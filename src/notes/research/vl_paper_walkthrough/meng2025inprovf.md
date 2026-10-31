@@ -38,14 +38,9 @@ The evaluation covers 12 violations in four workspaces and two abstraction types
 
 The authors explicitly limit the claims: “we currently assess the quality of informalization indirectly through the final repair correctness, which is neither sound nor complete.” (Section VII, p. 7.) They also caution: “Thus, a direct runtime comparison may not be fair.” (Section VII, p. 7.) The preceding passage contrasts an unoptimized CPU repair implementation with LLM components running on GPUs with extensive engineering optimizations. Inference: formal acceptance depends on the abstraction, task specification, parser, type checker, compiler, and Slugs solver. LLM descriptions guide candidate generation but are not themselves formally verified. Inference: the generate-check-feedback loop could inform a Verus repair workflow, but this paper supplies no Verus evaluation.
 
-## what VL should reuse
-
-Inference: VL should reuse constrained output, a strict parser/type checker before solver calls, counterexample-derived feedback, bounded retries, and denominators that separate violations from trials. It should not present informalization quality as sound or complete. The prior formal repair baseline and this LLM loop already cover the general idea of generate then formally check; new VL work should measure proof repair time, failed-proof categories, and whether counterexamples improve Verus verification rather than merely changing text.
-
 ## techniques for the catalog
 
 - abstraction and strategy informalization — translate formal environment inputs and automaton behavior into natural-language context
 - constrained repair generation — request machine-parseable candidate skills in a fixed DSL and reject malformed output
 - syntax plus realizability checking — type-check ASTs before testing the updated formal specification
 - counterstrategy feedback — analyze sink safety states and sinking SCCs to produce targeted repair prompts
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We are interested in sink states because those are the states where the system has no valid next move, indicating states that violate safety constraints."): checked all quotations, reported numbers, section and page references, technique steps, tag, and arXiv identifier; corrected quotations and page references, removed unsupported output-rejection and informalization-checking claims, clarified liveness feedback and trust assumptions, and labeled derived trial counts as inference; did not reproduce experiments, inspect implementation code, or verify the cited prior work.

@@ -48,8 +48,6 @@ How to apply it:
 4. Take inner products of action and history features and sample a stay/backtrack action from the softmax (Equation 2).
 5. Apply the action to select the next node or ancestor (Section 3.2).
 
-Inference: In VL, a learned controller could choose whether to retry a proof obligation or reopen an earlier lemma, but it must not override a failed Verus check. The action space should be bounded, and every backtrack must restore a state whose earlier obligations were actually verified.
-
 ## technique 4: policy-gradient training and learned prompting
 
 The paper trains the controller and prompter policies with a modified REINFORCE algorithm. A run receives +1 for a correct solution and −1 for an incorrect solution or reaching the maximum rounds (Section 3.3). The two policies are updated on alternating epochs while the other remains fixed (Algorithm 1). For prompting, a policy selects l in-context examples from a candidate pool based on recent nodes; the selected examples are concatenated into the generic prompt (Section 3.2, Equations 3–4).
@@ -62,16 +60,6 @@ How to apply it:
 4. Apply the policy-gradient update to the selected policy (Algorithm 1).
 5. During inference, select context examples, generate a prompt, check the resulting step, and continue or backtrack (Sections 3.2 and 3.4).
 
-Inference: A VL system could train prompt or repair policies against a reward defined by Verus acceptance, but reward hacking remains possible if the specification is incomplete. The paper’s binary reward measures solved Sudoku, not proof soundness or specification adequacy.
-
-## evidence, trust, and product threat
-
-The evaluation compares four solvers on three ten-puzzle benchmarks. ToT’s plotted success rates (Figure 2, page 8) are 1 for 3×3, 0.9 for 4×4, and 0.8 for 5×5. Plotted one-shot/few-shot rates are 0.9/0.9 on 3×3, 0.4/0.5 on 4×4 and 0.5/0.5 on 5×5; zero-shot is 0.4, 0.2 and 0.1. The authors suspect the simple controller explains the 4×4 failure and say a neural controller is future work (Section 4.2). They also acknowledge that the rule-based checker contains custom logic and is hard to adapt to generic problems (Section 5).
-
-What is measured is solver success on 10 puzzles per size (30 puzzles per solver), built by the authors, with `gpt-3.5-turbo` at temperature 1 (Sections 4.1 and 4.2); the paper reports one success rate per cell and no repeated runs. What remains trusted is the checker implementation, the LLM, prompt parsing, the controller, and the benchmark construction. The paper does not evaluate theorem proving, Rust, Verus, adversarial specifications, or robustness beyond Sudoku. Its claim that ToT can apply to mathematical theorem proving is a proposed extension: a partial proof is checked and the controller explores alternatives (Section 1), not an experiment.
-
-Inference: The direct threat to VL is an agent that keeps repairing a proof text without preserving verified state or that treats a valid intermediate lemma as evidence that the final specification is correct. ToT supplies useful search control and failure recovery; it does not replace a sound verifier. Existing work already provides tree search, memory, structured prompting, and backtracking patterns, so VL should reuse these mechanisms and focus new evaluation on proof obligations, counterexamples, and specification fidelity.
-
 ## techniques for the catalog
 
 - checker-guided tree search: generate a partial state, verify it, store valid nodes, and backtrack from invalid or hopeless nodes
@@ -80,4 +68,3 @@ Inference: The direct threat to VL is an agent that keeps repairing a proof text
 - learned controller: choose stay or bounded ancestor actions from checker output and recent search history
 - structured prompting: request each next step in a parseable format so the checker can extract it reliably
 - alternating policy gradient: train controller and prompter policies on alternating epochs with solved/failed-run rewards
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "The rationale is that given the current and recently attempted intermediate solution, some in-context examples might work better than others as hints for the next step."): read all of the paper text and viewed Figure 2 on page 8 of the PDF; checked every quotation, the section and algorithm references, the controller, prompter and training steps, the Sudoku setup (gpt-3.5-turbo, temperature 1, more than 5 children, 100 rounds) and the success counts (10/10, 9/10, 8/10); changed the capital letter in one quotation, replaced the vague baseline numbers with the Figure 2 values (one-shot on 4×4 is 0.4, so the paper's "80% higher" holds only against few-shot), softened the failure explanation to the authors' "suspect", and added that techniques 3 and 4 were not evaluated; did not check the equations' derivations, the cited related work, or the GitHub code, and the Verus and VL parts are marked Inference and not checkable against the paper. The link was kept (arXiv:2305.08291 matches the arXiv stamp in the paper text).

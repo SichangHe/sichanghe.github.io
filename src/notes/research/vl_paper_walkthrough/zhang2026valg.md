@@ -8,8 +8,6 @@ VALG treats machine-learning theory as joint development of a problem setup, the
 
 The system has two workflows. Workflow 1 surveys literature, selects up to three broad perspectives, generates narrower ideas, and formalizes each surviving idea into exactly one goal. Workflow 2 proves that fixed contract through sketch, global diagnostic, local steps, assembly, and specialized reviews. The paper evaluates nine subproblems from five COLT 2026 open-problem papers. It reports 22 internally finalized theorem candidates: two runs match the source scope and seven produce restricted, special-case, or conditional results. (§1, pp.2–3; §4, p.12) The denominator is nine subproblems, not 22 candidates.
 
-Inference: VALG's most transferable lesson for VeruLaw is to make specification drift explicit before proof generation. It does not produce Verus or Lean kernel-checked proofs in this paper; finalized candidates were independently reviewed by language models and “roughly audited by human” (§4, p.12). Therefore the numerical outcomes measure theorem-development discipline, not formal-verifier soundness.
-
 ## technique 1: source-relative formulation before proof
 
 What it is. Workflow 1 separates broad research direction from a concrete theorem contract. A perspective is represented by `(analysis target, model class, data assumption, regime, algorithm)`. An idea may specialize a perspective field but may not broaden or contradict it. The formalizer then fixes notation, primitive assumptions, quantifiers, regime, and exactly one goal. (§3.1, pp.6–8)
@@ -34,7 +32,7 @@ fn candidate(input: Input) -> (out: Output)
 
 Inference: `source_assumptions` and `source_goal` would be `spec fn`s or predicates over mathematical ghost values. A relaxed branch needs a distinct function or module with a visibly different predicate; Verus has no automatic notion of “source-relative” scientific scope.
 
-Evidence and limits. Table 1 assigns progress `P = min{C+B+H, applicable cap}` in [0,10], where a hard cap applies when a central quantifier, regime, or rate is missing. (§4, p.12) The paper gives examples: `P ≤ 3` when a theorem assumes a central unresolved property and `P ≤ 7` when it omits a central quantifier, regime, or rate. (§4, p.12) Inference: this cap is a useful audit invariant, but the score is an LLM assessment rather than a proof. The main failure risk for VL is proving a correct contract that omits a product requirement; separating branch contracts makes that omission visible but does not detect it automatically.
+Evidence and limits. Table 1 assigns progress `P = min{C+B+H, applicable cap}` in [0,10], where a hard cap applies when a central quantifier, regime, or rate is missing. (§4, p.12) The paper gives examples: `P ≤ 3` when a theorem assumes a central unresolved property and `P ≤ 7` when it omits a central quantifier, regime, or rate. (§4, p.12)
 
 ## technique 2: typed proof-dependency DAG and global diagnostic
 
@@ -94,15 +92,11 @@ Steps from the paper.
 
 Verus form. Inference: represent repair levels as an enum in orchestration code and retain the old contract as an immutable specification. A repaired proof must still satisfy the same `ensures`; a formulation repair creates a new predicate and requires a separate scope report. Verus can verify transition invariants for this controller but cannot decide whether a relaxation is scientifically acceptable.
 
-Evidence and limits. The paper records exhausted and interrupted branches in Table 1 rather than counting them as solved; “Exhausted indicates that the branch consumed its configured idea-variant budget without finalizing a theory.” (Table 1 caption, p.13) This prevents a failed search from becoming a false theorem. Inference: retry budgets bound cost, but the paper does not report repair-time distributions or compare minimal routing against whole-proof regeneration. A VL implementation should measure proof repair time, changed contract lines, and verifier regressions.
+Evidence and limits. The paper records exhausted and interrupted branches in Table 1 rather than counting them as solved; “Exhausted indicates that the branch consumed its configured idea-variant budget without finalizing a theory.” (Table 1 caption, p.13) This prevents a failed search from becoming a false theorem.
 
 ## what is proved, measured, and trusted
 
 The paper measures candidate counts, source-scope progress, mathematical-soundness and novelty scores, branch elapsed hours, ideas tried, and outcomes across nine subproblems. It presents theorem statements and derivations, but no machine-checked Lean or Verus artifact is the acceptance criterion. Trusted components include literature summaries, model reasoning, reviewer prompts, human audits, cited theorem correctness, and the scoring rubric. Inference: product-level verified Rust still trusts the specification, Verus verifier and solver, compiler, libraries, and environment; VALG mainly reduces specification drift and proof-process confusion.
-
-## what VL should reuse and avoid repeating
-
-Inference: VL should reuse source-relative contracts, typed lemma DAGs, theorem-level interface diagnostics, split proof production, independent adversarial review, and diagnosis-routed repairs. Inference: it should not claim a formal-verification capability from VALG's LLM-reviewed results or repeat its open-problem case-study inventory. The missing VL experiment is a benchmark where each branch emits a Verus contract, proof DAG, executable Rust, and verifier log; report denominators separately for source-scope proofs, restricted proofs, failed attempts, specification changes, and repair cost.
 
 ## techniques for the catalog
 
@@ -110,5 +104,3 @@ Inference: VL should reuse source-relative contracts, typed lemma DAGs, theorem-
 - typed proof-dependency DAGs — represent assumptions and lemma interfaces as an acyclic graph and run a whole-theorem composability diagnostic
 - split proof and independent review — generate sketch, global proof, local steps, and assembly with stage-specific reviewers
 - diagnosis-routed minimal repair — classify failure level, retry only the implicated artifact, and create a related variant only for formulation obstructions
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

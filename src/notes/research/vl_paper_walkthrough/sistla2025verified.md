@@ -43,17 +43,11 @@ Overall, the verifier validated correct answers on 9/20 examples, caught 6/8 inc
 The caught errors involved assumptions about library behavior, assumptions beyond the retrieved snippets, and incorrect code semantics (§§5.6.1–5.6.3, p.21). Missing function bodies and insufficiently precise predicates explain the remaining failures (pp.22–23). Running the formalizer once left at least one incomplete run on seven examples; iterative completion removed these inconclusive outcomes in the reported experiments (§5.6.4, p.24). The authors caution, “Thus, we cannot circumvent the undecidability of program equivalence, just because we are using LLMs!” (§6, p.24).
 
 ## Verus form and product implications
-Inference: a VL extension could represent agent claims and the requested condition in a Rust/Verus model, then use verification as a prerequisite check before accepting an explanation. This would require a faithful translation of the source, extracted claims, and condition. Replacing Datalog with Verus alone would not establish the missing source-to-claims implication. The paper evaluates neither this translation nor a Rust/Verus implementation.
 
 Inference: the main reusable idea is checking formal consequences of an explanation after generation. Its reliability depends on source retrieval, extraction, the predicate vocabulary, and the user-supplied condition. The reported results support this as a partial check, not as an unconditional proof that accepted answers match source semantics.
-
-## what was already done and what VL could add
-The paper demonstrates formal checking of extracted LLM claims and iterative synthesis of missing predicate instances. It explicitly separates source semantics from agent claims (§§3–5). Inference: VL should treat these as prior work. A further contribution could prove the connection between actual Rust code and the extracted model, then measure whether verification catches incorrect explanations, contracts, or invariants. The source-to-claims check remains future work in this paper (§3.1, p.7).
 
 ## techniques for the catalog
 - claim-condition decomposition — separate source semantics, extracted claims, and the requested condition; this implementation checks only claims-to-condition entailment
 - trace-to-Datalog extraction — retrieve missing snippets, extract a trace, and encode it with a fixed predicate vocabulary
 - iterative predicate completion — request and combine missing predicate instances, with a bounded stopping rule
 - equivalence checking from dependencies — encode data/control dependencies, expressions, selected variables, and program correspondences for Soufflé verification
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The formalizer is run for a maximum of five times or when the LLM concludes that the predicates are sufficient and stops generating new predicate instances, whichever is sooner."): read the complete paper including appendices; checked quotations, counts, method steps, section/page references, and the arXiv identifier; corrected the link, references, formalizer inputs and stopping rule, evaluation scope, and unsupported certainty; noted inconsistent equivalence totals and marked proposed VL/Verus extensions as inferences; did not reproduce experiments or validate external artifacts or Verus proposals.

@@ -46,8 +46,6 @@ The survey reports 43 competition awards, comprising 35 SV-COMP and 8 Test-Comp 
 
 The paper identifies specification completeness as an open problem: “An incomplete specification provides false assurance: the verification result is technically valid while substantively incomplete.” (Section 11.2, p. 30) It also discusses witness-validation limitations (Section 5.6, p. 11) and LLM reproducibility problems (Section 11.10, p. 34).
 
-Inference: trust depends on source-to-IR translation, execution models, SMT solving, validation, and the adequacy of the encoded specifications and bounds. For agent-written verified Rust, ESBMC supplies relevant precedents for bounded counterexamples, induction, and solver-checked LLM suggestions. VL should evaluate Rust-specific ownership reasoning and contract completeness rather than assume that reproducing the generic repair loop supplies those capabilities.
-
 ## techniques for the catalog
 
 - SMT-native BMC — lower programs to SSA, unroll to k, and use solver SAT/UNSAT for bounded safety
@@ -55,5 +53,3 @@ Inference: trust depends on source-to-IR translation, execution models, SMT solv
 - incremental solving — reuse solver state while increasing bounds or exploring interleavings
 - context-bounded concurrency — combine switch bounds, partial-order reduction, and symbolic scheduling
 - verifier-guided LLM repair — prompt repairs or invariants from counterexamples and accept only SMT-validated results
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Manually crafting such invariants demands deep program understanding and is a primary barrier to the practical deployment of inductive verification."): checked the entire paper text, study quotations, numbers, section/page references, technique steps, title, authors/year, and arXiv link; corrected quotations and page references, clarified front-end/source counts and bounded guarantees, corrected the missing-corpus claim, flagged contradictory repair-category evidence, and limited Verus comparisons to explicit inferences; did not independently check cited primary studies, repositories, competition data, or run ESBMC/Verus experiments.

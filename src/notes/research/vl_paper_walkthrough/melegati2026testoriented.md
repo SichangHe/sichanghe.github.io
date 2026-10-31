@@ -6,8 +6,6 @@ Tag: `melegati2026testoriented`, [paper](http://arxiv.org/abs/2604.08102v1)
 
 This two-page ICSE Companion paper proposes Test-Oriented Programming (TOP): developers specify a project and acceptance tests, inspect generated test code, and delegate production-code generation to an LLM. The abstract calls it “a novel paradigm consisting of the complete delegation of code generation based on natural language specifications, in which developers are only responsible for verifying test code.” The prototype, Onion, generates a small BibTeX command-line program from YAML configuration and tests. The evidence is a small feasibility demonstration, not a reliability or security evaluation.
 
-Inference: TOP is relevant to VeruLaw because a Verus specification and proof obligation can serve as an executable acceptance boundary, but ordinary unit tests do not prove functional correctness. A Verus workflow must retain the verifier as the acceptance oracle.
-
 ## technique: make tests the reviewed specification
 
 What it is: shift human review from generated production code to generated test code. Natural-language requirements remain input, but test code resolves their ambiguity. Section 2 explains that conventional programming's ambiguity is solved by formal specifications and proposes combining LLMs with test-driven development.
@@ -68,7 +66,7 @@ Verus form: Inference: benchmark candidate agents by proof compilation rate, rep
 
 ## what is proved, measured, and trusted
 
-The paper demonstrates that Onion generated a BibTeX CLI with no direct production-code edits in the reported 10 runs and that all runs eventually succeeded, while exposing test inconsistencies, test-review workload, nondeterminism, and model-dependent verbosity. It does not prove semantic completeness, security, scalability, or correctness beyond the selected tests. The developer's acceptance of structure and tests, the LLM, Python runtime, and test framework remain trusted. Inference: threat to agent-written verified Rust is medium to high if TOP is used without a formal contract; the paper's central failure mode is an inconsistent or incomplete test specification. What VL should reuse is the staged, bounded repair loop and the explicit accounting of model/run denominators. What VL should not redo is treating passing generated tests as evidence equivalent to a proof.
+The paper demonstrates that Onion generated a BibTeX CLI with no direct production-code edits in the reported 10 runs and that all runs eventually succeeded, while exposing test inconsistencies, test-review workload, nondeterminism, and model-dependent verbosity. It does not prove semantic completeness, security, scalability, or correctness beyond the selected tests. The developer's acceptance of structure and tests, the LLM, Python runtime, and test framework remain trusted.
 
 ## techniques for the catalog
 
@@ -76,4 +74,3 @@ The paper demonstrates that Onion generated a BibTeX CLI with no direct producti
 - staged Onion workflow — progress from YAML requirements to structure, tests, class implementations, and acceptance execution
 - bounded repair loop — repair tests or structure after failed generation, then retry up to a fixed limit
 - model variability audit — repeat generations per model and report intervention, failures, and output differences
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -85,8 +85,6 @@ Alive2 proves the accepted LLVM rewrite's semantic equivalence under its modeled
 
 Fine-tuning versus the non-finetuned baseline is normalized in Table 3 (p.12): runtime 100.0% to 97.5% (−2.5%) and binary size 100.0% to 90.5% (−9.5%), over the full benchmark suite. The paper additionally says roughly 78% of benchmarks fall below the runtime equality line in Figure 6 (Section 5.4, p.12). Inference: the mean and per-benchmark claims use different summaries and should not be conflated. A product using this architecture faces threat from invalid generated code only at the checker boundary, but faces separate threats from specification mistakes, performance regressions, model denial-of-service through repeated retries, and unsupported hardware effects.
 
-What VL should not redo: Inference: a Verus product should not rely on prompt-only semantic confidence or accept agent rewrites without an independent Verus check. The reusable idea is the generate–diagnose–recheck controller, adapted to Rust contracts and ownership rather than LLVM equivalence.
-
 ## techniques for the catalog
 
 - verified-supervision pairs — train on trusted optimizer input/output pairs while retaining failures so the model learns when to skip
@@ -94,5 +92,3 @@ What VL should not redo: Inference: a Verus product should not rely on prompt-on
 - verifier-gated generation — accept an LLM transformation only after an independent equivalence or contract checker succeeds
 - diagnostic regeneration — feed checker diagnostics into repeated candidate generation until a bounded, verified result is obtained
 - conservative transformation policy — use verification outcomes and held-out measurements to detect under-transformation and performance regressions
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

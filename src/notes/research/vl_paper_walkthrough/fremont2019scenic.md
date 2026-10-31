@@ -34,8 +34,6 @@ The initial image contained one car wrongly classified as three, giving 33.3% pr
 
 They replaced 400 one-car images, 10% of the 4,000-image generic training set, and evaluated on an enlarged 400-image generic test set. Table 8 reports precision/recall of 87.4%/91.6% for close-car replacement versus 82.9%/92.7% without replacement. Classical image augmentation yielded 78.7%/92.1%; shallow-angle replacement yielded 84.0%/92.1% (p. 13). These results show the reported precision improvement alongside a recall decrease.
 
-Inference: For VL, this workflow could help explore counterexamples from verified Rust, identify assumptions worth examining, and suggest preconditions or lemmas. Converting those observations into valid universal statements still requires proof.
-
 ## evidence, trust, and limits
 The GTAV case study used squeezeDet, batch size 20, and 10,000 training iterations unless otherwise noted (Section 6.1, p. 11). Section 6.2 used 4,000 generic training images and a 200-image generic test set. It reports precision/recall of 83.1%/92.6% for generic conditions, 85.7%/94.3% for good conditions, and 72.8%/92.8% for bad conditions (pp. 11–12); it does not state the specialized test-set sizes there.
 
@@ -43,11 +41,7 @@ In Section 6.3, training used 5,000 Matrix images and 5,000 iterations. Replacin
 
 The scene model itself had errors: “Since the resulting road information was imperfect, some generated scenes placed cars in undesired places such as sidewalks or medians, and we had to manually filter the generated images to remove these.” (Appendix D, p. 40) The authors leave describing 3D scenes and encoding dynamic scenarios to future language extensions (Section 8, p. 14).
 
-Inference: These experiments support the utility of targeted data generation within the tested simulator and detector setup. Applying the method requires trusting or separately validating the scene model, simulator, rendering interface, detector, and metrics. For VL, the useful contribution is the constrained generation and failure-generalization workflow; an incomplete model can still miss behaviors.
-
 ## techniques for the catalog
 - constrained probabilistic scenarios: describe object distributions plus hard requirements and probabilistically enforced requirements
 - geometric pruning: use erosion, dilation, and width bounds to remove impossible sample regions while preserving feasible scenes
 - failure generalization: vary selected features around a failing input, identify difficult scenario families, and generate data for testing or retraining
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We also created a second scenario specializing this further by requiring that the car be viewed at a shallow angle."): checked the whole paper including appendices against quotations, numbers, section/page references, and technique steps; corrected page references, size-pruning behavior, the direction of the pruning proof obligation, experiment scope and tradeoffs, and the unsupported Appendix D attribution; retained the DOI printed in the paper and marked proposed Rust/Verus applications as inferences; did not rerun experiments, inspect implementation code, or independently prove the paper's probability and soundness claims.

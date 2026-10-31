@@ -8,8 +8,6 @@ Deng and Shum report an ongoing Lean formalization of a fourteen-chapter measure
 
 The central engineering problem is interface mismatch. Mathlib states results at more general abstractions and in a different pedagogical order; the project therefore reuses a library theorem when its interface matches and proves a project-local bridge when it does not (Section 2, pp. 3–4). The paper’s scope is a formalization project, not a benchmark of proof-generation success. Its conclusion explicitly limits the claim: “This paper reports on a single formalization project, and its conclusions should therefore be interpreted accordingly.” (Section 8, p. 9).
 
-Inference: For VL, the transferable result is a disciplined library-adaptation workflow: preserve the user-facing contract, connect it to a more general verified library theorem through a named lemma, and review that connection. This is an inference because the paper studies Lean probability rather than Verus or Rust.
-
 ## technique: reviewable interface bridges
 
 Inference: Use this when a source statement is pedagogically concrete but the verification library exposes a more general definition or theorem. The following procedure follows the reported examples (Sections 2 and 3.1, pp. 3–5):
@@ -46,8 +44,6 @@ Inference: Use this when a textbook theorem may rely on a hidden standing assump
 
 The paper’s lesson is: “This example illustrates one of the benefits of formalization: it forces hidden assumptions to be made explicit.” (Section 3.3, p. 6). The evidence is a detected invalid conclusion and a counterexample, not a performance percentage.
 
-Inference: In VL, have the agent attempt a Verus contract exactly as written, then ask whether a counterexample or failed proof identifies a missing precondition. A proof can succeed for a weakened `ensures` clause, so source review must compare the intended requirement with the contract. Omitted ownership, length, or initialization assumptions are possible review targets; the paper does not study Rust APIs.
-
 ## technique: three-artifact agentic workflow
 
 Inference: Use this when generated formal code must remain traceable and reviewable. The project separates (1) source artifacts: textbook passages, corrections, and errata; (2) mathematical artifacts: Lean files, imports, and pinned Lean/Mathlib environment; and (3) process artifacts: candidates, helper lemmas, build results, review requests, verdicts, and repairs (Section 4, pp. 6–7). The paper states, “Lean checks whether a formal proof is valid in the given environment; it does not by itself check whether the formal statement is the intended translation of the textbook.” (Section 4, p. 6).
@@ -66,14 +62,6 @@ The paper states, “The final status of a task is updated only after both stage
 
 The reviewer is instructed to detect special-case theorems, extra hypotheses, changed identities, wrappers that bypass the intended argument, and helpers that move the main obligation into an assumption (Section 4, p. 7). Compilation, absence of `sorry`, and a controlled axiom footprint are necessary but not sufficient; human judgment remains part of deciding source fidelity (Section 4, p. 7).
 
-Inference: For VL, source artifacts are requirements and API docs, mathematical artifacts are Rust/Verus source plus pinned dependencies, and process artifacts are generated candidates, Verus logs, review decisions, and repairs. A Verus build should be followed by a contract-fidelity review and dependency freshness check. Verus can prove a stated contract, but it cannot establish that the contract captures the product requirement.
-
-## trust, limitations, and product threat
-
-The authors state, “We do not claim to measure the reliability of AI reviewers or to establish the superiority of an agentic workflow over traditional human formalization.” (Section 8, p. 9). The paper documents examples and a review process, rather than a controlled comparison. It also states, “Lean verifies a formal statement relative to its definitions, hypotheses, imported library, and axioms.” (Section 8, p. 9). Inference: Source interpretation and reviewer judgment remain trust assumptions alongside the formal environment.
-
-Inference: Specification drift and hidden assumptions are relevant risks for agent-written verified Rust; this paper does not measure their frequency or Verus soundness. VL can reuse the paper’s bridge and review patterns as prior art. A useful VL evaluation would measure how often source-fidelity review catches weakened contracts, extra preconditions, stale helper lemmas, or dependency changes, with denominators and pinned tool versions.
-
 ## techniques for the catalog
 
 - interface bridge lemmas — preserve a source-facing statement and prove a named connection to a more general library theorem
@@ -82,4 +70,3 @@ Inference: Specification drift and hidden assumptions are relevant risks for age
 - three-artifact provenance — keep source, checked mathematics, and process history as separate reviewable records
 - build-plus-fidelity prerequisite check — require compilation and axiom checks, then independently compare the formal statement with its source
 - stale-review invalidation — rerun review when source, statements, helpers, or dependencies change
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Even when an informal argument is correct in the surrounding mathematical context, the formal statement must contain all hypotheses needed for the theorem to hold."): checked all paper text, quotations, counts, references, and reported technique steps; corrected page references, clarified incomplete coverage and review application, removed an unsupported local-reference claim and comparative soundness claim, and marked derived procedures as inferences; did not inspect the project repository, textbook, cited works, or independently check Lean or Verus proofs.

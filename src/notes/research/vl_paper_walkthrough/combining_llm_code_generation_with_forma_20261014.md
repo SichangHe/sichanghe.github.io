@@ -66,11 +66,7 @@ Inference: Verus form: seed an LLM with a Verus-verified module whose public fun
 
 The formal guarantee applies to the synthesized TSL strategy under the formula’s assumptions and universal quantification over function and predicate interpretations. The authors state that users must manually check the specification (Formal Verification Assisted Code Generation, p. 4). Table 1 separately counts unverified code in pipeline (a). Inference: correctness of the intended application also requires checking the NL-to-TSL translation, data transformations, and integration; the synthesized strategy alone does not prove these. Benchmark success and line counts do not establish production reliability or general correctness of NL-to-TSL translation.
 
-The paper reports a scaling result: “the number of generated lines grows linearly with the number of conditions; the interacting requirements do not create exponential complexity that would cause it to be impractical to review.” (Results, p. 6). Inference: this is useful for VL because it suggests shrinking proof scope by isolating temporal control, but Verus still needs executable-state invariants and contracts for every data transformation.
-
-Inference: the main threat to a product that has agents write verified Rust is specification drift. An LLM can omit or misstate a guarantee before synthesis, and the synthesis engine will faithfully implement the wrong formula. The paper itself identifies unsynthesizable TSL and few-shot prompting limits as failure modes. Inference: a VL workflow should preserve the NL requirements, generated TSL or Verus contracts, synthesis output, and verifier logs as linked artifacts so a reviewer can detect this drift.
-
-Inference: VL should not redo the paper’s basic split of temporal control from data manipulation or its prompt-seeding experiment. New work should test the split with Verus contracts, explicit temporal-to-inductive invariant translations, and realistic Rust integration benchmarks.
+The paper reports a scaling result: “the number of generated lines grows linearly with the number of conditions; the interacting requirements do not create exponential complexity that would cause it to be impractical to review.” (Results, p. 6).
 
 ## techniques for the catalog
 
@@ -78,4 +74,3 @@ Inference: VL should not redo the paper’s basic split of temporal control from
 - tsl correct-by-construction synthesis: synthesize the temporal controller, then implement predicate and function terms around its guaranteed control structure
 - synthesized-code prompt seeding: place synthesized code in an LLM prompt to regenerate the entire solution
 - data/control separation: keep temporal behavior in the specification and move pointwise data transformations into function and predicate terms
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This separation enables developers to first focus on when their system should execute certain behaviors, and leave the question of how those behaviors should be implemented for a later step in the development process."): checked the whole paper, quotations, reported numbers, page and section references, technique steps, tag, and arXiv link; corrected quotations and page references, distinguished wrapper generation from whole-solution prompt seeding, qualified ambiguous trial and line-count reporting, and marked adaptations as inferences; did not reproduce experiments or verify the proposed Verus adaptations.

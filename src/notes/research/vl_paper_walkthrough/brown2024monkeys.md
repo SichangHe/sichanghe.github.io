@@ -61,8 +61,6 @@ Inference: Verus’s proof checker supplies stronger precision than voting becau
 
 The paper measures empirical coverage, success rate, costs, and verifier behavior. Lean checking establishes acceptance of a candidate under Lean 4.3.0-rc2 and the supplied imports; unit tests establish only tested behavior. Inference: Interpreting these measurements depends on the sampling implementation, checkers, benchmark labels, test suites, and reported cost assumptions. The authors found one GSM8K item with an incorrect ground-truth answer and 11.3% flaky SWE-bench Lite problems, showing that benchmark truth and checker outputs can be wrong.
 
-Inference: For VeruLaw, repeated checker-backed generation is a practical way to amplify an agent, but the product threat is specification omission and checker fragility. Existing work has already demonstrated sample-and-verify for Lean and code; VL should focus on Verus-specific contract coverage, dependency assumptions, and reproducible checker evidence rather than claim repeated sampling itself as new.
-
 ## techniques for the catalog
 
 - repeated sample-and-check: generate many independent candidates and accept one that passes an automatic proof or test checker
@@ -70,4 +68,3 @@ Inference: For VeruLaw, repeated checker-backed generation is a practical way to
 - budget-aware sampling: compare model size and sample count at fixed FLOPs or dollars using fitted coverage curves
 - verifier precision audit: measure selection methods separately from oracle coverage and test for flaky, false-positive, and false-negative checkers
 - formal-proof candidate pipeline: use Lean proof checking (Inference: adapt to Verus) as the selection oracle for generated proof artifacts
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "These imperfections in the verification process can lead to false positives and/or false negatives that are important to consider when applying repeated sampling."): checked the full paper text, quotations, numbers, section and page references, and technique steps; corrected the coverage-fit equation, Gemma model attribution, page references, and attempt definitions; added the flaky-test evaluation procedure and marked additional interpretations as Inference; did not reproduce experiments or independently validate Lean or Verus behavior.

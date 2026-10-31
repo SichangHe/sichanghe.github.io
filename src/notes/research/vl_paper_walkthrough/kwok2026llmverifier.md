@@ -51,7 +51,7 @@ With G=20, K=8, and three criteria, the framework reports 86.5% on Terminal-Benc
 
 The framework also supplies progress scores and dense RL rewards. On 500 Terminal-Bench trajectories, Spearman value-order correlation is 0.848 for successful and 0.769 for failed trajectories (Table 6, p. 13). In LIBERO, verifier rewards let DSRL-SAC reach a matched success rate with approximately 1.8× fewer environment steps; GRPO reasoning rewards give approximately 1.1× sample-efficiency improvement on MATH (section 7, pp. 14–15).
 
-The paper's limitations include requiring scoring-token logits for the main method, possible bias from hand-designed criteria, and experiments limited to single-turn RL; it also notes that score scaling does not add information to the trajectory. All empirical gains rely on the chosen verifier model, prompts, candidate pools, and benchmark labels. Inference: VL should use this as candidate ranking and progress telemetry around Verus, while treating the checker, compiler, specifications, libraries, and environment assumptions as trusted boundaries.
+The paper's limitations include requiring scoring-token logits for the main method, possible bias from hand-designed criteria, and experiments limited to single-turn RL; it also notes that score scaling does not add information to the trajectory. All empirical gains rely on the chosen verifier model, prompts, candidate pools, and benchmark labels.
 
 ## techniques for the catalog
 
@@ -60,5 +60,3 @@ The paper's limitations include requiring scoring-token logits for the main meth
 - criteria decomposition — score specification, output, and error criteria separately and ensemble them
 - probabilistic pivot tournament — use a ring pass and k pivots to reduce N-candidate comparisons from quadratic to O(Nk)
 - checker-gated ranking — use model scores for triage but require the formal checker for acceptance
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

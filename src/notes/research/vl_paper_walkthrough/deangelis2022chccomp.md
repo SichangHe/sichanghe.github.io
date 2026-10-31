@@ -83,16 +83,6 @@ When to use each technique. Inference: use predicate abstraction/CEGAR for itera
 
 Verus form. Inference: Verus directly checks Rust contracts rather than accepting CHCs as its user language. These algorithms are therefore candidate backend strategies for a Verus-to-CHC adapter, with a trusted translation obligation. The adapter must preserve satisfiability and map counterexamples back to Rust source locations.
 
-## observed failures, trust, and product threat
-
-The organizers detected 4 and 17 inconsistent results in the LIA-lin-Arrays and LRA-TS tracks, respectively; in each, Ultimate Unihorn reported sat while other competing tools reported unsat (Section 5.1, p. 52). In LRA-TS, Golem reported 17 unsat results while Ultimate TreeAutomizer reported 12 unsat and 5 unknown (p. 52). They were detected on March 24, 2022; the authors were sent six benchmarks on March 25 and submitted a fixed version on March 28 (p. 53). Results in the report use the fixed version. Table 7 (p. 53) gives Unihorn's results original versus fixed: LIA-lin-Arrays 283 sat/66 unsat versus 137 sat/67 unsat, and LRA-TS 134 sat/22 unsat versus 65 sat/38 unsat. These are counts of reported results, not accuracy rates; the report does not say which results were wrong beyond the inconsistencies listed. Separately, Section 6 (p. 54) proposes model/counterexample witnesses and explicit expected `:status` annotations for benchmarks.
-
-What is measured: the report measures solver outputs, scores, times, and resource use under the competition protocol. It does not describe validating every output; validation is proposed as future work (Section 6, p. 54). Inference: trusted elements include solver binaries, SMT backends, CHC parsers/translators, benchmark expected statuses, StarExec isolation, and the scoring script. Inference: a Verus product that trusts an unvalidated CHC translation inherits a serious soundness risk; witness checking and translation round-trip tests are needed.
-
-What VL should not redo (Inference): the track taxonomy, StarExec job model, score/tie policy, hardness ratings, and the listed CEGAR/interpolation/ADT-reduction algorithms are already documented here. Inference: VL's contribution should be a sound Rust/Verus translation, source-level witness explanations, and maintenance measurements rather than another generic solver contest.
-
-Threat to agent-written verified Rust. Inference: high when an agent relies on a backend result without checking the generated obligation, witness, and translation. Solvers can return inconsistent results, as the 21 observed conflicts (4 + 17) show. The threat is lower when Verus checks the final Rust proof directly and CI preserves exact tool versions and logs.
-
 ## techniques for the catalog
 
 - theory-and-shape track classification — route CHCs by background theory and linear/nonlinear clause structure
@@ -105,4 +95,3 @@ Threat to agent-written verified Rust. Inference: high when an agent relies on a
 - tree-automata CEGAR — refine regular sets of recursive counterexamples with tree interpolation
 - CHC-to-program translation — reduce Horn satisfiability to assertion checking in a recursive nondeterministic program
 - witness and status validation — require models/counterexamples and declared expected benchmark status before trusting scores
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We informed the authors of Ultimate Unihorn on March 25, 2022 by sending them six benchmarks on which we detected the inconsistencies"): read the whole paper text (pp. 44–62, including Tables 1–15) and compared every quotation, number, section and page reference and technique step; fixed the Introduction quotation (it had been altered), switched all page references to the printed EPTCS page numbers (the old ones mixed PDF and printed pages), corrected the RInGen, Unihorn, Eldarica and LRA-TS statements, added the competition time limits, the ranking caveat for Spacer, the rating-quota fallback rules and Unihorn fix dates, marked own conclusions as Inference, and replaced the arXiv link with the DOI printed in the paper; did not check the arXiv version against the EPTCS text, the cited references, or the Appendix A numbers beyond those used here.

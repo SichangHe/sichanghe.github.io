@@ -51,14 +51,6 @@ Evidence: rWasm's implementation took one person-month versus approximately two 
 
 The assumptions are significant: safe Rust and rustc are trusted but not formally verified here; an overly permissive or confused-deputy host API can undermine confinement; and sandbox safety does not establish Wasm semantic correctness (Secs. 3, 5.3 and 6.2). The authors report architecture coverage inherited from rustc, no handwritten formal proof, and convenient IRM instrumentation (Secs. 5.5 and 6.2).
 
-## what the paper leaves trusted and what VL should reuse
-
-Both designs protect the host from arbitrary Wasm but trust the exposed API, and neither addresses availability or side channels. vWasm proves the emitted assembly property and supports future static proofs, at the cost of roughly two person-years and x64-specific TCB pieces. Inference: rWasm suggests representing all mutable module state in a struct, using checked `Vec` accesses, and preserving source integer semantics explicitly when writing Rust that will also receive Verus contracts. The paper does not add those contracts.
-
-Inference: for agent-written Verus Rust, rWasm is a direct engineering pattern but its compiler-trust argument is not a substitute for Verus proofs. vWasm's small-step `AllOk` invariant suggests a proof structure for a machine-level sandbox theorem. Its reported development effort and both tools' trusted components should inform the scope of any VL verification claim.
-
-The paper supplies both Wasm sandbox designs, exploit tests, fuzzing, and comparative benchmarks (Secs. 4–6). Inference: these are prior work for VL, not new VL techniques. The reported slowdowns are means over the 30-program PolyBench-C suite or 100 executions of the image-conversion example (Secs. 6.1.1 and 6.2). Inference: these measurements do not predict every workload.
-
 ## techniques for the catalog
 
 - small-step sandbox invariant: model machine steps, prove grouped control-flow integrity, and preserve an `AllOk` state through every execution prefix
@@ -69,4 +61,3 @@ The paper supplies both Wasm sandbox designs, exploit tests, fuzzing, and compar
 - semantics-preserving arithmetic: use explicit wrapping operations to match Wasm integer behavior in every Rust build mode
 - inline reference monitors: instrument generated Rust with function, instruction, or memory tracers that rustc can optimize jointly
 - append optimized lists: replace immutable functional lists with a proven-equivalent tree representation to reduce vWasm compilation time from 25+ seconds to 2.5 seconds (Sec. 6.1.2, p. 1986)
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "For WebAssembly’s linear memory, there are multiple design choices both for how to implement it, as well as how to access it."): checked all paper text, quotations, numbers, section/page references, technique steps, trust assumptions, and inference labels; corrected references, the rWasm quotation, the TV/tv distinction, and overstatements about proofs, and used the publisher link printed in the paper; did not inspect implementation artifacts, reproduce experiments, or validate the proposed Verus adaptations.

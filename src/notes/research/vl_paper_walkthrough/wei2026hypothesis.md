@@ -58,7 +58,7 @@ The paper summarizes the merge invariant as follows: “The trunk remains builda
 
 Verus form. Inference: map Scaffolder output to Rust functions with fixed signatures and `requires`/`ensures`; use proof bodies and `assert` steps as Executor work; run `verus` in each isolated worktree; and merge only after a clean verification run on the integrated trunk. Loop invariants belong in the executable function’s loop using Verus’s `invariant` syntax, while reusable mathematical facts should be `proof fn` declarations. Inference: a Rust proof function is erased and cannot be used as runtime behavior, so the Reviewer must check that the executable body, rather than a proof-only path, implements the intended operation. Avoid treating `external_body` as evidence of a verified implementation; it would move the implementation into the trusted boundary.
 
-evidence and limits. The released artifact’s size and axiom certificate are the main quantitative evidence (Appendix A.2, p. 25; Appendix C.1, p. 30). The platform evaluation used Claude Code Opus 4.7 for both Manager and specialists, and the paper explicitly says: “We have not validated the framework end-to-end on a platform other than Claude Code.” (Appendix A.1, p. 25.) Inference: transfer to VL therefore requires measuring the same workflow with Verus, Rust dependencies, and agent models used by VL; the paper supplies no success-rate denominator for individual sub-lemmas, no wall-clock total, and no comparison against a single-agent baseline.
+evidence and limits. The released artifact’s size and axiom certificate are the main quantitative evidence (Appendix A.2, p. 25; Appendix C.1, p. 30). The platform evaluation used Claude Code Opus 4.7 for both Manager and specialists, and the paper explicitly says: “We have not validated the framework end-to-end on a platform other than Claude Code.” (Appendix A.1, p. 25.)
 
 ## technique: Scout gap reports and falsification triage
 
@@ -80,16 +80,9 @@ Verus form. Inference: pin ghost structures, spec functions, and model-state def
 
 evidence and limits. The case study shows that a green build and baseline axioms can coexist with a semantically stronger definition; only the definition audit exposed the relocation (Appendix B.2, p. 27). Inference: this is a direct threat to agent-written Verus Rust because ghost predicates can silently narrow the set of states accepted by a contract. The paper does not measure how often such relocations occur outside its two case studies.
 
-## what remains trusted, contradictions, and product threat
-
-The Lean checker, Mathlib and project definitions, the source book’s correctness, the Auditor’s semantic row classifications, the pinned toolchain, and the correctness of the generated Lean proof terms remain trusted to the extent stated by the paper. The artifact’s `[propext, Classical.choice, Quot.sound]` certificate is evidence against `sorryAx`; it does not prove that the formal statements match the source. The paper reports approximately 80,700 lines, 151 files, 240 definitions, and 1,000 lemmas, but labels the declaration counts “indicative rather than exact” (Appendix A.2, p. 25), so those figures should not be treated as exact sums.
-
-Inference: the strongest threat to VL is specification drift at the boundary between a natural-language requirement and an agent-authored Verus contract. The paper’s source rows, signature pinning, definition tracking, blocked-goal triage, and reviewed integration form a reusable control loop. Inference: VL should measure threat with seeded over-strengthenings (extra preconditions, narrower state predicates, or hidden ghost fields), record which audit stage catches each, and report denominators for caught and missed cases. Inference: the paper’s five theorem artifacts and two drift episodes show feasibility, but they do not establish that the method scales to production Rust, unsafe code, external libraries, or changing dependencies.
-
 ## techniques for the catalog
 
 - source-anchored boundary audit — classify every changed theorem or authored-definition obligation against a verbatim source row and remove unsupported strengthening
 - staged multi-agent proof workflow — lock signatures, execute isolated waves, review bodies and axioms, integrate on a rebuilt trunk, and close only after audit
 - Scout gap reports and falsification triage — boundedly classify library support and route blocked goals through counterexample or confirmation checks
 - definition-layer drift control — pin authored structures and definitions so proof obligations cannot move silently from theorem signatures into ghost or concept fields
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

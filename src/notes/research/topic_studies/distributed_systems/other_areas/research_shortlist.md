@@ -106,8 +106,6 @@ why this order
 - project choice remains provisional
   - publication potential, data access, and useful workload frequency are unresolved
 
-review record
-
 - human requested autonomous research decisions
   - quoted instruction: “Agents decide for themselves autonomously and only ask me to clarify the top-level goal instead of bothering me”
   - source: delegated human email, manager_mail/85c5dff58359-2626.txt:10–14

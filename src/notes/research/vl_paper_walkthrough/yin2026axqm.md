@@ -6,8 +6,6 @@ Tag: `yin2026axqm`, [paper](http://arxiv.org/abs/2609.05157v1)
 
 AxQM is a Lean 4 proof-synthesis benchmark built from Nielsen and Chuang's *Quantum Computation and Quantum Information*. It contains 1,019 kernel-checkable tasks over 479 textbook items and a custom library for finite-dimensional quantum mechanics. The abstract says: “Grading of the benchmark is done deterministically by the Lean kernel, which checks that the proof compiles, that no sorry appears in it or in any declaration it depends on, and that it introduces no new axioms.” (Abstract, p. 1). The released benchmark withholds the solution library, while exposing statements, the library, estimates, dependencies, and grading scripts.
 
-Inference: AxQM is useful to VeruLaw (VL) as a model for a benchmark whose pass condition is mechanically checked and whose task context includes a domain library. It is evidence about benchmark design, not about Verus proof difficulty: Lean, quantum mathematics, and finite-dimensional assumptions are different from Rust systems code.
-
 ## technique: construct a textbook-scale, library-context benchmark
 
 What it is: convert a large source text into formal theorem statements that share definitions and lemmas instead of presenting isolated problems. The authors count 687 extracted textbook items, formalize 505 mathematically expressible items, and include 479 as benchmark items (Sec. 5, p. 8). The benchmark covers density operators, Schmidt decomposition, universal gates, Fourier transform, Grover search, channels, stabilizer codes, fault tolerance, entropy, and inequalities (Sec. 2, p. 2).
@@ -21,8 +19,6 @@ How to do it:
 3. Build a shared foundational library and state tasks against it. AxQM's released benchmark adds 3,519 declarations on top of its Mathlib fork; the complete private solution library has 10,560 declarations (Sec. 2, p. 4).
 4. Keep reference solutions private so they cannot be copied into model training data.
 5. Publish task statements, library, task metadata, and grading scripts, while retaining solutions for evaluation.
-
-Inference: A VL benchmark should use Rust crates and Verus specifications as shared context, with tasks ranging from small lemmas to end-to-end modules. It should retain a private proof corpus and publish exact dependency and toolchain versions.
 
 Evidence: AxQM has 1,019 tasks over 479 items; 158 tasks (15.5%) are estimated very small, 324 (31.8%) small, 280 (27.5%) moderate, 190 (18.6%) large, and 67 (6.6%) very large (Table 1, p. 3). The largest reference proof needs more than 450 declarations beyond the released benchmark library (Sec. 2, p. 3). The comparison says purpose-built physics proof benchmarks had at most 200 tasks, while AxQM is 4.1 times the 250-instance PhysLeanData held-out split (Sec. 2, p. 4).
 
@@ -39,8 +35,6 @@ How to do it:
 3. Bucket the count into very small, small, moderate, large, or very large.
 4. Publish the bucket with each task, while withholding the proof itself.
 
-Inference: VL can publish proof-size and dependency metadata separately from measured agent success. A short proof may still require difficult invariant discovery, and a long proof may be routine once a library lemma exists; the metadata must not be presented as a difficulty label.
-
 Evidence: Table 1 gives all five bucket counts and percentages over 1,019 tasks. Exercise 9.9 is used as an example whose reference proof uses a mean-ergodic averaging argument because Schauder and Brouwer theorems are absent from Mathlib (Sec. 2, p. 3).
 
 ## technique: record and exploit empirical dependency structure
@@ -54,8 +48,6 @@ How to do it:
 3. For each item, calculate the share of declarations in its closure reused by another item.
 4. Record direct task-to-task dependencies and aggregate them by textbook chapter.
 5. Evaluate both independent mode (each task solved alone) and dependency-order mode (prerequisites completed first) (Sec. 2, p. 4).
-
-Inference: For VL, a dependency ledger can distinguish an agent that invents proofs from one that correctly reuses verified Rust lemmas. It can also expose whether a benchmark score depends on a hidden prerequisite corpus.
 
 Evidence: The ten most reused declarations include `pauliX` used by 159 items, `pauliZ` by 148, `pauliY` by 133, and `qubit` by 127 (Fig. 2, p. 4). The authors say: “A definitional error in any of these would have had to survive every one of those items’ proofs.” (Fig. 2 caption, p. 4).
 
@@ -90,8 +82,6 @@ What it is: search for statements that compile and have proofs but fail to repre
 
 Inference: When to use it: use this audit before publishing or scoring any benchmark whose formal statements are translated from prose, especially when a model can exploit weak hypotheses.
 
-Inference: VL should mutate contracts and inspect whether the implementation or theorem statement has smuggled the desired postcondition into `requires`, or whether `ensures` is vacuous. Verus's verifier cannot detect a semantically wrong contract by itself.
-
 Evidence: The authors invite physicists and Lean experts to inspect faithfulness and state that this is the failure mode that matters for a formal benchmark (Sec. 2, p. 5). They describe the faithful distance proof as requiring a trajectory `x : R → R`, a second-derivative condition, and initial conditions, rather than a definitional equality (Sec. 4, p. 7).
 
 ## technique: justify a domain-specific library fork explicitly
@@ -105,19 +95,11 @@ How to do it:
 3. Preserve upstream behavior as a special case; here, identity homomorphism recovers ordinary multilinearity.
 4. Publish the fork and seek upstream review; the authors identify Mathlib pull request #42534 (Sec. 3, p. 6).
 
-Inference: A VL benchmark should avoid silently changing Verus libraries or Rust semantics. If a fork is required, publish the exact commit, diff, and rationale, and test whether results reproduce on upstream versions.
-
 ## what is proved, measured, and trusted
 
 The Lean kernel checks accepted proofs, absence of `sorry`, dependency closure, and axiom additions. The benchmark measures task pass/fail, reference proof declaration counts, dependency reuse, and chapter coverage. It does not measure physical truth independently of expert review. The paper says the dictionary connecting a physical claim to a mathematical object is where an error can enter, and that faithfulness rests on expert review (Sec. 5, p. 8).
 
 Trusted elements include Lean's kernel and compiler, the pinned Mathlib fork, the task statements, reference-library construction, the grading scripts, and human judgment that translations match the textbook. The 84% median reuse statistic and successful proofs constrain but do not eliminate a shared definitional error.
-
-## implications for VeruLaw and threat assessment
-
-Inference: Agent-written verified Rust faces the same central threat as AxQM: a proof can pass while the specification is weaker than the intended system property. The distance example and the quantifier-order example show that this threat survives perfect kernel checking. A second threat is hidden dependence on a large private library: high success may reflect prerequisite lemmas rather than general proof synthesis.
-
-Inference: VL should borrow AxQM's deterministic grading, private reference proofs, task dependency ledger, proof-size metadata, independent/dependency-order regimes, and explicit semantic audit. It should not redo a textbook quantum benchmark; the transferable contribution is the benchmark discipline and failure analysis. A Verus benchmark should additionally test executable behavior, memory/resource contracts, Rust compiler/toolchain compatibility, and external-library trust assumptions.
 
 ## techniques for the catalog
 
@@ -127,4 +109,3 @@ Inference: VL should borrow AxQM's deterministic grading, private reference proo
 - deterministic proof grading — require compilation, dependency-closure cleanliness, and no newly introduced axioms
 - semantic failure audit — search for definitions, hypotheses, or missing algorithms that make a wrong claim provable
 - documented library fork — pin, explain, publish, and upstream-review domain-specific foundational changes
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

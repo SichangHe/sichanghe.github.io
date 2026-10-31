@@ -77,8 +77,6 @@ Table 4 shows the summary-generation funnel: 99,648 extracted functions become 8
 
 Verus form
 
-Inference: The analogous VL pattern is to keep a tool-independent resource contract, then instantiate it in Verus modules for each Rust API. Rust type and trait structure replaces analyzer-specific extension files, while the contract remains the authority shared by proof and checking tools.
-
 ## technique 4: filter warnings by path feasibility and LLM review
 
 what it is
@@ -105,11 +103,7 @@ The warning filter over-approximates heap state and defers semantically incorrec
 
 ## what is proved, measured, and trusted
 
-The paper demonstrates empirical bug finding and component ablations; it proves only the stated SAT path predicates under its abstraction, not complete memory safety. Trusted elements include Tree-sitter parsing, Z3’s solver checks, analyzer behavior, and human confirmation. LLM summaries and warning judgements are untrusted until symbolic or human checks. The main product threat is an incorrect but feasible summary: Z3 checks reachability, not semantic ownership correctness. Inference: VL can reuse the staged LLM proposal, symbolic gate, analyzer, path gate, and human/proof review architecture, but must map resource claims to valid Verus contracts and avoid accepting model output as proof.
-
-## what VL should not redo
-
-The paper already provides an analyzer-agnostic summary schema, CFG-based SAT validation, path-feasibility warning filtering, and evidence that combining semantic and symbolic stages improves detection. VL should focus on Rust resource models, contract authority, and proof-backed validation rather than recreate a generic LLM classifier.
+The paper demonstrates empirical bug finding and component ablations; it proves only the stated SAT path predicates under its abstraction, not complete memory safety. Trusted elements include Tree-sitter parsing, Z3’s solver checks, analyzer behavior, and human confirmation. LLM summaries and warning judgements are untrusted until symbolic or human checks. The main product threat is an incorrect but feasible summary: Z3 checks reachability, not semantic ownership correctness.
 
 ## techniques for the catalog
 
@@ -117,4 +111,3 @@ The paper already provides an analyzer-agnostic summary schema, CFG-based SAT va
 - CFG/SAT summary validation — retain an LLM summary only when a feasible path satisfies its allocation or deallocation claim
 - summary-augmented static analysis — inject validated summaries into complementary analyzers to expose custom wrappers
 - path-feasibility warning filtering — use symbolic state reachability to discard infeasible leak reports before expensive review
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

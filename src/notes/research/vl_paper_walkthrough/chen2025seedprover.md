@@ -6,7 +6,7 @@ Tag: `chen2025seedprover`, [paper](https://arxiv.org/abs/2507.23726v2)
 
 Seed-Prover is a Lean 4 whole-proof model organized around reusable lemmas, iterative compiler feedback, self-summaries, and three inference budgets. It also introduces Seed-Geometry, a separate domain-specific geometry engine. The abstract says: “Seed-Prover can iteratively refine its proof based on Lean feedback, proved lemmas, and self-summarization.” (Abstract, p. 1.) It reports 78.1% of formalized past IMO problems, 99.6% on MiniF2F test, and 331/657 on PutnamBench under its stated settings (Table 3, p. 8). The combined systems solved 4/6 IMO 2025 problems before the submission deadline and 5/6 afterward; Seed-Geometry solved P2, and the proof of P1 finished after the deadline (Table 3 and Section 3.2, p. 8).
 
-The evaluation uses Lean v4.14.0 and its corresponding Mathlib version unless otherwise specified (Section 3.2, p. 8), and Lean v4.16.0 for MiniCTX-v2 (p. 9). Inference: Lean verification establishes the formal theorem, not the intended meaning of a natural-language problem or the correctness of a Rust implementation. VL can transfer the decomposition and feedback loops, but its agents must generate Rust/Verus contracts and use only supported Verus constructs.
+The evaluation uses Lean v4.14.0 and its corresponding Mathlib version unless otherwise specified (Section 3.2, p. 8), and Lean v4.16.0 for MiniCTX-v2 (p. 9).
 
 ## technique 1: lemma-style whole-proof generation and a lemma pool
 
@@ -80,13 +80,7 @@ evidence and limits. Seed-Geometry solves 43 of IMO-AG-50 versus AlphaGeometry 2
 
 ## LooKeng interaction infrastructure
 
-The appendix introduces LooKeng, a REPL-based Python interface with `init_state`, `run_tac`, and `verify_proof`. It supports stateless concurrent states, complex tactics, version switching, memory thresholds, proof verification, simplification, statement negation, and asynchronous isolation (Appendix B, p. 12). Inference: VL could use a similar process-isolated Verus service, but must pin versions and re-run final verification; interface convenience does not enlarge Verus's soundness boundary.
-
-## what is proved, trusted, and VL risk
-
-The paper reports 121/155 past IMO (78.1%), 331/657 PutnamBench, and 30/100 CombiBench (Section 3.2, p. 9). Both MiniF2F splits reached 99.6% under Medium. Heavy then solved the remaining valid problem but failed on the remaining test problem, giving final results of 100.0% valid and 99.6% test (Table 3, p. 8; Section 3.2, p. 9). MiniCTX-v2 is 81.8% under Light and Lean v4.16.0, versus o4-mini 44.3% at Pass@8 (p. 9). The IMO 2025 statements were formalized by human experts; Seed1.6-Thinking first generated solution candidates for fill-in-the-blank problems (Section 3.2, p. 8). Inference: the model, proposer, and relevance judge guide search; their output still needs formal checking. Trust in the final result also depends on the formal statement matching the intended problem and on the verification software and accepted assumptions.
-
-Inference: the threat to agent-written verified Rust is moderate for proof search and high for specification and integration. Lemma pools, broad conjecture search, nested refinement, and feedback can reduce context waste and improve repair, but they cannot establish that a Rust contract is the intended safety property or that an external library obeys its specification. The paper places its approach alongside prior whole-proof reasoning, compiler-feedback refinement, and geometry search (Sections 1–2, pp. 2–6). Inference: VL should measure non-vacuous contract acceptance, dependency-change breakage, and repair time before claiming a new method.
+The appendix introduces LooKeng, a REPL-based Python interface with `init_state`, `run_tac`, and `verify_proof`. It supports stateless concurrent states, complex tactics, version switching, memory thresholds, proof verification, simplification, statement negation, and asynchronous isolation (Appendix B, p. 12).
 
 ## techniques for the catalog
 
@@ -97,5 +91,3 @@ Inference: the threat to agent-written verified Rust is moderate for proof searc
 - medium nested refinement — solve difficult child lemmas with inner searches and feed successes to the parent proof
 - heavy broad search — verify thousands of conjectures, rank useful lemmas, and use them in a final deep search
 - symbolic domain engine — combine a neural proposal model, explicit rule closure, and beam search for a restricted domain
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The proof rate serves as a strong indicator of lemma value; empirically, lemmas with low proof rate are often crucial to the final proof."): checked all paper text, quotations, numerical results, section/page references, and technique steps; corrected the paper link, IMO deadline scope, MiniF2F settings, geometry page reference and policy/value-model inconsistency, and marked extrapolations as Inference; did not reproduce experiments or independently validate Lean proofs or Verus recommendations.

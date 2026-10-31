@@ -104,15 +104,9 @@ Verus form (inference)
 
 Inference: a possible Verus integration would generate obligations over an explicit program model and justify their connection to executable Rust. Crowbar’s ABS annotations alone do not supply that connection. This integration is not implemented or tested in the paper.
 
-## what VL should retain and threat assessment
-
-The paper already develops the forward symbolic-execution pattern, branch-wise probability constraints, soundness induction, and a prototype solver pipeline. Inference: VL should not redo these as generic formal-verification ideas. The useful transfer is a contract-to-proof pipeline for randomized agent components: model choices explicitly, accumulate branch constraints, and separate solver discharge from semantic trust in the model. Inference: threat to agent-written verified Rust is low for ordinary memory-safety verification because the paper is probabilistic logic rather than Rust verification; it is moderate for products that need guarantees about randomized policies, sampling, or expected outcomes, where its branch and invariant patterns could supply a competing proof workflow.
-
 ## techniques for the catalog
 
 - symbolic-update pDL: represent probabilistic reachability and forward state changes with `[s]p φ` and `{U}φ`
 - constraint-generating execution: execute syntax-directed rules and combine branch probability bounds into SMT constraints
 - loop-invariant discussion: use probability-one preservation; restrict the quantitative `loopPreserving` rule to a non-probabilistic body
 - solver-backed prototype: encode pGCL annotations in a symbolic executor and discharge modality-free arithmetic with Z3
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The rules symbolically execute the first statement of the box-modality, generating a premise that must hold for the symbolic execution of the remaining program s."): checked all quotations, numerical bounds, section/page references, semantics, proof rules, loop discussion, and prototype claims; corrected the soundness quotation and page, added terminal rules and the non-probabilistic-body restriction, distinguished state-dependent semantics from the constraint simplification, and marked proposed Verus adaptations as inference; did not run Crowbar or Z3, independently prove soundness, or validate the proposed Verus adaptations.

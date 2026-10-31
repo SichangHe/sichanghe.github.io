@@ -67,10 +67,6 @@ Table 4 ablations identify verifier grounding as critical: replacing Lean/Python
 
 Proposition 1 gives the PSM attention-reachability argument in Section 3.3 (pp.7–8). Appendix A (pp.17–21) states topological-consistency, expressiveness, and optimization claims, assuming a Lipschitz logical scorer in embedding space, a verifier matching a scorer threshold, bounded model capacity, and verified training data. Remark 1 (p.18) limits the theory to distributional bridge quality rather than pointwise guarantees for discrete outputs. Inference: the theoretical claims do not establish universal correctness of generated bridges; acceptance depends on the particular verifier and what it checks. The proofs were read but not independently validated.
 
-## trusted boundary, failures, and VL implications
-
-The paper uses Lean 4 compilation, Python evaluation, and Python unit tests as acceptance checks (Section 3.4; Appendix C.1). It reports no-milestone fallback and distant milestones in Appendix B, and compilation/execution errors, logical gaps, variable hallucination, and near-misses among rejected bridges in Section 3.4. Inference: the verifier and its checked conditions form the trust boundary; generation, segmentation, sampling, and milestone selection propose material that still needs checking. Python test success establishes agreement with the tests, rather than a general proof of correctness. For agent-written verified Rust, the proposed transfer is to preserve verified proof context and regenerate a failed segment, then run Verus and review the specification. The paper provides no Verus experiments.
-
 ## techniques for the catalog
 
 - PSM bidirectional conditioning — reorder query, verified prefix, milestone, and bridge with three sentinels so a causal decoder sees both endpoints
@@ -79,4 +75,3 @@ The paper uses Lean 4 compilation, Python evaluation, and Python unit tests as a
 - surgical dual-system repair — locate the first failed step, infill only its bridge, splice it back, and reverify
 - bounded milestone scan — select the first later step that passes the verifier, with suffix-regeneration fallback
 - bridge-token budgeting — decrement the remaining budget by generated bridge length; evaluation additionally limits repair iterations
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The ablation study in Table 4 was conducted by retraining (or re-evaluating, where applicable) the TRI system with each individual component replaced or removed, holding all other hyperparameters and data splits constant."): read the entire paper including references and appendices; checked quotations, numbers, section/page references, training steps, repair algorithms, reported results, and stated assumptions; corrected the paper link, page references, gap-span description, token-comparison basis, stopping behavior, unsupported claims, and inference labels; did not reproduce experiments, audit data splits, independently validate proofs, or test Verus adaptations.

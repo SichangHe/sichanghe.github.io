@@ -24,8 +24,6 @@ Retrieval is decomposed into localized queries aligned with graph edges and subs
 
 How to apply it. (1) For each graph edge, retrieve API evidence specific to that relation (Sec. 3.3, p. 4). The paper also says generation is conditioned on the prompt, the graph, and the retrieved evidence. (2) Generate code against the complete graph and evidence. (3) Preserve intermediate acquisitions rather than collapsing the path into a guessed call. (4) Send the result to staged verification.
 
-Inference: in VL, retrieval should supply Verus library contracts and project-specific state-machine facts keyed by proof obligations. Retrieved text is advice; the verifier must check the generated Rust. A graph node can map to a typed Rust value, while an edge maps to a function contract or lemma.
-
 ## technique: four-layer pre-execution verification and diagnosis-driven repair
 
 The pipeline checks progressively deeper properties. Layer 1 checks that the Python is well-formed by AST parsing. Layer 2 checks causal flow: acquisition order, attribute access, and nullable returns. Layer 3 checks API alignment against retrieved APIs, including hallucinated calls and wrong object use. Layer 4 uses an LLM semantic judge for completeness, control flow, and output validity, and runs only after Layers 1–3 pass (Sec. 3.4, PDF p. 4).
@@ -54,8 +52,6 @@ The paper says it constructs “a dataset of 100 complex prompts via adversarial
 
 The conclusion says: “Overall, the results suggest that failures in EDA code generation are fundamentally structural, and that enforcing dependency consistency before execution offers a scalable alternative to execution-driven correction.” (Conclusion, PDF p. 9). What is measured is execution success, latency, tool calls, classifier quality, and filtering precision. Inference: trusted pieces include OpenROAD, API schema, LLM semantic judge, generated benchmark, and the execution environment. The paper does not prove that a graph captures every semantic requirement or that a verifier-Pass program is universally correct.
 
-Inference: threat to agent-written verified Rust is high for specification omission and moderate for proof workflow. VL should reuse explicit dependency graphs, localized diagnostics, staged checks, trajectory safeguards, and uncertainty filtering. It should not redo generic pre-execution structural checking if Verus contracts already encode the same dependencies; it must add a universal proof and specification review.
-
 ## techniques for the catalog
 
 - structural dependency graph — represent typed objects, acquisition paths, conditions, and actions as an explicit execution contract
@@ -65,4 +61,3 @@ Inference: threat to agent-written verified Rust is high for specification omiss
 - trajectory safeguard — detect repeated ineffective repairs and escalate to a different strategy
 - episode-level reflection — after a first pass over a multi-step task, analyze all subtask outcomes to find upstream root causes and drive a second synthesis pass (Sec. 3.6, p. 5)
 - uncertainty filtering — combine code, repair-trajectory, and verification-coverage signals to reject unreliable passes
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Table 1 shows that the proposed framework requires exactly one OpenROAD call per task, compared to 1.77 for tool-in-the-loop correction and 3.54 for OpenROAD Agent."): read the whole paper text and checked every quotation, number, table and equation reference, page number (by PDF page), and technique step against it; changed the wrong page numbers for Eqs. 3–4 (p. 4) and Table 4 (p. 7), corrected the import and enum signals from ratios to counts, rewrote the “structural grounding” quote to the paper’s wording, relabeled the 120-task count and the trusted-pieces list as inference, split the 100-prompt dataset citation to Sec. 4.1, added the multi-step latencies, Table 2 discrepancy and Sec. 3.6 reflection; did not check the cited prior work, the figures (only their captions), or the Verus-form mapping beyond marking it Inference.

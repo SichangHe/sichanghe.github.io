@@ -86,10 +86,6 @@ HaliVer’s front end proves the annotated algorithm’s functional contract. It
 
 The authors acknowledge, “One concern is that, since we have not formally proved the correctness of the transformation, our implementation could in principle be wrong.” (Section 3.3, PDF p. 12.) Their soundness argument keeps pipeline annotations close to the user’s contract and states, “If an intermediate annotation is not correctly transformed, the verification will fail, thus remaining sound but not complete.” (Section 3.3, PDF p. 13.) Inference: the result still depends on the encoded pipeline contract, HaliVer’s encoding, VerCors and its solver, and the user’s specification. Halide compiler correctness is checked for the generated program against that contract, rather than assumed for all compilations. Floating point is modeled as reals, and back-end verification requires concrete bounds because unknown bounds yield nonlinear arithmetic after flattening (Section 6, PDF p. 17).
 
-## relevance to VL
-
-Inference: HaliVer’s strongest lesson for VeruLaw is specification reuse across an algorithm and its optimized implementation. A VL pipeline can keep a single Rust/Verus contract attached to the clear algorithm, then require every optimized or parallel implementation to prove the same postcondition. The product threat is concentrated in transformation, generated loop invariants, and ownership/index reasoning, rather than in repeatedly rewriting the functional specification. HaliVer already covers this reuse pattern; VL should not redo it without addressing Rust-specific ownership, floating point, and verified transformation correctness.
-
 ## techniques for the catalog
 
 - pointwise pipeline contracts — specify input bounds and output equations directly on Halide functions
@@ -97,4 +93,3 @@ Inference: HaliVer’s strongest lesson for VeruLaw is specification reuse acros
 - front-end translation — encode Halide functions and reductions as verifier-friendly pure functions and recursive forms
 - schedule-aware annotation transformation — generate permissions and loop invariants through split, fuse, parallel, reorder, unroll, store_at, and compute_at
 - trigger-aware quantified reasoning — rewrite some quantified index expressions to obtain usable triggers; matching loops remain a limitation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For any non-inlined function, an intermediate annotation is required to guide VerCors in correct functional verification."): checked all paper text, study quotations, numbers, page and section references, technique steps, results, and limitations; corrected blur semantics and page references, front-end encoding and timing descriptions, solver limitations, and trust claims; did not rerun HaliVer experiments or validate the proposed Verus translations.

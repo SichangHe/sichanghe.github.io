@@ -96,7 +96,7 @@ How to apply:
 3. Have experts formalize and verify every statement before model evaluation (Section 3.1).
 4. Evaluate separate tasks for natural-language proof, formal theorem proving, and formal proof translation (Section 3.1).
 
-Verus form: Inference: build a VL benchmark with expert-written Rust signatures and Verus specifications, verify the statements independently, and publish Basic/Advanced splits. Include systems tasks, ownership, concurrency, and unsafe-boundary cases because Lean olympiad categories do not cover those risks.
+Verus form:
 
 Evidence: LEAP's overall solve rate is 83.3% on Basic and 56.7% on Advanced; its Algebra and Number Theory rows are 100% in both tiers, while Geometry is 16.7% Basic and 12.5% Advanced (Table 4, p. 8; each tier has 30 tasks, category counts differ as listed in Section 3.1). Inference: the geometry floor and category imbalance mean the aggregate score should always be accompanied by per-category denominators.
 
@@ -106,8 +106,6 @@ Inference: accepted Lean artifacts are checked by Lean, but the model, retrieval
 
 Inference: threat to a product that emits agent-written verified Rust is high for search engineering and medium for assurance. DAG memoization, decomposition review, and diagnostic repair could reduce proof-generation cost and improve completion. However, the evidence does not measure Rust memory safety, concurrency, unsafe code, weak specifications, or malicious model output. Lean's `sorry`-in-sketch discipline also does not transfer automatically: Verus trust escapes and external bodies require an explicit policy.
 
-Inference: VL should avoid claiming that LEAP's 100% Putnam result means reliable product verification. The denominator is exactly 12 undergraduate problems, and the largest reported run uses 3.0k LLM calls and 2.0k proof lines for one problem (Table 3, p. 8). Search cost, benchmark domain, and theorem-statement quality are material assumptions.
-
 ## techniques for the catalog
 
 - fallback decomposition — attempt direct formalization, then create compiler-checked helper subgoals in an AND-OR DAG
@@ -116,4 +114,3 @@ Inference: VL should avoid claiming that LEAP's 100% Putnam result means reliabl
 - decomposition review — have an LLM reject subgoals that are irrelevant, cyclic, or no simpler than their parent
 - compiler-feedback refinement — repair one proof for a bounded number of turns using exact diagnostics
 - verified benchmark construction — balance difficulty and categories, and expert-check every formal statement before evaluation
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

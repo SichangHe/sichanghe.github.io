@@ -22,8 +22,6 @@ Apply the method as follows:
 
 The example annotation in Figure 3 records `valid-free` before allocation, `valid-free-except i` during creation and initialization, and `valid-free` before enqueueing and before the final return (p. 49). The paper emphasizes that annotations “do not need to be explicitly defined, but can be generated as a consequence of an existing Hoare logic proof.” (§1, p. 47)
 
-Inference: In Verus, this corresponds to extracting intermediate facts from a successful `proof fn` or loop proof into reusable lemmas about a function's abstract state. Verus has no annotation monad or `afails` flag; a VL tool would store proof obligations and generated lemmas externally, then invoke Verus to recheck each use. The source code's executable behavior should remain unchanged, but the extracted fact is useful only if its `requires` conditions are preserved.
-
 ## technique: annotated triples and safe reuse
 
 Use an annotated triple to consume an existing annotation as a temporary strengthening of the proof context. The paper defines `kPk F kQk` to mean that, for every initial state satisfying P where F does not fail, all outcomes of the underlying function satisfy Q (§3, p. 49). The definition permits assuming intermediate assertions because the proof obligation is conditioned on non-failure of F.
@@ -68,19 +66,11 @@ Apply it as follows:
 
 The paper's `double-plus` example starts with `{|even i|} double-plus i {|λ -. even i|} ⟨?L⟩`; after proof, `?L` is instantiated to an annotation recording the intermediate `odd i` state between two increments (p. 53). This is an explicit example of proof-derived state facts rather than a separately authored invariant.
 
-Inference: Verus's verifier does not expose a weakest-precondition VCG that returns annotation terms. VL could approximate this by instrumenting proof failures and successful lemma applications, but generated artifacts require explicit Verus syntax and re-verification. The reusable unit should be a lemma or spec predicate with clear conditions, not an opaque trace.
-
 ## evidence: seL4 case study
 
 The case study concerns `invoke-untyped`, whose invariant-preservation proof is 300 lines of Isabelle script. About five lines of Isabelle reformulated the top-level precondition to produce an annotation, and the generated annotation was manually edited to remove extraneous properties (§5, p. 54). The paper says the net edit was "a single line was added to the script with 40 lines of manual annotation modifications." Applying the annotation to the integrity and authority-confinement proofs reduced the proof script from 192 to 56 lines; this "produced another annotation which, when applied to the proof of confidentiality, reduced the lines of proof script from 215 to to 39" (§5, p. 54). The conclusion reports the combined reduction as 407 to 95 lines for two properties of one function (§7, p. 55). These are line counts, not time measurements, and the denominators are the named proof scripts, not all seL4 proofs.
 
 The authors state that “Some manual effort is still required to effectively use these annotations, so they are currently in an experimental branch of the seL4 proof.” (§5, p. 54) Inference: annotation generation is therefore not fully automatic in the engineering sense: users adjust top-level preconditions and remove irrelevant assertions. The paper also says automation work is "still ongoing" (§5, p. 54). Recursive annotations and annotations over inductive maps are described as possible but left for future work (§4, p. 54).
-
-## trusted boundary, limitations, and VL threat
-
-Inference: the paper has no trusted-base section; the following is my reading. The trusted base would include Isabelle/HOL's monadic semantics, the Hoare and annotation rules, the VCG's implementation, and the proof that an annotation's failure flag is unreachable under its precondition. The method assumes the original proof establishes annotation adherence; the paper does not say it checks that a property is semantically relevant or that an annotation is minimal (it says generated annotations needed manual removal of extraneous properties, §5). It assumes the function's intermediate states are expressible in the chosen monadic model. The paper's seL4 evidence is one function (`invoke-untyped`) in an experimental branch, reused for the integrity, authority-confinement and confidentiality proofs, with manual edits. The paper also lists limitations and future work: recursive annotations are unexplored (§4, p. 54), and the authors plan to make annotations "more opaque to the end user" (§6, p. 55).
-
-Inference: For VL, this is a high-value proof-maintenance technique. Agent-written Verus proofs repeatedly establish ownership, representation, and state-machine facts that later lemmas need. Capturing those facts as named, checked lemmas can reduce duplicated proof text and make repairs local. The threat to product differentiation is moderate: an annotation cache could make a competing verification agent substantially more effective, but it does not replace specification design or Verus checking. VL should record each extracted lemma's preconditions, source obligation, and dependency version so stale annotations fail visibly after code changes.
 
 ## techniques for the catalog
 
@@ -88,4 +78,3 @@ Inference: For VL, this is a high-value proof-maintenance technique. Agent-writt
 - annotated-triple reuse — assume a verified annotation's intermediate predicates while proving a new property
 - annotation merging — conjoin independent annotation sets under a combined precondition
 - VCG annotation extraction — use weakest-precondition splitting and schematic lemmas to generate annotations automatically
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Function annotations are implemented by creating a new function which, effectively, has an assertion between every operation."): read the whole paper text and the whole study; checked every quotation, number (300, about 5, 40, 192 to 56, 215 to 39, 407 to 95), figure, rule and page reference, and the technique steps; changed the merge step (failure flags are disjoined, not conjoined), the confidentiality step (a second, derived annotation), the page for the not-queued implication, the soundness and trusted-base wording (now marked Inference), and the link (DOI from the paper text); did not check the Verus inferences against Verus, and did not check the Isabelle formulas beyond comparing them with the paper text.

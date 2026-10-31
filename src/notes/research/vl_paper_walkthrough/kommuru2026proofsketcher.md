@@ -43,17 +43,8 @@ The reliability analysis records the first failing node and mean repair repetiti
 
 Inference: In Verus, retain verifier diagnostics keyed to generated proof-node identity and regenerate only the affected proof function or assertion block. Verus's diagnostics and dependency behavior may differ, so this is a design inference, not a reported result.
 
-## evidence, limits, and VL implications
-Table I's exact comparison is: ReProver 26.64%, 51.20%, 13.98%; DeepSeek-Prover 50.00% on miniF2F and no entries in the other columns; DeepSeek-Prover-V2 88.93% and 37.10%; ProofSketcher 92.21%, 58.25%, and 44.62%, respectively. These are kernel-accepted pass rates on the named test sets, not percentages of all generated drafts, and denominators are not printed. The paper reports no ablation isolating typed sketches, certificates, node caching, or localized repair, so their individual effects are unproven.
-
-The paper's accepted artifact is a replayable checked proof; the LLM's suggestions are not evidence. Trusted components include the kernel, certificate checker, proof-object replay, and semantic-preserving obligation translation. Assumptions include suitable certificates for solver fragments, adequate library retrieval, and a sketch granularity that keeps obligations tractable. Failure modes include missing library lemmas, side conditions, oversized certificates, and domain mismatch across miniF2F, LeanDojo, and ProofNet.
-
-Inference: The threat to VL is concentrated in generated specifications and translation glue: localized repair can reduce wasted agent work, but only Verus acceptance establishes Rust behavior. VL should not redo the paper's generic pattern of typed intermediate proof plans, obligation extraction, certificate gating, and node-level caching; it should test whether those ideas preserve Verus contracts and measure their cost on actual Rust repositories.
-
 ## techniques for the catalog
 - typed proof sketch: have an LLM emit tagged, typed nodes and holes instead of an unchecked full script
 - obligation extraction: deterministically expand each node into sequent-shaped goals with provenance
 - certificate-gated automation: accept external solver results only after trusted certificate checking
 - localized incremental repair: edit the first failing node and reuse cached proofs for unchanged nodes
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -51,7 +51,7 @@ Inference: A Verus agent can iterate on Rust code and proof obligations: run `ca
 
 what was proved or measured, and product threat
 
-The paper measures benchmark acceptance and manual semantic equivalence, not formal vulnerability absence. Inference: For VeruLaw, this is a strong evaluation harness for detecting regressions in agent-written verified Rust, but it does not replace Verus proofs: a paired test can miss an unmodeled input, while a valid proof can fail to encode the intended security property. The paper reports that the three agents repaired 22–41 of 100 vulnerabilities correctly, versus 4 for directly prompted Claude Sonnet 4, 2 for APPATCH and 0 for GPT-4o (Answer to RQ1, p. 13); the agents and the strongest non-agent share the Claude Sonnet 4 backbone. Inference: VL should reuse the separation of security and regression evidence, the pinned per-instance setup, and explicit denominators; it should not redo the benchmark's Python-specific OSV curation.
+The paper measures benchmark acceptance and manual semantic equivalence, not formal vulnerability absence.
 
 ## techniques for the catalog
 
@@ -59,4 +59,3 @@ The paper measures benchmark acceptance and manual semantic equivalence, not for
 - manual oracle validation — confirm test intent, changed-path coverage, and advisory alignment before treating a test as a security oracle
 - execution-driven repair — let an agent inspect, edit, execute, and revise under fixed actions and cost, then score only its final patch
 - denominator-aware patch scoring — report exploit passes, paired passes, and manually confirmed correctness separately for every 100-instance run
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We select these frameworks because they are widely used, end-to-end executable on real repositories, and they cover different agent designs."): read the whole paper text and the whole study; checked every quotation, number (Table 2 rows, 119/104/98/15/6, 12.6%, 94%, step and cost limits), section and page reference, and the seven curation steps and four repair-loop steps; the arXiv id 2608.00692v1 in the paper header matches the link. Changed: the exploit-then-functional run order in step 7 (not stated in the paper), the Introduction quote (was missing its lead-in words), the Abstract page reference, the page range for the over-fitting and brittleness remarks (pp. 13–14), the same-backbone claim (GPT-4o is a different model), and the label on the trust and VL conclusions as Inference. Not checked: the PDF figures, the references list, and the released benchmark itself.

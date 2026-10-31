@@ -5,7 +5,6 @@ completed consultation, 2026-10-07 UTC
 - a shorter prompt succeeded after the failures recorded below
 - helper selected `gpt-5.6-sol` and verified "Extra High"
 - final diagnostic `condition.code`: "complete"
-- [ChatGPT response](https://chatgpt.com/c/6ac5deca-553c-83e9-aad5-3fa43a327b9d?temporary-chat=true): "My ranking is 1 > 2 > 3"
   - the temporary conversation may expire
   - these are AI opinions, not experimental findings or evidence of novelty
 - critique incorporated into [research directions](research_directions.md)

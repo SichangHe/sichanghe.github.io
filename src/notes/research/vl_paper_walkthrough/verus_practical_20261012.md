@@ -1,20 +1,9 @@
 # Verus systems foundation: proof architecture, automation, and realistic limits
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## Paper and reading boundary
 
-Andrea Lattuada, Travis Hance, Jay Bosamiya, Matthias Brun, Chanhee Cho, Hayley LeBlanc, Pranav Srinivasan, Reto Achermann, Tej Chajed, Chris Hawblitzel, Jon Howell, Jacob R. Lorch, Oded Padon, and Bryan Parno, *Verus: A Practical Foundation for Systems Verification*, SOSP 2024. [DOI](https://doi.org/10.1145/3694715.3695952), [primary PDF](https://www.andrew.cmu.edu/user/bparno/papers/verus-sys.pdf), [SSD1 PDF](/ssd1/sichangheagent/vlpw/verus_practical.pdf), [text](/ssd1/sichangheagent/vlpw/verus_practical.txt). Page numbers are the paper's printed pages, matching PDF pages.
-
 The [existing overview](../topic_studies/formal_verification_rust/rust_verifiers/verus.md) already records the headline scale and speed result. This study extracts the specific proof decomposition, solver choices, concurrency construction, experiment scope, and implications for agents. All performance and proof-effort results below are author reports, not independent reproductions.
-
-## Central lesson for VL
-
-Agents need to choose a proof structure before asking the solver to do more work. Verus achieves practical systems proofs by using Rust ownership for routine memory reasoning, mathematical views for functional behavior, isolated solvers for difficult arithmetic, and state-machine resources for concurrency. A larger context or more lemmas can make verification slower rather than stronger.
-
-The paper's architectural premise (§1, p. 2) is to organize proof obligations so they play to different automation strategies. It is also explicit that “Verus’s results depend on the correctness of the top-level specifications, the Verus verifier, the solvers it relies on, and the Rust compiler.” Agent inference: VL can reuse this proof infrastructure, but agents still need to recover suitable contracts and expose external assumptions.
-
-## Verification techniques and reusable engineering
 
 ### Check the supported memory operations before translating code
 
@@ -59,8 +48,6 @@ The paper says a well-formed VerusSync system “always corresponds to a resourc
 
 The NR ring-buffer example (§3.4, p. 8) tracks tail, per-thread versions, buffer size, and executor phases. A reader_finish transition consumes evidence of the reader phase and the thread's version entry, then returns the idle phase and updated version. §3.4, figure 6, p. 9, connects shards to physical atomics through invariant predicates. The concrete atomic update and ghost transition must preserve that relationship. Agent recommendation: generate protocol states and ownership movement first, then link them to physical operations. A proof of the abstract transition system alone is insufficient.
 
-## Experiments and their exact boundaries
-
 ### Small comparisons and failure feedback
 
 §4.1, pp. 9–10, compares Verus with Dafny, Low★, Prusti, and Creusot on lists, memory updates, and a distributed lock. The default machine is an EC2 m5.8xlarge with 16 cores, multithreading disabled, and 128 GiB RAM. Figure 7 reports medians of 20 single-threaded runs; the Creusot asterisk denotes a partial result requiring manual intervention. Prusti cannot express the cyclic-pointer doubly linked list.
@@ -83,22 +70,6 @@ Figure 9, p. 10, reports 6,119 executable lines, 31,231 proof lines, and 4,692 l
 
 **Persistent log:** §4.2.5, p. 13, builds a circular log for persistent memory, with asynchronous append, synchronous head advancement, and multi-log atomic append. The paper reports actual integration: “It is integrated into a production codebase, which incorporates it via Cargo.toml as just another Rust crate.” After ghost erasure, “standard rustc sees only executable code and readily consumes it.” This establishes practical Rust integration for the reported system, not autonomous generation. It refines an abstract infinite log, provides crash atomicity, and detects metadata corruption under CRC assumptions. External crates such as CRC receive trusted specifications. A Serializable trait expresses byte layout and avoids extra copying. Checking takes 12 seconds single-core with a 3.9 proof/code ratio. On 128 GiB Optane, each throughput point represents 8 GiB of appends through a 4 GiB memory-mapped file, with confidence intervals. The improved version has throughput comparable to libpmemlog, but the implementations differ: verified CRC calculation versus a lock in libpmemlog.
 
-## What VL should adopt and measure
-
-Agent recommendations, not additional human requirements:
-
-1. Treat proof generation as choices about views, ownership, intermediate invariants, and solver mode; retrieve examples by that structure rather than only by function name.
-2. Reuse VerusSync and serialization derivations instead of rediscovering resource-algebra machinery or repeated proofs.
-3. Evaluate failure-feedback latency, proof checking time, assumptions, supported features, and runtime separately.
-4. Count proof lines and trusted boundaries as well as executable lines. The authors' less-effort claim comes from ports and development experience, not a controlled randomized developer study.
-5. Preserve a concrete-to-abstract relation for system and concurrency claims. An agent-generated model must still describe the implementation and its environment.
-
-These patterns are already present in Verus. VL's remaining proposed contribution is agents recovering intended guarantees and building maintainable, auditable verified projects from ordinary inputs.
-
-## Product threat
-
-Agent inference: high overlap with the proof engineering that a thin Verus wrapper might sell, but no direct demonstration of autonomous specification recovery or repository conversion. The systems are authored and verified by researchers using explicit specifications. The work is strong evidence that the backend can support difficult systems proofs. It is not evidence that the human-free front end exists. VL should compete on correct intent recovery, reliable orchestration, maintenance, and evidence boundaries rather than claim novelty for Verus's existing solver and resource techniques.
-
 ## First reading
 
 Read §3.2, p. 5, and §3.4, pp. 7–8. Ask: which part of a target proof needs a better abstraction, and which part only needs the right local permission or solver mode?
@@ -106,8 +77,6 @@ Read §3.2, p. 5, and §3.4, pp. 7–8. Ask: which part of a target proof needs 
 ## Study status
 
 Checked the material claims and quotations against the saved primary paper text. An independent reviewer checked the drafts against the primary texts. No artifact execution or empirical reproduction was performed.
-
-Not ChatGPT-checked. The four full-PDF requests returned terminal `account_ui_retry_required`; a single sequential retry returned `account_ui_login_required`. The helper owner reported that the shared browser was signed out and required human login. No ChatGPT answer was used. [Initial diagnostic](/ssd1/sichangheagent/vlpw/verus_practical_diag.json), [terminal diagnostic](/ssd1/sichangheagent/vlpw/verus_practical_poll2.json).
 
 ## ChatGPT cross-check (2026-10-12)
 

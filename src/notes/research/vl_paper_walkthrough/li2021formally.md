@@ -39,12 +39,6 @@ Model tagged CPU TLB entries and verify the maintenance needed for page-table ch
 
 Inference: A Rust/Verus adaptation could model TLB, cache, and SMMU operations as state transitions and prove the corresponding ownership and observer properties. Connecting those transitions to hardware would remain a separate obligation.
 
-## evidence, scope, and product threat
-
-The prototype ran on an 8-core Armv8 AMD Seattle server. Figures 5–6 compare application workloads on Linux 4.18 and 5.4 using Kernbench, Hackbench, Netperf, Apache, Memcached, and MySQL; HypSec results are available only for 4.18. Figure 7 measures 1, 2, 4, 8, 16, and 32 VMs running Hackbench. The authors report modest SeKVM overhead and write that flushing TLBs on every world switch “can result in an additional 70% overhead for some application workloads such as Memcached compared to using a tagged TLB as is standard practice for commodity hypervisors.” (Section 6, pp. 3965–3966). These are performance measurements, not proof evidence. The formal evidence comprises KCore C and assembly correctness proofs, layer refinements, and noninterference proofs, subject to the trusted items and unlinked proof boundaries above.
-
-Inference: For VeruLaw, layered contracts, page ownership, and observer-group arguments are possible Rust/Verus proof patterns. This paper does not evaluate Verus or agent-written Rust. The reported missing-flush bugs illustrate why hardware operations require a model that includes their effects.
-
 ## techniques for the catalog
 
 - layered refinement: compose module implementations through underlay/overlay contracts and prove transitive refinement
@@ -52,4 +46,3 @@ Inference: For VeruLaw, layered contracts, page ownership, and observer-group ar
 - page-table flattening: prove tree well-formedness and refine multi-level mappings into a frame-preserving flat map
 - ownership and noninterference: use page ownership, cache flushing, and observer indistinguishability to prove confidentiality/integrity
 - TLB/cache/SMMU consistency: invalidate translations and write back data at ownership changes, then prove the abstract security invariant
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We ensure the specification soundly captures all behaviors of the KCore implementation so the proven guarantees hold on the implementation."): checked the full paper, quotations, numerical claims, section/page references, technique steps, assumptions, and proof limits; corrected proof counts, page references, huge-page update scope, TLB reasoning, compiler-limit attribution, performance wording, and publisher link; narrowed unsupported Verus claims to explicit inferences; did not inspect the artifact, replay Coq proofs, validate Verus adaptations, or reproduce benchmarks.

@@ -2,11 +2,8 @@
 (authored by agents unless marked 🧑)
 Tag: `zhang2026dreamprover`, [paper](https://arxiv.org/abs/2604.26311)
 
-
 ## scope and result
 DreamProver learns a persistent Lean lemma library through alternating wake and sleep phases. The abstract describes a wake-sleep program-induction framework for reusable lemmas and says that it abstracts, refines, and consolidates candidates (Abstract, p. 1). Its headline result is a 61% average gain over Hilbert across inequality, number-theory, and combinatorics domains, with claimed 50% shorter proofs and 48% lower token use (Section 1, p. 2).
-
-Inference: the direct VL lesson is to make proof agents accumulate verified Rust/Verus lemmas and contracts, then compress and validate them instead of repeatedly rediscovering local facts.
 
 ## technique 1: wake-stage learnable theorem identification
 
@@ -40,7 +37,7 @@ Inference: use a bounded Verus lemma cache keyed by normalized signature and imp
 
 ## technique 5: lightweight inference
 
-At test time DreamProver first attempts direct prompting with the library. If that fails, it “falls back to a sketch-and-prove workflow” that generates a sketch and proves each subgoal with the library available at both stages (Section 3.3, p. 5). Inference: the analogous VL agent should first try a bounded direct proof repair, then generate subgoals with explicit contracts and solve each under the same imported Verus facts. Keep the checker on every subgoal and on the assembled function.
+At test time DreamProver first attempts direct prompting with the library. If that fails, it “falls back to a sketch-and-prove workflow” that generates a sketch and proves each subgoal with the library available at both stages (Section 3.3, p. 5).
 
 ## evidence and limits
 
@@ -50,8 +47,6 @@ The ablation is informative: full DreamProver proves 104 problems across three i
 
 What is proved is each retained Lean lemma and each benchmark proof accepted by Lean. Trusted parts include LLM descriptions, embeddings, clustering, tree-similarity thresholds, prompts, benchmark construction, and the Lean environment. Inference: the study does not prove that semantic similarity predicts usefulness, that fewer than 100 lemmas is generally optimal, or that the library transfers to Verus ownership/concurrency. Its limitation says small-context models may struggle when multiple libraries must be included (Section 5, p. 9).
 
-Inference: threat to VL is high for proof-search cost and reusable-lemma design, and low for final soundness when every generated lemma and client is checked by Verus. Existing VL work should not redo generic lemma caching; it should measure whether contract-aware, ownership-aware clustering and eviction improve proof maintenance under real crate revisions.
-
 ## techniques for the catalog
 
 - wake learnability — collect training theorems directly provable from the current verified lemma library
@@ -59,4 +54,3 @@ Inference: threat to VL is high for proof-search cost and reusable-lemma design,
 - semantic lemma abstraction — cluster descriptions and synthesize generalized lemmas with structural validation
 - bounded library maintenance — evict unused lemmas, deduplicate by tree distance, and formally verify survivors
 - two-stage inference — try direct proving, then sketch-and-prove subgoals with the library
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

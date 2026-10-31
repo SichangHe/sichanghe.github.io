@@ -125,11 +125,7 @@ Inference: define labels as a Rust struct and use `spec fn dominates`, `can_read
 
 reported checks and trust boundary
 
-The paper reports 261 unit tests and 95 adversarial penetration tests, all passing on Node 22, for 356 total tests (Section 8.5, p. 18). It also reports strict TypeScript checking and CI execution, but no formal proof of the framework. The tests include tamper detection, signature forgery, fetch and raw-socket bypass, log truncation and reordering, trust-root mutation, DLP evasion, prompt and code injection, and net-capable extension admission (Abstract, p. 1; Sections 8.2–8.5, pp. 17–18). The paper states, “enclawed is a hardening framework, not an accredited compliance certification” (Abstract, p. 1). Trusted components and assumptions include the specification, JavaScript runtime, cryptography, native modules, operating system, hardware, identity binding, and deployment controls. Inference: for VeruLaw, the strongest transferable idea is the re-checkable artifact pipeline, while the largest threat is a false sense that passing bounded checks and tests proves the complete agent-written Rust product.
-
-## implications for VL and prior art
-
-Inference: VL can reuse the separation between (1) source-side effect analysis, (2) typed capability dispatch, (3) bounded transition checking, and (4) signed evidence revalidation. VL should not claim novelty for generic hash chains, Bell-LaPadula labels, Ed25519 manifests, or bounded model checking alone; those are already explicit here. The paper's JavaScript guards do not establish Verus Rust correctness, so a useful VL contribution would be a measured refinement from a capability manifest to Verus contracts and executable Rust, including dependency and OS assumptions.
+The paper reports 261 unit tests and 95 adversarial penetration tests, all passing on Node 22, for 356 total tests (Section 8.5, p. 18). It also reports strict TypeScript checking and CI execution, but no formal proof of the framework. The tests include tamper detection, signature forgery, fetch and raw-socket bypass, log truncation and reordering, trust-root mutation, DLP evasion, prompt and code injection, and net-capable extension admission (Abstract, p. 1; Sections 8.2–8.5, pp. 17–18). The paper states, “enclawed is a hardening framework, not an accredited compliance certification” (Abstract, p. 1). Trusted components and assumptions include the specification, JavaScript runtime, cryptography, native modules, operating system, hardware, identity binding, and deployment controls.
 
 ## techniques for the catalog
 
@@ -138,4 +134,3 @@ Inference: VL can reuse the separation between (1) source-side effect analysis, 
 - bounded model checking: enumerate bounded envelope traces and check the runtime state-change biconditional
 - proof-carrying bundle: sign canonical evidence, rerun all methods at load, and abort on drift or signature failure
 - mechanizable classification lattice: enforce Bell-LaPadula dominance, least upper bounds, and scheme invariants over integer ranks and sets
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -137,16 +137,9 @@ The planner supplies syntax errors and searches for a plan in the generated inst
 
 The paper’s scope is planning, not Rust or Verus. Inference: Its results do not establish that an LLM can produce Verus proofs. The direct transferable lesson is pipeline architecture: generate a typed formal artifact, check it with a deterministic verifier, feed diagnostics back, and preserve a second independent validation step.
 
-## contradictions, missing denominators, and product threat
-
-Section 4 specifies 100 instances per domain and three-run means. The 6/8 result counts model-domain combinations, and the 16% versus 68% result compares QwQ-32B transpilation methods on BlocksWorld. Raw success counts are not given in the prose. The abstract’s “more than a dozen pipelines” differs from section 5.1’s “12 pipelines”; the study does not resolve that discrepancy. The complexity discussion says direct PDDL loses “no more than 20% plan accuracy” (section 5.3, p. 8), without specifying relative percent versus percentage points. Section 7 also limits the findings to “moderately templated descriptions” and at most three IRs (p. 9).
-
-Inference: The threat to a product that lets agents write verified Rust is material at the generation boundary. An agent may emit a syntactically valid but semantically wrong contract, and iterative diagnostics can reinforce a wrong specification. The threat is reduced when compilation, Verus verification, and independent tests or reference models all reject the artifact, but this paper supplies no Verus-specific evidence.
-
 ## techniques for the catalog
 
 - formalize then solve: generate a typed formal model and use a symbolic solver plus an independent validator to find and check an executable result
 - syntax-aligned IR: generate a high-resource, structurally similar intermediate program, then transpile it to the target formal language
 - solver-feedback revision: regenerate the formal artifact using planner diagnostics, repeating one or two times
 - grammar-guided decoding: constrain generation with a formal grammar to remove syntax errors, then perform semantic checking separately
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Stage one converts natural language to a structured prose specification using nl_instruction; stage two calls only_pddl_instruction to emit PDDL from the summary plus original descriptions."): checked the full text, quotations, numbers, technique steps, section/page references, and arXiv identifier; inspected PDF page 7 to resolve two-column reading order; corrected planner attribution, quotations, pipeline-call wording, IR revision feedback, section references, unsupported Logistics baseline claim, and denominator discussion; marked recommendations and Verus analogies as Inference; did not reproduce experiments, inspect code, or verify the Verus analogies.

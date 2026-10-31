@@ -51,8 +51,6 @@ how to do it:
 
 Evidence: GPT-4o and Claude scores correlate only `r = 0.43`; the cross-fit ensemble reaches 0.822 AUROC and improves over GPT-4o by +0.052 [0.032,0.073], with ECE 0.031 (Section 4.5, PDF p. 6; Table 5, PDF p. 7). Raw GPT-4o and Claude ECE values are 0.319 and 0.210, versus 0.212 for string self-consistency (Table 5, PDF p. 7).
 
-Inference: VL can ensemble independent proof-risk predictors, such as separate model judges and static diagnostic features, then calibrate on held-out verified Rust. This supports abstention or human review queues; it cannot turn an unproved candidate into verified code. Calibration assumptions must be tracked by crate family and Verus version.
-
 ## technique 4: selective prediction with abstention
 
 what it is: choose a threshold on a calibration set and answer only when the predicted correctness probability is high enough. The risk–coverage frontier reports error among answered candidates as coverage changes.
@@ -79,14 +77,6 @@ how to do it:
 
 Evidence: in-distribution AUROC is 0.768 feature, 0.785 encoder, 0.766 Qwen2.5-1.5B LoRA and 0.798 Qwen2.5-7B LoRA; LODO transfer is only 0.661, 0.670, 0.659 and 0.662. Frozen GPT-4o reaches 0.710 macro-averaged transfer and 0.770 pooled (Table 4, PDF p. 5). Scaling 1.5B→7B improves in-domain but not LODO transfer (Section 4.4, PDF p. 5). The paper's scope is database transfer; these denominators are macro averages across held-out databases, not the 800-question total.
 
-Inference: a Verus-specific verifier trained on one crate family may learn surface patterns and fail on unseen APIs or toolchain versions. A frozen reasoning model may transfer better but costs more. VL should evaluate leave-one-project-out transfer and retain Verus as the final acceptance check.
-
-## trusted boundary, limits and product threat
-
-Correctness labels are execution-equivalence to a human reference SQL (Section 1, PDF p. 1). Inference: this is not a proof of user intent beyond that benchmark criterion. The paper states the BIRD slice “was fixed before any analysis and does not depend on model output,” that “All model outputs are cached,” and that exact prompts are in Appendix B (Section 3, PDF p. 3; Appendix B, PDF p. 10). Inference: provider model behavior is external and may change. Limitations (Section 6, PDF p. 9): “The main experiments use two OpenAI generators and two judge providers.” The paper does not iterate to improve queries; it predicts whether to answer or abstain (Section 2, PDF p. 2). Self-correction improves execution accuracy only from 0.451 to 0.468, while self-reported confidence has AUROC 0.637 and ECE 0.501 (Section 4.3, PDF p. 5).
-
-What VL should not redo: the paper already tests cheap agreement signals, independent judges, cross-fit calibration, abstention frontiers and leave-one-database-out verifier transfer. Inference: VL should adapt these controls to Verus diagnostics and crate splits instead of trusting self-consistency or a fine-tuned verifier alone. The product threat is a high-confidence but semantically wrong contract or a verifier trained on familiar code; the required boundary is independent Verus proof plus human specification review.
-
 ## techniques for the catalog
 
 - black-box correctness ceiling — measure agreement, executability and log-probability signals before adding a verifier
@@ -94,4 +84,3 @@ What VL should not redo: the paper already tests cheap agreement signals, indepe
 - cross-provider ensemble calibration — combine non-redundant judges with cross-fit logistic calibration and ECE
 - selective abstention frontier — choose thresholds on held-out calibration data and abstain when predicted risk is too high
 - leave-one-project-out transfer — test trained verifier generalization on unseen schemas or codebases against a frozen judge
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Scaling the generative judge from 1.5B to 7B improves the in-domain number but does not improve LODO transfer."): read the whole paper text and checked the quotations, all numbers (Tables 1–6, Section 4.3 Spider and self-correction figures, Section 4.4 transfer values), the section references and PDF page numbers, and the technique steps; changed the page references for Table 1, Section 4.1, Table 3 and the r = 0.43 correlation (p. 3 or 4, not p. 4 or 5) and for Tables 5 and 6 (p. 7, not p. 6), replaced two technique steps the paper does not state (a deployment-distribution caveat for calibration, and a rule about empty frontiers) with paper-stated ones, put unsupported reproducibility wording into marked inference, and added the paired log-probability interval, the Spider GPT-4o-mini result and the Section 6 limitation; the arXiv link was checked against the paper header (arXiv:2607.06799). Not checked: the PDF figures (Figure 1, Figure 2), Table 7 and Appendix A values beyond a read-through, the cited works, and the Verus-specific Inference lines (these are the study author's own conclusions).

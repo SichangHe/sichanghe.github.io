@@ -58,5 +58,3 @@ Inference: the reusable idea for Verus is a consumed protocol token that constra
 - typed TCP state machine — map handshake, data, retransmission, and close transitions to continuation types
 - virtual timeout branch — represent external timeout events as offer branches; disable the timeout when the retransmission queue is empty
 - trace and fault interoperability testing — combine netcat, Scapy, netem, packet capture, and expected output against Linux TCP
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We find that in our particular use case, having the capability to differentiate branches based on external context is necessary."): checked all paper text including the appendix, quotations, references, technique steps, and evaluation scope; changed the link to the paper DOI, corrected handshake and close paths and the packet-sniffer description, narrowed unsupported model limitations, and marked assumptions and recommendations as inferences; did not inspect source code, reproduce experiments, or independently verify RFC conformance.

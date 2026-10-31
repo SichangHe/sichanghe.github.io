@@ -22,7 +22,7 @@ how to apply it:
 3. check the argument by hand before formalization; the paper reports that the mathematician found no mathematical corrections were needed (Section 4.2, p. 7)
 4. turn each argument step into a group of Lean definitions and lemmas, keeping the blueprint as the project map (Sections 2.3 and 4.2, pp. 4, 6–7)
 
-Verus form: Inference: VL can first generate a Rust/Verus proof design listing state predicates, loop invariants, and lemma dependencies, then ask a coding agent to implement it. The blueprint is planning text, not evidence; Verus acceptance still requires compiling the resulting `spec fn`, `proof fn`, `requires`, `ensures`, `invariant`, and `assert` constructs.
+Verus form:
 
 evidence and limits: the paper provides one successful ten-day case, not a controlled comparison of blueprint versus no blueprint. The proof model was useful for the initial argument but the author says its later advice was “mostly for experimental sake” (Section 6.5, p. 13). The result therefore supports the workflow as an engineering report, not a causal benchmark.
 
@@ -71,7 +71,7 @@ how to apply it:
 4. run cleanup and linter checks, commit, and alert the human when intervention is needed (Section 4.5, p. 7)
 5. retain human control for architectural decisions and theorem integrity; the paper reports that automation was weaker at novel proof strategies (Section 6.4, p. 12)
 
-Verus form: Inference: a VL loop can generate candidate proof blocks, run Verus, inspect diagnostics, and ask a reviewer to search for vacuous `requires`, accidental `external_body`, unconstrained specifications, and runtime calls to erased proof code. Only verifier-passing code should be committed; review text is advisory.
+Verus form:
 
 evidence and limits: automation maintained quality and overnight progress, but the key abstract and Coulomb breakthroughs occurred in interactive sessions (Section 6.4, p. 12). This is evidence for an assistive loop, not full autonomy.
 
@@ -108,12 +108,6 @@ Verus form: Inference: encode boundary cases and arithmetic side conditions as e
 
 evidence and limits: Coulomb analysis added about 4,000 lines and was the hardest phase (Section 4.6, p. 8). The post-completion smoothness bug shows that all 10,445 lines and zero `sorry`s did not eliminate semantic review risk (Sections 5 and 6.3, pp. 8, 11–12).
 
-## what remains trusted and what VL should take
-
-Lean's kernel checks accepted proof terms. The paper's process, model outputs, theorem statements, definitions, Mathlib library, and human interpretation remain outside that kernel. Inference: VL should place Verus compilation at the acceptance boundary, record the exact source and verifier versions, and require a human or independent checker to inspect contracts and data-model definitions. Inference: the strongest transferable architecture is a blueprint followed by abstract/concrete separation, small-lemma proving, adversarial review, and a satisfiability witness. Inference: a product that lets an agent weaken `requires` or introduce an unconstrained specification faces a high threat; a product that preserves contract review and verifier checks can use the workflow as an engineering pattern.
-
-The paper argues that the assembled static VML characterization is new, while its individual ingredients are classical: the H-theorem, Landau nullspace characterization, polynomial matching, Killing fields, maximum principle, and harmonic analysis (Section 8, pp. 18–19). Existing work on simpler systems or dynamical stability should not be redone as if it supplied this exact theorem. The paper also reports that the formalization preceded the companion mathematics paper, reversing the usual publication order (Section 9, p. 19).
-
 ## techniques for the catalog
 
 - natural-language proof blueprint — resolve and check a complete argument before generating formal code
@@ -122,5 +116,3 @@ The paper argues that the assembled static VML characterization is new, while it
 - adversarial babysit loop — repeatedly critique, prove, check, clean, and log agent changes
 - automated lemma falsification — submit small lemmas and use disprovals to repair statements
 - singularity decomposition and definition audit — split local/complement estimates and expert-check overloaded definitions
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

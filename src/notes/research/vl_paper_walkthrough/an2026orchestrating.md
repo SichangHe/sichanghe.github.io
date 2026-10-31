@@ -7,8 +7,6 @@ The paper evaluates an end-to-end workflow in which one researcher coordinates m
 
 The workflow produced 1,071 SAT Math MCQs, converted textbook PDFs into structured chunks, mapped questions to relevant content, generated new MCQs under metadata constraints, and evaluated them with a 24-criterion rubric and two LLM judges (Abstract and Sections 3.1–3.5, pp. 1, 5–7). The paper finds high means but incomplete equivalence: strict 24/24 equivalence never occurred, and the matched/whole-set tracks found 9–12 equivalent criteria depending on judge (Abstract and Section 4.3, pp. 1, 9–11; Tables 4 and 7).
 
-Inference: this paper does not prove generated artifacts correct. It provides a workflow and measurement design that makes human specification, automated execution, and verification responsibilities explicit. That distinction is directly relevant to VL, where a model may generate Rust and proofs but a human or control process must define the specification and check evidence.
-
 ## technique 1: staged, human-orchestrated pipeline
 
 What it is. The paper divides work into six phases: data identification and acquisition; extraction and corpus construction; content alignment and structuring; artifact generation; artifact evaluation; and human interpretation and insight development (Section 1, pp. 2–3). It says: “Throughout Phases 1-5, the human researcher orchestrates and supervises the AI-driven workflow, defining objectives, setting constraints, and monitoring outputs.” (Section 1, p. 3.)
@@ -75,7 +73,7 @@ Verus form. Inference: encode artifact lineage as a hash-linked record and prove
 
 Measured: corpus and artifact counts, rubric scores, criterion/category equivalence, judge effects, labor allocation, elapsed time, and API costs. The direct variable API cost was $62 ($11 Mistral OCR, $9 OpenAI, $42 Gemini), excluding fixed subscriptions (Appendix B, pp. 17–18). The study’s central evidence is comparative and pilot-scale.
 
-Not proved: semantic correctness of every MCQ, psychometric validity, human agreement, absence of extraction omissions, or generalization beyond SAT Math and one researcher. Inference: VL should reuse the explicit phase boundaries, provenance records, multi-judge checks, and denominator auditing rather than assuming generated Rust or proof text is trustworthy because it is fluent. The product threat is that an agent can satisfy surface checks while missing deep requirements, and that evaluation instruments can share the same blind spots as the generator. The paper itself says: “The researcher’s work moved from “authoring items” toward specification, orchestration, verification, and governance.” (Abstract, p. 1.)
+Not proved: semantic correctness of every MCQ, psychometric validity, human agreement, absence of extraction omissions, or generalization beyond SAT Math and one researcher.
 
 ## techniques for the catalog
 
@@ -85,4 +83,3 @@ Not proved: semantic correctness of every MCQ, psychometric validity, human agre
 - rubric-based multi-judge evaluation — use explicit criteria, independent judges, and judge/version provenance
 - equivalence testing — use matched and whole-set TOST tracks with a declared smallest effect size and criterion-level denominators
 - governance and audit — version inputs and models, log provenance, validate failures, and retain human responsibility for acceptance
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Overall, the generated sets show partial comparability to baseline: a substantial subset of criteria meets equivalence, but strict all-criteria comparability is not supported in either evaluator or analysis track."): read the whole paper text and the whole study; checked every quotation, number (counts, means, TOST criteria, Tables 4, 7, 9, costs), phase list, formula, tool names and page/section reference against the paper; changed several page references (Figure 3 caption p. 6, Table 4/7 pp. 10-11, Section 5.2 p. 12, Section 5.3 p. 13, Section 6 quote p. 14, Appendix B pp. 17-18), the "disagreement resolution" and "limitation" wordings that the paper does not support, the Section 3.1 extraction description, the abstract quote capitalization, and marked untested claims as Inference; arXiv link and tag kept (author Yuan An, 2026, arXiv 2602.18891 matches the paper). Not checked: the Verus mappings (author inference, not in the paper), the cited external works, the PDF figures visually, and the public GitHub repository.

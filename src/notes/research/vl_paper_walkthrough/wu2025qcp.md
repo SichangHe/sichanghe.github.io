@@ -8,8 +8,6 @@ Source: Wu et al. (Shanghai Jiao Tong University, Peking University), arXiv:2505
 
 QCP verifies C functions against separation-logic specifications written in comments. Separation logic describes disjoint heap regions: `P * Q` asserts that P and Q hold on disjoint regions (§1, p.2). QCP symbolically executes annotated code, generates verification conditions (VCs), discharges some automatically, and exports the remaining conditions to the Rocq proof assistant for manual proof. §2, p.3: “QCP takes annotated C code as input and generates verification conditions.”
 
-Inference: the paper describes no LLM component. Its relevance to VL is the division between automatic and manual proof, specification patterns, and feedback during development.
-
 Measured: 155 functions, 2,972 lines of C, 3,876 annotation lines, 1,964 automatic VCs and 679 manual VCs (Table 1, p.12).
 
 ## technique 1: automatic and manual proofs with a checked list of obligations
@@ -26,8 +24,6 @@ Steps (§2.2, p.6–7; Appendix B, p.18–20):
 6. Complete `proof_manual.v`; the other three files require no user modification (§2.2, p.7).
 
 Figure 11 lists five VCs for `sll_free`: `entail_wit_1`, `entail_wit_2`, `entail_wit_3`, `return_wit_1`, and `partial_solve_wit_1`, each prefixed by `sll_free_`. Its manual proof file remains empty because the example verifies automatically (Appendix B, p.19).
-
-Inference: VL could similarly check that every generated obligation has a proof and explicitly record accepted assumptions. A count of successful proofs alone would not establish that all intended obligations were generated.
 
 Table 1 reports the following automatic/manual counts. Inference: the percentages are computed from those counts, rather than separate measurements:
 
@@ -52,8 +48,6 @@ Steps (§1, p.2; §2.1, p.3–4):
 
 Figure 2 uses `/*@ With d n Require x -> data == d && x -> next == n Ensure emp */` for `free_list_node`. The specification relates the field values to logical variables and requires an empty heap afterward. §2.1, p.4: “The syntax of QCP is designed to make sure that the .c file is still a legal C program that can pass typical compiler checks like gcc.”
 
-Inference: VL could treat external contracts as explicit assumptions to review. Verifying a caller against such a contract cannot establish that the external implementation meets it.
-
 ## technique 3: one primitive specification, others derived from it
 
 A function body is verified against one primitive specification; other specifications are derived from it and can be used by callers. §2.1, p.4: “To handle this, QCP mandates that each function be assigned one primitive function specification, which is used directly in verifying the function itself.”
@@ -66,8 +60,6 @@ Steps (§2.1, p.4–6; Figure 3, p.5):
 4. Use the appropriate specification in a caller. The paper says `LOS_ListTailInsert`, which calls `LOS_ListAdd(list->pstPrev,node)`, uses the primitive specification (p.6).
 
 For independent specifications, Appendix F (p.28–29) uses `swap` with equal or different pointer addresses. Its workaround is a specification `all` with a case parameter, from which `eq` and `neq` are derived. Proving `all` requires manual case analysis. The authors say separate specifications are more convenient here and plan to support them.
-
-Inference: VL could retain a primitive contract and prove separate abstract views from it, for example through wrappers or proof lemmas. This is a proposed adaptation, not an evaluated Verus technique in this paper.
 
 ## technique 4: assertion annotations as the proof skeleton
 
@@ -83,8 +75,6 @@ Steps for `sll_free` (Figure 2, p.4; §2.2, p.6–7):
 The annotation is Figure 2's line 19; the read is line 20. The prose in §2.2 incorrectly refers to a store at line 14 and a read at line 19.
 
 §5.3, p.13 explains the cost: “It should be noted that QCP requires a larger number of annotations than VST-A.” Inference: summing Table 5 gives 397 annotation lines for QCP and 300 for VST-A, with 704 and 1,426 proof lines respectively. Line counts are the paper's effort measure, not measured writing time.
-
-Inference: VL could expose a recursive definition or call an unfolding lemma immediately before the proof needs its contents. The paper does not evaluate this adaptation in Verus.
 
 ## technique 5: symbolic execution of incomplete programs
 
@@ -102,8 +92,6 @@ The colours have distinct meanings (§3, p.8). Green marks code that passed prel
 
 Figure 6 reads `x->next` after freeing `x`. Symbolic execution fails because the permission for that read is unavailable, with the message “Cannot derive the precondition of Memory Read.” The example is unfinished, yet QCP reports the error.
 
-Inference: VL could distinguish failure to construct a verification state from an unresolved logical obligation. Neither outcome by itself proves that the program is incorrect. The paper provides no user study measuring the claimed improvement in annotation writing.
-
 ## technique 6: separation-logic strategies and a small SMT solver
 
 QCP combines a rule-based engine for spatial constraints with a lightweight SMT solver for pure constraints (§4.2, p.10). The rule engine builds on Stellis.
@@ -119,8 +107,6 @@ Steps (§4.2, p.10; Appendix A, p.17–18):
 The quantifier limitation belongs to the SMT component. §4.2, p.10: “Currently, the solver does not support quantified formulas; such cases require manual user intervention.” This does not mean every VC containing an existential needs manual proof: the strategy language can introduce and instantiate existential variables.
 
 Appendix B's example (p.21) matches `listrep(?p)` and `p != NULL` on the left, with a demand for `p->data` or `p->next` on the right. It erases `listrep(p)` and adds fresh variables, the two field cells, and `listrep` for the tail. The authors explain: “This approach ensures that the listrep predicate is expanded only when load/store is required, avoiding unnecessary operations on unrelated predicates, thereby simplifying the assertion.”
-
-Inference: a proved lemma triggered by a term that appears when its fact is needed could serve a similar purpose in VL. The paper does not establish termination of QCP's strategies, and gives no basis for claiming they prevent solver loops by construction.
 
 Table 2 (p.12) lists six fully automatic examples. Its `avl_insert` row has 8 functions, 116 C lines, 99 annotation lines, 250 automatic VCs, and 2.84 seconds of symbolic-execution time. The table does not isolate the contribution of individual strategies.
 
@@ -150,8 +136,6 @@ Steps (Appendix D, p.21–23):
 5. Prove this contract with QCP. The paper explains `safeExec(True, mergesortrec(l), X)` as existence of an initial state satisfying True such that every final state of the abstract computation satisfies X (p.21–22).
 
 Appendix E applies this approach to `thm_apply` (p.27–28). Table 6 reports 4 functions, 64 C lines, 34 manual VCs, and 323 manual proof lines for that component.
-
-Inference: VL could separate a model's algorithmic properties from the implementation's agreement with that model. For a nondeterministic model, an input/output relation could describe the allowed results. This paper does not evaluate such a Verus encoding.
 
 ## specification patterns from the verified components
 
@@ -183,12 +167,6 @@ Inference: the following calculations and cautions qualify the reported results:
 - Appendix B's strategy uses `left_exist_add`, absent from Figure 9's grammar, which lists `forall_add` and `right_exist_add`.
 - §2.2's Figure 2 line references are inconsistent with the code, as noted in technique 4. The prose also uses `free_node_list` where the figure declares `free_list_node`. These are inconsistencies in the paper, not distinct verified routines.
 
-## implications for VL
-
-Inference: the most transferable designs are explicit coverage of generated obligations, primitive and derived contracts, unfolding only when needed, and checker-soundness contracts. The paper supplies no evidence that a Verus-based product needs a second proof assistant or that QCP's symbolic-state display can be copied directly into it.
-
-Inference: QCP is an indirect comparison for agent-written verified Rust: it targets C and permits manual Rocq proofs. Its 74.3% automation rate counts VCs, not programmer effort. Annotation counts provide a limited baseline: 3,876 / 2,972 is about 1.3 annotation lines per C line overall; 1,757 / 755 is about 2.3 for implementation components, before manual proofs. These data do not establish relative productivity or competitive impact.
-
 ## techniques for the catalog
 
 - checked obligation coverage — require proofs for every goal in the generated VC module type
@@ -202,5 +180,3 @@ Inference: QCP is an indirect comparison for agent-written verified Rust: it tar
 - heap proof recipe — preprocess, apply a structural lemma, instantiate existentials, and cancel common heap predicates
 - refinement through an abstract program — prove the algorithm in Rocq and its implementation's consistency through an encoded relational contract
 - checker-soundness contract — require a positive answer to be correct without requiring a conclusive answer on every input
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In contrast, QCP only requires users to prove specific VCs while leveraging entailment solvers to automatically resolve others."): read the complete paper and study; checked quotations, counts, calculations, page and section references, technique steps, and catalog entries; corrected proof-coverage claims, quantifier scope, feedback meanings, timing interpretation, and unsupported generalizations; marked VL adaptations and derived conclusions as inferences; did not run QCP, inspect its implementation, validate Verus behavior, or independently reproduce experiments.

@@ -93,5 +93,3 @@ Inference: the transferable proposal for agent-written verified Rust is to deriv
 - strongest-postcondition guidance: symbolically execute path conditions and stores so loop-free behavior constrains generated contracts
 - invariant skeleton completion: generate variable and loop-entry templates, then have an LLM fill unknown relationships; nested loops use a separate LLM-only path
 - error-directed refinement: classify syntax and proof failures, repair or revise invariants, and remove invalid candidates at the iteration limit
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "However, QCP requires manual annotations for loop invariants and callee function pre/postconditions, and may introduce unproven lemmas that require additional Coq proofs."): read the whole supplied paper; checked quotations, numbers, page and section references, technique steps, version year, and paper link; corrected citations, quotations, precondition and nested-loop descriptions, refinement scope, and unsupported claims, and marked conclusions as Inference; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

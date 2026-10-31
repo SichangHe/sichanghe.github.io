@@ -8,8 +8,6 @@ Inference: This paper introduces T3 RL, a test-time reinforcement-learning loop 
 
 The paper describes the problem precisely: “However, the majority answer is not always correct.” It then identifies the mechanism: “If the model has a systematic bias, many rollouts may converge to the same wrong solution.” Inference: This is a reward-label integrity problem rather than a proof of the model’s reasoning; the verifier only changes which sampled traces receive reward.
 
-## technique 1: verification-aware pseudo-labels
-
 ### what it is and when to use it
 
 Inference: Use this technique when inputs have no labels during adaptation, the model can generate multiple candidate traces, and a deterministic or independently checkable tool can test at least part of a trace. It is especially suited to tasks where solutions are difficult to generate but easy to execute or check, such as arithmetic, code, SMT constraints, or theorem-checker inputs.
@@ -62,8 +60,6 @@ The weight ablation shows why `ω` is soft rather than a hard filter. The paper 
 
 Inference: The reported percentages and score units are not interchangeable. Table 1 scores are pass@1 percentages averaged over runs; Table 3’s “Acc.” is verifier accuracy on policy rollouts; Figure 4’s false-majority share is a fraction of questions. The paper does not provide a single denominator for every plotted relative gain, so each comparison must retain its table or figure context.
 
-## technique 2: domain-specific executable verification
-
 ### what it is and when to use it
 
 Inference: Replace the Python arithmetic checker with a domain tool whose output can be compared to the extracted answer. The tool must produce external evidence rather than merely restating the rollout. The paper’s formal interface is `t_i = T(Code(x,y_i))` (Eq. 5), followed by `v_i = 1[t_i = â_i]` (Eq. 6).
@@ -84,8 +80,6 @@ Inference: No formal theorem about T3 RL’s learned policy is proved. The paper
 
 The paper reports that T3 RL@16 reaches AIME 20.0 versus TTRL@64 15.8 while using 147K versus 365K rollout tokens, 126 versus 324 seconds, and 3.0K versus 7.9K TFLOPs (Table 4). At inference, T3 RL uses 1,630 tokens per query; tool-verified majority with 16 samples uses 96K tokens and reaches AIME 20.8, AMC 51.5, and MATH-500 65.5, while T3 RL reaches 20.8, 50.9, and 74.6. Inference: These are separate training and per-query accounting regimes, so the apparent MATH-500 discrepancy reflects different methods and measurement settings, not a stated contradiction resolved by the paper.
 
-Inference: The strongest product threat is reward contamination: if an agent-written verifier produces biased, copied, or malformed checks, online learning can amplify the error at test time. The paper’s evidence suggests a capacity threshold—its 0.5B verifier reduces average score from TTRL 15.7 to T3 RL 14.3 in Table 8, with AIME 0.4 to 0.0, AMC 12.0 to 10.8, and MATH-500 34.6 to 32.0. Inference: For VL, this argues for treating every checker and generated proof obligation as a separately audited trusted component, and for soft evidence weighting rather than assuming a checker is infallible.
-
 ## techniques for the catalog
 
 - verification-weighted pseudo-labeling — sample unlabeled rollouts, verify each candidate, upweight verified answers by `ω`, and train against the weighted consensus
@@ -93,4 +87,3 @@ Inference: The strongest product threat is reward contamination: if an agent-wri
 - domain solver verification — translate candidate logical claims into SMT-LIB2 constraints and use a solver such as Z3 as external evidence before reward assignment
 - soft verifier weighting — use finite `ω>1` because noisy verifiers make hard filtering brittle; retain unit mass for unverified candidates
 - verifier-capacity evaluation — measure verifier accuracy and run ablations with self, external, and undersized verifiers before trusting verification-shaped updates
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

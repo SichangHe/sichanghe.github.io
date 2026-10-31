@@ -44,7 +44,7 @@ How to apply it.
 
 Verus form. Inference: Γ maps naturally to `requires` facts and ghost state; T maps to built-in arithmetic and explicit proof lemmas; Σ maps to separately proved `proof fn` lemmas imported by the module. A step lemma can use `requires` for Γ and `ensures` for `ai`, while `assert` or a named lemma supplies each T rule. An external theorem should not be represented by `external_body` on the function under verification; instead, its contract must itself be trusted or proved and its trust boundary documented. Verus cannot check a prose citation's authority or whether an implicit convention was intended.
 
-Evidence and limits. The paper's main evidence is the 10/10 invalid-proof rejection result under the 21-proof suite (section 4.2, p. 6; Table 1, p. 7). External retrieval is internet-based and provenance is only prompted, not computationally enforced: “we do not computationally enforce strict constraints on the exact provenance or syntactic precision of the cited theorems” (section 3.2, p. 5). Thus Σ can still contain a wrong or misapplied theorem. Inference: for VL, this is a direct threat if generated Verus lemmas are accepted from unreviewed libraries; contracts and imported axioms remain trusted inputs.
+Evidence and limits. The paper's main evidence is the 10/10 invalid-proof rejection result under the 21-proof suite (section 4.2, p. 6; Table 1, p. 7). External retrieval is internet-based and provenance is only prompted, not computationally enforced: “we do not computationally enforce strict constraints on the exact provenance or syntactic precision of the cited theorems” (section 3.2, p. 5). Thus Σ can still contain a wrong or misapplied theorem.
 
 ## technique 3: state machine, flaw confirmation, and halting
 
@@ -66,9 +66,9 @@ Evidence and limits. The state machine produced identical final verdicts across 
 
 The measured artifact is a four-pipeline comparison on a 21-proof diagnostic suite over three trials. Table 1 gives Global GPT-5.4 16/21, Global Codex-5.4 15.33/21, sentence-by-sentence Codex 18/21, and the proposed agent 18/21; valid proofs total 11 and invalid proofs total 10 (Table 1, p. 7). The paper's strongest measured property is 0/10 false negatives for invalid proofs. It does not establish formal soundness, generalization beyond the curated suite, or independence from benchmark leakage. The authors report auditing logs for FirstProof exposure and caution that Gemini results may reflect internet-visible answers (section 4.1, p. 5).
 
-Trusted parts include the base LLM, prompt files, source decomposition, retrieved theorem correctness and applicability, the human labels, and the interpretation of implicit conventions. Lean, Rust, or Verus is not used. Inference: a VL product using this pattern would still require Verus to check generated executable code and contracts; the pattern can prioritize proof obligations and dependency tracking, but cannot replace mechanical checking. The threat to agent-written verified Rust is medium: the workflow can reduce missed obligations, yet its textual acceptance can still hallucinate a theorem or silently encode an overly weak contract.
+Trusted parts include the base LLM, prompt files, source decomposition, retrieved theorem correctness and applicability, the human labels, and the interpretation of implicit conventions. Lean, Rust, or Verus is not used.
 
-The paper explicitly notes limitations: “our purely text-based agent remains susceptible to subtle hallucinations” and does not yet run a secondary adversarial pass (section 5, p. 6). Inference: VL should not redo this paper's 21-proof natural-language benchmark as a product claim; it should adapt the dependency ledger and state transitions to Verus proof obligations, then measure compile-checked outcomes on real Rust changes.
+The paper explicitly notes limitations: “our purely text-based agent remains susceptible to subtle hallucinations” and does not yet run a secondary adversarial pass (section 5, p. 6).
 
 ## techniques for the catalog
 
@@ -76,4 +76,3 @@ The paper explicitly notes limitations: “our purely text-based agent remains s
 - Γ/Σ/T dependency ledger — separate local context, external non-trivial theorems, and routine background rules, and close every used dependency
 - state-driven verification loop — move steps OPEN→VERIFIED or OPEN→FLAWED with explicit witnesses, confirmation, decomposition, and bounded exhaustion
 - auditable theorem retrieval — record exact as-used statements, proof or citation, and applicability before accepting an external dependency
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

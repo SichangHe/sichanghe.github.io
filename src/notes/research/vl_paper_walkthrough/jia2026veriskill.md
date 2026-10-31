@@ -4,8 +4,6 @@ Tag: `jia2026veriskill`, [paper](http://arxiv.org/abs/2607.27733v1)
 
 source: Changguo Jia, Tianqi Zhao, Zhiyou Xiao, Weiming Zhang, Minghui Zhou (Peking University, Zhongguancun Laboratory, Shanghai Jiao Tong University), arXiv:2607.27733v1, 30 Jul 2026; 9 pages, of which pages 8 and 9 are references; no appendix
 
-earlier notes: research/veriskill_20260803.md is a full competitive assessment of this paper against AutoVerus and Midas Lex. It already holds: the three stages in outline, the dataset splits, the headline gains, the ablation deltas, the cross-model range, the limits (reference solutions as supervision, weak semantic check, reuse of the validation set, no released artifact, no variance), and a proposed promotion loop for VL's own guidance. This study adds what that note lacks: each stage as steps with the paper's wording and page, Algorithm 1 line by line, the three acceptance formulas, every cell of Table 1 with its arithmetic, a likely size for the Frama-C benchmark, a Verus form per technique, and the list of parameters the paper does not give.
-
 ## what is measured, and what is trusted
 
 A skill here is a text document of workflows, tool instructions and error-handling procedures that a coding agent reads before a task. VeriSkill is a loop that edits such a document for one verifier. Nothing is proved about the loop. What is measured is PASS: the share of held-out benchmark tasks on which an agent using the final skill produces an artifact the verifier accepts and which also passes a check that the executable program was not changed (Section 5 "Metrics", p.5).
@@ -101,8 +99,6 @@ Not in the paper: the threshold that makes a local test pass (any positive effec
 
 Inference: the admission rule compares totals, so a candidate that gains two validation tasks and loses one is admitted; only the local level forbids a pass turning into a fail. On a 20-task validation set one task is 5 points, so strict improvement can be noise.
 
-Verus form (Inference). The procedure is independent of the verifier; only the check M needs a Verus definition. For annotation-only tracks the paper requires the executable C to match the input once annotations, comments and whitespace are erased (Section 5, p.5 to 6). The Verus equivalent: erase all ghost code (`spec fn`, `proof fn`, `proof { ... }` blocks, `requires`, `ensures`, `invariant`, `decreases`, `Ghost` and `Tracked` values) and require the remaining executable Rust to equal the input. The paper's second clause, no verification-bypass constructs, becomes: no `admit()`, no assume statements, no new `#[verifier::external_body]`, no new `assume_specification`. A third clause the paper lacks and VL needs: where the task supplies the `requires` and `ensures`, they must be unchanged.
-
 evidence: Table 2 (p.6): the variant defined as “w/o Executable Validation: candidate skills skip the revise–test loop on attribution and transfer cases, proceeding directly to validation.” (Section 6.2, p.6) scores 36.0%, a drop of 21.3 points from 57.3%, the largest of the three ablations. Inference: 36.0% is below three of the generic baselines in the same row of Table 1 (Skill-Creator 39.3, AutoSkill 41.0, SkillOpt-Lite 42.3), so the local loop, not attribution or abstraction, is what puts VeriSkill ahead of them on this track.
 
 where it fails: cost and data. The loop reruns the agent and the verifier many times per candidate: “Because each experiment requires repeated LLM-agent execution and formal verification over multiple evolution iterations, the complete evaluation incurred approximately US$15K in API costs.” (Section 6, p.6) It also needs enough failures of one pattern to fill both an attribution set and a transfer set.
@@ -112,8 +108,6 @@ where it fails: cost and data. The loop reruns the agent and the verifier many t
 what it is: a log of every attempted revision, read back in all three stages.
 
 how it is done: one record per candidate, whether accepted, rejected or skipped, holding its failure pattern, attribution, lesson, validation outcome and applicability conditions (Section 4.3, p.5). It is read in stage 1 to avoid repeating a wrong attribution, in stage 2 to supply lessons that worked and block ones that did not, and in stage 3 when building the candidate (Algorithm 1 lines 4, 5, 10, 11, 13, 20, 21).
-
-Verus form (Inference). Nothing verifier-specific; for VL it is a table keyed by error kind and missing duty.
 
 evidence: none. No ablation removes the memory.
 
@@ -145,12 +139,6 @@ Inference from the cells:
 
 Cross-model test (Section 6.3 and Figure 2, p.7): the skill evolved with Codex on Dafny is given unchanged to five other models in the Terminus agent wrapper, each compared with its own No Skill run on the same Dafny benchmark. “The Codex-evolved skill improves every Terminus-backed LLM, with gains ranging from +15.3 to +43.7 pp, even though no model-specific evolution is performed.” (Section 6.3, p.7) The five pairs printed in the figure, No Skill then with skill: 12.0 and 55.7; 10.3 and 51.7; 7.7 and 44.3; 6.0 and 41.0; 2.0 and 17.3. Each difference matches its printed gain. The models are GLM-5.2, Kimi-K2.7, Qwen3.7-Max, DeepSeek-V4-Pro and Qwen3-Coder; which bar belongs to which model cannot be told from the extracted text. All five with-skill scores are below the 66.0% of Codex itself.
 
-## what was already done, and threat
-
-Already done, so not a novelty VL can claim: mining verifier failures into a persistent guidance document with attribution, clustering, and validation-gated admission. The paper positions this against per-artifact repair systems, AutoVerus included: “The resulting procedural knowledge is not externalized as a persistent skill reusable across tasks, verifiers, and model backbones.” (Section 2.2, p.2)
-
-Inference: threat to a product of agent-written verified Rust is medium, unchanged from the earlier note's judgement. The method is verifier-agnostic and would run on Verus given training tasks with reference proofs; nothing in it is hard to reimplement, and the paper releases no code. Its weak point is the one VL's product depends on: the acceptance test counts verifier acceptance with unchanged code, so it rewards whatever makes proofs pass, including weaker specifications. A VL loop with the same three stages but an admission rule that also fixes the specification and forbids any per-task regression would be the same technique with a stricter gate.
-
 ## techniques for the catalog
 
 - four-way failure attribution: classify each failed attempt as unsatisfiable task, prover limitation, guidance not followed, or guidance missing, and learn only from the last two
@@ -165,4 +153,3 @@ Inference: threat to a product of agent-written verified Rust is medium, unchang
 - executable-projection check: accept an annotated artifact only if erasing annotations, comments and whitespace gives back the input program and no bypass construct was added
 - evolution memory: log every accepted, rejected and skipped revision with its pattern and outcome, and consult the log before attributing or writing again
 - unchanged-skill transfer test: give the final guidance to other models without further tuning to check that it is knowledge and not a model-specific prompt
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

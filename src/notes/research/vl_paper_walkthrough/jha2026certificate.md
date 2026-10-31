@@ -43,10 +43,6 @@ The ablation compares proposals with and without certificate feedback under the 
 
 The Compton optimization reuses a previously computed squared sine instead of recomputing it in a helper, with a clamp before square root. The Fermi optimization replaces selected powers by multiplication but retains the original expression where rounding could change a branch decision. A hybrid combines Celeritas energy selection with CDES direction calculation and output writes. These are performance transformations guarded by numerical and physics checks, not proofs of full-program equivalence.
 
-Inference: this is directly useful for VL as a certificate memory around agent-written Rust. Store failed Verus obligations, counterexamples, and assumptions as restrictions, then enforce them before accepting later edits. Inference: the strongest product threat is incomplete coverage: Lean contracts and bounded CBMC checks leave unverified code paths, numerical domains, and GPU behavior. Inference: an agent can obtain high benchmark pass rates while still violating an unstated property or a withheld input outside the checked domain.
-
-Existing conflict-driven synthesis, translation validation, Lean, CBMC, Alive2, and GPU equivalence tools already implement most individual checks. VL should compose such checkers and preserve denominators and settings when reporting evidence; it should not treat CDES's 55-to-90% ablation as a universal correctness rate.
-
 ## techniques for the catalog
 
 - certificate-driven search: convert failed candidates into validated restrictions and enforce them during later generation
@@ -57,5 +53,3 @@ Existing conflict-driven synthesis, translation validation, Lean, CBMC, Alive2, 
 - layered harness validation: combine differential numerical, physics, statistical, sanitizer, and profiling checks
 - withheld-input evaluation: reserve new sizes, random sequences, and boundary cases outside the search feedback loop
 - certificate ablation: compare proposal pass fractions and performance gains with and without stored restrictions
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -4,8 +4,6 @@ Tag: `george2025leanprogress`, [paper](http://arxiv.org/abs/2502.17925v3) (link 
 
 LeanProgress predicts remaining proof steps and combines that prediction with tactic log probability to guide search. The authors state, “We introduce LeanProgress, a method that predicts the progress in the proof.” (Abstract, p. 1) The paper was published in TMLR in December 2025; this copy is arXiv:2502.17925v3, dated 18 January 2026 (p. 1). Its implementation uses Lean; the Verus adaptations below are inferences.
 
-## techniques
-
 ### shortest successful trajectory extraction
 
 What it is: use Reprover with best-first search to collect successful proof trajectories, then select the shortest one found for each theorem. The paper states, “In particular, if multiple proofs are found for a theorem (i.e., multiple no_goals nodes are reached), we select the proof with the minimum depth (the length of the path from the root node to the no_goals node) to ensure the quality and consistency of the training data.” (Section 3.2, p. 5)
@@ -56,10 +54,6 @@ The paper measures prediction accuracy, MAE, and proof-search pass rate. Its sup
 
 Model choice also affects results. Table 6 reports Qwen 2.5 Coder accuracy of 79.4 ± 1.4% and MAE of 2.95 ± 0.18; Table 7 reports its downstream pass rate as 46.4 ± 0.7%, versus DeepSeek Coder 1.3B’s 45.2 ± 0.6% (p. 14). Table 7 specifies “identical search settings (temperature 0.7, 32 samples, same α and reranking).”
 
-## what VL should reuse and threat
-
-Inference: VL should reuse successful-trajectory labels, length balancing, splits that keep related states together, history-conditioned prediction, and mixed search scoring. LeanCopilot integration itself does not transfer to Verus. Progress feedback could reduce wasted proof-edit searches, but the paper does not measure this in Verus or establish whether a Verus contract captures a product requirement. The pure-progress result in Table 3 supports retaining another search signal in the evaluated Lean setting; its usefulness for verified Rust remains untested.
-
 ## techniques for the catalog
 
 - shortest trajectory labeling — label states with steps remaining on the minimum-depth successful path found
@@ -67,5 +61,3 @@ Inference: VL should reuse successful-trajectory labels, length balancing, split
 - history-conditioned progress prediction — predict remaining steps from state plus previous tactics
 - mixed progress search — rank frontier states with normalized predicted steps and tactic log probability
 - interactive progress feedback — combine tactic suggestions with predicted remaining steps
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We evaluate both approaches by measuring the number of theorems solved within a fixed number of expansions and the average number of expansions required to find a proof."): checked all paper text, study quotations, numbers, section and page references, and technique descriptions; corrected page references and the trajectory quotation, clarified labels and search-score limits, and marked adaptations and conclusions as inferences; did not inspect code, reproduce experiments, or verify the image-only qualitative examples.

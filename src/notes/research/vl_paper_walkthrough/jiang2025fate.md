@@ -2,12 +2,11 @@
 (authored by agents unless marked 🧑)
 Tag: `jiang2025fate`, [paper](https://arxiv.org/abs/2511.02872v4)
 
-
 ## what FATE provides
 
 Jiang et al. introduce FATE-H and FATE-X and expand the existing FATE-M, forming a graded Lean benchmark series in abstract and commutative algebra. FATE-M is textbook-level; FATE-H targets honors or graduate exams; FATE-X targets PhD qualifying exams or beyond. FATE-H and FATE-X each contain 100 problems, while FATE-M was expanded from 141 to 150. The paper's central finding is that current theorem-proving models collapse on the harder formalization tasks: the best reported model reaches 3% pass@64 on FATE-H and 0% on FATE-X (Abstract and Table 1, pp. 1, 6).
 
-This is a benchmark and diagnostic methodology rather than a new prover. Inference: VL can use this methodology to measure the gap between mathematical reasoning and verified code, curate difficult formal tasks, and classify failures.
+This is a benchmark and diagnostic methodology rather than a new prover.
 
 ## technique 1: progressive benchmark curation
 
@@ -43,7 +42,7 @@ how to do it:
 
 The paper states: “Every proof is rigorously checked by the Lean kernel to confirm it contains no sorry or compilation errors.” (Section 4.1, p. 6). Table 1 reports, with the denominator of 100 problems for each H and X set, best H accuracy 3.0% (3/100) and X accuracy 0.0% (0/100). FATE-M rates use its 150-problem denominator; for example, DeepSeek-Prover-V2-671B is 62.7% (Table 1, p. 6).
 
-evidence and limits: all models receive up to 64 attempts, so pass@64 is not a single-sample probability. It measures existence among attempts, not proof length, cost, or reliability under a fixed verifier-call budget. Inference: a VL evaluation should report Verus version, Rust toolchain, candidate count, timeout, and both solved problems and total problems; a passing candidate must be compiled and verified with no `external_body` escape hatch.
+evidence and limits: all models receive up to 64 attempts, so pass@64 is not a single-sample probability. It measures existence among attempts, not proof length, cost, or reliability under a fixed verifier-call budget.
 
 ## technique 3: two-stage natural-language/formal diagnosis
 
@@ -59,7 +58,7 @@ how to do it:
 
 Table 2 uses 100-problem denominators for both FATE-H and FATE-X. DeepSeek-R1 has 71.0% NL pass@1 and 0.0% FL pass@64 on H, and 33.0% NL versus 0.0% FL on X. DeepSeek-Prover-V2 has 39.0% NL versus 3.0% FL on H and 9.0% versus 0.0% on X (Table 2, p. 7). The authors conclude: “Rather, the critical challenge lies in the translation and implementation of a correct natural language proof into an absolutely precise formal language.” (Section 4.3.3, p. 8).
 
-evidence and limits: the manual NL labels are expert judgments and pass@1, whereas formal rates are automated pass@64; comparing them is diagnostic, not a like-for-like accuracy estimate. Prompt ablation on DeepSeek-R1/FATE-X gives 33% baseline, 43% pure math, 39% math output, and 32% math-before-Lean (Table 7, p. 23). Inference: VL can apply the same split to distinguish a wrong security argument from a correct argument that fails Verus syntax or library lookup.
+evidence and limits: the manual NL labels are expert judgments and pass@1, whereas formal rates are automated pass@64; comparing them is diagnostic, not a like-for-like accuracy estimate. Prompt ablation on DeepSeek-R1/FATE-X gives 33% baseline, 43% pure math, 39% math output, and 32% math-before-Lean (Table 7, p. 23).
 
 ## technique 4: formalization error taxonomy and counting
 
@@ -76,16 +75,9 @@ The paper defines Mathlib hallucinations as follows: “Errors in this category 
 
 evidence and limits: the analysis identifies library retrieval and accurate type information as plausible interventions, but does not test a retrieval system. The FATE-X case study examined DeepSeek-R1 alone and reports that it seldom generated lemmas about the supplied definitions’ general mathematical properties (Section D.2, p. 28). Inference: for Verus, analogous categories should include wrong `requires`/`ensures`, unsupported syntax, missing ownership facts, and specification/code mismatch; each category should retain the candidate and exact verifier diagnostic.
 
-## what remains trusted and what VL should learn
-
-Inference: this methodology relies on Lean kernel checking, Mathlib definitions, benchmark theorem statements, human formalization, expert NL judgments, and string-matching checks. The benchmark does not prove that a natural-language proof is mathematically complete beyond the human review protocol, and it does not evaluate Rust ownership, concurrency, runtime behavior, or Verus. The paper's specialized-prover comparison finds lower natural-language pass rates for DeepSeek-Prover-V2 than DeepSeek-R1 (Table 2, p. 7) and attributes this qualitatively to less effective reflection. Inference: that explanation is based on behavioral analysis and does not establish a causal training effect. The authors explicitly limit their proposed research directions: “Although our findings suggest these research directions, rigorously confirming them is beyond the scope of this article and remains a key task for future work.” (Section 4.6, p. 10).
-
-Inference: VL should measure formal compilation and proof completion separately from agent reasoning quality. The gap in Table 2 motivates this distinction, but the paper does not measure risks in agent-written Rust. VL should not redo a generic benchmark of contest algebra; the FATE series already supplies a difficulty ladder, two-stage labels, and denominator-aware error taxonomy. A Verus-specific follow-up should reuse the methodology while replacing Lean/Mathlib checks with versioned Verus verification and Rust semantic tests.
-
 ## techniques for the catalog
 
 - progressive expert curation — collect, formalize, review, and difficulty-label advanced algebra problems in a graded series
 - kernel-backed pass@k — count a problem solved only when one of k independent full proofs passes the trusted kernel
 - two-stage diagnosis — compare expert natural-language correctness with automated formal proof correctness
 - formalization error taxonomy — count library hallucination, prover proficiency, general capability, and reasoning-alignment failures with their true denominators
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The token length data in Table 6 indicate a clear increasing trend in output token length from FATE-M to FATE-H to FATE-X across all models."): checked all paper text, study claims, quotations, numbers, section/page references, and technique steps; corrected the unrelated DOI to the paper’s arXiv identifier, FATE-M attribution, final-theorem placeholder placement, page references, verification steps, and scope of definition and error analyses; marked VL recommendations and causal interpretation as inferences; did not reproduce experiments, inspect benchmark code, or independently validate the mathematical proofs.

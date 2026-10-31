@@ -38,7 +38,7 @@ Inference: in Verus, path-specific requirements could become lemmas or cases in 
 ## technique 3: infer table-wide properties
 “For table properties, we intentionally avoid providing predefined documentation since these properties should be inferable from API specifications.” (Section 4.3.2, p. 13.) The system aggregates APIs interacting with a table, derives natural-language properties from their specifications, records the responsible APIs, and generates one theorem per associated API. These theorems place fewer restrictions on inputs and focus mainly on changes to tables. The authors describe this as “checking invariants by analyzing how individual API calls modify table states in a single step” (Section 4.3.2, p. 13).
 
-Figure 6 illustrates preservation of Transaction record count by BalanceQuery and an increase of one after successful Deposit (p. 27; discussed on pp. 13–14). Inference: VL could collect functions that access a collection, propose state properties, and prove preservation or specified changes for each relevant operation. Establishing an invariant over executions would also require an appropriate initial-state argument.
+Figure 6 illustrates preservation of Transaction record count by BalanceQuery and an increase of one after successful Deposit (p. 27; discussed on pp. 13–14).
 
 ## technique 4: compiler-guided, adaptive proof search
 Section 4.4.1 uses compiler messages and “a backtracking mechanism to identify the last correct proof step with the unsolved goal” (p. 15). It retrieves proved examples at three similarity levels: “(1) same API/table, (2) same service, and (3) project-wide” (p. 15). Local refinement operates alongside a global retry mechanism as the pool of verified examples grows.
@@ -49,8 +49,6 @@ Inference: a Verus implementation could use verifier diagnostics and relevant pr
 “For those theorems unable to be proved after the entire proof search loop, we employ LLMs to search for counterexamples by first negating the original theorem and attempting to prove its negation.” (Section 4.4.2, p. 15.) A counterexample satisfies the original hypotheses but contradicts the conclusion. If neither direction is proved, the case remains undetermined and requires human verification.
 
 The UserLogin illustration uses different implementations for its positive and negative examples: “It’s important to note that the proofs of these two theorems are based on distinct formal implementations of the UserLogin API, as only one theorem can be valid for any given implementation.” (Section 4.4.2, p. 15; Figure 7, p. 28.) This statement concerns the illustrated pair, not a pipeline step that changes the implementation before checking its negation.
-
-Inference: VL could search for witnesses violating a postcondition and separately verify the witness relation. Such a result would identify a specification violation, without automatically repairing the implementation.
 
 ## evidence and denominators
 The authors evaluate stages separately: “To assess each pipeline stage independently, we manually validate stage inputs to eliminate potential misalignments, which means we use the best outcome out of three attempts from the last step as the input to the next step.” (Section 5.2, p. 16.) Non-proving tasks run three times and table values are averages; proving runs once per project. Inference: these stage results do not measure an unattended end-to-end success rate.
@@ -63,11 +61,6 @@ Section 5.3 says: “The experiments show that 8 out of 11 bugs are successfully
 
 The proof budget is “5 attempts with 8 refinement retries per attempt” (Section 5.2.3, p. 19). For TaxiApp, the paper reports “the average token-based model cost is $0.34, with verification costs averaging $2.19 per API” (p. 19). It does not explicitly name the unit averaged for the $0.34 figure. Inference: these costs should not be generalized to arbitrary production systems.
 
-## trust, limitations, and VL threat
-The authors identify two accuracy requirements: implementation formalization must ensure semantic equivalence, and theorem generation must align formal statements with natural-language specifications (Section 6, p. 21). They warn: “Semantic mismatches produce compilable but requirement-inconsistent theorems, which undermine verification integrity.” (Section 5.2.2, p. 18.) Their discussion also proposes “pre-formalizing external services like databases as standard components in the future” (Section 6, p. 21).
-
-Inference: correctness depends on the source-to-Lean translation, theorem fidelity, specification, and proof checker. The four generated projects and injected variants do not establish production-scale concurrency or external-service equivalence. For VL, a central risk is proving a misformalized requirement. Adapting the decomposition, state-property generation, diagnostic feedback, and counterexample search to Rust/Verus would still require validating those correspondences.
-
 ## techniques for the catalog
 - pure backend formalization: translate dependencies, APIs, tables, and effects into explicit pure state transitions
 - path-wise API theorems: split documentation into control-flow requirements and formalize each path
@@ -75,5 +68,3 @@ Inference: correctness depends on the source-to-Lean translation, theorem fideli
 - compiler-guided proof refinement: use diagnostics, backtracking, and similarity-ranked proved examples
 - negative theorem search: negate unresolved properties and try to prove a counterexample
 - human review: inspect unresolved cases and validate formalization and theorem alignment
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For those theorems unable to be proved after the entire proof search loop, we employ LLMs to search for counterexamples by first negating the original theorem and attempting to prove its negation."): checked the complete paper text, study quotations, numbers, section/page references, and technique steps; corrected quotations and references, linked the paper’s arXiv identifier, qualified guarantees and stage evaluation, distinguished Table 5 detections from counterexample claims, and marked adaptations and conclusions as inferences; did not reproduce experiments, inspect implementation artifacts, or independently validate external references.

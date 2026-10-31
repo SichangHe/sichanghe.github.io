@@ -6,8 +6,6 @@ Tag: `blaauwbroek2024tactician`, [paper](https://arxiv.org/abs/2401.02950v2)
 
 Blaauwbroek presents Tactician’s Web, a platform that exports Coq developments as synchronized text and semantic-graph data, records tactic proof states and actions, and lets agents suggest or execute tactics through Coq. The abstract says: “The Tactician’s Web is a platform offering a large web of strongly interconnected, machine-checked, formal mathematical knowledge conveniently packaged for machine learning, analytics, and proof engineering.” (Abstract, p. 1). The paper is infrastructure and representation research; it does not claim a new theorem prover or a proof of Rust programs.
 
-Inference: for VL, the central reusable idea is to make the verifier’s exact semantic state available as structured training and retrieval data, while preserving a live checker connection. The Verus forms below are adaptations, not claims made by this Coq paper.
-
 ## technique 1: represent kernel terms as a semantic graph
 
 What it is. The authors translate Coq’s kernel-level Calculus of Inductive Constructions (CIC) terms into an unordered directed graph with labeled nodes and labeled edges. Edges replace ordered child positions, and global definitions are direct references rather than names. Bound-variable references point to their binders, so alpha-equivalent terms can share structure. The target translation `f` is injective modulo chosen equivalences (Section 2.1, pp. 5–7).
@@ -24,7 +22,7 @@ Steps from the paper:
 
 Verus form: Inference: define a typed graph model with ghost `Seq`/`Map` values and a `spec fn` that maps a Rust expression or proof-state record to its graph. Use `proof fn` lemmas to establish that alpha-renaming leaves the model unchanged and that references resolve to the intended definition. Inference: Verus’s Rust AST and verifier state are not Coq CIC; a graph is an external index, not a replacement for Verus’s own checked specification.
 
-Limits. Kernel graphs omit non-kernel features such as typeclass and hint-database behavior (Section 6, pp. 41–42). Universe collapse is intentionally inconsistent as a full type theory, even though the author expects recovery in many applications (Section 2.1, p. 7). Fixpoint translation also drops the structurally decreasing parameter; the paper says: “Different choices can lead to changes in the reduction behavior of the fixpoint, and hence this translation loses a marginal amount of information.” (Section 2.4, p. 15). Inference: a VL graph must record omissions explicitly rather than imply semantic completeness.
+Limits. Kernel graphs omit non-kernel features such as typeclass and hint-database behavior (Section 6, pp. 41–42). Universe collapse is intentionally inconsistent as a full type theory, even though the author expects recovery in many applications (Section 2.1, p. 7). Fixpoint translation also drops the structurally decreasing parameter; the paper says: “Different choices can lead to changes in the reduction behavior of the fixpoint, and hence this translation loses a marginal amount of information.” (Section 2.4, p. 15).
 
 ## technique 2: preserve global context with a meta-graph
 
@@ -40,7 +38,7 @@ Steps from the paper:
 
 Verus form: Inference: key each retrieved proof artifact by Verus version, module imports, trait implementations, specifications, and external assumptions. Store a ghost or external dependency DAG and require a proof candidate to resolve every referenced item in the current context. Inference: ordinary source-file names are insufficient because dependency revisions can preserve names while changing contracts.
 
-Evidence and risk. The paper warns that section/module derivations can cause data leakage and says randomized train/test splits are discouraged (Section 2.6, pp. 20–22). It states: “Instead, one should choose a split such that it is obvious that none of the training data depends on the testing data.” (Section 2.6, p. 20, footnote 7). Roughly half of the 520k definitions in the released corpus are derived through sections or modules (Section 4.2, p. 37, footnote 14). Inference: VL should split by dependency ancestry and account for derived copies rather than split random examples.
+Evidence and risk. The paper warns that section/module derivations can cause data leakage and says randomized train/test splits are discouraged (Section 2.6, pp. 20–22). It states: “Instead, one should choose a split such that it is obvious that none of the training data depends on the testing data.” (Section 2.6, p. 20, footnote 7). Roughly half of the 520k definitions in the released corpus are derived through sections or modules (Section 4.2, p. 37, footnote 14).
 
 ## technique 3: hash-share bisimilar subgraphs
 
@@ -109,8 +107,6 @@ Oracle reconstruction shows the representation limits. For 131 thousand original
 
 The graph oracle reconstructs fewer proofs than the text oracle, yet Graph2Tac outperforms the tested language model (Section 5, pp. 40–41). The author's interpretation is: “First, agents that incorporate as much online data into their model as possible are strongly advantaged over agents that rely on a static set of background knowledge.” (Section 5, p. 41). Representation limits include non-kernel objects, hint databases, complex/custom and Ssreflect tactics, printer/parser behavior and settings, and graph-based tactic-argument restrictions (Sections 5–6, pp. 40–42). Inference: these limits can affect retrieval and proof search in a Verus adaptation; graph artifacts should remain candidates checked by Verus.
 
-Inference: VL should treat semantic-state extraction, dependency-aware context tracking, state-transition logging, graph sharing, and large-scale benchmark orchestration as existing ideas. A proposed adaptation is to index Verus contracts, proof functions, assertions, loop invariants, termination measures, ghost state, and external specifications. A useful experiment is whether retrieval from context-keyed verified artifacts improves verifier-clean proof rates on unseen dependency revisions without adding unchecked assumptions.
-
 ## techniques for the catalog
 
 - semantic CIC graph — encode kernel terms as labeled nodes and direct binder/definition edges
@@ -125,5 +121,3 @@ Inference: VL should treat semantic-state extraction, dependency-aware context t
 - proving client — explore proof states through capability-based tactic execution
 - parallel benchmark — construct package environments and distribute theorem evaluation at scale
 - Verus adaptation — Inference: apply context-keyed retrieval and checker-clean artifact storage to verified Rust
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The proof states and proof term are represented in the data both in textual and graph format."): checked the entire paper and study, quotations, numbers, section/page references, and technique steps; corrected the paper link, page references, hashing description, proof-step outcomes, decomposition safeguards, and inference labels; did not check implementation, cited publications, experiments independently, or the proposed Verus adaptations.

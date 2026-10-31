@@ -68,18 +68,8 @@ The authors state: “In our experiments, we arbitrarily set σ = 5 and observed
 
 Verus form. Inference: use a fixed iteration budget to retrieve relevant contracts and revise a Verus proof attempt. Adding verifier diagnostics to retrieval queries would extend the paper's method, which uses the original problem and an informal proof. Measure time and token cost, and require final Verus verification.
 
-## what is proved, trusted, and relevant to VL
-
-The reported correctness check runs generated formal proofs in Lean (§§4 and 4.3). Section 5 says: “Thus, no model can try multiple times to generate a proof.” Inference: this restriction concerns the scored formal-proof attempt; IPA still includes repeated informal-proof refinement. Pass@1 therefore does not imply equal inference cost across pipelines.
-
-Inference from the full paper: the experiments do not establish that every retrieved passage is relevant, that OCR preserves every formula, or that each informal proof is sound. They evaluate GPT-4 on MiniF2F and use five IPA iterations. The observed improvement does not by itself establish the same benefit for Verus.
-
-Inference: VL could reuse context-preserving retrieval, keyword query generation, and iterative proof refinement while checking final candidates with Verus. Report final-proof attempts and refinement cost separately. Retrieval ablations and checks that retrieved lemmas exist in the current project would help assess this adaptation. These are proposed checks, not experiments in the paper.
-
 ## techniques for the catalog
 
 - context-preserving RAG corpus — transcribe textbook pages into LaTeX, chunk complete problem–solution units, embed them, and retrieve semantic matches
 - enhanced query generation — ask the model for mathematical concept and theorem keywords before retrieval
 - iterative proof augmentation — regenerate retrieval queries using the problem and informal draft, refine the draft for a fixed iteration budget, then produce and verify a formal proof
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each problem in the MiniF2F dataset, we obtain its informal problem statement (in LaTex) and use it to generate a query to LemmaHead."): checked all quotations, reported numbers, section and figure references, technique steps, and link against the full paper; replaced shortened quotations, restored uncertainty about basic RAG's failure, clarified Pass@1 versus informal refinement, changed the link to the paper's arXiv identifier, and marked adaptations and conclusions as inferences; did not reproduce experiments or inspect implementation code.

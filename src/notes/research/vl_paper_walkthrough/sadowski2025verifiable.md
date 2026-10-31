@@ -40,8 +40,6 @@ Evidence. At 10% tolerance, the paper reports SOLAR averages of 76.4% for non-re
 
 Inference: the symbolic solver provides logically entailed facts only relative to the supplied T Box and ABox, and the Python interpreter, prompts, model outputs, ontology completeness, and 10%-tolerance benchmark remain trusted or measured components. The paper's error analysis found missing vocabulary for itemized deductions, omitted spouse relations, and incorrect filing-status precedence (Section 6.2, pp. 10–11). Inference: these failures show that a consistent solver cannot repair an incomplete ontology or an incorrect interpreter.
 
-Inference: the threat to agent-written verified Rust is concentrated at the specification boundary. SOLAR’s decomposition is a useful front end for proposing predicates and contracts, but it does not verify that natural-language statutes were formalized completely, nor that generated code implements all precedence and exception rules. VL should reuse the inspectable TBox/ABox and failure taxonomy, while independently proving the Rust interpreter and checking generated specifications against source law.
-
 ## techniques for the catalog
 
 - T Box/ABox separation — store reusable statute vocabulary and rules separately from case facts, then derive explicit assertions
@@ -49,4 +47,3 @@ Inference: the threat to agent-written verified Rust is concentrated at the spec
 - multi-agent ontology refinement — extract concepts and rules, integrate them, validate, and route sample failures back to the responsible artifact
 - 
 - SMT-backed query application — map text to an ABox, infer entailed facts with a solver, and run a deterministic interpreter
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Following the approach taken in LegalBench, we use the 10% tolerance threshold i.e., an answer is considered successful as long as it is within 10% of the target value."): read the whole paper text and checked every quotation, number, section and page reference, and the technique steps against it, and recomputed the Table 1 averages (76.4% and 82.3%); changed the KB formula wording, added the Chain-of-Code comparison and reasoning-model results, removed an unsupported remark about "denominators", and marked own conclusions "Inference:"; did not check the cited external works, the GitHub code, or the figures as images.

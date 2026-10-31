@@ -50,16 +50,8 @@ Proved: functional correctness theorems for the CDLL implementation, including `
 
 Inference: the paper's numbers are consistent as stated: “over 700” source lines and “890 lines” after translation are different measures, and “approximately 160” is a theorem count rather than a percentage. No denominator is supplied for the set of attempted programs, so a success rate cannot be computed.
 
-## relation to Verus and product threat
-
-Inference: the paper establishes that a restricted Rust-to-ACL2 pipeline can automate proofs of an index-backed cyclic data structure; it does not establish that Verus can verify arbitrary cyclic Rust or that ACL2 is superior to Verus. Inference: Verus could reuse the paper's decomposition—representation invariant, guarded mutators, and inverse-operation theorem—but would express it with Rust contracts, spec functions, ghost state, and proof functions. Inference: the main threat to agent-written verified Rust is specification and model drift: an agent may prove a clean array model while changing the executable representation, bounds, or link semantics. The paper's explicit translation chain suggests checking source-to-model correspondence as a separate assurance obligation.
-
-Existing work the paper says is already done includes Creusot, Prusti, RustHorn, Kani, and Verus as Rust verification systems (Section 7, p. 171), plus prior RAR examples for cryptography, JSON parsing, and array-backed data types (Section 3, p. 163). VL should not redo the claim that a restricted Rust subset can be translated to ACL2; it should test whether the same invariants and inverse-operation proofs reduce effort in actual Verus code.
-
 ## techniques for the catalog
 
 - RAR restriction and translation — constrain Rust to a RAC-equivalent subset, transpile with Plexi, and translate RAC into ACL2 for proof and hardware/software outputs
 - index-backed cyclic representation — represent circular links with fixed-array indices and explicit bounds to avoid cyclic ownership issues
 - invariant-first data-structure proofs — define a complete well-formedness predicate, require operation-specific hypotheses, and prove functional theorems such as restore-after-remove
-
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "The first thing to note about Fig. 6 is that, even though we are two translation steps away from the original RAR source, the translated function is nonetheless quite readable, which is a rare thing for machine-generated code."): read the whole paper text and checked every quotation, page and section reference, the 700/890 line counts, the 160-theorem count, the guards and fields in Figures 4 and 5, the cdllp definition and the restore-of-remove theorem against it; changed the link to the DOI printed on the paper's first page, removed two trailing periods that were inside quotations but not in the paper, rewrote the list of theorem families to the paper's own names, and marked as Inference the trusted-chain list, the hardware-layout remark and the reliance on record and RTL reasoning; did not check the Verus-form paragraphs against Verus documentation, the cited related-work papers, or the ACL2 books (not public in the paper).

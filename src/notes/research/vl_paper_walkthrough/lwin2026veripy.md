@@ -6,8 +6,6 @@ Tag: `lwin2026veripy`, [paper](https://doi.org/10.48550/arxiv.2610.02814)
 
 Lwin presents VeriPy, an implemented workflow that keeps Python source, contracts, backend proofs, native callers, and old/new compatibility checks connected. The abstract states: “Developers and agents express contracts, invariants, and proof hooks as Python comments, then refine checked auxiliary lemmas using source-located diagnostics.” (Abstract, p. 1). Direct AST encoders emit Dafny or Lean while preserving admitted executable bodies. A relational product checks old-domain inclusion and equality of returned values and modeled exception outcomes. This is a workflow and evaluation paper, not a Verus implementation; its reported results are for Python, Dafny 4.11.0, Lean 4.33.1, and pinned repositories.
 
-Inference: the most relevant VL lesson is to make each generated artifact traceable from source contract to checked proof and to treat compatibility as a separate relational obligation. VeriPy's Python comments, sidecars, and encoders do not transfer directly to Rust/Verus.
-
 ## technique 1: source-located contracts, invariants, and proof hooks
 
 what it is: put preconditions, postconditions, loop invariants, decreases measures, and named proof calls beside executable statements as comments. The implementation remains available to native callers; annotations are interpreted by VeriPy and erased for execution.
@@ -54,7 +52,7 @@ how to do it:
 4. gate sidecars: reject explicit assumptions and axiomatic additions in Dafny; restrict declarations and audit axioms in Lean (Section 3.2, p. 4)
 5. retain backend identity, artifact hashes, and source/contract provenance in the report
 
-Verus form. Inference: Verus is itself the backend for VL, so an analogous pipeline should emit one complete Rust/Verus artifact and run the actual verifier. Use only constructs documented in the local Verus guide: `spec fn`, `proof fn`, `requires`, `ensures`, `assert`, and loop invariants. Do not mark the function under verification `external_body`; use that only for explicitly trusted external code.
+Verus form.
 
 evidence and limits: an audit found that a Lean sidecar could introduce an ambient `False` hypothesis while the frontend reported the unconditional contract as proved; VeriPy fixed this by rejecting ambient declarations and retaining a reproducer (Section 3.2, p. 4). Backend exit codes or axiom lists alone are therefore insufficient. There is no mechanized end-to-end soundness theorem for the complete encoder.
 
@@ -102,15 +100,9 @@ how to do it:
 4. count joint functional-and-compatibility proofs, first-response completions, responses, and failure categories
 5. run a separate diagnostic only when public library information is equal; do not pool it with the primary effect (Section 5.3, pp. 7–8)
 
-Verus form. Inference: run the same design with VL agents, pin Verus and Rust versions, and separate contract changes from code changes. Count proof success over trial repetitions, classify unsupported/toolchain/specification failures, and review whether a passing contract still states the intended behavior.
+Verus form.
 
 evidence and limits: Reuse proves 14/24 trials (58.3%) and Rebuild 10/24 (41.7%); these are 24 trials per arm with repetitions, not independent samples. The paper says the gap occurs only in Packaging and is sensitive to library information: a post-hoc equal-regex diagnostic passes 4/4 in both arms (Section 5.3, p. 8). Thus the primary difference does not isolate a general benefit from proof reuse.
-
-## evidence boundary and implications for VL
-
-VeriPy's strongest evidence is 25 proof units across seven repositories, all 25 byte-identical annotated sources verified in both backends at one checkpoint, 50 successful invocations, 1,341 passing regressions, the scoped compatibility table, and frozen maintenance trials. These numbers describe selected units and pinned environments. The authors state that the components “are not a representative sample of Python projects.” (Section 5, p. 5). Trusted parts include the admission checker, encoders, sidecar gates, dependency models, runtime, backend kernels/solvers, and specification adequacy; the full conjunction has not been mechanized.
-
-Inference: the threat to agent-written verified Rust is high where source-to-model drift, stale dependencies, weak contracts, or proof sidecars can hide behavior changes. VL should not redo VeriPy's Python encoder or its selected repository cohort. It can adapt source-bound artifact hashes, explicit admission, differential execution, and relational old/new proofs to Rust/Verus, then measure contract-review errors and missed compatibility changes.
 
 ## techniques for the catalog
 
@@ -120,5 +112,3 @@ Inference: the threat to agent-written verified Rust is high where source-to-mod
 - guarded differential execution — compare native and translated behavior while treating tests as auxiliary evidence
 - relational compatibility product — prove old-domain inclusion and equality of declared observations
 - frozen agent maintenance trial — compare proof reuse and rebuild under identical budgets with repeated denominators
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

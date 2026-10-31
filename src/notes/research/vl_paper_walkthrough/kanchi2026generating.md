@@ -44,14 +44,8 @@ Verus form: Inference: use build output, `verus` diagnostics, and runtime tests 
 
 evidence: GPT-5.1 labeled 103 tests triggering, 35 non-triggering, and 14 unknown; interpreting unknown as unsuccessful gives 103/152 correct (68%). For triggering labels, 69/103 were correct (67%); for non-triggering, 34/49 (69%). Confidence did not correlate with accuracy because GPT always returned high confidence (Section 4.5). Codex self-critique was correct for compilation on 134/152 (88%) and PoV demonstration on 94/152 (62%).
 
-## comparison, assumptions, and VL threat
-In an ablation on the 33-sample dataset, GPT-5.2-Codex produced 23 manually PoV-demonstrating tests, Gemini Code Assist 11, and Mistral Vibe 12; the prior LLM tool produced 5 (Table 1). These denominators are 33 tasks. Results depend on Java projects, available exemplars, CVE descriptions, build reproducibility, and manual labeling. The authors could not compile 15 of 49 original pairs and excluded one patched dependency, leaving 33 (Section 4.1).
-
-The paper measures executable exploit evidence; it does not prove that all reachable vulnerabilities are found or that passing tests imply soundness. Trust includes Codex/GPT outputs, build tools, manually judged PoV behavior, and the vulnerable-version assumptions. Inference: VL can reuse the staged architecture for regression tests around verified Rust APIs, but must put Verus proof checking ahead of acceptance. Existing work already addresses context-rich prompts, iterative execution feedback, and log-based assessment; VL should not treat these as formal verification. Threat to agent-written verified Rust is moderate for test-generation productivity and high only if dynamic tests replace machine-checked specifications.
-
 ## techniques for the catalog
 - sink-to-source call paths: enumerate public attack surfaces reaching vulnerable APIs through private intermediaries
 - exemplar-guided generation: adapt a known exploit payload to each application entry point
 - execution feedback loop: compile, run, self-critique, and revise tests for bounded trials
 - log-grounded LLM assessment: summarize build/runtime evidence and classify trigger status with strict JSON
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

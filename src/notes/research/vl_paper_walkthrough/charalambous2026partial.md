@@ -64,8 +64,6 @@ Theorem T1 proves transfer from enforcement and replacement to conditional equiv
 
 Reported engineering limits include missing indirect, virtual, and macro-expanded calls in the tree-sitter graph; renaming that misses identifiers in macro bodies; side-effect comparison limited to writes through pointer parameters; and JUDGE's primitive-signature restriction. Cross-tool comparisons use published results rather than reruns and different success criteria. Benchmarks are small: 51 Frama-C programs, six X509 functions, and crafted EqBench pairs. The paper gives inconsistent average Frama-C sizes, approximately 20 lines in Section V-A and seventeen in V-G. Large production C and C++ remain outside the demonstrated generalization (Section V-G, PDF pp. 9–10).
 
-Inference: For VeruLaw, the reusable idea is to infer caller-sufficient specifications from verifier counterexamples and use them in old/new relational proofs. Applying it to Rust ownership, changed signatures, or product-scale code requires additional work; this paper does not demonstrate those capabilities.
-
 ## techniques for the catalog
 
 - partial one-sided contract — enforce an old-function contract, replace the old call by its over-approximation, and compare caller-observed outputs with the new function
@@ -77,5 +75,3 @@ Inference: For VeruLaw, the reusable idea is to infer caller-sufficient specific
 - semantic contract tightness — compare admit-set inclusion in both directions, accounting for preconditions, frames, and unsupported postconditions
 
 - sequential regression portfolio — run the contract-free check first and infer contracts only for pairs it leaves undecided, accepting additional false alarms as a precision cost
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each check is a pure validity query over a nondeterministic input and output, with no body of f involved (neither enforcement nor replacement); our implementation discharges each as a single SMT query."): read the entire paper, including references; checked quotations, numerical results, section and PDF-page references, theorem assumptions, and technique steps; corrected the paper link, references, admit-set definition, height example, success-rate denominators, comparison limits, and unsupported Verus details; did not inspect tool implementations, verify external references, or reproduce experiments.

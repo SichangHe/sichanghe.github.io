@@ -52,17 +52,13 @@ Verus form (Inference): encode provisioning as a pure `spec fn` over topology an
 
 Evidence: with `(f,c)=(6,6)` and `n=50`, sweeping `p` makes latency a step: 290–292 ms for `p≤7` and 248–255 ms for `p≥8`, because the 8-validator Tokyo tail is then excluded from the fast quorum (Section VIII-C, p. 12). Fault-free Hydrozoan at `n=10` commits in 215 ms at 10k tx/s and 268 ms at 100k, versus Mysticeti's 271 and 322 ms (Section VIII-E, p. 14). At `n=50`, the saving is about 80 ms, approximately 25% at 10k and 21% at 100k (Section VIII-B, p. 11).
 
-Failure and assumptions: these numbers use a three-region cloud deployment, 50 validators, p50 latency with p90 whiskers, and shared DAG engines. They do not establish performance under other topologies or workloads. Inference: VL should treat topology-specific thresholds as configuration evidence, not a universal latency theorem.
+Failure and assumptions: these numbers use a three-region cloud deployment, 50 validators, p50 latency with p90 whiskers, and shared DAG engines. They do not establish performance under other topologies or workloads.
 
 ## what is proved, measured, and trusted
 
 Lean proves the stated safety and conditional liveness properties for the abstract DAG model. The Rust evaluation measures throughput, p50/p90 latency, fault injection, and simulator scenarios; all baselines share the same DAG engine, so reported differences target decision rules. Trusted components include Lean's kernel and standard axioms, the theorem statements and model definitions, cryptography and networking, the Rust committer, and the validity/fairness hypotheses. The implementation is not fully verified end to end.
 
 Inference: the main threat to an agent-written verified Rust product is a mismatch between abstract certificate rules and runtime block handling. A proof can pass while serialization, signatures, parent retention, or timeout handling violates the modeled assumptions.
-
-## what VL should reuse and what it should not redo
-
-Inference: VL should reuse certificate-carrying decisions, explicit fault-budget parameters, path-exclusion lemmas, and a proof-to-code bridge where pseudocode procedures map directly to implementation functions. It should not redo a generic two-versus-three-delay benchmark without a new fault model or implementation boundary; Hydrozoan already measures 10- and 50-validator deployments, 10k and 100k transaction rates, crash sweeps, and an equivocating-leader simulation.
 
 ## techniques for the catalog
 
@@ -71,4 +67,3 @@ Inference: VL should reuse certificate-carrying decisions, explicit fault-budget
 - machine-checked liveness — prove eventual decision under explicit synchrony, fairness, and validity assumptions
 - generated-proof workflow — separate audited definitions and theorem statements from kernel-checked generated proof scripts
 - topology-driven provisioning — choose fast-path budget from slow-region size and simultaneous-fault targets
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

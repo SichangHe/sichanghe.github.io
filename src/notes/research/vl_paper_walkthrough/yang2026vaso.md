@@ -29,15 +29,9 @@ VASO turns verifier outcomes into reusable contract updates. The checker returns
 
 Inference: this is counterexample-guided contract repair for Verus. A failed proof or checked trace should be summarized into a concrete invariant or postcondition edit, then the Rust proof rerun. The update must distinguish a real counterexample from an incomplete proof; otherwise an agent may weaken a contract to hide a bug.
 
-## evidence, assumptions, and product threat
-Experiments use GPT-5-nano for skill generation, GPT-4o-mini for planning, 11 temporal specifications, and 20 generated skills. Initially 89% of skills satisfied all contracts; after one feedback iteration feasibility was 97% (section 5, p. 7; denominator 20 skills). Safety scores use the fraction of specifications satisfied. Across 100 initial and 100 optimized plans, optimized skills reached about 95% safety after seven steps while task feasibility remained 97%; the full specification evaluation covers 400 plans, with global rules over all 400 and local rules over 40 plans per skill (Appendix B, pp. 13, 17). Held-out evaluation uses four skills × (5 seen + 5 unseen prompts) × 5 plans = 200 plans; unseen prompts obtain 92–100% safety and 80–96% completion (Appendix B, p. 17). Table 1 reports automatic proposition alignment safety 96.8% and completion 86.5%, versus handcrafted alignment 97.2% and 85.3%; VASO overall safety is reported as 96.6% with competitive completion (section 5, p. 8).
-
-What is proved is model-checker satisfaction of the encoded automaton and specifications, conditional on proposition alignment and environment model `M`. Real-robot executions demonstrate feasibility but do not prove all possible dynamics. Trusted parts include generated label functions, NuSMV, the environment abstraction, planner/model outputs, and contract interpretation. Inference: threat to VL is moderate and specific: VASO supplies a practical verifier-feedback loop for agent-written contracts, but its robotics assumptions and LTL tooling do not establish Rust memory or functional correctness. VL should adopt explicit counterexample-to-contract updates and track denominators, while proving the concrete Rust/API correspondence in Verus.
-
 ## techniques for the catalog
 - semantic skill contracts — couple global/local temporal rules, proposition labels, and a reusable plan template
 - feasibility filtering — model-check a universal proposition system to reject contradictory local rules before planning
 - plan-to-automaton compilation — map ordered executable steps to labeled states and transitions for model checking
 - textual-gradient refinement — convert violated formulas and traces into contract updates without changing model weights
 - proposition-alignment auditing — measure and verify the mapping from concrete API behavior to symbolic propositions
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

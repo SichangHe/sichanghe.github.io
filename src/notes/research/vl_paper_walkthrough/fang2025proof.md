@@ -5,8 +5,6 @@ Tag: `fang2025proof`, [paper](https://arxiv.org/abs/2510.10131v2)
 
 Strat2Rocq extracts intermediate proof strategies from a language model, formalizes them as reusable Rocq lemmas, and gives those lemmas to CoqHammer. The abstract describes two stages: “In an offline stage, Strat2Rocq extracts proof strategies from LLMs and formalizes them as lemmas in Rocq. In an online stage, given a theorem to be proved, Strat2Rocq augments the proof context with these extracted lemmas, enabling CoqHammer to leverage the LLM-derived strategies for more effective automated proving.” (Abstract, PDF page 1) On 2,394 theorems from CompCert, Ext-Lib, Coq-Art, and Vfa, Claude 3.7 Sonnet produced 4,583 proved extracted lemmas, 1.91 per original theorem on average (Table 1). With three-fold cross-validation and a 20-second CoqHammer timeout, the total proved-theorem count rose from 880 to 998, a 13.41% increase (Table 2). The percentage uses 880 baseline proofs as its denominator: (998 − 880)/880 = 13.41%. The evaluation corpus contains 2,394 theorems.
 
-Inference: the transferable idea for VeruLaw is to mine reusable Verus lemmas from agent traces and insert only verifier-checked lemmas into later proof contexts. The paper uses Rocq and CoqHammer; it does not show that extracted lemmas help Rust ownership or concurrent invariants.
-
 ## technique 1: offline natural-language strategy extraction
 
 What it is. For each training theorem, Strat2Rocq first asks the LLM for a step-by-step natural-language proof. The authors argue that LLMs are stronger at producing natural-language proofs and hypothesize that these proofs reflect internal reasoning: “Consequently, the NL proof is likely to reflect the internal reasoning process of the LLM.” (Section 2.1, PDF page 5). Section 2.1 says the prompt supplies “Type Definitions,” “Function Definitions,” and “Script So Far” before the theorem statement.
@@ -104,12 +102,6 @@ The abstract claims a 13.41% success-rate increase; Table 2's raw counts show 11
 
 The paper's direct-to-formal ablation removes NL proof generation and yields 1,670 lemmas versus 4,583 (a 63.56% decrease) and 936 versus 998 proved theorems (a 6.21% decrease). The counts support the stated percentages: 2,913/4,583 = 63.56% and 62/998 = 6.21%. Failures include hallucinated logic and failure to identify arithmetic lemmas. Inference: Verus's richer state and ownership context may increase these failure modes, so lemma provenance and automated recompilation are essential.
 
-## what VL should reuse and what it should not redo
-
-Inference: VL can reuse offline proof-plan extraction, generalization into small reusable lemmas, verifier-backed repair, online context augmentation, relevance retrieval, and evaluation with held-out theorem sets. Tables 1–4 establish results for Rocq projects and the tested configurations. Inference: VL should test whether mined Verus lemmas improve automation, survive crate upgrades, reduce proof repair time, or cause solver instability.
-
-Threat to a product of agent-written verified Rust. Inference: the threat is material to proof throughput and automation because a mined library could let agents solve recurring ownership or invariant obligations without human invention. Inference: Verus checking limits what the resulting proofs establish to the supplied contracts and assumptions; weak contracts, unsound external assumptions, or stale dependency specifications can still make a reusable lemma misleading. The paper contains no evidence about Rust execution, unsafe code, or production APIs.
-
 ## techniques for the catalog
 
 - offline NL proof planning — prompt an LLM with definitions and file context to expose intermediate proof steps
@@ -122,4 +114,3 @@ Threat to a product of agent-written verified Rust. Inference: the threat is mat
 ## evidence references
 
 The workflow and prompt examples are in Sections 2–2.2, PDF pages 3–7. Online proving and implementation are Sections 2.3–2.4, PDF pages 7–8. Dataset and extraction counts are Section 3 and Table 1, PDF pages 8–10. The paper’s first-page identifier is arXiv:2510.10131v2, dated 4 March 2026; the existing citation tag is retained. CoqHammer results and case studies are Section 3.2 and Table 2, PDF pages 11–12. Backend and ablation results are Sections 3.3–3.4 and Table 3, PDF pages 12–13. LLM-agent results are Section 3.5 and Table 4, PDF pages 13–14.
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Specifically, we partition the collected theorems into three disjoint parts with equal size, and conduct three separate experiments."): checked the complete paper, all study quotations, numbers, section/page references, and technique steps; corrected the improvement denominator, reasoning claims, extraction workflow, proof-trust discussion, and unsupported retrieval-cost claim; flagged the printed contra/contra_2 inconsistency and undocumented tactic metric; did not reproduce experiments, inspect implementation code, or audit proof assumptions.

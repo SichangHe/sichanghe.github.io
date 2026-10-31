@@ -45,7 +45,7 @@ Verus form
 Inference: use a Rust-side generator for theorem statements, compile each candidate with Verus, and use verification success as the binary reward. Keep fuser and prover models separate. The GRPO mathematics and KL regularization are training infrastructure, not Verus constructs; the Verus portion is only the generated contract/proof checked by Verus.
 
 evidence, trust, and threat
-Table 1 (p.7) reports the MiniF2F and ProofNet pass@32 values above. The paper also reports an average relative improvement of 4.20% in the abstract, but the table contains model-specific absolute percentages; the denominator and baseline must be retained when quoting either. Inference: applying the loop requires trust in the proof checker and reward instrumentation, plus checks that autoformalized statements express the intended problems. Inference: for VL, the technique threatens proof-generation cost and model differentiation, but does not remove the need for Verus specifications, trusted libraries, and human review of generated contracts. Inference: VL should measure the benefit on a Verus benchmark and define how it handles specification changes before adopting this training method.
+Table 1 (p.7) reports the MiniF2F and ProofNet pass@32 values above. The paper also reports an average relative improvement of 4.20% in the abstract, but the table contains model-specific absolute percentages; the denominator and baseline must be retained when quoting either.
 
 ## techniques for the catalog
 
@@ -54,4 +54,3 @@ Table 1 (p.7) reports the MiniF2F and ProofNet pass@32 values above. The paper a
 - verifier-rewarded co-training — train a statement fuser to lower prover pass rate while training the prover to raise it, filtering by verifier outcomes
 
 - soft statement-modification penalty — penalize but do not ban model changes to a formal statement, balancing self-correction against reward hacking
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In contrast, our fusion approach creates a more effective implicit curriculum by combining distinct concepts from multiple problems, thereby validating the design of the Statement Fuser."): checked all paper text, quotations, numbers, section/page references, and technique steps; corrected the ProofNet source and filter page, distinguished modification-rate definitions, clarified the printed prover reward and evaluation rules, removed an unsupported external-reference claim, and marked recommendations as inferences; did not reproduce experiments, inspect code, or verify the appendix proofs with Lean.

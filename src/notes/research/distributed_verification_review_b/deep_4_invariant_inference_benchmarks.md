@@ -217,7 +217,6 @@ The preceding source links preserve the exact input files. Some contain supplied
 
 DuoAI Table 1 (p. 497), footnote c, states that a comparison input had “3 bugs”. Footnote i states that IC3PO evaluations “manually provided clauses”. These are claims by the DuoAI authors about other tools' evaluations. The IC3PO paper should be read alongside that criticism. **Inference:** evaluation must freeze exact commits and distinguish raw specifications, additional predicates, invariant templates, and strengthening assertions. Counting protocol names alone conceals different amounts of human guidance.
 
-
 ### IC3PO paper's actual 29-protocol experiment (distinct from the larger repository)
 
 Table 2, §8 (pp. 12–13 of arXiv PDF) reports the following complete set: tla-consensus; tla-tcommit; i4-lock-server; ex-quorum-leader-election; pyv-toy-consensus-forall; tla-simple; ex-lockserv-automaton; tla-simpleregular; pyv-sharded-kv; pyv-lockserv; tla-twophase; i4-learning-switch; ex-simple-decentralized-lock; i4-two-phase-commit; pyv-consensus-wo-decide; pyv-consensus-forall; pyv-learning-switch; i4-chord-ring-maintenance; pyv-sharded-kv-no-lost-keys; ex-naive-consensus; pyv-client-server-ae; ex-simple-election; pyv-toy-consensus-epr; ex-toy-consensus; pyv-client-server-db-ae; pyv-hybrid-reliable-broadcast; pyv-firewall; ex-majorityset-leader-election; pyv-consensus-epr. Table 2's row is “No. of problems solved (out of 29)”; IC3PO's entry is 29. [Experiment release](https://github.com/aman-goel/nfm2021exp) is referenced by the paper (p. 16); exact release download not inspected because GitHub API rate limiting started. `pyv-` here corresponds to the `mypyv/` group of ivybench.
@@ -291,7 +290,6 @@ There are 39 physical `.pyv` files in that directory at the inspected checkout. 
 | tlb_safety / prime | error state is unreachable |
 | Paxos families | all decisions agree, per instance where indexed |
 
-
 ### P-FOL-IC3: full 30-model experiment recovered
 
 **Inferring Invariants with Quantifier Alternations: Taming the Search Space Explosion**, Jason R. Koenig, Oded Padon, Sharon Shoham, Alex Aiken, TACAS 2022, pp. 338–356. [Open publisher PDF](https://link.springer.com/content/pdf/10.1007/978-3-030-99524-9_18.pdf), [implementation branch](https://github.com/wilcoxjay/mypyvy/tree/p-fol-ic3), [inspected branch snapshot](https://github.com/wilcoxjay/mypyvy/tree/14269ba7c343ff51fdb737588b80806f5eed0c9d). The paper uses breadth-first lemma search and a restricted formula shape that permits both conjunctions and disjunctions. Section 6.1, printed p. 349: “All our examples are safe transition systems with a known human-written invariant.” Its experimental set has 30 models, not the PLDI 2020 artifact's 19 files.
@@ -330,7 +328,6 @@ The artifact says its Table 2 uses “20 benchmarks (10 safe and 10 unsafe)”. 
 | cache-u → cache_unsafe | valid unmodified cache lines equal memory; unsafe |
 
 For exact multi-tool experiment inputs and logs, download the Zenodo VM (`induction-duality-popl-2022-artifact.ova`, about 5.45 GB). The instructions identify `popl-2022-experiments/inputs` and record mypyvy commit `5dcbb19`, SWISS `348b9c4`, IC3PO experiment commit `9d3a54b`, and DistAI `0ec9389`. This resolves the fixed experiment subset; a changing repository's larger example inventory remains a different object.
-
 
 ## TLA+ invariant inference, LLM proof assistance, and protocol benchmark sets
 
@@ -533,9 +530,7 @@ Repository snapshot checked 6 October 2026: f1b902dc0801cf435cb9dd6e6be495d5ed12
 | `toy_consensus_forall` | `Inv` |
 | `two_phase_commit` | `Safety` |
 
-
 Repository manifests checked at these commits: endive `8b6f2abd1988eeb308f965813635e9871f253e2d`; LMGPA `c27bf4f657c10254b8df8c66ca37f1cdbbf66f1e`; Basilisk `394ce1412df9c6e59efe6a00207f0f468400aa61`; Sift `a76729730c6698f5bd03d73f4d966048b29c9f92`; Kondo `1d6c43e475cadfdf7a10bfb5137cd777ccf2138f`.
-
 
 ## Decidability, parameterized verification, and refinement
 
@@ -648,7 +643,6 @@ The paper’s tool/model download pointer is `http://www.infsec.ethz.ch/research
 
 Web search tool returns HTTP404; DBLP gives a bot challenge; Semantic Scholar429; OpenAlex's shared-IP free daily budget exhausted. Primary GitHub, arXiv PDFs and Civl site work. Unresolved: complete Message Chains artifact (the names and properties are recovered below), Bakery open PDF/artifact, original six-variant EPR artifact, historical bounded-horizon artifact URL, CAV 2017 cutoff numerical bounds/protocol list, cutoff 2022 source download. QSM-Cutoff is assessed in the next section. These are explicit gaps, not evidence that the work does not exist.
 
-
 ### Cutoff automation with seven concrete protocols
 
 **Automating and Mechanizing Cutoff-based Verification of Distributed Protocols**, Shreesha G. Bhat, Kartik Nagar, arXiv 2022 (venue unconfirmed). [PDF](https://arxiv.org/abs/2211.15175). Read sections3–6/Table 2. Section 6 quote: “We use Z3 [12] as our backend SMT solver.” Quote section 6.1: “we cannot have two nodes where one decides to commit and the other aborts”. The latter is the2PC property. The approach proves that a small modified system simulates arbitrary instances, then verifies that small system; it synthesizes mappings and simulation obligations using static analysis. Three cases need human changes. No source repository found in paper.
@@ -708,7 +702,6 @@ The paper's model/proof sizes are literal data from §6.4. Verification times ar
 
 **Download limitation:** the current linked repository has `examples/chain_replication.smp`, `client_server_ae.smp`, `client_server_db_ae.smp`, `firewall.smp`, `fuzz.smp`, `ring_id.smp`, `ring_id_not_dead.smp`, and `submit.smp`, with execution data. It does not ship a full current manifest of all 19 evaluated models. The original 16 mypyvy sources are downloadable from the PLDI 2020 branch, but those are not identical UPVerifier translations. No complete fixed UPVerifier benchmark archive was located, including the industrial cases. The paper nevertheless establishes their names and guarantees.
 
-
 ### QSM-Cutoff: a full 19-model 2025 set
 
 **QSM-Cutoff: Systematic Derivation of Quantified Cutoff Formulas for Distributed Protocols**, Yun-Rong Luo, Aman Goel, Karem Sakallah, CAV 2025, pp. 263–286. [Open PDF](https://link.springer.com/content/pdf/10.1007/978-3-031-98682-6_14.pdf), [tool, scripts and CAV logs](https://github.com/QSM-Cutoff/QSM-Cutoff), [inputs](https://github.com/QSM-Cutoff/ivybench). The PDF and repository README were read. 
@@ -738,9 +731,6 @@ The method enumerates reachable finite states while exploiting symmetry, minimiz
 | quorum-leader-election-wo-maj | node=5, node-set=10; unique leader |
 
 Properties are interpretations of the shared Ivy models listed elsewhere; use this fork's exact files to reproduce the results. Ordered ballot/epoch/ticket protocols such as Paxos and Bakery are future extensions in §9, not members of this evaluated set.
-
-
-## Additional proof and inference workflows
 
 ### Veil: proofs in Lean with automatic first-order checks
 
@@ -810,8 +800,6 @@ The checked paper has no artifact URL. GitHub repository search for `DissProve` 
 5. Evaluate liveness separately, preserving fairness, fault, threshold, timing, and adversary assumptions. ByMC provides relevant progress tasks. Agreement or mutual exclusion alone does not establish termination, availability, or eventual election.
 
 **Remaining gaps:** complete fixed UPVerifier translations/industrial models; downloadable IC3Syn proofs/code; cited Scimitar NFM 2026 archive; DissProve and cutoff2022 source archives; original six-variant EPR artifact; historical bounded-horizon archive; CAV 2017 cutoff paper's full benchmark list and bounds; open Bakery paper and its two exact model versions; open I4 and primal-dual paper PDFs. P-FOL-IC3's branch and paper list were found, but the exact experiment commit still needs confirmation. These are gaps in this review, not claims that artifacts never existed. Human effort is reported only where a source states it; file size alone is not effort.
-
-**Intake:** 35 distinct papers found, counting the older Scimitar draft separately from its final paper; 24 new PDFs saved by this research team. CIll is an explicitly adjacent hardware paper. The final benchmark lists, rather than a sum of overlapping protocol names, are the unit of coverage. PDFs reside in one directory per paper under `/hdd1/sichanghe/paper_collection`; title/author/venue/year labels identify them. The requested note is this file.
 
 Repository source links with file manifests use inspected or retrieved revisions. Versioned paper artifacts are preferred for experiment reproduction. Additional repository pins:
 

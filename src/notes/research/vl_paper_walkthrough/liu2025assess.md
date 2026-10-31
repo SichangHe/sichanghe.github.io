@@ -62,8 +62,6 @@ The paper documents two important failures. A limited tactic set misses a semant
 
 Theorem 1 proves existence and uniqueness of the maximal pseudometric under the stated constraints (section 3.3.1, p. 6; proof in Appendix C, pp. 16–17). The authors report: “The resulting EPLA benchmark, detailed in Table 2, comprises 1,247 annotated instances.” (section 4.1, p. 7) Experiments measure agreement with expert provability labels. Inference: interpreting these scores requires trusting Lean parsing, tactic semantics, the finite tactic catalogue, heuristic search, expert labels, ground-truth formalizations, threshold selection, and the assumption that those labels represent semantic equivalence. The paper does not evaluate Verus contracts or Rust code.
 
-Inference: VL could test whether a Verus adaptation helps users repair candidate specifications, while retaining final Verus verification. The paper's results alone do not establish that benefit.
-
 ## techniques for the catalog
 
 - operator-tree representation: parse formal statements into ordered trees with explicit operator slots and omitted redundant parentheses
@@ -73,4 +71,3 @@ Inference: VL could test whether a Verus adaptation helps users repair candidate
 - expert benchmark construction: compiler-filter generated statements and annotate provability plus pre/post-transformation likeness
 - threshold calibration: sweep score thresholds on the target benchmark and report the denominator and Kappa optimum
 - failure-aware triage: the authors propose using similarity and search results to locate near misses for expert review
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "By augmenting the structural comparison of operator trees with a set of semantic transformations, our method provides a more holistic and robust measure of statement similarity."): checked all paper text, study quotations, numbers, references, technique steps, and inference labels; corrected the unrelated DOI to this paper's arXiv link, page references, transformation wording, and the NLE return ambiguity; removed unsupported Verus prescriptions and risk claims; did not inspect code, rerun experiments, or validate a Verus adaptation.

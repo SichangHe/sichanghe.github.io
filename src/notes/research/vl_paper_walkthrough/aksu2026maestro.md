@@ -6,7 +6,7 @@ Tag: `aksu2026maestro`, [paper](http://arxiv.org/abs/2606.23983v1)
 
 Maestro Order is an orchestration harness for unreliable solvers. It composes four primitives, decompose, ensemble, verify, and recurse, behind a common interface and chooses where to spend a compute budget. The harness is intended to make reliability a property of the organization around a model, rather than a claim about one model. The abstract states: “The harness treats any model as a black-box base solver behind a uniform interface, layers a verifier ensemble whose discrimination is measured online, and allocates verification and voting to the stages with the highest marginal reliability per unit cost.” (abstract, PDF p. 1)
 
-The paper's quantitative results are a faithful Monte Carlo simulation of a parameterized solver/verifier model, not measurements from deployed language models. Its simulated base solver emits a correct candidate with probability p; a verifier accepts correct candidates with beta and wrong candidates with alpha; verifier discrimination is Lambda = beta/alpha. Each point uses 20,000–40,000 trials, with Monte Carlo reliability noise about plus or minus 0.004 and expected-call noise about plus or minus 0.1 (section 12, PDF p. 6). Inference: this scope is essential when applying the design to VL.
+The paper's quantitative results are a faithful Monte Carlo simulation of a parameterized solver/verifier model, not measurements from deployed language models. Its simulated base solver emits a correct candidate with probability p; a verifier accepts correct candidates with beta and wrong candidates with alpha; verifier discrimination is Lambda = beta/alpha. Each point uses 20,000–40,000 trials, with Monte Carlo reliability noise about plus or minus 0.004 and expected-call noise about plus or minus 0.1 (section 12, PDF p. 6).
 
 ## technique 1: use a common solver interface and shared, replayable state
 
@@ -31,7 +31,7 @@ Inference: Represent the blackboard as an executable Rust struct with explicit s
 
 evidence and limits
 
-The harness requires deterministic replay up to declared randomness, not deterministic model outputs. It also requires every call's model id, decoding parameters, seed, prompt hash, tool versions, tokens, latency, and cost to be recorded (section 11, PDF p. 5). Inference: without these fields a VL attestation cannot explain which verifier evidence produced a verdict or reproduce a failed proof run.
+The harness requires deterministic replay up to declared randomness, not deterministic model outputs. It also requires every call's model id, decoding parameters, seed, prompt hash, tool versions, tokens, latency, and cost to be recorded (section 11, PDF p. 5).
 
 ## technique 2: use verification checks as likelihood-ratio amplification
 
@@ -50,8 +50,6 @@ how to do it
 The simulation trace uses a base correctness of 0.55 and Lambda = 6. One prerequisite check reaches 0.880, two reach 0.978, three reach 0.996, and four reach 0.999, at expected calls 3.8, 7.4, 11.7, and 17.3 respectively (Table 2, PDF p. 5). The paper reports that “verification amplifies reliability geometrically” (abstract, PDF p. 1).
 
 Verus form
-
-Inference: A VL prerequisite check can run Verus on the candidate Rust and require a successful verifier result before accepting it. Prove the orchestration logic with a Verus state-machine invariant that a committed candidate has a recorded verifier pass, source hash, verifier configuration, and no failed prerequisite check. Inference: Verus can prove the bookkeeping and transition policy, but it cannot prove the empirical value of Lambda or that a generated contract is semantically adequate without a formalized intent relation.
 
 evidence and limits
 
@@ -78,7 +76,7 @@ Inference: This controller is ordinary executable Rust with a proof obligation f
 
 evidence and limits
 
-The paper's Figure 3 reports simulation trajectories: verify-only reaches 0.999 at about 17 calls, a hybrid at about 23, while vote-only remains below 0.98 at 60 calls for the stated weak base and Lambda = 6. These trajectories are from the parameterized simulation (section 13 and Figure 3, PDF p. 6). Their controller is greedy, and section 16 says the constrained optimum could be solved more globally when marginal estimates are reliable (PDF p. 9). Inference: VL should expose the controller's threshold, estimates, and stopping reason in its attestation and should treat the policy as a tunable operating point.
+The paper's Figure 3 reports simulation trajectories: verify-only reaches 0.999 at about 17 calls, a hybrid at about 23, while vote-only remains below 0.98 at 60 calls for the stated weak base and Lambda = 6. These trajectories are from the parameterized simulation (section 13 and Figure 3, PDF p. 6). Their controller is greedy, and section 16 says the constrained optimum could be solved more globally when marginal estimates are reliable (PDF p. 9).
 
 ## technique 4: measure and calibrate verifier discrimination online
 
@@ -99,11 +97,9 @@ The paper says: “Measure Λ, do not assume it.” (section 8, PDF p. 4)
 
 Verus form
 
-Inference: In VL, keep calibration data and verifier versions as immutable evidence records. Use Verus to prove that a calibration record's counts match its labeled decisions and that a prerequisite check uses only the selected calibration map. Inference: statistical confidence intervals, distribution shift, and estimates of beta/alpha require a statistical model outside ordinary Verus arithmetic; the product should report uncertainty rather than presenting the estimate as a proof.
-
 evidence and limits
 
-The paper's simulation assumes fixed beta, alpha, p, and correlation gamma within each run, while its limitations state that real systems violate those clean assumptions and require a full real-model evaluation (section 16, PDF p. 9). The reported Monte Carlo outputs therefore validate implementation of the equations, not deployment performance. Inference: a VL verifier that passes current repositories can still be gamed by future generators or fail after a model, prompt, dependency, or codebase shift.
+The paper's simulation assumes fixed beta, alpha, p, and correlation gamma within each run, while its limitations state that real systems violate those clean assumptions and require a full real-model evaluation (section 16, PDF p. 9). The reported Monte Carlo outputs therefore validate implementation of the equations, not deployment performance.
 
 ## technique 5: fail closed, verify decomposition, and refine on rejected evidence
 
@@ -111,15 +107,11 @@ fail-closed operation
 
 The harness treats malformed candidates, tool errors, timeouts, and verifier crashes as rejections (section 5, PDF p. 3). The paper states: “Tool/model errors are treated as rejections (fail closed), never as silent acceptances; timeouts count toward cost and trigger escalation or abstention rather than a guess.” (section 11, PDF p. 5) Inference: implement this by recording the error and its cost, preventing commitment, and retrying under the budget, escalating, or abstaining.
 
-Inference: For VL, a failed Verus run, compiler error, timeout, missing dependency, or malformed proof artifact must not become a passing project verdict. Use a Verus state invariant that only `Verified` states contain a successful verifier result tied to the exact source hash.
-
 decomposition with verification
 
 The paper treats decomposition as risky because serial errors compound. The planner emits a typed directed acyclic graph of subtasks, each with input/output types, dependencies, and a verifier. Static type compatibility is checked before model calls; the recombination step itself requires verification. The paper says: “Decompose only when the split is clean and checkable.” (section 9, PDF p. 5)
 
 Steps: propose a split only when subtasks are independent or cleanly ordered; require each subtask to have an individual verifier; verify every result before it flows downstream; verify recombination; allocate more checks to high-fan-out or critical-path nodes; decline the split in favor of a monolithic solve when no clean check exists.
-
-Inference: For VL, decompose a Rust project by modules or functions only when each module has a contract and the integration proof checks representation and ownership assumptions. Verus `requires`, `ensures`, loop `invariant`, and `proof fn` lemmas can express local obligations; the paper's typed DAG and prerequisite-check policy must be implemented as ordinary Rust orchestration.
 
 refinement and abstention
 
@@ -135,9 +127,7 @@ For programs, the paper recommends executing candidates in a sandbox against uni
 
 The paper attributes the reliability laws to the companion Odds Law report; this paper supplies the harness design, pseudocode, engineering guidance, and parameterized Monte Carlo results (sections 1–3, PDF pp. 1–2). It does not present a Verus proof or an independent formal verification of the harness. The simulation reproduces the closed-form verification curve within plus or minus 0.004 for the tested verification-check counts and verifiers (section 13, PDF p. 6). The paper does not establish absolute correctness rates for GPT, Rust, Verus, or a live product. Inference: applying the results requires trusting the simulator, the model of conditional independence or correlation, calibration data, verifier implementations, sandbox isolation, source and trace hashes, and the semantic correctness of the candidate task.
 
-Inference: verification checks and specification adequacy are possible failure points for agent-written verified Rust. A controller can make a trustworthy record that Verus passed, yet the underlying contract may omit behavior, rely on an unsound external assumption, or be accepted by a checker whose effective false-acceptance has drifted. Inference: VL should combine fail-closed Verus results, contract adequacy checks, diverse tests, calibration, source-attached traces, and explicit abstention.
-
-The paper's catalog already includes model-agnostic interfaces, verifier ensembles, log-odds prerequisite checks, greedy budget allocation, online discrimination measurement, fail-closed execution, typed decomposition, refinement, and abstention. Inference: VL should not redo these as if they were new. Inference: a useful extension is to measure their behavior on actual Verus proof generation, including contract-vacuity attacks, solver correlation, dependency upgrades, and repair cost.
+The paper's catalog already includes model-agnostic interfaces, verifier ensembles, log-odds prerequisite checks, greedy budget allocation, online discrimination measurement, fail-closed execution, typed decomposition, refinement, and abstention.
 
 ## techniques for the catalog
 
@@ -148,5 +138,3 @@ The paper's catalog already includes model-agnostic interfaces, verifier ensembl
 - fail-closed orchestration: turn errors, timeouts, malformed candidates, and crashes into rejection or abstention
 - verified decomposition and refinement: split only into typed, checkable subtasks and regenerate after rejected evidence
 - diversity and executable checking: reduce correlated errors and prefer tests, type checks, execution, or machine proofs over plausibility judgments
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Solver and verifier calls are keyed by (input, config) and cached, so retries and refinement loops do not double-bill and so ablations reuse work."): read the entire paper; checked quotations, numbers, section and PDF page references, interfaces, algorithms, calibration, decomposition, and evidence limits; corrected page references, threshold and retry details, the ECE claim, and the source of the theory, and flagged the conflicting 0.90 cost row; retained VL and Verus proposals as Inference; did not run the released simulation or evaluate real models, Verus code, or the companion theory.

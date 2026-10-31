@@ -41,7 +41,7 @@ What it is. The pipeline checks emitted SystemVerilog separately from Lean sourc
 
 How to apply it. (1) Extract SystemVerilog from the typed source. (2) Run linting and reference-testbench simulation. (3) Run Yosys equivalence against the reference RTL using the configured combinational and sequential procedures. (4) Run synthesis, place-and-route, DRC, and LVS when backend realizability is required. (5) Keep the evidence categories separate: simulation covers exercised traces, Yosys covers its model and procedure, and Lean covers source definitions. The paper states: “A central verification boundary lies between the Lean source semantics and the emitted SystemVerilog.” (Appendix E, p. 25.)
 
-Verus form. Inference: Verus can prove the Rust-level contract, while a separate executable test, model checker, or equivalence checker would be needed for generated machine code or FFI behavior. Verus does not provide CKTLEAN's HDL extraction or Yosys integration. Inference: if VL emits Rust that calls unverified libraries, treat those calls like the paper treats the source-to-RTL compiler boundary and record them as trusted assumptions.
+Verus form.
 
 Evidence and limits. Table 9 says Lean kernel proofs apply within the formal signal model, Yosys is limited by supported constructs and configured procedures, and “Simulation covers only the exercised inputs and time horizon, while RTL equivalence remains tool- and design-dependent.” (Section 4.1, p. 4.) The paper explicitly reports no end-to-end compiler-correctness proof: “Neither directly establishes that the Lean-to-SystemVerilog translation preserves the source semantics.” (Appendix E, p. 25.) Timing-aware or gate-level equivalence and post-synthesis parasitics are outside scope (Appendix E, p. 25).
 
@@ -61,14 +61,9 @@ Failure and assumptions. The area-focused loop leaves timing at −0.37 ns in th
 
 Lean type checking proves supported structural invariants; kernel proofs prove stated source properties; Yosys checks emitted-RTL equivalence under its assumptions; simulation measures finite traces; synthesis and physical design measure realizability. The paper's own boundary statement is: “Completed Lean theorems establish the source-level functional properties they state.” (Appendix E, p. 25.)
 
-Inference: trusted components include the natural-language specification, theorem statements, CKTLEAN semantics and compiler, Lean kernel, Yosys models, reference RTL/testbenches, synthesis tools, and assumptions about clocks, reset, libraries, and hardware. The paper does not prove compiler correctness from Lean signals to SystemVerilog, nor semantic correctness of the natural-language requirement. For VL, the highest product threat is specification/API error hidden behind a successful proof; the most reusable mitigation is a staged loop that exposes compiler/proof state and independently checks generated artifacts.
-
-Inference: VL should not redo the paper's generic insight that interactive verifier feedback helps proof search. A potentially useful extension is to measure whether the same loop repairs Verus API and contract design, because this paper evaluates hardware generation and Lean proof steps rather than Rust systems APIs.
-
 ## techniques for the catalog
 
 - typed intermediate representation and compiler-guided repair — encode structural invariants in types, then repair from persistent compiler diagnostics before extraction
 - stepwise proof-state-guided equivalence — iterate proof steps against residual goals until the kernel accepts a no-placeholder theorem
 - independent artifact checking — combine source proofs with RTL equivalence, finite simulation, and physical-design checks while recording each scope
 - synthesis-feedback optimization with proof preservation — accept measured improvements only after recompilation/evaluation and preserve behavior with an equivalence proof
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

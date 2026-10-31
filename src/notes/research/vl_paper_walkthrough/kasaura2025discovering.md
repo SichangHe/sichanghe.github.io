@@ -45,8 +45,6 @@ Inference: Lean kernel checking proves the accepted Lean declarations under Math
 
 The natural-language control gave each model 16 trials with the definitions as context. The authors report: “GPT-4o incorrectly stated that the proposition is false 10 times and generated incorrect proofs 6 times. GPT-o3 never generated an incorrect proof, but it always judged incorrectly that the theorem is false.” Responses were checked by hand (section 5.3.3, PDF p. 8). Inference: these counts demonstrate failures on this target under these prompts, without establishing whether the theorem occurred in model training data.
 
-Inference: the narrow domain of three topology notions, GPT-o3 main comparison, 16-attempt limit, and token budgets constrain generalization. The authors state: “The propositions highlighted in this study were relatively natural to conjecture.” Their proposed next step is to “produce deeper and more insightful mathematical statements” (section 6, PDF p. 8). Inference: the threat to VeruLaw is moderate for proof-search orchestration: CPL supplies a concrete pattern for harvesting verified lemmas and retrying contracts, but it does not solve Rust translation, specification adequacy, unsafe APIs, or dependency trust. Reusing the architecture without Verus-specific novelty and contract checks would therefore leave major product risks unchanged (inference).
-
 ## techniques for the catalog
 
 - conjecture-proving separation — generate Lean statements first, then spend a bounded proof budget on each surviving statement
@@ -54,4 +52,3 @@ Inference: the narrow domain of three topology notions, GPT-o3 main comparison, 
 - Lean novelty filtering — use `exact?` against Mathlib and the generated library before proof search
 - verifier-feedback retries — return Lean diagnostics to the prover for up to a fixed attempt limit
 - stratified hard-theorem sampling — use multiple proof attempts so acceptance is less biased toward statements with easy proofs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Whether a generated library contains the desired theorem or not is checked as follows: place the statement of the theorem after the generated library and see if the proof is completed by using exact? command."): checked all paper text, study quotations, numbers, section and page references, and technique steps; corrected page references, clarified theorem-versus-library counts and target re-proof settings, narrowed unsupported claims, and marked conclusions as inference; did not rerun experiments, verify source code, or independently check Lean proofs.

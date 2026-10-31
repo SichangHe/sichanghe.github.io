@@ -109,20 +109,9 @@ Verus form
 
 Inference: For Verus, collect verification time and success by function, lemma, invariant, and dependency boundary. Report denominators and solver settings for each category. A project-wide pass rate should be accompanied by counts for `external_body` functions, unsafe or hardware wrappers, and proof-only lemmas. Verus proof time is not directly comparable to GNATprove’s measurements.
 
-## what is proved, trusted, and threatening to VL
-
-Inference: SPARK proves selected contracts and absence of modeled run-time errors. The flight stack’s BSP, HAL, RTS, hardware behavior, compiler, and any suppressed or external assumptions remain partly trusted. The paper says the BSP is “currently only verified by testing”, and its coverage table makes this visible: only 15.5% of HAL bodies and 8.6% of RTS bodies are in SPARK, even though both RTS VCs were proven (Table 1, p. 9).
-
-Inference: For agent-written verified Rust, the paper’s largest warning is false confidence from a green report built on wrong contracts, unreachable paths, or unverified device models. The transferable practice is co-verification with explicit boundaries, denominator-aware reporting, and refusal to suppress unexplained failures. The direct product threat is high for hardware-facing or concurrent code because a proof can cover the application while the HAL and runtime remain outside the proof boundary.
-
-what VL should not redo
-
-Inference: VL should not repeat the paper’s generic advice to start verification early, split expressions, bound ranges, and measure VC cost as if those were new. A useful new study would test the same failure modes in Verus: inconsistent `ensures`, trusted external bodies, hardware models, and proofs that become vacuous after refactoring.
-
 ## techniques for the catalog
 
 - co-verification design loop: run modular checks during implementation and reshape code around proof obligations
 - false-positive and contract audit: preserve warnings, prove contracts themselves, inspect assumptions, and validate runtime models
 - units and criticality types: encode physical dimensions and isolate high-criticality tasks with deterministic scheduling
 - denominator-aware VC accounting: report proof fractions and solver time by component and obligation type
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Polymorphism is available in SPARK, but its use is limited as a result of the access type restriction."): read all 12 PDF pages of the text; checked every quotation, the Table 1 numbers (lines, VCs, percentages, hardware, timeout), the 21%/65% and 70% figures, the technique steps and the PDF page numbers of every cited passage; changed page references (Table 1 and Figure 1 are on p. 9, section 5.1 on p. 10, the mistakes in section 4.1 on pp. 5–7, the conclusion on p. 11), removed the "per-VC timeout" and the unsupported Verus claim about `--assumptions`, replaced the latitude-saturation claim and the proved task-termination step with what the paper says, and labelled own conclusions "Inference:"; did not check the cited references, the source code repository, or the figure bar values in Figure 1 (only the table was compared).

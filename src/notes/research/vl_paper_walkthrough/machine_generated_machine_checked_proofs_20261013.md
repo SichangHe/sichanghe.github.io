@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `paraskevopoulou2026machinegenerated`, [paper](https://doi.org/10.1145/3828700)
 
-Audit: audited 2026-10-13 against the paper; checked all numbers (96 hours, 7,800/6,000/7,783/5,294 lines), section references, quotations, rule descriptions of Figure 3, Theorem 4.1 and the Let case; changed one mislabel (the Section 2 example is a CPS case, not ANF-like) and marked the trusted-base sentence as the study's inference; Verus remarks are unchecked against a Verus source.
-
 ## scope and result
 The paper reports an agent-assisted Rocq proof of CertiCoq's administrative-normal-form (ANF) transformation. The abstract says: “The proof establishes semantic preservation for the administrative normal form (ANF) transformation in the CertiCoq verified compiler for Rocq.” The task is a compiler-correctness proof, not a benchmark of arbitrary programs. The paper says the proof was “developed in approximately 96 hours” and describes Claude Code (Claude Opus 4.6), high-level human guidance, and human review; the authors “did not write Rocq proofs directly”. The paper has inconsistent size statements: the abstract says approximately 7,800 lines, the introduction says approximately 6,000 lines, and Section 5.4 reports 7,783 total lines versus 5,294 for CPS. Those denominators and contexts must remain distinct.
 
@@ -27,11 +25,6 @@ Inference: a Verus implementation can use a `spec fn` for the relational judgmen
 Theorem 4.1 quantifies over any continuation expression `ek` satisfying a free-variable freshness condition. It relates source evaluation to the target context followed by `ek`, using `anf_val_rel` for values and `anf_env_rel` for environments. The paper explains: “The universally quantified continuation 𝑒𝑘 is what makes the statement compositional: it allows the theorem to be applied inductively in larger contexts.” In the Let case, apply the induction hypothesis first to the second expression with `ek`, then to the first expression with `C2[ek]`, and close with transitivity.
 
 Inference: in Verus, represent the continuation as a ghost/spec-level expression or relation parameter, and state the theorem with quantified postconditions over continuations that satisfy the freshness predicate. This enables recursive composition but may require finite, executable encodings of syntax.
-
-## evidence, trust, limits, and product threat
-The whole-program corollary (Corollary 4.2) proves that a well-formed source expression has an ANF context whose target evaluation returns a related value. Inference (not stated by the paper): the logical relation, Rocq kernel, CertiCoq definitions, and compiler semantics remain trusted foundations; the LLM is not itself a trusted checker. The paper reports 96 hours of LLM-assisted work and compares 7,783 ANF lines with 5,294 CPS lines, while human effort was not systematically measured. It records silently weakened proof statements, false freshness assumptions, inefficient repair from file edits and recompilation, context-window loss, and focus on easy cases. It also says the agent lacked interactive proof-state access.
-
-Inference: agent-written verified Rust is threatened by specification weakening and unsupported freshness assumptions even when the verifier passes, because a machine check validates the statement actually supplied. VL should preserve the paper's independent review of theorem statements and use machine-readable verifier state; a passing proof does not establish that the intended property was stated.
 
 ## techniques for the catalog
 - logical-relatedness simulation: replace exact target-step matching with a reflexive, transitive relation that absorbs administrative redexes and alpha-equivalence

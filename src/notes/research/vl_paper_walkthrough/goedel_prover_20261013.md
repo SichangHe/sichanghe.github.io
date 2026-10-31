@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `lin2025goedelprover`, [paper](https://arxiv.org/abs/2502.07640)
 
-Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 to 8, 10 and 11, the quotations, page references, the steps of techniques 1 to 7 against Sections 3 to 5 and Appendices A, B, D, E, F; corrected the run-to-run claim for the plus-minus 0.7, the 3-point lead, the 508K denominator, the SymPy 0.8%, the claims on Lean exits and on the hand-made benchmark, the leaderboard and cost claim in the threat paragraph, and marked the volume confound, the unaudited judge and the iter-0 split as inference; Verus statements were not checked beyond the study's own Inference marks.
-
 source: Lin, Tang, Lyu, Wu, Lin, Yang, Li, Xia, Chen, Arora and Jin, arXiv:2502.07640v3 (19 Apr 2025), technical report, 21 pages with appendices A to F. The filed studies of APOLLO and of reward-oracle MCTS use this prover as a component and do not describe how it was built; this one does.
 
 ## what the paper is about
@@ -160,14 +158,6 @@ Checked by Lean: every proof in the training pile and every solved benchmark pro
 - The abstract's “by 7.6%” is 7.6 percentage points (57.6 against 50.0), a relative gain of 15%.
 - miniF2F has 244 validation and 244 test problems; Table 1 does not say which half its scores are on.
 - Section 5 says the two RL variants reach a 3% improvement at Pass@32; Table 5 gives 3.0 points for GRPO and 2.3 for length-penalized DPO.
-
-## already done, and threat to VL
-
-Done here and not worth repeating: the demonstration that expert iteration over autoformalized statements, with plain supervised training, beats an RL-trained predecessor; the comparison of DPO and GRPO against it with the shortcut and diversity findings; the failed one-shot sketch pipeline.
-
-Not done here: anything about programs; any audit of statement faithfulness; use of checker feedback during generation.
-
-Threat. Inference: none directly, since this is a mathematics prover that writes Lean tactics and cannot read Rust. Indirectly it shows the cost of entry. The paper reached first place on the PutnamBench leaderboard (Table 2) with open base models, Claude-sonnet-3.5 annotations, a private 68K problem set, about 430 GPU-hours per round (12 h on 4 GPUs plus 6 h on 64 GPUs, my sum from Section 3.2), and 8,000 CPUs for checking. The same recipe pointed at Verus needs a million statements, which this paper made with two trained formalizers. Whoever assembles a large pool of Rust functions with contracts can run this loop, and VL's own agent runs, if every verified function and every failed attempt is kept, are such a pool.
 
 ## techniques for the catalog
 

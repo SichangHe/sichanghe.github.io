@@ -62,19 +62,9 @@ For removing an edge in an acyclic graph with at most one path between nodes, us
 
 Inference: A Verus pointer proof can maintain a ghost reachability relation and update it with these formulas only under the same acyclicity/unique-path assumptions. The executable pointer mutation remains ordinary Rust; the ghost update lemma must prove that no other path was created or destroyed.
 
-## evidence, assumptions, and VL impact
-
-The paper reports successful verification with SPASS of list reversal, list append, the mark phase of mark-and-sweep (Sections 5.1, 5.6), and the unit-edge update formulas (Section 6.1), and compares the reasoning to TVLA (Section 6). For mark, the loop invariant was proved “using only the positive axioms” and the postcondition needed only `NoExit[marked, f]` (Section 5.6.2, pp. 23–24). The abstract says mark-and-sweep “has been previously reported as being beyond the capabilities of ESC/Java”. The only measurements I found are “under ten seconds” for proving each coloring axiom from induction (Section 1) and “2 orders of magnitude” speedup from GoOut on the acyclic part of reverse's postcondition (Section 5.2); there is no benchmark table. The paper states “soundness is guaranteed no matter which axioms are instantiated” (Section 7, p. 28), but the theorem prover may fail to terminate. The conclusion calls the examples “still preliminary” (Section 8, p. 28).
-
-Inference: Trusted components include the user-supplied loop invariants, the first-order prover, the heap transformer formulas, and assumptions such as acyclicity and unsharedness.
-
-Inference: VL should not redo the paper's TC axiomatization or its reverse-list examples. The reusable gap is a Verus ghost reachability library with finite-path induction, list-segment colors, and unit-edge update lemmas. Threat to agent-written verified Rust is high for pointer-heavy code: proving a local pointer update does not automatically establish global reachability, and the method remains conditional on supplied invariants and heap-model contracts.
-
 ## techniques for the catalog
 
 - first-order transitive-closure axiomatization: replace `TC[f]` with `f_tc` and prove sound closure and induction lemmas
 - coloring axioms: use NoExit, GoOut, and NewStart colors to prove path absence and path-through-region facts
 - directed color search: enumerate root, reachability, and Boolean-combination colors in phased theorem-prover search
 - unit-edge reachability update: maintain precise closure formulas for edge insertion and restricted acyclic edge removal
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Also, it ensures that the nodes reachable from the formal parameter x on entry to the procedure are exactly the nodes reachable from the return value y at the exit."): read the whole paper text (pp. 1–30) and checked every quotation, section and page reference, the T1, NoExit, GoOut and NewStart definitions, the explore algorithm steps (Fig. 10), Table 5, Fig. 9, the NoExit[r_x′,n,n′] refutation, and the edge addition and removal claims; changed the NoExit quotation (the paper writes "NoExit[A, f], says"), the page ranges, the reverse color list, the Table 5 description, the search-termination claim, the edge-removal limitation wording, and the evidence section (added mark/ESC/Java, timings, preliminary status, labeled trusted components as inference), and set the link to the DOI printed on the paper's first page; did not check the Verus Inference paragraphs beyond labeling, proofs of Propositions 3.1–4.7, Theorem 4.8 and Lemmas 4.9–4.10 in detail, Nelson's axioms N1–N7, or the cited references.

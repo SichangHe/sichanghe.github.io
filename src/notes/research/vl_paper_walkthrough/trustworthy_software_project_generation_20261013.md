@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `fang2026trustworthy`, [paper](https://arxiv.org/abs/2605.26017)
 
-Audit: audited 2026-10-13 against the paper; checked every number, quotation, page and section reference, each technique's steps, the figures and the Verus forms; changed one wrong count (the proof in Fig. 4 has four tactic lines, not five), one invented ordering of helper functions, one wrong section reference, a bodyless proof fn in Verus, claims widened beyond the paper (Interaction Trees as the way, all global properties in preservation form, no guard against weakened theorems, inspection by hand, under 30 minutes), and several statements now marked as inference; Verus indexing of Vec fields in a frame clause and the Verus solver-timeout behaviour are unchecked.
-
 source: Jian Fang and Yingfei Xiong (Peking University), arXiv:2605.26017v1, 25 May 2026, 10 pages, no appendix. The system is printed as "SPDDW L" in the extracted text.
 
 earlier note: `topic_studies/formal_verification_rust/llm_for_verification/c_and_systems_proofs.md` holds seven lines on this paper (method in one line, 47 instructions, 30 minutes, 265 tests, 12 hours of fuzzing, the unverified host layer, the extraction assumption). What follows adds the workflow as steps, the shape of the plan and of the properties, the repair ladder, the Dafny comparison in detail, and the Verus forms.
@@ -168,15 +166,6 @@ where it fails or what it assumes: one run per backend; no repetition, no varian
 “The LLM generated 265 test cases covering all 47 instructions; all 265 passed against the extracted C++ interpreter.” (Section V-D, p.8) “The AFL++ campaign ran for 12 hours and executed 98.2 million inputs, completing 211 full fuzzing cycles.” (Section V-D, p.8) It found no crash and no hang.
 
 Inference: both checks are weak as evidence of ISA conformance. The tests come from an LLM (the paper does not say which; presumably the model family that wrote the specifications), so a shared misreading passes; the fuzzer's oracle is crash or hang, which a wrong result does not trigger. The paper does not run an independent conformance suite or compare against a reference emulator.
-
-## done here, so not worth repeating in VL
-
-- Inference: showing that an agent can produce a few thousand lines with a machine-checked core without a human in the loop, for a state-machine-shaped task. This paper is one data point for Rocq; repeating it for Verus is only new if it adds what this paper lacks: specifications checked against something independent, repeated runs, and a measured SMT-feedback comparison.
-- Inference: the plan-first, pure-core, computes-plus-frame decomposition is described here well enough to adopt directly.
-
-## how much this competes with agent-written Rust verified by Verus
-
-Inference: low to moderate. The paper targets C++ through extraction from Rocq, names Rust only as a possible extraction target (“The example uses Crane [18] to emit C++, but the same workflow accepts other extraction tools [22]–[24] when the target is OCaml or Rust.”, Section III-C, p.4), and has no artifact link in the text. Extracted functional code over `int64_t` and association lists is not the Rust a systems team would ship. The part that does bear on VL is the argument that SMT-based verifiers give agents worse repair feedback than interactive provers; it rests on one failed Dafny run, but it names a real weakness (timeouts carry no location) that a Verus-based product has to answer with small lemmas and bisection.
 
 ## techniques for the catalog
 

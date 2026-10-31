@@ -8,8 +8,6 @@ The paper explains failed SAT-based verification in the vocabulary of a formal a
 
 The setting is many-sorted first-order predicate logic over finite universes. A verification condition P,D ⊨ R fails when the SAT instance P ∧ D ∧ ¬R has a satisfying interpretation; that interpretation describes a system situation forbidden by R (Sec. 2, pp. 3–4). The method has two alternating phases: explain a formula in one interpretation, then expand defined explanation literals into a tree of further explanations (Sec. 3, pp. 4–7).
 
-Inference: The direct VL value is a diagnostic algorithm for turning a large Verus counterexample model into a small, domain-level explanation. Verus uses SMT and typed Rust specifications rather than this paper’s finite SAT expansion, so the translation below is an adaptation rather than a claim about the paper.
-
 ## technique 1: relevance-guided explanation of a formula
 
 What it is. For each formula under a fixed interpretation, the algorithm chooses “interesting” subformulas. An immediate subformula is interesting if changing its truth value changes the whole formula. If no single subformula has that property, an interest measure intr ranks alternatives; the explanation follows the highest-interest subformula in true conjunctions and the least-interest subformula in false conjunctions (Sec. 3, pp. 4–6). The paper defines atom explanations as the atom when true and its negation when false (Definition 1, p. 5).
@@ -29,7 +27,7 @@ Inference: In Verus, use this ranking over a failed verification condition’s p
 
 Evidence. The worked railway example starts from the failed condition ∀s.(proceed(s) → ∃r.(entry(s,r) ∧ safe(r))). After dropping tc1 from green21, the solver finds green21 and right21 true while tc1 is false (Sec. 4, p. 10). The first explanation is {proceed(si21), ¬safe(rt2131), ¬safe(rt2133)} (Sec. 4, p. 10). Following definitions eventually selects occupied(track1), ¬tc1, and the omitted tc1 check as the reason for failure (Secs. 4, pp. 10–11).
 
-Failure and assumptions. The rule is heuristic, not a formal minimal-cause theorem. The author says: “We have not attempted to give a formal characterisation of explanations.” (Sec. 3, p. 7) Inference: VL must present the result as a relevance-ranked explanation, not as proof that every omitted predicate is irrelevant.
+Failure and assumptions. The rule is heuristic, not a formal minimal-cause theorem. The author says: “We have not attempted to give a formal characterisation of explanations.” (Sec. 3, p. 7)
 
 ## technique 2: dependency-driven explanation trees
 
@@ -85,7 +83,7 @@ Failure and assumptions. The method depends on being able to express an exclusio
 
 The paper discusses temporal logic and unbounded quantification as future work. For past-time LTL, it proposes moving through a sequence of interpretations and replacing a since connective with a fresh predicate plus an axiom (Sec. 7, p. 15). Unbounded quantification is harder because the finite-domain algorithm expands a universal quantifier into all instances; infinitely many uniform explanations cannot simply be listed (Sec. 7, pp. 15–16).
 
-The paper compares its definition-directed explanations with provenance. Provenance can provide additional explanations, but it lacks the “sense of direction” supplied by definitions and can select facts irrelevant to the failure (Sec. 6, pp. 13–14). Inference: VL should prefer source-directed expansion through Rust specifications, while retaining provenance-like alternatives when a definition is unavailable.
+The paper compares its definition-directed explanations with provenance. Provenance can provide additional explanations, but it lacks the “sense of direction” supplied by definitions and can select facts irrelevant to the failure (Sec. 6, pp. 13–14).
 
 ## what is proved, measured, and trusted
 
@@ -93,13 +91,9 @@ The paper demonstrates an implemented explanation method on a small but realisti
 
 Inference: the method’s trusted inputs are the domain definitions, interest assignment, SAT interpretation, and the mapping from low-level variables to domain predicates. A mistaken definition can produce a coherent but wrong explanation. For agent-written verified Rust, this creates a moderate product threat: explanations can misdirect repair even when the underlying Verus counterexample is valid.
 
-Inference: VL should not redo generic recursive formula explanation, definition unfolding, or the distinction between decisive and redundant branches. It should implement a Verus adapter, expose trust and source links, and validate every natural-language explanation against the actual model and verification condition.
-
 ## techniques for the catalog
 
 - relevance-guided formula explanation: rank subformulas by truth influence and an interest measure to extract decisive literals
 - dependency-driven explanation trees: recursively unfold defined predicates into branching domain-level explanations
 - syntactic interest assignment: derive relevance from undefined predicates and definition dependencies
 - iterative counterexamples: exclude a diagnosed failure and rerun verification to expose additional faults
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

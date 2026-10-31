@@ -93,12 +93,6 @@ Verus form: Inference: express local share and distribution properties as specif
 
 evidence and limits: Theorem 7.6 concludes noninterference modulo output. It should be combined with the assumptions of Theorem 4.3 when invoking that theorem to derive passive security. Section 7.3 discusses cheating detection and integrity for BDOZ; it does not provide a benchmark or a machine-checked implementation proof.
 
-## trusted boundary, contradictions, and product threat
-
-The paper contains inconsistent wording about cheating detection. Section 1.1 calls it a “strictly weaker property” (p. 2), while Section 7.3 calls it “a stronger property” (p. 12). The formal direction is: “If cheating is detectable in π, then π has integrity.” (Lemma 7.10, p. 12). Inference: the study should use this stated implication, without asserting the reverse implication or strictness. BDOZ security is argued using preprocessing and information-theoretic authentication assumptions (Section 7.3, p. 12).
-
-Inference: the implementation trust boundary would include the encoding of finite-field arithmetic and probability, the correctness of the analysis engine, the realization of preprocessing and oblivious transfer, and the relation between executable behavior and the protocol semantics. VL could reuse the explicit views and compositional proof structure, but would still need to justify randomness, permitted disclosures, authentication, and abort behavior in its Rust/Verus contracts. A proof about weakened contracts would not establish the protocol's stated security policy.
-
 ## techniques for the catalog
 
 - Overture protocol modeling — encode synchronous finite-field messages, reveals, outputs, and explicit random tapes
@@ -106,5 +100,3 @@ Inference: the implementation trust boundary would include the encoding of finit
 - truth-table and Datalog execution — compute exact Boolean runs and parallelize independent input fact bases
 - compositional circuit proofs — combine local determinism, uniformity, and independence facts into circuit noninterference
 - BDOZ authentication — model preprocessing and verify opened shares with MAC checks and abort
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In addition to converting view deﬁnitions to logic clauses, we also need to convert secrets and random tapes."): checked all paper text, study quotations, technique steps, theorem assumptions, and page and section references; corrected the cheating-detection implication, missing passive-security assumptions, distribution explanation, GMW proof descriptions, and page references; did not independently reprove the theorems, run the authors' analysis implementation, or validate Rust/Verus adaptations.

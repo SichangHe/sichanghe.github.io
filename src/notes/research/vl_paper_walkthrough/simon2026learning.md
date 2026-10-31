@@ -31,7 +31,7 @@ Inference: use a hierarchy such as (a) ownership/resource invariant, (b) data-st
 
 Evidence, assumptions, limits
 
-The evidence is a formal architecture and a hand-written arithmetic-series example; Figure 2 labels its texts “hand-written illustrations, not model outputs or empirical observations.” (Figure 2 caption, p. 5) No success rate, model comparison, or denominator exists. The paper warns that hindsight ideas may not be suitable foresight targets and calls for evaluation (Section 6, p. 12). Inference: any VL benefit remains unmeasured.
+The evidence is a formal architecture and a hand-written arithmetic-series example; Figure 2 labels its texts “hand-written illustrations, not model outputs or empirical observations.” (Figure 2 caption, p. 5) No success rate, model comparison, or denominator exists. The paper warns that hindsight ideas may not be suitable foresight targets and calls for evaluation (Section 6, p. 12).
 
 ## technique 2: verifier-guided hindsight selection
 
@@ -58,7 +58,7 @@ Inference: for each generated proof plan, invoke Verus `N` times with fixed solv
 
 Evidence and limits
 
-The paper supplies no measured results. It explicitly cautions: “a high score does not by itself establish that the retained idea helped the model solve the problem.” (Section 6, p. 12) The score can reward a solver that ignores the hierarchy, and selecting by score may introduce bias. Inference: VL should report pass denominators and fixed configurations rather than claiming that a selected plan caused the proof.
+The paper supplies no measured results. It explicitly cautions: “a high score does not by itself establish that the retained idea helped the model solve the problem.” (Section 6, p. 12) The score can reward a solver that ignores the hierarchy, and selecting by score may introduce bias.
 
 ## technique 3: anti-hindsight seed generation
 
@@ -79,7 +79,7 @@ Inference: generate plans from verified Verus functions while hiding later proof
 
 Evidence and limits
 
-The counts above are dataset construction counts, not success results. The source itself labels the teacher a data-generation tool and states that no empirical evaluation was performed. Inference: seed quality and model leakage are major threats for VL; the 15,000/50,523 figures do not establish proof improvement.
+The counts above are dataset construction counts, not success results. The source itself labels the teacher a data-generation tool and states that no empirical evaluation was performed.
 
 ## technique 4: joint prompt training with balanced batches
 
@@ -100,15 +100,11 @@ Inference: create training records for plan generation, contract/specification g
 
 Evidence and limits
 
-The paper gives implementation versions (Lean 4.10.0, LeanDojo 2.1.3, InternLM2-Math-Plus-7B) and data counts in Appendix A.1–A.2, but no outcomes. It reports that the verifier may time out and treats timeout as rejection (Section 4.2, p. 4). Inference: VL experiments must publish timeout budgets and distinguish timeout from a logically invalid proof.
+The paper gives implementation versions (Lean 4.10.0, LeanDojo 2.1.3, InternLM2-Math-Plus-7B) and data counts in Appendix A.1–A.2, but no outcomes. It reports that the verifier may time out and treats timeout as rejection (Section 4.2, p. 4).
 
 ## what is proved and trusted
 
 Proved in the paper: the abstract definitions of hierarchies, verifier-guided construction, training loop, and Lean data-conversion procedure. No theorem says the method improves proof success. Trusted: the deterministic verifier, reference solutions, model optimization, prompt interpretation, and all external Lean/mathlib behavior. The paper excludes `sorry` and `admit` from allowed Lean tactics (Section 3.1, p. 3), a useful hygiene rule for Verus equivalents.
-
-## threat and what VL should reuse
-
-Inference: threat to a product that generates agent-written verified Rust is moderate and indirect. The architecture can organize planning and candidate search, but the paper's absence of empirical evaluation means no evidence of improved Verus proof yield. VL should reuse verifier-gated data selection, explicit pass denominators, anti-hindsight prompts, and balanced role batches. It should not claim that a generated hierarchy is a proof or that score selection establishes causality.
 
 ## techniques for the catalog
 
@@ -116,5 +112,3 @@ Inference: threat to a product that generates agent-written verified Rust is mod
 - verifier-guided hierarchy selection — sample candidate plans, score them with repeated verified solves, penalize poor compression, and retain only scores above a threshold
 - anti-hindsight seed generation — ask a teacher to infer forward-usable plans while withholding later proof states and forbidding tactic replay
 - balanced multi-role training — jointly train solver, foresight, and hindsight prompts with fixed per-role batch fractions
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

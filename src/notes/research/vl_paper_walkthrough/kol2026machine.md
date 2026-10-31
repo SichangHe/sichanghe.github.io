@@ -21,7 +21,7 @@ How it is done in the paper:
 5. run numerical checks, submit Lean code, feed compiler errors and open goals back into the next attempt (Fig. 1, p. 4)
 6. accept only a clean Lean/kernel compilation (p. 3–4)
 
-Verus form. Inference: the same workflow in VL would freeze a Rust/Verus function signature and its `requires`/`ensures` before asking an agent to fill proof code. Inference: Python experiments can suggest invariants, but only Verus verification should decide acceptance. Inference: store the exact Verus version, imported specifications, diagnostics, and final source so a proof is reproducible.
+Verus form.
 
 Evidence and limits. The paper reports a complete Lean development and proof repository (Code and data availability, p. 7), but no count of model attempts or compiler iterations. The trusted semantic boundary is the human-audited formal statement, definitions, Lean kernel, Mathlib axioms, and supporting library. The model-generated proof is not trusted independently.
 
@@ -51,7 +51,7 @@ Verus form. Inference: encode factorization as recursive proof functions with a 
 
 ## what is proved, trusted, and left open
 
-Lean proves the formal theorem under the stated assumptions and standard classical axioms used in Mathlib. Human judgment remains necessary for semantic fidelity of the theorem and definitions. Numerical Python checks are exploratory only. The paper gives no proof-run time, hardware, attempt count, or independent audit of the Lean library. It reports a 2p multiplicity of optimal angle sets from the square-root freedom (p. 6), but gives no enumeration experiment. Inference: the threat to VL is high for specification errors and moderate for proof search: the loop demonstrates that an LLM can discover a non-obvious symmetry when a mature library and deterministic checker are available, but the mathematics is domain-specific and the Lean infrastructure is extensive. VL should reuse the frozen-specification and diagnostic-loop discipline; it should not redo a generic QSP prover.
+Lean proves the formal theorem under the stated assumptions and standard classical axioms used in Mathlib. Human judgment remains necessary for semantic fidelity of the theorem and definitions. Numerical Python checks are exploratory only. The paper gives no proof-run time, hardware, attempt count, or independent audit of the Lean library. It reports a 2p multiplicity of optimal angle sets from the square-root freedom (p. 6), but gives no enumeration experiment.
 
 ## techniques for the catalog
 
@@ -60,4 +60,3 @@ Lean proves the formal theorem under the stated assumptions and standard classic
 - mode-to-polynomial reduction — use symmetry and SU(2) mode decomposition to turn simultaneous steering into polynomial interpolation
 
 - complementary-polynomial factorization — complete an off-diagonal polynomial with Fejér–Riesz and invert Haah factors to recover control angles
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

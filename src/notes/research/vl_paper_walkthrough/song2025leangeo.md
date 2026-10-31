@@ -5,8 +5,6 @@ Tag: `song2025leangeo`, [paper](http://arxiv.org/abs/2508.14644v1)
 ## scope and result
 LeanGeo is a Lean 4 geometry framework, theorem library, benchmark, and training pipeline. The paper's abstract states, “To address these gaps, we introduce LeanGeo, a unified formal system for formalizing and solving competition-level geometry problems within the Lean 4 theorem prover.” It combines a manually formalized library with LeanSMT and Mathlib, and releases LeanGeo-Bench with 122 problems. Gemini 2.5 Pro reaches 27.05% pass@4 over the benchmark, while no evaluated model solves any of the 62 Olympic-level items (Table 3, page 7; discussion, page 8). Section 6.1 identifies incomplete reconstruction of SMT certificates into native Lean proofs (page 9).
 
-Inference: For VeruLaw, the transferable lesson is to give proof-generating agents a small, readable domain library and a machine-checked benchmark, then measure proof acceptance separately from natural-language plausibility. LeanGeo does not verify Rust or establish that a geometry specification matches a user's intent.
-
 ## technique: build a reusable, readable theorem library
 Start with foundational objects, relations, and commonly used structures. LeanGeo adds 52 geometric definitions, including `Midpoint`, `Circumcenter`, and `RadicalAxis`, using Lean abbreviations. The paper gives this exact example (page 4):
 
@@ -34,8 +32,6 @@ Construct benchmark strata with different provenance and difficulty. LeanGeo-Ben
 
 The evaluation prompt includes the proof language, error-and-correction examples, construction rules, all library theorem statements, and few-shot examples (Section 4.2, page 7; Appendix D, pages 22–28). Evaluation uses a two-step prerequisite check: first check that the generated result is consistent with the initial formal problem statement, then send it to a Lean server containing the theorem library for formal proof verification (page 7). Table 3 reports pass@1, pass@2, and pass@4 over the 122 benchmark items. Gemini's pass@4 is 27.05%, with 10 successes in UG, 4 in LB, 13 in SP, 6 in HSC, 0 in OP, and 0 in IMO. Inference: these successes sum to 33, while the category sizes sum to 122.
 
-Inference: VeruLaw should maintain benchmark strata by code domain and proof difficulty, require contract consistency before invoking Verus, and publish both pass rates and the number of checked items. A model's generated text should never count as a success without verifier acceptance.
-
 ## technique: generate checked training data from theorem recombination
 When cold-start proof data is absent, sample five random theorems from the existing library and ask Gemini 2.5 Pro to synthesize a new theorem and proof. Repeat 5,000 times with a different random subset each time. Automatically verify both statement and proof. The paper reports that 89% of generated formal statements are syntactically valid, but only 14% of full submissions, statement plus proof, pass verification (Section 5.1, page 8). Put valid-statement/correct-proof pairs into the activation dataset for supervised fine-tuning; use valid-statement/invalid-proof pairs as the reinforcement-learning prompt set.
 
@@ -58,11 +54,6 @@ Inference: the reported checking does not establish complete verification by Lea
 
 Inference: the paper's 89%, 14%, 37%→60%, 12.5%→40%, and 2.52%→10.92% figures measure particular generated datasets and training runs, rather than establish a general RL scaling law. The pass@4 category counts in Table 3 should not be compared as if every category had equal size.
 
-## limitations and threat to VL
-Section 6.2 (page 9) states, “Therefore, the solving speed of SMT significantly decreases as the number of points in the problem increases.” It proposes geometry-specific proof automation as future work. Section 6.3 (page 9) cautions, “However, long prompts may negatively impact the model’s performance.” Section 6.1 identifies complete end-to-end soundness and proof reconstruction as future work.
-
-Inference: The threat to agent-written verified Rust lies at library and specification boundaries. A rich reusable library can reduce proof effort, but a proved lemma about the wrong specification can support later proofs without meeting the intended requirement. VL can reuse LeanGeo's benchmark design and statement-consistency prerequisite check, while accounting for its incomplete proof reconstruction. This paper does not evaluate Rust ownership, unsafe code, external dependencies, hardware, or user-intent validation.
-
 ## Verus form
 Inference: A Verus analogue defines executable Rust functions with `requires` and `ensures`, reusable mathematical facts as `spec fn`s and proof functions, and loop facts in `invariant` declarations. Candidate generated proofs are accepted only after Verus verifies the complete function. A benchmark harness can compare the generated contract text with the task statement before invoking Verus, then record pass@k over a fixed denominator. The LeanGeo `abbrev`, `euclid_apply`, `esmt`, and `@[euclid]` syntax does not carry over.
 
@@ -74,4 +65,3 @@ Inference: A Verus analogue defines executable Rust functions with `requires` an
 - Inference: generate-then-verify training data: synthesize theorem-proof pairs and separate valid statements from proofs that actually verify
 - Inference: noisy theorem instilling: train theorem selection from a bounded prompt containing randomly selected library facts
 - Inference: staged verifier-based RL: train first on checked activation pairs, then on valid-statement/invalid-proof prompts and report exact pass-rate denominators
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This methodology not only enhances the readability and maintainability of the proof script but also improves the SMT solver’s performance by reducing its search space."): checked the full text, quotations, counts, page and section references, technique steps, and reported results; corrected the abstract quotation, caching and random-theorem page references, benchmark count discrepancy, and soundness claims, and added the nine extra axioms and inference labels; did not rerun LeanGeo, inspect its repository, reproduce experiments, or independently validate the axioms or formal problem statements.

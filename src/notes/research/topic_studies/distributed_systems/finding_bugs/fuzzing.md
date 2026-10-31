@@ -24,8 +24,6 @@ Jepsen and chaos tools throw random faults at a running cluster and see what bre
     - differential: run several implementations of the same spec and compare (Fluffy)
     - state-centric: did the controller reach the declared state (Acto, Sieve)
 
-## the main papers and systems
-
 ### fuzzing the cluster: faults, schedules, timing
 
 - [Mallory: Greybox Fuzzing of Distributed Systems](https://arxiv.org/abs/2305.02601), Meng, Pîrlea, Roychoudhury, Sergey, CCS 2023

@@ -53,12 +53,9 @@ The method still times out on learning-switch, multi-paxos-epr, fast-paxos-epr, 
 
 Inference: Applying the implementation requires trusting its Rust code and the solvers; the mathematical arguments in Appendix B do not establish correctness of the actual Rust implementation. I did not inspect or verify that code. Section 6.2 (p. 17) cautions: “Thus, the inclusion of their results is not intended as a precise comparison to our tool, but as a reference for the difficulty of the invariant inference task of each example, as evidenced by state-of-the-art techniques.” The DuoAI and P-FOL-IC3 times come from their respective papers and reflect different architectures and time limits.
 
-Inference: VL should not redo generic antichain canonicalization, recursive weakening, indexed formula sets, or counterexample-driven abstract interpretation as ideas. The threat to agent-written verified Rust is indirect: a bounded candidate domain can miss a needed invariant, and a buggy translation or solver interface can silently weaken guarantees. A Verus study would need to measure expressiveness, verifier cost, and trusted translation code rather than assume these FOL results transfer.
-
 ## techniques for the catalog
 - bounded first-order language: define a finite syntax with quantifier and Boolean bounds to make invariant search enumerable
 - syntactic subsumption and canonicalization: quotient equivalent formulas and retain a minimal antichain
 - recursive weakening: replace unsatisfied formulas with minimal subsumed formulas satisfied by a counterexample state
 - LSet indexed filters: use recursive maps and tries to prune searches for unsatisfied or subsuming formulas
 - symbolic abstract fixpoint: iterate counterexample-guided joins to compute the strongest invariant expressible in the language
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Our experience, however, is that the more significant bottleneck for computing least fixpoints for the most complicated examples is the SMT queries."): read the full paper including appendices A–F; checked quotations, numbers, section and page references, technique steps, and scope; corrected the paper link, base subsumption direction, mixed-quantifier weakening, LSet scan claims, and final representation sizes; marked recommendations as inferences; did not inspect the artifact code, reproduce experiments, or independently prove the theorems.

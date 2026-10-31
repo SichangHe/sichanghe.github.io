@@ -113,16 +113,6 @@ evidence: the evaluation reports: “Our approach scales as well as or better th
 
 limits and assumptions: the implementation extends the LRA solver to LIA incompletely (Section VI-A, p. 8). The simple EUF extraction can miss a unique realizer, as Example 10 demonstrates (Section V-A, p. 7).
 
-## evaluation, trusted boundary, and implications for VL
-
-The evaluation contains 57 benchmarks: 18 small conceptually distinct problems and 39 scaled versions. The authors selected a supported subset of a synthesis dataset and added examples and partial synthesis tasks. They excluded problems with theories beyond EUFLIRA, more complex quantification, interpreted uncomputables, or excessive similarity to selected problems (Section VI-B and footnote 4, p. 8). Each benchmark ran on one core of a 1.60GHz CPU with 16 GB RAM and a one-minute limit (p. 8).
-
-Table II reports “33 & 8” under “sum total & partial”: Synthesiz3 solves 33 total and 8 partial problems, hence 41 of 57 overall. The eight partial successes come from sets VII, IX, and XI, with counts 4, 3, and 1. Vampire solves 16 total problems and cvc5 solves 27; both lack support for the partial sets, marked “–” (p. 8). The paper reports that only Synthesiz3 solves 2- and 3-knapsack within one minute and finds maximum-of-n for `n` up to 100, while Vampire and cvc5 reach `n ≤ 20` (Section VI-B, p. 9).
-
-The authors describe the implementation as “a proof of concept” and its results as “encouraging early results” (Section VI, p. 8). Inference: the selected benchmark set and time limit support the reported comparison, not a general performance ranking across synthesis problems.
-
-Inference: trusting an emitted function requires confidence in the specification encoding, solver reasoning, and projection/witness implementation. A Verus integration could generate case functions and contracts, then require Verus to verify them. The paper provides no such integration. Inference: VL could reuse the synthesis procedures and focus on translating their conditions and realizers into executable code and checked contracts, while preserving unresolved obligations.
-
 ## techniques for the catalog
 
 - uncomputable-symbol specification — quantify reference functions or predicates in the specification while forbidding them from generated code
@@ -130,5 +120,3 @@ Inference: trusting an emitted function requires confidence in the specification
 - model-based projection with witnesses — eliminate symbols using theory-specific projection while extracting a computable realizer
 - core-based universal projection — project unsatisfiable cores and enumerate correction sets to find sufficient computable conditions
 - unique-realizer shortcut — combine E-graphs and arithmetic tableaux to extract forced computable output terms
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The main claim is that Gaussian elimination can be interleaved with congruence closure rules to establish all equalities modulo LRA + EUF under a set of asserted literals."): checked all paper text, quotations, numbers, page and section references, and technique steps; corrected page references, the 41-problem solved total, projection procedures, completeness attributions, and the distinction between unique realizers and forced values; retained the paper link from the fetch record; did not rerun experiments, inspect the implementation, or validate the proposed Verus integration

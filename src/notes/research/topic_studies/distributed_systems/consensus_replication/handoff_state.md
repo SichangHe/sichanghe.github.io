@@ -8,7 +8,6 @@
 - running when cut off (Sonnet subagents, may finish on their own or die)
   - crash_tolerant_consensus.md: FINISHED (~6,400 words, 11 PDFs saved)
   - bft_protocols.md
-  - if the files are missing or truncated, rerun with the brief at /tmp/claude-30033/-ssd1-sichanghe-github-io/b20a3e45-3278-48ed-bd0d-046da0241edb/scratchpad/BRIEF.md and the prompts in that scratchpad's gpt/*.md
 - left to do
   - rewrite index.md: start-here, reading tree over all files, merged research-idea list across the four Claude notes and the Codex notes
   - ChatGPT Extra High consultation: prompts ready in scratchpad gpt/prompt_{crash,bft,validators,verify}.md; blocked on human ChatGPT sign-in; manager will say when it works

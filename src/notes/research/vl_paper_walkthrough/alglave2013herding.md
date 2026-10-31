@@ -6,8 +6,6 @@ Page numbers below are the journal page numbers printed in the paper's running h
 
 ## takeaway
 
-Inference: this paper's central technique is a compact axiomatic model of weak memory. A program is turned into candidate executions containing events and relations; four relational checks decide which executions are allowed. The same four axioms are reused by the architecture instances (SC, TSO, C++ release-acquire, Power, ARM), the `herd` simulator, the CBMC bounded verifier, and `mole`'s cycle classification (which uses the SC instance); hardware litmus tests check the model against real machines. This separation is useful for VL because a Rust/Verus concurrency proof needs an explicit memory model and a way to test whether the model matches hardware.
-
 "We propose an axiomatic generic framework for modelling weak memory." (abstract, p. 1)
 
 Inference: the paper is not a Verus proof and does not establish correctness of Rust atomics. Its evidence combines formal equivalence lemmas, hardware observations, simulation timings, bounded-C verification, and static analysis; each has a different denominator and trust boundary.
@@ -141,18 +139,10 @@ Verus form. Inference: a Verus-oriented analogue can mine Rust MIR or source for
   - Table IX simulator throughput and seconds, with tool-specific test denominators (§8.3, p. 60)
   - Tables X–XII CBMC test counts and times (§8.4, p. 61)
   - Debian static mining counts, resource limits, and cycle totals (§9.2, pp. 68–73)
-- trusted or assumed
-  - instruction semantics, compiler/assembly translation, and event extraction
-  - hardware runs and the interpretation of "unseen" versus "invalid"
-  - points-to analysis; inline assembly beyond a relevant subset is ignored (803 Debian packages contained inline assembly; §9.1.3, p. 64)
-  - omitted locks, thread-spawn ordering, environment, and unmodeled architecture features
-  - Inference: in VL, the Verus verifier, solver, Rust compiler, atomic-library specification, and hardware remain additional trust components
 
 ## contradictions, omissions, and product implications
 
 Inference: the paper gives two different counts for the ARM behaviours its model still forbids. The abstract says "more recently 31 additional anomalies" (p. 1) and §8.1.2 says "we still have 31 behaviours that our model forbids yet are observed on hardware" (p. 56); Table VIII's ARM llh row is described as "31 tests and 1121 invalid executions" (p. 54). The conclusion instead says the models are not invalidated "except for the 33 surprising ARM behaviours detailed in Sec. 8" (§10, p. 73). The paper does not explain 31 versus 33. Do not conflate either with the 1,121 invalid executions, which count executions, not tests. The paper also calls its program-verification experiments preliminary (§10, p. 74), limiting claims about real applications.
-
-Inference: VL should not redo the generic four-axiom framework, `herd`, the SC/TSO equivalence, or the Debian mining study. A product-relevant task is to connect the exact Rust atomic operations used by agent-written code to a checked event model, then replay the litmus corpus on supported targets and fail closed when compiler or hardware assumptions change. The threat to agent-written verified Rust is high for concurrent unsafe code: a functional Verus proof under an overly strong SC abstraction can miss weak-memory executions, while a hardware-calibrated model can still omit compiler, FFI, or platform details. The paper's workflow supplies the missing discipline (model, test, compare, and mine) but does not remove those assumptions.
 
 ## techniques for the catalog
 
@@ -163,4 +153,3 @@ Inference: VL should not redo the generic four-axiom framework, `herd`, the SC/T
 - herd simulation: execute concise relation specifications over all candidate executions
 - axiomatic CBMC verification: encode the memory model directly in bounded C verification and compare with SC instrumentation
 - mole static mining: overapproximate thread groups and shared objects, enumerate cycles, and classify them by memory-model axiom
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "A memory read r consists of an init i(r), where it reads its value, and a commit part c(r), where it becomes irrevocable."): I read the whole paper text (lines 1 to 4112) and the whole study, and checked each quotation, number, table value, section and page reference, and technique step against it. I changed: page and section references for the four axioms (§4.3 to §4.6, pp. 15–23, not pp. 11–19), Fig. 25 (p. 33, not p. 41), Theorem 7.1 and the proofs (pp. 40–45, not 42–48), the mole quote (p. 65, not 66), the consume-atomics remark (§10, p. 73, not §4.9), the mixed-event-types remark (p. 26); the "33 behaviours" statement (§10, p. 73) now noted as an unexplained 31 versus 33 inconsistency in the paper rather than a test-versus-behaviour difference; the claim of a proof of "relation-level validity" was deleted as unsupported; the CBMC step "add assertions", the step about revising the model only on architectural evidence, and the 45,000-times arithmetic sentence were corrected; the mole limits (points-to may miss cycles, spawn ordering, partial inline assembly) were added. I did not check the PDF figures beyond the extracted text, the cited external papers or web pages, the Coq scripts, the herd/mole artifacts, or the arXiv page itself (the link is the arXiv identifier printed in the paper text); the Verus-form paragraphs are my inferences and not checked against any Verus documentation.

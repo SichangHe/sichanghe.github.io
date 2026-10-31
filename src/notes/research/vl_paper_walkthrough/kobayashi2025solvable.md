@@ -73,5 +73,3 @@ The paper proves mathematical properties of STP/CSTP inference and the restricte
 - least CSTP CHC solving — compute a least shape model for definite clauses and test goal clauses
 - shape-plus-length combination — conjoin STP list structure with integer length invariants from an arithmetic CHC solver
 - staged CHoCoL solving — try list, set/multiset, length, CSTP, and symbolic-refutation modes under resource limits
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We have also manually inspected some of the SAT instances that could not be solved by CHoCoL."): checked the whole paper including references and appendices, all study quotations, numbers, page/section references, and technique steps; corrected page references, inference and abstraction steps, multiset limitations, failed-goal interpretation, tool descriptions, experimental scope, and link; did not reproduce experiments, inspect tool implementations, or validate the proposed Verus integration.

@@ -30,7 +30,7 @@ Steps from Algorithm 1 (Section 3.2.2, pp. 5–6):
 5. Keep top-k cumulative-log-probability beams after each step; return Ω.
 6. In Level 2, maintain obligations over pairs of subtype/supertype states; match sends and branching receives, and use widening at recursion points to force fixpoint termination (Section 3.2.2, pp. 5–6).
 
-The checker is sound but incomplete: acceptance implies AMS validity, while rejection may reject a valid subtype; protocols above about 701 grammar units can exceed practical limits (Section 3.2.2, p. 6). Inference: this is a useful verifier-in-the-loop pattern for VL generation, but it gives a lower bound on correctness when the checker is incomplete. The paper explicitly says: “This checker accepts only candidates satisfying the asynchronous subtyping relation, while some valid ones may be rejected.” (Section 3.2.2, p. 6)
+The checker is sound but incomplete: acceptance implies AMS validity, while rejection may reject a valid subtype; protocols above about 701 grammar units can exceed practical limits (Section 3.2.2, p. 6).
 
 Verus form (inference): implement `Feasible` and `SimCheck` as ghost recursive functions over finite trees, with explicit `decreases` measures for recursion/widening. Executable beam search can call an unverified checker, but accepted output must be rechecked by Verus lemmas before use. Verus has no `ensures` on a `spec fn`; put postconditions on proof/executable wrappers.
 
@@ -42,12 +42,8 @@ Verus form (inference): model channels as ghost queues and prove each reorder pr
 ## evidence, failures, and product implications
 On the 100-supertype test set, Qwen2.5-Coder-7B direct generation produced 85.0% syntactic validity and 60.4% semantic validity among syntactically valid outputs; monitoring produced 96.7% syntactic and 99.2% semantic validity (Table 3, p. 8; denominator 100 test supertypes/model). Across models with monitoring, semantic validity was 99.5% for CodeLlama-7B, 95.7% StarCoder2-7B, 96.4% Qwen2.5-7B, and 95.6% Qwen2.5-Coder-32B (Table 3, same test setting). Monitoring raised token use from 8.6M to 27.5M for Qwen2.5-Coder-7B (Table 3, p. 8), approximately 3× as the authors state. The ablation removes monitoring and drops semantic validity to 60.4%; removing the prompt gives 93.9% versus 99.2% with it (Figure 9, p. 9). These numbers are checker acceptance, not proof that deployed implementations are deadlock-free.
 
-Already done that VL should not redo: typed MPST/AMS transformations and a sound derivative checker already provide the protocol-level contract; VL should focus on translating accepted trees into verified Rust handlers and connecting queue semantics. Inference: threat to agent-written verified Rust is medium to high for distributed code—Syntropy constrains protocol shape, but does not verify resource bounds, data invariants, unsafe code, or generated Rust. Trusted components include the grammar parser, AMS checker, model, beam implementation, and dataset's heuristic subtype generator.
-
 ## techniques for the catalog
 - MPST-conditioned subtype training — fine-tune on typed supertype/subtype pairs with explicit transformation grammar
 - token-level derivative filtering — prune prefixes that cannot complete to a valid asynchronous subtype
 - widening-based final checking — verify complete session trees with coinductive derivatives and recursion widening
 - variance and reordering refinement — apply covariance, contravariance, and independent send/receive anticipation
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -38,8 +38,6 @@ The verified artifacts cover six algorithms and their claimed ratios; the paper 
 
 Inference: the results rely on Isabelle/HOL's semantics, libraries, verification-condition generator, and underlying prover; the paper does not discuss this trust base.
 
-Inference: The threat to agent-written verified Rust is high for proof completeness but low for direct implementation reuse: generated code can compile while a weak invariant fails to imply the desired approximation guarantee. VL should ask agents to state preconditions, loop invariants, witness relations, and final ratio lemmas explicitly, then reject proofs that only show functional output. What is already done here is a reusable invariant-first recipe for approximation algorithms; VL should not redo an informal-only proof without checking preservation and lower-bound obligations.
-
 ## techniques for the catalog
 
 - invariant-based Hoare verification — express imperative algorithms with preconditions, postconditions, and loop invariants, then discharge initialization, preservation, and exit obligations
@@ -47,5 +45,3 @@ Inference: The threat to agent-written verified Rust is high for proof completen
 - existential ghost witnesses — quantify proof-only partitions or matchings to connect executable state to approximation bounds
 - lower-bound decomposition — prove average, maximum-item, and structural lower bounds separately before deriving the approximation ratio
 - verus translation (inference) — map contracts and ghost invariants to Verus `requires`, `ensures`, loop `invariant`, and erased `proof fn` lemmas
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "It is furthermore in this lemma that the question raised above about the factor 2 is answered."): read the whole paper text (LMCS 18(1:36), 21 pages) and checked every quotation, section and page reference, invariant definition and ratio against it; changed prior-proofs wording (pen-and-paper, not formal), moved the Δ+1 to Δ citation to p. 2, fixed the independent-set invariant description (P covers X with possible overlap, not a strict partition), removed an unsupported "counterexample" claim, corrected page references for §4 variant (p. 5) and load-balancing lemmas (p. 7), added the bin-packing weak-invariant example, and marked the termination, trust-base and how-to steps as inferences; did not check the Isabelle proofs in the Archive of Formal Proofs or the cited papers (BM03, BR03, KT06), and the Verus translations are untested.

@@ -5,8 +5,6 @@ Tag: `yao2021distai`, [paper](https://www.usenix.org/conference/osdi21/presentat
 ## scope and claim
 DistAI learns inductive invariants for IVy distributed-protocol specifications. The target is a safety property: an invariant that holds in every reachable state. The paper's abstract says, “DistAI generates data by simulating the distributed protocol at different instance sizes and recording states as samples.” It then enumerates candidate formulas consistent with those samples and asks IVy/Z3 whether the candidates plus the requested safety property are inductive. The guarantee is conditional: “We prove that DistAI is guaranteed to find the ∃-free inductive invariant that proves the desired safety properties in finite time, if one exists.”
 
-Inference: VL could use the same separation in a Verus project: generate likely relational facts from executions or model states, but make the Verus proof (invariants and lemmas) the authority. Sampling can prioritize proof candidates; it cannot justify a Rust contract by itself.
-
 ## technique 1: two-stage data sampling
 
 what it is and when to use it
@@ -82,12 +80,9 @@ The evaluation uses 14 distributed protocols (Table 1, p. 416), with one-week (1
 
 What is proved is inductiveness of the learned formulas relative to IVy transitions and the stated safety property. The Python simulator and IVy-to-Python translation are outside the trusted computing base, and sampling need not be complete. The paper explicitly says: “DistAI does not require sampling to be extensive or complete as the candidate invariants are checked by IVy.” (Section 1, p. 406.) Inference: the IVy implementation, Z3, and fidelity of the protocol specification remain trust or modeling assumptions. Black-box subprotocol behavior is sampled from postconditions and is not an executable implementation proof. For blockchain, the checked variant is that an honest leader at epoch `T` causes all transactions before `T` to be confirmed at `T`. The footnote states: “The original liveness property cannot be encoded as a safety property, thus falling out of the scope of DistAI, I4, and FOL-IC3.” (Section 6, p. 416.)
 
-Inference: for agent-written verified Rust, DistAI offers a useful design pattern. It can automate discovery of missing relational lemmas for distributed state machines, reducing proof search effort. It cannot certify Rust implementation details, ownership, I/O, cryptography, or scheduler behavior, and its universal-only bias misses protocols whose proof needs existential witnesses. VL should reuse the simulation→candidate→solver loop only as proof assistance, while requiring Verus to check executable transitions and explicit contracts.
-
 ## techniques for the catalog
 
 - two-stage sampling — simulate finite IVy instances, project states to quantified-variable subsamples, and use the data to prune candidate invariants
 - strongest-candidate enumeration — enumerate small universal formulas and retain only strongest formulas that hold for all subsamples
 - monotonic weakening — add literals to failed candidates, recheck with IVy, and increase formula size when the safety property itself fails
 - finite convergence condition — termination is guaranteed only when the safety property has a finite ∃-free inductive invariant representation
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "If the broken invariant has reached the maximum number of literals, this second step will be skipped."): checked the entire paper, study quotations, numbers, section and printed-page references, algorithm steps, and limits; corrected the publisher link, page references, candidate enumeration and weakening details, the rejected Ricart–Agrawala formula, simulator trust claims, and blockchain property; did not run the artifact or validate the Verus proposals, which are marked Inference.

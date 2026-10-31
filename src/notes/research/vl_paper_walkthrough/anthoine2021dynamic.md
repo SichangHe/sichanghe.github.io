@@ -32,13 +32,6 @@ To reduce persistent client state to `O(κ)`, encrypt V, store its ciphertext W 
 
 For public verification, replace ciphertext controls with `W=g^V` and publish `K=g^U`. Update W homomorphically and check `K^y=W^x` (§5.4, pp.547–548). Updated Merkle roots must be published over an authenticated, timestamped channel. Theorem 9 requires `p≥max{16n+96λ, m·2^(2κ)}` and LIP security in the chosen prime-order group. The server’s matrix-vector multiplication uses field arithmetic; the verifier performs group operations. Inference: Verus could check update equations under explicit field/group specifications, while the cryptographic security assumptions remain external.
 
-## evidence, limits, and VL threat
-Private-mode experiments used a 57-bit prime, 7-byte input chunks, square matrices, and 8 KiB Merkle blocks hashed with SHA-512/224 (§6.1, p.549). Public mode used ristretto255, a 253-bit prime-order subgroup of Curve25519, with matrix dimensions based on 252-bit data elements. Its reported computational security parameter ranges from 117.78 to 120.2, depending on database size (pp.549–550).
-
-On S1, one physical core with 7.5 GB RAM, private server audit time was 0.24 seconds for 1 GB and 529.90 seconds for 1 TB; public server time was 1.65 and 1725.75 seconds respectively (Tables 4–5, p.550). The 1 TB public timing was a single run; unstarred timings are medians over 11 runs after warm-up. On four-core S4, a private 1 TB audit took 278.37 seconds and cost $0.08; on sixteen-core S16 it took 250.91 seconds and cost $0.175 (Table 6, p.551). These parallel timings explain the abstract’s sub-five-minute claim. Table 7 reports 5906 KB and 1.80 seconds of communication for 1 TB on S4 (p.551). Costs are historical Google Cloud measurements, not current prices.
-
-The authors attribute limited parallel speedup at 1 TB to roughly 4 GB/s disk throughput (§6.4, p.551). Their square-matrix cost table gives `N+o(N)` server storage, linear setup and server audit work, square-root audit communication and client work, and logarithmic read/write costs under its parameter choices (Table 3, p.550). Inference: for VL, useful candidates are matrix/Merkle update invariants and the interface between deterministic correctness and cryptographic arguments. The paper neither evaluates Verus nor establishes a comparative threat to VL; such an assessment would require evidence beyond this paper.
-
 ## techniques for the catalog
 - Inference: matrix-vector PoR audit — maintain `vᵀ=uᵀM` and check `uᵀy=vᵀx`
 - Inference: Merkle range authentication — verify boundary paths and update the retained root
@@ -46,4 +39,3 @@ The authors attribute limited parallel speedup at 1 TB to roughly 4 GB/s disk th
 - Inference: Vandermonde extraction — recover M from sufficiently many distinct nonzero successful challenges
 - Inference: encrypted externalization — move V to the server with encryption and a second Merkle tree
 - Inference: public homomorphic audit — verify exponentiated control equations using published roots and controls
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The challenge, then, is to support equality testing for dot products of encrypted values, without decrypting."): read the whole paper, including references; checked quotations, parameters, equations, algorithms, section/page references, and experimental settings; corrected chunk and block sizes, control-row parameters, extraction wording, externalized updates, timing attribution, and the paper link; added the storage-time bound and identified printed parameter/probability discrepancies and the zero-challenge issue; did not independently validate all security proofs, inspect source code, reproduce experiments, or verify Verus feasibility.

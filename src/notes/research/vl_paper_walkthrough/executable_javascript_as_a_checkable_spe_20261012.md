@@ -1,7 +1,6 @@
 # Executable JavaScript as a Checkable Specification Language: A JS-SAM Case Study on SysMoBench
 (authored by agents unless marked 🧑)
 Tag: `dubray2026executable`, [paper](https://arxiv.org/abs/2607.13092v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## identity, question, and boundaries
 
@@ -44,12 +43,6 @@ how to do it. Score the baseline; build a repair prompt containing the full modu
 verus form (inference). Translate each counterexample into a failing `assert` or a test lemma, then repair the Rust transition or its invariant. Re-run `cargo verus` and a separate executable trace harness. A proof that only covers supplied examples is insufficient; use quantified lemmas or finite-domain coverage to rule out memorization. Verus can prove the root-cause guard is sufficient for all states satisfying the invariant, which is stronger than replay.
 
 evidence and limits. The repair prompt measures “can the model exploit precise, correct feedback,” not unaided generation. All held-out lock cases were observable no-ops, so source inspection and bounded-state evidence are needed. At Raft scale, 0/20 one-shot bare-next specifications pass every phase and one repair round recovers 6/20; protocol semantic derivation remains the bottleneck.
-
-## what is proved, trusted, and relevant to VL
-
-The paper proves only what its finite checkers and replay oracle establish: deterministic bounded exploration, invariant predicates over reachable states, and agreement with captured traces. Trusted components include the instrumentation, trace parser, projection rule, benchmark harness, container boundary, expert invariants, prompts, and the correctness of the hand-written reference model. The paper reports a real methodological contradiction: headline replay rates are inflated by six identity windows, so unconditional and conditional rates must both be reported. It also shows that Phase-2 “326,592 states explored” is actually step count `(d+1)·6^d`, not semantic-state coverage.
-
-For VL (VeruLaw), the reusable ideas are trace windows as a concrete debugging oracle, minimal observable transition contracts, and repair prompts generated from failed postconditions. The threat to agent-written verified Rust is substantial for specification fidelity: a Verus proof can certify the wrong contract unless traces or a reference specification constrain it. The threat is lower for memory safety and functional proof once the contract is correct. This threat assessment is an inference from the paper's distinction between internal consistency and implementation conformance.
 
 ## techniques for the catalog
 

@@ -17,7 +17,7 @@ A Verus adaptation is an inference. Treat a generated Rust proof function or spe
 ## technique: benchmark extraction from real repositories
 Use repository mining when a benchmark should reflect non-trivial proof development. The extraction pipeline mined five public Lean 4 repositories. It produced 2,206 problems with an average of 41 successor theorems per target. A hard subset contains 389 problems whose target declarations have body type `Prop`, requiring both proposition and proof generation (section 4.3, p. 5). Existing benchmarks supplied only 12 evaluation problems and 110 training problems meeting the non-triviality and successor-coverage criteria (section 4.3, p. 5).
 
-The authors generate missing natural-language statements with Claude Sonnet 4.5 and manually verify 10 randomly sampled annotations, finding no errors (section 4.2, p. 5). That is a 10-sample annotation audit, not proof that all 2,206 descriptions are correct. Inference: a VL benchmark should preserve source repositories, dependency metadata, and build configurations rather than flattening each proof into an isolated prompt.
+The authors generate missing natural-language statements with Claude Sonnet 4.5 and manually verify 10 randomly sampled annotations, finding no errors (section 4.2, p. 5). That is a 10-sample annotation audit, not proof that all 2,206 descriptions are correct.
 
 ## technique: separate compile, lexical, and testing metrics
 Run isolated compilation to measure syntactic/logical validity, TA to test successor behavior, and BLEU to measure lexical overlap with the reference theorem. The paper reports the gap directly. On the full T2 set, Claude-Sonnet-4.5 has 80.3% compilation accuracy but 38.9% TA; on T2 Hard it has 46.0% compilation and 4.5% TA (Table 2, p. 7). GPT-5 has 85.7% compilation and 37.7% TA on the full set, but 68.3% compilation and 3.4% TA on T2 Hard (Table 2, p. 7). These percentages use all problems in the corresponding T2 or T2 Hard subset; the table does not state a separate denominator for each model because the denominator is the full subset.
@@ -38,11 +38,6 @@ Use multiple successors and deeper dependency chains to reduce false positives. 
 
 The limitation is explicit: “The reliability of TA increases with the number and diversity of successor theorems, as each imposes an additional semantic constraint.” (section 8, p. 9) Inference: too few callers make a Verus integration test weak, while an enormous successor closure can make evaluation expensive and confound solver time with semantic failure. Record the successor count, depth, repository, Lean/Verus version, and timeout for every score.
 
-## what stays trusted and threat to VL
-The paper’s claims are about Lean theorem-generation evaluation, not theorem proving soundness. TA depends on Lean’s compiler and environment, dependency extraction, generated natural-language annotations, and the selected successor graph. It does not prove that a candidate theorem is equivalent to the natural-language statement when no successor exercises the difference. It also does not evaluate Rust ownership or Verus solver behavior.
-
-Inference: the main threat to agent-written verified Rust is a false sense of completion from checking one function or one proof obligation. A transitive successor harness can expose wrong contracts that still satisfy local SMT checks, but it can miss uncalled behavior and cannot replace explicit specifications. The paper already addresses isolated compilation, lexical metrics, and shallow benchmark design; VL should reuse dependency-aware integration tests rather than redo those weaker evaluations.
-
 ## techniques for the catalog
 - successor theorem testing: replace a target theorem and compile every transitive dependent theorem
 - dependency-aware extraction: mine repository graphs and retain predecessor, successor, depth, and build context
@@ -50,4 +45,3 @@ Inference: the main threat to agent-written verified Rust is a false sense of co
 - downstream prompt context: provide successor declarations with natural-language proof context during generation
 - coverage-controlled evaluation: increase successor count and dependency depth to make semantic tests stricter
 - caller-slice Verus inference: re-run Verus over every dependent specification and executable caller after replacement
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -54,7 +54,7 @@ Against external provers, cvc5[C] solved 2,382, versus Satallax 2,358, Vampire 2
 
 ## proved, measured, and trusted
 
-The paper proves no metatheory for cvc5's implementation. Its evidence is empirical benchmark solving under fixed hardware, parser exclusions, timeout, and strategy configurations. The solver's SAT/SMT core, rewriting, Skolemization, model construction, SyGuS enumerator, and generated lemmas remain trusted implementation components; the benchmark conjectures and higher-order semantics are assumptions of the evaluation. Inference: for agent-written verified Rust, the reusable lesson is to separate candidate generation from a checked proof artifact. A Verus project could use a similar search-and-filter architecture, but treating a model result or a generated Skolem lemma as a proof without a kernel-checked certificate would create a product threat. VL should not redo generic grammar enumeration; it should focus on extracting witnesses and contracts that Verus can check.
+The paper proves no metatheory for cvc5's implementation. Its evidence is empirical benchmark solving under fixed hardware, parser exclusions, timeout, and strategy configurations. The solver's SAT/SMT core, rewriting, Skolemization, model construction, SyGuS enumerator, and generated lemmas remain trusted implementation components; the benchmark conjectures and higher-order semantics are assumptions of the evaluation.
 
 ## techniques for the catalog
 
@@ -65,4 +65,3 @@ The paper proves no metatheory for cvc5's implementation. Its evidence is empiri
 - semantic candidate filtering — test substituted bodies in the current model before committing them
 - rewrite and vacuity filtering — simplify epsilon terms and discard predicates whose bound variable is unused
 - progress-aware search — cache failed substitutions, bound nested calls, and use lookahead symbols
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

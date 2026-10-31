@@ -60,8 +60,6 @@ The paper describes per-fold ensemble selection on the inner subset (Section 4, 
 
 Appendix G reports “18,722 API calls across model selection and evaluation phases” (p. 9). Table 7 includes 960 Z3 solver calls in its 18,722 total (p. 10). Inference: this total should not be treated as an unambiguous count of LLM API requests. Each syllogism requires five ensemble calls, one extraction call, and one Z3 solve; 960 Z3 solves take 8.5 seconds total, median 7 ms (Appendix G, p. 9). The paper reports approximately 4,300 tokens and 12.1 seconds of sequential latency per instance, or 2.8 seconds with parallel ensemble calls (Limitations, p. 6).
 
-Inference: VL should keep model-selection data separate from an untouched evaluation corpus and should treat extraction, solver, and threshold choices as part of the system specification. The product threat is concentrated at the natural-language-to-structure boundary: a formally correct Z3 or Verus check can validate the wrong structure. The paper’s selective routing is reusable for verified Rust agents when disagreement identifies an expensive proof path, but its reported accuracy does not transfer to Rust or Verus without new measurements.
-
 ## techniques for the catalog
 
 - disagreement-triggered formal routing: use a formal checker’s available verdict only on narrow ensemble votes
@@ -69,4 +67,3 @@ Inference: VL should keep model-selection data separate from an untouched evalua
 - Aristotelian FOL encoding: encode A/E/I/O propositions with explicit existence axioms
 - consistency-then-entailment checking: defer to the ensemble on inconsistent premises before testing premises plus negated conclusion
 - nested evaluation: select model/prompt pairs on inner subsets and report outer-fold results
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In each, the Z3 solver produces a correct verdict given the (incorrectly) extracted structure, confirming that the bottleneck is extraction fidelity, not logical encoding."): checked all paper text, study quotations, numbers, section and page references, technique steps, and the arXiv identifier; corrected page references, selective verdict use versus per-instance computation, unsupported diversity and threshold-selection claims, and inconsistent reported counts; did not reproduce experiments, inspect code, or verify the proposed Verus adaptations.

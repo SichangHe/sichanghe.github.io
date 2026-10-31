@@ -32,9 +32,6 @@ Table 2 (p. 9) gives DCN as 11,260 switches, 2,657,422 rules, and 11,136 subnets
 
 Libra assumes static IP-prefix forwarding, unchanged headers, deterministic behavior, complete forwarding snapshots, and matching rules that contain the entire subnet. It cannot explain why a state is wrong or interpret control logic; dynamic NAT and arbitrary header matching are outside the design. Deterministic header transformations could be supported by joining subnet graphs, but this is an extension. A subnet split by a more-specific rule would require finer slices; the paper leaves deriving equivalence classes from rules to future work. Each reducer must also fit an entire subnet graph on one server (section 9, pp. 11–12). Inference: the trusted base includes route dumpers, event timestamps, MapReduce, trie and reducer code, switch-table semantics, and graph algorithms. Inference: verifying prefix and graph code in Verus would leave snapshot assumptions, event delivery, and hardware behavior as separate proof obligations. A slice certificate would establish only properties of the supplied graph.
 
-## what VL should reuse
-Libra presents stable-snapshot reconstruction, subnet slicing, trie matching, graph construction, and an incremental design evaluated through component microbenchmarks. Inference: VL should reuse the divide-and-conquer architecture and prove its indexing and graph reductions against simple reference specifications rather than reimplementing a monolithic global checker. The paper says, “Veriflow slices the network into equivalence classes and builds a forwarding graph for each class, in a similar fashion to Libra.” (section 10, p. 12). Inference: Libra’s distributed decomposition complements that approach.
-
 ## techniques for the catalog
 - stable snapshot reconstruction: replay timestamped updates and wait 2ε to obtain a state known to have existed
 - subnet MapReduce slicing: map rules to contained prefixes, shuffle by subnet, and reduce independently
@@ -42,5 +39,3 @@ Libra presents stable-snapshot reconstruction, subnet slicing, trie matching, gr
 - route-dumper normalization: represent ingress-port-dependent rules and chained tables with logical switches
 - forwarding-graph checking: detect reachability, black holes, and loops with DFS and SCC algorithms
 - incremental slice updates: update only affected subnet graphs and rerun local graph properties
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Unlike NetPlumber and Veriflow, Libra does not need to explicitly remember the dependency between rules."): read the full paper and study; checked quotations, numbers, section and paper-page references, technique steps, assumptions, and the publisher link printed in the paper; corrected the mapper proof attribution, trie enumeration direction, Table 3 page and speedup scope, loop-check description, and evaluation scope; added route-dumper normalization and limitations; removed unsupported risk ratings and marked proposed proofs as inferences; did not reproduce experiments, inspect source code, or verify the proposed Verus proofs.

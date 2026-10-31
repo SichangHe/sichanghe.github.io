@@ -79,12 +79,6 @@ How to use it.
 
 Inference: A Verus service could retrieve candidate facts, run a bounded proof search or SMT call, and then demand a Verus-checked proof artifact. The external solver must not be trusted as the final authority; the Verus verifier should check the reconstructed result.
 
-## what remains trusted and threat to VeruLaw
-
-Inference: The proof-producing tactics and Lean kernel establish accepted Lean proofs. The learned encoder, signature extraction, premise labels, FAISS ranking, external Zipperposition search, timeout policy, and Duper reconstruction are components of the workflow; only a result accepted by Lean is a proof. The paper's benchmark comparisons do not establish soundness beyond Lean's checker or guarantee useful retrieval for an unseen library.
-
-Inference: Threat to VeruLaw is medium. The strongest transferable pattern is a callable, cached, high-recall premise service feeding bounded symbolic proof search, trained on complete verification dependencies. It could reduce agent retries and adapt to user-local Rust specs. Risks are wrong or incomplete dependency labels, retrieval of irrelevant facts that cause SMT divergence, and a generated specification that is formally proved but semantically wrong. Verus compilation and explicit specification review remain necessary.
-
 ## techniques for the catalog
 
 - hammer-aware dependency extraction — train on extracted theorem-wide premise sets, including implicit, tactic-induced, `rw`, and `simp` dependencies
@@ -92,5 +86,3 @@ Inference: Threat to VeruLaw is medium. The strongest transferable pattern is a 
 - masked contrastive premise retrieval — train an encoder with sampled negatives and masks for shared positives, then select high-recall top-k facts
 - unified neural-symbolic hammer — feed selected premises to direct search and an external prover, then reconstruct and check the proof in the assistant
 - callable cached premise API — expose retrieval as a user tactic, cache fixed-library embeddings, and incrementally embed new local declarations
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Meanwhile, the union of theorems our models and MePo can solve is much higher than each method separately, indicating that symbolic and neural methods have complementary strengths."): read the full paper, including appendices and references, and checked the study's quotations, numbers, section/page references, and technique steps; corrected full versus cumul proof rates, the scope of ground-truth results, extraction labels, notation printing, caching, positive masking, page references, and the paper link; marked recommendations and conclusions as inferences; did not reproduce experiments, inspect code, or validate the proposed Verus adaptations.

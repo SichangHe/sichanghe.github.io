@@ -6,7 +6,7 @@ Tag: `kozyrev2026rocqstar`, [paper](https://arxiv.org/abs/2505.22846v3)
 
 RocqStar combines proof-aware premise retrieval with a multi-stage agent for Rocq (formerly Coq). It mines intermediate proof states, learns statement embeddings that predict proof similarity, and supplies retrieved proofs to a generator. Its agent separates planning from execution, uses multi-agent debate (MAD), and includes reflection and replanning. The abstract states: “The evaluation of the designed approach shows up to 28% relative increase of the generator’s performance.” (Abstract, p. 1.) The paper version is dated 26 January 2026 and its ACM reference gives 2026, hence the corrected tag year.
 
-The evaluation uses 300 IMM project theorems, grouped by human reference proof length: ≤4 tactics, 131 theorems; 5–8, 98; 9–20, 71. Reference proofs longer than 20 tactics are excluded (Section 4, pp. 5–6; Table 2, p. 6). Rocq acceptance is the success criterion. The full agent solves 60%, compared with 51% for Claude 3.5 Sonnet given 12 attempts (Sections 4.1–4.2, pp. 6–7). Inference: VL can try these retrieval and agent-control patterns in Verus, replacing Rocq states, tactics, and tools with Rust/Verus source, contracts, and diagnostics.
+The evaluation uses 300 IMM project theorems, grouped by human reference proof length: ≤4 tactics, 131 theorems; 5–8, 98; 9–20, 71. Reference proofs longer than 20 tactics are excluded (Section 4, pp. 5–6; Table 2, p. 6). Rocq acceptance is the success criterion. The full agent solves 60%, compared with 51% for Claude 3.5 Sonnet given 12 attempts (Sections 4.1–4.2, pp. 6–7).
 
 ## technique 1: mine intermediate states with BigRocq
 
@@ -64,8 +64,6 @@ evidence and limits. Removing reflection lowers success from 66% to 48% overall 
 
 The experiments measure proof acceptance in Rocq, using the fixed IMM benchmark. Reference proofs of at most 20 tactics cover 83% of IMM proofs; longer proofs were not evaluated (Appendix D, p. 10). The authors acknowledge possible contamination of cloud LLM training because IMM is public. Modified goal presentation and premise-sensitive behavior are their arguments for mitigation, not a demonstration that contamination is absent (Appendix D, p. 10). The agent's full evaluation is a single run; retrieval results average three runs (Section 4.1, p. 6; Appendix E, p. 11).
 
-Inference: Rocq acceptance establishes the submitted proof against its stated theorem under the proof system's assumptions. It does not establish that the specification expresses a desired product behavior. Learned retrieval and LLM plans guide proof search and still require checking. The paper does not evaluate Rust/Verus, dependency changes, or proof maintenance. VL should measure those directly before assuming these patterns improve its own results.
-
 ## techniques for the catalog
 
 - intermediate-state mining — expand proof corpora by extracting valid subgoals and their proofs from existing files
@@ -73,5 +71,3 @@ Inference: Rocq acceptance establishes the submitted proof against its stated th
 - verifier-aware valid-prefix tools — return diagnostics, remaining goals, and the accepted prefix for incremental repair
 - multi-agent debate planning — generate, critique, score, and execute formal-proof strategies
 - reflection and replanning — trigger retrieval and plan repair after repeated verifier failures
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "All experiments are performed on the IMM-50 dataset, with all other system components kept unchanged."): checked the full paper, quotations, numbers, page and section references, technique steps, tag year, and paper link; corrected the year, page references, substitution cost, training details, retrieval counts, and reflection-trigger ambiguity, and marked conclusions as inferences; did not check external code, model artifacts, or reproduce experiments.

@@ -22,8 +22,6 @@ Pairwise LLM answers suffer positional bias and a tendency toward particular lab
 
 The maximum case compares three designs. A constrained-decoding baseline asks directly for the largest element. “Native” maximum replaces Python's `>` in the ordinary O(n) max reduction with a yes/no comparison. A tournament performs pairwise comparisons in ceil(log2 n) parallel rounds and n−1 total comparisons. For lists of 1,000 integers, the authors write, “The only configuration that solved n = 1000 reliably is the tournament maximum, which was several orders of magnitude faster yet maintained near-zero errors.” (Section 3, pp. 4–5). Thinking increased runtime almost tenfold; symmetrization doubled runtime and reduced error for the 1.7B model. Five runs were used per condition and 20 random lists per n.
 
-Inference: VL should retain verified loop bounds and parallel scheduling while asking an LLM only for local ordering or proof-lemma selection. This avoids allowing free-form generation to bypass a known complexity or termination argument.
-
 ## technique 4: sorting, clustering, and greedy selection
 
 Verbalized sorting uses an LLM comparison oracle in Bitonic sorting or KwickSort. Bitonic performs O(n(log n)²) comparisons in O((log n)²) parallel time. KwickSort follows quicksort, allows inconsistent comparisons, and has O(n log n) expected comparisons and O(log n) expected parallel time; recursion stops without sorting when a partition has at most θ elements, with θ ∈ {4,16}. Before the added early stopping, its approximation bound concerns the FAS-Tournament objective under inconsistent pairwise preferences: expected disagreement is at most three times optimal. Sorting accuracy is measured with Kendall-tau (Section 4, pp. 5–7).
@@ -36,8 +34,6 @@ Verbalized Greedy Submodular Maximization (VGSM) follows the classical greedy al
 
 Experiments used SGLang's offline asynchronous engine and repeated every condition five times. Hardware was NVIDIA A100-80GB for maximum/sorting and H100 for clustering/submodular tasks (Appendix E, p. 18). VAs need many model calls, so their constant factor can dominate despite classical asymptotics. The general transfer of guarantees is conditional on oracle accuracy; VGSM additionally requires a monotone submodular objective for the classical approximation bound (Section 2, p. 4; Section 6, p. 9). Free-form baseline outputs violated explicit WiFi constraints, including placing access points in walls or at duplicate positions; thinking reduced but did not eliminate violations (Section 6, p. 9).
 
-Inference: the inherited classical guarantees concern an algorithm under its oracle assumptions; they do not prove LLM correctness. What remains trusted includes prompts, serialization, decoding constraints, probability interpretation, and the oracle's semantic judgment. The product threat to agent-written verified Rust is specification drift hidden behind a correct low-level proof. VL should use VA structure for search and repair, but pair each oracle decision with a deterministic Verus-checkable predicate whenever one exists. Existing work already supplies sorting networks, greedy approximation, clustering structures, and noisy-oracle analyses; VL should compose them rather than re-derive unconstrained reasoning loops.
-
 ## techniques for the catalog
 
 - oracle substitution: replace only atomic classical operations with constrained LLM queries
@@ -45,4 +41,3 @@ Inference: the inherited classical guarantees concern an algorithm under its ora
 - algorithmic parallelism: retain tournament, sorting, and partition control flow for known complexity
 - verbalized greedy selection: use an LLM to choose each next item while inheriting greedy guarantees conditionally
 - noisy-oracle robustness: use algorithms designed for erroneous comparisons when the LLM is imperfect
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To reduce the runtime of the experiment, VGSM and Verbalized KwickSelect pre-selects 2k or 4k documents using the embedding baseline before running the respective algorithm."): checked the full paper including appendices against the study’s quotations, numbers, references, technique steps, and assumptions; corrected Section 2 page references, quotations, clustering steps, and guarantee qualifications; added sorting and RAG setup details; did not reproduce experiments or independently verify cited classical proofs.

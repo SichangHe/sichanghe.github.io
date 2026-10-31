@@ -5,8 +5,6 @@ Tag: `beyer2022progress`, [paper](https://doi.org/10.1007/978-3-030-99527-0_20)
 ## scope
 Beyer reports SV-COMP 2022, a comparative evaluation of automatic C and Java verifiers. The abstract gives the scale: “The competition consisted of 15 648 verification tasks for C programs and 586 verification tasks for Java programs.” (Abstract, p. 375). Inference: the report is a practical specification for reproducible verifier benchmarking, witness-based validation, resource accounting, and failure analysis.
 
-Inference: SV-COMP does not prove that any verifier is sound for arbitrary Rust or Verus programs. Its methods can nevertheless define how VL should measure a verifier and how to require independently checkable evidence for each result.
-
 ## technique 1: fixed benchmark tasks and explicit property categories
 
 The report defines the setup as follows: “SV-COMP is an open competition (also known as comparative evaluation), where all verification tasks are known before the submission of the participating verifiers, which is necessary due to the complexity of the C language.” (§2, p. 376).
@@ -17,7 +15,7 @@ How to use it. Inference: these steps are distilled from the report, not listed 
 
 Verus form. Inference: build a versioned corpus of Rust/Verus crates and task files, where each task names a function, contract, safety property, or bug-finding target. Keep functional correctness, memory safety, concurrency, and termination as separate categories. Freeze the corpus before an agent or verifier is scored. Rust compiler and Verus version must be part of the task definition because solver and language changes affect results.
 
-Evidence and limits. The paper says the results “represent the the state of the art of what can be achieved with fully automatic software-verification tools on the given benchmark set” (§5, p. 387). Inference: the benchmark measures performance on the selected tasks, not all software, and VL should report denominators per category and avoid claiming coverage of arbitrary Rust from a curated suite.
+Evidence and limits. The paper says the results “represent the the state of the art of what can be achieved with fully automatic software-verification tools on the given benchmark set” (§5, p. 387).
 
 ## technique 2: witness-based validation of verifier results
 
@@ -41,7 +39,7 @@ How to reproduce a run. The troubleshooting section gives a concrete sequence (�
 
 The paper states: “SV-COMP results must be reproducible, and consequently, all major components are maintained in public version-control repositories.” (§2, p. 380). It also reports hard limits: each verification run had 8 cores, 15 GB memory, and 15 minutes CPU; violation-witness validation had 2 cores, 7 GB, and 1.5 minutes (§5, p. 387). Runs used 167 machines, each one otherwise unloaded, with one Intel Xeon E3-1230 v5 CPU and Ubuntu 20.04, while BenchExec measured CPU time, memory, and energy (§5, p. 389).
 
-Verus form. Inference: package each VL task with the Rust toolchain, Verus commit, dependency lockfile, solver versions, generated proof source, and an invocation script. Run on dedicated workers with fixed CPU, memory, and wall-clock limits. Capture logs and solver seeds. Re-run locally and in a clean container before accepting a result. Record whether external specifications, `assume`, or `external_body` declarations are present.
+Verus form.
 
 Evidence and scale. The regular evaluation comprised 309,081 verification runs, 937 CPU-days, and 249 kWh before validation. Witness validation added 1.43 million runs and 708 CPU-days; including preruns, the infrastructure reached 2.85 million verification and 16.3 million validation runs, totaling 19 and 11 CPU-years respectively (§5, pp. 389–391). Inference: validation was a large cost (708 CPU-days against 937 CPU-days for the verification runs, and 11 against 19 CPU-years including preruns), so it must be budgeted as a first-class operation; it was not larger than verification in CPU time.
 
@@ -59,15 +57,9 @@ Verus form. Inference: report pass rate over named proof obligations, wrong-proo
 
 The paper's workflow treats logs, dependencies, machine assumptions, and witnesses as observable causes rather than silently aggregating failures. Typical problems include missing packages, insufficient logs, and hardware assumptions (§3, pp. 381–382). Inference: this is directly applicable to agent-written verified Rust, where failures can arise from a changed Verus binary, solver version, crate feature, or undeclared external specification. Preserve the complete failure artifact so a maintainer can replay it.
 
-## what is proved, trusted, and already done
-
-Inference: the report establishes comparative measurements under its rules; it does not prove the semantic correctness of every validator or benchmark property. Trusted elements include task specifications, verifier implementations, witness formats, validators, BenchExec, compiler and solver behavior, and hardware measurements. Inference: VL must expose the same trust boundary. Inference: existing SV-COMP already provides the benchmark, witness, reproducibility, and resource-accounting patterns; VL should adapt them to Verus rather than invent another opaque leaderboard. Inference: the threat to agent-written verified Rust is high if VL reports only “Verus completed” without checking specifications and artifacts, and lower when an independent checker replays a pinned source and witness. The remaining threat is specification error, unsupported Rust/FFI, and assumptions about libraries or hardware.
-
 ## techniques for the catalog
 - versioned benchmark tasks — freeze programs plus explicit properties in a public, reproducible task repository
 - witness validation — require independently checked proof or violation witnesses and lint every artifact
 - reproducible execution — pin archives, dependencies, machines, containers, logs, and resource limits
 - multidimensional scoring — report correctness, unknowns, time, energy, and errors with task denominators
 - troubleshooting workflow — reproduce locally and remotely, inspect logs and validators, and report benchmark defects through version control
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We used BenchExec [32] to measure and control computing resources (CPU time, memory, CPU energy) and VerifierCloud to distribute, install, run, and clean-up verification runs, and to collect the results."): read the whole paper text (pp. 375–402) and checked every quotation, number, table, section and page reference in the study against it; changed the link to the DOI printed in the paper, corrected the SV-COMP quote in technique 1, the validator count (ten validators plus one witness linter), the Table 1, Table 10 and Table 12 page references, the 167-machine and run-total page range, the claim that validation cost more than verification (it cost less CPU time: 708 against 937 CPU-days), and marked distilled steps and conclusions "Inference:"; did not check the cited external references or the websites and artifacts, and did not check the Verus-form proposals beyond marking them as inference.

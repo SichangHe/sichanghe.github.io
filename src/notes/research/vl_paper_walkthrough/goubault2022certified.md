@@ -29,11 +29,8 @@ The method handles aliasing by construction because “The locations of each pro
 
 Inference: Trusted assumptions include the language semantics, contract environment, Coq kernel, and any automated prover used for generated formulas (the paper names no prover for this work).
 
-Inference: This directly threatens a product that only supports self-composition, because it removes a recurring source of cross-run separation lemmas. It does not replace Verus's ownership proofs or prove Rust unsafe code sound. VL should reuse the paper's relational-obligation decomposition rather than reimplement its Coq language.
-
 ## techniques for the catalog
 
 - direct relational VCGen: compose weakest-condition generation over separate memory states for multiple runs
 - three-part obligations: prove procedure contracts, relational auxiliary conditions, and the composed main condition
 - aliasing by state separation: give each execution an independent memory state instead of renaming and separating heaps
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Basically, Ta collects all assertions, preconditions of called procedures, as well as invariant establishment and preservation, and lifts the corresponding formulas"): I read the whole paper text (pp.1–24 including appendices) and checked every quotation, page and figure reference, the definitions of Tc, Ta, Tf, Tcr, Tar, the three obligations of Theorem 3, the Coq file names, and the absence of benchmarks. I changed: the Tcr formula is no longer presented as a quotation (it is my transcription; Definition 7 is on p.12 and the n=2 formula on p.13); the Theorem 3 sentence is now attributed to the paper's "In other words" gloss; Figures 7–8 moved to pp.10–11 and Figure 1 to p.2; the "Use this when" advice and the trusted-assumptions sentence are marked Inference; I added the no-implementation, solver-claim, and language-scope limits. Tag line kept: the surname "goubault" in the key does not match the paper's authors (Blatter et al.), but it is the catalog key matching the file name, and year 2022 is right; link from the fetch record (arXiv:2202.10349v3 matches the paper header). I did not check the Coq repository, the PDF figures visually (text extraction only), or the cited external works.

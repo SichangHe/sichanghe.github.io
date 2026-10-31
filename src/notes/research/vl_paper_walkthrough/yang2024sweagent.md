@@ -32,11 +32,10 @@ Steps: request thought plus command; respond to malformed output with a retry pr
 Ablation with last-five observation processing scored 18.0% on Lite, versus 15.0% with full history and 16.3% without demonstrations (Table 3). Inference: this is evidence for the particular context policy under the stated GPT-4 Turbo setup, not evidence that information deletion is sound.
 
 ## what is proved, trusted, and still missing
-The paper defines % Resolved as “the proportion of instances for which all tests pass successfully after the model generated patch is applied to the repository” (section 4, p. 5). Inference: this measures success on the evaluation tests, without establishing correctness beyond them or Verus soundness. The ACI implementation, linter, test suite, and execution environment affect the reliability of that result. For agent-written verified Rust, these interface patterns may reduce operational errors and context waste; incorrect specifications, untrusted external bodies, and acceptance without a successful Verus run remain concerns. VL could reuse these patterns and measure verifier-specific outcomes.
+The paper defines % Resolved as “the proportion of instances for which all tests pass successfully after the model generated patch is applied to the repository” (section 4, p. 5).
 
 ## techniques for the catalog
 - summarized search: bounded filename/string results with a retry prompt for overbroad queries
 - bounded file viewer: line-numbered windows with explicit omitted context and navigation commands
 - guarded range editing: atomic line replacement, linter feedback, discard-on-error, and refreshed content
 - context compression: retain the last five observations and collapse older ones to omission placeholders
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "First, it simply reduces the number of tokens needing to be processed at each interaction step."): checked the entire paper, study quotations, numbers, section/page references, technique steps, tag, and arXiv identifier; corrected model evaluation scope, page references, Python lint-check scope and edit order, HumanEvalFix denominators, format-error termination, and inference labels; did not rerun experiments or inspect the implementation or external links.

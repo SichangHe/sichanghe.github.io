@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `zhang2026realworld`, [paper](https://arxiv.org/abs/2602.08384)
 
-Audit: audited 2026-10-13 against the paper; rechecked every number, fraction and percentage (Tables 2 to 4, budget curves, RQ3 and RQ4 figures, training settings), page references, quotations, technique steps and the Verus sketches; changed one claim (the one proof in four reading of the 84 wrong done rationales was widened); Verus loop sketch checked against the Verus reference only by reading, not run.
-
 source: Jianyu Zhang, Fuyuan Zhang, Jiayi Lu, Jilin Hu, Xiaoyi Yin, Long Zhang, Feng Yang, Yongwang Zhao, arXiv:2602.08384v1 (9 Feb 2026), 30 pages with appendices A to D. Pages cited are the printed page numbers. The method is called AutoReal and the model AutoReal-Prover.
 
 earlier note: `topic_studies/formal_verification_rust/llm_for_verification/c_and_systems_proofs.md` has a six-line entry (method in one line, the 51.67% figure, the hold-out caveat). It has no steps, no prompts, no per-category numbers, no account of the context oracle, and no Verus form. Those are what this study adds.
@@ -193,17 +191,6 @@ Where it fails. "Differ" is not defined (exact string, or modulo whitespace and 
 - Appendix B.2's failed proof (Fig. 11, p.27). Its rationales say the attempt "is marked as failed" and that Isabelle "would not accept the proof", and they compare the attempt with a better strategy. The model writes rationales before any check, so text that knows the verdict is not what a failed attempt would normally contain. Inference: the failed-case rationales shown were not produced the way inference-time rationales are, and the case study does not show that rationales reveal failure.
 - hold-out. Only the evaluation theorems' own steps are excluded. The paper does not say whether FVELER's traces come from the same seL4 version as the March 2024 evaluation copy, or whether lemmas near-identical to test theorems remain in training. For AFP there is no fine-tuning data, but the base model's pretraining exposure is not discussed.
 - abstract against body. The abstract counts as a contribution that the model "enables step-wise explanations alongside proofs"; 84 `done` explanations are wrong, so at most 84 of the 341 successful proofs (up to about one in four) carry a wrong closing rationale; the paper does not say how many proofs end in `done`.
-
-## not to redo in VL
-
-Inference:
-- measuring a prover with oracle premises is done here and gives about half of real seL4 theorems for a 7B model; repeating that for Verus would only show the same upper bound. The open measurement is with premises selected automatically
-- the evaluation recipe of technique 4 (theories chosen by an outside rule, every theorem, checker verdict, placeholder ban, several budgets) is sound and can be reused as is
-- building step rationales with an unchecked small model is cheap and was done; what was not done is checking them, or showing they beat plain fine-tuning
-
-## threat to VL's product
-
-Inference: low. This is proof filling for existing Isabelle theorems with hand-picked premises; it does not write specifications, code, or new lemma structure, and it does not target Rust. The part to watch is cost: if a locally run 7B model reaches half of seL4's theorems under an oracle, the proof-filling step of a Verus pipeline may also be doable by a small fine-tuned model, and a product whose only edge is proof filling with a large hosted model would have little margin. The paper's own limit applies to that reading: it gives no cost, time, or hardware figures.
 
 ## techniques for the catalog
 

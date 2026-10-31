@@ -130,16 +130,6 @@ Section 4.1 reports 28 single-line and ten multi-line ARepair specifications, wh
 
 Section 6 (p. 30) identifies possible training-data leakage: "This raises the concern that the models might be memorizing existing repairs rather than generating novel solutions, which could limit their applicability to Alloy models they have not been trained on." The evaluation uses static Alloy models, excluding Alloy 6 mutable specifications and LTL features (Section 4.5, pp. 15–16).
 
-## what remains trusted and product threat (inference)
-
-Inference: Repair acceptance depends on the analyzer, its SAT translation and solver, supplied assertions and commands, and correct handling of candidate source and analyzer results. LLM advice is a proposed repair, not evidence of correctness. The study does not establish that the supplied assertions capture all user intent.
-
-Inference: For VeruLaw, test a repair agent and a separate feedback agent while recording candidates, diagnostics, and verification results. A weak contract may permit verified code that misses the intended behavior. Specification review and counterexample testing could address that problem, but this paper does not evaluate those measures in Verus.
-
-## what VL should not redo
-
-Inference: Repeating the same Alloy comparisons would add little to this study. For VL, test whether feedback construction improves Verus repair while preserving the intended contracts. The Alloy results alone do not establish that transfer.
-
 ## techniques for the catalog
 
 - iterative analyzer-verified repair — repeatedly generate a complete declarative patch, run the analyzer, and feed failures into the next prompt
@@ -147,4 +137,3 @@ Inference: Repeating the same Alloy comparisons would add little to this study. 
 - graduated feedback levels — compare failure-only, templated, and LLM-generated feedback under a fixed repair loop
 - protocol and fallback guards — enforce tool JSON, detect repeated candidates, and parse or reject malformed responses
 - defect-stratified evaluation — report Correct@k, denominators, iterations, token cost, defect classes, and solver formula size separately
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This suggests that GPT-4o achieves more efficient and accurate repairs by leveraging simpler logical structures while maintaining correctness."): read the entire paper, including appendix and references, and the entire study; checked quotations, counts, denominators, techniques, section/page references, and the arXiv identifier; corrected the unrelated DOI, version year, repair counts, denominator claims, feedback procedure, and page references; exposed conflicting dataset totals, percentages, iteration totals, bug categories, and superiority claims; simplified unsupported Verus details and marked recommendations as Inference; did not rerun experiments, inspect implementation artifacts, or independently validate benchmark labels.

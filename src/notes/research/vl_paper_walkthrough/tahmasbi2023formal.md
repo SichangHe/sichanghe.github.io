@@ -38,8 +38,6 @@ Case studies cover priority, round-robin, and buggy FQ-CoDel-inspired schedulers
 
 The authors explicitly limit the time horizon and initial state: “We model queuing modules for a bounded number of time steps, starting with empty queues and every module in its initial state.” (Section 9, p. 657). They leave unbounded-time verification and converting traces into packets for real-world injection to future work (Section 9, p. 657). Inference: Conclusions depend on the SMT encoding, solver, metric definitions, queue bounds, and time horizon; the paper's experiments do not establish correspondence to every production implementation.
 
-Inference: For agent-written verified Rust, this work suggests generating interpretable traffic classes alongside functional proofs. VL could reuse the workload language and counterexample loop to propose performance proof obligations and regression traces, subject to a separately justified Rust model.
-
 ## techniques for the catalog
 
 - bounded queue model: encode FIFO queues, packet metadata, processing blocks, and finite time in SMT
@@ -47,4 +45,3 @@ Inference: For agent-written verified Rust, this work suggests generating interp
 - workload abstraction: constrain cumulative arrivals and inter-packet gaps to represent trace families compactly
 - MCMC synthesis: mutate candidate workloads using verifier counterexamples and a cost balancing coverage with concision
 - feasibility filtering: test base assumptions and candidate workloads for satisfiability before treating a result as meaningful
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The same phenomena can happen as long as tenant 2’s memcached traffic and tenant1’s spark traffic come from two different cores."): read the full paper text, including references and appendices, and the whole study; checked quotations, numbers, section/page references, model and synthesis steps, limitations, title, tag, and link; corrected the motivation reference, quotation punctuation, prototype packet-size scope, verification domain and feasibility conditions, example-generation and post-processing details, timings, and unsupported Verus/product claims; used the publisher link printed in the paper; did not reproduce experiments, inspect FPerf code, or validate the proposed Verus transfer.

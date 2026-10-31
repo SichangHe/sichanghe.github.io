@@ -38,13 +38,9 @@ Evidence and limits. Removing compositional learning lowered gpt-5.4-mini TestRa
 
 ## technique: project-level execution-guided inference
 
-The pipeline macro-expands C, builds a dependency graph, topologically orders functions, retrieves context-relevant insights, generates Rust, repairs `cargo check` failures up to five times per callable, then repairs project tests up to three times. Reflection mines recurring traces back into the bank (Section II-E, PDF pp. 5–6). Inference: VL could use this as a pre-proof translation stage, then invoke Verus after each repair and store only proof-checked lessons.
+The pipeline macro-expands C, builds a dependency graph, topologically orders functions, retrieves context-relevant insights, generates Rust, repairs `cargo check` failures up to five times per callable, then repairs project tests up to three times. Reflection mines recurring traces back into the bank (Section II-E, PDF pp. 5–6).
 
 The measured cost is 21.43M tokens (214.3K/project) versus 19.51M (195.1K/project) without insights, a 9.8% increase, and 15,326 seconds total (153.3 s/project) versus SmartC2Rust's 10,452 seconds (104.5 s/project), a 1.47× slowdown (Section V-A, PDF p. 10). The paper's own conclusion is limited to public C projects; kernels, drivers, native dependencies, and large industrial code are outside the evaluation (Threats to Validity, PDF p. 10). Inference: agent-written verified Rust is threatened mainly by unsound translation assumptions and test incompleteness; TRAIL's adversarial evidence is a useful guard but does not remove the need for formal contracts.
-
-## what is proved, measured, and trusted
-
-The paper measures compilation, tests, unsafe-block absence, clippy, and idiomaticity. It proves no theorem about equivalence of the original and translated programs. Trusted elements include LLM-generated challenge validity, LLM support/conflict scores, cargo and test oracles, benchmark representativeness, and the Rust toolchain. No denominator contradiction appears in the reported tables; SafeRate is per translated callable while CompRate and TestRate are per project, and the captions make that distinction. Existing C-to-Rust rule-based translators, repair systems, and benchmarks already cover basic migration, so VL should not redo generic retrieval-plus-repair without a Verus-specific proof-evidence comparison.
 
 ## techniques for the catalog
 
@@ -52,4 +48,3 @@ The paper measures compilation, tests, unsafe-block absence, clippy, and idiomat
 - single-insight adversarial refinement — generate executable boundary challenges and accept field updates only after replayed compiler/test evidence
 - compositional insight refinement — select compatible insight sets, jointly challenge them, and learn precedence or coordination constraints
 - execution-guided project migration — combine dependency ordering, retrieval, compiler/test repair, and trace reflection into a continual loop
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

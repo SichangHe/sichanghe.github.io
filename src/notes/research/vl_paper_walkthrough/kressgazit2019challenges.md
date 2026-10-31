@@ -6,8 +6,6 @@ Tag: `kressgazit2019challenges`, [paper](https://doi.org/10.4204/EPTCS.286.5)
 
 Kress-Gazit and Torfah survey formal synthesis for reactive systems (CREST 2018, EPTCS 286, pp. 50–64). The input is a temporal specification over environment inputs and system outputs; the synthesizer returns an implementation represented as a Mealy or Moore transducer. The paper opens by granting the usual selling point: “The resulting implementation is correct by construction and no further coding tasks are needed.” (section 1, p. 50). Its central warning follows: “However, the correctness of synthesized implementation is only relative to the provided specification.” (section 1, p. 51), while the resulting machine can be difficult to understand. The survey is organized around unrealizability and incompleteness of specifications (section 2, including vacuity detection and runtime monitoring), and around understandable representations of synthesized implementations (section 3).
 
-Inference: for VeruLaw, the transferable lesson is to verify both the Rust implementation and whether its contract constrains the intended behavior. A proof of an underspecified contract can pass while allowing an unwanted implementation.
-
 ## technique: unrealizability games, counterstrategies, and cores
 
 What it is. Realizability is treated as a two-player infinite game: the system chooses outputs and the environment chooses inputs (the system player starts). A specification is realizable exactly when the system has a winning strategy. The arbiter example (figure 2, p. 52) conjoins a response guarantee (each request `r_i` is eventually followed by grant `g_i`; the temporal operators are lost in the text extraction) and an access guarantee `¬a -> ¬g_1 ∧ ¬g_2`. The environment can keep `a` false forever, for example with the input sequence `{r1}{}^ω`, so no implementation can satisfy both.
@@ -57,10 +55,6 @@ What it is. Synthesized implementations can be much larger than manual ones: the
 
 Verus form. Inference: model an implementation's abstract state as a Rust enum or bounded `Seq`, then prove each refinement preserves the same transition contract. Verus can prove the final bounded implementation's invariants; it does not optimize transducer size or perform CEGAR automatically.
 
-## what is proved, trusted, and risky for VL
-
-The paper is a survey. It surveys techniques for realizability, specification satisfaction, and structural simplicity of synthesized machines, and gives one short argument (that the figure 3 specification has no finite counterexample set). Its examples are symbolic; it reports no empirical product reliability. Inference: trusted elements include the temporal-logic semantics, game solver, synthesis implementation, and the user's assumptions and intent. Inference: agent-written verified Rust faces high threat from incomplete contracts and opaque generated choices. VL should require explicit assumptions, adversarial counterexamples, coverage/vacuity checks, and readable state models before treating a Verus proof as sufficient. The surveyed work already covers game-based unrealizability, counterstrategy extraction, vacuity analysis, monitors, bounded synthesis, and abstraction refinement; Inference: VL should reuse these ideas rather than rebuild a temporal synthesis engine.
-
 ## techniques for the catalog
 
 - unrealizability games — solve the environment/system game, extract counterstrategies, and isolate minimal unrealizable cores before repairing assumptions or guarantees
@@ -72,5 +66,3 @@ The paper is a survey. It surveys techniques for realizability, specification sa
 - assumption monitoring — detect violated environment assumptions in simulation or deployment and feed reviewed assumptions back into specification refinement
 
 - output-sensitive synthesis — bound states and cycles, or refine abstractions incrementally, to obtain smaller and more understandable implementations
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "To understand which parts of the implementation were forced by the specification and which parts were decided by the synthesis procedure, one has to perform a coverage analysis"): read the whole text (pp. 50–64, through the start of the references); checked all three quotations, page and section references, the arbiter, counterstrategy, core, coverage, skeleton, monitoring and TBURST4 figures (14/61, 7/19, 7/7); changed the link to the paper's DOI, added the p. 51 correctness-relative quote, fixed the claim that counterstrategy pruning may be unavailable, softened the biconditional repair claim, corrected skeleton labels to states, spans of p. 54–55 and p. 57–58, and marked the unsourced steps and VeruLaw statements as Inference; did not check the reference list entries, the figure images beyond the text extraction, or the cited papers, and the temporal operators were lost in pdftotext so formulas are described in words.

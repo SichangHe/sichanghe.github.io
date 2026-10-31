@@ -6,7 +6,7 @@ Tag: `vaswani2017attention`, [paper](https://arxiv.org/abs/1706.03762)
 
 The paper introduces the Transformer for sequence transduction. Its abstract states: “We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely.” (abstract, PDF p. 1.) The evaluation is machine translation and English constituency parsing, not program verification. Inference: the verification relevance is architectural: a proof-search agent can use global attention, masking, and a verifier-backed action loop, but this paper provides no formal proof of its neural network or of a theorem prover.
 
-The authors report 28.4 BLEU on WMT 2014 English–German (abstract, PDF p. 1; Section 6.1, PDF p. 8: “Training took 3.5 days on 8 P100 GPUs.”) and 41.8 BLEU on English–French (abstract, PDF p. 1; Table 2, PDF p. 8; the prose of Section 6.1 says 41.0, see below). Inference: those are task-specific quality and training-cost measurements, not correctness guarantees. Inference: the paper's useful techniques for a VeruLaw agent are the exact attention computation, multi-head decomposition, residual/normalization structure, causal masking, positional encodings, and reproducible training/decoding choices.
+The authors report 28.4 BLEU on WMT 2014 English–German (abstract, PDF p. 1; Section 6.1, PDF p. 8: “Training took 3.5 days on 8 P100 GPUs.”) and 41.8 BLEU on English–French (abstract, PDF p. 1; Table 2, PDF p. 8; the prose of Section 6.1 says 41.0, see below).
 
 ## technique 1: scaled dot-product attention
 
@@ -63,13 +63,7 @@ Inference: a verified agent can encode token positions as explicit indices and p
 
 The paper trains on WMT 2014, batches about 25,000 source and 25,000 target tokens, and uses Adam with `β1=0.9`, `β2=0.98`, `epsilon=10^-9` (Sections 5.1–5.3, PDF p. 7). Its learning-rate schedule is linear warmup for 4,000 steps followed by inverse-square-root decay (Equation 3, Section 5.3, PDF p. 7). It applies residual dropout at rate 0.1 for the base model and label smoothing of 0.1 (Section 5.4, PDF pp. 7-8).
 
-For translation inference, the paper averages the last five checkpoints for base models and the last 20 for big models, then uses beam size 4 and length penalty 0.6 (Section 6.1, PDF p. 8). For parsing, it uses beam size 21 and length penalty 0.3 (Section 6.3, PDF p. 10). Inference: these are reproducibility parameters, not formal-verification techniques, but they matter if VL measures a learned proof proposer fairly.
-
-## evidence, trust, and product threat
-
-Table 1 compares per-layer complexity: self-attention is `O(n^2 d)`, has `O(1)` sequential operations, and maximum path length `O(1)`; recurrent layers are `O(nd^2)`, `O(n)`, and `O(n)` respectively (Table 1, PDF p. 6). The authors' experiments show the Transformer base model at 27.3 BLEU EN-DE and 38.1 EN-FR, and the big model at 28.4 and 41.8 (Table 2, PDF p. 8). The EN-FR sentence says 41.0 in the prose (Section 6.1, PDF p. 8), while the abstract and Table 2 report 41.8; this is an internal inconsistency in the paper's text (arXiv v7); Table 2 reports newstest2014 results.
-
-Inference: what is measured is translation BLEU, parsing F1, training cost estimates, and architectural ablations. What remains trusted includes data preprocessing, GPU arithmetic, optimizer implementation, learned parameters, beam-search code, and the claim that BLEU/F1 correlate with useful behavior. The paper proves no theorem about program correctness, model robustness, or generated Rust. Inference: the threat to agent-written verified Rust is indirect and moderate. Attention can improve search over proof states, but Verus remains the independent checker and the specification, numerical model, and any external model service remain outside this paper's evidence. VL should not redo the Transformer architecture or its standard masking and positional-encoding experiments; it should measure whether a verifier-backed agent benefits on actual Verus tasks.
+For translation inference, the paper averages the last five checkpoints for base models and the last 20 for big models, then uses beam size 4 and length penalty 0.6 (Section 6.1, PDF p. 8). For parsing, it uses beam size 21 and length penalty 0.3 (Section 6.3, PDF p. 10).
 
 ## techniques for the catalog
 
@@ -79,4 +73,3 @@ Inference: what is measured is translation BLEU, parsing F1, training cost estim
 - position-wise feed-forward — apply two shared linear maps with ReLU independently at every sequence position
 - sinusoidal positional encoding — add fixed sine/cosine vectors so a recurrence-free model retains order
 - beam-search decoding — average checkpoints and select outputs with a specified beam size and length penalty
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Even our base model surpasses all previously published models and ensembles, at a fraction of the training cost of any of the competitive models."): I read the whole paper text (arXiv v7) and checked every quotation, number, equation, section and PDF page reference, and technique step in this study against it. I changed: the EN-DE/EN-FR result sentence (3.5 days is stated for EN-DE in Section 6.1; 41.8 is in the abstract and Table 2, not the Section 6.1 prose), the scaling explanation (the paper says "We suspect", with the Section 3.2.1 quotes), page references for Section 3.2 (pp. 3-4), Section 5.4 (pp. 7-8) and the parsing beam size (p. 10), and marked one unmarked opinion as Inference. I did not check the Verus-related Inference claims (they are not in the paper), the cited references, or the figures (attention visualizations) beyond reading their captions.

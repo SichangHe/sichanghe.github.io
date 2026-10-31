@@ -14,7 +14,7 @@ Steps. (1) Collect open-source datasets for auto-formalization, unformalization,
 
 Verus form. Inference: build a corpus of Rust/Verus functions paired with specifications, proof scripts, compiler diagnostics, and natural-language intent. Use Verus compilation as the syntax and proof-validity filter; retain natural-language explanations only as auxiliary data. Inference: Rust ownership, `requires`, `ensures`, `invariant`, `assert`, and proof functions should be represented directly, because Lean tactic syntax does not transfer.
 
-Evidence and limits. The paper reports 512 Ascend 910b NPUs for pre-training, learning rate 4×10−5, and maximum length 32,768 (Section 4.2, p. 9). It does not isolate the causal contribution of each corpus task. Inference: a VL study would need ablations by task family and a denominator for retained, compiler-checked examples; the paper's aggregate results do not show which data prevents a particular Verus failure.
+Evidence and limits. The paper reports 512 Ascend 910b NPUs for pre-training, learning rate 4×10−5, and maximum length 32,768 (Section 4.2, p. 9). It does not isolate the causal contribution of each corpus task.
 
 ## technique 2: CoT-augmented state prediction
 
@@ -32,7 +32,7 @@ What it is. More than four million formal statements were synthesized, but only 
 
 Steps. (1) Detect a theorem that existing provers cannot solve. (2) Ask an LLM for main proof steps, strategies, intermediate lemmas, and proof structure (Section 3.1.4, p. 6). (3) Generate sub-statements beginning with `have`, each ending in a placeholder, and append a final placeholder for the main goal. (4) Check decomposition logic and strategy, code consistency with the informal plan, and formal syntax with the proof assistant (Section 3.1.4, p. 6). (5) Add the checked decompositions to pre-training to help later models solve the challenging problems. Inference: the placeholders remain unproved at this stage; syntax approval does not establish the subgoals or their sufficiency.
 
-Verus form. Inference: turn a failed Verus postcondition into explicit lemma statements and `proof fn`s, preserving the original `ensures`. Temporary holes may be used in a generation workspace, but final VL acceptance must reject `admit`, `assume`, `external_body`, or equivalent unproved bodies. Inference: each lemma needs a contract that is strong enough to imply the caller's obligation; conjunction alone is not sufficient if framing or ownership conditions are omitted.
+Verus form.
 
 Evidence and limits. The paper reports only the “more than 4 million” and “half” synthesis figures, with no exact denominator or per-decomposition acceptance rate (Section 3.1.4, p. 6). Inference: the method can teach useful intermediate structure, but its quality assurance does not demonstrate that every accepted decomposition is useful for proof search.
 
@@ -56,12 +56,6 @@ Verus form. Inference: use a clean Verus invocation as the binary reward and ret
 
 Evidence and limits. Spark-Prover-X1 averages 37.0% pass@32 over eight datasets (Table 2, p. 11); Section 4.1 states benchmark sizes including 100 CombiBench problems and 402 ExamFormal-Bench problems. PutnamBench has 658 problems overall, and Table 3 reports 27 solved at pass@32 and 55 at pass@512 (p. 11). The paper reports rewards from a proof assistant adapted from Kimina Lean Server (Section 4.2, p. 10). These are Lean results, not Verus results. Table 2 lists 4.7% for PutnamBench at pass@32, whereas Table 3 and the abstract report 27 solved. Inference: 27 of the stated 658 problems is about 4.1%, so these reported figures are inconsistent; the paper does not explain the denominator difference.
 
-## what is proved, trusted, and relevant to VL
-
-The formal proof assistant checks the generated Lean proofs. Inference: this does not independently validate the paper's semantic-consistency LLM, benchmark formalizations, data filters, or correspondence between theorem statements and intended problems. The prover results use pass@32; formalizer results use pass@8 and add an LLM semantic check. Inference: neither measures the success rate of a single deterministic attempt. Inference: VL can reuse the staged curriculum, state traces, decomposition, expert iteration, and compiler-rewarded RL, but must substitute Verus compilation and Rust-specific diagnostics at every acceptance point. Inference: the threat to agent-written verified Rust is contract drift—an agent may make a theorem easier by weakening `ensures`, alter a type or dependency assumption, or leave a hidden unproved helper. The paper does not measure these failure modes.
-
-The work reports Lean whole-proof results from combining broad data, expert iteration, and compiler rewards, without ablations separating their contributions. Inference: VL should not redo that generic demonstration. A useful new experiment is a comparison reporting task counts and rates of Verus proof success, repair time, and specification changes with and without state traces and decomposition, while retaining the original contract byte-for-byte.
-
 ## techniques for the catalog
 
 - diverse multi-task pre-training — mix formal, informal, tactic, state, translation, and decomposition data before specialization
@@ -69,5 +63,3 @@ The work reports Lean whole-proof results from combining broad data, expert iter
 - verified subgoal decomposition — turn unsolved theorems into checked intermediate statements and train on the resulting bridges
 - expert iteration — use checked formalizer and prover outputs to update pre-training and SFT datasets, repeating both stages
 - compiler-rewarded GRPO — train on hard problems with binary proof-assistant rewards, KL control, and length filtering
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "During training, rollouts that exceed the maximum token length are excluded from both advantage computation and subsequent gradient updates."): read the full paper and study; checked quotations, numbers, section/page references, technique steps, and the paper identifier; corrected page references, pre-training restarts and expert-iteration details, GRPO normalization, and problem-level success-rate wording; replaced inexact quotations, qualified decomposition checks, and flagged inconsistent PutnamBench figures; did not reproduce experiments, inspect training data or code, or test the Verus inferences.

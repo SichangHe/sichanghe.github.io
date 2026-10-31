@@ -91,14 +91,9 @@ The case study demonstrates five components “successfully verified” with thr
 
 Inference: For agent-written verified Rust, the threat is substantial when an LLM silently drops a precondition, misnames a state field, or translates a temporal condition into an incorrect contract. The reported tools check supplied properties rather than the fidelity of the LLM translation. A Verus proof likewise proves only the supplied contract. The paper’s `IM P |= F M |= KL` consistency goal is a useful product requirement, not evidence that the LLM has achieved it.
 
-## what VL should not redo
-
-The paper provides requirement filtering, variable refinement, LTL translation (Section 3), harness generation, and multi-tool checking (Section 4), with a worked harness in Listing 1.2. It states: “we still need to manually input the functional correctness properties into the verification harnesses” (Section 4.2, p. 13). Inference: VL can adapt this sequence to Rust/Verus and focus on checking that contracts preserve requirement meanings.
-
 ## techniques for the catalog
 
 - temporal requirement mining — filter temporal statements, standardize code-level variables, and translate them to LTL
 - assumption/assertion harnesses — call an IP interface under explicit preconditions and check postconditions
 - multi-verifier checking — combine bounded model checking, configurable reachability analysis, and trace-based verification
 - coverage by precondition union — use separate harnesses for distinct assumptions and inspect their union for requirement coverage
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The verification harness includes the translation of target functional correctness properties into a specific notation that can be executed by each tool."): checked all paper text, quotations, numbers, section/page references, technique steps, and catalog entries; corrected the consistency relation and its page, component sizes, quotation punctuation and citation, page references, symbolic-input scope, and integer-overflow wording; distinguished paper claims from inferences and noted manual functional annotations and variable-name inconsistencies; did not reproduce experiments or inspect the confidential components.

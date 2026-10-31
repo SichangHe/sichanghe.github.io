@@ -6,8 +6,6 @@ Tag: `mang2026automated`, [paper](https://doi.org/10.1145/3802017)
 
 Argus automates discovery of database test oracles. It asks an LLM to propose equivalent SQL skeletons, formally checks equivalence with a SQL prover, instantiates verified placeholders with concrete snippets, and runs the resulting query pairs. The abstract reports: “Argus uses LLMs to generate pairs of these skeletons, with their equivalence formally proven using a SQL equivalence solver to ensure soundness.” (Abstract, p. 1). The framework found 41 previously unknown bugs across five DBMSs; 36 were logic bugs, 36 reports were confirmed, and 27 were fixed (Abstract, p. 1).
 
-Inference: The transferable pattern for Verus is to let a model propose a high-level specification or proof transformation, require a sound checker to certify the transformation, and only then instantiate it into many concrete Rust verification tasks. The SQL prover is a trusted checker for SQL equivalence; in VL, Verus plays the analogous acceptance role for Rust contracts and proofs.
-
 ## technique 1: constrained abstract queries (CAQs)
 
 what it is
@@ -120,10 +118,6 @@ Argus ran for three months on Dolt, DuckDB, MySQL, PostgreSQL, and TiDB using o4
 
 Argus retains abstract pairs accepted by the SQL prover and checks generated queries and snippets by execution (Sec. 5.3, p. 10; Sec. 6.1, p. 12). Instantiated equivalence depends on the semantic constraints in Sec. 6.2 (p. 13), with the proof-scope qualification in Appendix B (p. 31). Inference: These checks rely on the prover implementation and constraint validation; LLM output alone is not trusted evidence. Runtime tests can reveal disagreements but cannot establish absence of bugs. A Verus adaptation still trusts Verus and the user’s contract as the statement of intended behavior.
 
-## what VL should not redo
-
-Inference: VL can adapt Argus’s typed skeletons, equal/fail prompting, plan-diversity clustering, formal prerequisite checks, corpus reuse, runtime snippet validation, and bug-report packaging to Verus diagnostics and proof obligations. The SQL bug counts do not establish effectiveness for Rust verification.
-
 ## threat to agent-written verified Rust
 
 Inference: The threat is low to formal soundness if every instantiated artifact is checked by Verus, and high to engineering throughput if the checker is incomplete or specifications are wrong. A model can generate a syntactically valid but semantically misleading contract, and a corpus can repeatedly encode that mistake. Independent specification review and pinned tool versions are therefore recommendations for a Verus adaptation.
@@ -135,4 +129,3 @@ Inference: The threat is low to formal soundness if every instantiated artifact 
 - formal equivalence prerequisite check — retain LLM proposals only after a sound solver proves the abstract relation
 - constraint-preserving instantiation — validate reusable snippets, enforce semantic side conditions, and fill verified skeletons
 - two-stage oracle generation — prove simple abstractions first, then instantiate richer concrete cases
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To further investigate the issue of extremely high false positive rates, we generated 20 candidate CAQ pairs that the LLM judged as equivalent, and manually verified them."): checked the entire paper including appendices, quotations, numbers, section/page references, technique steps, tag and DOI; corrected the Dolt comparison and documentation page reference, clarified instantiation constraints and proof scope, distinguished inference from paper evidence, and qualified duplicate reports and prover trust; did not reproduce experiments, inspect implementation artifacts, or validate the proposed Verus adaptations.

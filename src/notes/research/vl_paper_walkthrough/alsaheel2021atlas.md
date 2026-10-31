@@ -68,12 +68,9 @@ Section 6.1 uses four single-host and six two-host attacks recreated from campai
 
 Section 7, pp. 3018–3019, requires manually designated training entities and a true attack symptom. The authors say a false-positive symptom yields only non-attack sequences. ATLAS cannot detect mimicry attacks that imitate normal event sequences, and model correctness depends on training-log quality and representative temporal relations. Linux and FreeBSD support is proposed, not evaluated. The graph-traversal comparison is an implemented baseline, not a direct comparison with unavailable prior systems (Section 6.3).
 
-Inference: for VL, candidate verified components are graph filtering, finite enumeration, timestamp ordering, and accounting of reported entities. The graph parser, labels, embedding/training code, weights, and inference would also need explicit trust assumptions or verification beyond the paper's OS/auditing assumptions. Model scores alone do not prove that an entity participates in an attack.
-
 ## techniques for the catalog
 - causal-graph optimization — filter unreachable structure, deduplicate repeated actions, and merge equivalent nodes before analysis
 - semantic temporal sequences — convert entity neighborhoods into timestamped, lemmatized event sequences
 - imbalance handling — undersample similar normal sequences and mutate attack vocabulary for oversampling
 - sequence classifier — use embeddings plus bounded LSTM/Conv1D inference to score attack relevance
 - symptom-paired investigation — test every unknown entity with a known symptom and recover a timestamped attack story
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We evaluate the effectiveness of ATLAS for each implemented attack based on the model trained on other attacks."): read the full paper including references and appendices; checked quotations, numbers, section/page references, technique steps, assumptions, and evaluation scope; corrected incomplete quotations, timestamp-preservation claims, training subset construction, per-class sample counts, unspecified long-sequence handling, multi-host steps, timing, and model splits; replaced the link with the publisher page printed on the cover and marked proposed verification properties as inference; did not inspect source code, run ATLAS, reproduce experiments, or independently validate external campaign reports.

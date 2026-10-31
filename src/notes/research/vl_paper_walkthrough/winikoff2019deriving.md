@@ -107,12 +107,6 @@ Verus form. Inference: the phantom node can become a named ghost predicate or tr
 
 Evidence and limits. This expansion is a design activity carried out by humans. The paper gives no protocol for resolving conflicting goals or contradictory domain rules; it lists conflict handling as future work (Sect. 5, p.26).
 
-## what is proved, trusted, and relevant to VL
-
-The method produces candidate LTL properties and a traceability tree; it does not prove that the original tenet was captured completely. Model checking can then prove or refute each formal property, but the paper reports no model-checking runs, pass counts, coverage denominator, or usability study. Trusted inputs are the English tenet, goal-tree structure, domain implications, implementation observables, and every judgment that a refinement is complete or a decomposition is necessary. The paper itself flags overly strong reminder assumptions and future work on probabilities and conflicts (Sect. 2.2, p.9; Sect. 5, p.26).
-
-Inference: this is a direct specification gap for VL. Verus can prove a generated Rust contract while leaving the central question—whether that contract expresses the user’s safety goal—unanswered. VL should reuse the negated-tenet/refinement-tree workflow, require human review at completeness and necessity checkpoints, and retain links from each `requires`/`ensures`/`invariant` to its originating tenet and domain rule. Inference: VL should not redo the paper’s Care-O-bot example; it should test the process on Verus systems and measure omitted-property discoveries, review time, and proof repair effort. Inference: the paper is a high threat to any claim of end-to-end verified behavior unless product requirements are treated as first-class proof inputs.
-
 ## techniques for the catalog
 
 - negated-tenet refinement — start from a violation of a high-level value, refine all concrete failure modes, and verify negated leaves
@@ -120,5 +114,3 @@ Inference: this is a direct specification gap for VL. Verus can prove a generate
 - domain-knowledge refinement — replace broad nodes with more specific antecedents while checking refinement completeness
 - goal-tree refinement — use AND/OR subgoals, with equivalence-strengthened decompositions for negative contexts
 - goal-tree expansion — add missing intermediate goals and elicit new domain rules when existing artefacts cannot refine a node
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We also define Ψ as being true if the system regularly reminds the person to drink."): I read the whole paper text (pp.1–28) and the whole study; I checked every quotation, section and page reference, the algorithm steps, the case 0 to 3b descriptions, the formulas and the Care-O-bot example claims; I corrected the page or section of several references (richer-logics quote is Sect. 1 not Sect. 2; goal-tree Why/How pp.7–8; model checking p.3; drink formula pp.15–16; time-window remark pp.14–15; refinement of a negated goal p.19; phantom node p.22), softened one "overly weak or strong" claim to the paper's wording, added the DAG footnote, the domain-knowledge-first priority rule and the necessity quote, and marked my own readings "Inference:"; I did not check the cited external papers (vLL, Konur et al., others) and the Verus mapping is my own inference, not checked against any source; the link is from the paper's arXiv identifier.

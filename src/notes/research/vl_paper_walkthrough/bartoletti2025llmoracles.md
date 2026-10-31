@@ -73,12 +73,6 @@ Verus form
 
 Inference: Report a Verus-compatible subset and an out-of-subset complement, just as DS|SolCMC and DS|CVL do. Measure verification coverage (proved, refuted by executable counterexample, timeout, or unsupported) separately from model classification. Record every environment assumption and auxiliary lemma required for a proof because those are part of the trusted specification boundary.
 
-## what is trusted, what fails, and product threat
-
-The controlled experiment uses manually assigned ground truth, supplemented by Hardhat PoCs for violations in the two more complex use cases; uncertain tasks are excluded (section 3, p. 6). SolCMC and Certora themselves have unsound approximations; Certora's false-state counterexamples are not guaranteed reachable (section 7, pp. 11–12). The LLM has no soundness guarantee, and the paper's natural-language properties are carefully crafted. In the real-world audit experiment, the authors report property/specification mismatches and detailed counterexample traces, using manual inspection, further GPT-5 queries, and Forge PoCs for a sample of disagreements (section 8, pp. 12–14). They explicitly caution: “In general, determining the ground truth of the properties is extremely challenging, as these contracts consist of thousands of lines of code, besides those in external dependencies.” (section 8, p. 12) They leave one Certora counterexample's reachability unresolved (Appendix B.2, p. 24). The report counts also conflict: section 8 and Appendix B.2 state 47 infiniFi properties, but list 8 False and 41 True (pp. 12, 23). Inference: Those status counts sum to 49, so they cannot all describe the same total. Section 10 states that LLM predictions and explanations “are not supported by sound reasoning and are not certifiable.” (p. 15)
-
-Inference: The threat to VL is high for specification misunderstanding and false confidence, especially when an agent-written Verus contract has hidden environmental assumptions. GPT-style judging can triage candidates, explain failed proofs, and suggest counterexamples; it cannot replace Verus's checker or establish that the requirement itself is correct. The paper's controlled benchmark should be reused for VL only after translating denominator, assumption, and evidence categories to Rust.
-
 ## techniques for the catalog
 
 - mutation-and-property benchmark — mutate interpretable contracts while preserving a shared natural-language property set and auditable truth labels
@@ -86,5 +80,3 @@ Inference: The threat to VL is high for specification misunderstanding and false
 - assumption-explicit evaluation — state semantic abstractions such as gas behavior in the prompt and specification
 - expressibility-conditioned comparison — compare model and tool metrics only on matched expressible subsets and report coverage separately
 - evidence auditing — inspect whether counterexamples are executable and whether true answers include all necessary assumptions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In particular, in most of the cases in which a property is violated, GPT-5 was able to detect the violation and return a valid counterexample."): checked all paper text, quotations, numbers, page and section references, technique steps, and catalog entries; corrected page references, prompt and counterexample descriptions, qualitative counts, Certora accuracy, and metric denominators; flagged inconsistent qualitative and infiniFi counts; did not reproduce experiments, inspect the external repository, or verify the Verus inferences.

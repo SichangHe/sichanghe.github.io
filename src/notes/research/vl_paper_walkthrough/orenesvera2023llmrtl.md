@@ -5,7 +5,7 @@ Tag: `orenesvera2023llmrtl`, [paper](https://arxiv.org/abs/2309.09437v2)
 ## scope and result
 This paper extends AutoSVA with GPT-4-generated SystemVerilog Assertions (SVA). JasperGold (JG), a formal property verification (FPV) tool, checks assertions against RTL; an engineer audits the assertions and refines prompt rules using compilation errors and counterexamples. The paper's abstract states: "First, we design an FPV-based evaluation framework that measures the correctness and completeness of SVA." (Abstract, p. 1). It reports exposing a previously fixed bug in an older RISC-V CVA6 page-table walker (PTW), coverage improvements on PTW and the translation look-aside buffer (TLB), and a FIFO generation experiment (§IV–V, pp. 5–6).
 
-The authors explicitly separate coverage from correctness: "Having SVA with full RTL coverage does not imply that the assertions or the RTL are correct." (§III, p. 4). Inference: this distinction transfers directly to VL: generated Verus lemmas can mention every code path while proving an unintended specification, so proof acceptance and specification review are separate prerequisite checks.
+The authors explicitly separate coverage from correctness: "Having SVA with full RTL coverage does not imply that the assertions or the RTL are correct." (§III, p. 4).
 
 ## technique 1: iterative FPV-guided prompt-rule refinement
 
@@ -153,9 +153,6 @@ The paper's flow says: "Steps ③ to ⑥ are then repeated until convergence: ei
 Verus form
 Inference: use a Rust specification as the generation prompt, then feed checked contracts and failed proof obligations into a subsequent implementation prompt. Require the generated implementation to compile and pass Verus; keep human review for whether contracts match the product requirement. The iterative RTL/SVA flow is analogous, but SVA and JG are not Verus constructs.
 
-## proof boundary and VL risk
-The paper reports JG proof results and statement/toggle coverage (§II-B, p. 2; §IV-B, p. 5). Its complex-RTL experiments do not aim to return fully verified RTL (§IV, p. 5). It explicitly warns: "Note that the engineer must audit all assertions, not only those producing CEXs, as they may be proving the wrong thing." (§III, p. 5). Inference: the corresponding VL risk is a proved contract that misstates intended behavior. Proof acceptance depends on the verifier and its model; agreement with intended behavior still requires specification review. Inference: iterative prompt rules, multiple assertion batches, and assertion-guided implementation generation are prior workflows to compare with VL. Automated targeting of uncovered RTL lines remains future work in this paper (§III, p. 4).
-
 ## techniques for the catalog
 - FPV-guided rule refinement — classify compiler and counterexample failures and add prompt rules until SVA compiles and proves
 - timing-aware SVA prompting — teach cycle operators, `$past`, register/wire timing, hierarchy, and bitwise semantics
@@ -163,5 +160,3 @@ The paper reports JG proof results and statement/toggle coverage (§II-B, p. 2; 
 - multi-batch coverage — generate independent assertion batches and measure statement/toggle gains against a baseline
 - counterexample bug finding — use a failing generated assertion, audit it, and confirm the RTL fix by rerunning FPV
 - proof-guided RTL generation — append audited assertions to later implementation prompts and iterate to proof/coverage convergence
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We also observe no sign of GPT4 internally learning from prompting the rules repeatedly since removing the rule set results in a similar SVA as in T1."): checked the whole paper, quotations, numbers, section/page references, technique steps, tag, and arXiv link; corrected quotations and page references, distinguished the known-bug experiment from discovery, clarified prompt-rule scope and human RTL fixes, and marked conclusions as inferences; did not inspect external repositories, reproduce experiments, or validate the proposed Verus adaptations.

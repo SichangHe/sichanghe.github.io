@@ -46,14 +46,9 @@ In Table II (p. 8), the full one-shot+RAG+syntax-hint configuration has easy syn
 
 The practical study uses UWinTech, links monitoring/control points to a simulation model, and uploads generated ST to a control station. It lists four tasks and illustrates LED control, motor control, and temperature/relay updates (Section V-D and Figures 4–6, p. 9). Inference: these demonstrations do not establish Rust/Verus proof performance or unrestricted industrial deployment correctness.
 
-## proved, trusted, and product threat
-Inference: the evidence supports reported benchmark outcomes and practical demonstrations subject to the metric inconsistencies above. A formal result depends on the chosen properties, ST translation, verifier assumptions, and their relationship to the requirements. Human-written reference specifications and automatically generated properties are different sources of obligations; neither source alone proves that all intended behavior is covered. For VL, the transferable idea is a bounded generation/repair workflow driven by compiler and verifier feedback. Claims about preserving intended contracts or proving Rust require separate evidence. A human/specification authority boundary and direct Verus checks would address different risks from role separation and RAG alone.
-
 ## techniques for the catalog
 - role-separated closed loop: retrieval and planning guide coding; compiler and formal verification results drive debugging
 - RAG plus domain prompts: use PLC references, validated ST samples, compiler requirements, and operational constraints in generation and repair
 - property generation: generate verifier-format specifications when users supply none; Inference: separately establish their agreement with intended requirements
 - translation-based model checking: translate ST for model checking or BMC, acknowledging translation inconsistency and state explosion
 - bounded repair: iterate fixes until validation succeeds or the loop threshold triggers another plan
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each model is provided with user requirements, code skeletons, and natural language specifications to generate ST code."): read the full paper text and study; checked quotations, numbers, section/page references, workflow, and catalog; corrected repair ownership, CodeLlama denominators, table values and locations, efficiency interpretation, and unsupported details; recorded inconsistent metric definitions and table/prose results; did not reproduce experiments or inspect linked code, benchmark artifacts, or cited papers.

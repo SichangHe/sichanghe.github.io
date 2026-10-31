@@ -8,8 +8,6 @@ The paper argues that common theorem-proving benchmarks embed the answer in the 
 
 The released benchmarks are MiniF2F-Hard and FIMO-Hard, reannotated by experts. The paper reports DAP solves 36 PutnamBench Hard Mode problems (19 solution-style), 9/1 CombiBench problems, 201/168 miniF2F-test problems, and 3/0 FIMO problems at Pass@32 (Table 2, p. 6). The dataset totals in that table are PutnamBench 660/340, CombiBench 100/45, miniF2F-test 244/197, and FIMO 149/70, where each pair is total / Hard Mode count.
 
-Inference: VL should separate requirement or specification discovery from Rust/Verus proof construction. A proof agent that receives the desired postcondition as an unexamined premise can produce a valid but irrelevant proof.
-
 ## technique: discovery with self-verification and self-correction
 
 How the paper does it.
@@ -45,15 +43,7 @@ Verus form. Inference: freeze a contract file after the discovery review and giv
 
 The authors use three annotation principles: semantic accuracy, interpretability, and consistency (Section 4.1, p. 4). Experts independently annotate each problem and cross-validate labels. Hard Mode removes (1) answers encoded as premises, (2) goals weakened to a strict subset, and (3) premises absent from the human problem (Section 4.1, p. 4). They port FIMO from Lean 3 to Lean 4, verify compilation and semantic faithfulness, repair approximately 15 miniF2F and 20 FIMO errors across four types, and promote unknown values to free parameters with explicit side conditions (Section 4.3, p. 5).
 
-Verus form. Inference: construct VL benchmarks by having two reviewers compare each Rust contract with its natural-language requirement, explicitly checking that no postcondition is supplied as a precondition and that unknown values remain quantified or parameterized. Compile every benchmark under a pinned Verus version, and retain corrected examples as regression tests.
-
-## evidence, trust, and product threat
-
-The environment is Lean 4.15.0 with Kimina-Server; GPT-OSS-120B uses temperature 1.0 and up to 30 self-checking attempts; Goedel-Prover-V2 uses temperature 0.7, 30,000 max tokens, 32 samples, and Pass@32 (Section 5, p. 5). The formal evidence is Lean kernel acceptance of proof outputs. Inference: VL's corresponding trusted base includes Verus, its solver, Rust compiler and erasure, external API specifications, and benchmark contracts.
-
-The paper's Hard Mode results show that DAP's natural-language module is much stronger than the proof module: the abstract reports “state-of-the-art LLMs exceed 80% answer accuracy on the same problems where formal provers manage under 10%” (Abstract, p. 1). This gap means proving is the bottleneck, but it does not show that discovered answers are faithful for arbitrary software requirements. The stated limitation is possible dataset contamination because source problems and models are public (Limitations, p. 7).
-
-Inference: threat to agent-written verified Rust is high when agents can silently turn an intended behavior into an easier contract, and medium when requirements are reviewed and frozen. VL should reuse the separation between discovery and proof, but test contract drift, side-condition omissions, and behavior on real code rather than redo Hard Mode benchmark curation.
+Verus form.
 
 ## techniques for the catalog
 
@@ -61,4 +51,3 @@ Inference: threat to agent-written verified Rust is high when agents can silentl
 - self-verifying answer discovery — generate a candidate, inspect it for errors, and iteratively correct it before formalization
 - answer-conditioned rewriting — insert a reviewed candidate into a single-goal statement before invoking the theorem prover
 - semantic benchmark curation — expert cross-validation, unified conventions, and compilation checks prevent answer leakage and misaligned goals
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

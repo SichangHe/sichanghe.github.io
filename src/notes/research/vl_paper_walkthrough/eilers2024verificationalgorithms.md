@@ -6,15 +6,11 @@ Tag: `eilers2024verificationalgorithms`, [paper](https://doi.org/10.1007/978-3-0
 
 This paper compares five algorithms for extracting proof obligations from separation-logic programs: three used in existing tools and two new symbolic-execution algorithms (SE-PC, SE-TR). It implements all five in Viper so that language, logic, solver, and benchmarks are held constant. The abstract states: “Existing verification algorithms are designed to be sound, but differ in performance and completeness” (Abstract, p. 362). The study’s practical result is algorithm complementarity: “Our comparison identifies SE-PS as the best algorithm overall, but shows that the different verification algorithms have complementary strengths” (Introduction, p. 364).
 
-Inference: VL should treat verifier-engine choice as a product configuration rather than a fixed truth oracle. Verus currently delegates much automation to SMT, so the direct mapping is conceptual: expose alternative proof encodings or solver modes and select them from measured workload features.
-
 ## design dimensions: symbolic execution versus VCG
 
 Symbolic execution (SE) keeps a symbolic state (store, heap, and path conditions), explores each path through a method separately, updates the symbolic state, and discharges proof obligations on the fly via SMT queries. Verification-condition generation (VCG) applies a predicate transformer, usually weakest preconditions, and typically emits one proof obligation per method body (Sect. 2.2, p. 365). The paper summarizes the trade-off: “SE generates many, but comparably small and simple SMT queries, whereas VCG produces a single, more complicated query” (Sect. 2.2, p. 366). SE is harder to implement but offers more room for optimization; VCG delegates most of the work to the SMT solver (Sect. 2.2, p. 366).
 
 SE as described in the paper (Sect. 2.2, p. 365): (1) keep a symbolic store, heap, and path conditions; (2) explore each path separately, recording if-statement and loop conditions in the path conditions; (3) update the symbolic state per statement; (4) evaluate expressions and assertions in the symbolic state; (5) discharge each proof obligation by an SMT query; (6) use loop invariants for a statically-unknown number of iterations. VCG: (1) choose a state model that encodes heap and ownership (e.g., a map axiomatization); (2) apply the predicate transformer to the method body; (3) send the resulting single obligation to SMT (Sect. 2.2, p. 365).
-
-Inference: Verus function contracts and loop `invariant` clauses correspond to the source obligations, while the Verus engine chooses its internal encoding. A VL frontend could preserve multiple encodings of the same Rust/Verus contract, but the paper does not show a Verus implementation.
 
 ## design dimensions: partial versus total heaps
 
@@ -35,8 +31,6 @@ Inference: a Verus analogue is a proof lemma that supplies one ownership/alias c
 SE-PC keeps partial heaps but combines information from all chunks. For a read, it creates a fresh `v` and the path condition `(x = y1 ⇒ v = v1) ∧ … ∧ (x = yn ⇒ v = vn)`. Effective permission is the conditional sum `p = (x = y1 ? p1 : 0) + … + (x = yn ? pn : 0)`, and consuming permission may remove fractions from different chunks (Sect. 2.3, p. 368).
 
 Steps (paper): (1) take all relevant chunks for the location; (2) create a fresh symbolic value; (3) add conditional equalities for every chunk; (4) define the effective permission as a conditional sum; (5) consume the requested amount across chunks. This shifts work from the SE algorithm to the SMT solver and “reduces the number of state consolidation steps (but does not entirely eliminate them), at the price of more complex path conditions and SMT queries” (Sect. 2.3, p. 368). It was designed “to address the shortcomings of SE-PS” (Sect. 2.3, p. 368).
-
-Inference: VL could use a ghost map plus quantified equalities to combine alias cases, but this is a design analogy; no Verus API in the paper implements it.
 
 ## algorithm 3: SE-TR, total-heap symbolic execution
 
@@ -74,15 +68,11 @@ Performance used five runs, discarded the shortest and longest, and averaged the
 
 Because no single algorithm is optimal for all groups, the paper proposes running several algorithms in parallel until at least one succeeds (Sect. 4, p. 379). Portfolio P0, `{SE-PS, SE-TR, VCG-TR, VCG-TA}`, is the smallest set that gets the expected result on all examples. P1, `{SE-PS, SE-TR, VCG-TR}`, fails on one (as does `{SE-PS, SE-TR, VCG-TA}`); P2, `{SE-PS, VCG-TR}`, fails on six; P3, `{SE-PS, SE-TR}`, fails on ten (Sect. 4, pp. 379–380). P3 contains only SE algorithms, which share much implementation, so it is the cheapest to build for an SE tool; P1 performs mostly identically to P0 (Sect. 4, p. 380).
 
-Steps (paper): (1) evaluate all combinations of algorithms for completeness; (2) pick the smallest sets that maximize completeness; (3) run the chosen algorithms in parallel until one succeeds; (4) choose a smaller portfolio when resource or implementation cost matters. Inference: VL could run alternative Verus proof configurations or solver seeds in CI, but this requires a deterministic acceptance policy and must not treat one unsound configuration as a success.
+Steps (paper): (1) evaluate all combinations of algorithms for completeness; (2) pick the smallest sets that maximize completeness; (3) run the chosen algorithms in parallel until one succeeds; (4) choose a smaller portfolio when resource or implementation cost matters.
 
 ## what is proved, measured, and trusted
 
 The algorithms are designed to be sound; the evaluation measures completeness and run time, and the portfolio coverage, not end-to-end soundness of Viper, Boogie, Z3, or frontend translations. The implementations, benchmarks, and experiment data are available as an artifact (Introduction, p. 364). Inference: agent-written verified Rust remains threatened by specification errors, unsupported Rust behavior, solver incompleteness, and mismatches between generated obligations and linked code. The study shows how to reduce verifier incompleteness, not how to prove that an agent’s intended requirement is the one encoded.
-
-## what VL should not redo
-
-Inference: VL should not redo the basic SE/VCG or partial/total-heap taxonomy, the benchmark discipline, or the portfolio idea. The open work is Verus-specific measurement: classify proof failures by heap mutation, quantifier load, branching, and aliasing, then test whether alternative encodings or solver settings improve completion without weakening specifications.
 
 ## techniques for the catalog
 
@@ -93,4 +83,3 @@ Inference: VL should not redo the basic SE/VCG or partial/total-heap taxonomy, t
 - total heap and mask: encode values and ownership as maps with SMT axioms and non-deterministic unowned values
 - trigger control: tune quantified E-matching patterns to balance necessary instantiation and solver explosion
 - algorithm portfolios: run complementary verifier algorithms together to improve completeness
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The two algorithms using partial heaps (SE-PS, SE-PC) are both incomplete on 15 out of 16 examples in the Rea group, making them essentially unusable for this group."): read the whole paper text and checked every quotation, number, section and page reference, and algorithm step; changed the Introduction quote page to p. 364, the Rea counts (SE-TR 6/16, VCG 2 and 3), SE-TR to p. 368 and VCG-TR to pp. 368–369, the SE-PS disjunctive-aliasing step (users insert branches; not automatic), the VCG-TR framing claim (sourced to Sects. 3.4, 3.5, 5 instead of 2.2), the incompleteness definition and VCG-TA branch-heavy wording, removed unsupported steps (backward transformation, keeping other algorithms' diagnostics, per-function framing obligations); kept the tag and DOI link (DOI matches the paper text); did not check Table 1 and Figures 1–2 (images not in the text) or the technical report and artifact.

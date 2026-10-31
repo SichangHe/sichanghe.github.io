@@ -149,8 +149,6 @@ The strongest automation result covers 880 constraints across four suites: 843 s
 
 The paper's success is conditional on Lean's kernel, the soundness of the oracle, the generated frontend, and trusted wrappers such as the ring-buffer slice abstraction. It does not prove that a specification matches a product requirement, that Rust compilation and unsafe libraries are correct, or that every generated proof is fast enough for development. The paper itself identifies manual work, qualifier sensitivity, recursion/heartbeat limits, and remaining concrete goals (§6.1–§6.3).
 
-Inference: For VeruLaw, the most direct reuse is a certificate-producing CHC layer for specification or invariant candidates, with Verus checking the final Rust proof. This could reduce reliance on opaque SMT answers, but it would add a Lean kernel and translation boundary to the trusted base. The reported 95.7% success and 21.8-minute total are evidence for this paper's benchmark suite only. The product threat is medium: an agent-generated contract can still be wrong, and a solver-generated proof can certify that wrong contract; the value is an independently checkable certificate and better counterexample/debugging structure.
-
 ## techniques for the catalog
 
 - foundational CHC encoding — represent unknown refinements and loop invariants as existential Horn predicates interpreted by Lean
@@ -160,4 +158,3 @@ Inference: For VeruLaw, the most direct reuse is a certificate-producing CHC lay
 - Imp VC generation — synthesize loop-invariant obligations from entry, body, and exit conditions
 - refinement CHC generation — derive universal subtype implications from dependent refinement types
 - quantified memory invariant — define non-SMT invariants such as initialized ring-buffer indices in Lean
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

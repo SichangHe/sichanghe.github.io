@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `wu2022autoformalization`, [paper](https://arxiv.org/abs/2205.12615)
 
-
 ## scope and result
 
 This paper studies large language models (LLMs) translating natural-language mathematics into Isabelle/HOL theorem statements, then using the verified statements as training data for a neural theorem prover. Autoformalization is defined as translation from informal mathematics to formal specifications and proofs. The abstract reports, “we show large language models provide new prospects towards this goal.” (Abstract, p. 1.) The main evidence is on mathematical-competition problems (MATH and MiniF2F), not Rust programs or Verus specifications. The models are PaLM and Codex.
@@ -108,13 +107,9 @@ The paper's advanced example asks whether an arbitrary product of compact spaces
 
 The authors identify three core difficulties: “the model needs to (1) bridge the logical gaps left in pen-and-paper proofs, (2) assume the implicit contexts and assumptions, and (3) align informal definitions/concepts to formal ones.” (Section 6.1, p. 9.) They also warn that larger theories exceed current context windows and that generating complete theories with all definitions needs new methods (Section 7, p. 10).
 
-Inference: the threat to agent-written verified Rust is high at the specification boundary. A model can emit compilable Verus code with an omitted precondition, an overstrong assumption, or a postcondition unrelated to the English requirement. The paper's own failure modes—missing assumptions and wrong definition alignment—are direct analogues. VL should reuse verifier-backed filtering and independent semantic review rather than redo generic few-shot prompting research. This is an inference.
-
 ## what is proved, measured, and trusted
 
 The paper uses Isabelle to check proofs found by the prover (Section 5.1, p. 7). The autoformalization model itself is not proved correct; 25.3% is a sampled translation correctness rate from manual evaluation (Section 4.4, p. 6). BLEU, proof-search success, and MiniF2F rates measure different things and must not be conflated. Inference: the trusted components include the Isabelle checker and its library definitions, the human formalizations used as references, the choice of model and prompt, and the human classification of the 150 cases; the paper does not enumerate a trusted base.
-
-Inference: a VeruLaw pipeline should preserve the generated candidate, the exact Verus version and solver result, the English source, and an independently reviewed semantic mapping. It should report denominator, model, split, timeout, and contract-strength checks for every claimed rate. This is an inference.
 
 ## techniques for the catalog
 
@@ -124,4 +119,3 @@ Inference: a VeruLaw pipeline should preserve the generated candidate, the exact
 - proof-oracle training — let the interactive prover, not model confidence, filter candidate proofs (Sledgehammer is run with a 30 second timeout)
 - informalization back-translation — translate formal statements back to natural language, which the paper proposes as a prospect for creating aligned data but does not run as training
 - context-aware theory alignment — Inference: treat library definitions, hidden assumptions, and large-theory context as explicit failure boundaries; the paper reports these as limitations (Sections 6.1 and 7), not as a technique
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "For example, for deploying an autoformalization tool using LLMs we would need to consider the inclusivity of variable and lemma names, and of the attribution of scientific ideas."): I read the whole paper text (main text, references, appendices A to D) and checked every quotation, number, table value, section and page reference, and the technique steps against it. I changed the link to the arXiv page from the paper text; corrected the Table 2 sum (215, not 150); fixed the expert iteration steps (M(i-1) searches, M0 is fine-tuned, N = 2, B wording); corrected the model size to 700M non-embedding parameters; added the missing citation marker inside a quote; added the prompt-example counts and Appendix B.3 reference; narrowed back-translation to what the paper states; and labeled my own conclusions and use rules "Inference:". I did not check the cited prior work, the PDF figures beyond the text layer, or the appendix examples one by one.

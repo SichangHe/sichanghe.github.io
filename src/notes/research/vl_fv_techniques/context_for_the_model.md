@@ -74,8 +74,6 @@ Each step names where it comes from.
     - run the same tasks without retrieval, without the guide, without the slice
     - otherwise you cannot tell which piece paid
 
-## variants by paper
-
 ### code-keyed retrieval: PropertyGPT (Solidity, Certora-style rules)
 [study](../vl_paper_walkthrough/propertygpt_20261012.md)
 

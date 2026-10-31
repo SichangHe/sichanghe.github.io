@@ -59,12 +59,6 @@ The paper defines syntax and big-step rules and demonstrates that those rules ca
 
 The paper also states that realistic programs make INDIRECT produce many possible outcomes, so execution may propagate unknown values rather than meaningful results (Section 5.1, p. 124). Inference: trusted components therefore include Ghidra's disassembly, control-flow API, calling-convention model, the assumptions about variable layout, and the Haskell runtime. Inference: a Verus port would additionally trust the modeled binary format, parser, Rust compiler, Verus verifier, and solver unless those layers receive independent proofs.
 
-## implications for VeruLaw
-
-Inference: this work is directly useful when VL analyzes binary-derived IR or any generated intermediate language. The actionable pattern is to freeze producer versions, capture ambiguous cases in executable tests, make hidden control-flow and call-frame state explicit, and verify an interpreter against contracts. Inference: it is less useful as a drop-in proof of arbitrary Ghidra output because the paper changes the language and assumes API facts that are not proved.
-
-Inference: prior work already covers the core idea of formalizing P-Code, so VL should not claim novelty for “an executable semantics and interpreter” alone. A possible distinct contribution would be a Verus-verified interpreter with a stated refinement theorem, explicit treatment of nondeterministic INDIRECT, and measured coverage over a declared corpus; none of those are supplied here. Inference: the threat to a product that generates agent-written verified Rust is moderate when binary analysis feeds generated code: an incorrect IR model can make downstream proofs establish the wrong program. It is low for ordinary source-level Rust verification that never consumes P-Code.
-
 ## techniques for the catalog
 
 - producer-guided semantics: compare generated IR with known-source programs, then turn observations into executable syntax and transition rules
@@ -72,4 +66,3 @@ Inference: prior work already covers the core idea of formalizing P-Code, so VL 
 - predecessor-keyed phi: attach predecessor addresses to phi alternatives and select using tracked previous-block state
 - call-frame semantics: model ABI argument registers, fresh locals, cleanup, and return values explicitly in the transition system
 - executable validation: implement the semantics as an interpreter and report its assumptions and nondeterministic cases
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Three special registers are used to keep track of function return value, the address of the previous block and the address of the current block."): I read the whole paper text (pp. 111-128, abstract to references) and checked every quotation word for word, the version and date facts, the section and page references, the steps of techniques 1 to 3, the assumptions list, the NSA response and the no-numeric-evaluation claims. I changed one quotation (restored its full lead-in, because the original capitalised "we"), narrowed the "tests" wording to "design choices cover", fixed the block-terminator wording and page range, extended the phi-order page reference to pp. 114-115, and marked two unlabelled conclusions as Inference. The DOI link comes from the paper text. I did not check the figures (images, not in the text) or the cited external works, the Verus mappings (Inference, not paper claims), or the VeruLaw implications.

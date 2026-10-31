@@ -73,19 +73,9 @@ Of 243 equivalence certificates, 224/243 (92.2%) invoke Logos-specific lemmas an
 
 Verus form
 
-Inference: mirror the architecture with reusable Verus proof lemmas and a model proposing proof blocks, while `cargo verus` remains the checker. Keep the proof agent untrusted: only verifier-accepted code counts. Use `requires`, `ensures`, `assert`, and loop `invariant`; do not call proof functions at runtime. A lemma library's specifications become part of VL's trusted assumptions if their proofs or definitions are external.
-
 evidence and limits
 
 The 86.9% solved rate includes 47 timeouts; it measures definite results within 14,400 seconds, not complete decision power. The 87.6% agent-time share outside Rocq compilation identifies proof synthesis as the bottleneck. Model serving is nondeterministic, so individual runtime and timeout outcomes can vary (Section 5.4, p. 11).
-
-## what remains trusted, contradictions, and product threat
-
-Rocq kernel checking, FormalSQL definitions, SQLGlot/Calcite lowering, PostgreSQL-oriented behavior choices, schema contracts, and the proof agent's generated terms are the trust boundary; the agent itself is not trusted after checking. The paper's broad 86.9% coverage and 3,632-second median concern different axes: coverage is 338/389, while runtime is over solved cases. The 22.9-point improvement is 86.9% − 64.0%, consistent with those denominators. Inference: for agent-written verified Rust, Logos demonstrates a robust pattern—specialized semantics, reusable lemmas, untrusted synthesis, and kernel checking—but also a severe cost risk: proof search can dominate product CI. A Verus integration must control context and proof instability, and must connect abstract contracts to concrete database, parser, and runtime behavior.
-
-## what VL should not redo
-
-Logos already provides mechanized typed semantics, order-sensitive alternatives, bag-closure lifting, error-aware equivalence, LLM proof synthesis, and kernel-checked certificates. VL should not claim generic “LLM plus verifier” or lemma reuse as new without a different domain and evidence. Inference: a distinct contribution could adapt bag/list closure to Rust collection APIs or prove that generated Rust transformations preserve a formal state-machine semantics; this paper does not address Rust or Verus.
 
 ## techniques for the catalog
 
@@ -93,5 +83,3 @@ Logos already provides mechanized typed semantics, order-sensitive alternatives,
 - bag-closure lifting — use multiplicity equality only after proving every relevant ordering is admitted
 - certified lemma-guided synthesis — let an LLM assemble query-specific proofs while a Rocq kernel checks each certificate
 - proof-producing countermodels — certify non-equivalence with a fixed typed database against complete outcome relations
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

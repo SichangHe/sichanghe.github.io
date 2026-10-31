@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `helbling2026finding`, [paper](https://arxiv.org/abs/2605.12731v1)
 
-Audit: audited 2026-10-13 against the paper; checked quotations, steps, numbers (none beyond three experiments), figure and section references, Verus forms; changed step 5 of technique 1 (disequality applies to memory, event streams use a line diff), removed an invented assumption on unsat cores and path constraints, removed the claim that a sequential harness avoids annotations and that path explosion is a stated limitation, marked own inferences.
-
 ## scope and main result
 
 This paper adapts cozy, a binary comparative symbolic-execution tool, to compare C and Rust translations. It is designed for incremental migration and automated C-to-Rust output: differences are shown to a developer, who marks each as intentional or erroneous; outside approved differences, the binaries are formally checked equivalent. Inference: this is a differential assurance technique, not a proof that either implementation is memory safe or that all executions were explored.
@@ -94,12 +92,6 @@ The paper says only that “a large language model could consume the textual rep
 The paper reports three experiments: insertion sort; a watch/date-time incrementer with branching, rollover, leap years, and bounded sensible input ranges; and box blur with nested loops and dynamically sized Rust vectors. It verified box blur only for small images and kernel sizes. In the watch case, C overflow is undefined while Rust debug builds panic and release builds wrap in two's complement; the authors added input assumptions to avoid overflow states. Inference: these assumptions are trusted and narrow the claim.
 
 Inference (the paper has no trusted-base list): the binaries, compilers, angr, Z3, ABI/layout annotations, debug data, bounded inputs, and developer-approved difference classifications are trusted. The paper says cozy “detects differences in all explored paths” (Sec. VII, p. 3), and names execution performance, mostly binary interpretation in angr's Python, as the main limitation; it does not name path explosion. Of a sequential equality harness (Kani, as in VERT) the paper says “a copy of the execution tree of the second function is made for every leaf of the execution tree of the first function” and that it gives “a fairly coarse success/failure signal” (Sec. VI, p. 3). Inference: cozy's pairwise comparison is more diagnostic but, with n² naive pairs, can still become quadratic.
-
-Inference for VL: threat is high for automated translation: a Verus proof of the Rust target does not show that behavior matches legacy C, and C UB/overflow choices can make “equivalence” specification-dependent. Reuse cozy's differential harness as a release gate for translated components, with explicit approved differences and bounded-domain caveats. It should sit beside Verus proofs, not replace them.
-
-## what VL should not redo
-
-Inference: VL should not rediscover common-input relational execution, compatibility checks, unsat-core memoization, layout annotations, or interactive path-diff reports. It must implement Rust/Verus-specific ABI and ownership correspondence and decide whether approved changes preserve the product's intended semantics.
 
 ## techniques for the catalog
 

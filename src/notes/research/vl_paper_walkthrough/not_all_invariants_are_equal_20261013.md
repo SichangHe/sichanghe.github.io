@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `pinto2026not`, [paper](https://arxiv.org/abs/2603.15510)
 
-Audit: audited 2026-10-13 against the paper; rechecked every number in Tables 3 to 5, Appendix D and E and Table 9, the propositions, algorithms, rewrite rules, quotations and page references (all matched); corrected the proof description, the Verus claims on loops without an invariant and on casts, an unsupported claim about single timing runs, and the 16% figure, which excludes model inference time.
-
 source: Pinto, Elboher, Wu, Narodytska, Katz; arXiv:2603.15510v2, 23 Jun 2026; 19 pages; appendices A to G (examples, prompts, algorithms, data statistics, hard split, training settings, verifier configuration). Page numbers are the PDF's.
 
 ## the argument
@@ -180,10 +178,6 @@ Where it fails, and what the numbers do not show:
 
 - the experiment showing that fine-tuning on raw solver output lowers the share of syntactically valid answers and that shortening the targets with verifier re-checking fixes it
 - a complete recipe with prompts, algorithms and training settings for one-call invariant models on C; the abstract (p.1) says the code is public
-
-## threat to a product of agent-written verified Rust
-
-Inference: low. The result is a cut of about 16% in mean verification time (15.6%, 193 s to 162.9 s, when model inference is counted) for one C model checker on programs it could mostly already prove, obtained by a hint that is right less than half the time. It does not write code, contracts or proofs, and its data source, a verifier that discovers and prints invariants, does not exist for Verus. The part that matters to VL is the data argument: if VL ever fine-tunes on its own accepted proofs, the long machine-shaped ones are poor targets, and a shorten-then-re-verify pass with several rewrites per proof is the measured remedy.
 
 ## techniques for the catalog
 

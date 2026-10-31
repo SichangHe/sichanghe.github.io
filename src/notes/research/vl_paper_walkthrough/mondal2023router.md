@@ -35,7 +35,7 @@ Steps from the paper.
 4. Check syntax with Batfish, topology against the JSON description, and local policies with Batfish Search Route Policies; return errors or counterexamples to GPT-4 (Section 4.1, p. 5).
 5. After correcting the errors, simulate the entire BGP communication with Batfish to check the global policy (Section 4.1, p. 5).
 
-In the no-transit experiment, GPT-4 oscillated when given the global policy and feedback as a counterexample packet. Local policy prompts told R1 to add communities to routes arriving from ISPs and filter those communities on egress to ISPs. The authors explain: “We found that specifying local policies as in Lightyear [9] gave us better results because it allowed us to localize verification errors to specific routers and specific route maps within those routers.” (Section 4.1, p. 5). Inference: for VL, split a large Verus specification into function- or module-local proof obligations, then run a final whole-program proof. Local contracts should still imply the global property; otherwise modular feedback can hide cross-module failures.
+In the no-transit experiment, GPT-4 oscillated when given the global policy and feedback as a counterexample packet. Local policy prompts told R1 to add communities to routes arriving from ISPs and filter those communities on egress to ISPs. The authors explain: “We found that specifying local policies as in Lightyear [9] gave us better results because it allowed us to localize verification errors to specific routers and specific route maps within those routers.” (Section 4.1, p. 5).
 
 ## technique: humanizers, error classes, and reusable instruction prompts
 
@@ -58,8 +58,6 @@ In no-transit synthesis, “The entire cycle took 2 human prompts and 12 automat
 
 For translation, the authors report: “However, we were able to reach a point where Campion and Batfish no longer produced errors.” (Section 3.2, p. 4). For no-transit, they describe a final Batfish simulation to ensure the global policy (Section 4.1, p. 5). They caution: “First, a verifier cannot prove correctness without a specification.” and “In practice, specifications are incomplete, so not all solutions are in fact acceptable to the user.” (Section 1, p. 1). Inference: these results establish acceptance by the selected tools within their modeled scope, rather than correctness of the LLM or prompting machinery. For Verus, verification likewise depends on the supplied contracts and trusted implementation assumptions; localized feedback cannot establish missing requirements.
 
-Threat to VL. Inference: the paper's strongest warning for agent-written verified Rust is specification incompleteness plus global-to-local mismatch. A model can satisfy a local lemma while violating a system invariant, or fix one proof obligation while introducing another. VL should reuse local diagnostics, modular obligations, automatic retry, and final global verification, while retaining explicit human review for unresolved or oscillating feedback. The paper has already demonstrated the pattern and the need for verifier feedback; VL should not claim novelty for merely adding a retry loop.
-
 ## techniques for the catalog
 
 - verified prompt programming — iterate LLM generation with syntax and semantic verifiers that emit localized correction prompts
@@ -67,5 +65,3 @@ Threat to VL. Inference: the paper's strongest warning for agent-written verifie
 - diagnostic humanization — classify verifier output and fill reusable prompt templates with precise affected locations
 - initial instruction prompts — maintain expert rules for recurring model mistakes while continuing to verify every result
 - leverage measurement — report automated correction prompts divided by human prompts with the complete denominator
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Some of the 20 automatic prompt correction cycles included minor cycles for syntax correction not just at the start but also after correcting semantic errors."): checked all study quotations, numbers, section and page references, and technique steps after reading the entire paper; corrected quotation wording and attribution, page references, Table 2 counts, workflow details, and inference labels, and replaced the link with the paper's arXiv identifier; did not reproduce experiments or independently validate verifier implementations or Verus adaptations.

@@ -141,7 +141,6 @@ continuation review on 2026-10-08 UTC
   - consultation was pending at that review; its assessment appears below
 
 completed ChatGPT consultation on 2026-10-08 UTC
-- [captured saved conversation](https://chatgpt.com/c/6ac7bddd-e0f4-832d-87fb-ee29e616df8a)
   - GPT-6.1 Sol with requested effort “Extra High”
   - helper returned “status”: “complete” and recorded model and effort
   - the earlier temporary/current-model picker failures do not describe this successful saved route

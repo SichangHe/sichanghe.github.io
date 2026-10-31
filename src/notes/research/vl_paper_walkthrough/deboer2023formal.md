@@ -56,11 +56,9 @@ Section 7 compares two collision-resolution strategies, each with four variants:
 
 Table 2, p. 23, gives absolute rule counts for NN and ratios to NN for other variants. For NN, totals are 217,860 steps for chaining and 480,127 for probing; probing’s `addNewPair` alone takes 385,191 steps. Thus individual easier methods do not establish a uniformly easier strategy. The authors explicitly conclude the strategy question “cannot be answered conclusively” (p. 24). Object keys use a specialized immutable `Key` class, whose equality and hash behavior are simpler than arbitrary Java objects. Several proofs remain open under automation, particularly when replacing integer identity with object identity/equality; these results concern KeY’s strategy and these implementations.
 
-Inference: VL should compare proof cost after choosing realistic representation and equality contracts. Rust ownership may simplify bucket separation, while probing still needs an explicit search-path invariant. Neither Java rule counts nor these incomplete automatic runs predict Verus performance.
-
 ## what is proved, measured, and trusted
 
-The paper proves the specified Java methods against JML contracts with KeY and checks bounded executions with JJBMC; it also reports manually written JUnit contract and invariant tests. It found a deserialization invariant violation, a JDK7u80 failure-atomicity bug, and an integer-overflow capacity bug; the last caused about a 45% average performance decline for an initially too-small map (Sec. 6, pp. 19–22). Inference: the proof does not establish correctness of unspecified JDK code, Java reflection-based tests, the JML translation, KeY/JJBMC implementations, or the adequacy of the chosen contracts. Inference: for VL, the paper is a strong warning that verified hash-map code still needs reviewed specifications, arithmetic edge cases, failure atomicity, and bounded checks for hard-to-prove helpers.
+The paper proves the specified Java methods against JML contracts with KeY and checks bounded executions with JJBMC; it also reports manually written JUnit contract and invariant tests. It found a deserialization invariant violation, a JDK7u80 failure-atomicity bug, and an integer-overflow capacity bug; the last caused about a 45% average performance decline for an initially too-small map (Sec. 6, pp. 19–22).
 
 ## techniques for the catalog
 
@@ -69,5 +67,3 @@ The paper proves the specified Java methods against JML contracts with KeY and c
 - invariant-preserving resize — prove cardinality, provenance, uniqueness, empty-slot, and no-gap properties while rehashing
 - weakened deletion invariant — allow one temporary hole and prove helper repair restores the full invariant
 - branch merging and loop unrolling — reduce KeY proof branches by merging equivalent outcomes or unrolling a fixed outer loop
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The bounded analysis is parameterized by the maximum number k ∈ N of unwindings and unrollings to apply."): read all 26 supplied paper-text pages including references and the whole study; checked quotations, method counts, proof-step counts, page/section references, JML contracts and invariants, bounded-model workflow, unit-test limitations, discovered bugs, and empirical comparison scope; corrected the title-word tag, bounded-program scope and bound-notation ambiguity; added unit-test steps, branch merging/unrolling and the eight-variant comparison; did not execute KeY, JJBMC, JUnit, or the artifact, inspect source code, or reproduce experiments.

@@ -102,14 +102,6 @@ evidence: CryptoVerif proves “Kyber is SH-CR” when Kyber hash functions are 
 
 limits and assumptions: the re-encapsulation attack can occur without violating standard IND-CCA, so IND-CCA alone is insufficient for PQXDH’s KEM public-key agreement (Section 5.3, printed p. 479). Inference: hybrid composition needs protocol-specific binding properties in addition to each primitive’s stand-alone definition.
 
-## what is proved, what remains trusted, and product threat
-
-The paper proves symbolic theorems for revision 2 and computational theorems for selected properties and compromises. It also proves Kyber’s SH-CR property under random-oracle modeling. Inference: the trusted boundary includes ProVerif and CryptoVerif semantics, the applied pi-calculus and game models, cryptographic assumptions, event placement, and the link between Signal’s implementation and the model. The paper itself states: “We note that our proofs only hold for our models, which do not capture all the details of how the protocol is deployed.” (Section 5.5, printed p. 481.)
-
-The authors list important omissions: Signal reuses long-term identity material for X25519 and XEdDSA, while their model uses separate key pairs; CryptoVerif models only long-term-key compromise; deniability, full Signal composition, and the complete Double Ratchet are outside this work (Section 5.5, printed p. 481). Inference: for agent-written verified Rust, the main threat is a model that silently omits key reuse or composition while the Rust implementation still has it. Inference: the product needs refinement proofs for parsing, key-domain tags, AEAD associated data, and KDF inputs, plus explicit assumptions for external cryptography.
-
-Inference: what VL should not redo is an undirected symbolic search or a generic post-quantum protocol tutorial. Inference: the reusable workflow is the combination of ProVerif attack discovery, maximal compromise-aware queries, CryptoVerif computational proofs, and protocol changes that separate key encodings and authenticate the KEM public key. Inference: VL should invest in the Rust-to-protocol refinement boundary and in replaying ProVerif attack traces against executable code.
-
 ## techniques for the catalog
 
 - applied pi-calculus protocol modeling — encode hybrid roles, key servers, public channels, and compromise processes
@@ -118,4 +110,3 @@ Inference: what VL should not redo is an undirected symbolic search or a generic
 - CryptoVerif computational games — obtain stronger computational guarantees under explicit classical and post-quantum assumptions
 - hybrid domain separation — use disjoint key encodings and version/input separation to prevent cross-protocol confusion
 - KEM public-key binding — authenticate KEM keys in AEAD data or prove a protocol-specific SH-CR property
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "As a consequence, PQXDH offers a weaker forward secrecy guarantee than Alex may expect, since Alex cannot know if the decryption key will be immediately deleted."): read the whole paper, including references and appendices; checked quotations, numbers, assumptions, technique steps, and section and printed-page references; corrected the publisher link, references, attack scope, SH-CR game, and computational-proof conditions, and marked recommendations as inferences; did not run the formal models or inspect Signal’s implementation. The mid-paper sentence is from Section 4.2.2, printed p. 478.

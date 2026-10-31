@@ -75,16 +75,6 @@ Lowering computes the inverse of the thread mapping: each `cuda_threads` loop be
 
 Verus form. Inference: represent a fence as a proof transition that raises visibility in a ghost map; represent an await as requiring a matching arrival count. Executable synchronization calls remain in Rust, while proof functions establish ordering facts. This mirrors Verus concurrency state machines but does not carry over CUDA’s actual memory model automatically.
 
-## evaluation, trust, and product threat
-
-The paper compares TF32 GEMM and full-precision FP32 GEMV against cuBLAS. GEMM uses wgmma and TMA; GEMV uses warp shuffles and scalar math without accelerator instructions (Section 6, PDF p. 18). For large square GEMM, “we see very similar performance between Exo-GPU and CUBLAS”; unusual GEMM sizes show more variation. For GEMV, “Exo-GPU and CUBLAS follow a similar performance trend, with CUBLAS having an almost-consistent performance advantage.” (Section 6, PDF p. 19.) It does not prove PTX semantics, support Blackwell tcgen05, or support non-CUDA platforms (Section 8, p. 21). Two Hopper GEMM rewrites are marked unsafe because Exo’s dependency checks cannot prove value-sensitive redundancy, although the authors state that the transformations are semantically sound (Section 8, p. 21).
-
-Inference: For agent-written verified Rust, the threat is concurrency specifications that omit ownership, visibility, or barrier obligations. Exo-GPU’s sequential baseline and explicit synchronization checks are reusable defenses, but a Verus proof still trusts the modeled hardware API, compiler, solver, and erasure. The paper’s concrete-size interpreter is evidence of bug detection, not a universal proof over all dimensions.
-
-## what VL should not redo
-
-Inference: VL should reuse the sequential-reference pattern, explicit ownership/collective maps, and synchronization validation instead of inventing informal concurrency annotations. Remaining gaps include formal CUDA semantics, symbolic sizes, Blackwell support, and value-sensitive rewrite proofs (Section 8, p. 21).
-
 ## techniques for the catalog
 
 - sequential-parallel equivalence — check that parallel execution preserves a sequential semantic baseline for selected concrete sizes
@@ -93,4 +83,3 @@ Inference: VL should reuse the sequential-reference pattern, explicit ownership/
 - abstract-machine synchronization — translate accesses and barriers into visibility records and interpret checks for concrete problem sizes
 - barrier timeline modeling — use full and temporal ordering to validate fences and split barriers
 - equivalence-chain scheduling — compose sequential rewrite checks with separate synchronization validation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Control variables are preserved, since GPU IR and AMIR share the same control variables set Y."): checked the full paper including appendices against quotations, numbers, section/page references, technique steps, and catalog entries; corrected the unrelated DOI to arXiv:2609.16389, concrete-size scope, quotation wording, register-memory example, synchronization reference, GEMV precision, and unsupported code-generation prerequisite; did not execute Exo-GPU, reproduce measurements, or verify the proposed Verus inferences.

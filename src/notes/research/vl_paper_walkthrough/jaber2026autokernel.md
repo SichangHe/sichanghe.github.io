@@ -36,14 +36,10 @@ The six-tier playbook orders block-size tuning; memory access; compute fusion an
 ## technique: dual backend and fixed evaluation firewall
 Triton provides rapid 1–5 second compilation and block/warp/stage tuning; CUDA C++ exposes WMMA fragments, warp shuffles, vectorized loads, shared-memory layouts, double buffering, and launch bounds (§5, p. 6). Both expose the same `kernel_fn()` interface and run under the same benchmark. The benchmark is never modified by the agent, which the design rationale calls a firewall against evaluator gaming (§10, p. 10). Git commits record kept experiments; rejected commits are reset (§10, p. 10).
 
-Inference: VL can adapt this separation by keeping specifications and verification harnesses outside agent-writable Rust modules. Verus contracts should describe the stable interface, while optimization code is replaceable behind that interface. The fixed harness must include input-shape, panic, resource, and determinism checks relevant to the product, not just a speed metric.
-
 ## evidence, assumptions, and failure modes
 On H100, AutoKernel beats torch.compile in 12 of the 16 displayed configurations (Table 4, p. 7), but matmul remains below cuBLAS: 278 TFLOPS, 28% of the stated 989.5 TFLOPS peak, at size 4096³ (§7.1, p. 7). Community results are separately reported: vectorsum_v2 B200 latency 44.086 μs versus 44.249 μs for second place (§7.2, p. 8), and a user-reported FP4 H100 Triton result 1.63×–2.15× over CUTLASS across seven shapes (Table 5, p. 8). The latter is community evidence, not the controlled H100 evaluation.
 
 The main experiment covers one GPU model, FP16, seven kernel types, and 34 configurations. The agent inherits the underlying LLM’s limits; software pipelining, custom PTX, multi-CTA cooperation, distributed kernels, and multi-device memory are out of scope (§11, p. 10). “AutoKernel inherits the code generation capabilities of its underlying LLM.” (§11, p. 10.) The correctness oracle is the PyTorch reference implementation (§6, p. 7), so its semantics, tolerances, compiler, hardware, and benchmark code remain trusted.
-
-Inference: threat to VL is high for performance-driven agent edits if the gate checks only sampled examples or permits harness changes. The transferable pattern is a non-agent-writable, fail-closed harness, immutable reference semantics, isolated diffs, and an explicit keep/revert ledger. Verus can strengthen functional and memory-safety contracts, but it does not replace integration tests for compiler, GPU, FFI, timing, or numerical behavior. VL should not redo an agent loop without this fixed-evaluation firewall; a speedup claim without denominator, hardware, shape, and correctness gate is not evidence of product safety.
 
 ## techniques for the catalog
 - Amdahl prioritization: allocate optimization experiments by each kernel’s fraction of end-to-end runtime
@@ -53,4 +49,3 @@ Inference: threat to VL is high for performance-driven agent edits if the gate c
 - fixed evaluation firewall: keep benchmark and reference semantics outside agent control
 - dual backend interface: expose Triton and CUDA implementations through one tested kernel interface
 - experiment provenance: commit, log, and revert every candidate so performance claims are auditable
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

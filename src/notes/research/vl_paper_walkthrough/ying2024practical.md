@@ -54,12 +54,6 @@ Example 5.2 proves the QFT specification in five stages (pp. 37–39). (1) Defin
 
 The paper concludes: “Thus, the correctness of the circuit implementation (Table 1) of quantum Fourier transform is verified.” (Example 5.2, p. 39.) This is a mathematical derivation. Inference: the reusable pattern for verified Rust is a recursive contract, local operation lemmas, sequencing, and induction on an index interval; the quantum mathematics would need its own verified representation.
 
-## soundness, trust, and product threat
-
-Theorem 6.1 states that derivability implies the corresponding semantic partial or total correctness (p. 39). Its detailed proof is in Appendix A.3 (pp. 50–69). The checked revision reports: “During this process, a gap was found in the proof of the soundness theorem (Theorem 6.1) for the case of total correctness.” It then states: “In this revision, the gap has been fixed.” (Acknowledgement, p. 41.) The preceding context attributes the discovery to Lean formalization by Yuanjie Ren, Jinzheng Li, and Yidi Qi after journal publication. The conclusion still lists proof-assistant formalization and parallel/distributed extensions as research topics (p. 40); that list should be read alongside the later revision note.
-
-Inference: a tool based on QHL+ must justify its semantic encoding, quantum-operator lemmas, classical entailments, and connection between specifications and implementation. This paper offers a logic and a worked QFT derivation, without a Rust/Verus implementation or a performance evaluation. Its applicability claims do not establish a measured productivity improvement for agent-written Rust. The most direct ideas to reuse are paired assertions, explicit measurement-outcome accumulation, and loop variants.
-
 ## techniques for the catalog
 
 - typed quantum arrays — select quantum subsystems with classical index expressions and parameterise unitary operations
@@ -69,5 +63,3 @@ Inference: a tool based on QHL+ must justify its semantic encoding, quantum-oper
 - Hoare composition — apply substitution, sequencing, conditionals, consequence, and loops to paired assertions
 - total loop rule — establish invariant preservation and a nonnegative integer that strictly decreases
 - inductive circuit verification — compose local operation triples over recursively described quantum arrays
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The axioms and proof rules for total correctness are the same except that the rule for while-loop is changed to the rule (Rule-Loop-tot) in Table 4."): read the entire paper, including references and appendices; checked every study quotation, number, section/page reference, and technique step; corrected quotations, page references, operand distinctness, measurement parameterisation, consequence direction, accumulation prerequisites, and revision context; marked Rust/Verus transfers and trust conclusions as inferences; did not independently re-prove the mathematics, inspect the Lean formalization, or validate a Rust/Verus implementation.

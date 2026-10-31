@@ -239,7 +239,6 @@ reading order
 
 paper collection
 
-- added primary PDFs to /hdd1/sichanghe/paper_collection
   - Theseus, OSDI 2020
   - Asterinas, USENIX ATC 2025, arXiv 2506.03876v1
 - web retrieval used direct publisher and project URLs

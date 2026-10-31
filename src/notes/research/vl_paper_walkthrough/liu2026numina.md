@@ -21,7 +21,7 @@ How the paper does it.
 4. Search local projects and stdlib with `lean local search`; query Mathlib with `lean loogle` (Section 2.2, p. 3).
 5. Ask LeanDex to interpret a natural-language query and retrieve relevant Lean objects from packages including Mathlib and FLT (Section 2.2, p. 3).
 
-Verus form. Inference: the analogous VL controller would keep a Rust/Verus workspace and expose tools that inspect the function outline, verification goal, and diagnostics, then run `verus` on an isolated module or candidate proof. A retrieval tool can search the local Verus library and project contracts. Candidate strategies can be separate Rust proof blocks or helper `proof fn`s, but Lean commands and Lean theorem names do not carry over. The machine-checking boundary remains Verus's verifier; an agent's retrieved lemma is useful only after Verus accepts its use.
+Verus form.
 
 Evidence and limits. The paper gives no ablation isolating each MCP component. Its evidence is system-level: all 12/12 Putnam problems under the Section 3 setup. Lean-LSP-MCP is described as grounding decisions in “authentic compilation environment” (Section 2.2, p. 3), but retrieval quality and tool-call error rates are not measured.
 
@@ -114,7 +114,7 @@ Proved or measured: under the stated run, Numina-Lean-Agent solved 12/12 Putnam 
 
 Trusted or assumed: Lean's kernel, Lean-LSP-MCP, the Mathlib and other library contents, model APIs, the formal statements supplied by Seed-Prover 1.5, and the no-internet experimental setting. The authors do not provide a complete end-to-end proof of the agent, retrieval correctness, or model judgment. The human case study also relies on human experts and code still being simplified.
 
-Threat to a product of agent-written verified Rust. Inference: medium to high for productivity and medium for soundness risk. The architecture directly suggests tool-grounded proof repair, retrieval, blueprint planning, and context decomposition for VL. Soundness still comes from Verus's accepted contracts and proofs; model votes, informal hints, retrieval results, and changed specifications are untrusted inputs. A product must log them, rerun Verus, and reject admitted or externally trusted bodies.
+Threat to a product of agent-written verified Rust.
 
 ## techniques for the catalog
 
@@ -124,4 +124,3 @@ Threat to a product of agent-written verified Rust. Inference: medium to high fo
 - subgoal subagents — isolate a context-heavy lemma, obtain a hint, formalize it independently, and compose it into the parent proof
 - recursive blueprint — maintain a dependency DAG of definitions and lemmas and revise it from compiler and proof-state feedback
 - human-guided self-correction — permit reviewed hints and contract revisions when formalization reveals a false or degenerate statement
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

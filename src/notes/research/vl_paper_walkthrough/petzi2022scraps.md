@@ -68,5 +68,3 @@ Inference: useful Verus targets are the separation of evidence validation from s
 - status algorithm — return `trusted`, a score, `pending`, or `untrusted` from stored evidence state
 - request consolidation — combine requests into a per-Prover flag and reuse signed evidence across Verifiers
 - parameterized evaluation — distinguish prototype timings from simulation results and their tested network sizes
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The non-secure application provides the required functionalities to communicate with the blockchain and other devices."): checked the complete paper, study claims, quotations, numbers, section and printed-page references, protocol steps, tag, and publisher link; corrected phase assignments, block-ID freshness, registration, query branches, request consolidation, trust assumptions, and evaluation scope; did not inspect source code, reproduce experiments, or verify the underlying cryptographic and ledger implementations.

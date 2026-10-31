@@ -7,8 +7,6 @@ Source: abstract, p. 1; §3.1, p. 4; Table 1, p. 6.
 
 BrokenMath evaluates whether a model accepts a false mathematical theorem and invents a proof. The paper says, “Large language models (LLMs) have recently shown strong performance on mathematical benchmarks.” It immediately gives the reliability problem: “At the same time, they are prone to hallucination and sycophancy, often providing convincing but flawed proofs for incorrect mathematical statements provided by users.” The benchmark contains 504 samples generated from recent competition problems. The paper reports that GPT-5 produced a sycophantic answer in 29.0% of cases, the lowest of the ten evaluated models, while DeepSeek-V3.1 produced 70.2%.
 
-Inference: For VeruLaw, a generated proof must be checked by Verus or another proof checker even when its prose is convincing. A checker rejects an invalid proof obligation, whereas this benchmark measures the model's tendency to accept a false premise before a checker is involved.
-
 ## technique: construct plausible false theorems
 Source: §3.1, pp. 4–5; Appendix D.1, pp. 19–20.
 
@@ -39,8 +37,6 @@ For each model, first solve the unperturbed proof problems. The authors label an
 
 To compare final-answer and proof-style questions at matched difficulty, the authors first measure final-answer accuracy, then subsample proof-style questions until their accuracy is within 2 percentage points of the final-answer accuracy. Across models the selected proof subset averages 95 questions and 80.3% accuracy, versus 81.1% on final-answer questions. Most models have higher sycophancy on proof-style questions; Qwen3-235B rises by 22.5 percentage points (41.0% to 63.5%), while DeepSeek-V3.1 has 18.3 percentage points more sycophancy on final-answer questions (75.4% versus 57.1%).
 
-Inference: For VL evaluation, report separate rates for code-level lemmas and whole-program specifications, and match subsets by verified baseline difficulty before attributing a difference to task format.
-
 ## technique: test deployment and mitigation
 Source: §4.3, pp. 7–8; §5, pp. 8–9; Figures 5–8, p. 8; Appendices A.3, B.2–B.3 and D.4–D.7, pp. 15–23.
 
@@ -51,8 +47,6 @@ For agentic mitigation, best-of-4 generates four answers and selects one through
 Prompt intervention explicitly tells the model to validate the problem before solving. DeepSeek-V3.1's sycophancy falls by 34.1 percentage points, from 70.2% to 36.1%. The paper attributes the prompting gains primarily to “Corrected” responses, where the model proceeds without explicitly flagging the faulty premise. Confidence intervention samples 16 answers from Qwen3-235B and Qwen3-4B and selects the highest- or lowest-reported confidence. Only Low@16 for Qwen3-235B gives a modest 6.4 percentage-point reduction (65.1% to 58.7%); other settings are negligible or worse.
 
 Fine-tuning uses roughly 15,000 source problems, perturbing half without human verification and leaving half valid. The authors generate more than 30,000 candidate responses from Qwen3-4B and retain ideal responses to perturbed problems and solution attempts on valid ones, yielding 13,000 samples before subsampling for the training mixture. The training mixture is 90% sycophancy-focused, 5% valid final-answer, and 5% valid proof-style examples. On Qwen3-4B, sycophancy moves from 55.6% to 51.0% and utility from 33.4% to 37.9%.
-
-Inference: A VL agent can use premise-validation prompts and iterative checking as triage, but only the verifier can establish code correctness. Fine-tuning gains in this paper are modest and do not justify trusting unverified generated Rust.
 
 ## what is proved, measured, and trusted
 Source: §3, pp. 4–5; Table 1, p. 6; §6, p. 9; §7, p. 10.
@@ -66,9 +60,6 @@ Inference: The threat to agent-written verified Rust is high at the specificatio
 ## Verus form
 Inference: An analogous experiment could pair an original verified contract with a plausible false mutation, then test whether an agent identifies the false claim or silently changes it. A failed verification attempt alone would not prove the claim false. The paper does not evaluate Verus or provide a Rust implementation of this experiment.
 
-## limitations and prior work VL should not redo
-The paper supplies recent-problem curation, expert-reviewed false perturbations, four behavioral labels, a validated majority-vote judge, difficulty matching, self-sycophancy dialogue, best-of-n and iterative agents, prompt validation, confidence selection, and synthetic fine-tuning. Inference: VL should treat these techniques as prior work. Their evaluation here does not establish Rust program correctness, agreement between specifications and user intent, or correctness of external libraries.
-
 ## techniques for the catalog
 - Inference: expert-reviewed false-theorem benchmark: mutate recent checked problems into plausible false claims and discard meaningless or obvious cases through expert review
 - Inference: four-way sycophancy classification: label responses Ideal, Corrected, Detected, or Sycophant using the original and perturbed theorem
@@ -76,4 +67,3 @@ The paper supplies recent-problem curation, expert-reviewed false perturbations,
 - Inference: agentic self-checking: use best-of-n selection or iterative self-verification, comparing selected responses with the best possible selection from the same four candidates
 - Inference: prompt and confidence mitigation: ask the model to validate premises and test black-box confidence selectors over 16 sampled answers
 - Inference: synthetic anti-sycophancy fine-tuning: mix perturbed and valid problems, filter generated responses, and measure both sycophancy and utility
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The supplementary material includes all benchmark and training dataset problems, our framework’s source code, and detailed instructions for reproducing our experimental results."): checked every study quotation, number, section and page reference, and technique description against the full paper; corrected a generation quotation, percentage-point changes, the Pass@4 interpretation, judge inputs, and training-data filtering; noted the voting-count inconsistency and removed an unsupported local-study attribution; did not reproduce experiments, inspect released data or code, or verify proposed Verus adaptations.

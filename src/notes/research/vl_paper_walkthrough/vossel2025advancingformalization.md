@@ -61,14 +61,6 @@ Inference: for Verus, report parser validity, contract-name resolution, and proo
 
 On the FOLIO argument-validity check, the fine-tuned LLaMA3.1-8B obtains 39.70% valid conclusions versus 37.44% for LLaMA-2 13B with incremental fine-tuning and a predicate verifier, despite no FOLIO training for the authors’ model (Section 3.4, p. 8; Section 4.3, pp. 12–13). The paper uses the FOLIO evaluation subset but does not state its raw count. This check compares translated argument validity with known validity, rather than measuring exact formalization.
 
-## trusted scope and threat to VL
-
-The authors report observing that CoT sometimes overwrites initially correct translations (Conclusion, p. 13). The conclusion also states: “Flan-T5-XXL achieves 55% accuracy without a predicate list and 70% with a noisy one” (p. 13), without identifying the metric. Tables 5 and 7 give raw exact/equivalence scores of 35.79%/38.83% without lists and 62.39%/69.06% with noisy lists; predicate-normalized equivalence scores are 54.79% and 69.23%, respectively (pp. 10, 12). Inference: those normalized scores approximately explain the conclusion’s rounded values, but the paper does not explicitly connect them. The 55% statement should not be read as raw equivalence accuracy.
-
-Inference: the evaluation depends on dataset labels, the parser, the Z3 encoding, and the predicate-alignment procedure. Its solver checks establish equivalence to benchmark formulas, not agreement with a human’s intended meaning.
-
-Inference: a possible failure in agent-written verified Rust is a valid proof of a contract that uses the wrong field or predicate. VL could test predicate allowlists and staged name resolution, while checking types and verifying the actual body. The paper supplies evidence for predicate-list conditioning and separate structural/predicate metrics, but no Rust or Verus experiments. Whether checked name resolution reduces proofs of unintended contracts remains an experiment for VL.
-
 ## techniques for the catalog
 
 - fine-tuned NL-to-FOL translation — train sequence-to-sequence models on paired prose and formal strings
@@ -77,4 +69,3 @@ Inference: a possible failure in agent-written verified Rust is a valid proof of
 - staged predicate curriculum — predict names first or train gold-to-noisy-to-free-form stages
 - multilingual predicate abstraction — vary source language while keeping formal predicates fixed
 - semantic equivalence evaluation — parse formulas and prove negated bi-implication unsatisfiable with Z3
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The list is sorted to ensure that the order of predicates does not reveal information about the logical structure of the FOL expression."): read the complete paper text and study; checked quotations, numbers, techniques, section/page references, authors, year, and paper identifier; corrected the link, page references, unsupported steps and interpretations, and marked proposed Verus adaptations as Inference; recorded the multilingual model discrepancy and the unstated metric behind the rounded conclusion scores; did not reproduce training, inspect source code or datasets, or independently validate benchmark labels or Verus adaptations.

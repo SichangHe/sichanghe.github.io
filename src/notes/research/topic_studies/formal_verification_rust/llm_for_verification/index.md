@@ -59,7 +59,6 @@ reading the evidence
   - the requested Opus and Fable models were unavailable in this runtime
 - primary sources were retrieved directly when the web search tool failed
   - coverage is a focused review, not an exhaustive census
-- new collected PDFs and extracted text are in `/hdd1/sichanghe/paper_collection`
 - the requested Thursday deadline is October 8, 2026, 09:00 Los Angeles time
   - equivalent to October 8, 16:00 UTC
   - the delegation's October 9 parenthetical was inconsistent with Thursday

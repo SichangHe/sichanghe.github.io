@@ -82,5 +82,3 @@ Inference: threat to agent-written verified Rust is moderate for reusable abstra
 - validation and repair — parse candidates, reject structural or type errors, and use diagnostics to repair before soundness checking
 - weighted soundness loss — score counterexample abstract elements using sampled concrete states and emphasize inputs with larger numerical gradients
 - monotone refinement with fallback — require a minimum loss decrease, state a conditional convergence bound, and return a predefined fallback when retries end
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each synthesis is a one-time cost per operator, after which the synthesized sound transformer can be reused across arbitrary models and verification tasks without additional effort."): read the full paper, including appendices; checked quotations, numbers, references, and technique steps; corrected the publication year and DOI, page references, strict improvement rule, evaluation scope, and convergence wording, and marked interpretation as Inference; did not reproduce experiments, inspect the artifact, or independently prove transformer soundness.

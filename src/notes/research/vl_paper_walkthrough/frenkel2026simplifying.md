@@ -66,10 +66,6 @@ The case study covers Paxos, Flexible Paxos, Multi-Paxos, Fast Paxos, a first-or
 
 Forward-backward proofs generally replace mixed conjunction/disjunction formulas with clausal predicates. Prophecy further removes existential quantifiers in round-value Paxos variants. For `raft-epr`, forward uses `Q=7, A=2, B=9` and 3.7 seconds; forward-backward leaves the same complexity in this model, while forward-backward plus prophecy uses steps with `Q=1` and `Q=3`, three prophecy symbols, and 2.8 seconds (Table 1, PDF p. 20). For `fast-paxos-epr-v`, forward takes 1.5 seconds, forward-backward 1 second, and prophecy 0.8 seconds; these are medians of 15 runs on the stated machine. The authors caution that simplification is not guaranteed for other protocols (section 6, PDF p. 17).
 
-## trusted boundary, limits, and VL implications
-
-The paper proves rule soundness mathematically and checks concrete proof trees with mypyvy and Z3. Trusted components include the model, translation into mypyvy, the proof checker, Z3, and the correctness of the Rust or protocol abstraction used by any port. It does not prove that a chosen abstraction matches an implementation, and its examples are not Verus code. Inference: the main threat to agent-written verified Rust is selecting a prophecy or backward predicate that is sound for an abstract model but not linked to the Rust state machine. VL should reuse incremental decomposition, explicit soundness obligations, and shape-specific prophecy templates. It should not redo generic invariant-search work that these rules already simplify; it should focus on model-to-Rust correspondence and automated generation of the side-condition lemmas.
-
 ## techniques for the catalog
 
 - incremental forward invariants — prove simple predicates one at a time and use earlier predicates as assumptions
@@ -77,5 +73,3 @@ The paper proves rule soundness mathematically and checks concrete proof trees w
 - prophecy witnesses — add a sound ghost witness for an existential property and reconstruct a witness-free safe invariant
 - prophecy verification conditions — use `Proph-Fwd` or `Proph-Select` side conditions to avoid searching arbitrary soundness proofs
 - invariant reconstruction — translate an incremental proof into one safe inductive invariant with bounded Boolean and quantifier complexity
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -32,8 +32,6 @@ evidence, assumptions, limits
 
 The adequacy evidence is a verified client, not only a verified collector. The paper states, “The most reliable way to demonstrate adequacy of a specification is to use that specification to prove correctness of clients of that API.” (§3.3, p. 16) CertiRocq clients verify integer-to-Peano conversion and packed bytestring construction; the latter requires dereferencing while a record is partially initialized (§3.3, pp. 16–17). The graph isomorphism theorem assumes graph well-formedness, valid roots, no dangling destinations, and remembered-set coverage (§7.1, pp. 35–36). The implementation is C, so the VST model also trusts explicit axioms for tagged values and cross-block pointer-range comparisons (Appendices B–C, pp. 43–45).
 
-Inference: a VL product should expose stable abstract contracts for verified Rust components and test those contracts with representative clients. The threat is high if an agent can prove a weak contract while the client’s intended semantics are absent; the client-adequacy pattern directly detects that failure.
-
 ## technique: encode sharing and cycles in separation logic with a graph library
 
 what it is and when to use it
@@ -53,7 +51,7 @@ Inference: represent the abstract graph as a finite map from node identifiers to
 
 evidence, assumptions, limits
 
-The authors identify graph reasoning as a major proof cost: “Garbage collectors manipulate graphs with sharing and (sometimes) cycles; to fit this into separation logic (where separation is the antithesis of sharing) required a graph-reasoning system such as CertiGraph.” (§9, p. 41) Their conclusion depends on the graph library and its Rocq proofs; the paper points to the open-source CertiGraph release and lists `gc_correct.v` and `verif_*` files (Appendix A, p. 43). Inference: this is reusable infrastructure for VL, but a graph model that omits cycles or aliasing would invalidate the collector contract.
+The authors identify graph reasoning as a major proof cost: “Garbage collectors manipulate graphs with sharing and (sometimes) cycles; to fit this into separation logic (where separation is the antithesis of sharing) required a graph-reasoning system such as CertiGraph.” (§9, p. 41) Their conclusion depends on the graph library and its Rocq proofs; the paper points to the open-source CertiGraph release and lists `gc_correct.v` and `verif_*` files (Appendix A, p. 43).
 
 ## technique: prove a functional model first, then refine C to it
 
@@ -210,17 +208,9 @@ The paper reports the causal chain: “It was not until we tried to verify a cli
 
 Verus form
 
-Inference: make client verification part of the VL acceptance path. If a client cannot prove a required behavior under a component contract, inspect whether the contract is too weak or the implementation is wrong. Keep the corrected property in a shared `spec fn` and add a proof-only regression lemma. Do not treat a passing proof of an under-specified function as evidence of product correctness.
-
 evidence, assumptions, limits
 
-The no-scan bug was absent from tests because no test exercised both `depth>0` and no-scan objects (§5.5, p. 27). This is direct evidence that formal client adequacy catches an input combination missed by testing. Inference: agent-written verified Rust has substantial threat from omitted semantic cases, especially when the agent can satisfy a permissive contract; client obligations and adversarial data representations should therefore be part of VL’s proof workflow.
-
-## trusted base, measurements, and what VL should reuse
-
-The paper proves C implementation-to-model refinement, functional graph-isomorphism theorems, API contracts, and selected CertiRocq clients. It trusts or axiomatizes the C tagged-value extension and cross-block range comparison (Appendices B–C, pp. 43–46), the Rocq/VST/CertiGraph and compiler toolchain, and the adequacy of the stated graph and client specifications. The paper gives no runtime benchmark table for this implementation; it says the local depth-first choice has not been extensively measured (§4, p. 19). It reports proof scale qualitatively and gives one precise denominator: the four-line remembered-set loop needs 452 lines of proof (§6.1, pp. 31–32). It also gives configuration numbers: nursery size is `2^16` words, word size is 8 bytes, and the calculated maximum is 43 generations (§6.2, p. 32).
-
-Already done and reusable for VL: stable abstract API contracts; graph models for sharing and cycles; functional-model refinement; root-frame discipline; write-barrier and remembered-set invariants; one-generation plus outer-loop induction; and client adequacy as a specification test. Inference: VL should avoid redoing these as generic ideas and instead adapt them to Rust ownership, Verus ghost state, and the product’s actual agent-generated components. Inference: the largest product threat is semantic under-specification, followed by trusted foreign or unsafe operations and proof maintenance when representations change. The paper’s bugs and its 452-line loop proof show why a short executable function can require a large, explicit proof boundary.
+The no-scan bug was absent from tests because no test exercised both `depth>0` and no-scan objects (§5.5, p. 27). This is direct evidence that formal client adequacy catches an input combination missed by testing.
 
 ## techniques for the catalog
 
@@ -243,4 +233,3 @@ Already done and reusable for VL: stable abstract API contracts; graph models fo
 - client adequacy feedback — strengthen contracts when realistic clients expose omitted semantic cases
 
 - C-semantics axiomatization — isolate nonstandard tagged-value and pointer-range operations as explicit trusted assumptions
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

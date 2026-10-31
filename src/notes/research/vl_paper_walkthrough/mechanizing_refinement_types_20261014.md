@@ -9,8 +9,6 @@ The development is deliberately staged. First, λF is an unreﬁned System F wit
 
 Inference: for Verus, the reusable lesson is to isolate an unrefined executable model and prove its basic safety before adding specification machinery. This can keep a large proof from depending on a circular specification judgment.
 
-## technique: kinded polymorphism prevents lost refinements
-
 ### what it is and when to use it
 Refinement types constrain values with predicates such as `Int {ν: 0 < ν}`. Naively refining any type variable is unsound: a variable refined by `false` could later be instantiated with an unreﬁned function type and lose the predicate. λRF assigns each type variable either base kind `B` or star kind `★`. A `B` variable may be refined and may only be instantiated by a type well formed at kind `B`, including a base-kinded existential (WF-Exis, p. 11). A `★` variable may only have the trivial refinement `true`.
 
@@ -27,8 +25,6 @@ Inference: in Verus, encode the analogous boundary in the specification API. Use
 ### evidence and limits
 The result depends on proving preservation and progress for the kinded calculus; the paper does not report a separate bug-finding experiment. The soundness claim assumes the primitive and implication contracts listed as Requirements 1 and 2 (Section 8.4, p. 23). Arbitrary refinements are allowed in the calculus, so the authors do not prove that an SMT implementation decides them.
 
-## technique: existential result types preserve application facts
-
 ### what it is and when to use it
 For dependent application, λRF gives `f e` the existential type `∃ x:tx. t` instead of substituting the whole expression `e` into `t`. If `e` has positive type `Pos` and the identity function returns `Int {ν:ν=x}`, the result is `∃ x:Pos. Int {ν:ν=x}`. The witness variable retains the argument’s refinement while keeping arbitrary expressions out of the refinement logic. “Using the TApp-Exists rule, both of these problems are addressed.” (Section 2.2, p. 4)
 
@@ -43,8 +39,6 @@ Inference: a Verus analogue would keep a value in a ghost/spec variable and stat
 ### evidence and limits
 The authors choose existential types over A-normal form because A-normal form is not preserved by small-step evaluation and would complicate closing substitutions (Section 4.2, p. 13). The calculus still relies on subtyping and implication to eliminate witnesses, so those relations must satisfy the stated axioms.
 
-## technique: semantic subtyping through an explicit implication contract
-
 ### what it is and when to use it
 Base-type subtyping reduces to a predicate implication. Constructor rules handle function contravariance, existential witnesses, and polymorphism. Instead of formalizing an SMT solver, λRF treats implication as an abstract judgment satisfying eleven properties: reflexivity, transitivity, conjunction introduction and elimination, repetition, narrowing, weakening, two substitution properties, and strengthening. “This axiomatic approach precisely explicates the properties that are required of the implication checker in order to establish the soundness of the entire reﬁnement type system.” (Section 4.4, p. 14)
 
@@ -58,8 +52,6 @@ Inference: Verus can use this separation as a trust boundary: model solver-suppo
 
 ### evidence and limits
 The paper explicitly leaves the solver connection unproved: “In the future, we can look into either verifying that these properties hold for SMT-based checkers, or even build other kinds of implication oracles that adhere to this contract.” (Section 4.4, p. 14) Thus the mechanized theorem is conditional on Requirements 1 and 2, not a proof of Z3 correctness or completeness.
-
-## technique: co-finite quantification for binders
 
 ### what it is and when to use it
 Rules that introduce a binder quantify over every name outside a finite excluded set, rather than choosing one fresh name. For type abstraction, the premise is `∀ α′ ∉ L. α′:k, Γ ⊢ e[α′/α] : t[α′/α]`. This removes renaming obligations from mechanized substitution and inversion proofs. “As observed by Aydemir et al. [2008] this rephrasing simpliﬁes the mechanization of metatheory by eliminating the need for renaming lemmas.” (Section 4, p. 9)
@@ -87,8 +79,6 @@ Subtyping means typing is not syntax directed. The authors first prove subtyping
 The proof dependencies are as follows. Transitivity uses induction on the combined depth of the three types (Section 2.3, p. 6), case analysis on the two subtype derivations, substitution for the S-Witn/S-Bind case, and narrowing for function types (Section 6.1, p. 17). Inversion collapses a chain of T-Sub applications and narrows the body context (Section 6.1, p. 17). Weakening and substitution are each mutually recursive over typing and subtyping; substitution uses weakening (Section 6.2, p. 17). Narrowing covers well-formedness, subtyping, and typing, and uses exact typing (Section 6.3, p. 18).
 
 Inference: for Verus, this is a proof architecture for context-sensitive APIs: prove weakening, substitution, and context narrowing as reusable `proof fn`s before attempting high-level preservation. The exact judgment trees are paper-specific.
-
-## technique: reified data propositions as constructive proofs
 
 ### four-step encoding
 The authors reify propositions and their derivation evidence as Haskell data, connect them with refinement-level measures, and refine constructors with premises and conclusions. The four steps are: define proposition data such as `HasTyPr`; define one evidence constructor per rule such as `TPrim` and `TSub`; define measures mapping evidence to propositions; and refine constructor input/output types so only valid derivations can be built (Section 7, pp. 18–19). The paper states, “Reﬁned data propositions encode inductive predicates in LiqidHaskell by reﬁning Haskell’s data types, allowing the programmer to write plain Haskell functions to provide constructive proofs for user-deﬁned propositions.” (Section 7, p. 18)
@@ -120,14 +110,6 @@ The mechanization was checked with LiquidHaskell 0.8.10.7.1 on a Lenovo ThinkPad
 
 The proved theorem covers the λRF calculus and its operational semantics. Trusted inputs are the primitive typing/reduction conditions (Requirement 1) and the eleven implication properties (Requirement 2); the solver’s soundness and the connection from SMT implication to program evaluation remain outside the proof (Section 4.4, p. 14; Section 8.4, p. 23; Section 10, p. 26). The paper also says, “𝜆𝑅𝐹 covers a crucial but small fragment of the features of modern reﬁnement type checkers.” (Section 10, p. 26)
 
-Inference: the direct threat to VeruLaw is methodological rather than an immediate implementation vulnerability. An agent that emits refinement-like contracts without tracking kind restrictions, substitution, solver assumptions, and preservation obligations could produce specifications that look precise while losing facts at instantiation. The paper’s conditional implication oracle is a concrete reminder that solver validity and specification adequacy remain trusted boundaries.
-
-## what VL should reuse and what it should not redo
-
-Inference: VL should reuse the staged proof architecture, base-kind restriction, existential packaging of dependent results, explicit solver contracts, co-finite binder handling, and derivation-as-data pattern. These are transferable design patterns for a Verus proof library.
-
-Inference: VL should not redo this paper’s exact λRF calculus or its already mechanized preservation/progress lemmas unless it needs a Rust-specific semantic correspondence. A new effort should instead connect the patterns to actual Verus constructs and test whether generated proofs maintain the same assumptions under Rust ownership, external specifications, and solver changes.
-
 ## techniques for the catalog
 
 - kinded polymorphism: restrict refinements to base-kinded variables so instantiation cannot erase predicates
@@ -138,5 +120,3 @@ Inference: VL should not redo this paper’s exact λRF calculus or its already 
 - inversion and narrowing: use subtyping transitivity, context narrowing, and exact typing to recover syntax-directed facts
 - refined data propositions: encode judgments and derivation evidence as refined data constructors for constructive proofs
 - intrinsic SMT invariants: map executable measures such as free variables into solver-supported logic and attach postconditions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Note that while Haskell types are inhabited by diverging ⊥ values, LiqidHaskell’s totality, termination and type checks ensure that all cases are handled, the induction (recursion) is well-founded, and that the proofs (programs) indeed establish the given propositions (types)."): checked the entire supplied text, including both appendix copies, against the study’s quotations, numbers, references, technique steps, and stated assumptions; corrected the year and link to this 2022 arXiv version, kind and substitution details, page references, quotations, and the account of unfinished and inconsistent appendix proofs; did not inspect or rerun the LiquidHaskell implementation, validate the implication oracle, or verify the proposed Verus adaptations.

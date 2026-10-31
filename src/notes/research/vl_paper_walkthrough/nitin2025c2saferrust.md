@@ -6,8 +6,6 @@ Tag: `nitin2025c2saferrust`, [paper](https://arxiv.org/abs/2501.14257v2)
 
 C2SaferRust combines a deterministic C2Rust transpilation with LLM rewriting and static analysis. C2Rust first produces compilable but non-idiomatic unsafe Rust. C2SaferRust then decomposes that program into translation units, supplies call-graph and dataflow context to an LLM, swaps in each safer translation, compiles, runs end-to-end tests, and repairs failures with feedback. The abstract states: “We then decompose the unsafe Rust code into slices that can be individually translated to safer Rust by an LLM.” (Abstract, p. 1). It reports: “The resulting programs still pass all test cases.” (Abstract, p. 1).
 
-Inference: this is a translation-and-regression-testing system, not a formal verification system. Its safety metrics count unsafe constructs and raw pointers; passing tests does not prove memory safety or functional equivalence for untested inputs. The architecture is nevertheless relevant to VeruLaw as a front end that can turn legacy code into smaller Rust units ready for contracts and proofs.
-
 ## technique 1: compiler bridge plus bounded translation units
 
 what it is and when to use it
@@ -106,12 +104,6 @@ The system progressively replaces unsafe functions but deliberately leaves faile
 
 Inference: a Verus product should mark such boundaries as explicit trusted interfaces. `external_body` may be used only for a deliberately trusted function boundary, while the function being verified should retain a real body and contracts. The paper’s tests do not establish that unsafe FFI or pointer casts satisfy Verus specifications.
 
-## proved, trusted, and implications for VeruLaw
-
-The paper states: “Throughout this process, we maintain correctness modulo the test cases.” (Section 3.4, p. 6). It also states: “Although C2Rust makes efforts to ensure functional equivalence between the C and unsafe Rust code, this is not a formal guarantee.” (Section 7, p. 11). Inference: these results do not prove semantic equivalence for all inputs, ownership correctness of every raw pointer, thread safety, or absence of undefined behavior. Its benchmark has seven Coreutils programs with tests, and the ten Laertes programs lack end-to-end tests (Section 4.1, p. 6). The fixed model is `gpt4o-mini`, `L=150`, and `N=5` (Section 4.3, p. 7); results may change with another model, prompt, compiler, or test suite.
-
-The authors caution: “Our metrics are intended to model the safety and naturalness of the code; however it is possible that an improvement in a metric doesn’t correlate with improved safety or naturalness of the code.” (Section 7, p. 11). Inference: trusting behavior beyond tested inputs would require additional evidence about C2Rust, generated code, analysis completeness, and C/FFI behavior. Treating idiomatic translation plus tests as formal verification would exceed the evidence. It is a useful predecessor for a VeruLaw pipeline that uses slicing and dependency order to prepare small Rust functions, then adds Verus contracts, proof repair, and independent specifications. The paper’s “already done” items are C2Rust bridging, HIR/MIR slicing, call-graph ordering, feedback-guided repair, and quantitative unsafe-code reduction; VeruLaw should not present those mechanisms alone as new formal-verification techniques.
-
 ## techniques for the catalog
 
 - transpiler bridge — use C2Rust unsafe Rust as an executable intermediate representation for incremental safer rewrites
@@ -121,4 +113,3 @@ The authors caution: “Our metrics are intended to model the safety and natural
 - feedback repair — compile and run end-to-end tests, then regenerate failed units up to a fixed attempt bound
 - unsafe-code metrics — measure raw pointers, dereferences, unsafe lines, calls, and casts with explicit denominators
 - ablation validation — compare chunking and ordering choices across fixed programs and metrics
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In the remaining projects, we encountered failure due to limitations in managing unions and variadic arguments [30]."): read the full paper, including appendices, and checked the whole study’s quotations, numbers, references, technique steps, and limitations; corrected quotations and page references, clarified root-unit placeholders and the size bound, distinguished table results from inconsistent summary and ablation entries, and marked interpretations as inference; did not rerun experiments or inspect the implementation or cited papers.

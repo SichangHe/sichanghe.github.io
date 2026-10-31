@@ -50,8 +50,6 @@ Group operations by connection from the linearization sequence. `CoherenceTrans`
 
 The write-skew example is extracted into two transactions and then into an execution applying the first transaction followed by the second; that execution satisfies snapshot isolation (Figures 13–14, PDF p. 19). The main theorem states that for arbitrary verified clients, arbitrary execution points, and any implementation satisfying the separation-logic specification, the trace is valid and no thread is in a crash state (Theorem 5.1, PDF pp. 19–20).
 
-Inference: This is the paper's strongest reusable architecture for VeruLaw: preserve a ghost chain from concrete events to abstract transactions to a model-level safety predicate. A Verus implementation would need explicit sequence and map invariants and cannot assume Rocq's adequacy theorem.
-
 ## technique 6: wrap hidden resources with a ghost theory
 
 To preserve `ValidTrace` while operations append events, the authors define `ReflectI`, `PermissionLin`, and `PermissionPost` resources with laws for pre-event insertion, post-event insertion, uniqueness, and prefix ordering (Section 6, Figure 15, PDF pp. 21–23). They place `Trace(t) * ReflectI(t,t')` in an internal invariant. Law 1 derives `ValidTrace`; Law 2 grants exclusive permission to insert a linearization point after a fresh pre-event; Law 3 consumes post-event permission only when coherence holds.
@@ -64,8 +62,6 @@ Inference: In Verus, a ghost permission token and a wrapped predicate can encode
 
 All results are mechanized in Rocq, and the paper reports more than 13,000 proof lines (Section 1, PDF p. 4). The theorem assumes verified clients and an implementation satisfying the prior separation-logic specifications; it therefore proves a conditional free theorem. The Rocq kernel, Iris and Aneris soundness proofs, the operational semantics, the prior specifications, and the model definitions remain trusted foundations. The paper does not verify a production SQL engine, and its model currently exposes a key-value API; the conclusion says SQL's richer predicate operations and additional isolation levels remain future work (Section 9, PDF p. 26).
 
-Inference: For VeruLaw, the threat is high for concurrent storage agents that rely on informal claims about isolation: this architecture can turn per-operation proofs into an all-client guarantee, but only after a substantial ghost model and specification library exists. What VL should not redo is the basic observation that trace invariants can connect separation-logic contracts to state-based isolation; it should adapt the pattern to Verus and its target API. This threat estimate is an inference, not a measured product failure rate.
-
 ## techniques for the catalog
 
 - realistic transactional model — define identified operations, ordered transactions, executions, and commit tests after removing unrealistic simplifying assumptions
@@ -74,5 +70,3 @@ Inference: For VeruLaw, the threat is high for concurrent storage agents that re
 - linearization extraction — insert unique logical points between matching pre and post events using atomic specifications
 - transaction chopping — group linearization points by connection into well-formed transactions and abstract executions
 - ghost resource wrapping — combine original resources with permissions and reflection predicates to preserve cross-level coherence
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

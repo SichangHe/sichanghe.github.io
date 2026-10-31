@@ -28,8 +28,6 @@ how to do it (Inference: a checklist derived from the proposal, not a prescribed
 
 Verus form
 
-Inference: Build a Verus crate of reusable `spec fn`s, proof functions, and data-structure invariants for VL’s recurring algorithms. Keep executable Rust separate from proof-only functions and expose contracts that clients can import. The library should record assumptions and solver-facing lemmas explicitly. CSLib’s Lean definitions cannot be copied as Verus syntax, so this is a translation of its reuse principle.
-
 evidence for reusable abstractions
 
 The paper gives concrete Lean examples but no completion percentage, theorem count, or independent defect study. Its contribution is an architecture and initial codebase, not evidence that all planned abstractions are correct or easy to maintain.
@@ -110,8 +108,6 @@ how to do it (Inference: a checklist derived from the proposal, not a prescribed
 
 Verus form
 
-Inference: Verus already generates solver obligations and checks them through its verification pipeline, so VL can apply the same separation: model, contract, proof, solver result, and executable compilation should be separately identified. A Lean replay certificate is not a Verus construct; Verus users must rely on the supported Verus verifier/solver path and document its trusted assumptions.
-
 evidence for trusted automation
 
 The paper states a design goal rather than a completed foundation. It does not quantify the size of the Boole TCB or prove the planned transpilers sound. A future front end for Rust is explicitly a project goal, not an evaluated result.
@@ -146,16 +142,6 @@ This is a proposed governance policy. The paper gives no inter-reviewer agreemen
 
 CSLib’s examples prove Lean theorems when their proof bodies are present, and the Boole prototype generates Lean obligations for a loop. The paper measures neither a completed library nor end-to-end verified systems. Planned 2026 and 2027 milestones include many undergraduate algorithms, complexity and concurrency, low-level separation logic, and one substantially sized real-world system; these are roadmap goals. Figure 5 (p.9) labels “Semantics of PL” and “Lean Kernel” as the trusted computing base and depicts verified transpilation. This is the intended architecture. Inference: until translations and VC generation are proved correct, their implementations also require trust; kernel-checked solver certificates avoid having to trust the solver’s unsupported answer. Matching the formal semantics and specifications to the intended system remains a separate obligation. The roadmap calls itself “tentative” because the project is “currently only a few months old” (§6, p.13).
 
-Inference: For VL, the analogous trusted base includes Verus, its solver and translation, Rust compilation and proof erasure, external-library specifications, and the requirement model. Reusing a verified CSLib-style component would reduce proof duplication only if its specification matches the Rust component and its assumptions are tracked.
-
-## what VL should not redo
-
-Inference: CSLib already proposes a reusable CS knowledge base, explicit complexity effects, an IVL-to-VC architecture, proof-producing solver integration, AI training data, and mandatory code review. VL should not duplicate these as isolated libraries without checking interoperability and scope. CSLib is Lean-centric and its Rust/C++ translation is future work, so it does not replace Verus-specific systems proofs.
-
-## threat to agent-written verified Rust
-
-Inference: CSLib creates a strategic opportunity and a specification threat for VL. A mature reusable library could make agents better at selecting known invariants and lemmas, but a shared theorem with an unsuitable abstraction can make wrong specifications easier to reuse. The proposed human-review rule directly challenges unattended agent commits. No CSLib experiment quantifies defect reduction, proof speed, or security for Verus code.
-
 ## techniques for the catalog
 
 - reusable formal CS library: organize models, algorithms, specifications, and proofs into composable Lean modules
@@ -163,5 +149,3 @@ Inference: CSLib creates a strategic opportunity and a specification threat for 
 - Boole intermediate verification language: translate imperative code with preconditions and invariants into Lean verification conditions
 - proof-producing automation: replay Lean-SMT certificates in Lean and check proofs produced by other tactics
 - advisory AI with review: permit generated formalizations while requiring machine checking and manual code review before commit
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The bind operation chains together two computations and defines the time cost of the composition as the sum of the time costs of the individual operations."): read the entire supplied 17-page paper text, including references, and the entire study; compared quotations, examples, roadmap dates, references, and proposed techniques; corrected the Rust translation direction, certificate-replay scope, trusted-base claims, and summation-caption discrepancy, added source locations, labeled derived checklists as inference, and added a tag suffix because the base tag already exists in the notes; did not run Lean, inspect the project code, reproduce the prototype, validate cited papers, or visually inspect the PDF.

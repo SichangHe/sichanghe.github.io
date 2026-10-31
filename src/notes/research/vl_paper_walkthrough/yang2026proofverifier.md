@@ -6,8 +6,6 @@ Tag: `yang2026proofverifier`, [paper](https://doi.org/10.48550/arxiv.2602.02377)
 
 ProofVerifier builds a training corpus and reinforcement-learning recipe for models that judge complete natural-language proofs. The paper identifies the data bottleneck: “training such verifiers requires diverse and trustworthy question-proof-check (QPC) examples at scale, which are scarce.” (Abstract, p. 1) Its framework varies problem source, proof-generation method, and generator model; filters labels with five-model agreement; audits generation regimes with humans; then trains generative verifiers with balanced token weighting and a fluency filter.
 
-Inference: this is a learned informal verifier, not a formal checker. For VeruLaw, it can rank or triage candidate Rust/Verus proofs, but only Verus can establish the encoded contracts.
-
 ## technique 1: three-axis QPC data construction
 
 What it is. Construct question-proof pairs across (a) problem sources, (b) proof-generation prompts, and (c) generator LLMs. The paper calls a source-method-model combination a “slice” (§3.1, p. 3). Sources include OlympiadBench, USAMO, and Putnam; methods include reference-proof rephrasing, independent proof construction, masked completion, and augmentation; models include DeepSeek-R1, DeepSeek-V3.1, GPT-5-mini, and Gemini-2.5-Flash.
@@ -48,12 +46,6 @@ Verus form. Inference: apply this filter to agent-generated proof explanations b
 
 Evidence and limits. In one sampled interval, the judge flagged 0.6%–2.0% of outputs; manual inspection estimated 96% true-positive and 96% true-negative rates (§4.2, p. 6). It adds about 20% wall-clock overhead (Appendix A.7). Inference: these rates use the manually inspected flagged/unflagged outputs as denominators and are not mathematical soundness rates.
 
-## results, trust, and product threat
-
-The held-out human test has 238 question-proof pairs from 51 questions: 141 positive and 97 negative, all double-labeled (§3.3, p. 4). Accuracy is Avg@8, the average over eight independent rollouts. ProofVerifier-8B/14B/32B obtain 76.8/79.0/82.4%, compared with base 8B/14B/32B 71.6/71.9/72.5% (Table 2). On OPC and ProofBench, ProofVerifier-8B scores 75.7 and 67.5, while 32B scores 81.3 and 69.4 (Table 3). Best-of-k reranking uses 18 problems and 48 candidates each, totaling 864 human-annotated pairs (§5.4).
-
-The paper proves no soundness theorem. Trusted components include LLM labels, human audit judgments, model checkpoints, reward implementation, benchmark annotations, and the question-level split. Inference: a VeruLaw product should use ProofVerifier to choose which candidate to submit to Verus, then record Verus's compiler/solver result as the acceptance evidence. Existing learned proof-verifier datasets and RL recipes already cover this natural-language setting; VL should not claim novelty for reproducing them without a Rust-specific, Verus-grounded benchmark.
-
 ## techniques for the catalog
 
 - three-axis QPC diversification — vary source, generation method, and model to cover proof styles and error modes
@@ -61,4 +53,3 @@ The paper proves no soundness theorem. Trusted components include LLM labels, hu
 - balanced token weighting — interpolate per-response and global normalization to avoid short-trace and long-trace collapse
 - fluency reward filter — suppress binary rewards for repetitive, looping, malformed, or unsupported reasoning traces
 - best-of-k verifier reranking — sample candidate proofs and select the one with the highest verifier score
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

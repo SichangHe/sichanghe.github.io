@@ -6,8 +6,6 @@ RustHorn reduces pointer-manipulating Rust programs to constrained Horn clauses 
 
 The paper proves soundness and completeness for its typed core language, Calculus of Ownership and Reference (COR), and evaluates a more capable MIR-based prototype on small benchmarks. The authors explicitly distinguish these: “This algorithm performs a more advanced reduction than our formalized reduction presented in §3.” (§5.1, p.43). A direct proof of the implemented reduction remains open. All page references below use the article’s page numbers, 1–53.
 
-## techniques
-
 ### represent mutable references by current and final values
 
 Rust’s permissions allow multiple readers or one writer for an object. A mutable borrow temporarily transfers update permission and freezes the lender. In this paper a lifetime denotes the time when a borrow ends, rather than its whole active interval (§1.2, pp.4–9; §2.2, pp.13–17).
@@ -74,8 +72,6 @@ RustHorn paired with either solver collectively handled all programs handled by 
 
 The benchmark selection required supported features, compliance with Rust permissions, and size small enough for manual C-to-Rust translation. Arrays, function pointers and larger tests were omitted. The authors warn: “Although the benchmark set used for the experiments is small and more or less contrived, we believe that the experimental results already indicate effectiveness of our verification method.” (§5.3, p.48). These results do not measure coverage of arbitrary Rust programs.
 
-Inference: for VL, the reusable idea is to exploit ownership to remove explicit alias state before solving functional properties. Applying it still requires correct contracts, justified final-value relationships, and evidence for each unsupported library or language feature.
-
 ## techniques for the catalog
 
 - current/final pair encoding — connect mutable-reference updates to the state restored to the lender
@@ -85,5 +81,3 @@ Inference: for VL, the reusable idea is to exploit ownership to remove explicit 
 - execution/resolution bisimulation — connect concrete heaps to logical future-value variables
 - MIR block translation — symbolically execute blocks and constrain references at cleanup
 - nondeterministic functional translation — guess future values and filter inconsistent executions with assumptions
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We build a mechanism for extracting structured values from the heap memory, which is a finite map from addresses to integers."): read all 3,088 lines of the 53-page paper text including references and the whole study; checked quotes, theorem scope, references, encoding rules, prototype distinction and experimental results; corrected false absence of benchmarks, recursive-type support, page/section errors and theorem attribution, and expanded nested borrows, MIR translation, functional translation and limitations; did not execute RustHorn or solvers, inspect source, reproduce experiments, mechanically validate the proof, or visually inspect the PDF.

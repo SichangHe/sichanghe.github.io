@@ -86,8 +86,6 @@ Measured outcomes are test count, compilation pass, execution pass, line coverag
 
 Inference: Interpreting these results depends on the compiler analysis, compilation and coverage measurements, GPT-4o mini’s output, and maintainers’ review. These components do not establish a formal specification or proof.
 
-Inference: For agent-written verified Rust, PALM’s strongest transferable idea is converting program structure into small, targeted obligations and using compiler feedback for repair. A product should add a specification review and Verus verification stage because PALM’s tests can compile yet miss causal state requirements. Existing PALM work means VL should not redo path-guided test prompting as if it were formal verification; it should connect path obligations to proved contracts and report trusted assumptions.
-
 ## techniques for the catalog
 
 - CFG condition-chain extraction: collect branch predicates and return values for each execution path
@@ -95,5 +93,3 @@ Inference: For agent-written verified Rust, PALM’s strongest transferable idea
 - context-aware prompting: include focal code, direct and indirect dependencies, and path constraints in a structured prompt
 - compiler-guided patch repair: apply minimal LLM-suggested changes from diagnostics with explicit iteration and error budgets
 - coverage and acceptance evaluation: report compilation, execution, line and branch coverage, and reviewed PR outcomes with denominators
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We first measured the number of generated test artifacts (fuzz targets for RuMono; unit tests for others)."): checked all quotations, reported numbers, section and PDF page references, and technique steps after reading the full paper; corrected page references, boundary-test counts, context extraction details, and repair limits, and marked recommendations and trust conclusions as Inference; did not reproduce experiments, inspect the implementation, or verify the Verus adaptations.

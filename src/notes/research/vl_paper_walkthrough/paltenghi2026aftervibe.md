@@ -14,8 +14,6 @@ Steps from Figure 5 and Section 3.2:
 3. separate abstract intent, mid-level essential decisions, and concrete external names/thresholds/contracts (Section 3.2, p.5)
 4. list requirements as declarative behavior and omit test-writing instructions (Figure 5, p.4)
 
-Inference: for VL, apply the same extraction to a Verus change: state the contract’s intended behavior, invariants and externally fixed interfaces, while allowing Rust implementation freedom. Then translate requirements to Verus `requires`/`ensures` and loop invariants; do not treat the natural-language output as a proof.
-
 The environmental-grounding hypothesis is explicit: agents can discover repository structure and APIs, so only undiscoverable facts need concrete wording (Section 3.1, p.4). This assumption fails for hidden deployment rules or undocumented unsafe behavior.
 
 ## technique: independent oracle extraction
@@ -26,8 +24,6 @@ Steps:
 2. generate behavioral VCs from trajectory, diff, and summary (Section 3.3, p.5)
 3. keep VCs fixed while specs are refined (Section 3.3, p.5)
 4. run the same artifacts on original and regenerated code (Section 4.2, p.7)
-
-Inference: in VL, derive executable checks from the user request and Verus contracts independently of the agent’s prose summary. A VC can be a Verus theorem obligation or a runtime property test; independence prevents the agent from grading its own weakened specification.
 
 ## technique: three-tier regeneration verification
 What it is: combine flexible test execution, VC checking, and ground-truth alignment. The score is `regen_score = 3 flex + 2 vc + align`, where flex and vc are fractions in [0,1] and align is binary (Section 3.3, p.6).
@@ -46,16 +42,11 @@ Inference: Verus can replace the VC tier for properties expressible in contracts
 ## technique: iterative strengthening and best-of-K
 If score is below τ (default 6.0), a refinement LLM receives S, C, C′, failed VC, and rejection reasoning; it rewrites the complete spec S′. A fresh blind regeneration is scored, and after K rounds the highest-scoring spec is retained (Section 3.5, p.6). Best-of-K is monotonic by selecting the per-task maximum, but information is bounded by the original conversation.
 
-Inference: a VL workflow can refine a natural-language contract after a failed Verus obligation, but the repair must strengthen the intended property rather than weaken `ensures`. Keep the original VC fixed and reject specs that merely make verification easier.
-
 ## what is trusted and what fails
 The three graders are autonomous LLM agents, so their judgments are fallible. Ground-truth validation found nine of 72 landed CI-passing tasks failing a grader: four environment mismatches, three extraction failures, and two empty-test edge cases (Section 4.1.1, p.7). Thus the reported score measures this pipeline, not semantic equivalence in a theorem-prover sense. The paper notes that “there is no single correct implementation” for under-determined vibe-coded changes (Section 3.3, p.5).
-
-Inference: threat to agent-written verified Rust is high at the specification boundary and low at Verus kernel soundness. AfterVibe can expose missing intent and produce review artifacts, but LLM-derived VCs and alignment are not trusted evidence. Existing formal work (including Verus-SpecGym and AutoVerus, discussed in Section 6.3, pp.14–15) already addresses execution/formal checking; VL should combine those checks with trajectory recovery rather than substitute regeneration scores for proofs.
 
 ## techniques for the catalog
 - abstract spec distillation: recover intent, essential decisions, and undiscoverable facts from diff plus conversation
 - independent oracle extraction: derive verification conditions and test commands without using the recovered spec
 - three-tier regeneration test: score flexible tests, VCs, and intent alignment with weighted evidence
 - iterative strengthening: rewrite weak specs from failed conditions and retain the best-of-K candidate
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

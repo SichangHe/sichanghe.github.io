@@ -40,14 +40,9 @@ The authors train flan-t5 base (reported as 350M parameters) and small (80M) on 
 
 Inference: a Verus analogue would train on verified proof-state/edit pairs and evaluate project-wise holdouts, not random lines from the same crate. The paper reports 28 days and 24 parallel processes to process all Mathlib4 (Section 4.2, p. 12). Inference: generation cost and library version are part of the reproducibility boundary.
 
-## implications for VL
-
-Already done: state-graph theorem synthesis, template normalization, embedding retrieval, bounded BFS, shortest-proof selection, and large-corpus training. Inference: VL should adapt the data-generation loop only after measuring whether Verus states are stable enough to deduplicate and whether short proof paths correlate with maintainability. Inference: threat to agent-written verified Rust is moderate. A large verified corpus can improve tactic suggestions, but it can also encode weak specifications or stale dependency assumptions; final Verus checking and specification review remain necessary.
-
 ## techniques for the catalog
 
 - state-transition theorem synthesis — retain reachable proof states with paths to a finished checker state as new theorems
 - tactic-template retrieval — normalize identifiers, embed templates, retrieve nearest candidates, and instantiate bounded substitutions
 - bounded graph exploration — use priority-queue search with time and transition caps, then emit states within a fixed distance of completion
 - verified-corpus training — train a tactic predictor on checker-accepted state/proof pairs and evaluate with bounded retries
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We can construct a theorem for each provable state, by collecting the tactics along the path from its node to the ProofFinished node, which is a proof for this theorem."): checked all quotations, numbers, section and page references, and technique steps; corrected page references, quotation punctuation and location, placeholder coverage, and the unsupported unseen-state condition in graph construction; added the evaluation time limit and small-model results, and marked the generated-artifact interpretation as inference; did not check code, dataset contents, external references, or the proposed Verus adaptations experimentally.

@@ -1,8 +1,5 @@
 # LeetProof: certified synthesis with a multi-modal verifier
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
-
-Source: [2604.16584v1](https://arxiv.org/abs/2604.16584v1); [saved full PDF](/ssd1/sichangheagent/vlpw/certified_synthesis.pdf). This study uses the full primary text, including appendices. Page numbers are printed PDF pages. Results are author reports unless labeled otherwise.
 
 LeetProof separates specification validation, implementation/invariant generation and proof construction inside Lean. Its strongest reusable idea is to find cheap counterexamples before expensive proofs. The final proof establishes alignment with the accepted formal contract; testing and an LLM judge do not prove that contract matches intent.
 
@@ -34,17 +31,6 @@ Feng, Kafle, Gladshtein, Kurin, Pîrlea, Zhao, Müller and Sergey build on Velve
 
 §6.4 replicates on 25 randomly sampled tasks with Opus 4.6: Velvet fully proves 10/25 versus seven for direct Lean. §7, pp. 9–10 notes fixed-budget/model effects and domain limits. Independent repetitions and comparable dollar accounting for specialist rescue would strengthen inference. Complexity annotations constrain synthesis, but this paper does not establish that every claimed runtime bound is formally proved.
 
-## What VL can use and competitive overlap
-
-Recommendations: test precondition coverage, known-good outputs and wrong-output rejection separately; mutate expected outputs near the correct answer; audit benchmarks and human references; make invariant failures executable and concrete; dispatch residual mathematical obligations; keep test-only admissions out of certificates. Preserve intended multiple outputs, termination requirements and resource constraints when selecting the contract.
-
-Prior work supplies Lean, Loom, Velvet, Plausible, Hoare verification, invariant inference and specialist theorem provers. LeetProof contributes their staged combination and specification-testing infrastructure. §8, p. 10 notes “VERINA [67] also uses PBT”, but retrospectively and as a fallback rather than as an online synthesis filter. Testing contract adequacy itself therefore predates this paper. Existing [LeetProof study](../leetproof_20260804.md) and [specification notes](../topic_studies/formal_verification_rust/llm_for_verification/specifications.md) should be reused; this note adds the full-paper pipeline, evidence limits and count inconsistency.
-
-Product inference: LeetProof demonstrates ordinary-language-to-certified-program synthesis in an embedded imperative Lean language, so that broad capability is occupied. It does not evaluate ordinary Rust/Verus repository generation. VL’s potential distinction is native Rust integration and auditable repository intent recovery, neither established merely by choosing Verus. Cheap semantic rejection and proved condition generation are comparison targets.
-
-First reading: §§3.1–3.3 and §5.1. Ask which validation goals are admitted and which propositions the final certificate actually depends on.
-
 ## Study status
 
-The full primary-text synthesis was checked against PDF text and independently reviewed. Local source links resolve. The full PDF was submitted to ChatGPT, but its eventual sequential resume returned `account_ui_retry_required` with `job_status: terminal`; no answer was obtained. [Recorded failure](/ssd1/sichangheagent/vlpw/certified_synthesis_poll3.json). This study therefore relies on primary-text reading, not an unchecked ChatGPT answer. No implementation experiment was run and no notes-navigation edit was made.
 Audited 2026-10-12 against the paper: checked the quotations and sections, the 188-problem categories, 13/18/16 issue counts and the 9 minute versus 8 hour figures, the 50-problem benchmark, 28/50 vs 17/50, 23/35 vs 16/35, 18 vs 30 partials, 4 vs 3 failures, Table 2 overlap, the Aristotle 18 and 23 of 30 closures, 46/50 and 40/50, and Opus 10/25 vs 7/25. All numbers match. Changed: the count-inconsistency paragraph now notes that categories 5 and 6 sum to 5, and the held-out label became evaluation set, as the paper words it.

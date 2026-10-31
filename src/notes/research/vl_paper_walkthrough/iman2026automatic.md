@@ -66,14 +66,6 @@ The survey reports strong mutant detection, fewer assertions than HARM and GoldM
 
 Inference: a Verus version can mine transition relations and quantified invariants from traces, prioritize rare state combinations, and turn accepted candidates into `invariant` clauses or proof lemmas. A trace-derived candidate remains a hypothesis until Verus checks it over the model's full quantified domain. Thresholds and mutant counts must be reported; rare traces cannot justify claims about all inputs.
 
-## cross-cutting lessons and product threat
-
-The survey's common pattern is candidate generation followed by a formal or simulation check, with quality controlled by data diversity, templates, minimization, and coverage. It also names “manual assertion generation” as costly, time-intensive, and error-prone (section I, p. 1). The miners differ in where they get hypotheses: static cones and decision trees (GoldMine), dependency graphs (DDG), templates plus ILP (A-TEAM), template/ranking/parallel search (HARM), or association rules (ARTmine).
-
-What is proved or measured varies. Formal model checking of a generated property can prove that property under the model; mutation or fault coverage measures detection of injected faults; trace mining measures observed behavior. None proves that the mined assertion set captures the complete intended specification. Trusted elements include simulation traces, fault models, templates, thresholds, abstraction, model-checker semantics, and the human's interpretation of the design requirement.
-
-Inference: threat to agent-written verified Rust is high when a miner turns observed executions into apparently authoritative contracts. The product could become unsound by accepting an over-constraining precondition, missing an untraced branch, or treating mutation coverage as completeness. The safe use is candidate generation plus mandatory Verus checking and explicit coverage/assumption reports. VL should not redo this survey's catalogue of hardware miners; it should test which Rust/Verus hypothesis sources reduce proof-authoring effort without increasing false confidence.
-
 ## techniques for the catalog
 
 - trace and static mining: generate candidates from simulations and causal static analysis, then formally check them
@@ -82,4 +74,3 @@ Inference: threat to agent-written verified Rust is high when a miner turns obse
 - parallel hint mining: search template permutations in parallel, rank with context-aware metrics, filter, and cluster
 - association-rule mining: discover temporal rules in traces, tune corner-case thresholds, and convert rules to assertions
 - coverage hygiene: treat traces, fault coverage, thresholds, and model checking as separate evidence with explicit blind spots
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

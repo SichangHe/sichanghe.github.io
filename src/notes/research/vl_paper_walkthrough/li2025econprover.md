@@ -43,10 +43,7 @@ Table 3 (p.8) shows DeepSeek non-CoT baseline Pass@16 65.6%, random eight heads 
 
 ## technique 3: token-level cost accounting and hybrid scaling
 
-The cost metric counts initial and refinement tokens across every pass (§2.1, p.3), and compares sequential CoT and parallel sampling on a performance-cost curve (§2.2, p.3). Hybrid scaling combines both. The paper reports PS=8 at 63.1% versus sequential CoT 58.6%, using 443×8 versus 4,488 tokens (§2.2, p.3). Inference: VL should report verified-pass rate together with total generation tokens and Verus verification time; pass count alone hides this tradeoff.
-
-## trusted boundary, contradictions, and product threat
-Inference: the trusted boundary is the Lean checker; it checks generated proofs, not the correctness of preference labels, prefix training, or cost accounting. The 12% headline is a relative sampling-cost claim for the Goedel setting; Table 1’s EconProver-GD row reports relative cost 3× versus its non-CoT baseline, so the denominator must be stated. Inference: transferring these efficiency results to VL requires a Verus benchmark because model, context, and verifier overhead can differ. The proposed methods could reduce proof-generation cost; independent Verus checking still determines acceptance.
+The cost metric counts initial and refinement tokens across every pass (§2.1, p.3), and compares sequential CoT and parallel sampling on a performance-cost curve (§2.2, p.3). Hybrid scaling combines both. The paper reports PS=8 at 63.1% versus sequential CoT 58.6%, using 443×8 versus 4,488 tokens (§2.2, p.3).
 
 ## techniques for the catalog
 
@@ -54,4 +51,3 @@ Inference: the trusted boundary is the Lean checker; it checks generated proofs,
 - difficulty-aware prefix heads — partition by verified success count, train independent PPO prefix embeddings, and allocate calls uniformly
 - prefix diversity coverage — measure distinct early proof n-grams as a proxy for redundant parallel exploration
 - token-level scaling accounting — sum generated tokens over passes and refinement to compare cost with verified accuracy
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Concretely, we learn n specialized heads, implemented as lightweight prefix embeddings, that cooperate to cover the proof space more effectively."): checked all paper text, study quotations, numbers, section/page references, technique steps, tag, and arXiv link; corrected the Figure 1 quote attribution, page references, prefix-token definition, and misleading Table 2 ratios; marked recommendations as inferences; did not reproduce experiments or validate the proposed Verus adaptations.

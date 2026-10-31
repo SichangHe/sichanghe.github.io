@@ -5,8 +5,6 @@ Tag: `beyene2014ctlfo`, [paper](http://arxiv.org/abs/1406.3988v3)
 ## problem and central construction
 CTL+FO combines temporal path quantifiers with first-order data quantifiers. The paper's abstract says: “Temporal quantifiers require discovery of invariants and ranking functions, while first-order quantifiers demand instantiation techniques.” (abstract, p. 1). Its contribution is a procedure, Gen, that makes a top-down recursive descent through the syntax tree of the formula and turns a CTL+FO verification problem into a system of existentially quantified recursive Horn clauses, solved by EHSF (Introduction, p. 1; Section 3, p. 2). The abstract describes the result as “a constraint-based method for proving CTL+FO properties automatically.” (abstract, p. 1)
 
-Inference: this is a recipe for turning temporal verification into solver-discovered predicates, witnesses, and well-founded relations. It is relevant to VL when a Rust specification relates values across loop iterations or branches, but it is not a Verus implementation.
-
 ## technique 1: model the program and formula
 
 when to use it
@@ -42,11 +40,8 @@ Theorem 1 states: “For a given program P with init(v) and next(v,v′) over v 
 
 Inference: trusted elements are the transition encoding, EHSF's Horn/well-founded solver, and the proof-rule correctness argument; the paper gives only a proof sketch (“We omit the full proof here for space reasons.”, Section 3, p. 3). The paper says the implementation "may generate non-Horn clauses" when nested path quantifiers have outer F or U; the authors "used a simple heuristic to seed solutions for queries appearing under the negation operator" (Section 4, pp. 4–5).
 
-Inference: product threat is medium. The method can suggest invariants and ranking measures for agent-written Verus Rust, but the solver has incomplete/timeout behavior and no Rust semantics. VL should reuse its formula-directed decomposition and independently check generated candidates in Verus.
-
 ## techniques for the catalog
 - syntax-directed CTL+FO encoding — recurse over formula syntax to emit Horn and well-foundedness constraints
 - witness relation synthesis — replace existential data quantifiers with solver-discovered `aux`/Skolem relations
 - temporal invariant and ranking synthesis — encode `AG`, `EF`, and `U` using inductive predicates and well-founded rank
 - CEGAR Horn solving — refine witness templates from contradiction trees until a model or counterexample is found
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We illustrate Gen (see Figure 1) on a simple example. We consider a property that the value stored in a register v can grow without bound on some computation."): read all 6 pages (text and appendix) and checked quotations, page and section references, the Gen rules for FO quantifiers, assertions, EF, AG, EG, AX, EX, until, the worked example, Theorem 1, the Table 1 counts (28 rows, P10 and P16 timeouts) and the CEGAR description against the paper; changed one quotation (added leading "Note that"), corrected page references (Section 2 is p. 2, universal-quantifier rule p. 2, example and undecidability p. 3, evaluation conclusions p. 4), added the paper's Skolem solution, the denial-of-service remark, the timeout explanation and the proof-sketch/non-Horn quotes, and marked inferences; did not check the cited external works, the Ehsf paper [3], the tool executable, or the claimed Verus mappings (all Inference).

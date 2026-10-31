@@ -46,7 +46,7 @@ The failure model assumes `N` sequential stages, independent per-stage defect pr
 
 Governance overhead was measured with inference components stubbed: CPU operations were under 50 microseconds, audit append 127 microseconds, checkpoint write 672 microseconds, and the end-to-end governed path added 33.3 milliseconds over baseline, or 1.1% against a representative 3-second inference call (section 6.2, page 20). SWE-bench Verified used a paired bug-fixing design. Across four runs, executed protocol resolve rates were 69.1% (n=94), 66.7% (n=96), 72.4% (n=98), and 67.0% (n=191), compared with bare/prose baselines in Table 3 (section 6.5.2, pages 24–25). In the highest-power ablation, the plain executed loop B′ resolved 59.7% and engine arm C 60.7% on the same `n=191` pass; B′ versus C had `p=0.90`, so the benchmark measured the loop gain, not engine-only governance (section 6.5.3, page 25).
 
-The capability boundary is material: with gpt-oss:20b, rates were A 9.1%, B 19.2%, C 14.1% (`n=99`), and C did not significantly beat prose (`p=0.33`) (section 6.5.5, page 26). Inference: verified Rust agents face the same floor—enforcement guarantees that checks run, but cannot manufacture a correct proof or patch from an incapable generator. VL should reuse executable gating, recovery budgets, and explicit trust assumptions, while avoiding claims that these benchmarks establish human-in-the-loop safety or unrestricted semantic correctness.
+The capability boundary is material: with gpt-oss:20b, rates were A 9.1%, B 19.2%, C 14.1% (`n=99`), and C did not significantly beat prose (`p=0.33`) (section 6.5.5, page 26).
 
 ## techniques for the catalog
 
@@ -57,5 +57,3 @@ The capability boundary is material: with gpt-oss:20b, rates were A 9.1%, B 19.2
 - invariant enforcement — maintain token, capability, blocker, audit, and session invariants under explicit assumptions
 - policy trade-off analysis — quantify false-pass and false-block behavior with denominator-labeled simulations
 - capability-aware evaluation — measure process gains and identify the base-agent capability floor
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

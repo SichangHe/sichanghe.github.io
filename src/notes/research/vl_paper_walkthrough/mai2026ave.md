@@ -39,18 +39,9 @@ Verus form (inference): expose a verified Rust kernel contract and feed countere
 
 Evidence and scope: on AMD MI300X, Ave reports normalized throughput of 0.89–0.99 relative to hand-optimized references and 1.62–1176× over uncontaminated agentic baselines (section 9.1, PDF page 10). The denominator is the three kernel families and five configurations per family; throughput is geometric mean normalized to hipBLASLt for GEMM and AITER for attention/MoE. On 200 KernelBench tasks, it reports all 100 Level 1 and 88 Level 2 tasks solved within three attempts (abstract, PDF page 1). These are measured kernels and attempts, not proof of arbitrary GPU-program correctness. The paper notes that reward-hacking inspection is manual and not exhaustive (section 8, PDF page 8).
 
-## trusted, proved, and product threat
-
-Ave proves or checks tag relationships, not semantic equivalence of the whole kernel. Trusted components include the DSL compiler, MLIR/LLVM lowering, Z3, hardware behavior, unit-test/reference definitions, and the planner’s expert recipes. Inference: for VeruLaw, the useful pattern is a contract-preserving optimization loop that turns verifier counterexamples into repair instructions. The threat is high for agent-written GPU or systems code whose tests cover only end-to-end outputs: a local layout invariant can catch silent corruption earlier, but it cannot replace a Verus proof of functional behavior, memory safety, or external-device assumptions.
-
-## what VL should reuse
-
-VL should reuse tag-style ghost metadata for ownership, buffer regions, protocol states, and index relationships; compile-time counterexamples should name the failing state; and optimization agents should only retain candidates that pass contracts, tests, and measured performance. VL should not redo Ave’s GPU-specific tile algebra or claim that path-insensitive SMT checks are full formal verification. Inference: the missing integration is a Verus library of reusable layout/tag lemmas and a repair loop that maps proof failures to concrete Rust edits.
-
 ## techniques for the catalog
 
 - symbolic data-flow tags: assign coordinate-derived ghost labels to values and assert conformity at transformation boundaries
 - tile-layout algebra: model memory as shape/stride tiles and require size-preserving views for reinterpretation
 - path-insensitive SMT validation: merge tags in a bottom/concrete/top lattice and solve compile-time assertion constraints
 - invariant-guided optimization loop: retrieve recipes, lower transformations with instantiated contracts, validate, profile, and feed witnesses back to the planner
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

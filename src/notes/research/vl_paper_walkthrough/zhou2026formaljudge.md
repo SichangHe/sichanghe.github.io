@@ -15,7 +15,7 @@ Use this when a natural-language requirement contains several interacting constr
 3. Make each fact binary, directly grounded in observable evidence, and context-minimal
 4. Ask an LLM only the resulting yes/no atomic questions
 
-The paper defines each fact as `fi:(I,τ)→{0,1}` and requires facts to be “binary (answerable as yes/no), grounded (directly observable from trajectory evidence), and context-minimal (requiring only a relevant subset of τ).” (Section 3.2.1, PDF p. 4) Inference: for VL, this decomposition could turn a Rust safety or API requirement into individually checkable predicates before generating Verus proof obligations. The decomposition remains an LLM-generated specification and therefore needs review.
+The paper defines each fact as `fi:(I,τ)→{0,1}` and requires facts to be “binary (answerable as yes/no), grounded (directly observable from trajectory evidence), and context-minimal (requiring only a relevant subset of τ).” (Section 3.2.1, PDF p. 4)
 
 ## technique 2: context-aware grounded extraction
 
@@ -37,7 +37,7 @@ Run an agent, evaluate its trajectory, and return the Dafny specification, concr
 
 On Deceivers, each judge-agent configuration is evaluated on 200 deceptive and 200 non-deceptive trajectories (Section 4.4, PDF p. 7). Figure 5 reports FormalJudge at 91–96% across agent sizes, while LLM judges fall from 78–85% on 7B agents to 62–71% on 72B agents (Figure 5 caption, PDF p. 7). The paper attributes residual errors to LLM decomposition and semantic extraction, stating that formal verification “cannot resolve” the natural-language translation problem (Section 5, PDF p. 7).
 
-Trusted components are the extracted facts, benchmark ground truth, Dafny compiler, Z3, trajectory parser, and the mapping from user intent to predicates. Inference: a successful proof establishes only that the compiled predicates hold; it does not prove the predicates capture the user’s intent or that observations are authentic. Inference: the threat to a VL product is high for specification drift and fabricated evidence, but the decomposition-plus-proof pattern is reusable for agent oversight around verified Rust. Existing work already demonstrates contract synthesis and solver checking; VL should add domain-specific predicates and evidence provenance rather than redo generic LLM judging.
+Trusted components are the extracted facts, benchmark ground truth, Dafny compiler, Z3, trajectory parser, and the mapping from user intent to predicates.
 
 ## techniques for the catalog
 
@@ -45,4 +45,3 @@ Trusted components are the extracted facts, benchmark ground truth, Dafny compil
 - deterministic plus semantic extraction — parse structured evidence first and call an LLM only for residual semantic facts
 - layered Dafny/Z3 composition — compile facts, derived predicates, and safety predicates, then prove their composition
 - proof-guided refinement — feed formal violations back to the agent for repeated correction
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

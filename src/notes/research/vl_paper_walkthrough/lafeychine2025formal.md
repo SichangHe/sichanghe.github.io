@@ -69,8 +69,6 @@ Inference: A Verus product should treat such axiomatized unsafe interfaces as ex
 
 The report proves soundness and expressiveness of the modified RustHornBelt type system in Rocq and demonstrates `InvCell`. It does not prove complete Creusot soundness, arbitrary unsafe Rust, Rust's full operational semantics, or the proposed type-invariant extension. Its future-work list explicitly includes type invariants, places/final-borrow analysis, and relaxed memory (Summary, p. 2). The only timing statement is “within seconds” for one example; no repeated-run count or timing distribution is provided. The report’s semantic explanation explicitly omits step-indexing details (§5, p.15); the adequacy proof is reported unchanged (validity summary, p.2).
 
-Inference: VL should reuse the paper's borrow-identity and restricted prophecy-access ideas rather than independently inventing snapshot semantics. If VL introduces a comparable prophecy-based abstraction, its soundness argument must explain how snapshot expressions are prevented from inspecting the relevant prophetic state. The paper does not show that existing Verus snapshots have this defect.
-
 ## techniques for the catalog
 
 - prophetic mutable-borrow encoding: represent a borrow by current and final values, update current values, and resolve by equality at borrow end
@@ -78,5 +76,3 @@ Inference: VL should reuse the paper's borrow-identity and restricted prophecy-a
 - non-extensional borrow identities: add a fresh borrow identity and expose final values only through a prophecy assignment
 - prophetic predicate transformers: thread the prophecy assignment through creation, writes, resolution, and borrow subdivision
 - Iris observer/controller proof: link an interior value observer and exterior prophecy controller to prove unique resolution
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Thanks to the RustHorn’s representation, the lender x is not required to be present in the context of neither MutWrite nor MutEnd, allowing local reasoning as desired."): read the entire supplied 19-page report text, including bibliography, and the entire study; compared quotations, representations, typing-rule changes, case-study scope, and page references; corrected page locations, removed an ellipsis from a quotation, distinguished proved and axiomatized interfaces, clarified observer consumption and the unchanged adequacy proof, corrected the tag, and qualified unsupported Verus-risk claims; did not run Rocq or Creusot, inspect mechanisation code, validate references, or visually inspect PDF figures.

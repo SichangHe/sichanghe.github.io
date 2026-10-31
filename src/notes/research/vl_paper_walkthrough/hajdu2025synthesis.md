@@ -6,8 +6,6 @@ Tag: `hajdu2025synthesis`, [paper](http://arxiv.org/abs/2507.19827v3)
 
 This paper contributes a benchmark set for deductive program synthesis from first-order ∀∃ specifications. A problem asks for output functions that satisfy a formula for every input while avoiding designated uncomputable symbols. The dataset combines 37 prior benchmarks with 253 new problems, for 290 total; 140 are solved by at least one of cvc5, Synthesiz3, or Vampire under a one-minute limit (Sections 1 and 4, pp. 2, 6). “Our dataset is continuously growing and invites contributions from the communities of computer mathematics, automated reasoning, program verification, and others.” (Section 1, p. 2) Among the authors' stated motivations: “there is a lack of synthesis benchmarks requiring reasoning with theories, quantifiers and induction.” (Section 1, p. 2)
 
-Inference: this is a benchmark-construction and solver-evaluation paper, not a verified Rust implementation. For VL, it supplies reusable specification shapes, hardness categories, and a disciplined way to test synthesis of proof-oriented functions. Verus mappings below are inferences.
-
 ## technique 1: ∀∃ synthesis with uncomputable symbols
 
 What it is. A benchmark is a pair consisting of a many-sorted first-order formula and a set of uncomputable symbols:
@@ -25,7 +23,7 @@ What it is. The authors extend SMT-LIB 2.7 with `assert-synth`, `assert-claim`, 
 
 How to apply it. (1) Declare theories, sorts, functions, and axioms in standard SMT-LIB. (2) Add an `assert-synth` command containing input variables, output variables, and φ. (3) Add `assert-claim` lemmas when a solver may use them as axioms or prove them as subgoals. (4) Mark uncomputable symbols with `set-option :uncomputable (u₁ ... uₙ)`. (5) Run each solver with its documented command and preserve the exact input file for reproduction (Section 2 and Section 4, pp. 3, 6).
 
-Verus form. Inference: translate `assert-synth` to a Rust function contract and `assert-claim` to named `proof fn` lemmas. A forbidden-symbol list should become a checked dependency policy. Verus specifications can express quantified postconditions, but synthesizing arbitrary bodies from SMT-LIB is outside Verus's normal workflow; a VL generator would need to emit both Rust and proof code and then invoke Verus.
+Verus form.
 
 ## technique 3: SyGuS translation with uncomputable restrictions
 
@@ -33,7 +31,7 @@ What it is. Every benchmark is translated to SyGuS 2.1 by a Python script. Since
 
 How to apply it. (1) Replace each uninterpreted function or forbidden symbol by a higher-order universally quantified variable of the same sort. (2) Turn SMT-LIB assertions into SyGuS assumptions. (3) Add variables for computable uninterpreted symbols to synthesized-function signatures and to the constraint. (4) Omit uncomputable variables from those signatures. (5) For interpreted uncomputable symbols, restrict the SyGuS grammar to computable symbols only (Section 2, p. 4). (6) Inference (not from the paper): compare solver results against the original SMT-LIB-SYNU problem; translation changes the interface and must not silently change the specification.
 
-Verus form. Inference: treat SyGuS grammar restrictions as an allowlist of Rust expressions or helper functions. A generated Rust body must be checked against the same allowlist before verification. The logical equivalence between the translated constraint and the original ∀∃ specification is a proof obligation for a VL translator, not something Verus supplies automatically.
+Verus form.
 
 ## technique 4: benchmark categories that force induction
 
@@ -57,12 +55,6 @@ The evaluation used cvc5 1.2.1 (footnote 8 points to the cvc5 releases page), Sy
 
 Inference: trusted artifacts include each benchmark's axioms and datatype definitions, parser and translator correctness, solver soundness, timeout handling, and the assumption that a returned term satisfies the intended semantics. A solver “solved” count is not a formal proof of a Rust implementation until the generated term is translated and independently verified. The paper does not measure proof size, generated-code quality, or Verus compatibility.
 
-## what VL should reuse and threat assessment
-
-Inference: VL can reuse the benchmark split as a regression suite for agent-generated verified Rust: non-recursive arithmetic and uninterpreted-function tasks test contracts and quantifiers, while R_UFDT tests recursive data structures and induction. The `original`/`assisted` pair is useful for measuring how much lemma invention an agent needs. The uncomputable-symbol list is a direct analogue of preventing an agent from calling an unverified helper or external oracle.
-
-Inference: the threat to a product is moderate and indirect. A synthesis agent may produce a term that satisfies a weak or inconsistent specification, or exploit an exposed forbidden helper. Enforcing explicit contracts, dependency allowlists, and independently proved auxiliary lemmas addresses those failures. The dataset itself does not establish security properties, memory safety, or correctness of generated Rust. VL should not redo the paper's dataset collection or solver table as a novel technique; a new contribution would need Verus-specific translations, proof-repair measurements, and evidence on agent-generated implementations.
-
 ## techniques for the catalog
 
 - ∀∃ synthesis contract — specify a function by universally quantified inputs, existential outputs, and forbidden uncomputable symbols
@@ -70,4 +62,3 @@ Inference: the threat to a product is moderate and indirect. A synthesis agent m
 - SyGuS restriction translation — preserve uncomputable symbols by omitting them from synthesized-function inputs and restricting grammars
 - inductive benchmark design — use recursive datatypes and definitions to force induction and recursive-program synthesis
 - assisted proof variants — compare bare specifications with versions containing explicitly stated auxiliary lemmas
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Given the expected growth of our benchmark set, as well as the agile development of state-of-the-art solvers, we emphasize that our experimental results only depict the current capabilities of the respective synthesis tools."): read the whole paper text (including the appendix table, skimmed), and checked every quotation, the counts (37, 253, 290, 180, 110, 140), the evaluation table rows cited, solver configurations, section and page references, and the format and translation steps; the cvc5 version in the PDF is 1.2.1 plus footnote marker 8 (pdftotext had fused it into "1.2.18"). Changed: cvc5 version, the list-example description (it asks for the biggest element), the NR_ category wording, the "central motivation" overstatement, the quoted caveat on results, and labelled several own steps as Inference. Not checked: per-benchmark appendix rows, the linked benchmark repository, cited external works, and the Verus mappings (all inferences).

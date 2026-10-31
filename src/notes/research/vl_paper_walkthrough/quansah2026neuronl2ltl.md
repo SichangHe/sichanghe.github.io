@@ -73,16 +73,9 @@ The paper’s ablation reports semantic equivalence 27.8% for the full system ve
 
 Verus form: Inference: define a reward from successful Verus verification, reduced diagnostic count, and repair size; optimize candidate contract/proof generation with a verifiable-reward policy update. Keep the generated Rust and its specification under independent Verus checking; a reward model must not be trusted as a proof.
 
-## evidence, trusted boundary, and product threat
-On the VERIFY test set, the full system reports 27.8% semantic equivalence and 93.7% syntactic correctness (Table 2, p.11). Of syntactically correct outputs, 96.8% are satisfiable and, of those, 95.4% are non-trivial, yielding an unconditional pass rate of 86.2% (Section 4.2, p.11; the paper defines these conditional denominators explicitly). The filter catches 28.4% of the 72.2% semantically incorrect outputs: 8.7% at parsing, 12.3% as unsatisfiable, and 7.4% as trivial; the remaining 71.6% are satisfiable, non-trivial, and wrong (Table 3, p.12). These fractions sum to 100% of errors, while 28.4% of all errors is the caught subset.
-
-The trusted symbolic boundary includes the ITL parser and Spot’s decision procedures; the neural encoder has no formal guarantee (Section 3.3). Inference: the intended meaning of a natural-language requirement, proposition definitions, training labels, and deployment environment remain assumptions. For agent-written verified Rust, NeuroNL2LTL’s strongest reusable ideas are typed intermediate representations, runtime sanity checks, bounded repair, and verifier-derived rewards. Its 28% semantic-equivalence result also shows the product threat: a contract can be satisfiable and non-trivial yet semantically wrong, so Verus acceptance alone cannot validate requirement intent. The paper already addresses this verifier-in-the-loop pattern; VL should measure intent agreement and specification review rather than repeat only satisfiability checks.
-
 ## techniques for the catalog
 - structure-preserving intermediate representation — translate through a grammar whose deterministic inverse preserves logical structure
 - grammar-constrained decoding — restrict generated tokens to the valid intermediate-language grammar
 - satisfiability and non-triviality filtering — use a symbolic backend to reject contradictory, vacuous, or malformed specifications
 - bounded two-layer repair — try ranked local edits, then learned AST edits, rechecking after each repair
 - verifier-in-the-loop reward — optimize neural generation with parser, verifier, and repair-cost feedback
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

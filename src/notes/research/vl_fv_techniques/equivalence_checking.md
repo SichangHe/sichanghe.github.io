@@ -44,8 +44,6 @@ Every Verus step below is my inference.
    Both functions must satisfy the same strong contract, or one must be stated in terms of the other.
 7. Where a proof is too costly, add a harness or a differential test and record its bound.
 
-## variants by paper
-
 ### proof in a theorem prover: REM2.0
 
 Translate both versions, then prove a generated equality lemma.

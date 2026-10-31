@@ -70,13 +70,7 @@ Inference: In Verus, bounded special hypotheses can be ghost lemmas parameterize
 
 CIRC is implemented in Maude using reflection and order-sorted subsorts. Its base entailment normalizes terms after turning variables into fresh constants, adding condition equations, and orienting specification equations as rewrite rules (Section 5, p. 11). To control exponential special-hypothesis growth, it stores generic hypotheses with fresh subsorts and instantiates them for generated constants; the paper says, “We store only generic hypotheses represented with variables of fresh subsorts and each new generated constant is declared as inhabitant to an appropriate such subsort.” (Section 5, p. 11).
 
-The same engine can combine coinduction and induction. In the `zeros + S = S` example, coinduction reaches `sum(0,hd(S))=hd(S)`, saves the proof state, proves the generalized induction goal `sum(0,N)=N`, reloads, and completes coinduction (Section 5.1, pp. 12–13). Inference: VL can use this as a two-phase proof planner: induction proves recursive data lemmas, then coinduction proves stream/resource observations. Rust/Verus requires separate lemmas over enums or ghost streams; CIRC's Maude reflection is not a trusted Verus artifact.
-
-## trust, evidence, limits, and VL threat
-
-Theorems 1, 3, and 4 establish soundness relative to the contextual entailment assumptions, freezing discipline, and well-founded ordering on experiments (Sections 4, pp. 7–10). The implementation evidence is automatic proofs of mirror, sum, Fibonacci, and combined stream examples, but no aggregate success denominator or runtime table is reported. The paper itself notes that the induction/coinduction integration was “not yet completely mechanized” in the example (Section 5.1, p. 13).
-
-Inference: Product risk is medium to high for agent-written verified Rust when cyclic proof search invents lemmas or when a datatype is modeled by an abstraction that does not preserve constructor semantics. VL should reuse the explicit freeze/decrease discipline and insist on a machine-checked termination or size argument for every cycle. Existing CIRC work already supplies the two-rule calculus, special-hypothesis optimization, and induction/coinduction combination; VL should not redo those as ad hoc tactics.
+The same engine can combine coinduction and induction. In the `zeros + S = S` example, coinduction reaches `sum(0,hd(S))=hd(S)`, saves the proof state, proves the generalized induction goal `sum(0,N)=N`, reloads, and completes coinduction (Section 5.1, pp. 12–13).
 
 ## techniques for the catalog
 
@@ -85,4 +79,3 @@ Inference: Product risk is medium to high for agent-written verified Rust when c
 - special-hypothesis closure — add bounded experiment instances to support strong and non-linear induction
 - subsort hypothesis compression — store generic frozen lemmas by source subsort and instantiate generated variables
 - induction/coinduction composition — save a coinductive proof state, discharge an inductive lemma, then resume coinduction
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

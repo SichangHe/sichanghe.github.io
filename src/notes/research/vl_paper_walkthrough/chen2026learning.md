@@ -17,8 +17,6 @@ Inference: Use this representation when direct generation of complete Lean proof
 
 How to do it. (1) Prompt the model to output a sequence of atomic objects. (2) Give each object a unique `id`. (3) List its `dependencies`, consisting of premises or earlier step IDs. (4) Put the new `conclusion` in a formal language. (5) Record the applied `rule`. (6) Enforce fewer than five dependencies per step. (7) Require the final object's ID and conclusion to match one of the provided answer options (Appendix E.1, p. 15). (8) Keep natural-language reasoning and the structured sequence in one uninterrupted model response; verify only after generation.
 
-Inference: A possible Verus adaptation follows. A VL agent could emit a JSON list whose conclusions are Rust predicates or short Verus lemma statements. A translator would turn each item into a temporary `proof fn` goal, check it, and report the failing step. The dependency bound is an orchestration constraint, not a Verus construct. The paper evaluates first-order logic, not Rust.
-
 Evidence and limits. The paper reports that direct proof generation produced few compiling scripts and that compiled scripts often collapsed into opaque `simp` calls. PRoSFI makes the formal object smaller and decouples verification from token generation. However, extracted propositions may omit parts of the prose: “Reward Hit, i.e., all structured formal intermediates are verified, does not necessarily guarantee the Soundness of the entire reasoning path.” (Section 3, p. 4). Inference: Verification of the extracted claims alone cannot establish that every prose step is valid.
 
 ## technique 2: asynchronous step-level formal verification and reward
@@ -55,12 +53,9 @@ Inference: A possible Verus adaptation follows. Sample N Rust/Verus proof plans,
 
 The paper describes checking extracted formulas through Lean tactics, Prover9, Z3, or a formal theorem-proving model (Section 4.1, p. 5; Appendix H, p. 18). It does not identify which backend produced each experimental result. GPT Soundness is a measurement from an LLM judge. The authors state: “This is because the extracted formal propositions may not fully cover the entire reasoning path.” (Section 3, p. 4). Inference: End-to-end confidence also depends on the dataset formalizations, parser, translation, and correspondence between prose and extracted claims; checking formulas alone does not establish those properties.
 
-Inference: For VL, PRoSFI's most useful lesson is to make the model emit small checkable obligations before writing a large Rust proof, then use their verification results in a response reward after generation. Inference: it does not remove the need for specification coverage; unrepresented natural-language steps can still be unsound.
-
 ## techniques for the catalog
 
 - structured formal intermediates — JSON/YAML atomic steps with dependencies, formal conclusions, and rules
 - asynchronous step verification — parse, translate, and check each step after generation, then assign graded reward
 - GRPO with process rewards — train on group-relative rewards that distinguish answer, format, and per-step soundness
 - verifier-based test-time selection — choose a verified candidate, or fall back to majority voting
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For the Outcome-CoT baseline, we adopt the same prompt template as Logic-RL, while the prompt for PRoSFI is adapted slightly to suit this task."): checked every quotation, reported number, section and page reference, and technique step against the full paper, including appendices; corrected test sampling and split counts, the final-option constraint, verification order, response-level rewards, test-time selection and Figure 2 location; removed an unsupported gradient-update claim and marked adaptations and conclusions as Inference; did not reproduce experiments or inspect implementation code.

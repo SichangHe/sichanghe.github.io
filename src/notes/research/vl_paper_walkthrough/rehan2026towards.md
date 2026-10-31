@@ -8,8 +8,6 @@ This paper adds a synthesis-and-verification meta-level to an existing neuro-sym
 
 The lower framework combines Symbolic Abduction Trees (SAT) in first-order logic, a structural causal model (SCM), and a deep-reinforcement-learning (DRL) policy (section 4.1, p. 4). The meta-loop receives human natural-language goals and principles, synthesizes candidate rules, verifies them, and feeds only accepted rules back into the knowledge base. The authors state: “Only rules that satisfy all verification stages are promoted to a verified theory and committed to the knowledge repository” (section 4.2, p. 5).
 
-Inference: VL can borrow the admission boundary, but the paper’s FOL predicates and DRL/SCM components do not prove Rust memory safety or concurrent behavior. They are a rule-governance pattern that can sit before Verus proof generation.
-
 ## technique 1: goal decomposition into candidate causes
 
 What it is. Given a high-level effect such as “respond correctly to a sudden obstacle on the road,” ask an LLM to enumerate concrete conditions, behaviors, or properties that could explain or realize it (section 4.2, pp. 5–6). The prompt is constrained by a curated legal and safety theory to limit hallucinated or irrelevant causes.
@@ -64,8 +62,6 @@ Trusted evidence and failure modes
 
 The trusted base includes the curated German traffic regulations, physics and safety principles, symbolic grammar, the FOL engine/solver, and the human goals. The paper explicitly says, “All reasoning carried out by the LLM is grounded in these curated laws, which serve as the primary reference for evaluating causes” (section 5.2, p. 7). GPT-4o Mini is the sole model in the proof of concept (section 5.1, p. 7). The authors acknowledge black-box model reasoning, incomplete regulations, and prompt sensitivity (section 6, p. 9). They also state that the experiment is not intended to verify causality statistically, but to demonstrate structured abductive and deductive reasoning (section 5, p. 7).
 
-Inference: threat to agent-written verified Rust is moderate. The verify-before-admit loop directly addresses specification drift and rule contradictions, but the demonstrated domain is two driving scenarios with no Verus code, concurrency, memory model, or adversarial evaluation. VL should reuse the layered gate and traceability, while treating generated contracts as candidates until Verus proves them. Existing work already supplies a concrete necessity/sufficiency search and rule admission design; VL should not redo those abstractions without measuring Rust-specific failure modes.
-
 ## techniques for the catalog
 
 - goal-to-cause decomposition: split a natural-language safety goal into constrained, traceable candidate causes
@@ -73,4 +69,3 @@ Inference: threat to agent-written verified Rust is moderate. The verify-before-
 - grammar-bound translation: map causes to machine-checkable predicates under an explicit symbol grammar
 - minimal-set search: enumerate and cache minimal necessary and sufficient cause combinations
 - verify-before-admit: gate new rules on syntax, consistency, safety, and invariant checks before committing them
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -70,17 +70,8 @@ Failure and assumptions. Baseline explanations often identify the first divergen
 
 The formal tool proves each generated harness against the RTL and each mutant under a bounded depth. MGR measures adversarial kill rate; solver selection measures latency; CNS measures explanation faithfulness. The LLM remains trusted only as a generator and explainer, while the acceptance signals come from Yosys/SymbiYosys, solver outcomes, and mutation audits. Inference: the framework does not prove that the natural-language specification captures user intent, that its mutant set is complete, or that a surviving mutant is harmless outside the bounded window.
 
-Inference: VL should treat generated Verus specifications as candidates requiring adversarial mutation and counterexample-grounded explanations. A proof that succeeds with an over-strong `requires` clause can be vacuous in the same practical sense as an RTL assertion that passes for the wrong reason; mutation and satisfiability-style checks should therefore accompany generation.
-
-## threat and reuse for VL
-
-Inference: Agent-written verified Rust is threatened by weak specifications that prove an unintended behavior, by proof budgets that mask hard obligations, and by diagnostics that mislead the repair agent. MGR directly addresses the first threat; structure-aware scheduling addresses the second; CNS addresses the third.
-
-Inference: VL should not redo generic mutation auditing, bounded-proof kill-rate accounting, or trace-faithfulness scoring. It must adapt their objects and denominators to Rust and Verus, define mutation operators for contracts and implementations, and record trusted assumptions explicitly.
-
 ## techniques for the catalog
 
 - mutation-guided refinement: inject faults, compute effective kill rate excluding invalid mutants, and refine weak harnesses
 - architecture-aware solver selection: choose verification resources from normalized structural metrics before proof construction
 - causal narrative synthesis: summarize counterexamples using extracted traces and score cycle, signal, mechanism, and unsupported claims
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

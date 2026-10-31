@@ -68,13 +68,10 @@ How to apply it:
 
 Evidence: consolidation-only, initialized from the base model, reaches 49/175 on LiveCodeBench v6, 352/1140 on BigCodeBench Full, and 19/148 on Hard; the complete two-stage model reaches 50/175, 363/1140, and 23/148 (Table 4, p.7). The ablation therefore attributes complementary value to injection and consolidation. Inference: the method's deployment contract is ordinary code generation, so it does not force a generated program to carry a machine-checkable proof at runtime.
 
-Verus form: Inference: a VL pipeline could pretrain on Verus proof-role annotations and then fine-tune on Rust code plus contracts, but final generation should still be passed to Verus. Use the generated roles as hints for `requires`, `ensures`, `spec fn`, `proof fn`, `View`, and loop invariants; do not trust the model's role labels as evidence.
+Verus form:
 
 ## what is proved, measured, and trusted
-The paper measures solved-task counts and Pass@1 under fixed benchmark denominators, plus ablations and difficulty/category buckets. It does not prove that graph alignment recovers all correctness structure, that GPT-generated hints express the whole task specification, or that a generated program is correct beyond the benchmark tests. The formal component is Lean-kernel checking of generated traces; Python correctness is judged by execution suites. Inference: for VL, Verus should be the final acceptance gate, with independently reviewed specifications and tests. Trusted components include the task statement, reference solutions used for graph extraction, GPT-5.2 annotation, theorem-template library, Lean/Verus kernels and solvers, training code, benchmark tests, and the semantic correspondence from proof roles to executable regions.
-
-## threat to VL and work already done
-Inference: the residual risk to VL-generated verified Rust is material but bounded by Verus acceptance. The paper offers a useful way to teach an agent where invariants and postconditions belong, which can reduce missing-structure errors; however, it targets Python and Lean, and its deployed model emits no proof artifact. A malicious or mistaken model can produce a plausible role description while Verus rejects, or accepts, a weak specification. VL should not redo generic graph alignment, AST graph extraction, or Lean proof-flow supervision. A distinct contribution would be a measured Verus adaptation: compare code-only generation, Verus-role injection, and proof-carrying generation on unseen Rust modules, reporting verifier pass rate, repair effort, and specification defects.
+The paper measures solved-task counts and Pass@1 under fixed benchmark denominators, plus ablations and difficulty/category buckets. It does not prove that graph alignment recovers all correctness structure, that GPT-generated hints express the whole task specification, or that a generated program is correct beyond the benchmark tests. The formal component is Lean-kernel checking of generated traces; Python correctness is judged by execution suites.
 
 ## techniques for the catalog
 - implementation graph — represent control, call, dominance, and region structure from a parsed reference program
@@ -82,4 +79,3 @@ Inference: the residual risk to VL-generated verified Rust is material but bound
 - graph-role alignment — retain implementation roles supported by overlapping proof roles and generate region obligations
 - multi-target injection — train one model on code, concept, and obligation targets with a summed loss
 - verification-to-code consolidation — remove auxiliary outputs through a second code-only training phase before deployment
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

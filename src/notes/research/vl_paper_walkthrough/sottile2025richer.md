@@ -46,7 +46,7 @@ The authors recommend avoiding over-specialization, unrealistic examples, and om
 
 Avoid over-specialization. “A problem that is highly specialized to SMT solvers or dependently typed proof assistants is better suited to those communities than it is to the broader scientific computing community.” (Section 3, PDF p. 23.) Design the specification at a method-neutral level so multiple verification approaches can map to it (Section 3). Inference: publish mathematical contracts and executable test oracles separately from any Verus proof script.
 
-Avoid toy problems. Use realistic algorithms rather than dated textbook kernels. The paper contrasts a direct (O(n^2)) n-body solver with Barnes–Hut or multipole methods used in practice (Section 3, PDF p. 23). Inference: a VL challenge should retain realistic data layouts and optimization choices so a proof agent encounters the same edge cases as product code.
+Avoid toy problems. Use realistic algorithms rather than dated textbook kernels. The paper contrasts a direct (O(n^2)) n-body solver with Barnes–Hut or multipole methods used in practice (Section 3, PDF p. 23).
 
 Focus on scientific issues. Include conservation laws, CFL bounds, and other domain criteria that differ from bit-level cryptographic correctness or perceptual graphics correctness (Section 3, PDF p. 23). Inference: Verus specifications should state these as first-class postconditions, not merely test outputs.
 
@@ -62,10 +62,6 @@ Cover all scales and validation. Include small scripts, agent-based models, disc
 
 The paper proposes correctness dimensions and design guidelines for a future suite of challenge problems. It presents no implemented suite, proof, or timing results. The authors call their recommendations “a starting point to a broader discussion between the scientific computing and formal methods communities” (Section 1.2, PDF p. 20). Inference: applying these recommendations requires domain models, physical assumptions, uncertainty models, and judgments about realism. The paper distinguishes the two kinds of problem sets: “Challenge problems define a target to reach for and a criterion to assess whether that target has been reached. Benchmarks move a step further to not only assess that the target has been reached, but provide an objective set of metrics that assess the relative quality between different solutions.” (Section 1.1, PDF p. 20.)
 
-## relevance to VL
-
-Inference: this paper is a requirements specification for a Verus benchmark program rather than a verification technique. It warns against proving only memory safety or toy arithmetic while ignoring numerical stability, physical invariants, approximation error, and validation. Agent-written verified Rust is threatened when an apparently successful proof relies on unchecked domain assumptions or a specification disconnected from the intended science. VL should reuse the paper’s layered challenge design and mark every assumption and validation obligation, while adding executable Verus contracts and independent numerical or domain oracles.
-
 ## techniques for the catalog
 
 Inference: the following catalog entries adapt the paper’s recommendations to verification tasks.
@@ -75,4 +71,3 @@ Inference: the following catalog entries adapt the paper’s recommendations to 
 - approximation and uncertainty contracts — state error, uncertainty propagation, and approximation validity separately from memory safety
 - method-neutral benchmark design — avoid challenges tied to one prover or toy algorithm so different verification methods can be compared
 - verification plus validation — test both implementation conformance and whether the formalized program models the intended scientific problem
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "It is important to consider approximation schemes separately from numerical methods, which are a very specific class of approximation that is driven by our implementation of numbers in computers."): checked the full paper text, all study quotations, dimensions, technique steps, numbers, section and printed-page references, authors, year, and DOI; corrected the coverage claim about graph methods and sparse matrices, narrowed a page reference, clarified the proposed artifacts, labeled study-specific conclusions as inferences, and replaced the link with the paper’s DOI; did not check cited works, external Verus capabilities, or implement or validate the proposed Verus adaptations.

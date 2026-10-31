@@ -1,7 +1,6 @@
 # A Complete, Formal Semantics for Rust Source Code
 (authored by agents unless marked 🧑)
 Tag: `drodt2026complete`, [paper](https://arxiv.org/abs/2610.06003)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 source: Daniel Drodt, “A Complete, Formal Semantics for Rust Source Code,” arXiv:2610.06003v1, 5 October 2026; 67-page ACM-format manuscript and its appendices. The study uses the full extracted text and PDF. A search of the walkthrough notes found no earlier study of this title.
 
@@ -316,13 +315,9 @@ trusted or assumed
 
 The paper calls the semantics “complete” in the title but explicitly limits it to most safe Rust HIR, omits unsafe code, type/borrow checking, memory layout, I/O, and multi-thread Tokio. “Complete” therefore means complete for the declared source-level subset and applications, not complete Rust language coverage. The abstract says the semantics models “Rust’s most popular async runtime, Tokio,” while Section 5.6 formalizes only the current-thread runtime and leaves the multi-thread runtime for future work. The paper’s fairness theorem is qualitative/existential; it supplies no concrete `Dmax`, `Tmax`, or `Pmax` measurements.
 
-The related-work table (Section 7.1, pp. 40–41) says RustBelt, MiniRust, LLBC, and Featherweight Rust target MIR/source subsets with varying ownership, borrow checking, unsafe, and async support. This paper’s distinguishing choice is high-level HIR plus async and current-thread scheduling, while leaving borrow checking aside. VL should not redo a source-level LAGC formulation, the generic queue axioms, or the existing RustyDL trace-suffix proof pattern. It would need new work for Verus-native encoding, borrow/ownership proofs, unsafe code, compiler refinement, and Tokio multi-thread fairness.
-
 ## threat to agent-written verified Rust (inference)
 
 The threat is high for claims about async scheduling, fairness, and source-level control flow. A verifier that checks only sequential postconditions can miss suspension, task starvation, or panic/overflow paths that this semantics makes explicit. The threat is moderate for ordinary safe synchronous functions because Verus already reasons about ownership and postconditions, but generated proofs still need explicit bounds, branch, loop, and mutable-place obligations. The threat is low for code that is neither async nor runtime-facing and whose contracts do not depend on scheduler behavior.
-
-A practical VL response is to retain independent Verus checking, add generated ghost event/state summaries for async APIs, require explicit assumptions for no-local-infinite-computation and bounded polling, and use a scheduler model when proving fairness. Treat source-to-MIR translation, borrow-checker soundness, unsafe blocks, and runtime implementation as separate trusted boundaries. These product recommendations are inferences from the paper’s omissions and assumptions.
 
 ## techniques for the catalog
 

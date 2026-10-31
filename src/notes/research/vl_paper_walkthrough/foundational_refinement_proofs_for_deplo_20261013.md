@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `lazaropoulos2026foundational`, [paper](https://arxiv.org/abs/2607.26306v1)
 
-Audit: audited 2026-10-13 against the paper; checked every number against Tables 1 and 2 and the text, the section and figure references, the steps against Sections 4 to 6, and the trusted-base list against Section 5.2; corrected a wrong number (the ERC20 runtime is 2,708 bytes, 35 is its source lines), the proof-line range, the 99.99% conformance figure (it is Nethermind's EVMYulLean, not this paper's extended model), the Table 1 caption claim about imports, the reuse scope of ABI decoders, the stopped-versus-still-running status of Clipper and Auction, three section references, an invented run-Lean step, and a filler sentence about Table 2 percentages; marked the study's own advice as inference; the assert_by remark in the Verus forms is unchecked.
-
 ## paper's question and architecture
 
 The paper asks whether LLM agents can construct foundational, machine-checked refinement proofs for deployed EVM bytecode after deployment. Its abstract describes the target precisely: “We study this in the context of the Ethereum Virtual Machine (EVM), a low-level virtual machine that executes smart contracts on the Ethereum blockchain.” EqiVM is a Lean framework with an executable EVM semantics, the Sol− specification language, and a refinement relation. A contract's bytecode can come from any compiler or handwritten assembly; the proof relates the deployed bytes directly to a human-readable specification.
@@ -138,12 +136,6 @@ The cost study used subscriptions rather than metered API credits, so prices are
 A finished certificate is a Lean theorem. The authors state: “Because proofs are validated by the kernel, the LLM agent, tactics, macros, and the proof combinators are not trusted for soundness.” The trusted base includes the Lean kernel, standard axioms, the correctness of the EVM model, the refinement relation, the official conformance test suite, the Lean compiler used by test execution, and EVMYulLean test runners (Section 5.2). Keccak is an opaque foreign function, so selector facts are trusted per contract. `native_decide` introduces evaluator axioms for decoding, gas/memory checks, ABI decoding, and jump-table membership (Section 5.2). Inference: these are material trusted components even though the LLM itself is outside the soundness base.
 
 Table 2 reports no percentages; its partial function counts (Clipper 26/29, Auction 18/20) are per contract, and a timeout mark in the Check column means that check timed out (Auction's cell is blank in the text). The relation permits vacuous out-of-gas equivalence and does not bound gas consumption (Section 5.2). Inference: a deployment that needs resource-bounded correctness requires a separate termination/gas theorem.
-
-## implications for VL
-
-Inference: the threat to a product that emits agent-written verified Rust is high at the orchestration level: EqiVM demonstrates that frontier models can complete machine-checked proofs for heterogeneous deployed artifacts when a reusable semantic library and precise top-level theorem exist. Inference: the threat is lower as direct evidence about Verus because EqiVM proves Lean theorems about EVM bytecode, not Rust ownership, unsafe memory, dependency versions, or Verus solver obligations. The reusable lesson is to invest in a compositional proof library, explicit relational specifications, telemetry, and a hard boundary around trusted assumptions.
-
-The paper has already explored post hoc per-artifact certification, compositional reach invariants, unknown-code interaction, and token-cost measurement. VL should not redo those as generic claims. Inference: a non-duplicate direction is measuring how Verus proof agents handle dependency upgrades, specification drift, and external-library contracts while preserving a concrete Rust implementation.
 
 ## techniques for the catalog
 

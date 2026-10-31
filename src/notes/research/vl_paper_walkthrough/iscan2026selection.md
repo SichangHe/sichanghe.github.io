@@ -20,8 +20,6 @@ Step by step, the evaluation is: (1) generate one byte-for-byte shared pool per 
 
 The paper proves a finite-sample limitation rather than treating zero observed harm as a universal guarantee. If zero harms occur in `n` independent trials, the exact one-sided upper confidence bound is `1−δ^(1/n)`. To certify harm rate ≤α, `n≥ceil(log δ/log(1−α))`; for α=.05, δ=.10, n≥45 (Proposition 1, p. 7). Therefore the paper treats zero-harm results on ≤32-task sets as suggestive, not certified. This denominator matters: the bound is about independent evaluated tasks, not candidates or generated samples.
 
-## selection and consensus techniques
-
 ### execution-fingerprint consensus (MBR-Exec)
 
 For every candidate, execute a deterministic probe bank of at most 24 public arguments and type-aware mutations. Encode each probe result as a bounded fingerprint (`repr[:200]`, typed error, `NOFUNC`, `NOCODE`, or `TIMEOUT`). For each probe, find the plurality fingerprint; among public-passers, choose the candidate agreeing with the plurality on the largest fraction of probes. The paper’s equation is `argmax_i (1/|Π|) Σ_j 1[fp_i(j)=maj_j]` (Section 2.1, p. 9). Use this when candidates all pass visible tests but differ on behavior; it is a leakage-free execution analogue of minimum Bayes risk. The measured verdict is a tie with BoN at k=8; no hidden-test gain is shown.
@@ -88,9 +86,7 @@ Inference: a Verus implementation can prove bounded state-machine facts for the 
 
 The paper proves Proposition 1 and gives a conditional consensus-trap lemma under a majority-symmetry assumption. It measures exact paired hidden-test outcomes, classifier AUC, false-refutation rates, candidate coverage, compute savings, and benchmark counts. The strongest evidence is externally replicated M1 and selection results on two benchmarks and three model cells. The paper explicitly limits scope: it evaluates hidden unit-test correctness, not code quality, abstention usefulness, hardware portability, or all possible operators; Ollama outputs may vary across hardware.
 
-Trusted components include the hidden-test oracle, canonical solutions, sandbox isolation, model serving, extractor implementation, probe-bank soundness, classifier training data, and the mapping from benchmark tests to real product requirements. Inference: for VL, a Verus proof would reduce risk for the selected Rust algorithm and its stated contracts but would not validate the natural-language requirement, generated test adequacy, model output extraction, external libraries, or deployment environment. The paper’s own mechanism suggests a product priority: measure candidate coverage and repair extraction before adding semantic rerankers.
-
-Inference: threat to an agent-written verified-Rust product is moderate at the workflow boundary and low for the specific semantic-selection claim. M1 directly motivates a robust Rust extraction/normalization gate before proof attempts. ACE could reduce verifier or generation cost only after measuring a local, independently calibrated harm budget. The 26 semantic operators’ null results warn against assuming that execution agreement, self-repair, or an LLM judge can recover correctness from a pool that contains no correct candidate or no leakage-free discriminating signal. The paper does not test Verus, so transfer to VL remains an inference.
+Trusted components include the hidden-test oracle, canonical solutions, sandbox isolation, model serving, extractor implementation, probe-bank soundness, classifier training data, and the mapping from benchmark tests to real product requirements.
 
 ## techniques for the catalog
 
@@ -106,5 +102,3 @@ Inference: threat to an agent-written verified-Rust product is moderate at the w
 - M1 expression recovery — robustly extract a single function, align its name to public assertions, and retry only when standard extraction found no public passer
 - ACE consensus early stop — stop sampling once fingerprint-cluster thresholds decide the modal candidate and report saving against full-budget consensus
 - coverage-wall diagnostic — increase k on held-out hard tasks and distinguish missing correct candidates from selector failures before claiming post-hoc improvement
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

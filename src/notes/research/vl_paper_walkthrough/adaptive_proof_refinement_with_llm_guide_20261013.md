@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `lu2025adaptive`, [paper](https://arxiv.org/abs/2510.25103)
 
-Audit: audited 2026-10-13 against the paper; checked every number, fraction, page and table reference, quotation and technique step; changed the CoqHammer scope (not every non-Rango system uses it), the Section 4.8 note (RQ5 varies the iteration limit, so it is no contradiction), marked three unmarked inferences as Inference, and reworded one unclear admit() sentence; other numbers and quotations matched.
-
 source: Lu, Zhou, Xie, Jia, Delaware, Zhang, arXiv:2510.25103v2 (9 Sep 2026), ASE '26, 13 pages, no appendix. The system is called Adapt. The prover is Rocq (formerly Coq), not Verus; every Verus form below is an inference.
 
 ## what is measured and what stays trusted
@@ -175,8 +173,6 @@ Verus form. Inference: the recipe applies to a Verus repository unchanged: per c
 - The best classifier reaches 82% accuracy at predicting the human's move (Table 4, p.9) yet does worse than random as a decision-maker (595 against 605). The paper blames features and scarce lemma-discovery data. Inference: accuracy on a label derived from one human tactic says little about which move helps an LLM prover.
 
 ## what is already done, and threat
-
-Done, so VL need not redo it: the comparison of five ways to choose a repair move on one benchmark, and the finding that LLM keywords beat whole-state queries for lemma retrieval (651 against 625 of 1,720).
 
 Inference on threat: low. This is a Rocq tactic-proof system with no specification writing, no Rust, and a 37.85% success rate on single theorems. What it does offer a competitor is a loop shape that is easy to copy onto Verus. The paper itself names AutoVerus as fixed-rule repair (Section 6, p.11): “AutoVerus [51] automates the verification of Rust programs using Verus [30] by refining LLM-generated proofs based on the specific error type.”
 

@@ -2,12 +2,9 @@
 (authored by agents unless marked 🧑)
 Tag: `zhang2023survey`, [paper](https://arxiv.org/abs/2301.03270v3)
 
-
 ## what the survey contributes
 
 This survey reviews 112 learning-based automated program-repair papers collected through November 2022 (Section 2, pp.4–5), with a separate discussion of selected 2023 advances (Section 7.4, pp.50–52). It organizes repair into localization, preprocessing, generation, ranking, validation, and correctness assessment.
-
-Inference: for VL, producing a candidate proof or patch and establishing its correctness are different stages. Test-passing patches are only plausible; semantic correctness needs stronger evidence (Sections 3.1 and 4.7, pp.6 and 20).
 
 The survey defines the pipeline as follows: “The framework can be generally divided into six phases: fault localization, data pre-processing, input encoding, output decoding, patch ranking, patch validation, and patch correctness assessment.” (Section 4.1, p.8). The sentence lists seven items but calls them six phases. The subsequent six numbered steps combine encoding and decoding under patch generation (pp.8–9).
 
@@ -112,8 +109,6 @@ Inference: Verus adaptation: APCA features should include changed pre/postcondit
 
 The survey reports execution metrics (compilable, plausible, correct) and match metrics such as Accuracy@K and BLEU. It cautions that token matching ignores semantically equivalent alternatives and that BLEU was designed for natural language (Section 6.2.2, p.41). Inference: correctness labels, developer patches, test suites, localization assumptions, data splits, and learned classifiers are assumptions or evidence to audit; none proves arbitrary program semantics.
 
-Inference: VL should not redo generic NMT patch generation, beam search, test-only validation, or token-match metrics as if they establish verified Rust correctness. Those components are established baselines. VL’s new work should focus on contract-preserving repair, Verus-specific localization, independent specification review, and denominator-correct reporting of verifier success. The product threat is overfitting: an agent can make tests or a weak specification pass while deleting behavior. The survey cites 105 C bugs for which many overfitting patches were equivalent to deleting buggy functionality (Section 4.7, p.20), illustrating why a green test suite is insufficient.
-
 ## techniques for the catalog
 
 - spectrum-based localization — rank suspicious code from passing/failing execution coverage before generation
@@ -123,4 +118,3 @@ Inference: VL should not redo generic NMT patch generation, beam search, test-on
 - executable patch validation — compile and run tests or static analysis to identify plausible patches
 - automated patch correctness assessment — classify overfitting with static/dynamic features, similarity, or learned models
 - execution-versus-match metrics — report compilable, plausible, correct, Accuracy@K, and BLEU separately
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The application of existing pre-trained models to program repair is usually divided into two categories: universal and specific pre-trained model-based APR techniques."): checked all study quotations, counts, section/page references, technique steps, and the paper link after reading the full text including references; corrected 87 papers to 112, the placeholder DOI to the paper’s arXiv identifier, page references, preprocessing and training descriptions, and unsupported denominator detail; marked VL/Verus recommendations as inferences; did not reproduce cited experiments, inspect underlying tools/datasets, or verify external links.

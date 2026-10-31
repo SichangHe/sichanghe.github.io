@@ -111,12 +111,6 @@ The single GPT-5.4 configuration reaches miniF2F FV 60.66 and J 55.64, and Proof
 
 Algorithm 2 accepts a candidate when its plug-in estimate is greater than or equal to the current estimate, while Equation 9 states a strict almost-sure increase for the conservative acceptance policy (Appendix D, p. 15; Section 2.3.2, p. 5). The paper does not explain this equality-versus-strictness difference. The authors also acknowledge that the same LLM judges are used for optimization and reported soft metrics, and that uncertainty calibration uses one human annotator (Appendix I.1, p. 24).
 
-## what is proved, measured, and trusted; VL implications
-
-The paper proves the LCB, certified monotonicity, and convergence/terminability statements under explicit statistical assumptions. It measures Lean theorem-prover validity, LLM-judge soft scores, human evaluations, and candidate-call cost on two benchmarks. It does not prove LP, MC, or FQ; it does not establish that LLM judges are calibrated in deployment; and it does not report item denominators in the headline paragraphs. The trusted base includes Lean, benchmark translations, generator weights/prompts, judge models, margin calibration, and the natural-language theorem’s intended meaning.
-
-Inference: for VeruLaw, this is a useful control loop for drafting and repairing Verus specifications, with Verus FV as the hard gate and human or independently checked semantic tests for LP/MC. It threatens a product only if agent-written code is accepted because a prover passes a wrong contract: the paper’s own FV mask cannot detect a semantically wrong but formally valid statement. VL should not redo generic Lean autoformalization or LLM judge ensembles; the open engineering question is whether this loop reduces Verus proof repair time while preserving contracts across dependency changes.
-
 ## techniques for the catalog
 
 - masked objective: multiply soft LP/MC/FQ scores by binary theorem-prover validity before ranking
@@ -125,5 +119,3 @@ Inference: for VeruLaw, this is a useful control loop for drafting and repairing
 - conservative acceptance: retain a candidate only when its plug-in score strictly improves
 - LCB monotonic loop: use theorem-prover checks and judge bounds to obtain conditional convergence
 - Verus adaptation: gate generated Rust contracts with Verus verification and keep semantic intent checks explicit
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

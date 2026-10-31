@@ -5,8 +5,6 @@ Tag: `yang2026circuitprover`, [paper](http://arxiv.org/abs/2607.27259v1)
 ## problem and architecture
 CircuitProver verifies parameterized Chisel hardware by translating implementation and natural-language specification into executable Lean 4 models, having an agent construct proofs through Lean feedback, and storing successful proof knowledge for reuse. The paper contrasts this with instance-by-instance model checking: “CircuitProver proves parameterized correctness in Lean 4 and accumulates reusable proof knowledge, while traditional model checking verifies instantiated designs independently.” Its target theorem is generally ∀ n, Spec ≡ Impl for all legal parameters.
 
-Inference: the transferable VL idea is proof accumulation: preserve reusable invariants and lemmas as checked artifacts, while preserving natural-language guidance only as a hint. A Verus adaptation must store Verus-valid lemmas/contracts, not trust an agent’s summary of a proof.
-
 ## technique 1: hardware auto-formalization
 Phase I translates a Chisel design D and natural-language specification S into Lean implementation LD and specification LS. The parser handles a subset of Chisel, including parameter structures, state, initialization, and step functions. The paper’s counter example defines `Params` with `n : Nat`, a `State` containing `BitVec p.n`, an `init` state, and a `step` function. The specification is a proposition relating reset, enable, and next-state behavior for every time t.
 
@@ -34,11 +32,8 @@ The 2×2 ablation separates guidance from theorem reuse. With guidance fixed, ad
 ## what is proved, trusted, and assumed
 Lean kernel checks establish only the formalized Lean theorem. Trust remains in Chisel-to-Lean parsing, the natural-language specification, Lean and its libraries, and any unsupported Chisel constructs. The prototype runs Lean 4 v4.29.0 and supports only a subset of Chisel; full industrial RTL coverage is future work. Inference: Verus similarly trusts its verifier, solver, Rust compiler/erasure, external APIs, and the correctness of the written contract. Reusable lemmas can amplify a wrong abstraction if the specification is wrong.
 
-Inference: threat to VL is moderate to high for proof maintenance and agent scalability: the library can reduce repeated proof search and preserve hard-won invariants. It does not prove that an agent-generated specification matches product intent, nor does it remove the need for model-specific proof engineering. What VL should not redo is unstructured proof retry without a persistent checked-lemma store; the paper already quantifies the cost of rediscovery.
-
 ## techniques for the catalog
 - auto-formalization — translate parameterized implementations and specifications into executable theorem-prover models
 - feedback-driven proving — iteratively edit proof scaffolds using compiler/prover states until the kernel accepts the proof
 - reusable proof libraries — distill checked lemmas and separate natural-language strategies for retrieval on related tasks
 - parameterized verification — prove one symbolic theorem for all legal design parameters instead of checking instances separately
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

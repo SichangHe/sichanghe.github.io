@@ -43,11 +43,7 @@ The evaluation uses 281 attack instances per random seed, three seeds, and 843 i
 
 Failures are concentrated where maliciousness depends on server state or response content, because the method sees only HTTP requests (§4.4). The conclusion states, “Since the proposed framework relies solely on HTTP requests, attacks whose maliciousness depends primarily on server-side state or response content remain difficult to characterize.” (§4.4, p. 6)
 
-Inference: for VeruLaw, this is a useful verifier-in-the-loop pattern for synthesizing contracts or detectors from traces, but the 81.5% denominator is 843 generated attack instances evaluated on generation traces, not unseen attacks or verified Rust programs. The trusted base includes the mock server, traffic representativeness, parser, deterministic compiler, Suricata, and the specification that “malicious” is the desired property. VL should preserve explicit non-generation when a contract cannot be proved and should report these trust boundaries.
-
 ## techniques for the catalog
 - semantic intermediate specification: have an LLM identify a vulnerable parameter and emit a predicate before target-language code
 - CEGIS with diagnosed counterexamples: test candidates, return failed checks and diagnoses, and iterate with a hard limit
 - deterministic verified compilation: compile a passed specification into syntax-sensitive rules and reject overly broad matches
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

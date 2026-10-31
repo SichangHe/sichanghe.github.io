@@ -83,8 +83,6 @@ This needs a Verus-to-Lean or Verus-to-Rocq bridge.
 No study shows one for Verus.
 Treat step 9 as inference from WybeCoder.
 
-## variants by paper
-
 ### choosing a mode by the shape of the obligation
 
 [Verus practical](../vl_paper_walkthrough/verus_practical_20261012.md)

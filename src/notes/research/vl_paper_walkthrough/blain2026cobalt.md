@@ -97,14 +97,6 @@ Measured: TLC runtime, end-to-end runtime, explored-state counts, shortest trace
 
 Inference: the trusted or assumed components are the protocol abstraction, finite bounds, TLA+/TLC semantics and installation, subprocess wrapper, trace parser, LLM context, and human interpretation of a `BUG_FOUND` trace. The paper's safety-invariant convention also assumes that a `SAFE` result can indicate a modeling mistake when the intended bug is absent from the model (Section III.B, p. 2).
 
-## relevance to Verus and threat to VL
-
-Inference: COBALT-TLA's strongest transferable idea is the separation between hypothesis generation and a deterministic checker. VL could use verifier diagnostics as structured feedback to repair agent-written Rust contracts, but the final trust anchor must remain Verus's checked proof rather than the model's confidence or an external trace.
-
-Inference: the relevant risk for agent-written verified Rust is specification error. A repair loop can fix compiler mistakes quickly, yet it can also tighten guards until a real behavior disappears or weaken an invariant while retaining a `SAFE` result. Possible safeguards are preserving the intended specification, reviewing generated contract changes, replaying bounded counterexamples, and checking the implementation against its stated property with Verus.
-
-Inference: VL should not redo the paper's bounded TLA+ loop as a novel contribution without a distinct Rust/Verus integration and evaluation. The paper already demonstrates the loop on three bridge models and explicitly leaves production-bytecode semantics and statistical reproducibility open.
-
 ## techniques for the catalog
 
 - bounded LLM-to-TLA+ synthesis — generate finite `Init`/`Next` models and TLC configurations from protocol descriptions
@@ -113,4 +105,3 @@ Inference: VL should not redo the paper's bounded TLA+ loop as a novel contribut
 - agentic REPL correction — alternate model generations and checker feedback until a bug, safe result, or budget limit
 - small-scope vulnerability search — exploit short counterexamples while recording the finite-bound limitation
 - Inference: architecture-to-code boundary — treat model findings as protocol evidence and require a separate proof or semantics link for deployed code
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each LLM response is appended as an assistant turn and each TLC feedback message as a user turn, preserving the full specification history within the model’s context window."): read the entire four-page paper and study; checked quotations, numbers, section and page references, technique steps, and the arXiv link; corrected references, prompt details, trace syntax, quotation attribution, runtime claims, and the distinction between model counterexamples and implementation proofs; marked extrapolations as Inference; did not run the system, inspect its implementation, or independently validate the bridge exploits or Verus proposals.

@@ -3,7 +3,6 @@ collected primary papers
 
 archive
 - added October 7, 2026
-- root: `/hdd1/sichanghe/paper_collection`
 - records below include primary links and PDF checksums
 - PDFs remain local under the collection
   - existing Git rules exclude PDF files

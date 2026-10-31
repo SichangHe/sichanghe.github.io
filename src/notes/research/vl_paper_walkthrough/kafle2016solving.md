@@ -6,8 +6,6 @@ Tag: `kafle2016solving`, [paper](https://doi.org/10.4204/EPTCS.219.4)
 
 The paper reduces satisfiability of nonlinear constrained Horn clauses (CHCs) to repeated calls to a linear CHC solver. Its abstract states: “In this paper we show that checking satisfiability of a set of non-linear Horn clauses (also called a non-linear Horn clause program) can be achieved using a solver for linear Horn clauses.” (Abstract, p. 33). The key transformation bounds derivation-tree dimension, linearises the bounded program, and increases the bound until a model or counterexample is found. The authors built LHornSolver and tested it on 44 verification problems.
 
-Inference: This is a backend design for CHC-producing verifiers, not a direct Verus proof method. It is useful to VL if an adapter emits CHCs and preserves a checked correspondence back to Rust contracts.
-
 ## technique 1: tree dimension and bounded under-approximation
 
 What it is. Tree dimension measures branching nonlinearity. Definition 1 gives dimension 0 for a leaf, the maximum child dimension when there is one unique maximum, and maximum plus one when there are multiple maxima (Section 2, p. 35). A trace tree represents a CHC derivation (Definition 2, p. 35). For a bound k, Definition 3 splits each predicate p into (p^{≤d}) and (p^{=d}), and constructs (P^{≤k}) containing derivations of dimension at most k (pp. 35–36).
@@ -67,9 +65,7 @@ Verus form. Inference: evaluate a CHC adapter with a fixed benchmark denominator
 
 ## what is proved, trusted, and already done
 
-The paper states, without proofs in this paper, the dimension-bounded implication (Proposition 1, p. 36), the correctness of the partial-evaluation linearisation (Proposition 2, p. 39, relying on cited results and on the correctness of partial evaluation), Lemma 1 on linear over-approximation (p. 39), soundness of Algorithms 1 and 2 conditional on a sound terminating linear solver (Proposition 3, p. 43), and progress of Algorithm 2 (“the same counterexample does not arise more than once”, p. 43). It measures 44 benchmark outcomes and runtimes. Inference: trusted pieces include the CHC encoding, partial-evaluation implementation, linear solver, abstract interpreter, predicate-renaming trace mapping, and benchmark labels. Inference: a VL product must additionally trust its Rust-to-CHC translation and should use Verus as a second checker for the final code.
-
-Already done: dimension bounding, partial-evaluation linearisation, iterative model checking, lower-dimension model reuse, and a prototype evaluation. VL should not present these as new ideas. Inference: a useful product extension is source-preserving translation and proof replay, especially for Verus constructs that the CHC language does not directly express.
+The paper states, without proofs in this paper, the dimension-bounded implication (Proposition 1, p. 36), the correctness of the partial-evaluation linearisation (Proposition 2, p. 39, relying on cited results and on the correctness of partial evaluation), Lemma 1 on linear over-approximation (p. 39), soundness of Algorithms 1 and 2 conditional on a sound terminating linear solver (Proposition 3, p. 43), and progress of Algorithm 2 (“the same counterexample does not arise more than once”, p. 43). It measures 44 benchmark outcomes and runtimes.
 
 Threat to agent-written verified Rust. Inference: high when agents treat an external CHC “safe” result as equivalent to a Rust proof. The 27/44 within-one-second result and many unknowns show performance and translation limits; a backend answer does not remove the need to check the actual Rust contracts.
 
@@ -83,5 +79,3 @@ Threat to agent-written verified Rust. Inference: high when agents treat an exte
 - linear-solver black-box contract — require terminating linear solvers to return sound models or witnesses
 - source-aware counterexample handling — distinguish traces using approximate facts from real counterexamples
 - fixed-denominator evaluation — report solved, unknown, iterations, and time over an explicit benchmark set
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Another property of the Algorithm 2 is that of progress, that is, the same counterexample does not arise more than once."): I read the whole paper text (pp. 33–48) and checked every quotation, definition, proposition, algorithm step, number and page reference against it, and recounted Table 1; I changed the link to the DOI printed in the paper, fixed page references (the unbounded-dimension remark is on p. 37, not p. 33; the benchmark and blow-up remarks are on p. 45, not p. 46; Algorithm 2 spans p. 41), corrected the claim that the paper "proves" propositions (they are stated without proof here), added the paper's account of why LHornSolver returns unknown, and noted that my recount of Table 1 (26 solved, mean 1.19) differs slightly from the text (27 solved, 1.185). I did not check the cited works [1], [11], [24], the correctness of the propositions, the Figure 2 drawing, or the linked artefacts (LHornSolver repository, benchmarks); the Verus-related Inference statements are my own and not checked against any paper.

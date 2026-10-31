@@ -3,7 +3,7 @@
 Tag: `george2026torchlean`, [paper](https://doi.org/10.1007/978-3-030-25540-4_26)
 
 ## scope and result
-TorchLean is a Lean 4 framework that gives neural-network specification, execution, differentiation, bound propagation, and certificate checking a shared operator-tagged SSA/DAG graph semantics. Its key boundary is stated plainly: “External artifacts are not accepted as guarantees by fiat; they are checked against the graph semantics consumed by Lean.” (abstract, p. 1). Inference: this is a useful architecture for VeruLaw, where generated Rust, specifications, and proof artifacts must refer to one semantic object.
+TorchLean is a Lean 4 framework that gives neural-network specification, execution, differentiation, bound propagation, and certificate checking a shared operator-tagged SSA/DAG graph semantics. Its key boundary is stated plainly: “External artifacts are not accepted as guarantees by fiat; they are checked against the graph semantics consumed by Lean.” (abstract, p. 1).
 
 The framework's verification claim is about the denotation `[[G]]` of a compiled graph. It supports interval bound propagation (IBP), CROWN/LiRPA affine bounds, robustness, Lyapunov and PINN conditions, and certificate replay. It does not prove every frontend, CUDA kernel, exporter, or hardware Float32 behavior. The paper summarizes the boundary: “The contribution is not that every external producer or runtime is verified inside Lean.” (Section 6, p. 16).
 
@@ -46,12 +46,9 @@ Evidence: certified robustness on sklearn digits uses 360 test inputs: nominally
 ## numerical semantics and trusted components
 TorchLean distinguishes proof-level reals/rationals, executable IEEE32 models, and interval/affine domains. It proves an internal FP32/NF-to-IEEE32Exec refinement on finite paths excluding NaN/Inf and overflow, while deployed hardware Float32 links remain target-specific assumptions (Table 3, p. 22). CUDA, cuBLAS/cuFFT, Python/Julia exporters, ONNX imports, Arb/FLINT, and external CROWN optimizers are producers or runtime boundaries. Inference: a Verus product must state equivalent assumptions for Rust standard libraries, FFI, hardware arithmetic, and model serialization.
 
-Already done: shared graph semantics, derivative theorems, IBP/CROWN checker architecture, and explicit trust tables. VL should reuse these patterns rather than claim novelty for certificate replay. Threat to agent-written verified Rust (Inference): medium. A generated checker can be small and strongly verified, but a mismatch between model, graph lowering, numerical mode, and deployed kernel can invalidate the intended claim while every local proof passes. The paper's own explicit boundary discipline is the mitigation.
-
 ## techniques for the catalog
 - shared SSA/DAG semantics: execute, differentiate, and verify one typed graph denotation
 - reverse-mode AD proof: compose local operator derivative lemmas into a graph-level theorem
 - IBP/CROWN transfer: propagate sound interval or affine enclosures by topological induction
 - certificate checking: replay external bounds and prove the target property about the Lean graph
 - explicit numerical boundary: separate real, interval, IEEE32, and hardware semantics with named assumptions
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -167,7 +167,6 @@ production computation evidence
   - [source: Differential Dataflow maintainers, background](https://github.com/TimelyDataflow/differential-dataflow#background)
   - use its examples before modifying a full database
 
-
 RIFL follow-up: caller lifetime is part of the contract
 - inspected paper sections 2–6 and 8–10 on 8 Oct 2026
   - evaluation inspected selectively; no measurements reproduced
@@ -326,7 +325,6 @@ first practical step
 - reserve study 2 for a hardware experiment
   - performance conclusions require controlled machines and repeatable measurements
 
-review status
 - submitted the draft to ChatGPT with Extra High selected
 - the helper ended with `terminal_deadline_expired` before returning an answer
   - no ChatGPT opinion is used as evidence or presented as completed consultation

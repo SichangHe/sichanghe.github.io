@@ -260,7 +260,6 @@ remaining limits
 - this is a cross-language mechanism review
   - it is not a complete ranking of October 2026 proving models
 - official source pages were fetched directly when the browser search endpoint failed
-- five frontier PDFs and extracted text were added to `/hdd1/sichanghe/paper_collection`
   - folder names contain the linked title, first three authors, arXiv, and year
   - source versions are recorded in the entries above
 - the research proposals above are agent recommendations

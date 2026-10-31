@@ -6,8 +6,6 @@ Tag: `deangelis2022catamorphism`, [paper](http://arxiv.org/abs/2205.06236v2)
 
 The paper verifies pre/post contracts for programs manipulating algebraic data types (ADTs) by translating them to constrained Horn clauses (CHCs), then transforming ADT clauses into clauses over basic sorts. Its contract language is restricted to catamorphisms: functions defined by a simple structural recursion over a list or tree. The abstract states: “We prove that the transformation is sound, that is, if the derived set of CHCs is satisfiable, then so is the original set.” (abstract, p. 1). It also proves termination for the catamorphism class and evaluates an implementation, VeriCaT.
 
-Inference: this is directly relevant to VL's recursive Rust data structures because a catamorphism is a solver-facing summary such as length, sum, sortedness, height, or content. The paper is not about Rust, ownership, or Verus; Verus mappings below are explicitly inferences.
-
 ## technique 1: encode contracts as CHCs with catamorphism summaries
 
 what it is and when to use it. A contract has a program predicate, input constraints, catamorphism atoms over its ADT arguments, and a basic-sort postcondition. Use it when a property can be stated through structural summaries rather than direct ADT equality. Definition 2 requires the catamorphism input and output variables to form pairwise disjoint tuples of distinct basic-sort variables, and the ADT arguments of the catamorphisms to be variables occurring in the program atom's argument tuple. The authors' reverse-list contract is `rev(L,R) ==> is_asorted(L,BL), is_dsorted(R,BR) => (BL=>BR)` (Section 4, p. 7).
@@ -27,7 +25,7 @@ Inference: the false-headed CHC is an internal verification-condition view; a Ve
 
 evidence. In the motivating reverse example, direct CHC solving fails even though the clause set is satisfiable: “state-of-the-art CHC solvers, such as Eldarica and SPACER, fail to prove its satisfiability.” (Section 3, p. 4). The paper attributes this to lack of induction on lists and failure to use the `snoc` contract while proving `rev` (p. 4).
 
-assumptions and limits. Contracts must use the paper's catamorphism schemata and total functions. The paper explicitly names ADT equality (more than one ADT argument) as outside the class; it states no other exclusions. Inference: arbitrary relations between several ADT arguments and postconditions that are not constraints over catamorphism outputs are likewise outside the class. Inference: a VL generator must reject or separately handle specifications that cannot be reduced to a structural summary.
+assumptions and limits. Contracts must use the paper's catamorphism schemata and total functions. The paper explicitly names ADT equality (more than one ADT argument) as outside the class; it states no other exclusions.
 
 ## technique 2: transform with Algorithm Tcata
 
@@ -59,7 +57,7 @@ Verus form. Inference: encode the helper contract as a `proof fn` and call it af
 
 evidence. Table 1 compares the implementation using contracts with AdtRem's differential lemma discovery. The table reports the number of proved contracts per program: 191 in total for VeriCaT and 125 for AdtRem. The paper does not state how many contracts were attempted, so no success rate can be computed. The paper reports that VeriCaT “is indeed able to exploit the extra information provided by the contracts” (Section 6, p. 13).
 
-assumptions and limits. Inference: a contract used as a lemma is only justified because the algorithm takes one contract per program predicate and transforms the goals of all of them together (Figure 6); a false contract would invalidate the proof. Inference: VL must ensure each generated helper lemma is independently proved against executable Rust rather than merely assumed in a proof context.
+assumptions and limits.
 
 ## technique 4: verify the basic-sort result with CHC solvers
 
@@ -81,10 +79,6 @@ Inference: trusted components are the contract specifications, total/functionali
 
 Inference: threat to agent-written verified Rust is medium to high for recursive data-structure contracts. The paper gives a terminating recipe for turning many list/tree summaries into solver-friendly obligations, and Table 1 lists 191 proved contracts across 14 program groups. However, its guarantee is one-way and its language excludes arbitrary ADT equality; applying it to Rust requires a sound bridge from executable ownership and library behavior to the abstract catamorphisms.
 
-## what VL should not redo
-
-VL should not present catamorphism summaries, contract-as-lemma application, fold/unfold elimination, or the Tcata termination/soundness claims as new ideas. New work should test the translation to Verus `spec fn`/`proof fn` contracts, ownership-sensitive data structures, and maintenance under Rust changes. The baseline counts also show that direct ADT CHC solving is a weak comparison unless encodings are matched carefully.
-
 ## techniques for the catalog
 
 - catamorphism contracts — specify ADT behavior through total structural summaries and basic-sort postconditions
@@ -94,5 +88,3 @@ VL should not present catamorphism summaries, contract-as-lemma application, fol
 - widening-based termination — generalize constraints while finitely adding catamorphism atoms to guarantee termination
 - basic-sort solver discharge — run SPACER or Eldarica on the transformed LIA/Bool clauses
 - one-way soundness accounting — treat transformed satisfiability as sufficient for validity, while unsatisfiability is inconclusive
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Thus, the unsatisfiability of TransfCls means that our transformation technique is unable to prove the validity of the contract at hand, and not necessarily that the contract is not valid."): read the whole paper text (pp. 1-18 including appendices); checked every quotation word for word, the page and section references, Definitions 1-2, the Tcata steps, Theorems 1-3, the Table 1 sums (191, 125, 285,710 ms, 32,380 ms), and the baseline solver counts. Changed: Theorem 2 page (11, not 12), termination pages (8-9), hardware page (12), Example 3 page added, Definition 2 wording, removed the unsupported "191/191" and "denominator" claims (the paper gives proved counts only, not attempted counts), removed "complete recipe", and marked my own conclusions (exclusions beyond ADT equality, widening precision, contracts-as-lemmas justification, trusted components) as Inference. Not checked: the Verus code sketch and Verus mappings (inferences, not paper content), the proofs in Appendix C beyond reading them, the VeriCaT web page, and any cited work.

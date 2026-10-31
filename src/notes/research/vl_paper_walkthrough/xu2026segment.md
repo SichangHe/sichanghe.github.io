@@ -46,17 +46,9 @@ Verus form. Inference: run the same ablation with a fixed Verus benchmark, prese
 
 Evidence and limits. Segment-level wins miniF2F in all three training sources: 64.84%, 60.90%, and 66.31% (Table 1, p. 7). Whole-proof-seg underperforms segment-level in all settings, so the authors attribute gains to both training target and search interface (Section 4.2, p. 7). Alternative token, tactic-distance, and state-distance boundaries perform below open-goal change; the best is 66.31% on NuminaMath-LEAN miniF2F (Section 4.3, p. 9). Inference: these comparisons support the signal in the studied Lean distributions, not a universal optimal boundary rule.
 
-## what is proved, trusted, and relevant to VL
-
-Lean checks every source trajectory and generated tactic sequence, but model weights, theorem formalizations, benchmark selection, and the Lean environment remain trusted inputs. The key measurements have explicit settings: five independent runs for success rates, and common-solved subsets for cost (Table 1 and Table 2 captions, p. 7). The paper's appendix openly states that short proofs and highly automated tactics reduce the benefit of intermediate segments (Appendix A.1, p. 12).
-
-Inference: VL can reuse the central idea by organizing verified Rust proof traces around obligation-set changes and using bounded macro rollouts to reduce search branching. Inference: the product threat is a rollout that suppresses a failed intermediate proof step or a segmentation heuristic that misses a semantic change; replayable compiler logs and clean final verification are required. Existing VL work should not redo generic claims that intermediate supervision can help LLM proving. A useful new result would measure this boundary signal on Verus obligations, with denominators for candidate attempts, verified proofs, backtracks, compiler time, and contract edits.
-
 ## techniques for the catalog
 
 - verified trajectory reconstruction — replay compiled proof scripts to record state/action transitions for reusable supervision
 - open-goal segment supervision — place boundaries after goal-count changes and train on locally coherent tactic sequences
 - goal-aware rollout — after a structural goal change, execute a bounded linear continuation before returning to search
 - granularity ablation — compare atomic, whole-proof, and segment targets under matched data and evaluation settings
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

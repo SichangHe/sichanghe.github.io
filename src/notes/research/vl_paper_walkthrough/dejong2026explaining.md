@@ -47,14 +47,8 @@ steps: run each of eight instruction-following models five times with the same n
 
 evidence: Claude Sonnet 4.5 is best with 58.2 (±0.2)% exact match and 73.1 (±0.2) micro-F1 (mean ± sample standard deviation over five runs, 362 problems; Table 3, p. 7). Annotator mean is 80.9 exact match and 84.9 micro-F1, so the best model trails by 22.7 and 11.8 points. Models overgenerate: top-five predictions average 1.4 relations versus 1.0 in references; predicted empty sets are 15% versus 29% reference sets. Inference: high recall or proof coverage does not establish relation soundness.
 
-## what is proved, trusted, and relevant to VL
-Section 5, footnote 6 (p. 5), states: “The resulting tableau constitutes a formal proof whose individual inference steps can be inspected.” Inference: its conclusion depends on the sentence analysis, inference rules, and supplied lexical assumptions. LLM-generated relations are not guaranteed true; the paper explicitly reports semantically unsound relations helping proofs by compensating parser errors. The dataset covers entailment only; contradiction and neutral are excluded because their explanations involve negation, incompatibility, or missing information (Limitations).
-
-Inference: VL can adopt the architecture as a proposal-and-check loop for Rust proof search: model suggests candidate lemmas, verifier checks, failure feedback triggers one revision, and metrics distinguish suggestion quality from verified proof count. Inference: VL should not count increased proof coverage as evidence of soundness without checking specifications and assumptions. Admitting unproved model relations as axioms would make their truth a trusted assumption.
-
 ## techniques for the catalog
 - LEX relation encoding: express needed lexical knowledge as directed, normalized specific-to-general relations
 - multi-reference curation: annotate multiple valid explanation sets and adjudicate variation
 - neuro-symbolic KB injection: generate relations, run a symbolic prover, and optionally revise after proof failure
 - intrinsic/extrinsic diagnostics: score explanations with EM/F1 while separately counting machine-constructed proofs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Agentic generation improves proof coverage for all models except Gemma 3 4B, indicating that Gemma cannot successfully revise the relations produced in its initial attempt."): checked all quotations, numbers, section and page references, technique steps, and the arXiv link against the paper; corrected the introduction attribution and shortened quotation, restored independent annotation and scoring details, separated intrinsic scoring from proof assistance, and marked or removed unsupported conclusions; did not rerun experiments, inspect the code or dataset, or validate the proposed Verus adaptations.

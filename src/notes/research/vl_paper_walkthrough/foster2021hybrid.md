@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `foster2021hybrid`, [paper](https://arxiv.org/abs/2106.05987)
 
-
 ## framework
 
 The paper extends an Isabelle/HOL shallow-embedding framework for hybrid programs. Its abstract lists three changes: “an algebraic model for hybrid program stores, a shallow expression model for hybrid programs and their correctness specifications, and domain-specific deductive and calculational support.” (Abstract, p. 1) The resulting workflows either certify a unique ODE solution and use it for weakest-precondition reasoning, or assert invariant sets and prove them abstractly (Section 1, p. 2).
@@ -67,7 +66,7 @@ Verus form. Inference: Verus’s solver automation and proof functions might sup
 
 The water-tank proof uses `dInduct-mega`, frame reasoning, and `dProve` to verify a controller loop; the autonomous-boat example proves vector invariants such as `s² = v·v` and unchanged velocity and orientation `φ` when `a = 0` (Section 7, pp. 12–15). The paper reports examples rather than a single aggregate denominator or runtime table. It claims a framework tested on “a large set of hybrid verification benchmarks” (Section 1, p. 3), but does not quantify that phrase in this paper.
 
-The paper states its rules as theorems proved in Isabelle/HOL and presents example proofs. Inference: trusted assumptions include the model’s ODE semantics, user-provided flows and Lipschitz facts, any future translation from modelling languages (the paper lists Modelica as future work), and Isabelle libraries. Inference: for VeruLaw, the local-frame discipline is a medium-threat, high-value pattern for controller code because it limits proof obligations to modified state. Continuous dynamics remain high threat when numerical code, solver tolerances, or plant assumptions are outside the verified model. VL should reuse frame-based modularity and explicit flow/invariant contracts rather than redo generic differential-induction foundations.
+The paper states its rules as theorems proved in Isabelle/HOL and presents example proofs.
 
 ## techniques for the catalog
 
@@ -75,4 +74,3 @@ The paper states its rules as theorems proved in Isabelle/HOL and presents examp
 - shallow expression translation — preserve readable specifications while translating program variables to semantic store operations
 - framed differential induction — calculate derivatives only over mutable continuous variables and combine cuts, frames, and ghosts
 - automated flow and invariant tactics — use weakest-precondition, differential-induction, and certified-flow methods to discharge routine obligations
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We have developed a proof method called local-flow for certifying that a flow is the unique solution to an ODE."): read the whole paper text; checked the quotations, section and page references, rule and equation numbers, the frame-rule side condition, the technique steps and the water-tank, pendulum, decay and boat examples; changed the frame-rule step (page 6, side condition `(−A) ] I`), tool-description details in techniques 2 and 4, the ghost-rule step, the boat summary, and marked unsupported gloss as Inference; replaced the DOI link with the arXiv link from the paper text; did not check the Verus comparisons against Verus documentation, the DOI target, or the Isabelle proofs.

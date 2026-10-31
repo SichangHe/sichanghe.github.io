@@ -1,8 +1,6 @@
 # Spec-Harness: Measuring and Improving Behavioral Adequacy of LLM-Synthesized Formal Specifications
 (authored by agents unless marked 🧑)
 
-Audit: audited 2026-10-13 against the paper; checked every number, fraction and page/section reference, the formulas and steps of techniques 1, 2 and 4, and the Verus forms; the numbers matched; changed one widened claim (ceiling, not quickly), one reference (Equation 1 is on p.6), one date-model label, one unattributed novelty claim, and added Inference marks on the trusted list and the Codex remark; the Verus statements are consistent with the Verus references (reveal_with_fuel, old).
-
 source: Misu, Ma, Lopes (UC Irvine), arXiv:2604.00280v2 (8 Sep 2026), 12 pages, IEEE two-column, no appendix; artifacts in the authors' VeriAct GitHub repository (Section X, p.11)
 
 earlier coverage in the notes: `topic_studies/formal_verification_rust/llm_for_verification/specifications.md` has a short entry (the four scores, the 49.2% to 63.3% Claude Code figure, the omitted contract features), and `daily_proposals/2026-10-07/source_review.md` has an entry that says the numbers were not extracted. Neither gives the harness construction, the formulas, the scoring function for prompt search, the agent loop, or the points where the paper's numbers disagree with each other. Those are below.
@@ -97,7 +95,7 @@ evidence (Table III, p.6; gpt-4o; SpecGenBench 118 tasks after removing the 2 de
 - “After optimization, all three prompt types converge to a narrow band (45.70–46.61% on SpecGenBench, 18.59–19.96% on FormalBench), regardless of how far apart their seeds began.” (Section IV-C, p.6)
 - under the adequacy scores the optimized prompts reach 39% PostComp on SpecGenBench and 14% on FormalBench (Section V-E item 4, p.8)
 
-Verus form (Inference): the same grading applies to Verus output by splitting compiler and syntax errors from verification errors and counting failed obligations. Inference: the lesson for VL is negative. With gpt-4o-2024-08-06 as generator, prompt search against verifier acceptance moved FormalBench by under one percentage point; and the thing it climbs is the wrong target, as the paper states: “Optimizing against verifier acceptance makes specifications pass more often without making them capture more behavior, because the signal only rewards passing, not adequacy.” (Section V-E, p.8)
+Verus form (Inference): the same grading applies to Verus output by splitting compiler and syntax errors from verification errors and counting failed obligations.
 
 where it fails: one model (gpt-4o) is both generator and reflector, which the authors note may limit feedback diversity (Section VII, p.9); no variance over repeated optimizer runs is reported.
 
@@ -156,12 +154,6 @@ Inference: any generator whose loop proposes many clauses and keeps what the ver
 - the seeds are introduced as zero-shot (worst), least-to-most (average), chain-of-thought (best) (Section IV-B, p.5), but in Table III the least-to-most seed (45.66%) is above the chain-of-thought seed (44.07%) on SpecGenBench
 - Section V-E says optimized prompts are about the same as unoptimized ones under the harness; on FormalBench it gives 14% PostComp for the optimized prompt and at most 9% for the three prompt approaches. The task sets and models differ (512-task test split with gpt-4o against 662 tasks with the best model), so the two are not directly comparable, and the paper does not give the seed prompts' adequacy on the same split
 - Section VI-C says Claude Code's and Codex's verification rates dip only slightly on SpecGenBench; the Figure 6 labels read 0.93 to 0.78 for Codex
-
-## already done, so VL should not redo
-
-- the idea of checking a contract on concrete pairs and mutated outputs through the verifier is prior work for Dafny and Rust by the paper's own account (Section V, p.6, and the acknowledgment, p.11, crediting Lahiri's intent-formalization work). The paper states its addition as bringing this to JML and OpenJML and also scoring preconditions (Section V, p.6). Inference: the use as agent feedback is also new here, but the paper does not say so
-- Inference: the finding that verifier acceptance overstates contract quality needs no further demonstration; VL should measure adequacy from the start
-- not done: any Rust or Verus measurement; loop invariants, frame conditions, exceptional behavior; held-out pairs for the feedback experiment; multi-function or stateful code (all tasks are single Java methods from LeetCode-style and MBJP sources, Table I, p.4)
 
 ## what it means for selling agent-written Verus contracts
 

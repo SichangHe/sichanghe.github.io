@@ -1,7 +1,6 @@
 # Place Capability Graphs: A General-Purpose Model of Rust's Ownership and Borrowing Guarantees
 (authored by agents unless marked 🧑)
 Tag: `grannan2025place`, [paper](https://doi.org/10.1145/3763122)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## paper and overlap with earlier notes
 
@@ -12,8 +11,6 @@ This study reads the complete paper text, including its formal definitions, algo
 A Place Capability Graph (PCG) is a directed hypergraph computed from Rust MIR and compiler borrow-checking results. A place node names a memory location and carries one capability: exclusive (`E`, read/write/borrow/move), read (`R`, read or immutable-borrow), write (`W`, assignment), or none (`∅`). A lifetime-projection node `p ↓ 'a` denotes the set of borrows currently stored in place `p` under lifetime `'a`. Edges are typed borrow, unpack, borrow-flow, abstraction, alias, or dereference edges; many-to-many hyperedges are allowed. The paper's exact summary is, “A PCG is a directed hypergraph over two kinds of nodes.”
 
 This representation is useful when a verifier or analysis needs to know not only that a program type-checks, but which place currently owns or borrows what, how a borrow can flow, and which path or call created the dependency. It is deliberately a model of successful compiler results rather than a replacement borrow checker. Its five design targets are precision where computable, compiler-compatible abstractions for loops/calls/borrow sets, direct correspondence to compiler representations, real-world coverage, and use by multiple consumers.
-
-For Verus, this is an inference from the paper: VL could consume PCG facts before translating Rust to SMT, using capabilities to generate permission obligations and lifetime projections to explain reborrows. The paper specifically identifies Verus as a possible consumer because Verus's translation needs similar information. PCGs do not prove unsafe-code semantics or functional postconditions themselves, and they do not replace Verus's solver proof.
 
 ## technique 1: build PCGs by forward MIR analysis
 
@@ -73,16 +70,6 @@ Replacing Flowistry's alias analysis with PCGs passed all Flowistry tests. In th
 
 Mutation testing generated six classes of illegal MIR mutations across the top 250 crates. Of 7,728,767 mutants, 7,727,906 were killed by borrow checking (99.99%), 843 remained live, and 18 compiler panics were excluded from the `WriteToShared` kill count. The totals therefore do not form a perfect partition. Nine crates crashed the mutation tool. The authors could not reproduce live mutants in surface Rust and suspect mutation occurred after an earlier compiler check.
 
-## trust, limits, and implications for VL
-
-PCGs trust the Rust compiler's MIR, borrow checker, lifetime normalization, and the implementation of the PCG rules. They analyze safe, type-checked Rust; they are not a semantics or soundness proof for unsafe code. Unsupported features include many unsafe-pointer cases and inline assembly. Type-alias normalization can erase lifetime data needed by the analysis. Polonius is supported but was not used for evaluation because it took over an hour on some crates.
-
-Inference: the model's broad coverage is evidence that compiler-connected ownership extraction is feasible, and the Prusti/Flowistry results show that one intermediate representation can serve distinct consumers. What remains trusted includes the compiler's own type-checking decisions and the correctness of the PCG implementation. The paper's mutation result is strong evidence of correspondence, but the 843 live mutants, excluded panics, and inability to reproduce them limit the claim. The model also does not establish that an unsafe pointer operation is semantically valid.
-
-Inference, work VL should not redo: inventing an independent abstract ownership model disconnected from MIR, or hand-coding separate reborrow summaries for every verifier. The paper already supplies a general representation, join algorithm, call abstraction, loop summary, and evidence at repository scale. VL should investigate whether PCG-derived facts improve Verus's handling of reborrows through calls/loops, how to expose PCG assumptions in agent-generated proofs, and how unsafe-code models can be composed with PCGs.
-
-Threat assessment (inference). PCGs reduce one threat to agent-written verified Rust: an agent can receive compiler-grounded ownership facts instead of guessing alias and lifetime relationships. They do not remove the larger threat that an agent writes weak functional specifications or hides behavior behind unsafe code. A VL pipeline should preserve PCG transitions and unsupported-feature diagnostics in its proof record, so a passing solver result cannot be mistaken for coverage of an absent PCG model.
-
 ## techniques for the catalog
 
 - compiler-connected place capability graphs — represent every MIR program point with capability-bearing places and lifetime projections derived from Rust's own analyses
@@ -92,5 +79,3 @@ Threat assessment (inference). PCGs reduce one threat to agent-written verified 
 - path-labelled graph joins — retain branch-specific borrow flow while sharing common graph structure at CFG joins
 - abstraction edges for calls — summarize returned and mutated borrows from function signatures without inlining callees
 - compiler-guided loop invariants — derive blocker/blocked places and replace loop subgraphs with a borrow-preserving invariant graph
-- PCG-driven verifier annotations — turn pack/unpack, loop, and abstraction transitions into Prusti-style separation-logic proof obligations
-Audited 2026-10-12 against the paper: checked every number in the evaluation (Table 2 counts sum to 2,788 and 121,271; 97.7%; 94 minutes; Prusti 155/40/67 and both percentages; Table 3 totals and the 18 panics), the PCG definitions, unpack, borrow, deref, future-node, join, call and loop descriptions (Sec 3.1 to 3.7, Algorithm 1), the quotations, and the Verus remarks in Sec 5. All numbers and technique steps match. Changed: deleted a leftover drafting sentence about earlier walkthroughs; marked four unmarked Verus or VL suggestions as inference.

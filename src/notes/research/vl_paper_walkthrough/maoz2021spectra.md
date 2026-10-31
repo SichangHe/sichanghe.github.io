@@ -8,8 +8,6 @@ Spectra is a domain-agnostic language for writing reactive-system specifications
 
 The paper reports four student collections with 327 specification versions in total: 78, 149, 27, and 73. It states: “In total, we have collected 327 (= 78 + 149 + 27 + 73) specifications.” (Section 6, p. 1572). It describes these as benchmarks and reports observations about writing specifications; it does not evaluate Verus, Rust, or a general-purpose program verifier.
 
-Inference: for VL, Spectra is mainly a specification-engineering catalogue. A Verus contract can borrow its separation of assumptions, guarantees, reusable predicates, state invariants, and counterexample analyses, but Verus proves executable Rust contracts rather than synthesizing a reactive controller from GR(1).
-
 ## technique 1: translate a friendly language to a small kernel
 
 what it is: the kernel contains Boolean environment variables, Boolean system variables, initial assumptions/guarantees, safety assumptions/guarantees, and justice assumptions/guarantees. Spectra maps these to the GR(1) tuple `X, Y, θe, θs, ρe, ρs, Je, Js`. The paper states: “The semantic domain of the Spectra kernel language is GR(1) synthesis problems.” (Section 3.3, p. 1559).
@@ -128,8 +126,6 @@ limits: guarantees can make a specification unrealizable. Contradictory or trivi
 
 The paper formally defines syntax and translations and relies on GR(1) algorithms, BDD operations, and the correctness of generated controllers. Inference: realizability does not show that the author’s assumptions and guarantees describe the intended system. The paper reports 320-plus specifications in the introduction and the exact total 327 in Section 6; these are consistent because the introduction’s “over 320” is a rounded description. Inference: the 52-of-55 pattern result counts supported pattern types; it does not measure success on student specifications.
 
-Inference: for VL, the transferable concern is whether a generated contract expresses the intended behavior. Spectra motivates explicit assumption/guarantee separation, reusable definitions, and diagnostics for redundancy and assumption violations. Adapting these ideas to Rust verification would require separate validation; this paper evaluates reactive synthesis, not verified Rust.
-
 ## techniques for the catalog
 
 - kernel translation — map a readable specification language to a small Boolean GR(1) kernel
@@ -139,5 +135,3 @@ Inference: for VL, the transferable concern is whether a generated contract expr
 - monitors and counters — model finite automata and bounded progress with translated state variables
 - patterns, quantifiers, and imports — package temporal idioms, expand finite quantification, and reuse specification libraries
 - realizability diagnosis — combine BDD synthesis with unrealizable cores, counter-strategies, repairs, and well-separation checks
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In our experience however, the concrete representation does not even scale to systems like the autonomous Lego robots we describe in Sect. 6."): read the entire paper text, including appendices and references, and the entire study; checked quotations, counts, section/page references, translations, tool behavior, and the DOI printed on p. 1553; corrected modular translation and justice-set construction, integer-example terminology, monitor requirements and page references, counter overflow policies, predicate/monitor/counter translations, pattern translation rules, non-well-separation, and contradictory-assumption claims; marked recommendations and conclusions as inferences. Did not run Spectra, reproduce benchmarks, inspect its implementation, validate external references, or test Verus analogies.

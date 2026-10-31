@@ -1,8 +1,6 @@
 # SpecAgent: Empowering Program Verification with Agentic Synthesis of Formal Program Specifications
 (authored by agents unless marked 🧑)
 
-Audit: audited 2026-10-13 against the paper; checked every number, table total, page reference, the steps of each technique against Sec. 3, and the quotations; changed one page reference (Sec. 3.3.1 is on p. 8, not p. 7) and marked three unmarked inference passages (trusted components, the VL threat, what VL should not redo).
-
 ## scope and main claim
 
 SpecAgent is a Python prototype for synthesizing ACSL annotations for C programs. Its central claim is a workflow claim: specification generation should plan dependencies, retrieve structurally similar examples, verify candidates, repair root causes that may be upstream, and critique semantic strength after proof success. The paper evaluates this on 50 programs from 14 repositories and on 811 verification targets. It reports 96.82% precision and 88.95% recall for DeepSeek-V4, and 604/811 targets discharged. These are the paper's measurements; the transfer to Verus below is my inference.
@@ -111,12 +109,6 @@ Full critique raises recall from generation-only by 8.02 points (DeepSeek) and 1
 Agents use ReAct tool calls, but a deterministic state-machine orchestrator controls role transitions, budgets, and termination. Planning and critique get ten steps; generation and repairing get thirty; total invocations are capped at ten. Agents share a workspace but no mutable conversation state. On DeepSeek, SpecAgent averages 1,684.49 seconds, 25.58 Frama-C calls, 99.40 LLM calls, and $0.6228 per program. It discharges 604/811 targets (74.5%): X509-parser 140/140, Contiki 137/163, Atomthreads 109/239, and SV-COMP 218/269. These denominators are essential: success is substantial but incomplete.
 
 Inference: the trusted components include the C implementation, ACSL parser, Frama-C/WP and Eva, SMT solvers, model outputs, orchestrator, benchmark translations, and the equivalence script used for precision/recall. The paper notes that WP is incomplete and may create false negatives. It also reports that SpecGen modified source code and invalidated some targets (Contiki and Atomthreads); inference: this supports annotation-only edits.
-
-Inference, for VL: the threat is high for agent-written verified Rust if the system treats “verifies” as sufficient. SpecAgent demonstrates a practical architecture for planning, retrieval, repair, and strength critique, but its C/ACSL experiments do not establish Verus correctness, unsafe-Rust coverage, or semantic adequacy of Rust contracts. VL should reuse the staged control loop and completeness probes while separately auditing ownership, panic behavior, integer overflow, unsafe boundaries, and solver assumptions.
-
-## what VL should not redo
-
-Inference: VL need not rediscover dependency-aware planning, structural example retrieval, verifier-gated repair, or post-proof strength critique. It does need Rust-specific implementations and evidence because the paper explicitly says its evaluation focuses on C/ACSL/Frama-C and may not generalize (Sec. 6.2, p. 17).
 
 ## techniques for the catalog
 

@@ -28,7 +28,6 @@ Inference: applying this work to agent-written verified Rust would require colle
 
 ## techniques for the catalog
 
-
 - repository filtering — search public Lean repositories, estimate proof-bearing files, reject incompatible versions and retain only compilable evidence
 
 - direct compiler extraction — compile isolated files with the underlying compiler and a dependency graph instead of requiring every Lake target to succeed
@@ -38,5 +37,3 @@ Inference: applying this work to agent-written verified Rust would require colle
 - proof-state name normalization — rename free variables and hypotheses by internal storage order to identify states with the same hypotheses and goals
 
 - proof-trace training — fine-tune next-tactic generation on declaration and proof-state inputs, then evaluate with best-first proof search
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "It comprises 371 formal problems which are sourced from popular undergraduate pure mathematics textbooks and cover topics such as real and complex analysis, linear algebra, abstract algebra, and topology."): checked the entire paper, quotations, counts, references, extraction and search procedures, training, and benchmark results; corrected the paper link, deduplication quotation and references, conclusion quotation and page, unsupported procedure details, and inference labels; did not reproduce extraction, training, proofs, or benchmark experiments.

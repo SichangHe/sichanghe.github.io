@@ -184,20 +184,11 @@ This principle does not make informal intent perfectly provable. It makes human
 and agent omissions equally visible and prevents either source from becoming the
 oracle. The manager owns the concrete benchmark design, staging, and launch.
 
-Experiment ownership, staging, and launch belong to the manager. The separate
-context result is only a boundary fact: one qualifying PCODX route can inject a
-compacted ledger into a fresh upstream thread, but in-place active-thread
-replacement, KV-cache reuse, live-provider acceptance, and semantic recall have
-not been demonstrated.
-
-## source map
-
 ### CP — CryptoProver
 
 - authoritative manuscript: <https://arxiv.org/abs/2608.00965>
 - primary full text: <https://arxiv.org/pdf/2608.00965v1>
 - local PDF:
-  [paper](</hdd1/sichanghe/paper_collection/An AI Approach to Verified Production Cryptographic Libraries, Chuyue Sun, Su Fong, Zhiyi Kuang, Yizheng Jiao, Nina Narodytska, Haoze Wu, David L. Dill, Clark Barrett, arXiv, 2026.pdf>)
 - SHA-256:
   `5afa405f7721666d45fe7fa32f24547aadcec7b9bef3fc6d6e3c5ea007bced42`
 - version/date: arXiv v1, 2026-08-02
@@ -213,7 +204,6 @@ not been demonstrated.
   <https://verse-lab.org/papers/leetproof-ase26.pdf>
 - DOI: <https://doi.org/10.1145/3832783.3837559>
 - local PDF:
-  [paper](</hdd1/sichanghe/paper_collection/LeetProof- Certified Program Synthesis with a Multi-modal Verifier, Yueyang Feng, Dipesh Kafle, Vladimir Gladshtein, Vitaly Kurin, George Pîrlea, Qiyuan Zhao, Peter Müller, Ilya Sergey, ASE, 2026.pdf>)
 - SHA-256:
   `f3702b4d98a5f92f28a3f303102433b37e9aaeae16bd245df65481f03df1f664`
 - version/date: ASE 2026 proceedings version; retrieved 2026-08-05
@@ -238,7 +228,6 @@ not been demonstrated.
 - authoritative paper: <https://arxiv.org/abs/2510.01346v2>
 - official service: <https://aristotle.harmonic.fun/>
 - local PDF:
-  [paper](</hdd1/sichanghe/paper_collection/Aristotle- IMO-level Automated Theorem Proving, Tudor Achim et al., arXiv, 2025.pdf>)
 - SHA-256:
   `3cb2f3760b9f73ef24caf36ceafa600e75da5ca51f31dd46f662aac3b6263749`
 - version/date: arXiv v2, 2025-10-10

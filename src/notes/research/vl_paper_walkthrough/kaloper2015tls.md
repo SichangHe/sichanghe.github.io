@@ -123,12 +123,6 @@ Verus form. Inference: mark C/FFI primitives as trusted specifications only if t
 
 Only the AES-NI AES implementation was protected from timing side-channel leaks; the generic path still needed work (Section 4.2, paper p. 8). The paper also explicitly lists “no mitigation of Lucky13 [19]” (Section 7.2, paper p. 12).
 
-## what remains trusted, contradictions, and product threat
-
-The paper proves neither TLS security nor correctness of its model. Inference: trusted components include the OCaml type checker/compiler/runtime, generated parser code, C primitives, GMP, entropy sources, Xen/Linux, cryptographic assumptions, and policy choices. Inference: the TCB comparison is a code-size ratio (2,560/102 ≈ 25.1), not a measured probability of compromise. Table 2 excludes the Xen hypervisor shared by both systems; the OCaml compiler is discussed separately (section 7.2, paper p. 13). Section 7.1 reports roughly 30,000 traces from about 350 client stacks; around 27% of these resulted in connection-establishment failure. Section 1.1 (paper p. 3) separately states “roughly 10% failing connections from legacy clients.” Inference: the paper does not reconcile this with the 27% figure. Section 7.3 reports throughput ratios of about 78% and 84% for 16-byte and 8196-byte blocks respectively (paper pp. 13–14). Inference: these are scenario-specific ratios, not one overall ratio.
-
-Inference: for VeruLaw, the strongest reusable ideas are explicit state-machine types, pure transition specifications, parser round-trip lemmas, and predicate-based certificate validation. They can reduce agent-written Rust’s attack surface when contracts are complete. The threat remains high for cryptography, FFI, entropy, protocol-policy mismatches, and omitted transitions; a Verus proof only establishes the written contracts.
-
 ## techniques for the catalog
 
 - executable specification and trace oracle — reuse a pure transition function as both implementation core and deterministic checker for recorded sessions
@@ -137,4 +131,3 @@ Inference: for VeruLaw, the strongest reusable ideas are explicit state-machine 
 - declarative ASN.1 derivation — synthesize parsers/serializers from typed grammar values and test round trips
 - predicate-based X.509 validation — compose deterministic certificate predicates into role-specific validators
 - constrained cryptographic boundary — minimize C to primitive loops, keep protocol logic memory-safe, and combine fuzzing with hostile-input corpora
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Such a discrepancy might indicate an error in the TLS stack being tested, an error in the nqsb-TLS specification, or an ambiguity in what TLS actually is."): checked all quotations, numbers, section/page references, and technique steps against the full paper; corrected page references, trace-checker inputs, state-machine claims, fuzzing attribution, and timing limitations, and marked conclusions as Inference; did not inspect implementation code, independently validate Verus examples, or reproduce experiments.

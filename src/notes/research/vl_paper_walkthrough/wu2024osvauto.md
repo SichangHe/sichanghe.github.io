@@ -91,19 +91,9 @@ Table 1 (p.18) reports 58 goals over 901 lines of specifications, auxiliary defi
 
 Verus form: Inference: an analogous workflow would express API behavior, state invariants, and preservation obligations in Verus. OSVAuto's timing and 58-goal result do not predict Verus throughput.
 
-## trusted boundary, failures, and product threat
-
-Section 4 attributes incompleteness to heuristic instantiation and states that normalization and encoding preserve satisfiability. Section 5 reports a Python implementation using Z3's Python API (pp.16–17). Inference: relying on these results requires trusting the implementation and solver, and separately checking that the functional model describes the intended implementation.
-
-The authors leave combining this work with concurrent separation-logic reasoning to future work (Section 5, p.17). They also leave completeness proofs to future work, explaining difficulties with uniqueness and index-dependent properties (Section 6, pp.17–18). Inference: an adaptation to agent-written verified Rust would need to distinguish instantiation failure from a false invariant and establish the connection between the functional model and implementation behavior.
-
-Inference: Table 1's listed API times sum to 218.7 seconds, matching its total; its goal counts sum to 58. The table therefore supports the stated 58-goal case-study denominator, while the paper gives no success denominator for obligations outside this selected set.
-
 ## techniques for the catalog
 
 - normalization to solver primitives — expand rich structures, maps, sequences, and quantifiers into generalized atomic terms and basic operators
 - condition-carrying graph instantiation — propagate index substitutions through weighted graph edges while pruning inconsistent paths
 - uninterpreted-function SMT encoding — map normalized names and indices to primitive SMT variables/functions before solving
 - automatic invariant/refinement discharge — run the pipeline on stated OS functional obligations without interactive proof steps
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Whenever an instantiation is added according to the above rules, the list of conditions is combined with the quantifier-free facts in the current proof goal, and checked for inconsistency using the backend SMT solver."): checked all paper text, quotations, numbers, section/page references, and technique steps; corrected instantiation seeds, added pattern propagation and generation details, corrected enumeration examples and references, used the paper's arXiv link, and removed unsupported Verus claims; did not run OSVAuto, inspect its implementation, or validate a Verus adaptation

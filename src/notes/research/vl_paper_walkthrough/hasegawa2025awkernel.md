@@ -135,14 +135,6 @@ Inference: the trusted or assumed elements are the line-by-line translation, ato
 
 The paper distinguishes model exploration from implementation coverage: “Hence, even though model checking exhaustively verifies described behaviors, it must be noted that behaviors not described are not checked.” (Section 7.3, p. 11) Runtime verification addresses some omissions but is itself non-exhaustive. Inference: combining the two is evidence strengthening, not a compositional proof of the entire implementation.
 
-## implications for VeruLaw
-
-Inference: the strongest transferable idea is to make concurrency assumptions executable twice: as a finite search model for rare interleavings and as a runtime monitor for implementation/model mismatch. A VL agent could generate a Verus transition contract, a small bounded harness, and an optional runtime monitor from one reviewed task-state specification.
-
-Inference: the product threat is high for agent-written verified concurrent Rust if agents silently choose atomic blocks, bounds, or timer assumptions. A successful Verus check can establish only the written contract; it does not establish that the Promela abstraction, task partition, or interrupt model covers production behavior. The paper's two discovered omissions show why runtime instrumentation and human review of the model boundary remain necessary.
-
-Inference: VL should not redo the basic pattern of line-by-line Promela translation, guarded-process preemption encoding, DFA task monitoring, or the `need_sched` race scenario as if they were new techniques. Existing work already reports them, including the concrete resource measurements and two bug classes above. A useful new VL experiment would measure whether one shared transition specification can generate sound Verus contracts and runtime monitors without introducing an unproved translation gap.
-
 ## techniques for the catalog
 
 - line-by-line model-checking-assisted review — translate concurrent Rust control flow into Promela and inspect Spin's exhaustive traces under explicit assumptions
@@ -152,4 +144,3 @@ Inference: VL should not redo the basic pattern of line-by-line Promela translat
 - task-class under-approximation — use Light and Heavy task automata and run fixed parameter sets separately to control state explosion
 - DFA runtime transition monitor — embed one deterministic task model per task and check every state-changing event in the Rust implementation
 - model-checked race repair — mark the intended task with `need_sched`, cancel stale preemption, and re-check the existing waiting-task behavior
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Once preemption occurs, the flag ensures that the next preemption cannot happen until one of the tasks completes its process."): checked all paper text, quotations, numbers, section/page references, and technique steps; corrected quotations, the single completed-run configuration, the intentionally embedded bug description, preemption and monitor steps, and inference labels; did not check external references, implementation artifacts, or the proposed Verus adaptations.

@@ -18,7 +18,7 @@ how to do it:
 4. use edits to skip declarations, rename definitions, supply annotations or replacements, and correct declaration order as needed (Sections 3, 3.5–3.6, and 4.2)
 5. prove properties over the translated definitions; address partiality and termination issues and inspect remaining assumptions (Section 3.7, pp. 9–10)
 
-Verus form. Inference: a VL front end could preserve Rust names and interfaces while generating specifications and proof obligations. A possible design would use `spec fn` predicates, `requires`/`ensures`, and `proof fn` lemmas. The paper does not evaluate this Rust workflow.
+Verus form.
 
 evidence and limits: partial pattern matches can introduce `patternFailure : forall {a}, a`; a `nonterminating` edit can replace recursion with `unsafeFix : forall {a}, (a -> a) -> a`. Both axioms are unsound. The authors recommend eliminating provisional axioms as necessary and using `Print Assumptions` to inspect dependencies. Options for termination include fuel, `Program Fixpoint` with a termination edit, handwritten Coq definitions, or refactoring (Section 3.7, pp. 9–10). Unsupported features can produce axioms with explanatory comments (Section 3.9, p. 10). The base translation skips IO, arrays, and selected partial operations (Section 4.3, p. 12).
 
@@ -52,15 +52,9 @@ Verus form. Inference: a Rust Bag implementation could use a ghost sequence, a `
 
 evidence and limits: verification exposed a missing condition in `foldBag`’s documentation. Besides associativity of the combining operator, equality with the commented-out reference implementation requires the initial value to be its identity. The discrepancy had existed for over 21 years (Section 2.3, p. 5).
 
-## trusted boundary, failures, and product threat
-Inference: applying the Coq results to the original Haskell requires confidence in the translation, edits, specifications, and library mappings, as well as checking the theorems’ assumptions. Skipped code lies outside the verified scope. The paper does not establish a general semantic-correctness theorem for hs-to-coq; testing operational equivalence after round-tripping through extraction is future work (Section 5.1, p. 12).
-
-A concrete semantic limitation is the library’s mapping of primitive numeric types to Coq binary numbers `Z` and `N`. For fixed-precision types, these mappings were chosen for expediency; handling underflow and overflow is future work (Section 4.2, footnote 8, p. 11). Inference: these proofs cannot automatically establish machine-integer behavior. For VL, the reusable ideas are explicit representation invariants, correspondence lemmas, selective translation, and assumption inspection. Their application to Rust ownership, mutation, and effects would require further work.
-
 ## techniques for the catalog
 - total-source translation — translate terminating Haskell definitions into a live Coq program while preserving structure
 - law-class specifications — encode algebraic laws as type-class fields and prove concrete instances
 - totalization before proof — replace partial results with explicit option values before compiler-correctness proofs
 - representation correspondence — prove operations equivalent to a simpler model and preserve an invariant
 - declarative verification slicing — skip irrelevant modules and definitions through edit directives
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Since Coq does not have this feature, hs-to-coq has to remember the default method’s definition and include it in the Instance declarations as needed."): checked all quotations, numbers, section and PDF-page references, technique steps, and scope against the full paper; corrected a quotation and page references, clarified axioms, skipped code, and numeric limitations, and marked proposed applications as inference; did not run hs-to-coq, reproduce Coq proofs, test Verus applications, or inspect cited external sources.

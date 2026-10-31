@@ -60,7 +60,7 @@ Steps (§4.1.2, p.4; §4.6, p.7):
 
 Size: 15,463 lines of Python and 1,230 lines of prompts (§4.6, p.7).
 
-Verus form. Inference: this is an orchestration pattern and transfers as is. The validators for a Verus agent would be: the diff touches only allowed regions; the target function's signature and `ensures` are unchanged; no `assume`, `admit()` or new `#[verifier::external_body]`; the count of verified functions did not fall. The point that matters for VL is step 4's monotonicity rule: a change is rejected if it lowers any previously achieved measure, even when it fixes the current error.
+Verus form.
 
 Evidence: the uncontrolled alternative is the baseline CodexUP, a general coding agent (GPT Codex) given the goal and the five criteria but no method (§5.2.1, p.8). On the 57 CVE targets (Table 1, p.9): structurally valid 31.6% for CodexUP against 93% for AutoSOUP at scope level 1; average covered lines 57.8 against 108.8. The failure mode is the one criterion 1 targets (§5.2.2, p.8): Codex often could not compile or verify the target and “instead created simpler copies to verify”.
 
@@ -134,7 +134,7 @@ Steps (Algorithm 2 and §4.4, p.6–7; Appendix C.3, p.20):
 
 The paper's example (§5.3.2, p.10; Appendix F, p.23), RIOT-OS `nanocoap.c`: the harness for `coap_opt_put_uri_pathquery` gives `buf` and the string unconstrained sizes; refinement reaches a `memcpy(buf + n, odata, olen)`; the checker reports an out-of-bounds write; the inferred precondition bounds the input length; the validator traces the string back to the public API `nanocoap_sock_post` and finds no length check; the precondition is classed as violable and the write is reported.
 
-Verus form. Inference: Verus performs steps 4–6 itself and soundly for callers that are verified: a `requires` on a function is an obligation at every call site, so a precondition the callers do not establish fails there, and the choice is the same three-way one: weaken the `requires`, keep it, or fix the caller. Step 2 transfers as precondition inference for agents: when an index, overflow or division obligation fails inside a function, propagate the failing condition back to a parameter or to the `ensures` of a trusted callee and propose it as a `requires`. What needs care is the boundary Verus does not check: a public function called from unverified code, or from foreign code, has an unchecked `requires`. There the paper's step 5 is what a VL agent must do by other means, and the safe encoding is a run-time check that returns an error, not a `requires`.
+Verus form.
 
 Evidence (Table 4, p.11): after this stage variable models per proof rise from 0.068 to 3.424 and verified properties from 412.8 of 580.0 to 531.6 of 539.0 (98.63%); it is the costliest stage at 141.5 minutes and $2.602, because violations are handled one at a time (§5.4.2, p.11). On known CVEs (Table 2, p.10): S1 exposes 40 of 60; six more reach the sink and are tagged unexploitable because the precondition held in the calling context.
 
@@ -192,10 +192,6 @@ Verus form. Inference: for a Rust code base the same construction, reverting fix
 - Initial loop bound: §4.2 says all bounds start at 1; Appendix D speaks of an initial and default bound of 2. Inference: Listing 3 counts iterations plus one for the exit test, so one iteration is written as 2.
 - Table 1 rows are undefined against each other: for S1, verification completes (96.5%) exceeds generation succeeds (93.0%).
 
-## what VL should not redo
-
-Inference: the validator-gated agent loop with a no-regression rule, the five acceptance criteria, and the permissive-first ordering of assumptions are worked out here and can be adopted. Bound selection is specific to unrolling checkers and has no place in a Verus pipeline. The open piece, and the one this paper leaves to an LLM, is deciding whether an inferred precondition is true of the callers; in Verus that is a proof obligation, which is an advantage to keep and not to replace with agent judgment.
-
 ## threat to a product of agent-written verified Rust
 
 Inference: moderate on one axis, none on the other. It is not a competitor for functional correctness: it proves only bounded memory-safety properties, which safe Rust gives without proof. It is a credible competitor for the claim of cheap machine-checked safety evidence on existing systems code: about $3 and two hours per component with no annotations, on C that teams already have, with 20 confirmed new vulnerabilities. A product that requires rewriting in Rust and writing contracts must justify itself by what bounded checking cannot give: unbounded loops, functional properties, and assumptions checked by proof at every caller.
@@ -214,4 +210,3 @@ Inference: moderate on one axis, none on the other. It is not a competitor for f
 - caller validation with three outcomes — check an inferred precondition at real call sites: weaken it, record it, or report the caller path as a bug
 - verified-count with coverage — never read a verified-property count without the covered-line count beside it
 - fix-reversion benchmark — re-inject known bugs by reverting their fixes and score a method by whether its proofs fail at the recorded sink
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

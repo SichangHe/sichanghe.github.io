@@ -68,17 +68,11 @@ how to do it:
 4. judge accepted artifacts for content quality and review protected-content leakage; define semantic pass as content score ≥0.80 with no reported leakage (Section 4.2, p.12)
 5. submit nine fixed compromised patches naming hidden sources through copy, move, or test and measure strict patch-source rejection without a model (Section 5.3, pp.16–17)
 
-verus form: Inference: this ablation structure maps to VL by comparing projection, schema, phase, and Verus proof prerequisite checks on identical tasks, and by reporting compile/proof acceptance separately from semantic quality. Inference: Verus verification should be a prerequisite check for acceptance, with an LLM judge supplying a separate quality score.
+verus form:
 
 evidence: under GPT-5-mini, full-state settings leak in 25.9–31.5% of live runs, versus 0.7% View Only and 0.2% PatchOptic; View Only and PatchOptic use 11–13% fewer tokens than full-state settings (Section 5.1, pp.12–13). In the nine-artifact stress test, Verify Only and PatchOptic reject all nine hidden-source patches, FSM+ACL rejects one, and Unconstrained, Schema Only, and View Only accept all nine (Section 5.3, p.16). The test denominator is nine fixed artifacts, not the 5,520 live runs.
 
-limits: projected reads do not prevent transformed disclosure or policy-authorized disclosure; source checks do not detect literal values an actor already saw and copied into a generated patch (Section 5.3, p.17). Semantic output errors remain outside the guarantees. Inference: VL must separately constrain visibility and verify the compiled artifact.
-
-## trusted boundary, contradictions, and VL implications
-
-The paper measures leakage, token cost, accepted-output quality, and runtime blocks, and analyzes static certificate conditions (Sections 3.4 and 6, pp.7–8 and 17). The paper explicitly trusts policy declarations (Section 2, p.3). Inference: implementation correctness depends on the verifier and JSON Patch/Pointer semantics; empirical conclusions depend on the judge, leakage review, and hand-authored cases. Inference: the strongest product lesson is to make read authority, write authority, and patch-source authority explicit and independently checked; no single prompt rule provides this guarantee.
-
-What VL should not redo (Inference): a generic shared-state patch contract, path-footprint algebra, and source-path enforcement already exist here. VL should instead test how these ideas encode in Verus ownership, contracts, and proof artifacts. Inference: the main threat to agent-written verified Rust is a policy or specification that omits a state dependency; a successful proof can then certify an incomplete contract.
+limits: projected reads do not prevent transformed disclosure or policy-authorized disclosure; source checks do not detect literal values an actor already saw and copied into a generated patch (Section 5.3, p.17). Semantic output errors remain outside the guarantees.
 
 ## techniques for the catalog
 
@@ -87,4 +81,3 @@ What VL should not redo (Inference): a generic shared-state patch contract, path
 - footprint restriction and union — narrow delegated actors and compose peer/sub-workflow interfaces by path-set algebra
 - commutation certificate — reorder same-phase steps only when prefix-disjoint writes and cross-read conditions hold
 - compromised-source stress test — submit fixed hidden-source patches to isolate patch-source enforcement from model behavior
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "An accepted artifact passes semantically if its content score is at least 0.80 and it has no reported leakage."): read all 24 pages, including references and appendices; checked quotations, numerical results, denominators, technique steps, page references, tag, and arXiv link; corrected the pair-count formula and its inaccurate quotation, page references, patch-source details, composition requirements, certificate assumptions, and temperature wording; labeled inferred trust dependencies and retained Verus proposals as Inference; did not inspect source code or run artifacts, reproduce experiments, or validate the proposed Verus encodings.

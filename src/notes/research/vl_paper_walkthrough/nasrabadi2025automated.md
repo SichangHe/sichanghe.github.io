@@ -53,8 +53,6 @@ Automation starts after manual choices: “The manual inputs are: (a) selecting 
 
 The authors distinguish lifting assurance from model assurance: “Regarding our methodology soundness, transpilation from assembly to BIR and symbolic execution remain sound, although we lack formal proofs validating our translation to Sapic+ (see Section 3.4).” They add, “However, a positive security result from DeepSec cannot be fully trusted.” (Section 6, p. 12) Equivalence results are bounded, depend on abstractions, and exclude no channels outside the observation set (Section 3.6, p. 8; Section 6, pp. 12–13). The toolchain also cannot currently verify fence-based mitigations or hardware/OS defenses (Section 6, p. 12).
 
-Inference: for VL, reuse the idea of checking protocol privacy at the compiled-binary boundary. The paper does not establish that a Verus functional proof covers leakage or that this pipeline can certify arbitrary verified Rust binaries.
-
 ## techniques for the catalog
 
 - binary-to-protocol lifting — select protocol code, lift exact instructions through verified BIR, and extract symbolic behavior
@@ -62,5 +60,3 @@ Inference: for VL, reuse the idea of checking protocol privacy at the compiled-b
 - symbolic execution with leakage observations — track path constraints and SMT-assisted indirect jumps while retaining behavior relevant to speculation
 - observation refinement — compare constant-time and shadow speculative observations to isolate speculative-only distinguishers
 - multi-backend protocol checking — use Sapic+ with reachability or bounded equivalence queries under the appropriate abstractions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While for functional correctness analysis, eliminating such paths is possible, we cannot apply this simplification when we look for side-channel leaks, as unreachable branches can leak during speculative execution."): checked every quotation, number, section/page reference, and technique step against all 15 pages, including references and appendices; corrected the tag year and page references, distinguished the two extraction pipelines and speculative-only leakage, added soundness limits and measured results, and marked Verus/VL conclusions as inferences; did not rerun the authors’ tools, reproduce experiments, inspect source artifacts, or independently validate the hardware and privacy claims.

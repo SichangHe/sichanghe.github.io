@@ -6,8 +6,6 @@ Tag: `carrott2024coqpyt`, [paper](https://arxiv.org/abs/2405.04282v1)
 
 CoqPyt is a Python client over Coq LSP for collecting proof-state data and modifying proofs. The paper's motivation is machine-checked proof automation: “Recent automation techniques based on neural methods address this issue, but require good programmatic support for collecting data and interacting with proof assistants.” (abstract, PDF p.1). CoqPyt targets Coq 8.17–8.19 (section 1, PDF p.1) and exposes file, term, proof, and step objects through Python (Figure 1, PDF p.2).
 
-Inference: the directly reusable idea for VL is a structured API that turns each attempted Rust/Verus proof into training data: source position, AST-like syntax, visible definitions, current goals, and whether the verifier accepted the step.
-
 ## technique 1: navigate executable proof files and extract contexts
 
 What it is. A `CoqFile` hides Coq LSP and exposes `is_valid`, `save_vo`, and `exec`. The paper says, “A CoqFile object provides an exec method which allows users to take an arbirary number of forward and backward steps through the file.” (section 2.3, PDF p.2). Each returned `Step` includes textual representation and AST contents. A `FileContext` indexes terms defined up to the execution point, including module-qualified names and term types; notations are indexed by their string patterns (section 2.3, PDF p.2).
@@ -44,16 +42,9 @@ What it is. The authors evaluate all CoqPyt features on CompCert in Docker on an
 
 Evidence. The table reports 609.6 mean steps per file, 6.6 s mean load time, and 31.2 s mean execute time; execution-time PCC with step count is 0.72. Add-step PCC is 0.90 at the beginning and 0.92 at the current pointer; delete-step PCC is 0.94 and 0.92 respectively (Table 1, PDF p.4). The benchmark unit is a Coq file; the paper reports 193 runnable files and the failure counts above, but does not explicitly state a denominator for every table statistic. The authors conclude execution time is positively correlated with file steps, while cache affects execution time (section 4, PDF p.4).
 
-Inference: a VL data miner should record both successful and failed verification attempts, resource failures, and cache/environment metadata; otherwise a training corpus overstates reliability.
-
-## what is proved, trusted, and relevant to VL
-
-The paper describes Coq proof scripts as generating proof terms (section 2.1, PDF p.2); CoqPyt supplies navigation, extraction, and modification. Its conclusion explicitly limits context extraction: “nor does it fetch context recursively, i.e., for each term in a step context we ignore the context of the term itself.” It also excludes module types and section-local constructs (section 5, PDF p.4). Inference: the reported failure counts sum to 66 unsuccessful files. The feature and timing evaluations do not establish context completeness, search completeness, or Python/Coq LSP security. Inference: a similar API could reduce iteration cost for agent-written verified Rust, but this paper supplies no Verus measurements or evidence about whether generated specifications express the intended properties. VL could reuse the extraction and transaction ideas; measuring their value for Verus remains separate work.
-
 ## techniques for the catalog
 
 - proof-file navigation — step through source and retain text, AST, validity, and visible definitions at each cursor
 - premise and goal extraction — associate every proof step with context and intermediate goals for retrieval and training
 - transactional proof repair — apply candidate edits atomically, revert invalid changes, and keep accepted proofs
 - verifier API benchmarking — measure feature latency and failures against file size with explicit hardware and denominators
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "During the transaction, intermediate invalid states are allowed as long as the final state is valid."): checked all paper text, quotations, numbers, section/page references, API steps, and stated limits; corrected context naming, used-versus-available terms, the ProofStep quotation page, the proof-attempt recipe, benchmark scope, and unsupported conclusions; noted the paper's goal/goals inconsistency; did not run CoqPyt, reproduce the benchmark, or validate the proposed Verus adaptations.

@@ -121,16 +121,6 @@ evidence, limits, and assumptions
 
 The authors observe in Section 5.6 (p. 10) that removing regularization can leave final success similar because later counterexamples reduce overfitting. Table 4's No Reg row is 100.0%, 85.7%, 71.4% at SD=1,2,3, compared with Agentic's 100.0%, 85.7%, 76.2% (21 runs per column). Thus regularization mainly affects early trajectories, not a proof of correctness. Fixed bounds may exclude a correct target expression, and the paper does not optimize those bounds formally.
 
-## what remains trusted and product threat (inference)
-
-The measured success is run-level exact recovery of target regexes, not verified Rust programs. The checker, regex parser/library, target generator, sampling procedure, model API, and evaluation scripts are trusted to produce the reported labels. Appendix D reports three trials per regex for the main results, one trial for RQ3–RQ5, 65,536 context tokens, 32,768 output tokens, temperature 0, and pyformlang; these setup choices constrain reproducibility and cost (Appendix D, p. 15). The paper's numbers are internally tied to their stated denominators; no formal proof of the LLM's reasoning is claimed.
-
-Inference: For VeruLaw, the strongest reusable pattern is a closed loop in which an executable verifier emits compact, typed counterexamples and Verus proves the verifier and state-update invariants. The threat from agent-written verified Rust is moderate: counterexamples can expose specification or implementation mismatches, but this paper does not address Rust ownership, unsafe code, solver soundness, or specification adequacy. A product should therefore gate generated code on independently verified specifications and machine-checked postconditions; reflection text and model confidence are evidence for search, not trust anchors.
-
-## what VL should not redo
-
-The paper already supplies a complete regex benchmark, clustered-difference construction, reflection/repair architecture, prompt templates, ablations, and cost-versus-success comparisons. Repeating those experiments for regexes would add little. The open transfer question is whether the same verifier-feedback loop works for Rust/Verus specifications with sound counterexamples and meaningful proof obligations; that requires new benchmarks and trusted-kernel accounting.
-
 ## techniques for the catalog
 
 - oracle-guided refinement — iterate candidate generation, equivalence checking, and symmetric-difference counterexamples until the candidate is correct or the epoch bound is reached
@@ -142,4 +132,3 @@ The paper already supplies a complete regex benchmark, clustered-difference cons
 - syntax-and-satisfaction repair — compile, check examples, score, and retry candidates with compiler and misclassification feedback
 
 - prompt regularization — constrain expression length, operator nesting, and alphabet to discourage early overfitting while preserving verifier checks
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

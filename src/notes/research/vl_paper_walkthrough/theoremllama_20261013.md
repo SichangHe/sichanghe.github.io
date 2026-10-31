@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `wang2024theoremllama`, [paper](https://arxiv.org/abs/2407.03203)
 
-Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 to 5, Appendices C, F, G, I and the sums and fractions derived from them, the quotations, page references and the steps of techniques 1 to 5 against Section 2 and 3; corrected the claim that tree-search baselines got 128 generations, the smallest-drop claim for curriculum sorting (false on Test), the hand-aligned example set, the one-in-six wording, the incomplete list of non-whole percentages, the Appendix G setting, the Appendix A remedy, and the Threat paragraph; marked the 256-generation budget, the block-sorting interaction and the translation-is-easier claim as inference; Verus claims such as lemma and modifies not existing in Verus were not checked against a Verus source.
-
 source: Wang, Zhang, Jia, Pan, Diao, Pi and Zhang, arXiv:2407.03203v2 (4 Oct 2024), 22 pages with appendices A to K.
 
 ## the task, and what the paper claims for it
@@ -124,14 +122,6 @@ Other results:
 - Section 2.1.2 names the formal-to-informal step “formalization”; the rest of the paper calls it informalization.
 - Section 3.2 argues the comparison with GPT-4-Turbo and Gemini is fair because both were released after Mathlib4 and so may have it in their training data. That speaks to their exposure to Mathlib; it does not address the unequal generation budget noted under technique 5.
 - Appendix H sets a proof made without bootstrapping beside one made with it, and the two are proofs of different theorems, so the pair shows no contrast.
-
-## settled by this paper, left open, and threat to VL
-
-Done here, not worth redoing: the comparison of interleaved comments against a comment block up front and against no comments, for one model and one benchmark; the observation that fine-tuning on bare formal proofs can leave an NL-guided prover no better than untuned.
-
-Left open: whether interleaved explanation still helps models far stronger than an 8B Llama3; any use of checker feedback; any evidence on programs. The limitations section adds a risk that matters when the prose is a requirement and not a proof: an NL-guided prover may quietly correct an error in the NL and prove something slightly different from what was written.
-
-Threat. Inference: negligible as a competitor. It is a 2024 mathematics prover that needs a human proof as input and solves a third of a high-school benchmark. Its value to VL is two cheap, checkable practices: comment-interleaved proofs, and same-project verified proofs as examples. The Goedel-Prover study in this batch shows where the field went next (57.6% on the same benchmark at Pass@32 with no NL proof given), which is a higher score on the same benchmark by a different recipe; neither paper compares data scale with NL guidance, and whether NL guidance helps on program proofs, where the reasoning is tied to code that a comment can explain, is not answered by either paper.
 
 ## techniques for the catalog
 

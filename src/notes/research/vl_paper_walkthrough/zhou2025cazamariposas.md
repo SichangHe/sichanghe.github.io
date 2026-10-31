@@ -16,8 +16,6 @@ Steps:
 3. Collect a proof log from the passing mutant and a trace log from the failing mutant (Section 4).
 4. Match corresponding quantified formulas across mutants and compute their instantiation differences (Section 2.2, p. 77; Section 4.3, p. 84).
 
-Inference: VL could retain mutant pairs in CI and flag Verus proofs whose success depends on assertion order or solver seed.
-
 ## technique 2: edit-and-test repair
 Cazamariposas treats each quantified axiom as a hypothesis and applies a query edit intended to reduce the solver’s reasoning obligations, then tests the edited query for stability. “Cazamariposas follows an “edit-and-test” scheme to identify stabilizing repair strategies.” (Section 4, p. 80.) The procedure is:
 1. Hypothesize that reasoning over quantified axiom ϕ is causal (Section 4, p. 80).
@@ -27,12 +25,10 @@ Cazamariposas treats each quantified axiom as a hypothesis and applies a query e
 
 The four singleton actions are `del` (remove an axiom), `inst` (add proof instantiations), `inst-del` (replace the quantified axiom by those instantiations), and `sk` (Skolemize an existential) (Table 1, p. 81). For `del`, `inst`, and `inst-del`, soundness follows because the axiom context is no stronger and the verification goal is unchanged. The only action allowed on the goal is `sk`, which preserves satisfiability (Section 4.1, p. 82). Search is limited to singleton and doubleton edits; the evaluation first tests k=10 singleton candidates, then 10 doubleton candidates only if no singleton succeeds (Section 4.1, p. 83; Section 5.4, p. 90).
 
-The paper states that “del corresponds to source-level visibility control mechanisms” and “inst corresponds to quantifier instantiations as source-level annotations” (Section 4.1, p. 82). It relates `sk` to Hilbert’s choice, which selects a value satisfying a predicate. Inference: VL could present these SMT edits alongside the Verus examples below, while checking whether each edit has a source-level equivalent.
+The paper states that “del corresponds to source-level visibility control mechanisms” and “inst corresponds to quantifier instantiations as source-level annotations” (Section 4.1, p. 82). It relates `sk` to Hilbert’s choice, which selects a value satisfying a predicate.
 
 ## technique 3: triage quick unknown versus timeout
 The tool distinguishes quick-unknown (QU) failures, where the solver returns `unknown` quickly, from slow-timeout (TO) failures, where it exhausts its budget (Section 4.2, p. 83). The authors hypothesize that QU indicates missing key instantiations and TO indicates excessive irrelevant instantiations. These are hypotheses, not a definitive diagnosis from elapsed time alone. In the benchmark, approximately 43% of Verus failures occur within one second, barely any between one and ten seconds, and the rest at the 10-second timeout; Mariposa has approximately 19% within 10 seconds and 78% at 60 seconds (Section 5.3, p. 89). Median instantiation counts are 4,587 for Mariposa QU and 270,396 for Mariposa TO (p. 90).
-
-Inference: VL can classify verifier failures by elapsed time and log profile before proposing a fix. The timeout budget is benchmark-specific: Verus artifacts use 10 seconds, while Mariposa uses 60 seconds (Section 5.1, p. 88).
 
 ## technique 4: differential metrics and dependency graphs
 For each quantified formula, Deficit counts instantiations present in the passing proof but absent from the failing trace; Excess counts trace instantiations absent from the proof (Section 4.3, p. 84). For QU, singleton edits use `inst`, ranked by Deficit first and negative Excess second; a candidate is dropped if none of its proof instantiations can be materialized without additional Skolemization. Existential formulas have zero Deficit and Excess; Contingency counts proof instantiations containing their Skolem constant. QU doubleton edits first Skolemize an existential, then instantiate a dependent universal, ranked by Contingency first and Deficit second (Sections 4.3–4.4, pp. 84–85).
@@ -45,7 +41,7 @@ In a Verus `lemma_from_after`, Cazamariposas identified an unrelated imported `m
 ## evidence, trust, and limits
 Cazamariposas is 4,730 lines of Python. Stability tests use 180 mutants per query; Z3 is version 4.13.0. Proof-production workarounds included first finding an unsatisfiable core and producing a proof from that core, trying four Z3 versions, extending the timeout to one hour, and trying up to 256 mutants; four Mariposa and three Verus proof-production failures were counted as unfixed (Section 5.1, p. 88). Inference: the 70% result includes proof-production failures and should be interpreted under the reported solver and timeout settings.
 
-The repair is sound relative to the SMT verification goal, but deleting or replacing quantified axioms can sacrifice broader completeness (Section 4.1, p. 82). Source-level translation remains future work. The authors warn that “del on an axiom for higher-order functions has no direct source-level equivalent” and that adding many instantiations can be impractical (Section 4.1, p. 82). Inference: VL should retain the original query, edited query, and verification goal so developers can inspect a proposed repair and its source-level applicability.
+The repair is sound relative to the SMT verification goal, but deleting or replacing quantified axioms can sacrifice broader completeness (Section 4.1, p. 82). Source-level translation remains future work. The authors warn that “del on an axiom for higher-order functions has no direct source-level equivalent” and that adding many instantiations can be impractical (Section 4.1, p. 82).
 
 ## techniques for the catalog
 - semantic-mutant diagnosis: compare passing and failing equivalent SMT mutants to expose instability
@@ -54,4 +50,3 @@ The repair is sound relative to the SMT verification goal, but deleting or repla
 - differential quantifier metrics: rank axioms with Deficit, Excess, and existential Contingency
 - instantiation dependency graph: trace pattern, rewrite, Skolem, and nesting causes to rank interacting edits
 - bounded singleton/doubleton search: test the top ten one- and two-axiom edits before giving up
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Our notion of causality extends the instantiation graph from the SmtScope (formerly the Axiom Profiler) [4], a tool to analyze instantiation loops and other sources of poor performance in pattern-based SMT solvers."): checked all quotations, numbers, section and page references, technique steps, and the DOI link; corrected the doubleton repair count, goal-edit soundness explanation, candidate-limit reference, QU and TO ranking details, and proof-production workarounds; removed unsupported source-edit suggestions and marked interpretations as Inference; did not reproduce experiments, inspect the implementation, or verify external Verus documentation.

@@ -142,14 +142,9 @@ Coq checks the generated proof scripts for generated statements. The measured ou
 
 Inference: For agent-written verified Rust, the direct threat is specification translation failure and identifier/coreference errors. A model can produce a proof accepted by Verus for a weakened or misread contract. The paper's handwritten results, 53.3% to 73.3% semantic accuracy on 45 examples, suggest that out-of-grammar inputs are a substantial risk. The useful design lesson is to generate candidates in a restricted grammar, preserve identifiers explicitly, and run the target verifier on every candidate; this does not remove the need for contract review.
 
-what VL should not redo
-
-The paper already establishes a complete small-domain pipeline: grammar generation, copy-aware translation, relative-position Transformer variants, exact and semantic scoring, and Coq checking. A VL experiment should not claim these as new techniques. A useful extension would instead measure Verus-specific contract fidelity, ownership and borrowing failures, unsafe-code boundaries, and behavior-preserving specification changes on real Rust projects.
-
 ## techniques for the catalog
 
 - grammar-aligned proof generation: sample theorem and proof skeletons from a controlled grammar while emitting paired formal code
 - per-literal copy tokens: replace each distinct identifier or number with an indexed placeholder and learn to copy it
 - relative-position recurrent Transformer: remove absolute positions, use relative self-attention, and add recurrent encoder/decoder passes for length generalization
 - semantic verifier scoring: run the target proof assistant and score validity separately from exact proof-string match
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Our autoformalization task guarantees mutual exclusivity between generating (g) and copying (c) tokens, which allows using a simplified formula for calculating the probability of producing a token yt at time step t."): read the whole paper text (arXiv 2301.02195, 8 pages) and the whole study; checked every quotation word for word, every number (dataset sizes, train/test lengths, hyperparameters, Table 1 values, handwritten-set accuracies), the page and section references (page numbers located with pdftotext per page), the Figure 3 and Figure 5 descriptions, and the arXiv link and tag; changed the Figure 3 page (3 to 4), the arithmetic dataset sizes (POWERS is 2,000, not 5,000), the semantic-evaluation quote ("theorm" as in the paper), the claim that unseen identifier generalization was evaluated (the paper only states the ability; no ablation found), the handwritten-set scoring (theorem checked manually, not by token match), the Figure 5 proof-step description, the POLY results and depth quotes; marked my own conclusions as Inference; I did not re-run Coq or the authors' code and did not check the cited related work or the equations beyond their description.

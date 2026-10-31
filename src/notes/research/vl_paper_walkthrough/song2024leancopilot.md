@@ -71,17 +71,8 @@ The retrieval step is explicit: “Given a proof goal at inference time, we firs
 Verus form
 Inference: retrieve relevant specifications and lemmas, show their signatures and source, and indicate which imports are needed. Retrieval scores would rank suggestions; Verus would check their use in a proof.
 
-## evidence, limitations, and VL impact
-The measured assistance uses reference-tactic replay, with default AESOP rather than a hand-tuned rule set: “For AESOP, we use it out of the box, without manually configuring the rule set.” (sec. 5, p. 9). Proof-step percentages are averaged across theorems, so 74.2% is not a fraction of the pooled 983 tactics. SELECT_PREMISES is not evaluated alongside the other two tools: “We focus on evaluating SUGGEST _ TACTICS and SEARCH _ PROOF, as SELECT _ PREMISES is mainly a helping tool, and it remains a challenge in the field to effectively evaluate premise selection due to the inherent lack of ground truths.” (sec. 5, p. 9).
-
-Appendix C cautions about reproduction: “It is possible that when running those two tactics again, a different tactic/proof would be generated, possibly leading to slightly different evaluation results.” (p. 20). The authors preserve generated tactics and proofs in comments. The paper reports no measured inference latency, pre-filter error frequency, or evaluation on systems-verification tasks.
-
-Inference: Lean Copilot offers a pattern VL could adapt to reduce proof-authoring effort: combine model suggestions, checker feedback, search, and premise discovery inside the editing workflow. Its MIL results do not establish effectiveness for Verus. Checking a generated proof concerns the formal statement being proved; it does not establish that the statement expresses the user's intended specification.
-
 ## techniques for the catalog
 - native in-assistant inference — expose model generation and encoding in Lean through C++ FFI, with a server alternative
 - checked tactic suggestion — simulate candidates and display error-free tactics with their remaining goals
 - goal-dependent proof search — augment AESOP's best-first search with tactics generated for each goal
 - premise retrieval and annotation — rank premises by goal embedding and show scope, type, documentation, or import source
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "These results confirm the benefit of integrating LLMs into the theorem proving pipeline in Lean."): checked all quotations, reported numbers, section and page references, and technique steps against the full paper, including appendices; corrected the version year and paper link, distinguished simulated assistance from human-participant evidence, flagged conflicting SUGGEST_TACTICS figures, clarified native versus server execution, and removed unsupported kernel-boundary claims; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

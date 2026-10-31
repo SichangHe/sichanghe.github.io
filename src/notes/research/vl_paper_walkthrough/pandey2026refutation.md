@@ -22,14 +22,14 @@ Inference: Verus cannot natively check DRAT; integrate a verified or separately 
 ## technique 3: count and audit certificates, not just outputs
 Use independent artifact checks to detect defects that semantic proof terms miss. Reproduce published baseline numbers; treat mismatches as evidence requiring investigation. Keep run records and proof files, isolate each instance under an address-space cap, and rerun apparent failures without budgets. Run an adversarial audit that recomputes every quantitative claim from raw records. In the paper, this found a doubled aggregation count (20% inflation), a censored statistic, and a false 3% failure tail caused by inheriting the remainder of a global budget. Table 1 lists five defects; none was found by code reading alone.
 
-The authors state: “None of the three is exotic, and none is visible to any artifact-level check.” (Sect. 6, p. 7) Inference: For VL, keep independent run ledgers and have agents recompute denominators and claims; a proof of generated Rust does not validate benchmark aggregation or product-level conclusions.
+The authors state: “None of the three is exotic, and none is visible to any artifact-level check.” (Sect. 6, p. 7)
 
 ## evidence and limitations
 Across 121 established optimality results, 111 refutations were independently checked and 10 closed by counting bounds; 0 refutations were rejected and 0 disagreed with the uncertified values. Median DRAT proof size is 1.06 MB, maximum 301 MB; median solving time 0.18 s, maximum 160 s; median checking time 0.24 s, maximum 440 s; median check/solve ratio 1.9× and maximum 2.7× (Table 2, p. 8). The 121 are the closable subset of 148 attacked instances, so 82% of all attempted instances end in certified optimality. Four initially budgeted failures later verified in 333–440 seconds, exposing a harness artifact.
 
 The pipeline’s scope is n≤9; beyond n=9 the encoding becomes unreliable, while the surrounding literature studies n=32 and n=64. `drat-trim` itself is trusted but not formally verified; a stronger endpoint would emit LRAT and use a verified checker such as cake-lpr. DRAT certifies `φk(M)`, not the natural-language argument that symmetry-breaking constraints preserve equivalence to the original SLP problem. The paper also reports a CaDiCaL proof rejected by drat-trim (“no conflict”), while Glucose 4.2 proofs verified; on 75 paired instances total solve time differed by 0.4% against 1.3× run variance.
 
-Proved or checked: circuit validity, whole-input equivalence, Lean certificates, DRAT refutations, and numerical recomputation scripts. Trusted: Lean kernel/propext, Z3, Glucose, drat-trim, the CNF encoding argument, target-matrix provenance, and aggregation scripts until audited. Inference: The threat to agent-written verified Rust is high for any claim of “minimal,” “optimal,” or “best” that reports only solver UNSAT. VL should require proof-carrying lower bounds, independent checkers, and denominator audits whenever synthesis claims optimality.
+Proved or checked: circuit validity, whole-input equivalence, Lean certificates, DRAT refutations, and numerical recomputation scripts. Trusted: Lean kernel/propext, Z3, Glucose, drat-trim, the CNF encoding argument, target-matrix provenance, and aggregation scripts until audited.
 
 ## techniques for the catalog
 - layered construction certification: independently replay, symbolically equate, and kernel-check every synthesized artifact
@@ -37,4 +37,3 @@ Proved or checked: circuit validity, whole-input equivalence, Lean certificates,
 - self-contained trust reporting: emit certificates with explicit axiom lists and no hidden library/build dependencies
 - adversarial result auditing: recompute claims from raw records and rerun budgeted failures to expose aggregation artifacts
 - encoding-faithfulness review: separately verify that solver constraints exactly represent the optimization problem
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

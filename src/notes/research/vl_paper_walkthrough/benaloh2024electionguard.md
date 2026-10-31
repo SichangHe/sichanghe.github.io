@@ -6,8 +6,6 @@ Tag: `benaloh2024electionguard`, [paper](https://www.usenix.org/conference/useni
 
 ElectionGuard is a deployable end-to-end verifiable election toolkit. It separates cryptographic operations from existing voting equipment, publishes encrypted ballots and proofs, and lets voters or independent programs check the record. The paper's abstract says, “ElectionGuard is a flexible set of open-source tools that—when used with traditional election systems—can produce end-to-end verifiable elections whose integrity can be verified by observers, candidates, media, and even voters themselves.” (Abstract, p. 5485.) The design has three phases: guardians jointly generate keys, devices encrypt ballots and return confirmation codes, and a quorum of guardians decrypts the tally and publishes a record (Section 1, pp. 5485–5486).
 
-Inference: this paper teaches cryptographic evidence protocols rather than a Verus program-verification method. Its useful lesson for VL is to make evidence objects and checks explicit, deterministic and independently replayable. A Verus implementation could verify parsing, arithmetic and state-machine transitions, while cryptographic assumptions, random-oracle modeling and election administration remain trusted.
-
 ## technique 1: distributed key generation with verifiable secret sharing
 
 What it is and when to use it. Guardians jointly create a public ElGamal key and hold shares of its private key. A quorum `k` of `n` guardians can later decrypt; privacy requires fewer than `k` compromised guardians. Use this when confidentiality must survive fewer than `k` compromised guardians and when the public record must expose enough evidence to detect a malicious administrator.
@@ -67,10 +65,6 @@ The paper proves cryptographic security properties under explicit assumptions, s
 
 The guarantees have different assumptions: record availability and a common view are assumed (Section 2.2, pp. 5486–5487); privacy requires fewer than `k` compromised guardians, secure ElGamal, and a device that preserves ballot privacy (Sections 2.5 and 2.9, pp. 5488–5489, 5495). Result verification is independent of guardian honesty, relies on hash collision resistance, and requires actual independent checking (Sections 2.8.3–2.9, pp. 5494–5495). Eligibility is external to ElectionGuard (Section 2.8, p. 5494). Inference: for agent-written verified Rust, the largest product threat is an implementation that emits a valid-looking record while omitting a ballot, mishandling contest limits, or leaking a nonce. Verus can make record parsing, state transitions and arithmetic checks auditable, but cannot make compromised hardware honest.
 
-## what VL should not redo
-
-ElectionGuard already provides a complete pattern for public evidence, threshold keys, ballot challenge, homomorphic tally and independent verification, with deployments in Wisconsin, California, Idaho, Utah, Maryland, France and organizational elections. Inference: VL should not build another generic receipt-and-hash layer without first specifying which trust boundary differs. A focused contribution could verify a Rust election-record verifier against the paper's state and arithmetic invariants and test it against malformed records, while retaining the cryptographic assumptions explicitly.
-
 ## techniques for the catalog
 
 - distributed key generation: combine Feldman commitments, encrypted polynomial shares and Schnorr proofs so a quorum can decrypt without one private key
@@ -78,4 +72,3 @@ ElectionGuard already provides a complete pattern for public evidence, threshold
 - nonce-derived confirmation: derive encryption randomness from a secret ballot nonce and let voters recompute ciphertexts of challenged ballots
 - aggregate threshold decryption proof: combine quorum partial decryptions and publish one Chaum–Pedersen proof with a commit–reveal round
 - public election-record verification: publish encrypted ballots, proofs and hashes so independent programs can check cast-as-intended and tallied-as-cast properties
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "It would have been more direct for each guardian to publish an independent Chaum-Pedersen proof that it computed its partial decryption accurately."): checked every quotation, number, section/page reference and protocol step against the full paper, including references; corrected the paper link, an incomplete equation presented as a quotation, section/page references, encoding-base explanation, challenge and tally steps, aggregate-response description and Verus inferences; did not check implementation code, external sources or independently prove the cryptographic theorems.

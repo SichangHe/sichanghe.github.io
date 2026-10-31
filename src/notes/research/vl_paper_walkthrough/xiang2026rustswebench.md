@@ -31,8 +31,6 @@ Step by step for the structured workflow:
 4. Generate and apply one patch, then run hidden acceptance tests (section 4.1.3, p. 8).
 5. Count success only if the patch applies and all tests pass (section 4.1.3, p. 8).
 
-Inference: In VL, the analogous loop should localize the Rust function and its Verus contracts, propose a proof edit, run the verifier, read diagnostics, and retry. Compilation and verification output should be the observation channel. A ReAct trace is process evidence only; the accepted artifact is the verified Rust patch.
-
 The leading baseline’s denominator is all 500 tasks: 106/500 = 21.2%. The paper also reports 75/500 (15.0%) for SWE-agent with Claude-Sonnet-3.7 and 36/500 (7.2%) for Agentless with that model (Table 3, p. 9). Higher success comes with higher cost: OpenHands with Claude averages $3.81 per task, while SWE-agent averages $3.48 (section 4.4.1, p. 9).
 
 ## technique 3: isolated workspace plus dynamic Trace
@@ -46,12 +44,9 @@ Step by step from section 5.2 (pp. 11–12):
 5. Execute the test in the isolated workspace and emit one JSON call graph (section 5.2, p. 12).
 6. Restore the original project after tracing (section 5.2, p. 12).
 
-The clap-rs case traces `get_required_usage_from` and `create_smart_usage`; the output reveals an incorrect argument list and enables a two-function patch (section 5.3.3, pp. 13–14). Inference: a VL analogue could instrument executable Rust around verified functions for counterexample diagnosis, but generated tracing code must preserve Verus specifications and should be removed before proof checking. The paper’s tracer is observational, not a proof of semantic equivalence.
+The clap-rs case traces `get_required_usage_from` and `create_smart_usage`; the output reveals an incorrect argument list and enables a two-function patch (section 5.3.3, pp. 13–14).
 
 RustForger with Claude resolves 143/500 tasks (28.6%), compared with 106/500 (21.2%) for OpenHands, a relative improvement of 34.9% as reported by the paper (Table 5, p. 13). On a 200-task ablation, full RustForger averages 30.3 solved tasks across four models, versus 25.0 without Trace and 22.0 without the reproduction workspace (Table 6, p. 14). Trace is used for 71.3% of RustForger’s 143 Claude successes (section 5.3.3, p. 13). Tracing adds about 1.65% of token usage, a 40-second initial build, and about 12 seconds per invocation (section 5.3.2, p. 12).
-
-## proved, trusted, and product threat
-The paper reports that “the remaining 44.5% of tasks fail at the reproduction stage and thus could not be successfully resolved even under the top-performing agent-model configuration.” (introduction, p. 2) The benchmark proves only that submitted patches pass its tests. Rust’s compiler provides memory and data-race guarantees, but the paper does not verify functional specifications with a theorem prover. The agent, benchmark construction, manually selected tests, and repository build scripts remain trusted. Inference: threat to agent-written verified Rust is high for specification mismatch and incomplete issue reproduction, while the isolated workspace and compiler feedback are useful safeguards. Existing Rust issue agents and Rust-SWE-bench already cover repository navigation, reproduction, and patch validation; VL should avoid redoing a generic SWE benchmark and instead measure proof completion, contract quality, and soundness-preserving edits.
 
 ## techniques for the catalog
 - fail-to-pass benchmark filtering: retain real issues only when tests fail before a patch and pass after it without regressions
@@ -59,4 +54,3 @@ The paper reports that “the remaining 44.5% of tasks fail at the reproduction 
 - ReAct repair loop: alternate repository actions and observations to localize and patch issues
 - isolated reproduction workspace: decouple tests from complex project build configurations
 - AST Trace command: inject selective macros, capture cross-project calls, and restore source after diagnosis
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

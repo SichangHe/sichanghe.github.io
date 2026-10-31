@@ -18,8 +18,6 @@ The drafts omit thinking traces inside `<think></think>` to keep context length 
 
 Table 1 uses 16 generations per question. For example, GPT-OSS-20B on AIME24 falls from 51.88% Direct to 17.50% with one incorrect draft and 21.25% with two; the AIME24 subset denominator is 10/30 (§2.1, Table 1, p. 3). The AIME24 accuracy covers 10 filtered questions with 16 generations each, rather than the full 30-question benchmark. In iterative refinement, GPT-OSS-20B's accuracy declines across 16 iterations while majority voting improves (§2.2, Figure 2, p. 4). The authors warn: “without mechanisms to detect, filter, or reset from low-quality drafts in the context, the model can become increasingly biased toward the erroneous context.” (§2.2, p. 4)
 
-Inference: VL should benchmark proof repair with clean, failed, and mixed diagnostics. A higher rate of model verdicts recognizing errors could coexist with repeated failed proof structures; compare independent retries and a clean-slate baseline.
-
 ## technique: quantify structural copying with tree edit distance
 The paper applies this analysis to Game of 24. Expressions must use four supplied integers exactly once with addition, subtraction, multiplication, division, and parentheses to reach 24 (§2.3, p. 4). For each problem, extract final expressions from Direct and 1F responses, parse them into trees, and compute tree edit distance (TED) from each expression to the incorrect draft. TED counts the minimum-cost node insertions, deletions, and relabelings (Appendix C.1, p. 22). For 2F, use the minimum distance to either draft for both Direct and conditioned responses; the lower absolute distances do not establish stronger drag (Appendix C.2, p. 22).
 
@@ -42,15 +40,6 @@ Both remove `<think></think>` traces between passes and omit explicit draft veri
 
 The targeted fallback trains GPT-OSS-20B on 40,000 correct-draft and 40,000 incorrect-draft pairs (§4.2, p. 7). Only verification trajectories whose verdict agrees with the symbolic answer checker are retained (Appendix F.3, p. 33). Each incorrect example concatenates correct error verification with a correct clean-slate trajectory from GPT-OSS-20B; each correct example combines correct verification with a fixed answer-reuse template (Appendix F.4, pp. 33–34). Training uses token-level supervised learning (§4.2, p. 7). Table 3 reports 1F gains: AIME24 rises from 17.5% baseline to 40.6% after fine-tuning, but remains below Direct (§4.2.1, Table 3, p. 7). Appendix Table 15 exposes a tradeoff: on 1T (correct drafts), fine-tuned pass@1 falls from 73.12% to 50.63% on AIME24 (Appendix F.6, p. 34).
 
-Inference: a VL fallback should drop failed proof context and regenerate from source/specification state, while retaining verified lemmas selectively. Training must include correct-context cases so the model does not learn to discard useful proof facts. These proposed Verus applications were not evaluated in the paper.
-
-## trust, limits, and product threat
-The abstract reports 10–20% drops, but does not define that range as an average across tasks and models. Table 1 varies substantially: GPT-5 on AIME24 changes from 88.75% Direct to 88.13% under 1F, whereas GPT-OSS-20B changes from 51.88% to 17.50%. The evaluation uses filtered subsets, and the successful-self-verification analysis additionally selects trajectories after generation. Neither supports a universal degradation rate. Appendix F's 40k/40k synthesis depends on math-verify and agreement with model-generated verdicts.
-
-Inference: symbolic answer checking validates the extracted answer under the checker's rules; it does not certify every reasoning step. Model verdicts, denoising, and TED do not replace Verus verification. The paper's suggestion of a fundamental attention-architecture limitation (§6, p. 8) is an interpretation, rather than a demonstrated causal mechanism.
-
-Inference: iterative VL workflows that retain failed Verus attempts could suffer similar bias; this paper does not establish that transfer. Compare clean-slate and failure-conditioned repair before choosing retry limits or context resets. Context denoising and fallback fine-tuning already have precedents here, so a Verus application needs evidence of its own contribution.
-
 ## techniques for the catalog
 Inference: the proof-specific adaptations below require separate evaluation.
 
@@ -59,4 +48,3 @@ Inference: the proof-specific adaptations below require separate evaluation.
 - independent error-signal test — distinguish external warnings from model self-verification with separate conditions
 - context denoising — revise or filter drafts before reuse, measuring cost and residual degradation
 - conditional fallback training — train incorrect-draft verification followed by clean-slate regeneration and correct-draft reuse
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Note that under this setup, the in-context draft used in the contextual drag evaluation may either come from the evaluated model itself or from other models, depending on whether the evaluated model is chosen as one of the anchor models."): read the full paper including appendices; checked quotations, numbers, page and section references, evaluation scope, and technique steps; corrected the unrelated DOI link to the paper's arXiv identifier, qualified denoising and degradation claims, completed denoising and TED procedures, and marked proposed Verus applications as inferences; did not reproduce experiments, inspect implementation code, or validate transfer to Verus.

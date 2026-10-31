@@ -3,7 +3,6 @@ collected Rust papers
 
 archive
 
-- root: `/hdd1/sichanghe/paper_collection`
 - collected 33 distinct PDFs during this task
   - identical PDFs are counted once
   - source texts and provenance records are committed

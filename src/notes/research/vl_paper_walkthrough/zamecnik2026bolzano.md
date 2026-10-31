@@ -30,16 +30,9 @@ Evidence. STOC 2026 produced four results that source authors confirmed: a one-p
 
 Verus form. Inference: encode extracted problem assumptions as `requires` and the claimed result as `ensures`; prove the algorithm or finite combinatorial claim with executable Rust plus `proof fn`s. Keep source extraction, novelty checks and human review outside the trusted Verus theorem unless their outputs are themselves formalized. A Verus proof of a mis-extracted statement does not establish progress on the source problem.
 
-## what is proved, trusted, and risky for VL
-
-The paper proves no theorem about Bolzano’s LLM orchestration. Its evidence is workflow output and external checking. Trusted components include LLM prompts and responses, task extraction, screening, the verifier’s judgments, the source-paper interpretation, and human or author review. The paper explicitly reports missing assumptions, weaker-than-requested proofs, invalid arguments and rediscoveries. It also says screening can miss useful output and that experiments have no comparison with direct use of the underlying models.
-
-Inference: for VL (VeruLaw), the useful pattern is a persistent proof backlog with verifier-gated state updates and source-condition audits. The threat to agent-written verified Rust is medium: an LLM can propose a plausible but wrong Verus specification or solve a weakened property; Verus can then certify the wrong statement. A source-linked requirement ledger and independent review should precede any `ensures` contract. Bolzano’s own verifier does not replace Verus or human review.
-
 ## techniques for the catalog
 
 - persistent research state — carry notes, candidate proofs, outcomes and summaries across parallel exploration rounds, with verifier-only updates
 - self-contained open-problem extraction — check source status and literature, then package definitions, assumptions and question before proof search
 - verifier-gated orchestration — critique all prover outputs and apply structured append/replace updates through one gate
 - source-and-proof audit — separately test source support, proof correctness, scope, completeness and novelty before human review
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

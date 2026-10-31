@@ -63,7 +63,7 @@ The Charm proof-of-concept uses MNT224, reported as providing 112 bits of securi
 
 Dropout verification is different: “the verifier’s runtime is linear in the number of remaining users because it must compute the product of the masking factors EK j for every remaining user j” (Section 9.6, p. 6968). With 1000 users and 10% dropouts, the reported runtime is below 0.0165 seconds (p. 6969). Inference: these computation-only prototype results do not establish network latency or production throughput.
 
-The paper presents correctness and confidentiality/unforgeability arguments under its assumptions. Base availability is assumed; mPVAS-IV handles malformed user messages under the stronger availability condition on the aggregator, and mPVAS-UD handles announced absences. Inference: for VeruLaw, the transferable techniques are the algebraic decomposition, explicit adversary bounds, and state transitions. A Rust or Verus implementation would need additional work on cryptographic primitives and their assumptions; this paper supplies no such implementation or verification.
+The paper presents correctness and confidentiality/unforgeability arguments under its assumptions. Base availability is assumed; mPVAS-IV handles malformed user messages under the stronger availability condition on the aggregator, and mPVAS-UD handles announced absences.
 
 ## techniques for the catalog
 
@@ -71,5 +71,3 @@ The paper presents correctness and confidentiality/unforgeability arguments unde
 - grouped secret sharing — reduce interaction within random groups while bounding the probability of a fully malicious group
 - malicious-user identification — combine commitments, signature checks, and zero-knowledge equality proofs to remove culprits and restart
 - dropout recovery keys — compensate for announced absences and uncancelled masks in public verification
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The commitments contained in the set SK are hiding, thus the aggregator cannot extract the signing keys either."): checked all paper text, quotations, numbers, section/page references, protocol steps, assumptions, and the publisher link; corrected the verification key, references, identification procedure, communication-versus-computation distinction, dropout verification cost, and fully malicious-group wording; made implementation suggestions explicit inferences; did not independently validate the security proofs, reproduce experiments, or verify the suggested Verus models.

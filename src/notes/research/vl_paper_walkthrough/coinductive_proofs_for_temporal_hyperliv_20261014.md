@@ -99,14 +99,6 @@ Example 7.1 relates two executions of an echo server, requiring every right outp
 
 Verus form: Inference: control labels and ghost memories could express program states, with separate lemmas for silent transitions, event matching and paired-memory invariants. Connecting this model to Rust execution and proving the required infinite-trace principles remain separate obligations.
 
-## trusted boundary, contradictions, and VL implications
-
-The authors report a mechanized soundness proof in Coq using functional choice (Section 1, p.53:2; Section 3.4, pp.53:10–11). Their strengthening construction avoids adding predicate extensionality (Sections 4.4–5.1, pp.53:17–19). The development is linked at `https://github.com/acorrenson/hyco-popl-2025`, with a submission-time archive at `https://zenodo.org/records/14055009` (Data Availability, p.53:27).
-
-Inference: a VeruLaw adaptation would depend on the proof assistant, the chosen axioms, the trace definitions and a justified relationship between Rust executions and the modeled LTS. This paper establishes no such Rust connection. Its reusable contributions are local event matching, derivative rules, incremental hypotheses and compatible closure operators. They could help express relational reactive policies, but their soundness depends on preserving the quantifiers, event observations and guard discipline.
-
-Inference: the main integration work is a justified Rust/Verus trace model and infinite-trace proof principles. Reusing a sound calculus could avoid constructing a separate coinductive argument for each policy. The paper's incompleteness discussion limits any expectation that the matching method can prove every true supported trace property (Section 9, p.53:27); it does not contradict its soundness theorems.
-
 ## techniques for the catalog
 
 - coinductive event matching — prove `∀∃ □φ` from a relation preserved by observable transitions
@@ -116,5 +108,3 @@ Inference: the main integration work is a justified Rust/Verus trace model and i
 - compatible closure operators — justify strengthening and simulation within incremental proofs
 - multiple-trace HyCo — generalize transition matching to `∀*∃*` safety relations
 - imperative I/O tactics — specialize event matching, memory invariants, nondeterminism and loops
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Substituting a relation with an equivalent one is not an issue when doing informal reasoning in set theory; however, in type-theory based proof assistants such as Coq, this is not possible in general."): checked the entire paper, quotations, quantifiers, definitions, proof steps, examples, section and page references, authorship, year and paper link; corrected the always modality, invariant obligations, alignment asymmetry, derivative rules, strengthening mechanism and example references, and replaced unsupported Verus assertions with labeled inferences; did not inspect or execute the external Coq development, verify the mathematical proofs independently, or validate a Verus implementation. The mid-paper quotation is from Section 4.4, p.53:17.

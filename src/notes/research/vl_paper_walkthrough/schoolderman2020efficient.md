@@ -7,8 +7,6 @@ Schoolderman, Moerman, Smetsers, and van Eekelen verify a high-speed X25519 impl
 
 The target uses 32 base-256 limbs, hand-optimized assembly, and a C Montgomery ladder. The proof covers field arithmetic, the ladder, the final scalar multiplication, memory safety, and calling conventions. Verification also found an interrupt-safety bug and enabled small performance improvements.
 
-Inference: for VL, the main lesson is to verify low-level wrappers against a mathematical model while preserving explicit contracts at every representation boundary. This is evidence about a specialized Why3 workflow, not a measurement of Verus or agent-written Rust.
-
 ## technique 1: define a succinct mathematical specification before proving code
 The ultimate Why3 contract for `crypto_scalarmult_curve25519` requires a canonical reduced result and states that the output represents the clamped scalar multiple of the input x-coordinate, returning zero for the point at infinity. The paper explains that, after the high bit of the input x-coordinate is masked, the second postcondition says “a ratio (X : Z) representing the x-coordinate of [s] · P is computed using repeated application of Montgomery’s formulas” (Sec. 5.2, p. 13).
 
@@ -62,8 +60,6 @@ The proof confirmed that two instructions in the 128×128 multiplication routine
 
 The trust boundary named in Sec. 8 includes Why3's verification-condition generation, the automated provers, and the C compiler, assembler and linker; separately, Sec. 5 states primality of 2^255−19 as an axiom. The authors found a soundness error in Alt-Ergo 2.0 and excluded it. They used Why3 0.88.3 with CVC3 2.4.1, CVC4 1.4/1.6, Z3 4.6.0, and E-prover 2.0. They state that proof trust “mainly resides with trusting the verification condition generation of Why3, the soundness of the automated provers, and the compilation-toolchain” (Sec. 8, p. 15).
 
-Inference: threat to VL is high for low-level crypto and unsafe/FFI boundaries, because the paper demonstrates that a real bug can survive conventional engineering but be exposed by a machine model. The product should reuse block contracts, ghost address facts, validated instruction models, and explicit alias/frame conditions. It should not claim end-to-end binary assurance unless the Rust compiler and emitted machine code are included in the refinement chain.
-
 ## techniques for the catalog
 - succinct crypto contract: specify scalar multiplication, reduction, clamping, and infinity behavior mathematically
 - validated instruction model: prove compact instruction contracts from a bounded machine model and the official ISA
@@ -71,4 +67,3 @@ Inference: threat to VL is high for low-level crypto and unsafe/FFI boundaries, 
 - ghost address instrumentation: supply solver-visible address and intermediate-value facts without changing execution
 - cross-layer refinement: translate C and assembly through one primitive model and preserve alias and calling conventions
 - ladder and memory proof: combine projective-coordinate invariants, scalar preconditions, and explicit memory footprints
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Perhaps unsurprisingly, it becomes increasingly hard for SMT solvers to reason about out what address an index register is referring to after many modifications have been applied to it."): read the whole paper text (arXiv v2) and checked every quotation, the Table 1 and Table 2 numbers, section and page references, and the technique steps against it; changed the page of the Sec. 5.2 quote (p. 13), Table 2 routine count (14, not 13), the assembly-size wording, SUBI contract text, the stack-model limits, block-proof and ghost-argument details, the bug and improvement descriptions, and the trust-boundary list; the arXiv link is kept from the fetch record (the paper text only shows arXiv:2012.09919v2 and a Zenodo DOI for the code). Not checked: the appendix specification line by line, cited works, the Why3 proofs or repository, and all Verus-form paragraphs, which are marked Inference and are this study's own.

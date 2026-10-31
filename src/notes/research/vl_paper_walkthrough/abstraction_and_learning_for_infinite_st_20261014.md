@@ -84,13 +84,9 @@ Interface generation (Section 6, pp. 222–225) differs: a component’s environ
 
 Verus form (Inference)
 
-Use a verified trace relation for concrete Rust and an abstract interface automaton. Prove refinement lemmas for each predicate addition and keep determinization/learning as audited external artifacts. This is useful for modular VL components but does not eliminate trusted abstraction choices.
-
 ## what is proved and trusted
 
 Argued on paper (not mechanically checked): soundness and completeness of the basic assume-guarantee rule (Section 2.2.1), the language-inclusion relation for abstractions (Section 2.3), and correctness and termination arguments for the framework (Sections 3.2 and 4.2). The termination argument for infinite-state components holds only when the component has a finite bisimulation quotient (Section 4.2, p. 220). Not measured: the paper reports no experiments; it gives two small illustrative protocol examples (Section 5), and for the infinite-state one “we carried out all steps, except for abstraction refinement, automatically” (Section 8, p. 226). The flight-software results are cited from earlier work. Inference: a user of this technique would have to trust model-checker results, theorem-prover calculations, the L* implementation, the choice of abstraction predicates, concrete simulation, and any environment/model-code translation.
-
-Inference: for VeruLaw, this work reduces monolithic-proof threat by providing a principled way to learn interfaces around verified Rust modules. The main risks are spurious abstraction traces, incomplete assumptions, and trusting external automata. VL should reuse the may/must distinction and counterexample classification rather than redo generic L* research.
 
 ## techniques for the catalog
 
@@ -99,4 +95,3 @@ Inference: for VeruLaw, this work reduces monolithic-proof threat by providing a
 - L* assumption learning: infer finite assumptions from membership queries, conjecture checks, and counterexamples
 - interleaved refinement: classify traces by concrete simulation and refine either predicates or assumptions
 - interface generation: combine may safety and must permissiveness checks for infinite-state components
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Note that this framework has an important characteristic: the information that is communicated to L* is always correct with respect to the concrete system."): I read the whole paper text (pp. 211–228) and the whole study; I checked every quotation, page and section reference, the rule and premise descriptions, the may/must definitions, the L* query/conjecture steps, the infinite-state counterexample handling, the interface-generation claims and the tag. I changed one quotation that was not word for word (“The framework uses M2 …” is “it uses M2 …” on p. 216), the link (now the DOI printed in the paper text, replacing the arXiv link), the wrong claim that termination depends on predicate quality (the paper ties it to a finite bisimulation quotient), the wrong Measured and Proved-on-paper wording (nothing is measured; arguments are paper arguments), the overgeneral restriction of soundness and completeness to finite-state components, and the oversimplified counterexample classification for the infinite-state case; I added the example, the 2-state assumption result and the interface-generation theorem from [30]. I did not check the cited prior work ([8], [28], [30]) or the figures beyond their captions and text, and the Verus-form paragraphs are my own inferences, not claims of the paper.

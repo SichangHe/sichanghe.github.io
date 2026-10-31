@@ -46,15 +46,9 @@ The checker computes ownership status; the proof's resource environment `Ω` map
 
 Evidence: "Our Rocq development took about 15 person-months and 45.4k lines of code (LOC) on top of CompCertO [24, 55]." (§7, p. 25). The reported components are 1.7k LOC for open safety, 25.3k for the Owlang compiler, 11.4k for ownership checking, and 7.1k for the hash-map verification. Most hash-map proof code handles manual source verification: "Automating this process or integrating state-of-the-art verification tools is left as future work." (§7, p. 25).
 
-## trusted boundary, contradictions, and product threat
-The paper does not enumerate a trusted computing base. It states: "The formal development of this work is fully formalized in the Rocq theorem prover." (§1.2, p. 5). Environment compliance is an explicit premise: "The checked module is guaranteed to adhere to Iown automatically, but it also relies on the environment to respect Iown as well; otherwise, the memory safety guarantee may no longer hold." (§5.1.2, p. 21). Borrow checking and integration with existing verification tools remain future work (§8, p. 28).
-
-Inference: VL could reuse the decomposition into partial safety, checker assumptions, compiler simulation, and target composition. Applying it to agent-written Rust verified with Verus would require separate proofs connecting Verus's guarantees, foreign calls, and the compiler to this semantic framework. The paper provides no Verus implementation or product-risk measurement.
-
 ## techniques for the catalog
 - open safety invariant — preserve a hidden state invariant and progress-or-error at every small step of an open module
 - error-parameterized partial safety — prove a checker excludes a subset of explicitly modeled error states
 - simulation-preserved safety — transport interfaces through open backward simulations with a calling-convention operator
 - ownership rely-guarantee interface — protect untransferred memory footprints across foreign calls
 - interface refinement and composition — strengthen preconditions, weaken postconditions, and link heterogeneous modules
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "As discussed earlier, the composition of modules does not require knowledge of the internal structure of Inv𝑡 ."): checked the entire paper including references and Appendix A against the study's quotations, numbers, references, and technique steps; corrected initialization and resumption obligations, partial-safety preservation prerequisites, ownership invariant/interface distinctions, and unsupported trusted-base and product-risk claims; did not check the Rocq artifact, reproduce its proofs, or validate the proposed Verus adaptations. The paper identifier arXiv:2510.10015v1 appears on p. 1.

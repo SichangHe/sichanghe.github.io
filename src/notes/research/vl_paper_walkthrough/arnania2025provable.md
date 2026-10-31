@@ -96,8 +96,6 @@ How to apply it.
 3. Compile, test, lint, or formally verify each candidate.
 4. Repair or resample failed candidates and retain evidence for the accepted one.
 
-Inference: for VeruLaw, keep the LLM as a proposal generator and use Verus verification of contracts, loop invariants, and proof functions as a prerequisite check. Contract review and independent compilation remain necessary assumptions of this proposed workflow.
-
 The review reports no single denominator for LLM synthesis correctness and explicitly identifies the “correctness impasse,” security risks, and reasoning deficits (Section 4.5, pp. 45–47). Any product-level safety claim is therefore an inference beyond this thesis.
 
 ## technique 7: neuro-symbolic search, library learning, and constrained generation
@@ -126,4 +124,3 @@ Inference: what remains trusted varies: deductive systems depend on the specific
 - neural-guided symbolic search — use learned component scores to prioritize a sound symbolic search
 - wake-sleep library learning — solve tasks, compress recurring subprograms into a library, and retrain search on replays and generated tasks
 - constrained neural generation — enforce grammar/type constraints during decoding and semantic verification after generation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Given that the basic generative process is probabilistic and not guaranteed to produce correct code, a range of techniques has been developed to steer the model towards better solutions and improve overall success rates."): read the full paper, including bibliography, and checked study quotations, numbers, section/page references, and technique steps; corrected the unrelated DOI link using the title-page arXiv identifier, abstract and section page references, one quotation's citation, the listing punctuation, search alternatives, CEGIS steps, and inference labels; did not independently check cited works, reproduce reported results, or validate the proposed Verus adaptations.

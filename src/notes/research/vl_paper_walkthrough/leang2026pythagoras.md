@@ -6,15 +6,13 @@ Tag: `leang2026pythagoras`, [paper](https://www.semanticscholar.org/paper/fe3fee
 
 Pythagoras-Prover studies how to train Lean theorem provers with limited compute. It combines a verified seed corpus, curriculum SFT, dynamic proof-reasoning filtering, GRPO reinforcement learning, Augmented Lean Formalisation (ALF), self-distillation, and a tactic-level diffusion objective. The abstract reports that “Pythagoras-Prover-4B surpasses DeepSeek-Prover-V2-671B at pass@32 on MiniF2F-Test (82.4% → 86.1%), despite using roughly 167× fewer parameters.” The 32B model reaches 93.0% at pass@2048 on MiniF2F-Test and solves 93 of 672 PutnamBench problems (abstract, p. 1).
 
-Inference: the useful VeruLaw lesson is a data-and-evaluation recipe, not a claim that Lean methods transfer unchanged to Verus. Verus proofs have Rust ownership, executable code, and contracts rather than Lean theorem declarations, so every transfer below is an inference unless the paper is being quoted.
-
 ## technique 1: make a Lean-verified curriculum corpus
 
 What it is. The corpus has easy, medium, and hard tiers. Easy and medium problems come from DART-Math-Hard, DeepScaleR-Preview, and OpenR1-Math; hard problems come from selected Olympiad, AIME, AMC, forum, and Level 4/5 MATH subsets of Big-Math-RL-Verified (Section 2.1, pp. 3–5). The authors say the tiers are ordered monotonically: easy instances simplify medium ones, while hard problems require non-routine techniques (Section 2.1, p. 3).
 
 How to do it. (1) Autoformalize each natural-language problem into Lean with Goedel-Autoformaliser-v2. (2) Translate the candidate back into natural language and discard logical discrepancies (“auto-informalisation”) (Section 2.1.1, p. 4). (3) Generate two independent proof attempts with Goedel-Prover-v2-32B and retain a pair if at least one compiles. (4) For failures, classify compiler errors into seven categories: invalid field/projection, unsolved goal, tactic failure, type mismatch, synthesis failure, unknown identifier, and other errors (Section 2.1.1, p. 4). (5) Prompt Qwen3 models to create rubric-targeted simpler variants, then rerun formalization and proof verification. The rubric gives a 30% relative improvement in autoformalization success (Section 2.1.1, p. 4). (6) For hard problems, synthesize four variants per source, retain only synthesized variants for SFT, and hold original hard problems out for RL (Section 2.1.2, p. 5).
 
-Evidence. The contributions describe “a Lean-verified corpus of roughly 800K instances stratified into easy, medium, and hard tiers” (Introduction, p. 3). Every retained seed pair is gated by the Lean type-checker (Section 2.1.1, p. 4). Inference: VL can stratify verified Rust/Verus obligations by proof complexity and use verifier diagnostics to build a contract-specific failure rubric. A Verus corpus must also preserve toolchain and dependency versions; that requirement is not in this paper.
+Evidence. The contributions describe “a Lean-verified corpus of roughly 800K instances stratified into easy, medium, and hard tiers” (Introduction, p. 3). Every retained seed pair is gated by the Lean type-checker (Section 2.1.1, p. 4).
 
 ## technique 2: dynamic proof-reasoning filtering under a context budget
 
@@ -42,7 +40,7 @@ The evaluation uses Lean 4.9.0-rc1 and a maximum generation length of 30,000 tok
 
 On MiniF2F-Test, Pythagoras-Prover-4B obtains 86.1% at pass@32 and 89.8% at pass@2048; Pythagoras-Prover-32B obtains 89.8% at pass@32 and 93.0% at pass@2048 (Table 1, p. 8). MiniF2F-Test has 244 test problems, so 86.1% represents approximately 210/244 and 93.0% approximately 227/244; the paper reports percentages rather than integer counts. PutnamBench has 672 problems; the 32B model solves 48 at pass@32, 59 at pass@64, and 93 at pass@2048 (Table 2, p. 9).
 
-The authors compare independent restarts with self-correction. On PutnamBench, Goedel-Prover-V2 self-correction solves 57/672 at pass@32 and 86/672 at pass@184, while Pythagoras solves 48/672 at pass@32 and 93/672 at pass@2048 (Table 2, p. 9). The paper argues that restarts avoid inheriting an early logical error (Section 4, p. 9). Inference: a VL system should measure independent proof attempts separately from repair histories and state both attempt budget and denominator.
+The authors compare independent restarts with self-correction. On PutnamBench, Goedel-Prover-V2 self-correction solves 57/672 at pass@32 and 86/672 at pass@184, while Pythagoras solves 48/672 at pass@32 and 93/672 at pass@2048 (Table 2, p. 9). The paper argues that restarts avoid inheriting an early logical error (Section 4, p. 9).
 
 ## technique 6: contamination-sensitive ALF benchmark
 
@@ -58,13 +56,9 @@ At pass@32 on MiniF2F-Test, the diffusion 4B model reaches 63.25%, versus 86.1% 
 
 ## what is proved, trusted, and measured
 
-The seed corpus is checked by Lean; ALF pairs are not exhaustively checked. Reported pass rates use explicit sampling budgets and fixed benchmarks. The verifier, parser, statement-alignment filter, model-generated mutations, and external benchmark correctness are trusted to different degrees. The authors themselves distinguish ALF alignment from validity. Inference: VL must preserve this trust split in reports and never label self-distilled Verus examples verified without a verifier run.
+The seed corpus is checked by Lean; ALF pairs are not exhaustively checked. Reported pass rates use explicit sampling budgets and fixed benchmarks. The verifier, parser, statement-alignment filter, model-generated mutations, and external benchmark correctness are trusted to different degrees. The authors themselves distinguish ALF alignment from validity.
 
 The threat to agent-written verified Rust is data contamination and specification overfitting: high MiniF2F performance can drop under nearby mutations, and a proof can address a mutated statement without being valid. Pythagoras reduces but does not eliminate these risks; its 4B/32B results are for Lean and cannot predict product-level Verus reliability.
-
-## what VL should not redo
-
-The paper already provides difficulty curricula, verifier-gated seed construction, dynamic context filtering, GRPO verifier rewards, structured mutation, self-distillation, restart-versus-repair comparisons, and a perturbation benchmark. Inference: VL should adapt those patterns to Rust contracts and focus new work on ownership-sensitive mutations, dependency replay, and semantic requirement checks.
 
 ## techniques for the catalog
 
@@ -75,5 +69,3 @@ The paper already provides difficulty curricula, verifier-gated seed constructio
 - restart pass@N — compare independent proof sampling with self-correction under explicit denominators
 - perturbation benchmark — test transfer and contamination sensitivity on controlled statement mutations
 - tactic-level diffusion — mask and denoise complete proof tactics rather than arbitrary tokens
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

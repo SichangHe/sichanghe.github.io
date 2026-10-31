@@ -6,8 +6,6 @@ Tag: `wang2018experiments`, [paper](https://arxiv.org/abs/1805.06502)
 
 The paper studies neural translation from informalized mathematical LaTeX to formal Mizar statements. It reports: "We report on our experiments to train deep neural networks that automatically translate informalized LATEX-written Mizar texts into the formal Mizar language." (Abstract, PDF p. 1). The target is a formal, verifiable language, but the experiments measure exact string agreement rather than proof-checking. The authors describe the result as "our best performing model configurations are able to generate correct Mizar statements on 65.73% of the inference data, with the union of all models covering 79.17%." (Abstract, PDF p. 1).
 
-Inference: For VeruLaw, the useful pattern is a generator that proposes Verus specifications or proof fragments followed by a verifier that accepts only compilable, proved output. Mizar exact-match rates cannot be treated as Verus proof rates.
-
 ## technique 1: create aligned informal/formal training data by controlled informalization
 
 The problem is the lack of naturally aligned informal and formal statements. The paper starts from the formal Mizar corpus and uses its established Mizar-to-LaTeX translation. It says: "Our requirement is that the informalization should be nontrivial, i.e., it should target a reasonably rich subset of LATEX and the transformations should go beyond simple symbol replacements." (Section 3, PDF p. 6). The process is:
@@ -67,12 +65,6 @@ Inference: The Verus analogue is to compile both the generated and reference fun
 
 The paper measures neural translation quality on a synthetic, randomly partitioned corpus. It does not prove that generated statements are mathematically equivalent when strings differ, and it does not report Mizar checker or ATP acceptance rates for the generated outputs. Inference: the Mizar-to-LaTeX translation, alignment tags, tokenizer, NMT implementation, and evaluation scripts are trusted components of the experiment, since the paper reports no independent check of them. Inference: A Verus product must keep the Verus verifier, Rust compiler assumptions, and any external-body code in its trusted base; generated text is untrusted until Verus checks it.
 
-Inference: The synthetic overlap (57,145 of 105,247 inference lines also occur in training) means the 65.73% result is not a clean measure of generalization to unseen proof patterns. The paper reports the non-overlap denominator as well, saying "in addition to correct translations, we are also interested in correct translations in the 48,102 non-overlapping sentences." (Section 4.2, PDF p. 8). Inference: VL should not redo a bare exact-string benchmark; it should reuse the alignment, progressive ablations, disjoint evaluation, ensemble coverage, and checker-based semantic validation ideas.
-
-## threat to a product of agent-written verified Rust
-
-Inference: The paper supports a moderate threat to specification drafting: a model can learn nontrivial informal-to-formal transformations and produce useful candidates. It does not demonstrate a threat to soundness because no generated Mizar statement is accepted without a separate formal checker, and semantic equivalence is explicitly future work. Inference: The main operational risk for VL is plausible but wrong Rust specifications that compile or resemble references; mandatory Verus checking and independent review of the intended contract are required controls.
-
 ## techniques for the catalog
 
 - synthetic informalization: generate aligned informal/formal pairs from a formal corpus with nontrivial syntax transformations and position tags
@@ -82,4 +74,3 @@ Inference: The paper supports a moderate threat to specification drafting: a mod
 - checker-oriented evaluation: report exact matches on overlap and non-overlap splits with explicit denominators and separate quality metrics
 - greedy ensemble coverage: add models that maximize new correct outputs and measure edit-distance near misses
 - semantic post-checking: use theorem proving or verifier-based equivalence checks instead of treating string identity as correctness
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The performance decreases when the number of units reaches 2048, which might indicate that the model starts to overfit."): I read the whole paper text and checked every quotation, number (corpus split, Tables 3 to 9, percentages, 11-hour training time) and technique step against it, and corrected PDF page references (Table 3 is on p. 8, Tables 5 and 6 on p. 10, Section 5.3 and the future-work sentence on p. 11, Table 8 on p. 12, Section 3 spans pp. 6-7, Section 4.1 spans pp. 7-8); I reworded step 1 of technique 1 (the paper does not describe choosing articles), added the paper's own sentence on the non-overlap denominator, labelled the trusted-components sentence as Inference, and left the tag line unchanged with the arXiv link taken from the paper text; I did not check the cited references, the figures, Table 10, Section 6, or the Appendix A snapshots against anything beyond the paper text, and I did not verify the Verus-related Inference lines beyond confirming they are marked as inference.

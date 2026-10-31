@@ -40,12 +40,6 @@ The authors explicitly limit finite-instance validation: “the IC3 fixpoint on 
 
 Inference: TLC screening establishes finite reachable-state validity, while Apalache's admission and push checks support the IC3 frame construction. Neither alone establishes the unbounded result. That result depends on the subsequent TLAPS obligations for the specified protocol. Confidence therefore depends on the model and verification tools, rather than the plausibility of LLM output. The paper reports proof completion; this study does not inspect proof artifacts or audit the implementation.
 
-Inference: In VL, retain generated Rust lemmas as source and check them with Verus. Treat the synthesis driver as proposing proof material whose correctness must be checked.
-
-## threat to VL and prior work
-
-Inference: IC3Syn is relevant to VL's distributed-state reasoning because it combines counterexample-focused lemma generation with checked clause admission. Its results do not establish effectiveness on Rust or Verus. Reusing this decomposition is a plausible direction; an exact blocker over concrete finite states would need a separate justification before transferring the paper's finite-instance completeness claim to a Verus workflow.
-
 ## techniques for the catalog
 
 - IC3/LLM blocking synthesis: search backward from frontier bad states, reuse stored clauses, and request new clauses for unresolved states
@@ -53,5 +47,3 @@ Inference: IC3Syn is relevant to VL's distributed-state reasoning because it com
 - exact aggregate fallback: negate accumulated bad states after LLM-guided search fails and no fresh frontier bad state exists
 - push-failure refinement: attempt one extra blocking step when a clause cannot move to the next frame
 - unbounded induction handoff: prove the extracted invariant with TLAPS after finite-instance synthesis
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Quantifier templates are extracted directly from the specification and deduplicated modulo variable renaming, providing the LLM with protocol-specific quantifier structure without requiring manual template design."): read the complete paper text and study; checked quotations, numbers, section and page references, algorithm steps, and finite versus unbounded claims; corrected two citation locations, added clause reuse, syntax processing, symbolic admission, fallback prerequisites and push-failure handling, replaced the fetch-record link with the paper's arXiv identifier, and marked Verus and trust conclusions as inferences; did not reproduce experiments, inspect code or TLAPS proof artifacts, or test the proposed Verus adaptation.

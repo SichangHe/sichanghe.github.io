@@ -79,11 +79,7 @@ The paper reports: “We use an additional format reward like [4].” (Section 3
 
 Section 3 states, “The experiment is conducted on miniF2F containing 30 samples.” Table 2 reports the results. Lean-qwen0.5B-sft has 11 positive samples and 36% accuracy on miniF2F, with 49% train-set accuracy; Lean-qwen0.5B-rl has 13 positive samples, 43% miniF2F accuracy, and 61% train-set accuracy (Table 2, p.3). The paper concludes that reinforcement improves accuracy over direct supervised fine-tuning. The denominators are 30 miniF2F samples and the unspecified train-set size; the table does not give a train-set denominator.
 
-Inference: Lean/LeanDojo execution is the correctness boundary for accepted proofs; GPT-4o reasoning annotations, supervised loss, GRPO rewards, model outputs, and breadth-first orchestration are untrusted search components until Lean accepts a tactic sequence. The paper does not test Verus, Rust, specifications, memory safety, or deployed code. Inference: VL can reuse the two-phase training pattern, checker-grounded search, and format filtering, but should train on Verus states and reward actual Verus verification rather than Lean reference-tactic similarity alone.
-
 Table 2 reports 43% versus 36% and 13 versus 11 positives for the 30 miniF2F samples. Inference: these percentages are approximate; 13/30 is about 43.3%, and 11/30 is about 36.7%. The train-set figures (61% and 49%) have no evaluation denominator in the paper, although the raw training source contains 25k samples. Inference: the miniF2F comparison is small and should not be extrapolated to product reliability. Inference: reinforcement may improve proof-step proposals for agent-written verified Rust, but this paper does not measure that possibility or establish a threat level.
-
-Inference: VL should not redo a generic supervised-versus-reinforced Lean comparison with the same tiny setup. A useful new experiment would replace the reward with Verus acceptance, measure proof repair cost and verifier time, and report denominators and variance.
 
 ## techniques for the catalog
 
@@ -91,5 +87,3 @@ Inference: VL should not redo a generic supervised-versus-reinforced Lean compar
 - two-phase GRPO training — supervised adaptation followed by grouped sampling and reward-weighted updates
 - verifier-backed BFS — execute candidate tactics, enqueue novel states, and identify grammar errors
 - reference-tactic and format rewards — compare candidates with reference tactics and add a format reward
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In the optimization step, the reward is calculated by comparing the candidate with the ground-truth."): checked all paper text, study quotations, numbers, section and page references, and technique descriptions; corrected the abstract quotation, model labels, reward description, unsupported search details, and inference labels; did not reproduce experiments, inspect implementation code, or independently validate plotted curves.

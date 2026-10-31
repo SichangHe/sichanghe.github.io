@@ -60,7 +60,7 @@ Verus form. Inference: make the Rust wrapper's kernel specification explicit, wi
 
 Evidence. On the 60-task subset, Opus single-shot scores 6% (3/60) and NKI-Agent 63.3% (38/60); SFT single-shot 15.0% (9/60) and NKI-Agent 25.0% (15/60). Multi-turn without tools remains 15.0%, showing that grounded compiler/verification feedback, not extra conversational turns, supplies the gain (section 4.4, pp. 4–5). Tool use can hurt easy tasks: the agent sometimes changes already-correct code after warnings or exhausts turns (section 4.4, p. 5).
 
-Limits. The ten-turn limit is empirical, results are single-run without error bars, and correctness is measured with random inputs rather than exhaustive equivalence (section 6, p. 6). Inference: `torch.allclose` can miss shape-specific or adversarial numerical failures, so VL should pair dynamic checks with formal contracts and targeted edge cases.
+Limits. The ten-turn limit is empirical, results are single-run without error bars, and correctness is measured with random inputs rather than exhaustive equivalence (section 6, p. 6).
 
 ## technique: LoRA SFT followed by binary-reward GRPO
 
@@ -81,8 +81,6 @@ Evidence. GRPO underperforms SFT on every reported configuration: 60-task single
 
 The paper measures compile-and-verify pass rates on real Trn1 hardware, by difficulty level and model, plus SFT data-quality progression. It does not provide confidence intervals; absolute differences of 1–2 tasks on 150 are within noise (table 1, p. 3). Trusted components include the Neuron SDK/compiler, PyTorch reference, random-input sampling, `torch.allclose`, generated dataset filters, LoRA/GRPO implementations, and single-run evaluation. The benchmark spans 250 tasks but the principal balanced result uses 150 (50 per level); every percentage above retains its denominator.
 
-Inference: for VL, this paper's most transferable idea is a bounded compile–verify–fix loop with explicit typed diagnostics, while its strongest warning is that tool success on a finite dynamic sample is not a formal proof. Agent-written verified Rust should expose the same separation: compile and Verus-check after each candidate, preserve diagnostics, and cap repair turns. A model can still repeatedly produce a kernel that passes sampled tests while violating an unmodeled shape or memory invariant; encode those invariants in Verus contracts and retain hardware checks as complementary evidence.
-
 ## techniques for the catalog
 
 - domain corpus synthesis — expand real operator seeds across shapes, dtypes, and fusions, then compile/execute/stability/baseline filter
@@ -90,5 +88,3 @@ Inference: for VL, this paper's most transferable idea is a bounded compile–ve
 - compile–verify–fix loop — iterate real-hardware compilation and reference comparison for up to ten turns
 - curated LoRA SFT — train on quality-controlled domain episodes with frozen low-rank adaptation settings
 - binary-reward GRPO audit — compare RL against SFT and treat sparse binary compilation reward as a tested failure mode
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

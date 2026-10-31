@@ -6,8 +6,6 @@ Tag: `mensfelt2024autoformalization`, [paper](https://arxiv.org/abs/2409.12300)
 
 The paper translates natural-language descriptions of strategic games into Prolog predicates that a solver can execute. Its abstract says: “Our approach utilizes one-shot prompting and a solver that provides feedback on syntactic correctness to allow LLMs to refine the code.” (Abstract, p. 1) The game solver has a game-independent part for transitions and situation calculus, a game-dependent part for initial state, legal moves, effects, abnormal fluents, final states, and payoffs, plus auxiliary predicates (Methods, §3.1, pp. 3–4).
 
-Inference: the same architecture applies to VL when a natural-language requirement is translated into a Rust/Verus state machine: keep a fixed transition/model layer, generate only domain predicates or state facts, and run a checker before accepting the output. The paper’s Prolog and game semantics do not prove Verus code; the Verus mappings below are inferences.
-
 The paper has an internal count discrepancy. The contribution list says the dataset has 105 descriptions (p. 1), while §3.3 says the descriptions across five games total 110 and Table 2 contains 5+50+5+50=110 descriptions (p. 5). The reported 108/110 syntax denominator in §4.2 (p. 6) follows the latter count.
 
 ## technique: fixed solver plus generated domain predicates
@@ -46,7 +44,7 @@ Syntactic accuracy is the percentage of programs correct on the first attempt be
 
 The authors report: “The generated code was syntactically correct in 108 out of 110 cases (98%).” (§4.2, p. 6) They also report: “Overall, the translation showed high syntactic and lower semantic correctness.” (§4.2, p. 6)
 
-Verus form. Inference: split VL evaluation into parser/type checking, executable model tests, and semantic review against a requirements oracle. Report separate denominators and preserve incomplete or ambiguous inputs instead of silently excluding them. Verus compilation can replace syntax checking for generated Rust, while semantic correctness still requires a formal reference model or human review.
+Verus form.
 
 ## technique: structural generalization from one example
 
@@ -64,12 +62,9 @@ Verus form. Inference: model the action set as an enum and turn ownership as an 
 
 The Prolog solver checks generated predicates for syntactic validity. The outcome-query example executes the supplied PD model (§3.1, p. 4). Semantic labels are manual: “The semantic correctness was investigated manually, which limits the scalability of the evaluation.” (§6, p. 7) Executing generated code to find payoffs is future work (§6, p. 7). The studied class is mostly two-player simultaneous games, with two additional generalization cases. Inference: applying this workflow requires trusting the supplied game descriptions, prompt example, Prolog implementation, and manual semantic labels.
 
-Inference: the threat to agent-written verified Rust is specification error. A generated Verus proof can certify a wrong state machine exactly as a syntactically valid Prolog program can encode an invalid move rule. VL should adopt the fixed-model/limited-generation split, solver feedback, explicit retry bounds, and separate syntax/semantic metrics. It should not claim semantic correctness from compilation alone.
-
 ## techniques for the catalog
 
 - fixed solver plus domain predicates — separate generic transition semantics from LLM-generated domain facts
 - solver-feedback correction loop — attempt correction using checker traces with a bounded retry count; the two observed syntax failures resisted this feedback
 - syntax/semantic evaluation — report first-attempt checker validity separately from manually judged meaning with explicit denominators
 - one-shot structural generalization — use one complete example to test changes in turn structure and action cardinality
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Then, GPT-4o was prompted to create further dilemmas from various domains such as social life, business, politics, and warfare, using the initial scenario as a template."): checked all paper text, study quotations, numbers, section/page references, and technique steps; corrected the count attribution, generic versus PD-specific final states, retry-loop description, evaluation scope and denominators, failed correction results, and conclusion page references; did not reproduce experiments, inspect external code/logs, or validate the inferred Rust/Verus adaptations.

@@ -50,5 +50,3 @@ Inference: For verified agent-written Rust, the transferable method is to synthe
 - CEGIS: alternate SMT counterexample search with candidate-template pruning
 - impossibility by beliefs: show no action works on a valid belief set to rule out a performance objective for deterministic CCAs
 - transition lemmas: join bounded execution checks by induction to prove progress and performance over arbitrarily long executions
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We will show that the network can compute the set of all feasible actions using the belief set."): checked all paper text, including appendices and references, against the study's quotations, numbers, references, technique steps, assumptions, and catalog; corrected quotation punctuation, the scope page reference, the publisher link, the sufficiency theorem's scope, and the utilization claim; added post-synthesis proofs, model-specific guarantees, the tradeoff's conditions, and implementation limits; replaced unsupported Verus assertions with labeled inferences; did not reproduce experiments, run synthesis, or independently certify the mathematical proofs.

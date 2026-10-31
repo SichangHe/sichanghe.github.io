@@ -40,8 +40,6 @@ how to do it:
 
 The kernel is intended to be small and independent of the LLM. The paper gives three reasons for trust: small code, LLM independence, and sound decision procedures for cited quantifier-free linear integer and real arithmetic (p.8). It also says every conclusion carries a proof trace, a sequence of triples containing a natural-language explanation, a statute or precedent, and a verified intermediate value (Part II.D, p.8).
 
-Inference: the Verus analogue is a verified Rust function with `requires` and `ensures`, loop `invariant`s, and solver-backed proof obligations. Verus’s solver acceptance is evidence for the stated contract, while the contract and any external-body assumptions remain trusted. Inference: a VL system should preserve counterexamples and proof traces as artifacts for repair and review rather than emitting only a pass bit.
-
 evidence: the article supplies worked deadline and Commerce Clause examples but no measured kernel implementation. For the Commerce Clause example, the kernel checks that all five Lopez factors are addressed, appear in the correct sequence, and terminate consistently when an earlier category resolves the issue (Part III.B, pp.11–12).
 
 limits: SMT success proves the formal constraint under the solver’s modeled theories, not that the formal rule matches law or facts. Open-textured analysis receives a weaker guarantee: the architecture proposes checking citation existence, ratio faithfulness, and structural analogy, while the premise remains judgment (Part II.D and Part III.C, pp.8, 12). Inference: solver soundness cannot compensate for omitted variables or an incorrect formal encoding.
@@ -60,17 +58,13 @@ how to do it:
 
 The authors argue GRPO suits heterogeneous difficulty and small expert corpora; its group normalization avoids easy examples dominating, and its graded signal exposes intermediate progress. They say, “Verifier feedback supplies the missing leverage: the model can explore new formalizations, the kernel can score them, and GRPO can shift probability mass toward the candidates that survive.” (Part II.E, p.9).
 
-Inference: for VL, this is a direct training pattern: sample candidate Verus specifications or proof repairs, run Verus and meaningful tests, and reward verified candidates while retaining the checked source as the artifact. Inference: a binary Verus pass alone is too sparse for useful training; staged rewards could include parsing, type checking, target obligations, and regression tests, but reward weights are engineering choices.
-
 evidence: no GRPO training run, sample count, cost, or success denominator is reported. The article explicitly presents a “theoretical foundation for implementing a verifier-based legal-AI pipeline” (Part II.F, p.10), so performance claims are hypotheses.
 
 limits: uniformly passing candidates can hide incorrect shared assumptions, while uniformly failing candidates provide no useful relative signal; the proposed resampling does not establish semantic correctness. Inference: reward hacking remains possible if tests or formal specifications omit required behavior.
 
 ## what is proved, measured, and trusted
 
-The paper proves no new kernel theorem and reports no implemented-system benchmark. Its examples show how structural properties could be checked for deadlines, Commerce Clause factors, and cross-jurisdictional sanctions. The claimed guarantees are conditional: bound determinations follow from the formalized rules; open-textured analyses receive structural checks. The specification gap remains explicit. The kernel, SMT procedures, λlaw semantics, source corpus, test suite, and legal experts are trusted or assumed; the LLM is an untrusted proposer and explanation generator. Inference: this separation maps closely to VL’s proposer-verifier boundary, but only if the formal specification and trusted external contracts receive review.
-
-Inference: VL should not redo a generic proposer-verifier loop or staged verifier rewards as an isolated idea. The paper already supplies that architecture. A product threat is the specification gap: agent-written verified Rust can satisfy a wrong or incomplete contract just as λlaw can encode a wrong legal rule. The useful remaining work is domain-specific coverage, dependency/FFI assumptions, and measurements on real maintenance tasks.
+The paper proves no new kernel theorem and reports no implemented-system benchmark. Its examples show how structural properties could be checked for deadlines, Commerce Clause factors, and cross-jurisdictional sanctions. The claimed guarantees are conditional: bound determinations follow from the formalized rules; open-textured analyses receive structural checks. The specification gap remains explicit. The kernel, SMT procedures, λlaw semantics, source corpus, test suite, and legal experts are trusted or assumed; the LLM is an untrusted proposer and explanation generator.
 
 ## techniques for the catalog
 
@@ -79,4 +73,3 @@ Inference: VL should not redo a generic proposer-verifier loop or staged verifie
 - proof-trace explanations — attach each verified conclusion to source authority and intermediate values before generating prose
 - verifier-rewarded GRPO — sample candidate formalizations, score staged verification outcomes, and update the policy by group-relative advantage
 - specification-gap testing — use worked examples, concolic inputs, and literate code review to detect wrong formal rules
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

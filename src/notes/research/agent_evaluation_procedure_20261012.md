@@ -115,8 +115,6 @@ dk /opt/tla/tlc -config M.cfg M.tla
 
 S6. Decide the task type: vague request only; request plus a design or spec handed over; or translation of an existing spec. This changes what the verdict means (K9).
 
-## Step 2. Read the files (no verifier needed)
-
 ### K1. Enough model to state the claims [G]
 Look at: the model and spec files.
 Do: find (a) per-node state, (b) messages or a network, (c) a step relation, (d) runs as endless sequences of states, (e) at least one named theorem per claim. A single struct with a vector, or a model that exists only as prose, fails. Quote file:line for each.
@@ -178,8 +176,6 @@ Look at: the agent's prompt and workspace files (S1).
 Do: if the task was to work out the details from a vague request, check that the agent was not given a design, an invariant list, or an earlier agent's spec file it could edit. Check for reference answers in the workspace. You cannot check what the agent saw in training; write that in the hand-back as "not checked".
 Condition when handed: "the task handed over the design, so this shows spec and proof skill, not discovery from a vague request". Condition when the prompt is absent: "agent input unknown".
 
-## Step 3. Run the verifier on the clean copy
-
 ### R1. The verifier itself rejects bad input [G; pass or cannot tell only]
 Do: in the same environment, check three small files from Appendix C: a false postcondition, a hidden "assume false" helper, and a tiny correct file. Use the strict flags in Appendix A. These flags are fixed by this text, not taken from the result.
 Pass: the first two are rejected, the third accepted.
@@ -195,8 +191,6 @@ The success line depends on the tool (Appendix A, "success line").
 Pass: all runs exit 0 with the success line and the same counts; the count equals the report's (otherwise add a condition).
 Fail: run 1 or the strict run exits nonzero with a verifier error in the result's code. Quote it.
 Cannot tell: no verifier, timeout, out of memory, Docker error, or the three runs differ (an unstable proof; report it). You may retry once with a longer time limit; say so.
-
-## Step 4. Does the spec say what the request says?
 
 ### M1. Claim to theorem, graded [C]
 Do: find the theorem and every definition it uses. Write the theorem in plain English from the code, ignoring comments, names and the report. Compare with the claim in both directions: does the theorem imply the claim, and does the claim imply the theorem? Give the grade. Quote file:line.
@@ -263,8 +257,6 @@ Do: for each, find the model step that does it (quote). The model must contain e
 Pass: each named fault found. Fail: a named fault is missing (so a claim like "safe during partitions" says nothing), or a multi-write operation is one atomic step.
 Condition: a fault from Appendix D that the request did not name is absent.
 
-## Step 5. Does the spec notice wrong behavior?
-
 ### W1. Wrong versions are rejected [C]
 Do, in two parts. First, targeted: for each wrong behavior from S3 and Appendix B that breaks this claim and stays inside the request's faults, make it as a small edit on a copy of the model or code. Second, bulk: make at least 20 mutants of the model (or all plausible ones if fewer) spread over every step, using the kinds in Appendix E. This mutates the model, not only the code. Include one mutant where all the helpful steps are replaced by do-nothing steps. Rerun the verifier on each. Write `edit | result | item that failed`.
 Sort the bulk results: killed; survived but equivalent (the change adds no run that matters to any claim: say why in a line; if you cannot, count it as uncovered); survived and uncovered (it changes behavior and no theorem notices); survived and breaks a claim; did not compile (leave out); timed out (leave out and count).
@@ -284,8 +276,6 @@ Cannot tell: an example cannot be built. n/a: no model.
 ### W3. A known real bug [C]
 Do: if you know a real bug for this kind of system, reproduce it as an edit and check the spec rejects it. Liveness bugs are known for PBFT, Casper FFG, early Tendermint and FaB; also a leader that is deposed again and again by competing timeouts (Appendix B).
 Pass: rejected. Fail: accepted. n/a: you know no bug for this kind of system, or it cannot be expressed in the model.
-
-## Step 6. Assumptions and liveness
 
 ### L1. Assumption sheet [task, not a check; do it before L2]
 For every "eventually" claim list every assumption and every other premise of its theorem: `name | file:line | plain sentence | who: request, justified from outside, or agent added`. Quote the request words for "request". Include premises like "clients are quiet" and "no node times out while the group agrees". For each, write whether the conclusion would follow if it held and the protocol did nothing.
@@ -378,8 +368,6 @@ Look at: the driver, parsers, serializers, sockets, files, clocks, library calls
 Do: list each place and its stated contract. Check where the guarantee is actually decided.
 Condition: one for each unverified place, with its contract.
 Fail: the guarantee a claim depends on is decided in unverified code (for example duplicates are filtered in the driver, not in the verified function).
-
-## Step 8. Close out
 
 ### E1. A second reader [C, cond]
 Do, in two parts. First, give a fresh agent that has not seen the request only the theorem and its definitions, and ask for a plain English statement of what it guarantees; compare with the claim. Second, give it your claim list, grade lines and quoted evidence, and ask it to refute your three weakest grades and any pass on M1, M2, L2 and T1. If you can compare formulas with a tool, you may also have it write the formal statement again from its English and compare.

@@ -60,12 +60,6 @@ Failure and assumptions: MCS only handles explicit comparable facts. IFS's sever
 
 The paper proves representation-relative theorems in Appendix G: reconstruction completeness for covered Kernels, IFS soundness for represented dimensions, and detection of any mismatch that induces a positive checkpoint. Those theorems assume a correct mapping `M` and a syntactically valid input. Measurements cover IFS, execution, GoodExec/FalseExec, MCS, model settings, and denominators stated above. Trusted components include the parser, mapping table, reference contract, model-generated contract, object-realization registry, and MOOSE. Execution is explicitly only a runtime-validity signal, not a proof of intent.
 
-Inference: for VL, the strongest reusable pattern is a small verified semantic checker between generation and execution. The threat is specification drift: an agent can produce a proof-valid Rust implementation whose contract omits an important state or uses an incomplete abstraction.
-
-## what VL should reuse and what it should not redo
-
-Inference: VL should reuse deterministic reconstruction, explicit contract checkpoints, bounded repair with a regression guard, and separate structural and parameter diagnostics. It should not claim that compilation, test execution, or Verus proof alone establishes user intent. The paper's 220-case benchmark already establishes that execution-only repair leaves many runnable-but-wrong outputs; a new VL experiment should measure its own contract omissions and false acceptance rate.
-
 ## techniques for the catalog
 
 - semantic reconstruction — map generated DSL objects to normalized semantic operators and retain unresolved cases
@@ -73,5 +67,3 @@ Inference: VL should reuse deterministic reconstruction, explicit contract check
 - contract-guided refinement — feed deterministic violations to a generator for bounded, regression-guarded repair
 - structural plus parameter checks — pair a structural score with a conditional coefficient/material consistency diagnostic
 - executable-versus-intent audit — report GoodExec and FalseExec separately so runnable code is not mistaken for correct code
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

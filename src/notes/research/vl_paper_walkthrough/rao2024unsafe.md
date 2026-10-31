@@ -58,5 +58,3 @@ Inference: the evidence supports a method for organizing manual review, rather t
 - structural isolation formulas: classify nine patterns and assign safety obligations to callers and constructors
 - constructor invariant audit: compare safe and unsafe construction paths using required and verified safety sets
 - visibility audit: examine literal construction and safe functions whose soundness depends on restricted callers
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Developers and code auditors must identify all preconditions and postconditions associated with the unsafe code."): checked the full paper, quotations, numbers, formulas, technique steps, section and PDF page references, and the arXiv identifier; corrected the safety model, graph reduction, isolation patterns, constructor references, and 69.0% finding; removed unsupported Verus prescriptions and marked conclusions as inference; did not reproduce the project analysis or independently validate Rust or Verus semantics.

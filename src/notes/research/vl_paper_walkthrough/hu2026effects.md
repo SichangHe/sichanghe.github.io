@@ -22,8 +22,6 @@ The mediator must retain the pending request and re-derive fixed values rather t
 
 Step by step: (1) hold the caller’s request in mediator state; (2) derive operation, address, length, and authorized buffer from that request; (3) compare proposal fields with those values; (4) check chosen slots or similar free fields against the observed permitted set; (5) reject stale, replayed, expired, or superseded tokens; (6) consume the token regardless of the result; (7) run the primitive and classify the actual outcome; (8) update abstract state and log the outcome. A device error such as EIO is a committed outcome with a state transition, whereas a failed validation is externally silent (section 3, page 3).
 
-Verus form (Inference): encode `valid_token` and `refines` as `spec fn`s over ghost state, and prove a `proof fn` that accepted proposals imply field equality and an allowed transition. A loop over commit-log entries can carry an `invariant` stating that the log is a specification trace prefix. The paper’s claim is conditional on complete mediation, trusted primitives, serialized commits, a correct interpreter, and an explicit crash model; those conditions must be represented as trusted boundary assumptions in a VL design.
-
 ## technique: draw the mediability envelope before deploying
 
 The paper gives six conditions. The effect vocabulary must supply legibility (each effect identifies its operation), specification-input observability (the mediator sees every transition input), and correlatability (effects group into operations with recoverable order). Deployment must supply completeness (no state change bypasses the boundary), outcome enumerability (all primitive outcomes are classifiable), and explicit durability (persistence is represented by an effect such as flush or barrier). The paper says, “Six conditions delimit it, and they are of two kinds.” (section 4, page 4)
@@ -36,7 +34,7 @@ Verus form (Inference): make each envelope condition a documented invariant at t
 
 Validation, primitive invocation, abstract-state updates, and log insertion run under one commit lock; stale proposals are rejected and replanned. A multi-primitive guest operation is not atomic unless the vocabulary supplies an atomic primitive or substrate locking (section 3, page 3). The mediator guarantee excludes liveness, availability, timing channels, and defects in the specification. A Byzantine driver may propose nothing or stall, and an unenumerated outcome or specification defect is enforced faithfully rather than detected (sections 3–4, pages 4–5).
 
-What is proved or measured: nothing experimentally; there is no implementation, formal semantics, mechanized proof, or measurement. What remains trusted: confinement, mediator code and compiler, effect adapters, specification and interpreter, commit serialization, complete mediation, and crash model. Inference: this is a major threat-model result for agent-written verified Rust. Verus proofs of generated code do not remove the need for a mediator when regeneration, irreversible effects, or proof-assumption drift can break artifact-level trust. VL should reuse the proposal-commit and envelope ideas, but should not claim this paper experimentally validates them.
+What is proved or measured: nothing experimentally; there is no implementation, formal semantics, mechanized proof, or measurement. What remains trusted: confinement, mediator code and compiler, effect adapters, specification and interpreter, commit serialization, complete mediation, and crash model.
 
 ## techniques for the catalog
 
@@ -45,4 +43,3 @@ What is proved or measured: nothing experimentally; there is no implementation, 
 - sealed observation tokens — bind observations to request and state versions, then consume tokens under a commit lock
 - outcome-closed transitions — enumerate every primitive outcome and its abstract-state transition
 - mediability envelope — screen effect vocabularies for legibility, observability, correlatability, completeness, outcome closure, and durability
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

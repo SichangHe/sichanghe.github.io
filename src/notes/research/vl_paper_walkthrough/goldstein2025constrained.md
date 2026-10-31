@@ -72,8 +72,6 @@ Palamedes is a Lean library invoked with `generator_search (fun t ⇒ isBST t (l
 
 Users can keep the tactic call or render editable code with `generator_search?`. Adding weights or size bounds manually may change distributions or make the generator incomplete. The sampling interpreter retries failures and exhausted fuel (section 5.2, PDF page 16).
 
-Inference: a VL backend could emit Rust generators with Verus proof obligations. Any resulting guarantee would depend on the encoded support semantics, predicate, and executable sampling implementation, as well as successful proof checking.
-
 ## evidence, limits, and trusted parts
 The Main suite contains 32 benchmarks. Experiments used an M1 MacBook Pro with eight cores and 16 GB memory, Lean 4.21.0, a 900-second timeout, and 30-run averages for Palamedes (section 6, PDF pages 16–17). The authors report: “Palamedes finds generators for 80% of the Main benchmarks in under 3 seconds.” (section 6.1, PDF page 17). It fails `isUnique` and `hasDuplicates` because it cannot automate conversion to optional accumulations. Appendix E.1 reports synthesis times of 1.53 seconds for BSTs and 50.4 seconds for `isRBT` (PDF page 36). These are synthesis times, not measurements of sampling performance.
 
@@ -85,8 +83,6 @@ The paper contains a count inconsistency: section 5.2 says “All but three gene
 
 The approach is partial and handles recursive predicates expressible through first- and second-order primitive recursion; normalization or missing base generators can prevent synthesis. It has no built-in sizing or distribution optimization (section 7, PDF page 19). A nested `pick` example assigns four valid values probabilities 0.5, 0.25, 0.125, and 0.125 under equal-probability branch choices (section 9, PDF page 21).
 
-Inference: exact support proves validity and possible coverage under the stated semantics; it does not establish useful finite-sample coverage or the correctness of the function under test. For VL, the reusable ideas are proof-producing synthesis, reusable support lemmas, fold/unfold normalization, and support-preserving optimization. Distribution quality and actual sampling performance would need separate evaluation.
-
 ## techniques for the catalog
 - support-exact generator synthesis: construct a generator whose denotational support is exactly the predicate’s satisfying set
 - deductive combinator rules: synthesize `pure`, `pick`, `bind`, available generators, and case splits by backward proof search
@@ -95,5 +91,3 @@ Inference: exact support proves validity and possible coverage under the stated 
 - fold/unfold recursion: normalize recursive predicates to optional accumulations, tuple constraints, and synthesize unfold steps
 - proof-producing tactic pipeline: combine best-first proof search, AST optimization, and checked correctness proofs
 - distribution separation: establish support first; distribution tuning is proposed future work
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "QuickChick does not search for generators; instead it works more like a compiler, producing a generator almost instantly by walking over a predicate in a single pass."): checked the full paper including appendices, study quotations, numbers, page and section references, and technique steps; corrected the publication-year tag, page references, runtime-search qualification, recursive normalization workflow, and evaluation limitations, and noted the inconsistent assume-free counts; did not execute Palamedes, reproduce experiments, check external artifacts, or validate the proposed Verus adaptations.

@@ -16,8 +16,6 @@ Use O1 when the user has an executable Asmeta model but has not listed all impor
 
 The demonstrated O1 steps are to supply the clock specification and ask for its three most important guaranteed properties. The clock specification declares `sec`, `min`, and `h`, with ranges 0–59, 0–59, and 0–23 (Listing 1, p. 4). Inference: review the resulting candidates, formalize selected items with O2, and check them with AsmetaSMV before treating them as guarantees.
 
-Inference: For VL, use elicited properties as candidate specifications and require a human or domain policy to select them before proof generation. A Verus proof of an elicited but irrelevant property still succeeds, so property selection is trusted input.
-
 ## technique 2: context-aware LTL/CTL generation (O2)
 
 Use O2 to translate an informal temporal requirement into LTL/CTL using valid operators and functions defined in the Asmeta specification. For the clock, the requested rule is that when `min` reaches 59 it is 0 in the next state. The agent emits `AG (min = 59 implies AX (min = 0))` (§3, p. 5). The paper requires the LLM to “recognize the roles and types of functions, and incorporate these elements appropriately into temporal operators” (§2, p. 2).
@@ -32,13 +30,9 @@ O3 translates a formal temporal property back into natural language. For the clo
 
 The demonstrated O3/O4 steps are to request an explanation of an existing formula or an available Avalla scenario (§3, p. 5). Inference: compare the explanation with the formula or scenario before using it to diagnose a problem; the demonstration does not include that comparison or a state-by-state explanation.
 
-Inference: In VL, render Verus counterexample traces, failing assertions, and model-state snapshots into plain language, but link each sentence to the exact trace event. Explanations should never be accepted as proof evidence; only a successful Verus verification run is proof evidence.
-
 ## evidence, trust, and limits
 
 The paper reports no benchmark, accuracy denominator, runtime, or human study. Its evidence consists of the clock walkthrough and the proposed integration design. The conclusion states: “Future work will focus on turning this conceptual workflow into a concrete implementation within Asmeta” (§4, p. 5). Inference: relying on generated properties requires trusting the model, Asmeta semantics, and AsmetaSMV/NuSMV results, and checking that properties capture the intended requirements. Model checking a formula does not itself validate an LLM's natural-language explanation.
-
-Inference: A risk for VL is specification drift: an agent can produce a syntactically valid contract that omits required behavior. Preserve a trace from requirement to generated contract to checker result, and test contracts against negative examples. This paper proposes a prompt → model-checker feedback → correction workflow; it does not measure that workflow's effectiveness or proof soundness.
 
 ## techniques for the catalog
 
@@ -46,5 +40,3 @@ Inference: A risk for VL is specification drift: an agent can produce a syntacti
 - checker-feedback formalization — translate requirements into LTL/CTL using the model's functions; provide model-checker errors in a correction prompt (proposed O2 workflow)
 - temporal explanation — translate existing temporal formulas into natural language (O3)
 - witness/counterexample narration — explain available Avalla scenarios in natural language (O4)
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The user begins by providing both an Asmeta specification and the informal requirements of properties to be formalized, within a specifically designed prompt."): checked all paper text, quotations, numbers, page and section references, technique steps, and paper identity; corrected implementation status, model name, page references, CTL terminology, and unsupported procedural claims, and marked analytical conclusions as Inference; did not reproduce ChatGPT interactions or run AsmetaSMV/Verus.

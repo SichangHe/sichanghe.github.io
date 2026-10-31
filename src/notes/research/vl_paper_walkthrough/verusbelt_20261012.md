@@ -1,18 +1,9 @@
 # VerusBelt: sound proof types and the limits of Verus's foundation
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## Paper and reading boundary
 
-Travis Hance, Laila Elbeheiry, Yusuke Matsushita, and Derek Dreyer, *VerusBelt: A Semantic Foundation for Verus’s Proof-Oriented Extensions to the Rust Type System*, PLDI 2026, 25 pages. [DOI](https://doi.org/10.1145/3808325), [primary PDF](https://iris-project.org/pdfs/2026-pldi-verusbelt.pdf), [SSD1 copy](/ssd1/sichangheagent/vlpw/verusbelt.pdf), [extracted text](/ssd1/sichangheagent/vlpw/verusbelt.txt). Page numbers below are PDF pages, also the article's 247:n page numbers.
-
 This study extends the [existing Verus overview](../topic_studies/formal_verification_rust/rust_verifiers/verus.md) with the semantic mechanisms, the discovered invariant-lifetime error, and the limits of the theorem. It does not reproduce the proofs or run the artifact.
-
-## Central lesson for VL
-
-A proof API needs a sound meaning before agent-written proofs using it can establish anything. This paper checks important Verus proof types in Iris/Rocq, a framework and proof assistant for reasoning about owned and shared resources. It also discovers a real lifetime-checking mistake. It does not certify the implemented Verus pipeline.
-
-The authors state the boundary directly (§1, p. 4): “We do not attempt to verify the actual implementation of Verus itself; rather, our efforts are focused on providing a semantic foundation for Verus’s proof-oriented types.” Agent inference: VL should reuse these supported abstractions and record the remaining assumptions, rather than treat a verifier pass as an unconditional statement about compiled Rust.
 
 ## What it does
 
@@ -51,16 +42,6 @@ Theorem 6.1 (§6, p. 20) concludes: “f executing under VerusBelt semantics wil
 
 These are different boundaries. A sound proof type does not establish the correctness of a library axiom, a translation pass, a solver, or proof-code removal.
 
-## What was already done; what VL can reuse
-
-The foundational machinery builds on RustBelt, RustHornBelt, Leaf, and Iris. The paper's specific advances are the uniform lifetime-sharing account, cell-chain logic, proof-type soundness, invariant-lifetime diagnosis, and safe integration of prophecies. §5, p. 18, explicitly says that combining RustHorn's encoding with automated proving “is not novel”; Creusot already did it. The new issue is coexistence with Verus proof types.
-
-Agent recommendations: use existing permission and invariant APIs when shaping generated Rust; retain the lifetime bug and prophecy paradox as examples for assumption reviews; report the precise formalized subset and trust boundary. Full mutable-reference support, realistic erasure verification, and checked source-to-condition correspondence remain separate engineering or research work. These recommendations do not authorize implementation changes.
-
-## Product threat
-
-Agent inference: this strengthens VL's chosen verification backend rather than replacing an agent product. It supplies foundations and APIs that VL should not claim to have invented. It also weakens any differentiation based only on producing Verus proofs, because the underlying proof language already supports sophisticated systems reasoning. The paper contains no evaluated autonomous specification discovery, proof-generation agent, or repository-to-Verus conversion pipeline. Its most direct product implication is assurance: VL must explain which guarantees rest on these semantic results and which still depend on trusted implementation components.
-
 ## First reading
 
 Read §4, p. 17, on the invariant-close mistake, then §5.1, p. 19, on the prophecy paradox. Ask: can a generated contract or proof resource depend on an event that execution is not obliged to reach?
@@ -69,11 +50,8 @@ Read §4, p. 17, on the invariant-close mistake, then §5.1, p. 19, on the proph
 
 Checked the material claims and quotations against the saved primary paper text. An independent reviewer checked the drafts against the primary texts. No artifact execution or empirical reproduction was performed.
 
-ChatGPT analysis of the full PDF, 2026-10-12: [answer](/ssd1/sichangheagent/vlpw/verusbelt_chatgpt_answer.md). It agrees with this study on what is proved and what stays trusted. Checked against the paper text and added from it:
-
 - An earlier Verus formalism covers part of what VerusBelt leaves out. §7, p. 21: it “proves termination of ghost code, as well as an erasure-validity theorem, which VerusBelt does not do.” The next sentence adds that it “does not address all the challenges described in §6.”
 - The prophecy restriction also appears in later work by another author. Footnote 2, p. 4 (the same work is described in §7, p. 22, in slightly different words): “Lafeychine [22] has adapted RustHornBelt to model “ghost snapshots” (a particular proof-oriented API) using a similar prophecy-stratification to ours.”
-- The division of labor the authors intend. §7, p. 22: “VerusBelt uses Iris only to verify the proof-oriented primitive types of Verus, and expects developers to verify these libraries by (safely!) building on” them. Agent inference: VL agents should build on these primitives in Verus and never need Iris.
 - Callers see only contracts. §2, p. 5: “Verus treats every function call as opaque and only reasons about it via its declared requires and ensures.”
 
 Not checked: its 30-item technique list beyond the items above, its threat ratings (its opinion), and its section 6 recommendations. Seven of its quotations were checked and all are in the paper; the rest were not checked.

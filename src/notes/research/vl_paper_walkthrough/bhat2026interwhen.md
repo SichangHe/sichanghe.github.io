@@ -8,8 +8,6 @@ interwhen addresses process verification for reasoning models. A model emits a t
 
 The framework has an offline phase and an online phase. Offline, a frontier LLM converts a free-text policy and domain description into verifiers and a map from state patterns to applicable verifiers. Online, a model generates one trajectory while forked extraction and asynchronous verification run beside it. If a verifier rejects a state, generation rolls back to the checked prefix, receives feedback, and resumes. Algorithm 1 returns a policy-compliant trace or `ABSTAIN`; §4.1 sets the correction limit to 5 and outputs “No solution” if it is exceeded (Algorithm 1, PDF p.8; §4.1, PDF p.6). The claimed compliance guarantee depends on extraction: “if it does output an answer, it is guaranteed to satisfy all verifiers (modulo any LLM-based variable extraction errors)” (§1, PDF p.3).
 
-Inference: For VeruLaw, the analogous object is a Rust/Verus agent trace containing proposed code edits, contracts, and proof commands. A verifier can inspect extracted proof state or compile diagnostics while generation continues. This inference does not claim that interwhen verifies Rust semantics; it transfers the control loop.
-
 ## technique 1: extract verifiable state from a partial trace
 
 Inference: Use state extraction when raw reasoning tokens are too unconstrained for a verifier. At each step boundary, fork an extractor model and ask it to produce only the variables needed by relevant checks. The paper's Algorithm 1 performs `σk ← s(τ≤k)` at every boundary, then chooses `Vk ← µ(σk)` (§4.1–4.3, PDF pp.5–8). For agentic tasks, tool calls and responses are states; for non-agentic tasks, states are extracted every 40 occurrences of a blank-line marker (§5, PDF p.9).
@@ -23,8 +21,6 @@ Inference: In Verus, state extraction can produce a ghost/specification record c
 Inference: Use asynchronous checks to avoid paying verification latency on traces that are already valid. Algorithm 1 starts generation, extracts each state in a fork, selects applicable verifiers, and launches `async Vk(σk, Π)` without blocking the main model (Algorithm 1, PDF p.8). When a pending check completes, an invalid result halts the model, rolls the trace back to `τ≤k`, appends feedback, and resumes from that prefix. A retry counter returns `ABSTAIN` after more than `R` retries (Algorithm 1, PDF p.8).
 
 The paper states, “Thus, for a trace without any violations, there is no increase in latency due to verification.” (§4.1, PDF p.6). Writes are the exception: asynchronous checks cannot allow a side-effecting tool call before its check completes (§4.1, PDF p.6).
-
-Inference: A VeruLaw implementation can run Verus compilation or a lightweight contract checker in a worker process while the agent drafts its next step. Before applying a filesystem mutation, wait for the relevant check. If a proof fails, restore the source snapshot, append the diagnostic, and regenerate from that snapshot. This is an orchestration design, not a Verus language feature.
 
 ## technique 3: synthesize policy verifiers and prove them against a specification
 
@@ -46,16 +42,6 @@ Inference: For verified Rust, policy verifiers correspond to API contracts, trac
 
 Inference: When a check fails, return a concise textual explanation at the rollback point. The Maze example feeds invalid-move or turn-count feedback back into the model by prepending reflective text (§4.1, PDF p.6). The verifier therefore both rejects a state and supplies a repair direction. A post-hoc probe replayed the same trace with and without feedback: on Maze, the mean probability of the correct answer rose from 0.4892 to 0.8148 across 460 events; on SpatialMap it rose from 0.1256 to 0.2042 across 448 events (Table 6, PDF p.14).
 
-Inference: VeruLaw diagnostics should name the failed contract, the source location, and the smallest rollback-safe state. Include the exact Verus error and a suggested lemma only when the suggestion is mechanically checked. A generated textual explanation remains untrusted guidance until the next verifier run succeeds.
-
-## evidence, limits, and product threat
-
-On agentic benchmarks, the paper reports τ²-bench solo reward 87.70% versus 32.17% CoT and dual reward 55.26% versus 24.56% CoT for Qwen3-30B (Table 3, PDF p.13). AgentSafetyBench safety is 72.31% with policy-plus-prompt IW versus 48.75% CoT, at 131.60% versus 100.00% tokens (Table 4, PDF p.13). On non-agentic tasks, Qwen3-30B IW obtains Game24 accuracy 97.2% at 61.6% CoT tokens, versus Generate-Test 96.1% at 116.3%; SpatialMap is 84.73% versus 73.9% for Generate-Test (Table 5, PDF p.14). In the Lean ablation, automatically generated and proved Lean verifiers are reported comparable to manually validated Python verifiers on the same policy (§6.2, PDF p.14; Table 7).
-
-These denominators and settings matter: τ²-bench has 114 tasks; `Pass^4` requires four independent runs; non-agentic token percentages are relative to the same model's CoT; Table 6 probabilities average events, not tasks. The paper's framework still trusts state extraction. It explicitly says, “state extraction is still model-based and can lead to erroneous verification.” (§4.4, PDF p.8). Completeness also remains open: the conclusion calls ensuring that verifiers catch all violating trajectories a limitation (§7, PDF p.17). Vague policies can over-block tool calls; AgentSafetyBench safety rose while helpfulness on fulfillable tasks fell from 98.24% to 89.26% (Table 4, PDF p.13).
-
-Inference: The threat to agent-written verified Rust is a false assurance chain: a correct Verus checker applied to an incorrectly extracted state can approve the wrong action. Another threat is an incomplete contract, analogous to the policy-versus-trace mismatch. The product should therefore log extractor inputs and outputs, require human review of generated specifications, and test completeness with adversarial traces. VL should reuse the offline spec–implementation–proof pipeline and asynchronous rollback loop; it should not claim that Lean-equivalence results establish Verus program correctness.
-
 ## techniques for the catalog
 
 - state extraction: fork a model to turn partial traces into verifier input variables
@@ -64,4 +50,3 @@ Inference: The threat to agent-written verified Rust is a false assurance chain:
 - layered verifiers: combine policy, trace-derived, and prompt-derived checks
 - feedback intervention: attach verifier diagnostics at the rollback prefix and regenerate
 - Inference: completeness auditing: test extraction and verifier coverage because formal checker soundness alone is insufficient
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Notably, k-Stable Answer does not require forking at any point; it operates entirely within a single reasoning trace by exploiting the model’s natural tendency to revisit and restate its final solution during extended thinking."): checked every quotation, number, section/page reference, and technique step against the full paper, including appendices; corrected page references, the latency quotation, and verifier-generation wording, and qualified the compliance guarantee; did not reproduce experiments, inspect implementation code, or validate the proposed Rust/Verus adaptations.

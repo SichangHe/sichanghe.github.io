@@ -6,8 +6,6 @@ Tag: `aberle2026compositional`, [paper](http://arxiv.org/abs/2604.01303v1)
 
 Inference: The paper presents a framework in dependent type theory in which polynomial functors are program interfaces, free-monad morphisms are implementations, and dependent polynomials are pre/post specifications. “We present a framework for compositional program verification based on polynomial functors in dependent type theory.” (abstract, p.1) The author reports an Agda formalization. “The entire development has been formalized in Agda (Norell 2009).” (§1, p.1)
 
-Inference: The practical lesson for VeruLaw is an architecture for making local contracts composable: give each module an explicit interface, make calls go through a typed computation tree, and carry proof evidence through the same composition operation as execution. The paper does not measure Rust, Verus, solver time, or generated-agent code, so any transfer to Verus is an inference.
-
 ## technique 1: interface as a polynomial functor
 
 Inference: What it is. A polynomial is represented by positions A and directions B(a): `Poly = Σ Set (λ A → A → Set)`. The pair describes a dependent function interface `(a : A) → B(a)`. A morphism from `(A,B)` to `(C,D)` contains a forward position map and a backward direction map. “A morphism p ⇒ q between two polynomials, where p = (A, B) and q = (C, D), thus consists of a forward map f0 : A → C on positions and a backward map f 1 : (a : A) → D(f0 (a)) → B(a) on directions.” (§2.1, p.2)
@@ -80,17 +78,11 @@ Appendix A replaces coproduct composition with the parallel sum `p∥q`, whose i
 
 The stated restriction is: “Concretely, this means that in a parallel wiring diagram, a wire cannot be used in two places simultaneously (though it can remain unused, i.e. it can be left dangling).” (Appendix A.1, p.17) The paper uses this to argue race-freedom for effects represented by those interfaces. Appendix A.2 also allows a dependent polynomial over the simultaneous-call interface to relate the two inputs and outputs, rather than merely pairing independent contracts. Inference: that describes where relational contracts belong; it does not supply completed noninterference or monotonicity case studies.
 
-Inference: for VL, this suggests making the ownership of concurrent effect interfaces explicit before composing their contracts. The paper's restriction alone does not establish race-freedom for arbitrary Rust shared memory outside the interface model.
-
 ## what is proved, measured, and trusted
 
 The paper states and explains type-level composition theorems (Theorems 3.1 and 5.3), operational and dependent operational composition (Propositions 6.2 and 6.3), and supplies Agda verification definitions for append, state invariants, and the Fibonacci contract described above. It reports no runtime, solver, dataset, or denominator-based empirical measurements. Inference: relying on the reported formalization requires trusting Agda's type checker and relating the modeled interfaces and contracts to the intended program. No Agda type-checking run or compiled runtime was checked in this study, and the paper establishes no result about Verus, Rust, or Z3.
 
 Inference: the main threat to a product that generates verified Rust is contract mismatch: generated proofs can compose while a wrong postcondition still describes the wrong behavior. The architecture is useful for requiring explicit dependency contracts and proof-carrying composition, but it does not by itself solve specification mining, unsafe foreign calls, or solver robustness.
-
-## what VL should not redo
-
-Inference: The paper already supplies a generic typed account of interface sums, free-monad interaction, wiring-diagram composition, dependent contracts, state invariants, and an Agda formalization. Inference: VL should reuse these as design patterns and focus experiments on Rust/Verus encodings, generated contract quality, and maintenance under code changes rather than re-proving the abstract category theory.
 
 ## techniques for the catalog
 
@@ -102,4 +94,3 @@ Inference: The paper already supplies a generic typed account of interface sums,
 - Inference: dependent Mealy invariant: prove stateful executions preserve relational and state predicates at each transition
 - Inference: parallel composition: combine interfaces, programs, proofs, and machines while preventing simultaneous reuse of an effect wire
 - Inference: relational specification: relate inputs and outputs across the simultaneous-call part of a parallel interface
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Thinking of this as an interface to a pair of functions/program modules, what this allows is for us to call either one or both of the functions/modules at once, and to obtain a corresponding result of the appropriate type."): read the complete paper text, including appendices and code; checked quotations, definitions, technique steps, examples, theorem references, page references, author, year, and arXiv identifier; restored incomplete quotations, corrected references, clarified call preconditions and the Fibonacci contract, removed unsupported Verus restrictions, and added the categorical and parallel constructions; did not run Agda, test proposed Verus encodings, inspect external artifacts, or check sentence reuse against other studies.

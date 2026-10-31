@@ -12,8 +12,6 @@ The paper defines two models: `f_theta : S → L` maps natural-language statemen
 
 Step by step: fine-tune NL→Lean and Lean→NL models independently with SFT; freeze the back-translator; generate Lean completions for each NL prompt; greedily back-translate each completion; embed original and reconstructed text; compute cosine reward; optimize the NL→Lean model with GRPO (Sections 3.1 and 3.4, pp. 2–3).
 
-Inference: for VL, one can ask a model to emit a Rust/Verus contract, render the contract into a normalized natural-language summary, and reward agreement with the original requirement. The Verus compiler must be an additional hard reward or filter because embedding similarity can accept vacuous or wrong specifications.
-
 ## technique 2: parameter-efficient LoRA fine-tuning
 The base is Qwen3.5-2B. LoRA adapters update only feed-forward `gate_proj`, `up_proj`, and `down_proj` modules, with rank 16 and scaling alpha 32. This yields approximately 9.4 million trainable parameters out of 2 billion; attention layers are excluded (Section 3.2, p. 2). Inputs are truncated to 512 tokens and training uses bfloat16. SFT data removes duplicates, compiler errors, and examples with TF-IDF cosine similarity above 0.5 to PutnamBench problems (Section 3.3, p. 3).
 
@@ -23,8 +21,6 @@ Inference: LoRA can adapt an NL-to-Verus generator on one GPU while leaving the 
 The filtered SFT set contains 74.7k training and 3.93k validation examples across difficulty levels 1–10, capped at 10k examples per level. Curriculum SFT trains one epoch at difficulty 1, then 2 through 10, carrying the adapter forward. The ablation trains the identical data in one shuffled pass. Both use AdamW, learning rate 2×10^-4, cosine scheduling, 3% warmup, effective batch size 32, and cross-entropy (Section 3.3, p. 3).
 
 The FLC held-out set has 700 examples, 100 per difficulty 1–7; difficulty 8–10 are absent from final evaluation because they were used for training (Section 4.1, p. 3). Table 1 gives FLC cycle scores 0.519 (no curriculum) and 0.513 (curriculum), with PutnamBench scores 0.432 and 0.422 respectively. Mann–Whitney tests find no significant difference: FLC p=0.46 and PutnamBench p=0.32 (Section 4.4, p. 4).
-
-Inference: a VL training pipeline should measure curriculum against shuffled data at equal examples and optimizer budget; this paper found no benefit at its scale. It does not justify omitting curriculum for larger models or a different proof corpus.
 
 ## technique 4: GRPO with cycle reward
 RL starts from the curriculum SFT checkpoint. The RL prompt set excludes SFT train and validation examples, stratifies at most 1,000 prompts per difficulty 1–7, and contains 7.7k prompts (Section 3.4, p. 3). For each prompt, GRPO samples G=8 completions. Rewards are normalized as `A_hat_i = (r_i - mu_r)/(sigma_r + epsilon)`. The policy maximizes a clipped surrogate objective with KL penalty beta·D_KL(f_theta || f_theta_ref), beta=0.04. RL uses learning rate 10^-5, batch size 1, gradient accumulation 16, and one epoch (Section 3.4, p. 3; Section 4.3, p. 4).
@@ -40,15 +36,9 @@ The paper explicitly cautions that “Cycle consistency is a proxy metric with s
 
 The paper also observes that RL gains decline from 0.208 at difficulty 1 to 0.126 at difficulty 7 because the back-translator's reward becomes noisier (Section 5, p. 5). FLC may contain repeated Lean patterns; PutnamBench is treated as the more conservative estimate because it is more diverse (Section 5, p. 6). Small domain groups are unreliable: FLC discrete mathematics has n=13 and PutnamBench probability n=14 (Section 5, p. 5).
 
-Inference: for VL, the trusted base is the Verus checker and specification, not the embedding model, back-translator, RL reward, or `proof fn` text. A generated `ensures` clause can be semantically wrong while compiling if the precondition is too strong or the postcondition is vacuous. Product evaluation must therefore report proof success, requirement fidelity, and specification audits separately.
-
-## what VL should reuse and avoid repeating
-Inference: the paper already covers cycle-consistency rewards, LoRA-only adaptation, curriculum ablation, GRPO group normalization, KL-constrained updates, decontamination, and held-out cross-domain evaluation. VL should treat these as baselines. The unresolved research opportunity is a reward that couples natural-language fidelity to actual Verus proof success without allowing vacuous contracts.
-
 ## techniques for the catalog
 - cycle-consistency reward: back-translate generated formal code and reward embedding similarity to the original statement
 - LoRA autoformalization: adapt only feed-forward projections with low-rank adapters for single-GPU training
 - curriculum ablation: compare difficulty-ordered SFT with identical shuffled data and budget
 - GRPO semantic tuning: sample groups of completions, normalize rewards, and optimize a KL-constrained clipped objective
 - proof-aware reward design: combine semantic round-trip quality with a hard formal-check result to avoid proxy reward hacking
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

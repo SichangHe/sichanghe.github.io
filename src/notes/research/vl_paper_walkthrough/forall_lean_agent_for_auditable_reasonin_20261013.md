@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `lwin2026forallleanagent`, [paper](https://arxiv.org/abs/2610.00885)
 
-Audit: audited 2026-10-13 against the paper; checked every number, table row, page reference, quotation and the appendix prompts and counts; changed: the six Table 4 incidents were called wrong earlier measurements of the author and the leak incidents the author's own runs, which the paper does not say; the leak evidence was widened to similarity alone while the paper also cites transcript and access records; the sentence that no technique has a measured effect ignored the one single-run retrieval comparison; the heading claimed every known way; three unmarked inferences marked; the import wording and a one run wording fixed; not checked: the Verus claims that Verus has no command listing assumptions and no independent proof checker, which the Verus references do not address.
-
 source: Naing Oo Lwin (Astrio Labs), arXiv:2610.00885v1, 1 Oct 2026, NeurIPS 2026 Workshop on AI for Verifiable Coding; 9 pages of text, Appendices A to C (pp.12-18) with budgets, validation and the full prompts
 
 ## proved, measured, trusted
@@ -249,16 +247,6 @@ Where it fails. Short proofs and standard induction patterns score high without 
 - Table 4 counts 229 false failure records from authentication errors; §6 speaks of sixteen zero-token records re-measured. How the sixteen relate to the 229 is not said.
 - 26 of 86 audited tasks made blocked requests in a run described as 100 tasks; why 86 were audited is not stated (86 is also that run's solved count).
 - The PutnamBench totals agree: $3.52 + $1.20 = $4.72; $2,364 + $805 = $3,169; 662 + 10 = 672; 651 + 21 = 672; 502 + 170 = 672.
-
-## already done; VL need not redo
-
-- The acceptance protocol as a whole: mechanical screen, frozen statement, shadowing guard, axiom audit, transcript-blind reviewer, hash-bound acceptance, harness-controlled continuation. The prompts are printed in Appendix C and can be adapted directly.
-- The catalogue of ways an agent evaluation goes wrong, each with an observed instance (Table 4).
-- Not done: any ablation; any measurement of what the reviewer catches; release of the harness; anything on whether the specification is the right one.
-
-## threat to VL
-
-Inference: moderate, and of a specific kind. The paper is Lean-only and its harness is unreleased, so it does not compete for Verus work directly. Its numbers show that by late 2026 unaided Claude Code and Codex runs (up to eight samples each) solve 93 to 100 of the 100 subset tasks under the benchmark rule and 82 to 89 under the strict rule, so proof-writing skill is not where a product can stand apart; the paper locates the remaining value in the acceptance protocol and the evidence trail, which is the same ground a product of agent-written verified Rust would claim. Everything in techniques 1 to 6 can be rebuilt for Verus from the paper's description. What the paper leaves open, and a Verus product still has to solve, is the Verus counterpart of the axiom audit and of the independent checker, and any check on the specification itself.
 
 ## techniques for the catalog
 

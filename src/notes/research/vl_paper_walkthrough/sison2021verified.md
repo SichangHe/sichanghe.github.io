@@ -66,7 +66,7 @@ How to do it:
 
 Verus form (Inference): represent `Φ` and `S` as ghost maps and sets. A wrapper for a shared read should require a lock token and ensure the returned value equals the memory value at the read point. On unlock, a proof function should invalidate or remove cached expressions. The executable Rust cache and lock implementation must satisfy these ghost-state transitions; `external_body` would leave the crucial compiler property unproved and should not be used for the verified function.
 
-Evidence and limits: compilation can return `failed = True` when it detects a race or expression depth beyond the limit assumed by the register-allocation model (section 5.1, p.32; Appendix B). This is a rejection policy, not evidence that arbitrary source programs compile. Inference: VL should treat lock-discipline checking as a prerequisite check on inputs and report rejected programs separately from verified compilations.
+Evidence and limits: compilation can return `failed = True` when it detects a race or expression depth beyond the limit assumed by the register-allocation model (section 5.1, p.32; Appendix B). This is a rejection policy, not evidence that arbitrary source programs compile.
 
 ## technique: preserve a no-high-branching restriction
 
@@ -92,8 +92,6 @@ How to do it:
 3. Initialize each target register bank and mode state consistently; the paper uses an empty compilation record C0 (Definition 5.20, p.42) and, in the case study, registers initialized to zero (Theorem 6.4, p.52).
 4. Apply Theorem 5.22 or Theorem 5.27 to obtain `sys-secure` for the concurrent target system (pp.42–45).
 5. If some target threads are handwritten RISC, prove their per-thread security directly and use the mixed composition option described after Theorem 5.24 (section 5.4.2, pp.43–45).
-
-Verus form (Inference): give each Rust thread a state-machine instance with lock and mode resources, prove its local low-bisimulation relation, then prove a composition lemma over the shared resources. The target of the paper is a compiler, whereas VL generates Rust directly; the reusable part is the proof architecture, not the Isabelle theorem statements.
 
 Evidence: Theorem 5.22 requires a list-length equality, successful compilation for each source thread, input requirements, and local mode compliance, then concludes whole-system security (p.42). The theorem has no empirical success fraction; it is conditional on all premises.
 
@@ -128,4 +126,3 @@ Assumptions the paper states include: schedulers whose decisions never depend on
 - no-high-branching preservation: carry equal control-flow and program-counter relations from source to target
 - whole-system composition: combine per-thread confidentiality, lock compliance, and no-locks-held initialization into a system theorem
 - mixed-sensitivity case study: classify shared buffers by control-dependent sensitivity and compile three verified threads to RISC
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "To preserve security for mixed-sensitivity concurrent programs, CVDNI-preserving refinement demands small-step preservation of the contents of all shared memory locations including those that control value-dependent classifications and implement locks."): read the whole paper (arXiv v2, printed pages 1–63 including appendices) and checked every quotation, page and section reference, definition and theorem number, proof-line figures and technique steps against it; changed page references to the arXiv printed page numbers, corrected one quotation that used an unmarked ellipsis and one that dropped words, fixed several steps (mode state description, Iwr, case-study routes, Theorem 5.24 page, register initialisation), narrowed claims about what this paper proves versus what it takes from Murray et al. (2016b), added the scheduler and environment assumptions, marked inferences, replaced the DOI link with the arXiv link given in the paper text; did not check the Isabelle theories (not provided), the cited external works, or the Verus-form suggestions beyond marking them as Inference.

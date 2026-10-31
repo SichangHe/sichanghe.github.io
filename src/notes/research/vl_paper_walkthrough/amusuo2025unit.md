@@ -78,5 +78,3 @@ The experiments establish only that the selected FreeRTOS unit proofs, run with 
 - proof-fault validation and repair — recreate defects, classify missed detections, repair harnesses or properties, and rerun
 
 - proof evolution — track code/proof dependencies, update affected models and contracts, and compare re-verification evidence
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The modeling complexity is increased in stateful software where shared state variables can be influenced by the function’s callers and other functions in the software."): checked quotations, numbers, section and PDF page references, and technique steps against the full paper; corrected page references and quotation wording, separated observed procedures from proposed tools, removed unsupported implementation steps and Verus details, and replaced the link with the paper’s arXiv identifier; did not run the research artifact, reproduce experiments, or verify cited external sources.

@@ -6,8 +6,6 @@ Tag: `dross2020verifythis`, [paper](http://arxiv.org/abs/2008.13610v3)
 
 The report describes a two-day, human-centred competition: 13 teams, 21 participants, and three 90-minute verification challenges. The paper says, "VerifyThis aims to bring together researchers and practitioners interested in formal verification, providing them with an opportunity for engaging, hands-on, and fun discussion" (section 1, p. 2). Its evidence is therefore both technical (algorithms, specifications, proofs) and empirical (submissions, interviews, and a regression over 21 historical challenges).
 
-Inference: for VeruLaw (VL), the useful lesson is a repeatable benchmark that measures whether an agent can choose representations, write contracts and invariants, and close proofs under a time budget. The paper does not evaluate Rust or Verus, so the following Verus mappings are inferences.
-
 ## technique 1: staged specification and invariant strengthening for monotonic segments
 
 what it is and when to use it
@@ -101,14 +99,7 @@ evidence, trust, and threat
 
 No team solved all of challenge 3. Six of 12 teams in the final session attempted only the sequential part, and three of six teams attempting concurrency completed the no-race task (section 4.3, p. 13). The model checker completed task 3 only with finite input and process bounds (section 4.3, p. 14). Team Coinductive Sorcery relied on unproved associativity assumptions for vector addition (section 4.3, p. 14). Inference: this is a substantial threat to agent-written verified Rust because concurrency proofs require a semantic model of synchronization and algebraic laws, not only local contracts.
 
-## what is proved, what remains trusted, and reuse for VL
-
-Inference: the event shows what each submitted tool and specification establishes; it does not validate that the natural-language challenge captures every desired property. The paper notes that “correctness is relative to a specification, and hence, different ways of formalizing a specification drastically change the hardness of establishing correctness” (section 1.4, p. 3), and that judging used no fixed quantitative scoring. Model-checking results are bounded (sections 2.3 and 3.3, 4.3), and SMT proofs depend on supplied invariants. The report’s regression covers 21 challenges; it found that mutable input, outlined or recursive algorithms, and matrix inputs correlate with fewer complete solutions (section 5.3, pp. 17–18). Table 3 reports complete-solution percentages; for example, Monotonic segments and GHC sort had 85% partial and 15% complete, Cartesian trees 69% partial and 15% complete, and sparse matrix multiplication 85% partial and 0% complete, each denominator being participating teams for that challenge (Table 3, p. 17).
-
-Inference: VL should use staged tasks, explicit denominator-labeled metrics, and challenge families covering arrays, recursive structures, and concurrency. It should record assumptions such as bounded domains, unproved algebraic laws, and omitted maximality. The report also says that high-level languages let teams focus on behavioral properties while low-level languages spend effort on memory separation (section 5.2, p. 16; the paper’s examples are memory safety and separation); this is directly relevant to deciding which Rust safety obligations Verus should discharge automatically.
-
 ## techniques for the catalog
-
 
 - staged invariant strengthening — prove base bounds and functional properties, then add maximality with endpoint-specific invariants
 
@@ -119,5 +110,3 @@ Inference: VL should use staged tasks, explicit denominator-labeled metrics, and
 - relational concurrency proof — model all processing orders with a set or multiset and prove equivalence to a sequential fold
 
 - benchmark-based evaluation — compare tools with fixed time, challenge order, solution categories, and denominator-labeled results
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Instead of using a concrete data structure, Team Viper defined stacks in a pure logic fashion using uninterpreted function symbols and axioms that postulate the result of popping, pushing, and peeking on a stack."): I read the whole paper text and checked every quotation, number, team result, section and page reference, and the algorithm and task descriptions against it; I changed the misattributed "a few key invariants" quote (it describes an incomplete proof, not successful ones), several page numbers (section 2.2 items are on p. 6, VerCors sequences on p. 7), the claim that the Refiners used the refinement framework for challenge 1 (the paper ties it to challenges 2 and 3), the "high-level languages" citation (section 5.2, p. 16, not 5.4), the OpenJML SMT claim, and I marked proof steps that the paper does not state as "Inference:"; I did not check the cited external works, the Verus mappings (inferences by the study author, not in the paper), or the figures beyond their text and captions. The link is the arXiv identifier printed in the paper (2008.13610v3).

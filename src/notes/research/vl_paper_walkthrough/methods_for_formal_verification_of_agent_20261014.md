@@ -51,13 +51,8 @@ Verus form (inference): encode a bounded trace as a fixed-size array and prove a
 ## proof-carrying bundle and worked evidence
 The four artefacts are `evidence/static.json`, `evidence/types.proof`, `evidence/smt.unsat`, and a signed `evidence/manifest.attest.json` (Section 8.1, p. 13). Bootstrap verifies the signature, reruns static analysis, re-type-checks dispatch, and reruns SMT; cached evidence is not trusted. The implementation reports 53 unit tests, covering boundary throws, biconditional violations, signatures, tamper, and drift; “All 53 tests pass on the published commit.” (Section 8.4, p. 15). In the worked example, static analysis finds an undeclared reversible cache write, then after manifest correction Method B type-checks and Method C returns unsat for Kmax=100 (Section 9, pp. 15–16). These denominators are the 53 tests and the 100-envelope bound, respectively; no deployment-wide success rate is reported.
 
-## what is proved, trusted, and risky for VL
-The proved claims are conditional on sound analysers/type systems, faithful SMT encoding, no dispatch bypass, and the runtime flush check. The trusted base includes the runtime, analyser, type checker, solver checker, signing root, and manifest. The paper itself identifies read-only exfiltration, TOCTOU, and operator coercion as residual surfaces (Section 7.1, p. 12). Inference: VL can reuse the decomposition as a design checklist—effect summary, capability precondition, bounded trace invariant—but must separately specify Rust I/O and Verus models. Inference: the threat to agent-written verified Rust is medium: the pattern can catch undeclared effects and protocol mismatches, but it does not establish semantic correctness of arbitrary generated Rust or the LLM.
-
 ## techniques for the catalog
 - abstract capability-effect lattice — over-approximate every script effect with joins, widening, and conservative top for reflection
 - refinement-typed dispatch — admit only envelopes whose capability is in the manifest set
 - SMT-bounded biconditional checking — search finite transaction horizons for an audit/world-state mismatch and retain a witness or unsat result
 - proof-carrying bootstrap — ship signed static, type, and SMT evidence and independently re-run all checks
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

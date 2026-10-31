@@ -120,14 +120,6 @@ The generator’s rule choice is explicit: “The generator handles benign and m
 
 Verus form. Inference: represent clusters and generated rules as immutable values; prove that each classified pattern is covered by its group’s generated rule. Any claim that rules allow only observed accesses needs a separate specification of permitted subjects and objects; prefix matching alone does not establish it. A Verus proof of generation would not establish whether the security classification is correct.
 
-## evidence, assumptions, and threat to VeruLaw
-
-The prototype ran on an eight-node Hadoop cluster (eight-core 2 GHz Xeon, 32 GB per node) and analyzed 1.3 million logs within three hours from cold start (Section 5.1, proceedings p. 359). After deduplication and generalization, the corpus had 3,530 patterns. At the threshold row used for Figure 3, coverage was 63.9% classified malicious, 10.5% classified benign, and 25.7% unclassified; among classified malicious patterns, 96.81% were true malicious and 3.19% false, while classified benign patterns were 90.81% true and 9.19% false (Table 1, proceedings p. 360). The three coverage percentages use all 3,530 patterns; the true/false percentages use their respective classified malicious or benign sets. Figure 3(b) separately shows 336 true benign, 2,182 true malicious, 106 misclassified, and 906 unclassified patterns in December (proceedings p. 360).
-
-The paper’s ground truth was a later human policy with 6,337 allow and 94 neverallow rules, supplemented by experienced analysts (Section 5.2, proceedings p. 359). Inference: this comparison does not prove that the policy is complete. Section 6 identifies missing evidence: “If the policy is too permissive or has too coarse-grained allow rules, malicious access patterns could be mistakenly allowed and missed by audit logs.” (proceedings p. 363). It also discusses missing framework-level operations, compromised logging, isolated attacks, and poisoning of co-occurrence statistics (proceedings pp. 363–364).
-
-Inference: the direct VeruLaw value is a workflow for turning observed Rust/OS access traces into reviewed policy candidates, with explicit confidence and abstention. It does not replace Verus functional proofs. The threat to agent-written verified Rust is indirect: classification and rule generation can reduce deployment mistakes, but poisoned logs, bad seeds, threshold drift, and incomplete observability can generate unsound policy conclusions. Keep analyst confirmation and explicit trust assumptions in the verified system boundary.
-
 ## techniques for the catalog
 
 - audit-event normalization — join SELinux records, deduplicate events, and abstract them into six-field access patterns
@@ -136,4 +128,3 @@ Inference: the direct VeruLaw value is a workflow for turning observed Rust/OS a
 - directional co-occurrence learning — classify patterns from thresholded, time-windowed co-occurrence with known patterns
 - ensemble threshold balancing — trade coverage for precision with strict thresholds or two-of-three voting
 - least-privilege policy synthesis — cluster patterns and derive fine-grained labels, allow rules, and neverallow rules
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The final combined classification result is added to the knowledge base and sent to the policy refinement generator."): checked the entire paper, study quotations, numbers, section and proceedings-page references, and technique steps; corrected normalization details, semantic-sibling matching, threshold examples, co-occurrence qualifications, result denominators, and inference boundaries; did not reproduce experiments or validate proposed Verus proofs.

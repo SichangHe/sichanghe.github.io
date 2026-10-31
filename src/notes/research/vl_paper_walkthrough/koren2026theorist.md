@@ -60,9 +60,7 @@ Verus form. Inference: implement the ledger and gate as CI artifacts keyed to ea
 
 The paper does not claim that the economic model is verified. Its measured evidence consists of one worked example, three protocol runs, three catches in the adversarial run, one reviewer-rejected sub-goal, and convergence of two runs on an effective-resistance kernel (§1, pp. 2–3; §6, pp. 16–18). The author explicitly says these are demonstrations from one example, “not measured rates” (§6, p. 16). What remains trusted includes the human's mathematical triage, the model's assumptions, the numerical implementations, and the protocol code; no theorem prover kernel checks the economic formulas.
 
-Inference: VL should reuse the separation between candidate, evidence, and verdict, plus the ledger and independent adversarial checks. It should not treat multi-agent agreement as proof: P1 and P3 shared Claude Opus 4.8, so their convergence is same-model, different-framing evidence (§6.1, p. 16). The direct product threat is high for workflows that let an agent declare verified Rust from a polished explanation; the paper supplies a concrete countermeasure pattern. Inference: threat magnitude remains unmeasured because no Verus implementation, repair-cost study, or product comparison appears.
-
-The paper's realistic deliverable is a “disciplined frontier” rather than a finished theorem (§7.5, p. 23). Inference: VL should expose unresolved specifications and failed proof attempts as first-class outputs, while reserving verified status for claims that clear the project’s independent gates.
+The paper's realistic deliverable is a “disciplined frontier” rather than a finished theorem (§7.5, p. 23).
 
 ## techniques for the catalog
 
@@ -72,4 +70,3 @@ The paper's realistic deliverable is a “disciplined frontier” rather than a 
 - composed verification gates — combine self-discipline, adversarial, numerical, and reviewer gates before a claim enters a paper
 - open-obligations ledger — record every unresolved step, transition reason, and negative result
 - reproducibility trail — attach prompts, transcripts, scripts, seeds, outputs, and reviewer decisions to each load-bearing claim
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

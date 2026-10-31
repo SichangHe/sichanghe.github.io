@@ -52,10 +52,6 @@ Evidence and limits. The paper’s limitations (p. 9) say its taxonomy “may no
 
 The reported evaluation measures generated postcondition correctness and mutant detection through C@k, CPC, BCR, and BDR (Section 5.1, pp. 6–7). Section 5.2 states that three-shot and category-based generation produced “at least one correct postcondition for each problem in EvalPlus” (p. 7). Table 3 reports CPC 164 for both approaches across all three models and leaves category-based C@k entries blank. Inference: those statements are compatible; CPC 164 does not assert that every sampled response is correct. The paper does not present deductive proofs of generated postconditions. Inference: reproducing the results depends on the canonical solutions, legal tests, handwritten examples, mutant selection, and manual category filtering.
 
-## implications for VL
-
-Inference: VL can reuse the taxonomy, category-specific prompts, assertion format, and mutation metrics as a specification-generation benchmark. Verus acceptance should be a separate prerequisite check, and specification completeness still needs review. The best combined BCR is 34.15% over 164 problems, and the best combined BDR is 77.42% over 1,293 mutants (Table 3, p. 7). Inference: these results support evaluating specification strength separately from whether any correct condition was generated. The paper does not evaluate Verus or establish results for Rust ownership, concurrency, unsafe code, or external effects. A VL adaptation should measure those additional capabilities explicitly.
-
 ## techniques for the catalog
 
 - postcondition taxonomy — classify assertions into ten categories and interpret results with the proposed maturity levels
@@ -63,5 +59,3 @@ Inference: VL can reuse the taxonomy, category-specific prompts, assertion forma
 - category decomposition — request applicable categories separately, filter with keywords and manual review, and combine outputs
 - mutation completeness — generate failing mutants and report per-problem all-bug coverage and per-mutant detection
 - denominator-separated metrics — keep C@k probabilities, CPC problem counts, BCR over problems, and BDR over mutants distinct
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This suggests that the model may need multiple attempts to generate correct postconditions for these categories."): checked the entire paper, study quotations, numbers, method descriptions, section and page references, and catalog; corrected the paper link, metric denominators, category-based BDR, limitations page, unsupported method details, and Verus inferences; did not reproduce experiments, inspect repository code, or validate Verus adaptations.

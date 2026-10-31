@@ -36,13 +36,9 @@ Against Hassel on one Stanford backbone snapshot, VeriFlow averaged 68.06 ms (ma
 
 The paper states, “VeriFlow assumes it has a complete view of the network to be checked.” (section 6, p. 11). Inference: a verified Rust implementation would need assumptions connecting observed rules and topology to actual switch behavior, plus proofs for the trie, graph construction, and invariant checkers. Asynchronous checking would require a weaker prevention claim. The paper provides no Verus implementation or proof-effort measurements.
 
-## what VL should reuse
-Inference: VL could reuse the incremental decomposition for verified Rust artifacts: partition packets by forwarding behavior, identify the affected classes, construct their forwarding graphs, and check invariants. The key proof obligation is that the optimized index and graph traversal cover every affected packet and agree with reference forwarding semantics. The paper describes its scope as “we find the set of ECs whose operation could be altered by a rule, and verify network invariants only within those classes.” (section 3, p. 3).
-
 ## techniques for the catalog
 - equivalence-class slicing: partition packets by identical network behavior and recompute only affected classes
 - incremental forwarding graphs: model each changed class as a graph from switch decisions
 - invariant plug-ins: run reachability, cycle, consistency, or custom checks per changed graph
 - trie-indexed updates: use multidimensional prefix tries to locate overlapping rules quickly
 - proposed asynchronous fallback: allow disruptive updates through while verification runs, then alarm or remove problematic rules
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We found that the number of ECs that are affected by a new rule strongly influences verification time."): checked the complete paper, quotations, numbers, internal page and section references, technique steps, and limitations; corrected synchronous-checking scope, EC construction and graph references, the proposed optimization proof, evaluation scope, and unsupported trust and difficulty claims; retained the link from the fetch record; did not check external references, source code, or reproduce experiments.

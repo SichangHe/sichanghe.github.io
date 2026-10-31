@@ -21,7 +21,7 @@ How to apply it.
 
 Verus form. Inference: treat each strategy as a ghost record containing a proposed contract, assumptions, candidate lemmas, and known counterexamples. A readiness gate can be an external script that requires every unresolved claim to have a named Verus proof obligation. Verus can check the resulting contracts and lemmas, but cannot decide that a natural-language route is “mature”; that judgment and candidate diversity stay outside the verifier.
 
-Evidence and limits. The paper's open-ended research examples use tree configurations with “slightly over 100 leaf nodes” for exploration (section 4.4, p. 9), but the paper does not give a universal cost or optimal gate threshold. Inference: a VL pipeline should measure whether the gate reduces wasted Verus proof attempts, rather than assume that more strategies improve correctness.
+Evidence and limits. The paper's open-ended research examples use tree configurations with “slightly over 100 leaf nodes” for exploration (section 4.4, p. 9), but the paper does not give a universal cost or optimal gate threshold.
 
 ## technique 2: sectioned dependency graph and local retries
 
@@ -37,7 +37,7 @@ How to apply it.
 
 Verus form. Inference: map each DAG node to a Verus module or `proof fn` whose `requires` list names predecessor postconditions and whose `ensures` gives the node result. Keep executable Rust unchanged while iterating on proof functions and lemmas. Local retry means editing one lemma/module and rerunning Verus; the DAG itself is orchestration metadata, not a Verus construct. Cycles must be rejected before proof generation because Verus contracts cannot justify circular dependencies.
 
-Evidence and limits. The paper reports that independent sections are solved in parallel and that rejected proofs return to revision or re-exploration (section 3.1, p. 5). It gives no ablation isolating local retry from the other stages. Inference: VL should record repair time and unaffected-node reuse to test whether section-level retries reduce proof maintenance effort.
+Evidence and limits. The paper reports that independent sections are solved in parallel and that rejected proofs return to revision or re-exploration (section 3.1, p. 5). It gives no ablation isolating local retry from the other stages.
 
 ## technique 3: targeted falsification with overlapping tree aggregation
 
@@ -52,7 +52,7 @@ How to apply it.
 
 Verus form. Inference: generate alternative contracts or lemma proofs, then have reviewers search for counterexamples with bounded test harnesses or failed Verus obligations. Tree aggregation can select a proof artifact whose contracts compile, but the aggregation policy itself is unverified. Use explicit `assert` and proved lemmas to preserve only compatible mathematical claims; do not treat a majority of model outputs as evidence.
 
-Evidence and limits. The paper says that “failure to find a defect does not establish correctness” (section 4.1.2, p. 7). Thus the falsification stage improves defect discovery but leaves residual hallucination risk. Inference: for VL, only successful Verus verification can turn a candidate into evidence; model agreement is at most a prioritization signal.
+Evidence and limits. The paper says that “failure to find a defect does not establish correctness” (section 4.1.2, p. 7). Thus the falsification stage improves defect discovery but leaves residual hallucination risk.
 
 ## technique 4: global verification and localized feedback
 
@@ -71,15 +71,13 @@ Evidence and limits. On TCS-Bench, cross-model critique selection achieved 213/3
 
 ## technique 5: shared knowledge directory and execution probe
 
-The knowledge curator records reusable theorems and lemmas with hypotheses, failed approaches and failure points, references with needed statements, and observations with evidence (section 4.3.2, p. 9). Entries retain source and caveats, allowing later agents to avoid repeating failed routes. Inference: in VL, store verified lemma names, exact contracts, failed proof obligations, and dependency versions; require a Verus compile result before labelling an entry “verified.” A text directory alone remains trusted memory.
+The knowledge curator records reusable theorems and lemmas with hypotheses, failed approaches and failure points, references with needed statements, and observations with evidence (section 4.3.2, p. 9). Entries retain source and caveats, allowing later agents to avoid repeating failed routes.
 
-For programs, the same DAG ends in an implementation node. The execution probe compiles and runs candidate C++ on public samples and generated stress inputs, returning checker outcomes and resource measurements to the revision loop; hidden tests remain inaccessible (section 7, p. 14). Inference: the analogous VL probe is Verus verification plus runtime tests for executable behavior. Runtime tests cannot establish properties outside tested inputs, and Verus cannot establish requirements omitted from contracts.
+For programs, the same DAG ends in an implementation node. The execution probe compiles and runs candidate C++ on public samples and generated stress inputs, returning checker outcomes and resource measurements to the revision loop; hidden tests remain inaccessible (section 7, p. 14).
 
 ## what is proved, measured, and trusted
 
 Measured results are benchmark scores and acceptance counts, not formal soundness. The paper's own conclusion calls Colosseum a “model-agnostic many-agent harness” (section 8, p. 14). Trusted components include the language models, prompts, strategy gate, falsification quality, tree aggregation, benchmark grader, source references, and correctness of specifications. The paper does not prove that a selected proof is mathematically valid; it reports grader outcomes and case studies.
-
-Inference: the threat to agent-written verified Rust is medium to high if Colosseum outputs are treated as proof evidence before Verus checking. Its decomposition, localized retries, and defect routing can reduce engineering search cost. They do not close specification gaps, external-library assumptions, unsafe code boundaries, or solver trust. VL should reuse the DAG and feedback architecture, while making Verus compilation the acceptance gate and retaining every unresolved objection.
 
 ## techniques for the catalog
 
@@ -89,5 +87,3 @@ Inference: the threat to agent-written verified Rust is medium to high if Coloss
 - localized global verification — map defects to affected sections, revise or re-explore, and reverify the whole artifact
 - persistent research memory — retain drafts, caveats, failed approaches, references, and evidence for later rounds
 - execution feedback loop — compile and run implementations, then feed checker and resource results into local revision
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

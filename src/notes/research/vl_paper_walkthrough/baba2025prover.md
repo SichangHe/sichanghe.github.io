@@ -57,15 +57,7 @@ Inference: include the proved Verus `proof fn`s in the same module and call them
 evidence and limits
 On MiniF2F-test, the ensemble setting reaches 88.1% at budget 260 (Table 1, p. 6); the table's denominator is the MiniF2F-test theorem set and values are percentages of correctly proved theorems. On PutnamBench the Goedel-Prover-V2 setting reaches 25/659 at budget 110 (Table 2, p. 7). The paper reports that direct generation saturates around budget 80, while final synthesis with lemmas improves after refinement (Section 5.5, p. 7). Inference: these Lean mathematics experiments do not establish transfer to Rust systems specifications.
 
-## proof boundary and relevance to VL
-
-The authors report that they “check proofs with lake build instead of REPL and additionally verified that the apply? tactic is not used.” (Section 5.1, p. 5). They do this to avoid incorrectly accepting invalid proofs because of known bugs. The theoretical analysis assumes independent subgoal success within an attempt and improved composition success when solved subgoals are supplied (Assumptions 4.1–4.2, p. 4). These assumptions concern the analysis, not measured properties of every proof search.
-
-Inference: Lean acceptance does not establish that an informal theorem matches a product requirement, that generated lemmas help Verus, or that a Rust contract is complete. VL could reuse this orchestration pattern for difficult proof obligations while reviewing specifications and checking for vacuous lemmas. A Verus study could measure transfer, proof repair cost, and whether verified contracts express the intended requirements.
-
 ## techniques for the catalog
 - verifier-guided refinement: select the lowest-error draft and repeatedly repair it from compiler diagnostics
 - auxiliary lemma discovery: generate subgoals, special cases, and hypothesis-derived facts, then formalize and prove them independently
 - lemma-guided synthesis: place verified lemmas in the parent context and search/refine a final proof under a fixed sample budget
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We have conducted further analyses to better quantify the role of auxiliary lemmas in Prover Agent traces."): checked all paper text, study quotations, numbers, technique steps, and section/page references; corrected a quotation, direct-attempt pass rates, algorithm references, benchmark settings, version year, and inference labels; did not rerun experiments, execute Lean or Verus, inspect the repository, or independently validate the theoretical proofs.

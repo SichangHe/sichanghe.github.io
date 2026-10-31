@@ -84,14 +84,6 @@ Verus form. Inference: this architecture is directly applicable to a Verus/Rust 
 
 Evidence and limits. ProofPlumber extends rust-analyzer's type checker and conforms to LSP, so actions work in editors that implement the LSP client side (section 3.2, p. 354). Across the 17 actions, every ProofPlumber feature is used by at least one action (section 4.1, p. 356; Figure 4, p. 355). The paper states that automatic transformations “require information about the program’s control flow, the types of expressions, and the definitions of variables, functions, and types.” (section 2.4, p. 352).
 
-## trust, measurements, and implications for VeruLaw
-
-The framework can reduce a verifier's trusted computing base by moving debugging features outside verification-condition generation. The paper describes Verus `--expand-errors` as essentially a combination of Decompose Failing Assertion, Insert Failing Postconditions, and Insert Failing Preconditions, notes Dafny's VCG has custom code similar to Apply Induction, and argues that replacing such code with untrusted proof actions enhances trustworthiness (section 4.3, pp. 357–358). Inference: the proof actions do not establish correctness; Verus remains responsible for checking the final contracts.
-
-Inference: for VeruLaw, the most transferable product is an editor-side diagnostic loop that turns one failed Verus obligation into small, source-level obligations and reruns Verus automatically. Inference: the measured action size, 29–177 lines (section 4.2, p. 357), suggests project-specific diagnostics can be small enough to maintain. Inference: agent-written verified Rust is threatened by opaque failures, solver incompleteness, and proof-visibility instability; diagnosis can reduce iteration cost but cannot detect a wrong specification without an independent requirement.
-
-Inference: what remains trusted or assumed: the underlying Verus verifier and SMT reasoning must be sound, the source transformations must preserve enough meaning for diagnostics, and users must interpret failures. The paper says verification failure may result from “incorrect executable code, incorrect proofs, or even the SMT solver’s incompleteness.” (section 6, p. 359). Inference: VL should not redo generic assertion-splitting and precondition-inlining logic; it should integrate these established transformations with Verus-specific Rust types, project contracts, and requirement traces.
-
 ## techniques for the catalog
 
 - weakest-precondition stepping — move a failed assertion backward through control flow and test each branch
@@ -101,4 +93,3 @@ Inference: what remains trusted or assumed: the underlying Verus verifier and SM
 - induction scaffolding — generate base, inductive, or recursive match proof structure
 - TOST/context/verifier APIs — combine typed source editing, symbol lookup, verifier reruns, and timing diagnostics
 - untrusted debugging extensions — move diagnostic transformations outside the verifier's trusted core
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Rust does not require type annotations for every variable or expression, so the type information is often unavailable at the source (or TOST) level."): what I checked: every quotation, number, section and page reference, and technique step against the full text, plus Figure 4 from the rendered PDF page 355; what I changed: corrected the action counts (16 Dafny rewrites, not 16 actions; 12 Dafny-group and 7 Verus-group actions; noted the paper's eight-versus-7 mismatch), reversed the five-special-cases claim, fixed pages for Remove Redundant Assertions, section 5 and section 4.3, rewrote unsupported step wording (enum induction, pretty-print order, preserving semantics), cited Figure 4 for Insert Failing Preconditions' features, and marked unsupported conclusions "Inference:"; what I did not check: Figures 1, 2, 3 and 5 images, the linked repository, and the Dafny reference.

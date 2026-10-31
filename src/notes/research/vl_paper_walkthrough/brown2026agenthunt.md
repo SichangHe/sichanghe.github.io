@@ -68,8 +68,6 @@ Inference: for Verus, give each subsystem a narrow Rust module and expose reusab
 
 Inference: the checker establishes proofs relative to formal statements and allowed axioms; it does not establish that those statements match Munkres or that admitted dependencies are true. The faulty cosine and sine definitions illustrate this distinction (Section 6, p. 7). The reported outcomes include line growth, bounty transitions, theorem proof lengths, and an estimated subscription cost. The paper reports no pass fraction over all 393 statements, no independent semantic audit, and no controlled comparison of market versus centralized scheduling. Inference: the 39k-versus-7k line comparison does not establish a causal speedup because the projects and observation periods differ and theorem difficulty is not controlled. The authors state: “This is only a rough comparison, one should also be looking at the capability to prove major theorems (Sect 6), etc.” (Section 4, p. 4).
 
-Inference: for VeruLaw, the market could increase parallel proof throughput and surface useful lemma decomposition, but it also creates product risk through statement errors, stale locks, solver/checker bugs, and admitted dependencies. The most important reusable practice is mechanical separation of immutable specifications, proof edits, and trust status. The product should measure verified contracts and dependency closure rather than generated line count.
-
 ## techniques for the catalog
 
 - bounty-based decentralized proof search — agents propose and claim priced theorem obligations in a shared ledger
@@ -81,4 +79,3 @@ Inference: for VeruLaw, the market could increase parallel proof throughput and 
 - dependency-closed checking — permit a final proof status only when all recursive dependencies are checked, while labeling incomplete work admitted
 
 - compositional lemma ownership — divide theorem regions by theme and expose intermediate lemmas so later proofs avoid expanding definitions
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Indeed, there is both substantial self-completion by creators, and some cross-agent collaboration and proof completion."): read the complete paper and study; checked quotations, numbers, section and page references, technique descriptions, and the arXiv link against the paper; corrected the subscription count, quotation boundaries, page references, and unsupported descriptions, and marked recommendations and conclusions as inferences; did not inspect the public repository, rerun the experiment, or independently validate Megalodon or the Verus adaptations.

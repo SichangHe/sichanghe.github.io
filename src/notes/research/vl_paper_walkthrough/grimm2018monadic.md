@@ -37,13 +37,6 @@ Section 6 (pp. 13–16) proves memoization and two union-find optimizations by r
 
 Verus form (Inference): expose an abstract functional specification for the data structure, prove each optimized operation refines it, and use ghost representatives for parent forests and ranks. A `proof fn` can connect concrete heap updates to the abstract relation. The paper's F⋆ syntax and SMT triggers do not transfer directly; Verus solver behavior and supported pointer encodings become assumptions.
 
-## evidence, trust, and VL implications
-Table 1 (Section 2.5, p. 6) reports 10 example subjects, 4,363 lines of code without comments, 1,411,829 ms first-run checking time, and 130,614 ms replay time, measured with Z3 4.5.1 on an Intel Xeon E5-2620 at 2.10 GHz with 32GB of RAM; replay uses hints (unsat cores) recorded in the first run. Subjects include loops, reorderings, Benton relational Hoare logic, cryptography, four IFC variants, memoization, and union-find. The paper reports that “revising a proof with hints is fast, which greatly aids interactive proof development” (Section 2.5, p. 6). These are project totals, not a universal speed claim.
-
-What is proved is each listed F⋆ relational lemma under its effect model and specifications. Inference: the F⋆ typechecker, SMT solver, primitive effect implementations, cryptographic probability model, and specifications remain trusted; the paper does not discuss its trusted base. The paper's conclusion identifies the ingredients as “monadic effects, reification, dependent types, non-relational weakest preconditions, and SMT-based automation” (Section 9, p. 17).
-
-Inference: VL should reuse effect-specific ghost models, explicit relational postconditions, and footprint/refinement lemmas. It should not redo generic demonstrations of noninterference or optimizer equivalence without a Verus-specific memory model. Agent-written verified Rust is threatened when two-run properties are reduced to independent unary proofs: each run can satisfy its contract while their relation fails. This framework supplies the missing relational layer, but its F⋆ proof automation does not establish that Verus can discharge the same obligations.
-
 ## techniques for the catalog
 - monadic effect modeling — define an effect-specific state and weakest-precondition semantics
 - monadic reification — expose effectful executions as pure state-passing functions for relational proofs
@@ -52,4 +45,3 @@ Inference: VL should reuse effect-specific ghost models, explicit relational pos
 - probabilistic program equivalence — model random tapes and prove distribution-preserving bijections
 - semantic information flow — combine low-equivalence proofs with syntax-directed security typing
 - refinement of optimizations — relate optimized data structures to abstract reference behavior
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Of the 20 rules and equations of RHL presented by Benton (2004), 16 need at most 5 lines of proof annotation each, among which 10 need none and are proven automatically."): read the paper text from first line to last; checked every quotation, Table 1 numbers, section and page references, and the technique steps against the text; changed the link to the arXiv page from the paper text (the old DOI was not in the paper), fixed the reify warning and the Section 2.5 reference for the hints quote, replaced the vague footprint, crypto, IFC and union-find descriptions with what the paper states, added the RHL results, and marked trust and Verus statements as Inference; did not check the Verus-side claims, the DOI, or the paper figures beyond the text, and did not re-derive any F⋆ proof.

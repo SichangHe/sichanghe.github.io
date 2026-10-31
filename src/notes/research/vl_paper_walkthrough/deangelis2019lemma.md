@@ -6,8 +6,6 @@ Tag: `deangelis2019lemma`, [paper](https://doi.org/10.4204/EPTCS.299.4)
 
 The paper verifies functional-program properties by translating them to constrained Horn clauses (CHCs), transforming clauses over inductive lists into clauses over linear integer arithmetic (LIA), and asking Z3 for satisfiability. Its new contribution is generating the induction lemmas needed by transformation: either a difference predicate or auxiliary queries. The authors state: “In this paper we show, through an example, how during the process of transforming CHCs for eliminating inductively defined structures one can introduce suitable predicates, called difference predicates, whose definitions correspond to the lemmata to be introduced.” (abstract, p. 4). A second example uses auxiliary queries "whenever difference predicates cannot be introduced" (abstract, p. 4). The program is OCaml (Section 2, p. 5); the paper is the VPT 2019 workshop paper (EPTCS 299, pp. 4-18) and describes itself as "ongoing work" (Section 5, p. 16).
 
-Inference: for VL, the transferable pattern is to expose a recursive Rust/Verus contract as a solver-friendly relational problem, synthesize a lemma-shaped relation during proof transformation, and discharge the resulting arithmetic obligations. This is a proof architecture, not evidence that Verus accepts CHCs or OCaml directly.
-
 ## technique 1: translate a functional property to CHCs
 
 what it is and when to use it. Translate each terminating function into relational clauses and the desired universal property into a query whose head is `false`. Use it when a solver handles the resulting theory better than the original inductive data type. In the insertion-sort example, the target is preservation of list sum. The paper gives the complete program (`ins`, `insertionSort`, and `sumlist`) and states: “Thus, in formulas, we want to prove that:” followed by `∀ l. sumlist l = sumlist (insertionSort l)`, named “Property Sum” (Section 2, p. 6).
@@ -27,7 +25,7 @@ Inference: the CHC query corresponds to the negated postcondition that Verus gen
 
 evidence. The paper reports that “state-of-the-art CHC solvers, such as Eldarica or Z3, fail to prove satisfiability of clauses 1– 8, because those CHC solvers do not incorporate any induction principle on lists.” (Section 2, p. 6). This failure motivates the next technique; no runtime benchmark denominator is given.
 
-assumptions and limits. The translation assumes function relations are total and functional; the paper relies on termination of the source functions for that fact (Section 3, p. 10; Section 5, p. 15). It targets CHCs and does not itself prove that a specification matches an implementation. Inference: a VL implementation must separately connect the Verus specification to Rust behavior and account for ownership and executable code.
+assumptions and limits. The translation assumes function relations are total and functional; the paper relies on termination of the source functions for that fact (Section 3, p. 10; Section 5, p. 15). It targets CHCs and does not itself prove that a specification matches an implementation.
 
 ## technique 2: eliminate inductive arguments by fold/unfold/replace
 
@@ -98,10 +96,6 @@ The trusted assumptions are total functional initial predicates, terminating sou
 
 Inference: threat to a product that generates Verus Rust is medium. The method targets exactly the hard class of recursive data-structure lemmas that can block automation, but it depends on discovering matching clause structure and proving relational side conditions. A generator could use these patterns to propose `proof fn` lemmas and arithmetic summaries; it cannot treat a Z3 model as proof of executable Rust, ownership, library behavior, or specification adequacy. The paper has no evidence about agent-written Rust, Verus acceptance, maintenance cost, or adversarial code.
 
-## what VL should not redo
-
-The paper gives two worked examples (not a fully specified, mechanized algorithm) covering CHC translation, fold/unfold/replace elimination, difference-predicate generation, auxiliary-query generation, and solver discharge. Inference: a VL project should not reimplement these as novel ideas without comparing against this work. The open engineering questions are the Verus encoding, automated witness/lemma synthesis, and robustness when Rust specifications include ownership, mutable state, or library contracts; those are inferences from the gap between the paper's list/CHC setting and Verus.
-
 ## techniques for the catalog
 
 - CHC property encoding — translate terminating functions and a negated universal property into false-headed constrained Horn clauses
@@ -110,5 +104,3 @@ The paper gives two worked examples (not a fully specified, mechanized algorithm
 - auxiliary-query lemma generation — turn a no-output mismatch into an implication, eliminate negation, and prove the resulting false-headed queries
 - solver model discharge — use Z3 satisfiability and its LIA model to establish the transformed clauses and check difference-predicate functionality
 - soundness conditions — rely on total functional source relations, valid generated implications, and solver soundness; equisatisfiability additionally requires functional difference predicates
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Thus, the satisfiability of the derived set of clauses is sufficient to guarantee the property of the functional program that we want to verify"): read all of the paper text (Sections 1-6, references) and checked every quotation, clause number, step list, model, section and page reference in the study; changed the link to the DOI printed in the paper (10.4204/EPTCS.299.4), fixed several page references (p. 6 for the solver-failure quote, p. 8 for the diff-mismatch quote, p. 10 for the final conclusion and Z3 model), corrected the clause count for `ins`, the description of the Match, diff-head and H2-to-H4 steps, the claim that L2/L3 are in TransfCls, and the "complete recipe" wording, and marked own conclusions as Inference; did not check the Verus code sketches against Verus (they are labelled Inference), the cited prior work [10, 11], or the arXiv version.

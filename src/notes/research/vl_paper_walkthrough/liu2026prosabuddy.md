@@ -25,8 +25,6 @@ The paper emphasizes the domain mismatch with pure mathematics: a Prosa lemma of
 
 Verus form
 
-Inference: A VL agent can index Rust/Verus modules and retrieve contracts, invariants, and proof functions before invoking `verus`. A tool wrapper should return structured diagnostics, source locations, verification conditions, and local hypotheses. The paper's ReAct and retrieval pattern transfers, but Rocq's proof-state API and tactics do not; Verus users write Rust-like proof code and rely on supported `requires`, `ensures`, `assert`, `proof fn`, and loop `invariant` constructs.
-
 evidence and limits
 
 The full system's 17/24 result is on a benchmark whose lemmas intentionally reuse Prosa foundations. The authors state, “Our benchmark targets lemmas that are not yet included in the existing Prosa library but are closely connected to the foundations provided by Prosa.” (Sec. IV, p. 10). This makes the result evidence for library extension, not for inventing definitions or theories from scratch. The paper also says the model's backbone matters: GPT-5.4 proves 17/24, DeepSeek-v4-flash 9/24, DeepSeek-v4-pro 6/24, Gemini-3.1-flash-lite 2/24, and GPT-oss-120B 1/24 (Table IX, p. 12).
@@ -67,11 +65,7 @@ Inference: A Verus analogue should compile in a clean process, reject `external_
 
 Ablations isolate components. Removing proving skills solves 12/24, removing decomposition 14/24, removing human hints 15/24, and removing full-library access 12/24 (Table VI, pp. 10–11). For Prosa-selected lemmas grouped by tactic count, ProsaBuddy solves 10/10 at L1, 10/10 at L2, 8/10 at L3, 9/10 at L4, 9/10 at L5, 6/10 at L6, and 1/5 at L7 (Table VIII, p. 12). The paper reports a 50,000K-token timeout and an average KV-cache hit rate of about 90%, while warning that the hit rate depends on serving-provider allocation (Sec. IV, p. 10).
 
-The Rocq kernel checks proof terms; retrieval, ReAct, decomposition, and skills guide construction but are not themselves trusted for kernel soundness. The audit adds trust in its compiler, AST extractor, tactic classification, libraries, and script. Formalization correctness remains outside the proof: the authors explicitly note that no verifier can fully decide whether a schedulability formalization captures a human's intended meaning (Sec. V, p. 13). Inference: VL must treat the natural-language-to-contract step as a separate, human-facing risk even when Rust verification succeeds.
-
-## prior work VL should not redo and product threat
-
-This paper already evaluates retrieval, structured subgoal delegation, trace-derived skills, proof-plan DAGs, stagnation checks, and AST-based anti-cheating audits in a domain-specific verifier. A new VL system should compare against these components rather than claim novelty for generic agent loops. Inference: The threat to agent-written verified Rust is high in long dependency chains, where a weak model can choose the wrong abstraction or loop forever on unchanged obligations. The strongest reusable defenses are mechanically checked decomposition, independent auditing, minimal dependency slices for contamination control, and explicit separation of formalization review from proof acceptance.
+The Rocq kernel checks proof terms; retrieval, ReAct, decomposition, and skills guide construction but are not themselves trusted for kernel soundness. The audit adds trust in its compiler, AST extractor, tactic classification, libraries, and script. Formalization correctness remains outside the proof: the authors explicitly note that no verifier can fully decide whether a schedulability formalization captures a human's intended meaning (Sec. V, p. 13).
 
 ## techniques for the catalog
 
@@ -80,4 +74,3 @@ This paper already evaluates retrieval, structured subgoal delegation, trace-der
 - trace-derived proving skills — mine failed and successful proof traces into reviewed, reusable tactics guidance
 - stagnation detection — compare proof states and block repeated attempts that add no evidence
 - independent proof audit — compile in a clean process, restrict proof commands, and compare theorem source outside the proof body
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

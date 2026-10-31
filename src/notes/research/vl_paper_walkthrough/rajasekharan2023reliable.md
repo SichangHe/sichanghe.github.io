@@ -8,8 +8,6 @@ STAR (Semantic-parsing Transformer and ASP Reasoner) splits language understandi
 
 The execution boundary is explicit: “The query is executed on the s(CASP) goal-directed ASP system against the LLM-generated predicates and ASP-coded commonsense knowledge to generate a response.” (Introduction, p. 275.)
 
-For VeruLaw (VL), the transferable technique is a trust boundary: an agent proposes structured facts or specifications, while a deterministic verifier derives consequences and explanations. Inference: this is useful for extracting Rust preconditions, postconditions, and invariants from prose, but ASP's nonmonotonic semantics and s(CASP) are not substitutes for Verus's Rust ownership and solver semantics.
-
 ## technique: split semantic parsing from symbolic reasoning
 
 What it is. The LLM is used for semantic parsing, “converting sentences to predicates that capture their semantics,” while ASP handles reasoning (Introduction, p. 275). The authors fine-tune or use in-context learning with text–predicate examples, encode commonsense knowledge in advance, and execute a query against generated predicates plus rules.
@@ -61,9 +59,7 @@ Evidence. On 500 E2E examples, predicate generation accuracy is 89.33% using 11 
 
 ## what is proved, trusted, and left open
 
-The paper's symbolic conclusions are checked by s(CASP) and accompanied by proof trees; its empirical claims are the task accuracies above. The LLM extraction stage, hand-written rules, predicate vocabulary, database, and selected contexts remain trusted or manually authored. Inference: in VL, Verus would strengthen the final executable-state proof, but it would not automatically validate that an LLM extracted the right requirement from prose.
-
-The authors already describe the neuro-symbolic split, proof-tree explanations, query-driven reasoning, and state-machine conversation pattern. VL should not redo these at a generic level. Inference: a useful extension is to measure whether predicate extraction into Verus contracts catches contradictory or underspecified Rust requirements.
+The paper's symbolic conclusions are checked by s(CASP) and accompanied by proof trees; its empirical claims are the task accuracies above. The LLM extraction stage, hand-written rules, predicate vocabulary, database, and selected contexts remain trusted or manually authored.
 
 ## threat to agent-written verified Rust
 
@@ -76,4 +72,3 @@ Inference: the threat is medium to high at the specification-extraction boundary
 - fixed predicate grammar — constrain model output to typed domain relations before reasoning
 - proof-tree explanations — return the facts and rules that justify each answer
 - state-machine conversation — store predicates as state, ask for missing fields, and query trusted data
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Following the STAR approach, we convert the knowledge in the chosen algebraic problem to the predicates defined above using an LLM."): read the whole paper (pp. 274-287) and checked every quotation, table number (Tables 1 and 2), count (91, 24, 67, 500, 11, 89.33%), section and page reference, and the technique steps against it. Changed: link now the DOI printed in the paper (the arXiv link was not in the paper text); corrected the page of the "smoke" example (p. 279, not 280); fixed section/page references for the proof tree, predicate vocabulary, algebra example and concierge state machine; replaced an unsupported "validate or normalize" step with what the paper says and marked it as Inference; marked the 67/24 split as the paper reports it; softened "establish" and the integrity-constraint claim, which the paper describes but does not evaluate. Did not check: the Verus/VeruLaw applicability statements (marked Inference, my own judgment), the arXiv version differences, or the cited external works.

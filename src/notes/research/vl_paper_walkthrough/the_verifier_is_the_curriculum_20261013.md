@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `zhou2026verifier`, [paper](https://arxiv.org/abs/2607.09709)
 
-Audit: audited 2026-10-13 against the paper; checked numbers, fractions, section and appendix references, quotations, steps against Algorithm 1 and §5 to §10, and the Verus forms; corrected the claim that techniques 2 to 7 all rest on the launch gate (4 to 7 use APPS), step 2 of technique 1 (5 frames is not in the paper), an unmarked inference on needing a passing first model, a widened only-for-offline claim, the blind judge called an LLM judge, the crossed bootstrap given for all seeds, the false-negatives-lower-reward claim in the catalog, and two overstatements in Verus forms.
-
 source: Zhou, Jiang, Wu, Zhou (Institute of Science Tokyo, Zhejiang University, National University of Singapore), arXiv:2607.09709v2, 15 Sep 2026, 15 pages in two columns; appendices A to D
 
 ## what the paper measures and what it leaves trusted
@@ -187,11 +185,9 @@ Verus form. Inference: unchanged. Proof attempts for one function are correlated
 
 ## what is already done, and the threat
 
-Done in the paper: the filter-swap control; the linear price of false positives between π = 0.25 and 1; the near-zero price of false negatives for filtered fine-tuning; the reversal under GRPO; the result that more sampling pays only behind a strict gate. Inference: VL need not rerun these to believe them, within the limits above.
+Done in the paper: the filter-swap control; the linear price of false positives between π = 0.25 and 1; the near-zero price of false negatives for filtered fine-tuning; the reversal under GRPO; the result that more sampling pays only behind a strict gate.
 
 Not done: any formal verifier as the gate; any gate that can be passed by weakening the goal, which is the main false positive in verification; base models stronger than 14B; more than three rounds.
-
-Inference on the threat to VL: none as a competitor, since nothing here verifies code. It supports VL's premise from the training side: a deterministic check is a better teacher than a judge, in proportion to how rarely it admits wrong work. It also warns that a model fine-tuned on Verus-accepted output will learn whatever loophole the acceptance check leaves.
 
 ## techniques for the catalog
 

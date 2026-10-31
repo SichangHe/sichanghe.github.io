@@ -38,11 +38,6 @@ For retrieval, it states: “Retrieval Augmented Generation (RAG) [52] supplemen
 
 Inference: supply relevant Verus rules and verified examples, generate a candidate contract, and check it with Verus and human review. Compare prompting variants using measured verification and requirement-correctness results. This review supplies no Verus comparison.
 
-## trusted boundary, limits and VL implications
-The numerical results above are this review’s summaries of other papers. Its conclusion identifies continuing challenges: “While LLMs is contributing significantly in improving development cycle, the challenges of ambiguity resolution, verification and domain adaptation shall be the focus areas of future research.” (Section 8, p.11).
-
-Inference: VL could connect each natural-language requirement to its generated contract, proof obligations, counterexamples and human review. An agent that changes the requirement’s meaning can produce a contract whose successful verification does not establish the intended behavior. This review supports investigating translation and refinement techniques; it does not establish their soundness or effectiveness for agent-written Rust.
-
 ## techniques for the catalog
 - iterative LLM formalisation — generate formal specifications from natural language and let users refine translations (nl2spec, Section 3, pp.2–3)
 - neuro-symbolic explanation feedback — formalise explanatory sentences and use theorem-prover feedback for refinement (Explanation-Refiner, Section 3, p.3)
@@ -51,5 +46,3 @@ Inference: VL could connect each natural-language requirement to its generated c
 - model-based testing — partition inputs using assumptions of uniform behavior (Section 5.1, p.8)
 - counterexample-to-test reuse — use model-checker counterexamples as test cases (Section 5.4, p.9)
 - prompt decomposition and retrieval — articulate intermediate reasoning steps and supply retrieved information (Section 7.1, pp.10–11)
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Retrieval Augmented Generation (RAG) [52] supplements problem information with specifically retrieved information and is often used in knowledge intensive tasks."): checked the full text including references and appendix, study quotations, numbers, section and page references, technique descriptions, and paper identity; corrected quotations and page references, replaced unsupported procedure details with supported descriptions or explicit inferences, distinguished prompting methods, and changed the link to the paper’s arXiv identifier; did not independently check the cited studies, reproduce experiments, or test the proposed Verus applications.

@@ -5,8 +5,6 @@ Tag: `mesnard2026solving`, [paper](http://arxiv.org/abs/2607.21196v1)
 
 This paper reports an experiment in which Claude generated pure ISO Prolog solutions, tests, and LPTP proofs for 33 of the Ninety-Nine Prolog Problems. The authors define “solved” operationally: generate code and tests, run the tests, then prove reliability properties with the Logic Program Theorem Prover (LPTP). They report 58 logic procedures, 112 Prolog clauses, 150 lines of code, 508 runtime tests, 257 lemmas, and about 11,800 proof lines (Section 5, pp. 212–213). The 33 exercises are P01–P28 and P31–P35, 33/88 = 37.5% of the full collection (Introduction, p. 210).
 
-The experiment is a concrete verifier-in-the-loop workflow. It is relevant to VL because it separates executable tests from proof obligations and makes the agent maintain project instructions and reusable proof lessons. No earlier study with this exact title was found in the walkthrough notes; the following account therefore covers the paper's complete workflow and examples.
-
 ## technique 1: per-problem artifact layout and explicit project contract
 
 What it is. Each problem gets a self-contained directory containing implementation, a ground representation, tests, proof file, report, and local instructions. The paper states: “For each Pxx from P99, we want Claude to create a directory P99/Pxx, with its own CLAUDE.md file describing the problem, its solution pxx.pl, its tests pxx_test.pl, the properties and their proofs pxx.pr, and a report pxx-experiment-report.md describing the work done.” (Section 3, p. 211).
@@ -51,13 +49,9 @@ How to do it. (1) Implement an MCP server around LPTP and expose `get_lptp_gramm
 
 The paper maps induction, case analysis, completion, definition unfolding, existential elimination, totality-axiom expansion, and automated search to separate tools. It reports that proof batches for P14–P24 were certified in 40 minutes to one hour, depending on complexity, and that only Claude produced valid proofs for that subset (Section 7.2, p. 218). Those are interaction-time and model-comparison results, not a success rate over all 11 problems.
 
-Verus form (inference). A VL MCP server could expose a fixed Verus compile/check command, error extraction, source inspection, and a clean-build proof check. Tool calls must reject `assume`, `admit`, and untrusted bodies according to VL's trust policy. Verus diagnostics can drive repair, but LPTP tactic names and JSON schemas do not transfer.
-
 ## evidence, trust, and product implications
 
 The proof checker establishes only the properties encoded in LPTP and the soundness assumptions of its libraries and axioms. SWI-Prolog execution and 508 tests measure concrete behavior. Human review remains trusted: the authors “checked manually each generated file” and examined code, tests, logical statements, and proofs (Section 5, p. 213). The paper does not report independent replication, a blinded audit, or a denominator for the proportion of generated candidates that failed before the 33 completed exercises. It reports effort from 15 minutes for P01 to several hours for P35 (Section 5, p. 213), so cost is highly uneven.
-
-Inference: For VL, the strongest reusable practice is a per-task artifact contract plus a fixed property checklist, followed by verifier-native tool calls and clean-build certification. Inference: this workflow threatens an agent product that emits Rust and runs one final Verus command without systematic tests, explicit trust audits, or reusable repair memory. Inference: it does not establish that LLM-generated verified Rust is safe without human review; the paper's own workflow relies on that review.
 
 ## techniques for the catalog
 
@@ -65,4 +59,3 @@ Inference: For VL, the strongest reusable practice is a per-task artifact contra
 - property portfolio — test edge cases and prove type, groundness, termination, uniqueness, existence, and functional correctness separately
 - strengthened induction — prove an auxiliary stronger invariant when the direct induction hypothesis cannot close the recursive case
 - verifier-native MCP loop — expose grammar, tactic, lemma, and whole-file checking tools and iterate until the proof checker certifies the file
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

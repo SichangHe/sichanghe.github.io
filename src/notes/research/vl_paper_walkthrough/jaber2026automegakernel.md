@@ -44,8 +44,6 @@ Inference: AMK has four layers. Layer 0 is a hand-written, frozen VM and loader;
 
 > “The Layer-2 agent proposes a structured object, not kernel code.” (Section 4, p. 6)
 
-Inference: This separation transfers directly to VL: let an agent propose typed policy/configuration data, then lower it through a fixed trusted implementation and verify the resulting Rust/Verus artifact. It reduces the agent's ability to bypass synchronization or memory ownership rules, though it does not eliminate bugs in the trusted lowering code.
-
 ## correctness and coverage evidence
 
 Inference: The paper evaluates correctness on seven GPUs and reports denominators and settings. The validator dataset has 7,160 schedules: 360 real lowerings, 2,800 single-injection mutants across eight unsafe classes, and 4,000 random DAGs. An independent oracle labels 6,091 unsafe schedules. `validate()` rejects all 6,091, yielding zero false accepts, and accepts all 360 real lowerings; 24 of those are re-run in the reference VM and match eager bit-for-bit. Validation runs at about 5,150 schedules per second on CPU.
@@ -74,8 +72,6 @@ Inference: The paper reports kernel and whole-decode denominators separately. On
 
 Inference: AMK trails cuBLAS on training-class A100/H100 because fixed cross-SM synchronization dominates; T4 stays below parity for an occupancy reason. Long-context decode is unmeasured because all timings are batch-one position zero with empty KV. No Nsight hardware counters were available, so utilization is wall-clock plus analytic roofline, not direct DRAM-counter evidence.
 
-Inference: VL should not redo a generic agent-proposes-code/test loop. The paper already supplies a stronger structure: a typed edit surface, frozen lowering/VM, static pre-launch safety gate, independent semantic oracle, drift-robust search, and explicit trusted-boundary disclosures. What VL would still need to establish is Verus-specific proof soundness, Rust ownership integration, and a threat model for external crates and unsafe code.
-
 ## techniques for the catalog
 
 - static schedule validator — reject unsatisfiable waits, cycles, self-blocking queues, partial joins, unordered reads, KV hazards, and unreachable outputs before launch
@@ -83,4 +79,3 @@ Inference: VL should not redo a generic agent-proposes-code/test loop. The paper
 - reference-oracle gate — require semantic equivalence against a CPU reference before measuring or retaining an optimization
 - drift-robust autoresearch — use interleaved A/B timing, keep/revert, and a physical roofline guard for noisy unattended optimization
 - adversarial validator audit — compare a checker against an independent unsafe oracle, report every class denominator, and retain stricter checks the oracle cannot model
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

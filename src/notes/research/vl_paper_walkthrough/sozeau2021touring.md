@@ -122,18 +122,10 @@ Evidence and limits. The paper says the extracted checker "can be used to succes
   - extracted checker runs on the HoTT library prelude (§5, p. 24)
   - project scale of about 100k lines of OCaml and Coq code (§6, p. 25)
   - no denominator for bug-finding rate, checker throughput, or extraction success percentage
-- trusted or assumed
-  - strong normalization; the paper calls it the only axiom used in the development (§4.1, p. 23)
-  - correctness of unformalized guard checking, because it relies on oracles (§6.1, p. 26)
-  - omitted eta conversion, SProp, module system, and template polymorphism (§6.1, pp. 25–26); SProp and primitive types are in the syntax but not the specification (§2.2, p. 17)
-  - Inference: the Coq/OCaml runtime, extraction and compiler integration, and the consistency of the formal theory remain trusted; the paper says the trusted base moves from Coq's unverified kernel to the formalized PCUIC typing rules plus the strong-normalization axiom (§6, p. 25)
-  - Inference: in VL, Verus, Z3, Rust compilation, FFI, and hardware would add analogous trust components
 
 ## limitations and product implications
 
 Inference: the paper explicitly omits eta conversion, SProp, module-system checking, and template polymorphism; therefore “full calculus” in the abstract is bounded by the supported PCUIC subset (§6.1, pp. 25–26). It also says guard-checking correctness is assumed, so the trusted base is reduced rather than eliminated.
-
-Inference: VL should not redo MetaCoq's general metatheory, bidirectional type-checking pattern, or erasure theorem. The reusable product lesson is to specify the language that agent-written Rust proofs actually use, verify the checker or proof-producing translator against that specification, and enumerate every unverified boundary. The threat to agent-written verified Rust is medium to high: a proof can be valid relative to a wrong specification or an unverified erasure/compiler boundary. MetaCoq shows a route to reducing that risk, but its own explicit omissions show why the trust inventory must remain concrete.
 
 ## techniques for the catalog
 
@@ -145,5 +137,3 @@ Inference: VL should not redo MetaCoq's general metatheory, bidirectional type-c
 - complete type checker — return an inferred type plus a squashed proof or an error, then check conversion
 - verified erasure — erase types/proofs to untyped lambda calculus and prove observational preservation
 - trust-base inventory — record strong normalization, guard checking, omitted features, extraction, and compiler assumptions explicitly
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "In a bidirectional synthesis derivation, if a variable does not appear in the term position, then it cannot appear in the inferred type."): I read the whole paper text and viewed printed p. 21 of the PDF to confirm page placement; I checked every quotation, the section and page references (printed pages 13–29; the PDF has 17 pages), and each technique step against the paper. I changed: the link to the DOI from the paper text; page references for §2.2.1, §2.2.2, §3.2.4, §3.3, §3.5, §4.1 conversion, §4.2 and the HoTT example (which is in §5, p. 24, not §4.2); the description of principality, of the bidirectional variant (credited to Lennon-Bertrand [32], strengthening and principality "trivial to derive"), of the `match` bug and its fix, of the erasure test for types and proofs, and of what the paper claims about CertiCoq and CompCert ("will provide"); I added the subject-reduction restriction on co-inductive types, the failed first extraction attempt, and the "naive" universe algorithm; and I marked my own conclusions "Inference:". I did not check the Verus-form paragraphs beyond their being marked as inference, nor the cited works or the formal development online; the figures (Fig. 1 to Fig. 3 and the embedded rule excerpts) were not read in detail.

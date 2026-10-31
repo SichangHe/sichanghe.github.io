@@ -48,12 +48,6 @@ For raft-reconfig ID 343 and raft-reconfig-big ID 709, the initial completions w
 
 For every protocol in Table I except Peterson, the authors used TLAPS to prove the key safety property for all instances. They explicitly state, “our TLAPS proofs did not consider liveness” (§V, p. 7). This limits the generalization guarantee to safety.
 
-## trust, limits, and product threat
-
-The authors modified benchmarks to separate the controllable protocol from its uncontrollable environment and restricted grammar array indices to prevent unimplementable updates (§V, p. 7). They also added liveness properties and fairness constraints because safety alone can admit trivial solutions, such as filling a pre-hole with `False` (§V, p. 7). Their conclusion claims: “We present the only, to our knowledge, truly syntax-guided synthesis method for symbolic, parameterized, infinite-state distributed protocols” (§VII, p. 8). This is the authors' comparison with prior work.
-
-Inference: Trust in these results depends on the protocol model, grammars, expression evaluator and reductions, TLC checks, and subsequent TLAPS proofs. For VL, the reusable idea is counterexample-guided search over typed holes with equivalence reduction. A bounded model can omit behavior of a larger instance or the implementation's environment. Any proposed Verus adaptation should therefore state exactly which executions and properties its checks cover. The paper does not establish its effectiveness for Rust ownership, concurrency, or proof repair.
-
 ## techniques for the catalog
 
 - typed protocol sketches — define pre- and post-holes with argument domains, output types, and grammar-generated expressions
@@ -62,4 +56,3 @@ Inference: Trust in these results depends on the protocol model, grammars, expre
 - semantic equivalence reduction — normalize set, Boolean, equality, and inequality expressions and keep one representative per normal form
 - short-circuit enumeration — exploit commutativity to skip reversed operand-size combinations
 - larger-instance extra-check — model-check larger instances before returning a candidate; separately prove all-instance safety with TLAPS
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Our primary goal is to avoid over-pruning constraints, since over-pruning results in an incomplete algorithm, i.e., an algorithm that might miss valid completions."): checked the complete paper, including Appendix A, against the study's quotations, counts, references, technique steps, and guarantee scope; corrected the table count, page and section references, hole-update example, enumeration details, and ID 709 timeout account, and qualified Verus analogies as inferences; did not rerun experiments, inspect the artifact or TLAPS proof files, or validate the proposed Verus adaptations.

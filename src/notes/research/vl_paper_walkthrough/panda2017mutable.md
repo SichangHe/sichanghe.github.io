@@ -36,13 +36,9 @@ The evaluation uses Z3 4.4.2, reports results from 100 runs of each experiment, 
 
 VMN cannot find middlebox implementation bugs, including classifier and flow-lookup bugs (section 2.2, PDF p. 5). The introduction cites EXPSPACE-completeness for reachability with mutable datapaths, while Appendix D says unrestricted mutable networks are Turing complete and verification is undecidable (PDF pp. 3, 20). VMN rejects networks with forwarding loops, and Z3 timeouts can leave invariants unresolved (sections 3.1 and 4.2, PDF pp. 6, 8–9). Inference: trusted components include middlebox models, any oracle constraints, topology/configuration inputs, the logical translation, Z3, and correspondence between models and deployed devices.
 
-## what VL should reuse
-Inference: VL could reuse oracle boundaries, slice closure proofs, policy-equivalence classes, symmetry, and counterexample-producing satisfiability checks. A verified Rust adaptation should explicitly state model assumptions and prove the relation between slices and the full network. Opaque classification remains outside the proof unless verified separately.
-
 ## techniques for the catalog
 - oracle middlebox model: specify guarded forwarding while abstracting complex packet classification
 - flow-parallel slicing: close a smallest endpoint subnetwork under forwarding and per-flow state
 - origin-agnostic slicing: close under forwarding and include a host per policy-equivalence class when middleboxes are origin-agnostic or flow-parallel
 - symmetry reduction: verify one representative among isomorphic invariant slices
 - SMT reachability: negate invariants and use satisfiability plus counterexamples to decide violations
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Since this network only contains a firewall, using slices we can verify invariants on a slice whose size is independent of network size and policy complexity."): read the complete paper including appendices and references; checked quotations, numbers, section/page references, technique steps, and limits against it; corrected oracle output types, slice equivalence and prerequisites, symmetry's definition, unsupported algorithm steps, and decidability wording; did not reproduce experiments, inspect implementation code, or verify the proposed Verus adaptations.

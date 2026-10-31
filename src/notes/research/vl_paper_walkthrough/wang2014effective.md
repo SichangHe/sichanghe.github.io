@@ -54,14 +54,6 @@ How to apply it. (1) Initialize one counter per sequence at 1. (2) Count current
 
 Verus form. Inference: track counters and prove that every consumed input prefix embeds in the output. A termination proof additionally needs every iteration to advance an unfinished sequence. The printed fixed `n/4` threshold does not establish this: if only one outgoing-only sequence remains among four original sequences, the incoming branch advances nothing. Check the implementation or add and verify a progress rule before claiming termination. The paper reports no approximation guarantee for this heuristic; measure overhead and prove subsequence feasibility separately.
 
-## defense evidence, trusted assumptions, and VL threat
-
-On 100 sites with 30 instances each, the authors evaluate sequence-end, class, and full-information defenses against a target uniform accuracy. A class-level defense with maximum uniform accuracy 0.1 has approximately 59% ± 3% overhead and the new attack accuracy 0.068 ± 0.007; the bound says no attack on that dataset can exceed 0.1. For comparison, decoy pages have 130% ± 20% overhead and accuracy 0.30 ± 0.06, while BuFLO has 190% ± 20% and 0.10 ± 0.03 (Section 7, p. 154). The bound is conditional on the dataset used to establish the possibility sets. Section 6.1 explicitly names the training set for a defense's maximum-uniform-accuracy claim and warns that a constructed testing set can contain a page with accuracy 1; Table 2 distinguishes training and testing by information level.
-
-Inference: the trusted base includes the trace collection and page-load oracle, the deterministic-defense implementation, equality of packet observations, the chosen testing multiset, and the mathematical implementation of SCS or its approximation. The authors publish attack and defense code, data, feature vectors, clustering, stopping points, and supersequences (Section 8.3, p. 155). For identifying which of 100 monitored pages was visited, they warn that if those pages account for less than 0.1% of visits, “false alarms will overwhelm the number of true positives” (Section 8.2, p. 155).
-
-Inference: the paper supplies a reusable finite privacy proof pattern, but does not evaluate agent-written Rust or Verus. VL can prove an exact finite privacy bound, output-size bound, and subsequence invariant, but it cannot infer that packet traces are complete, that timing and direction are modeled correctly, or that the runtime network preserves the abstraction. The paper already supplies the core universal-bound and supersequence ideas; VL should adapt them to explicit Rust sequence contracts and preserve the denominator, prior, and observation model in every claim.
-
 ## techniques for the catalog
 
 - feature-weighted k-NN attack — classify packet traces with a broad weighted feature distance and learn weights that emphasize features a defense leaves open
@@ -70,5 +62,3 @@ Inference: the paper supplies a reusable finite privacy proof pattern, but does 
 - shortest common supersequence construction — minimize bandwidth among deterministic simulatable defenses by outputting SCS values
 - information-level clustering — choose anonymity sets and stopping prefixes according to what the client knows
 - counter-based SCS approximation — track consumed prefixes; verify progress before claiming termination and report measured overhead
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The testing time per instance scales linearly with the number of training elements for all three classifiers."): read the entire paper including references; checked quotations, numbers, section and proceedings-page references, attack steps, accuracy definitions, defense assumptions, clustering and SCS approximation; corrected multiplicity-weighted averaging, clustering order and information restrictions, optimality scope, page references, and inference labels; retained the publisher link printed on the paper cover; did not inspect released code, reproduce experiments, or implement or verify the proposed Verus proofs.

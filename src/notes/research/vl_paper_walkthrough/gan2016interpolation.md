@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `gan2016interpolation`, [paper](http://arxiv.org/abs/1601.04802v3)
 
-
 ## problem and result
 
 The paper generates reverse Craig interpolants for contradictory conjunctions of concave quadratic polynomial inequalities, including strict inequalities, and combines the method with equality over uninterpreted functions (EUF). A concave quadratic has degree at most two and a negative semidefinite quadratic matrix (Definition 4, Section 3, PDF p. 5). Variables are split into common `x`, A-local `y`, and B-local `z`; the interpolant may use only `x`. Page numbers in this study are PDF pages of the 40-page arXiv v3 file; the pages carry no printed numbers.
@@ -79,8 +78,6 @@ Measured: Section 8 (pp. 35–38) reports an implementation in Mathematica with 
 
 Inference: trusted assumptions include real arithmetic semantics, negative semidefinite matrices, exact SDP/SOS reconstruction, and the correctness of flattening and Horn functionality axioms.
 
-Inference: threat to VeruLaw is moderate. The method can generate nonlinear interpolants useful as Verus invariants, including EUF-shaped specifications, but numerical SDP and theory combination are outside Verus's trusted kernel. VL should not redo the CQ interpolation theorem. A useful integration would import exact SOS certificates and measure proof size, solver time, and repair under Rust code changes.
-
 ## techniques for the catalog
 
 - NSOSC SDP interpolation: solve a semidefinite certificate and split its SOS witness into A-local and B-local parts
@@ -88,4 +85,3 @@ Inference: threat to VeruLaw is moderate. The method can generate nonlinear inte
 - SOS certificate checking: reconstruct exact square decompositions from numerical SDP output before accepting a candidate
 - EUF purification and Horn combination: flatten function terms, generate functionality Horn clauses, separate mixed clauses, and call the CQ interpolator
 - separating terms: compute common-variable lower and upper bounds for A-local and B-local terms to split mixed equalities
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We analyze the complexity of the above algorithms assuming that the complexity of an SDP problem is of time complexity g(k), where k is the input size."): read all 40 PDF pages of the text; checked every quotation, theorem/lemma/algorithm reference, algorithm line number and the technique steps for IGFCH, IGFQC, IGFQCE and SEP/SEPmix; changed page numbers to PDF pages, corrected the Algorithm 2 line references, the false claim that the paper has no experiments (added Section 8 and Table 1), the Example 3 and Example 2 mix-up, the Gröbner-basis claim (Section 7, not Introduction), the Theorem 4 strict-side condition, and the footnote 6 quotation (the paper has the typo "andd"); did not check the proofs of Lemmas 1-3, 8 or the correctness of Examples 6-15 numerics, nor the cited works.

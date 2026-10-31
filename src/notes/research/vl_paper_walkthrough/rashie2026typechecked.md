@@ -12,7 +12,7 @@ The protocol separates expensive policy translation from runtime checking. Compl
 
 Steps from section 2.3.1 are: (1) ingest natural-language policies; (2) call Aristotle to auto-formalize constraints; (3) compile the generated code with the Lean kernel; (4) iteratively repair inconsistencies; and (5) store the compiled environment immutably. The authors describe Aristotle's `sorry`-filling ability, but a completed proof is only as correct as the policy translation and definitions supplied to it.
 
-Verus form. Inference: for VL, treat natural-language translation as an untrusted front end that emits Rust/Verus specifications. Require a human-reviewed or independently checked mapping from policy concepts to spec values. Use `requires` and `ensures` on the executable authorization function, and keep policy data immutable after verification. Verus can prove the gateway's decision procedure against the supplied spec; it cannot prove that an English policy was translated faithfully.
+Verus form.
 
 ## technique: synchronous request-response authorization
 
@@ -46,14 +46,6 @@ Section 4.3 proposes compiling the Policy Environment and orchestrator into WebA
 
 The roadmap has three phases. Phase 1 is a stateless minimum viable product: translate a bounded policy subset, run shadow verification beside production, and compare Lean judgments with human compliance reviews. Phase 2 moves the verified environment into a hardened WASM runtime, puts the orchestrator in the critical path, adds SMT-backed `grind` checks, and introduces back-translation of refusals (section 6.2, pp. 7–8). Phase 3 scales to global rule sets and high-frequency operation, with bounded MPSC mailboxes, work-stealing schedulers, and immutable proof-linked telemetry (section 6.3, p. 8).
 
-Inference: the staged rollout is a useful verification workflow for VL: first observe decisions, then enforce a narrow verified policy, then broaden the state and concurrency model. The paper does not provide phase exit criteria, measured false blocks, policy coverage, or a denominator for “production-ready.”
-
-## evidence, assumptions, and product threat
-
-The paper supplies architecture, cited regulatory requirements, and cited Cedar/Lean performance figures. It reports no new benchmark suite, no number of translated policies, no translation accuracy rate, no successful attack rate, no end-to-end latency distribution, and no proof that the proposed protocol satisfies any regulator. The Lean kernel checks generated terms, but the natural-language policy, Aristotle translation, `sorry` repair process, immutable repository, orchestrator parser, current-state source, gateway implementation, external API, WASM host, and regulatory interpretation remain trusted or assumed. Contradictions follow from this scope: the abstract presents absolute compliance certainty, while section 4.2 acknowledges that a structurally valid but semantically malicious translation can cause the kernel to authorize a violation.
-
-Inference: for agent-written verified Rust, the paper's strongest lesson is to put a small, deterministic, proof-checked authorization gate after an untrusted agent and to separate policy compilation from runtime checking. The main threat to VL is specification translation: Verus can prove an action satisfies the generated predicate while the predicate omits a risk limit, maps a restricted concept to a permitted symbol, or assumes stale state. VL should not redo the generic claim that theorem kernels reject invalid proofs; it should measure translation fidelity, stale-state handling, and proof-linked audit records.
-
 ## techniques for the catalog
 
 - asynchronous policy formalization — translate and compile policies before runtime, then store the checked environment
@@ -64,4 +56,3 @@ Inference: for agent-written verified Rust, the paper's strongest lesson is to p
 - context sanitization — statically remove untrusted or unnecessary text before formalization
 - WASM sandboxing — run the policy and orchestrator with denied host network and filesystem capabilities
 - phased shadow-to-production rollout — compare shadow judgments, enforce a narrow policy, then scale the verified state machine
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

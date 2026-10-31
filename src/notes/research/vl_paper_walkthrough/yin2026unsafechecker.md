@@ -71,12 +71,6 @@ Inference: in Verus, replace an unavailable callee with an explicit trusted cont
 
 evidence and limits: the paper reports practical scalability, but its CVE benchmark explicitly excludes FFI and external semantics (Section 4.2, p.15), so those results do not measure soundness across foreign boundaries. Inference: product deployment should treat dependency and FFI contracts as separate review obligations.
 
-## what remains trusted and what VL should learn
-
-The analyzer’s findings are warnings, not proofs. The wild-crate criterion required manually written executable PoCs that trigger UB in Miri through safe APIs; 114 such bugs were found across 83 crates, 45 were acknowledged, and 27 fixed (Section 5.4, p.19). Inference: the trusted evidence chain is rustc MIR/layout behavior, the analyzer implementation and models, Z3/Apron behavior, and manual PoC validation; Miri validates concrete executions but cannot establish absence of bugs.
-
-Inference: for agent-written Verus Rust, UnsafeChecker is a high threat at unsafe abstraction and dependency boundaries, because it demonstrates safe APIs can expose UB despite Rust’s type checker. It is useful as a pre-proof bug finder and regression scanner, while Verus remains the proof gate for explicit contracts. The paper’s missed cases and exclusions mean VL should not redo generic MIR ownership/layout bug-finding; it should connect such scanning to verified specifications, external-contract checking, and coverage of concurrency and FFI assumptions.
-
 ## techniques for the catalog
 
 - MIR flow-sensitive abstract interpretation — compile Rust to MIR and propagate ownership, lifecycle, and layout facts to a fixpoint
@@ -85,5 +79,3 @@ Inference: for agent-written Verus Rust, UnsafeChecker is a high threat at unsaf
 - interval layout analysis — track byte bounds, alignment, nullability, and mutability with widening at loops
 - boundary and instruction checks — apply explicit rules for leaked dangling pointers, aliasing, UAF, OOB, invalid slices, and related UB
 - context-sensitive inlining — recursively analyze callees and use conservative summaries at depth or external boundaries
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

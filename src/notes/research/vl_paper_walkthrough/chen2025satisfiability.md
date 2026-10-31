@@ -48,13 +48,9 @@ The dataset contains 340 manually formalized requirement sets: the initial CVC5 
 
 The authors identify possible errors in manually created checkers and samples, dataset imbalance, selection bias, and possible overlap between common programming exercises and LLM training data (section VI-E, pp. 10–11). They cross-check manual artifacts for consistency and evaluate SAT and UNSAT metrics separately. Generalization to complex industrial requirements remains future work. Inference: checker agreement alone does not guarantee that the formalized predicates capture the English requirements.
 
-Inference: for VeruLaw, this is a practical specification pipeline: turn prose requirements into executable predicates, generate witnesses, cross-check with independent mechanisms, and return UNKNOWN when checker evaluation is unknown or the retry budget expires. The threat is checker agreement on the same wrong interpretation. A Verus proof can make the Rust predicate and witness validation reliable only after a human or trusted parser fixes the formal meaning; it cannot prove that an LLM translated the natural-language requirement correctly. VL should preserve the paper's explicit separation between SAT witness evidence, UNSAT proof evidence, and UNKNOWN.
-
 ## techniques for the catalog
 
 - divide-and-conquer checker synthesis — split NL requirements, generate per-batch SMT/Python checkers, check syntax, optionally assess semantics, and merge batches that pass the configured checks
 - declarative/imperative complement — use SMT for UNSAT and either checker type for concrete SAT witnesses
 - feedback verification loop — validate each LLM outcome, feed counterexamples and explanations back, and bound retries
 - hybrid checker — combine imperative witness checking with declarative inconsistency checking
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Checkers are considered formally correct only if equivalence is explicitly proven; all solver results that yield timeout or unknown outcomes are disregarded."): checked all quotations, numbers, section/page references, and technique steps against the full paper; corrected the link, quotation, page references, semantic-check scope, feedback behavior, and F1 range, removed the unsupported reviewer-session claim, and marked adaptations as inferences; did not run the artifact or independently validate the Verus adaptations.

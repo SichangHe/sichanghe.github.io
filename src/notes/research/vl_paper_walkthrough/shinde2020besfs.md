@@ -56,4 +56,3 @@ Inference: For agent-written verified Rust, reuse the state-transition and check
 - explicit state counter — distinguish repeated external calls with an increasing argument in the functional model
 - custom recursive induction — strengthen generated induction schemes for mutually recursive directory trees
 - atomic error semantics — make every failed operation return a specific error without changing state
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The state resulting from the operation of each method is explicitly passed as a parameter to the next call."): checked all study quotations, numbers, section and printed-page references, technique steps, assumptions, and evaluation claims; corrected quotations and page references, the hand-translated C description, proof scope, and unsupported conclusions; did not check code, proofs, or reproduce experiments.

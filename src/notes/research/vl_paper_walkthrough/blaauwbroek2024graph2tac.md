@@ -52,7 +52,7 @@ What it is. The k-NN solver learns from recent tactic scripts, while Graph2Tac l
 
 How to apply it. (1) Benchmark Graph2Tac and online k-NN separately. (2) To simulate concurrent execution under one CPU's budget, count a theorem as solved by the combined solver at time `t` if either component solved it within `t/2`. (3) Compare this simulated aggregate with the individual solvers at the same total time limit. Section 4 (p. 7) defines this accounting; Figure 5 shows the results. The experiment aggregates separate runs rather than merging suggestions into one search.
 
-Verus form. Inference: a VL agent can combine embedding retrieval from new declarations with recency retrieval from recently repaired proofs, then submit all candidates to Verus. The verifier, rather than a heuristic vote, is the acceptance oracle. Inference: measure complementarity by comparing the overlap of solved-goal sets under a fixed computational budget.
+Verus form.
 
 Evidence and limits. The aggregate solves 33.2% of the test set (Introduction, p. 2), but the paper's comparison to some prior systems is informal because training packages, Coq versions, time limits, and hardware differ (Section 3.3, p. 7; Appendix I, p. 20). Inference: the aggregate number should not be compared directly with unrelated benchmark splits.
 
@@ -62,10 +62,6 @@ The learned models predict single tactics; Tactician searches for a full proof (
 
 The paper's own example shows G2T-Anon-Update reusing a newly defined lemma (`toZpK`) and solving `toZp_inj`; online k-NN instead retrieves a tactic for a nearby lemma from its recent database (Appendix R, pp. 29–30). Inference: this supports retrieval as a proof-search accelerator, not as evidence that a model understands mathematical validity independently of a kernel.
 
-## implications for VL
-
-Inference: the directly reusable ideas are dependency-aware graph indexing, recency retrieval, online embedding updates, and combining retrieval channels before Verus checking. Inference: VL should not redo a generic claim that nearest-neighbor examples help; it should measure whether Verus-specific proof-state graphs improve checked-proof completion on unseen modules, with axiom-free and timeout-explicit benchmarks. Inference: these Coq results do not establish performance on Rust ownership, external effects, unsafe code, or generated specifications. Inference: accepted Verus proofs still depend on the specification, imported library contracts, solver behavior, and any admitted or externally trusted code.
-
 ## techniques for the catalog
 
 - shared mono-graph encoding — represent definitions, proof states, binders, and references in one reversible graph with shared equal terms
@@ -73,4 +69,3 @@ Inference: the directly reusable ideas are dependency-aware graph indexing, rece
 - dual-task graph prover — train a shared GNN to embed definitions and predict tactics plus arguments
 - dependency-ordered online embeddings — compute embeddings for unseen definitions in topological dependency order
 - complementary solver portfolio — combine definition-based Graph2Tac and proof-script-based k-NN under one budget
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Our choice to split on package was essential to testing our online setting, and comparable to other Coq solvers, but it also means our results are more variable."): checked the full paper, study quotations, numbers, references, and technique steps; corrected the paper link, quote endings and context, binder direction, prediction details, simulated solver combination, citations, and unsupported claims; noted the prose/Table 1 baseline discrepancy and excluded packages; did not reproduce experiments or validate the proposed Verus adaptations.

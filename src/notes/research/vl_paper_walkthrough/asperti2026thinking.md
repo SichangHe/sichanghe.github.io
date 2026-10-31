@@ -66,8 +66,6 @@ evidence and limits. The survey reports that self-correction can become “perfo
 
 This review synthesizes published system results and conceptual arguments. The survey reports benchmark success rates from cited studies rather than a new measure of semantic understanding. The authors write: “Even when an LLM-generated formalization is accepted by a proof assistant, it does not follow that the model has captured the underlying mathematical ideas.” (Section 6.4, PDF p. 20.) Inference: distinguish dependencies of formal correctness, such as the proof checker and assumptions, from dependencies of benchmark scores, such as labels, retrieval, and model implementation. Retrieval and generation can affect success without becoming logical authorities.
 
-Inference: the survey suggests candidate methods for VeruLaw: tactic loops, retrieval, verifier feedback, autoformalization, proof sketches, and repair. Their usefulness on Verus workloads needs direct evaluation. Suggested measurements are final Verus acceptance, proof-repair effort after library changes, timeout rate, and the fraction of contracts reviewed by a human.
-
 ## techniques for the catalog
 
 - prover-in-the-loop tactics: generate one proof step, check it, and feed the updated state back
@@ -76,5 +74,3 @@ Inference: the survey suggests candidate methods for VeruLaw: tactic loops, retr
 - verified autoformalization: revise translated statements using assistant errors and contextual lemmas
 - proof sketches: generate high-level structure and let automated provers close open conjectures
 - iterative repair: alternate proposals, checks, critiques, and verifier-accepted revisions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Before diving deeper into the issue of autoformalization, and in order to better organize the discussion, it is useful to distinguish two orthogonal sources of difficulty."): read the entire paper, including references; checked the study’s quotations, numbers, section/page references, and technique descriptions; corrected the Figure 1 quotation, miniF2F prompting denominator, result page, and table quotation punctuation; linked the arXiv version, qualified conflicting feedback descriptions, and marked proposed implementations and Verus applications as Inference; did not independently check the cited studies, reproduce experiments, or validate Verus proposals.

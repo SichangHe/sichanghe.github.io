@@ -48,19 +48,9 @@ Floating-point rounding can invalidate an enclosure. ReluVal uses outward roundi
 
 Refinement regions can be checked independently. Section 6 describes dynamic thread rebalancing to redistribute deeper portions of an unbalanced bisection tree while limiting thread scheduling overhead (p. 1607). The introduction reports about 3,000 lines of C (p. 1600). Section 6 specifies OpenBLAS and an Ubuntu 16.04 server with 16 CPU cores and 256 GB memory (p. 1607), while the abstract describes a result on a “single 8-core machine without GPUs” (p. 1599). The paper does not explain this difference.
 
-## what is proved, trusted, and relevant to VL
-
-The mathematical results establish enclosure and a refinement error bound under the stated assumptions (Sections 4 and 5.1, pp. 1603–1606). Inference: applying these results to the C implementation still requires trusting the encoded network, input bounds, property, arithmetic and rounding implementation, compiler, and hardware. The paper does not present a machine-checked proof of that implementation or evaluate agent-written Rust or Verus.
-
-Inference: for VL, reusable components would be a verified interval library and a verified refinement driver, with network operations and arithmetic behavior explicit in their specifications. An incorrect bound or rounding operation could produce a false certificate. A certificate covers only the specified input region and property.
-
-The implemented scope extends beyond regular ReLU: “Our current prototype implementation of symbolic interval propagation supports several common piece-wise linear activation functions (e.g., regular ReLU, Leaky ReLU, and PReLU)” (Section 9, p. 1611). Adapting symbolic propagation for tanh and sigmoid remains future work there. Supporting norms beyond L∞ and using interval analysis during training are also proposed future directions (Section 9, p. 1611).
-
 ## techniques for the catalog
 
 - sound interval extension — propagate lower and upper bounds through linear operations and ReLU to enclose concrete outputs
 - symbolic interval propagation — retain linear expressions to reduce dependency errors, concretizing as needed
 - iterative interval refinement — bisect inconclusive input boxes, using interval gradients and monotonicity to reduce work
 - outward rounding and parallel refinement — round lower endpoints downward and upper endpoints upward, and check independent regions concurrently
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "A ReLU node’s gradient can either be 0 for negative input or 1 for positive input."): checked all paper text, quotations, numbers, section and page references, and technique steps; corrected quotations and references, clarified timeout and convergence limits, corrected rounding direction and activation scope, removed unsupported explanations, and used the publisher link printed in the paper; did not reproduce experiments, audit the implementation, or verify the proposed Verus adaptations.

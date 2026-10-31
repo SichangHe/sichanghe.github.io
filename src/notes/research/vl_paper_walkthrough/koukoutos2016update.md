@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `koukoutos2016update`, [paper](https://doi.org/10.4204/EPTCS.229.9)
 
-
 ## problem and result
 
 Leon synthesizes or repairs recursive, purely functional Scala programs (a subset of Scala with mutually recursive functions). The specification is given as function pre- and postconditions plus possibly symbolic input-output examples (Section 1, p. 100). The paper reports progress in scaling this: new techniques, including "a more precise mechanism for encoding the space of meaningful candidate programs" (Abstract, p. 100). The abstract reports: “Our techniques increase the scope of synthesis by expanding the space of programs we can synthesize and by reducing the synthesis time in many cases” (Abstract, p. 100).
@@ -78,4 +77,3 @@ Inference: the threat to agent-written verified Rust is high for candidate-gener
 - symbolic term exploration — enumerate candidates by size, test concretely, and validate symbolically with SMT
 - counterexample-guided test growth — add solver counterexamples to a prioritized concrete test base
 - specification-driven repair — synthesize or repair code only when the resulting candidate satisfies formal contracts
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our focus is to push the limits of what can be synthesized in a reasonable amount of time, rather than to optimize for simpler benchmarks"): read the whole paper text (pp. 100-111) and the whole study; checked every quotation, section and page reference, the rule and grammar steps, Algorithm 1, the table counts (Table 1 has 24 rows, Table 2 has 34 rows) and the ablation claims against the text and tables. Changed: fixed two quotations (case, and an omitted clause), the row counts (25 and 35 were wrong), the argsSmaller and Sized descriptions, the "double exponential" claim, the location of the X and parenthesized-result legend (Section 5 text, not a caption); removed unsupported claims about the repair benchmark internals; marked the trust-base, completeness and "not polynomial" statements as inference; replaced the link with the DOI printed in the paper. Not checked: the cited prior work [11-13, 18], the Table 1 and Table 2 per-row times beyond those quoted, the Figure 1 code beyond the cited line, and any behavior of Verus (the Verus statements are inference).

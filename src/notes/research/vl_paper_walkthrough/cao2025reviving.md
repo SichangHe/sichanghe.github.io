@@ -110,12 +110,9 @@ The authors state: “All proofs are verified using Lean 4 (v4.17.0-rc1) with th
 
 Table 3 (p. 9) reports average tokens per pass separately by model size: R1-V3-BFS uses 12k from the 7B prover plus 3.6k + 0.8k from the 671B draft and sketch models, achieving 80.7% at 1,024 passes. Kimina-Prover-Preview uses 10k from a 72B model, achieving 80.7% at 8,192 passes. Inference: the token comparison supports fewer total generated tokens at these reported settings; it is not a model-size-adjusted compute comparison. Appendix B (p. 14) derives the prover estimate from miniF2F-test pass@32 observations: about 1,500 samples per workflow attempt and about 8 tokens per sample.
 
-Inference: VL could reuse staged decomposition, hypothesis hints with an all-hypotheses fallback, diagnostic-driven repair, bounded verifier feedback search, and buffered ensembles. Final verification would still need an accurate specification and justified trusted assumptions. The paper does not measure Verus performance, Rust safety coverage, or production reliability.
-
 ## techniques for the catalog
 - concise draft generation — derive ordered mathematical subgoals from the formal statement and filter reasoning tokens before sketching
 - hypothesis-hinted sketching — autoformalize a hierarchy of subgoals with explicit supporting hypotheses
 - error-line masking — comment out malformed dependent lines or replace failing proof lines with `sorry` for later repair
 - integrated step proving — combine model-predicted tactics with symbolic tree search under bounded budgets
 - ensemble buffering — cache phase outputs and try diverse model configurations to increase cumulative coverage
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We find that incorporating informal proofs does not lead to an overall improvement in performance, which is different from the original DSP [13]."): checked all study quotations, numbers, page and section references, technique steps, and catalog entries against the full paper including appendices; corrected benchmark pages, added the all-hypotheses fallback and iterative masking, restored the omitted 7B prover token cost, qualified Verus recommendations as inferences, and used the paper's arXiv identifier for the link; did not reproduce experiments, execute Lean or Verus proofs, inspect repository code, or independently validate cited prior work.

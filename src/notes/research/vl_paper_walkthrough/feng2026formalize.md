@@ -59,15 +59,11 @@ The paper distinguishes Lean type-checking from proving the resulting theorem. T
 
 The proof experiment uses DeepSeek-Prover-V2-7B with one greedy pass per candidate. Proof-level accuracy is 4–31% versus much higher statement-level results (Table 4, §5.4). BASE improves 11 of 12 proof-level cells, with a sign-test (p=0.006); the exception is AIME 2024 with R1-Qwen3-8B, where (n=28) (§5.4). The paper reports an average incorrect-candidate complete-proof false-positive rate of approximately 7%, ranging from 1–14% across cells (§5.4). “The per-candidate false-positive rate—an incorrect answer receiving a complete proof—is a low ∼7% on average (1–14% across cells), arising when the autoformalizer renders an incorrect answer as a statement that type-checks and admits a proof.” (§5.4, p. 7)
 
-Verus form (Inference): use a two-stage pipeline in which Verus compilation first rejects malformed contracts, then proof completion establishes the postconditions. Treating compilation as correctness would be unsound for the same reason as in the paper: a well-typed specification can still describe the wrong answer. For high-assurance VL, select only proofs whose Verus postconditions match an independently reviewed specification, and preserve the solver's rank as a tie-breaker rather than as evidence of truth.
-
 ## assumptions, evidence, and boundaries
 
 The shared-base method assumes that all candidates have the same problem-side structure and differ in a local answer expression. The paper states that this holds for its tasks but may fail when candidates require structurally different statements (§6). It also leaves proof-generation efficiency to future work and notes that autoformalization faithfulness remains a challenge (§6). “This work focuses on the efficiency of statement-level autoformalization for K candidate answers, and we use statement-level type-checking as the selection signal due to the limitation of provers.” (§6, p. 9)
 
 The experiments use one RTX PRO 6000 GPU, vLLM, greedy decoding, Mathlib 4, and a 60-second per-statement Lean timeout (§4.2). The comparison keeps prompts, verifier components, and selection rule identical between independent formalization and BASE (§4.3). In a FANS-style integration, BASE reduces calls by 4.5–5.8× while accuracy changes from 88.2 to 88.6 on MATH-500, 62.7 to 61.4 on AMC-AIMO, and remains 13.3 on AIME 2024 (Table 6, §5.5). The paper's factorization (Acc=GT@K\cdot Acc\mid GT@K) shows that BASE changes verifier retention, not the solver's candidate list (Table 7, §6).
-
-Inference: for a VL product that generates many verified Rust candidates, the strongest reusable idea is amortizing the common specification and proof scaffold while checking each changed answer locally. The threat is bounded by structural divergence, generator misformalization, false-positive proofs, and the correctness of the supplied specification. A product should measure those failure modes separately instead of reporting a single compile rate.
 
 ## techniques for the catalog
 
@@ -76,4 +72,3 @@ Inference: for a VL product that generates many verified Rust candidates, the st
 - Lean-filtered expert iteration: retain only rewriter outputs whose reconstructed statements pass the formal checker and fine-tune repeatedly
 - statement/proof signal separation: distinguish well-formedness checks from kernel-checked proofs and report both denominators
 - shared-scaffold integration: factor verifier accuracy into candidate coverage and conditional retention to isolate the effect of reuse
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -48,14 +48,6 @@ The ticketlock example increments `next` with fetch-and-add to obtain a ticket a
 
 Verus form. Inference: encode a fairness round counter and ticket ownership in a state machine; prove each transition preserves ticket order and decreases a bounded bypass measure. Use a ghost round token to prevent double compensation. A progress theorem needs an explicit scheduler/fairness assumption or a bounded environment model; ordinary functional `ensures` alone cannot prove it.
 
-## evidence, contradictions, and VL implications
-
-The evidence is non-foundational machine-checked VeriFast proofs of Java versions of the examples (Section 8), including the spinlock, ticketlock, and cohortlock (abstract); the appendix also gives a pen-and-paper Iris proof outline of the instrumented motivating example (Appendix D). I found no lines-of-code total, proof-time figure, solver-success percentage, or independent benchmark in the paper. “Machine-checked” therefore means the supplied encodings checked in VeriFast; it does not measure engineering cost or prove a Verus implementation.
-
-The paper’s central safety boundary is explicit: auxiliary code is erasable, but the reduction only applies when the instrumented program is safe and the scheduler is fair. Inference: a VL product that emits verified Rust should treat liveness claims as separate artifacts from memory safety and functional postconditions. Inference: the threat to agent-written verified Rust is high for concurrent code if the agent silently assumes fair scheduling, lock fairness, or cross-thread obligation transfer; a proof can establish safety of an instrumented model while the executable’s environment violates those assumptions.
-
-VL should not redo the idea of parameterizing blocking operations with client-supplied progress code, nor the reduction from safe fuel-bounded instrumentation to fair termination. A new contribution would need a Verus-native encoding, measured proof effort, and explicit checks that generated obligations correspond to real Rust thread behavior.
-
 ## techniques for the catalog
 
 - prepaid progress fuel — instrument waits with erasable signals, obligations, and pre-paid expect permissions so fair infinite executions become impossible
@@ -63,4 +55,3 @@ VL should not redo the idea of parameterizing blocking operations with client-su
 - safety-to-termination reduction — prove an instrumented program safe, then derive termination of the erased program under fair scheduling
 - total-correctness atomic triples — extend logically atomic module specifications with liveness arrows, obligation resources, and per-round compensation
 - fairness contracts — distinguish unfair locks requiring client eventuality from fair locks that bound bypasses (the ticketlock gives FIFO handoff)
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Therefore, if there are threads of multiple cohorts competing for a lock, it is preferable to pass the lock to a thread of the same cohort to improve throughput."): read the whole paper text (main text and appendices, appendix proofs skimmed) and checked every quotation, section, figure and page reference, and each technique step against it; changed the link to the arXiv abstract page (arXiv:2312.15379 is in the paper text), corrected the ticketlock linearization point, the fair-lock compensation direction, the cohortlock composition (ticketlocks only, no spinlock), the Figure 3 and Figure 10/12 descriptions, and added the Expect level condition, the on-paper-only Coq limitation and the Java VeriFast detail; I did not check the Verus-form inferences against Verus, the appendix proofs in detail, or the cited external works.

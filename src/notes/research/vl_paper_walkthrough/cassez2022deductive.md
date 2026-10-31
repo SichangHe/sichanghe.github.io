@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `cassez2022deductive`, [paper](http://arxiv.org/abs/2208.02920v1)
 
-
 ## what the paper proves or measures
 
 The paper presents a Dafny methodology for smart contracts. Its central claim is that one can put the contract, its specification, and its implementation in one verification-oriented language, then model failures and arbitrary callbacks while preserving a global invariant. The abstract states: “We present a methodology to develop verified smart contracts.” (Abstract, p. 1.) The paper does not provide a Dafny-to-EVM compiler. It says: “Although we do not yet have a compiler from Dafny to EVM bytecode, the results we obtain on the Dafny code can reasonably be assumed to hold on Solidity code: the translation of the Dafny code to Solidity is straightforward.” (Abstract, p. 1.) Inference: this transfer is an assumption, not a proved compiler-correctness theorem.
@@ -67,16 +66,9 @@ Verus form (Inference): define a proof-facing callback abstraction as a `spec fn
 
 evidence and limits: Dafny proves `GInv()` for the mutually recursive model, including an unbounded number of nested calls, because gas decreases strictly (Section 3.2, p. 10). The paper calls the solution “abstractly but conservatively” modelling external calls. Inference: the proof is conservative with respect to the chosen callback model, not a proof that every EVM behavior is represented. If more callback knowledge is available, the authors say `externalCall` can be adjusted; if state is changed after the callback, the proof fails on their example (Section 3.2, p. 10).
 
-## trusted boundary, contradictions, and product threat
-
-The verified claims are Dafny's contracts, invariant preservation, arithmetic safety, rollback behavior, and termination of the abstract model. Inference: the Solidity translation, EVM semantics abstraction, `havoc` coverage of all callbacks, omitted helper proofs, and correctness of Dafny and its backend prover remain trusted assumptions or tools. The paper says that “the contracts we have verified are checked with Dafny within seconds on a standard laptop (MacBook Pro)” (Section 3.2, p. 12) and that it tested “several contracts (e.g., Token, Simple Auction, Bank)” (Section 4, p. 12), but it gives no per-contract timings, code-size table, or failure count. Its auction example adds ghost history sequences to state temporal properties, e.g., “Once the variable ended is set to true, it remains true for ever” (Section 3.2, p. 12).
-
-Inference: VL should reuse the three-stage decomposition—closed state proof, explicit error result, then adversarial callback abstraction—and require the agent to state which callback assumptions its Verus contract makes. VL should not redo the paper's already-demonstrated point that global invariants and gas-bounded recursion can express re-entrancy reasoning. Inference: the threat to agent-written verified Rust is high when agents omit rollback, callback ordering, or external-code assumptions; it is lower for the mechanical arithmetic and invariant checks after those contracts are explicit. A Verus acceptance result still proves only the written model.
-
 ## techniques for the catalog
 
 - single-language contract specification — put executable state, preconditions, postconditions, ghost accounting, and a global invariant in one verification-oriented program
 - runtime revert modeling — check caller conditions, return a tagged success/error result, and prove state is unchanged on error
 - gas-bounded callback abstraction — model unknown and re-entrant calls with havoced inputs and mutually recursive transitions decreasing gas
 - invariant-before-callback discipline — update state until the invariant holds before an external call, then require and re-establish it across the abstraction
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "As a result many transfers will be performed (as long as some gas is left) and tokens will be created without a proper call to mint."): read the whole paper text (pp. 1-14) and checked every quotation, listing and line reference, section and page reference, and the technique steps against it; changed several page and line references (Listing A.3 is on p. 8, Listing A.5 on p. 11, the gas-induction argument is on p. 10), the Bank/timing attribution (Bank appears only in Section 4), the step wording for the constructor, the `Try<T>` lift and the revert postconditions, and marked the study's own conclusions "Inference:"; removed the Z3 claim and the unsupported claim that the result applies to the authors' complete artifact; did not check the Verus statements (not from the paper), the external repository, or the cited works.

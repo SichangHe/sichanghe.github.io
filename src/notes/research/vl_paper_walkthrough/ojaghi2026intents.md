@@ -68,12 +68,6 @@ Verus form. Inference: apply the loop to proof-policy candidates or code repairs
 
 Evidence and limits. The released numerical artifact performs deterministic replay and records solver certificate status (Table II, p. 12). It does not implement live model calls, so LLM token cost and model-generation reliability are not measured. Intent-transfer experiments show no stable diagonal specialization on eight national seeds and 12 unseen metro regions (Section VIII, p. 15). Inference: replayability is demonstrated more strongly than LLM-guided discovery.
 
-## what is proved, trusted, and relevant to VL
-
-The formal result is conditional feasibility preservation for the trusted allocator and a lexicographic tie-break bound in the exact reference model (Lemma 1, Section III-B, p. 4). The experiments measure utility and robustness of a bounded numerical search, not semantic correctness of arbitrary generated code. Trusted assumptions include candidate-path enumeration, capacity and delay data, atomic state updates, solver certificates, and the intent's specification. The paper's own conclusion says the contribution is “the trust boundary and its reproducible numerical evaluation” and “not evidence that an LLM improves heuristic design” (Section VIII, p. 15).
-
-Inference: the strongest transfer to VL is the separation of agent-generated decision logic from a small, verified Rust authority. A VL system can let an agent propose proof or implementation fragments while a trusted Verus module owns state, contracts, and actuation. The threat to agent-written verified Rust is specification and authority leakage: an agent may change the contract, call untrusted code, or exploit an allocator assumption while preserving a superficial proof. Protected specifications, static capability checks, clean Verus runs, and archived replay artifacts address these concrete boundaries. Existing VL should not redo a generic claim that an LLM improves algorithm discovery; the missing experiment is a Verus-specific trusted-wrapper study with exact accounting for accepted/rejected candidates, proof repair effort, and remaining assumptions.
-
 ## techniques for the catalog
 
 - intent-to-IR compilation — turn natural-language objectives and hard constraints into a typed, bounded machine-readable contract
@@ -82,4 +76,3 @@ Inference: the strongest transfer to VL is the separation of agent-generated dec
 - static/runtime verification — reject malformed, over-complex, nondeterministic, or unsafe candidates before scenario execution
 - oracle and failure witnesses — compare tractable cases to exact optimization and feed structured finite-scenario failures into repair
 - diversity-preserving evolution — mutate, recombine, validate, archive, and replay candidates under disjoint train/validation/test scenarios
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

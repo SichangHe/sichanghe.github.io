@@ -7,8 +7,6 @@ The paper proposes VeriBToT, a backtrack tree of thought for generating Verilog.
 
 The design has two cognitive pathways: self-decoupling refines a module partition and self-verification checks generated code. Each thought node contains a natural-language module description, RTL Verilog, and a testbench. The paper says, “Each thought step generates a complete design flow for a sub-module, including natural language descriptions, RTL design Verilog, and testbench Verilog.” (Sec. II, p.3)
 
-Inference: for VL, the reusable idea is a tree whose nodes are independently specified and checked artifacts, with explicit backtracking when a local check or a composition check fails. The paper does not use Rust or Verus.
-
 ## technique 1: hierarchical self-decoupling
 Use self-decoupling when a failed design is still judged complex; the decomposition aims to minimize inter-module dependencies. The paper's method is:
 
@@ -60,10 +58,7 @@ Evidence and limits: on hard cases, Tables II and III report successful attempts
 ## what is proved, measured, and trusted
 The measured outcomes are Verilog syntax correctness, functional testbench correctness, pass@1/pass@5, successful attempts among five, and token consumption. No theorem about the generated circuit is proved in a proof assistant. The final EDA invocation is described but its tool, configuration, and complete testbench corpus are not specified in the text. Inference: the trusted components therefore include the natural-language specification, LLM-generated testbenches, evaluator judgments, EDA tools, and the interpretation of functional correctness.
 
-Inference: threat to VL is medium. The operator decomposition and failure-directed repair could reduce proof-search scope and expose which contract failed, but an LLM-generated partition or test is not evidence that Rust satisfies its intended policy. VL should retain independently stated Verus contracts and treat agent suggestions as candidates. The proposed transfer to VL concerns workflow control rather than a new verification foundation. Inference: VL should not redo generic tree-of-thought prompting; it should test whether boundary-level contracts and selective re-verification reduce proof repair cost on real Rust changes.
-
 ## techniques for the catalog
 - hierarchical self-decoupling: recursively split a complex RTL task into submodules, each carrying its own design and verification artifact
 - node self-verification: have the LLM assess each generated module against its testbench before composing it upward
 - explicit backtrack operators: use branch, evaluate, rethink, backtrack, and aggregate operations to localize failures and revise decompositions
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The LLM will then evaluate in the same manner iteratively until it backtracks to a node where the submodule division is valid and recommences branching."): checked all paper text, quotations, numerical results, section and page references, and technique steps; corrected the unrelated paper link to the paper’s arXiv identifier, intermediate self-validation wording, operator flow, references, and hard-case counts; removed unsupported metric-denominator and existing-VL claims; did not reproduce experiments, inspect external implementations, or validate the proposed Verus transfer.

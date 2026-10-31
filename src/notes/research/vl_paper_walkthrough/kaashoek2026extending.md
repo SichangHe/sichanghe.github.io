@@ -4,8 +4,6 @@ Tag: `kaashoek2026extending`, [paper](http://arxiv.org/abs/2609.04043v2)
 ## verified object and trust boundary
 MachCSL extends Iris-style concurrent separation logic to Sail’s sub-instruction RISC-V model. The verified artifact is the xv6 ELF and `fs.img`, not a source-level C theorem: “Grounding all specifications and proofs in machine code allows MachCSL to factor out the compiler, linker, assembler, and other parts of the build process from the trusted computing base.” (Section 4.1, p.7). The kernel theorem quantifies over interleavings of HARTs, devices, interrupts, DMA, and power cycles, and implies process isolation, crash safety, and hardware safety. The paper reports 6,593 C/assembly lines, 8,697 instructions, about 1.5 million Rocq proof lines, 93 days, ten xv6 bugs, and one Sail bug (Sections 1–2, pp.2–3).
 
-Inference: VL can borrow the separation between a compiled verified artifact and its source build, but a Verus project normally verifies Rust functions rather than a whole ELF against a hardware model. The machine-code boundary is therefore a design option, not a drop-in Verus feature.
-
 ## technique 1: ownership and framing for concurrent local proofs
 Use ownership when many HARTs or devices share state. A points-to resource such as `a ↦Mem v` gives one proof exclusive access; read-only kernel text is persistent and duplicable. The paper’s method is:
 
@@ -30,17 +28,11 @@ MachCSL distributes responsibility for machine state. Each HART register, TLB, p
 
 The page-table proof handles A/D-bit writeback by allowing the page-table invariant to quantify over arbitrary accessed/dirty bits. Translation tiers distinguish identity mappings valid during boot from mappings installed by the kernel page table, and every virtual-memory resource carries a tier no higher than the current HART’s tier (Section 6.2, pp.17–18). During user/kernel page-table switching, the proof requires the TLB to contain only mappings common to both tables between the two `sfence.vma` operations (Section 6.2, p.18).
 
-Inference: For VL, model abstract addresses and permissions in ghost maps and connect them to Rust slices or page-table representations with explicit invariants. The tier idea is reusable for initialization phases; the exact Sail/TLB model is outside ordinary Verus libraries.
-
 ## technique 4: agent-assisted proof maintenance
 The authors used Claude Code to write proofs and intermediate specifications after designing MachCSL abstractions themselves. Machine checking allowed them to avoid inspecting generated proof text; agents also repaired pervasive proof shifts after recompilation changed binary offsets (Section 4.8, p.12). The paper reports that the proof covers safety but not liveness or non-interference, and trusts Rocq plus Sail/interconnect/device models (Section 1, pp.3–4). It further warns that the theorem is only as meaningful as its precise trace statement.
 
-Inference: This is a direct VL workflow: have agents edit proof files, run Verus, preserve compiler diagnostics, and rerun after code generation changes. It is unsafe to treat a passing proof as evidence for properties outside the stated theorem or to trust agent-written specifications without review.
-
 ## evidence and what remains open
 MachCSL found ten xv6 bugs and one Sail bug while proving a theorem about all modeled interleavings. Its model assumes TSO with load-load reordering and excludes liveness and non-interference; build tools and external hardware remain outside the theorem. The application theorem says `echo hello world` has only the specified output, but safety permits executions that power off or fail in explicitly allowed ways (Section 2, pp.3–4).
-
-Inference: The threat to a product of agent-written verified Rust is high for low-level concurrency and specification complexity: this paper demonstrates that agents can maintain million-line machine-checked proofs when humans design the abstractions. The main reusable work is ownership/framing, explicit continuation safety, hardware-state invariants, and adequacy; VL should not redo generic spinlock examples without connecting them to a concrete artifact and threat model.
 
 ## techniques for the catalog
 - ownership and framing — compose per-function proofs by transferring protected resources and preserving disjoint state
@@ -54,6 +46,3 @@ Inference: The threat to a product of agent-written verified Rust is high for lo
 The paper applies the same resource method to several difficult cases. Interrupts use `sie_cap_gpr` carrying an enabled flag, stack budget, register map, and trap-vector continuation; this permits an inductive loop over arbitrary interrupts and register migration across HARTs (Section 6.1, pp.16–17). Page-table invariants permit arbitrary A/D-bit writeback while preserving the logical mapping (Section 6.2, p.17). Context switching stores a `wp CpuLoop` in a valid context so a scheduler can resume a preempted thread (Section 6.3, p.18).
 
 Lock specifications track interrupt-disable depth and enforce CPU-local release, rank locks to prevent recursive/conflicting acquisition, make dynamically allocated pipe invariants cancellable once reference count reaches zero, and distinguish blocking from non-blocking sleeplock acquisition using ghost holder counters (Section 6.4, pp.19–20). The allocator has a counted boot regime and a duplicable concurrent regime; `kfree` accepts ownership without requiring stable TSO values (Section 6.5, p.20). File-reference slots bound refcount increments and prevent overflow (Section 6.6, p.20). The file-system proof separates durable `D` and in-memory `M` states, uses write-ahead-log permits threaded across sector writes, tracks transaction block sets for log absorption, and gives each buffer an invariant plus fractional reference-count ghost state (Section 6.7, pp.21–23). Link-count ghost fragments make global directory consistency local to inode invariants; stronger `iget` premises expose real xv6 bugs (Section 6.7, p.23).
-
-Inference: These patterns suggest a VL catalog should index proof obligations by lifetime (boot versus concurrent), ownership transfer (lock, device, crash), and abstraction level (physical bytes versus ghost logical state), not only by API name.
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

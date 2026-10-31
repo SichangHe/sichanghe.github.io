@@ -9,15 +9,13 @@ The paper states: “We design a testing methodology that ensures mined tactics 
 
 The workflow has three stages: tactic mining, validity and generalization testing, and tactic integration (Section 3, PDF p. 3). Mining uses 11,725 Rocq standard-library theorems. Generalization uses 6,462 C-CoRN theorems and 93,424 proof-script positions. Prover evaluation uses 6,199 theorems from CompCert, Coq-Art, Ext-Lib, and Vfa. The abstract reports that mined tactics improve CoqHammer by 23.87% and increase the number proved by a Claude Code agent by 9.90%.
 
-Inference: for VeruLaw, the transferable idea is an offline library of verified proof procedures mined from successful Verus proofs, reducing repeated agent reasoning and runtime model cost.
-
 ## technique 1: per-tactic proof analysis and strategy generalization
 
 For every theorem proof, the LLM analyzes each tactic separately, explaining its semantic meaning and its effect on the current proof goal. The authors explicitly analyze per tactic because whole-proof summaries omit steps whose effects seem less apparent (Section 3.1, PDF p. 4). Definitions and types used by tactic parameters are supplied to improve analysis.
 
 A second prompt abstracts these local explanations into general proof strategies. The paper’s example identifies structural induction for recursive data, simplification followed by congruence, and a combination pattern such as `induction <variable>; simpl; <auto-solver>`. The output is natural language first; this is intended to expose reusable reasoning beyond the source lemma.
 
-Verus form. Inference: collect successful Verus proof blocks, split them into individual `assert`, lemma calls, induction-like recursion, and invariant steps, then ask an LLM to explain each step and propose a parameterized strategy. Keep the explanation separate from executable proof code. Verus does not have Rocq’s Ltac language, so the paper’s exact tactic representation does not carry over; a VL representation might be a proof-macro template or an agent skill that emits ordinary Verus constructs.
+Verus form.
 
 ## technique 2: autoformalization into reusable tactics
 
@@ -55,14 +53,6 @@ The ablation table starts with 35,408 mined tactics, 13,174 valid tactics, and 2
 
 Without generalization filtering, CoqHammer plus all mined tactics proves 1,708/6,199, versus 1,972/6,199 with filtering, a 13.39% difference (Table 7, PDF p. 9). This supports filtering as a retrieval-noise control.
 
-## trusted boundary, assumptions, and threat to VL
-
-The Rocq kernel is the final correctness authority; the LLM’s analysis, strategy abstraction, autoformalization, BM25 retrieval, and threshold are not trusted for soundness. The method assumes the source proof corpus contains useful reusable patterns and that held-out theorem applications represent future goals. Results are on Rocq and Ltac; no Verus experiment is reported.
-
-Inference: VL should not redo runtime LLM proof search for every repeated pattern. An offline mining pipeline could turn successful verified Rust proofs into checked, reusable recipes. The primary threat is overfitting or retrieval noise: a recipe can compile and be logically sound yet be irrelevant, wasting proof search. A secondary threat is corpus bias: patterns mined from existing agent proofs may preserve their specification mistakes. Verus kernel checking protects proof soundness, not specification adequacy.
-
-Inference: because Verus has no Ltac analogue in the cited paper, the first VL implementation should store recipes as ordinary proof-function templates and test them against held-out obligations, rather than inventing unsupported Verus syntax.
-
 ## techniques for the catalog
 
 - per-tactic strategy mining — explain each proof step, abstract reusable strategies in natural language, and formalize them later
@@ -70,4 +60,3 @@ Inference: because Verus has no Ltac analogue in the cited paper, the first VL i
 - held-out generalization testing — insert each candidate into many external proof states, retain only non-no-op applications above a measured threshold
 - theorem-indexed retrieval — retrieve source theorems with BM25 and use their associated tactics to overcome sparse tactic text
 - And-Or tactic search — alternate ATP solving with candidate tactic application, requiring every generated subgoal to close
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -26,14 +26,8 @@ MIO represents computations with a free monad, trace specifications with a predi
 
 Inference: a Verus adaptation would need to establish the corresponding source/target context relationship; proving a wrapper's local postcondition alone would not establish RrHP.
 
-## evidence, assumptions, and VL impact
-The main case study is a verified web server with adversarial handlers and a benign file-serving handler. It runs after extraction to OCaml and handles browser requests, but “securing and formally verifying this extra step going from our target language to OCaml is out of scope for this work” (section 7, page 26). The formal results concern terminating programs in shallowly embedded F★ subsets, with IO as the single side effect (section 1, pages 4–5; section 2.1, page 6). Section 10, pages 28–29 leaves arbitrary OCaml contexts and additional effects to future work. The paper gives proofs and examples rather than a performance or defect-detection benchmark.
-
-Inference: VL could apply the contract-plus-monitor pattern at boundaries with unverified Rust or external code. Its runtime enforcement, trusted IO implementation, and supported effects would require their own justification; SCIO★ does not establish guarantees for such an adaptation.
-
 ## techniques for the catalog
 - higher-order boundary contracts: compile wrappers that dynamically enforce refinement, precondition, and postcondition assumptions
 - reference monitoring: check every untrusted IO operation against a trace-based policy before execution
 - monitored effect discipline: restrict access to IO and monitor state with indexed effects or capabilities
 - secure compilation proof: establish trace safety and relational preservation for verified code linked with hostile contexts
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The effectful checks are indexed by the same operations flag fl as for the wrapped function, so they can be used inside the contract without affecting the effect polymorphism."): read the entire paper and study; checked quotations, references, technique steps, and stated proof scope; corrected quotation wording, asymmetric boundary checks, intermediate types, abstract monitor state, error obligations, RrHP, and OCaml limitations, and replaced the link with the paper's arXiv identifier; did not inspect the artifact, rerun F★ proofs or examples, or validate the proposed Verus adaptation.

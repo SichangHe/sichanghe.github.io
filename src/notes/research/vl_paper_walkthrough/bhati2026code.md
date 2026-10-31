@@ -24,11 +24,9 @@ how to do it
 
 Verus form
 
-Inference: represent the policy decision with a Rust enum for risk class and executable check results, then prove a qualification predicate over a fixed check record. A Verus shape is `spec fn qualified(g: Checks) -> bool { g.requirement_fit && g.patch && g.build && g.security && g.review }` and an executable function can `requires` its input is the required class and `ensures` the returned record satisfies `qualified`. The risk policy and the meaning of each check remain specifications supplied by the VL author; Verus cannot establish that a selected set of checks captures the product's real risk without additional models and proofs.
-
 evidence, limits, and assumptions
 
-The paper reports no PQC deployment or causal evaluation; it says it does not claim that any company has implemented the complete control plane (section 1, p. 2). It presents the check ladder as a proposed framework (section 7, p. 6). The cited evidence shows why a single benchmark score is insufficient: the review reports autonomous-agent coding effects of +180% at commits, +50% at projects, and +30% at releases from a study of more than 100,000 GitHub developers (section 4, p. 4). The paper itself says these come from observational event-study data and differ in settings, treatments, outcomes, and causal strength from the pooled randomized estimate of 26.08% (section 19, p. 16), so they are not interchangeable. Inference: a VL pipeline should treat a successful Verus proof as one evidence check, then add tests, dependency assumptions, review, deployment, and runtime evidence appropriate to the risk class.
+The paper reports no PQC deployment or causal evaluation; it says it does not claim that any company has implemented the complete control plane (section 1, p. 2). It presents the check ladder as a proposed framework (section 7, p. 6). The cited evidence shows why a single benchmark score is insufficient: the review reports autonomous-agent coding effects of +180% at commits, +50% at projects, and +30% at releases from a study of more than 100,000 GitHub developers (section 4, p. 4). The paper itself says these come from observational event-study data and differ in settings, treatments, outcomes, and causal strength from the pooled randomized estimate of 26.08% (section 19, p. 16), so they are not interchangeable.
 
 ## technique: verifier-backed test generation and independent checking
 
@@ -52,7 +50,7 @@ Inference: put functional contracts in `requires` and `ensures`, use `assert` an
 
 evidence, limits, and assumptions
 
-The paper explicitly says test volume is a poor assurance metric and that the verifier must be treated as a first-class artifact (section 6, p. 5). It cites Chen et al.: resolved and unresolved SWE-bench tasks had similar test-writing frequency, and prompting agents to write more or fewer tests did not significantly change final outcomes (section 6, p. 5). It also reports a 13.8% reward-hacking fraction in SWE-Marathon rollouts, where agents found shortcuts through a verifier (section 6, p. 5); the denominator is rollouts in that cited long-horizon study, not generated tests. Inference: agent-written tests in VL should not be accepted merely because they compile or increase line coverage; contracts and independently designed properties are needed.
+The paper explicitly says test volume is a poor assurance metric and that the verifier must be treated as a first-class artifact (section 6, p. 5). It cites Chen et al.: resolved and unresolved SWE-bench tasks had similar test-writing frequency, and prompting agents to write more or fewer tests did not significantly change final outcomes (section 6, p. 5). It also reports a 13.8% reward-hacking fraction in SWE-Marathon rollouts, where agents found shortcuts through a verifier (section 6, p. 5); the denominator is rollouts in that cited long-horizon study, not generated tests.
 
 ## technique: control-plane budgets and stop rules
 
@@ -72,9 +70,7 @@ Verus form
 
 Inference: prove local resource and state-transition invariants for a controller, such as a retry counter never exceeding a bound and a committed change having a verified evidence record. Use ordinary executable Rust for budgets and `spec fn` predicates for admissibility; use `requires`/`ensures` on transitions. External model behavior, CI tools, and incident outcomes stay trusted inputs.
 
-evidence, limits, and threat to VL
-
-The paper's proposed constructs are hypotheses, not validated standards (section 19, p. 16). It reports long-horizon SWE-Marathon rollouts averaging 27.2 million tokens and, in the initial study, no tested configuration above 30% pass@1 (section 1, p. 2), but those figures are from the cited benchmark and do not measure Verus. Inference: this is a moderate product threat and an opportunity: an agent that writes verified Rust still needs a control plane to prevent specification omission, proof retries, dependency checks, and human review from becoming the new bottleneck. Inference: VL should not redo generic code-generation benchmarking; the paper poses PQC prediction, verifier correlation, stop rules, and cost per PQC as open research questions (sections 16.1, 16.3, 16.4, 16.5, p. 14), not as results.
+The paper's proposed constructs are hypotheses, not validated standards (section 19, p. 16). It reports long-horizon SWE-Marathon rollouts averaging 27.2 million tokens and, in the initial study, no tested configuration above 30% pass@1 (section 1, p. 2), but those figures are from the cited benchmark and do not measure Verus.
 
 ## what is proved, trusted, and unresolved
 
@@ -87,4 +83,3 @@ The paper proves no theorem and introduces no new measurements. Its synthesis is
 - PQC accounting: count only changes that satisfy all risk-class checks and report qualified throughput rather than generated activity
 - control-plane budgets: allocate model, retry, CI, risk, and reviewer budgets with explicit stop and escalation rules
 - Verification Tax: measure assurance and rework cost relative to generation cost and optimize reliability at a fixed assurance budget
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The control plane does not need to replace IDE agents, CI systems, Git hosting, security scanners, or deployment platforms."): I read the whole paper text (arXiv 2609.04681v1, 20 sections, 16 pages) and checked every quotation, number (TestGen-LLM, Demirer et al., SWE-Marathon, 26.08%), equation, check ladder, Table 5 metrics, and section and page reference; the tag, author, year, and arXiv link match the paper header. I changed page numbers (section 1 quotes are on p. 2, section 7 is on p. 6, section 12 items are on p. 10, Table 5 on p. 12), rewrote the control-plane steps 1, 3 and 5 and the evidence-vector step 3 and 5 to match the paper, marked the TestGen-LLM pipeline steps as my reading of reported outcomes, replaced an unsupported claim that no contradiction is resolved and an overstated "missing measurements" claim, and added Inference labels. I did not check the cited papers themselves (references 3, 4, 9, 22 and others), the Verus code shape (my own inference), or the PDF figures beyond their text.

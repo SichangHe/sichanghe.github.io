@@ -15,8 +15,6 @@ Steps from the case:
 4. deploy to private staging for direct human inspection and obtain explicit operator approval before production (Section 2, p.2)
 5. for difficult choices, obtain independent recommendations from several models and present reasons/risks to the operator (Section 2, p.2)
 
-Inference: VL should separate proof generation from release authority. An agent may propose Rust and Verus lemmas, while a human or policy gate decides which contracts become durable and which binaries reach production. Repository permissions and staging are control mechanisms, not proof of correctness.
-
 ## technique: incident-driven lesson and regression loop
 When a failure is confirmed, the agent fixes it, searches for similar problems, and records a reusable lesson. Confirmed failures become regression tests; lessons update later instructions (Section 2, p.2; Section 4, p.3). The operator tests test quality by deliberately recreating targeted failures: “Tests were checked by deliberately recreating targeted failures and confirming that the corresponding checks failed” (Section 4, p.3). This is mutation-style fault seeding.
 
@@ -31,8 +29,6 @@ Inference: for Verus, seed violations of a contract or invariant and check that 
 
 ## technique: independent coverage mapping
 The project’s accumulated checks were mapped against OWASP Top 10, OWASP API risks, CWE Top 25, and HIPAA provisions that were not consulted while constructing them (Section 4, p.3). Of 84 mapped items, 69 (82.1%) were covered by pre-existing checks (Section 4, p.3). The denominator is 84 mapped items; the paper cautions that this does not establish full platform security or model generalization because the standards are public.
-
-Inference: maintain an external property catalog for VL: map Verus contracts, permission checks, panic tests and deployment controls to independently chosen failure taxonomies. Coverage indicates omissions to investigate, not assurance that each check’s oracle is sound.
 
 ## technique: audit the auditors and constrain authority
 The case found monitors that checked intermediate events without proving a usable backup, an audit that stopped without reporting failure, and a pass-rate report that ignored checks with no result. A monitor also misclassified legitimate long-running work and repeatedly triggered automated repair, causing disruption (Section 4, p.3). The authors summarize the recurring concerns as whether a check observed the intended outcome, whether it ran, whether missing results stayed visible, and whether its authority was limited enough to prevent harmful action (Section 4, p.3). Their conclusion states: “the tests and reviewing agents introduced to support oversight could provide incomplete or misleading evidence” (Conclusion, p.4).
@@ -49,11 +45,8 @@ Inference: a Verus proof should expose trusted assumptions about external librar
 ## what is proved, measured, and trusted
 The study reports process observations, not defect reduction, security, HIPAA compliance, or causal effectiveness; its limitations are one operator, one platform and an evolving workflow (Section 5, p.4). The 82.1% mapping is descriptive. Tests, reviewers, monitors and multi-model councils are themselves fallible software. Human approval, access boundaries and staging are the final authority in the case.
 
-Inference: threat to agent-written verified Rust is high in the assurance layer. Verus can prove a stated contract, but the case shows that test oracles, monitor completeness and release permissions can still be wrong. Existing mutation testing and formal-verification studies cover individual checks; VL should add authority and evidence-scope audits rather than assume another reviewer removes the problem.
-
 ## techniques for the catalog
 - authority separation: delegate bounded implementation while reserving durable context and production release for an operator
 - incident regression loop: seed failures, require detection, fix analogous defects, and preserve lessons
 - external coverage mapping: compare accumulated checks with independent security/property catalogs
 - auditor audit: verify check execution, outcome validity, missing-result visibility, and remediation authority
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

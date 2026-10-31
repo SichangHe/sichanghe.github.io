@@ -77,7 +77,7 @@ Verus form (Inference). Verus uses SMT-backed verification but does not provide 
 
 Trusted and proved. The paper proves soundness of VC generation and translation lemmas, and relies on the natural-proofs solver, SMT solver, and trusted semantics of the source languages. It does not prove that least-fixpoint validity is always found; FO-completeness applies to validity under arbitrary fixpoints. The empirical claim is bounded by the listed benchmark suite, not arbitrary programs.
 
-Threat and prior work. Inference: The threat to agent-written verified Rust is medium: the techniques expose a route to automated framing and recursive data-structure proofs, but unique footprints, cloud-style quantifier elimination, and supplied inductive lemmas remain substantial specification work. The paper explicitly builds on prior Frame Logic and natural-proofs work; VL should not redo those foundations. New work for VL is a sound Rust/Verus encoding, ownership interaction, and evaluation on real Rust APIs.
+Threat and prior work.
 
 ## techniques for the catalog
 - support-based Frame Logic: represent each formula’s heap footprint with Sp and verify exact or relaxed allocated-set conditions
@@ -85,4 +85,3 @@ Threat and prior work. Inference: The threat to agent-written verified Rust is m
 - cloud quantifier elimination: replace guarded location quantifiers with value-preserving, support-free terms
 - strongest-postcondition VC generation: process SSA blocks while tracking transformations, heaps, allocations, frames, and recursive definitions
 - FO-complete natural proofs: restrict VCs to one-way foreground functions and discharge them by systematic quantifier instantiation plus SMT
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

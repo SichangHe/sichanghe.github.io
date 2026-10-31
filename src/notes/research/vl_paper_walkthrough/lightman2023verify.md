@@ -41,7 +41,7 @@ How to apply it:
 
 Their four ablations are explicit: neutral-as-positive with product 78.2%, neutral-as-positive with minimum 77.6%, neutral-as-negative with product 77.4%, and neutral-as-negative with minimum 77.8%, all best-of-1860 (Appendix F.2, Table 4). The paper calls the difference between all four strategies “minor.” The authors use neutral-as-positive and product in the main experiments, while warning that a product “does create a slight bias against solutions with a larger number of steps” (Appendix F.2).
 
-Verus form. Inference: A VL checker can aggregate per-obligation confidence for triage, but confidence must never replace Verus acceptance. A generated proof either verifies against the specification or it does not; multiplying model probabilities is only a search heuristic. The product analogue can prioritize shorter or more locally supported proof candidates, with the paper’s length bias retained as a known limitation.
+Verus form.
 
 ## technique 3: active learning for high-value labels
 
@@ -77,12 +77,6 @@ For an external check, they evaluate the large-scale ORM and PRM on a held-out s
 
 Threats remain. MathMix decontamination strips LaTeX and searches matching n-grams, but the authors say they cannot strongly guarantee no rephrased test problems remain (Appendix A; Section 6.3). They expect contamination to affect relative comparisons similarly, but this is an assumption. The evaluation is mathematical or STEM-exam based, and the paper says “It is unknown how broadly these results will generalize beyond the domain of math” (Section 6.2).
 
-## implications for VL
-
-What is established. Process labels improve reward-model selection on MATH under the stated generator, data, and test splits; in the small-scale synthetic setup, active selection reduces estimated labeling cost; and a large PRM can provide synthetic labels for small models. What remains trusted includes human label quality, automatic final-answer grading, the generator, PRM predictions used as teacher labels, and the specification that defines “correct.” The paper’s own process is not a formal proof of mathematical truth for every intermediate step.
-
-Inference: A product that lets an agent write verified Rust should expose proof failures at the smallest useful unit, retain the exact diagnostic, and train search on rejected-but-plausible attempts. It should never accept a proof because a language model’s reward score is high. Existing work has already explored process-vs-outcome reward modeling and active data selection; VL should reuse those ideas rather than repeat a generic claim that step-level feedback is useful. The direct product threat is reduced human review: if users accept fluent proof text without running Verus, the workflow recreates the outcome-supervision failure mode.
-
 ## techniques for the catalog
 
 - first-error process labels: label each generated reasoning step and stop at the first incorrect step so feedback identifies the failure location
@@ -90,4 +84,3 @@ Inference: A product that lets an agent write verified Rust should expose proof 
 - convincing-wrong active learning: prioritize high-scoring incorrect completions because they expose current reward-model mistakes
 - teacher-generated supervision: use a large process reward model to label smaller-model data for controlled process-versus-outcome comparisons
 - best-of-n verification evaluation: rank many sampled solutions, automatically check the selected answer, and report the exact test denominator
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "In our experience inspecting model-generated solutions, we saw no clear signs of our models memorizing MATH problems."): read the whole paper text (Sections 1-8, Appendices A-I) and compared every quotation, number (78.2/72.4/69.6%, Table 1, Table 4, 800K/75K/12K, 1,085,590/101,599, 20% threshold, 80/20 split, 2.6x, 500/4,500 test split, 224 vs 234), section and appendix reference, and technique step against it; the link is the arXiv page, matching the arXiv identifier printed on the paper's first page. Changed: replaced a misquoted Section 1 sentence, fixed the 800K citation to Section 2.4, replaced the unsupported "does not clearly advance" neutral definition with Appendix D's wording, added the paper's "first incorrect step" quote and the phase 1 difference, marked an unlabeled inference, added the Appendix H threshold rationale and the no-at-scale-ablation caveat, reworded the 224 versus 234 discussion, corrected "test set is mathematical" (Section 5 includes AP STEM exams), and scoped the active-learning claim to the small-scale setup. Not checked: figures beyond the numbers printed in text and Figure 3's table, the PRM800K repository, and the cited external works; the Verus-form paragraphs are my own labeled inferences and were not tested.

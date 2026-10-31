@@ -12,9 +12,9 @@ What it is. The worked matcher begins with a mathematical matching relation, the
 
 How to apply it. (1) Define the intended mathematical relation. (2) Encode the source language as an inductive datatype. (3) Define the semantic relation as an inductive proposition. (4) State the executable function's type as a decision procedure for that proposition. (5) Prove the implementation correct against the relation. The paper's specification type is `acc_t (rs : r char * list char) := {acc_p rs}+{¬ acc_p rs}`, where `acc_p` is the matching proposition (Section 2, p. 110).
 
-Verus form. Inference: represent the abstract relation with a `spec fn` over an enum of regex nodes and a sequence of characters. Give the executable matcher `requires` and `ensures` clauses relating its Boolean result to that specification. Deep embedding is useful when VL must reason about transformations or compare two program representations; a direct Rust implementation is simpler when only one fixed algorithm matters.
+Verus form.
 
-Evidence and limits. Deep embedding gives “full control over its syntax and semantics” and makes relations on pairs of syntax trees straightforward (Section 6.2.5, pp. 178–179). It also requires implementing parsers, binders, and interpreters, so the survey notes that shallow embedding is often preferable for realistic programs. Inference: VL should choose the smallest model that supports the required proof relation.
+Evidence and limits. Deep embedding gives “full control over its syntax and semantics” and makes relations on pairs of syntax trees straightforward (Section 6.2.5, pp. 178–179). It also requires implementing parsers, binders, and interpreters, so the survey notes that shallow embedding is often preferable for realistic programs.
 
 ## technique 2: separate termination, partial correctness, and adequacy
 
@@ -54,11 +54,11 @@ Verus form. Inference: put stable contracts and abstract data types in separate 
 
 ## what is trusted and what fails at scale
 
-The survey separates the trusted base of proofs from that of programs: formal models, unmodeled components, proof checkers, axioms, compilers, extraction, runtimes, and hardware remain relevant even when a proof succeeds (Section 4.4, pp. 137–140). Extraction can introduce discrepancies, and automation-heavy proofs can create large terms that are slow to check and difficult to debug (Sections 4.4.2 and 6.2.6, pp. 139 and 182–183). Inference: proof and contract maintenance at dependency boundaries, plus hidden assumptions in automation and external code, are relevant risks for VL; this survey does not compare their severity or evaluate agents writing Verus. The survey's established practices—explicit specifications, refinement relations, layered automation, stable interfaces, and a written trusted base—are work VL should reuse rather than redo.
+The survey separates the trusted base of proofs from that of programs: formal models, unmodeled components, proof checkers, axioms, compilers, extraction, runtimes, and hardware remain relevant even when a proof succeeds (Section 4.4, pp. 137–140). Extraction can introduce discrepancies, and automation-heavy proofs can create large terms that are slow to check and difficult to debug (Sections 4.4.2 and 6.2.6, pp. 139 and 182–183).
 
 ## proof evolution and project maintenance
 
-Regression proving rechecks proofs after changes. The survey describes file/proof dependency selection and parallel checking; iCoq was up to three times faster than conventional persistent-store checking and up to ten times faster from a clean slate on several Coq project histories (Section 7.2.1, pp. 207–208). Proof refactoring preserves semantics, whereas proof repair may change them; PUMPKIN PATCH learns reusable Gallina patches from an old and updated proof but handles only simple changes (Sections 7.2.2–7.2.3, pp. 209–211). Inference: VL should treat dependency-aware rechecking and proof repair as first-class maintenance tools, with repaired proofs still subject to the verifier.
+Regression proving rechecks proofs after changes. The survey describes file/proof dependency selection and parallel checking; iCoq was up to three times faster than conventional persistent-store checking and up to ten times faster from a clean slate on several Coq project histories (Section 7.2.1, pp. 207–208). Proof refactoring preserves semantics, whereas proof repair may change them; PUMPKIN PATCH learns reusable Gallina patches from an old and updated proof but handles only simple changes (Sections 7.2.2–7.2.3, pp. 209–211).
 
 The survey reports that proof effort and proof size correlate in seL4 studies, but those are empirical findings from cited projects, not universal cost laws (Section 7.3, pp. 214–215). Its repository-mining examples include theorem-name prediction, tactic learning and formalization from aligned English/HOL corpora; one reported translation system had 64% correct results among its top 20 candidates (Section 7.4, pp. 215–217). These figures describe cited systems and should not be generalized to Verus without a comparable corpus.
 
@@ -76,5 +76,3 @@ The survey reports that proof effort and proof size correlate in seL4 studies, b
 - regression proving: select affected files and proofs, then check them in parallel
 - proof repair from examples: derive a reusable patch from an old and updated proof
 - relation-based transport: move functions and proofs across established type relations
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Importantly, deep embedding gives the programming language implementor full control over its syntax and semantics."): read all 7,600 lines of the survey text (printed pages 103–281 plus front matter), including the complete references, and the whole study; checked quotations, definitions, section/page references, examples, scope and cited performance figures; added proof-evolution and repository-mining limits, corrected the trusted-base description and the introductory page reference, and kept Verus guidance explicitly inferential; did not execute Coq, Isabelle, or any cited tool, reproduce survey examples or benchmarks, inspect repositories, or verify cited works independently.

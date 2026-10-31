@@ -8,8 +8,6 @@ This survey builds a four-category taxonomy—input manipulation, model compromi
 
 The introduction summarizes the motivation: “The alarmingly high success rates summarized in Table I illustrate just how vulnerable LLM-powered agent workflows have become to input manipulation and protocol exploits.” (Section I, p. 2)
 
-Inference: for VeruLaw, the paper is a threat-model input, not a correctness proof. Its equations can become security proof obligations around an agent's Rust/Verus state machine, but the attack success rates summarize heterogeneous external studies and are not directly comparable. The paper itself cautions: “These results are not directly comparable due to variations in model architectures, datasets, experimental setups, and defense mechanisms.” (Section I, p. 2)
-
 ## technique: formal input-manipulation model
 
 Model an agent system as `FS(h,x,k)`, where h is dialogue history, x current input, and k retrieved knowledge. An attacker applies `g:(h,x,k)↦(h′,x′,k′)`. The attack succeeds when the safety policy `π(y,a)=0` or an objective loss `L(y,o)≤ε` (equations 3–4, Section III-A, p. 7). Prompt-based attacks restrict g to textual injections `(h⊕δh,x⊕δx,k)` and maximize unsafe/attacker-aligned output probability (equations 5–6, p. 8). Jailbreaking is a subset whose goal is a forbidden output `y∈Yforbidden` while violating policy (equation 7, p. 9). Adversarial/evasion attacks minimize a representation distance subject to changing the output (equation 8, p. 9). Composite attacks compose transformations `gcomposite = gadv ∘ gprompt` (equation 9, p. 9).
@@ -56,14 +54,6 @@ Inference: in Verus, define a message enum and a `spec fn verify_message` that c
 
 The MCP code example is a concrete injection boundary: an SDK serializes `userInput` into JSON `args.query` and sends it to a database server (Section VI-B, p. 29). The A2A layer adds cross-agent prompt injection, discovery spoofing, rogue registration, adaptive indirect injection, memory subversion, and contagious recursive blocking (Section VI-C, pp. 30–31).
 
-## evidence, defenses, and product threat
-
-The authors report reviewing more than 150 publications and technical reports, incorporating vulnerability repositories and GitHub advisories, and using expert validation (Section I, p. 4; abstract, p. 1). Table VI classifies input manipulation as no-to-low privilege/high-feasibility at the tool/agent layer; model compromise as medium-to-high privilege at host/model; system/privacy as medium privilege at host/agent; and protocol exploits as low-to-medium privilege/high-feasibility at protocol/agent (Section V-E, p. 26). Table VIII lists 2025 CVEs including indirect prompt injection, SSRF, XXE, path traversal, MCP-Remote command execution, and MCP Inspector CSRF/DNS rebinding (Section VI-B, p. 31).
-
-The survey's defenses are layered: sanitize and validate prompts/schemas; sign code, metadata, and discovery responses; enforce mTLS, nonces, timestamps, least privilege, token audience binding, and explicit delegation; use immutable audit logs and provenance; isolate context per agent; and rate-limit/circuit-break recursive workflows (Table VII, p. 28; Section VII, pp. 30–34). Inference: these controls should be Verus-verified at the Rust boundary, while model behavior remains an assumption tested by adversarial evaluation.
-
-The paper reports selected external ASRs rather than a new common benchmark. Examples include adaptive indirect injection above 50%, compositional instruction attack above 95%, jailbreak fuzzing above 90%, GAP 92%, and AEIA up to 93% (Table I, p. 2). Inference: because models, datasets, experimental setups, and defenses differ, these values do not establish one product risk score. A threat to VL is an agent that proves a local Rust operation while accepting attacker-controlled prompts, tool arguments, memory, or peer messages outside the proof boundary. Existing VL work should not redo generic prompt-injection taxonomy; it should implement typed, authenticated, bounded interfaces and prove their invariants.
-
 ## techniques for the catalog
 
 Inference: the following entries adapt the survey’s models and defenses into proof tasks.
@@ -75,4 +65,3 @@ Inference: the following entries adapt the survey’s models and defenses into p
 - authenticated message model — represent protocol messages, signatures, nonces, impersonation, context tampering, and replay as predicates
 - bounded recursive workflows — model task spawning and resource thresholds to prove denial-of-service bounds
 - layered agent defenses — combine schema checks, provenance, cryptography, least privilege, isolation, rate limits, and circuit breakers
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The backdoor is activated only when all trigger keys are present in the input, ensuring the attack remains covert until specific conditions are met."): checked the full text, quotations, numbers, equations, section/page references, and technique descriptions; corrected the unrelated DOI, completed the abstract quotation, corrected references and model descriptions, and labeled proposed applications as inferences; did not independently check cited studies, CVE records, experiments, or Verus proofs.

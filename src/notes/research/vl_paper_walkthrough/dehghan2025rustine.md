@@ -6,13 +6,13 @@ Tag: `dehghan2025rustine`, [paper](http://arxiv.org/abs/2511.20617v1)
 
 Rustine is an automated five-stage pipeline for translating a whole C repository, including application code, tests, and build/configuration files, into Rust. The paper reports: “Evaluating on a diverse set of 23 C programs, ranging from 27 to 13,200 lines of code, Rustine can generate fully compilable Rust code for all and achieve 87% functional equivalence (passing 1,063,099 assertions out of 1,221,192 in test suites with average function and line coverage of 74.7% and 72.2%).” (Abstract, PDF p.1) This percentage measures assertion passes after automated and manual debugging (§3.2, PDF pp.12–13). Inference: these tests provide evidence of functional agreement, not a proof for all inputs; the generated Rust also retains unsafe constructs (Table 3, PDF p.14).
 
-The five stages are preprocessing, refactoring, dependence analysis, LLM translation, and test-based validation/debugging (§2, PDF pp.3–4). Inference: the pipeline is relevant to VL because it exposes where generated Rust is only tested, where unsafe code enters, and which transformations have a semantic argument.
+The five stages are preprocessing, refactoring, dependence analysis, LLM translation, and test-based validation/debugging (§2, PDF pp.3–4).
 
 ## technique 1: preprocess C before translation
 
 Rustine runs the C preprocessor to insert headers, substitute macros, and resolve conditional compilation such as `#ifdef` and `#if defined()` (§2.1, PDF p.4). This makes syntax visible before prompting; otherwise the LLM must perform context-dependent macro expansion without complete type and function-signature information.
 
-The paper does not present a formal proof of preprocessing equivalence. Inference: a VL implementation could feed preprocessed source to later analyses and compare its behavior with the original C tests. Unless proved correct, preprocessing remains a trusted transformation even if the Rust result is subsequently verified.
+The paper does not present a formal proof of preprocessing equivalence.
 
 ## technique 2: semantics-preserving C refactoring
 
@@ -50,7 +50,7 @@ Verus form. Inference: compilation feedback and ICL can propose proof repairs, b
 
 After translation, Rustine runs translated tests and counts assertions, not merely test-process exits. The authors write: “Rustine leverages test translation and execution for validation, and to determine an upper bound for functional equivalence: after completing the translation of the entire project, Rustine executes the translated tests.” (§2.5, PDF p.9) For each failure it temporarily disables the failed assertion or test to let the suite continue, re-enables failures one at a time, shortlists the top n functions on the stack trace, and replaces a shortlisted function if it is a focal method examined by a passing assertion (§2.5, PDF p.9). A reasoning LLM receives the C source, Rust translation, and stderr and proposes a fix. Rustine reverts non-compiling changes and disables the failing assertion again. It accepts a compilable fix only when the corresponding test/assertion passes without breaking previously passing tests/assertions (§2.5, PDF p.10).
 
-This is a debugging heuristic. The authors explicitly say it is imperfect because it examines only a subset of possible culprits (§2.5, PDF p.10). Inference: VL can use the same failure localization to prioritize proof obligations, but acceptance must require a Verus proof rather than a passing test.
+This is a debugging heuristic. The authors explicitly say it is imperfect because it examines only a subset of possible culprits (§2.5, PDF p.10).
 
 ## measured evidence and limits
 
@@ -60,7 +60,7 @@ One developer, with over ten years of relevant industry experience and no famili
 
 Safety metrics show raw-pointer declarations/dereferences falling from 4,080/2,045 in C to 198/126 in Rust across the subjects, while pointer arithmetic fell from 452 to 14 after refactoring (§3.2.1–3.2.2, PDF pp.14–15). The translation nevertheless introduced 243 new pointer-arithmetic cases in 14 projects, attributed to C libraries without Rust equivalents and string manipulation (§3.2.2, PDF pp.14–15). Inference: these retained unsafe constructs require separate justification in a verified translation.
 
-Evidence limits. The paper claims pointer-refactoring semantic preservation, but its referenced appendix is absent. It measures compilation, test assertion outcomes, coverage, pointer/unsafe counts, readability, time, and cost. The 87% pooled assertion pass rate is the final reported result after automated and manual debugging, not a before-repair rate. Inference: a VL implementation must separately justify preprocessing, source behavior, unsafe blocks, and external calls. Verus contracts and verified API wrappers could complement this pipeline; proof coverage should be reported separately from assertion coverage.
+Evidence limits. The paper claims pointer-refactoring semantic preservation, but its referenced appendix is absent. It measures compilation, test assertion outcomes, coverage, pointer/unsafe counts, readability, time, and cost. The 87% pooled assertion pass rate is the final reported result after automated and manual debugging, not a before-repair rate.
 
 ## techniques for the catalog
 
@@ -69,5 +69,3 @@ Evidence limits. The paper claims pointer-refactoring semantic preservation, but
 - dependence-graph ordering — use context-sensitive dependencies and SCC condensation to choose translation order
 - adaptive two-tier prompting — retry a cheap model, then use a reasoning model with error-indexed examples
 - assertion-level validation — execute translated tests, localize failures by stack and assertion, and repair iteratively
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Rustine translations contain 5/49 fewer raw pointer declarations and dereferences compared to RustMamp in bzip2, and only one more raw pointer declarations compared to Syzygy."): read the full supplied paper, including references, and checked all study quotations, numbers, section/page references, technique steps, author/year tag, and arXiv link; corrected quotations and page references, separated automated from manually repaired results, qualified the ten-project claim where assertion results are absent, corrected API graph representation and the final 87% interpretation, and marked verification proposals as inferences; did not inspect external artifacts, reproduce experiments, or check the claimed pointer-refactoring proof because the referenced appendix is absent.

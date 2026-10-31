@@ -39,7 +39,7 @@ How to apply it.
 
 Verus form. Inference: encode each layer as a separate Rust module or trait boundary with explicit contracts. A memory wrapper can prove bounds; a crypto wrapper can expose only approved algorithms; an OS adapter can carry a specification for atomic open-and-check behavior. Keep external-body assumptions at the adapter boundary only when no executable model exists, and document them as trusted. Use `ensures` on executable functions and `spec fn` for mathematical predicates; do not treat proof code as runtime code.
 
-Evidence and limits. The layered analysis explains why MA-CoT is strongest for Java and Python configuration/API risks but leaves C residuals from OS, toolchain, and memory hazards (Section V-F, pp. 10–11). Inference: this decomposition is useful for VL because it distinguishes what a Verus proof can establish in Rust from what must be supplied as a dependency, OS, compiler, or hardware assumption.
+Evidence and limits. The layered analysis explains why MA-CoT is strongest for Java and Python configuration/API risks but leaves C residuals from OS, toolchain, and memory hazards (Section V-F, pp. 10–11).
 
 ## what is proved, measured, and trusted
 
@@ -47,14 +47,9 @@ Measured: static-analysis vulnerability counts, severity classes, CWE distributi
 
 Not proved: functional equivalence to task intent, exploitability of every finding, absence of vulnerabilities outside SonarQube rules, correctness of the mitigation knowledge base, or correctness of generated code under changed dependencies and environments. Trusted components include model APIs, prompt and dataset curation, SonarQube rules, expert judgments, CWE mappings, and the compiler/OS/library behavior used by generated code. Inference: a Verus proof would reduce the trusted portion for the modeled Rust function, but it would not validate the original English task or unmodeled foreign calls.
 
-## implications for VL
-
-Inference: MA-CoT is a useful front-end policy for Verus generation: classify the task, retrieve concrete mitigations, require secure defaults, generate Rust, then require Verus contracts and proofs. The paper’s results do not show that prompting alone can replace proof. VL should avoid redoing generic “be secure” or unguided CoT experiments unless its model, language, or benchmark differs materially; this paper already reports that those controls are unstable. The product threat is substantial: the primary baseline produced 92 findings and LLMSecEval baseline 73, while the paper says models “often select insecure defaults while producing plausible explanations” (Section VI, p. 11). Inference: agent-written verified Rust still risks wrong specifications, unsafe dependency assumptions, unsupported OS behavior, and residual hardening errors such as TOCTOU and secure wiping.
-
 ## techniques for the catalog
 
 - mitigation-aware chain of thought — classify task domains, retrieve concrete CWE mitigations, combine universal and language-specific rules, and reason through implementation with those constraints
 - mitigation knowledge base — store general rules, language guidelines, review checklists, and secure/insecure examples keyed by CWE or domain
 - layered vulnerability attribution — classify each finding by language core, runtime/library, ecosystem, OS, toolchain, or application policy and mitigate at the necessary layer
 - secure-by-construction hardening — replace prompt-only advice with bounded buffers, atomic file operations, approved cryptography, and guaranteed wiping primitives
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Because the datasets differ in size and composition, we interpret cross-dataset differences qualitatively and focus on within-dataset changes across prompting methods."): read the whole paper text (pp. 1-15 incl. appendices) and the whole study; checked every quotation, the totals (recomputed from Tables III and IV: 92 to 39, 73 to 4), severity and Table VII percentages, Table I settings, section and page references, and the pipeline and layer-attribution steps; changed the paper link (it pointed to the DOI of an unrelated paper, reference [4]; now the arXiv page 2605.24300 given in the paper text), the page and section references for the 7,200 count, the 150-task count, the ordinary CoT sequence (Section III-C, not III-F), the expert review (not in Section III-D), and the TOCTOU/CWE-14 pages, and marked the claim that MA-CoT reuses the four CoT steps as an inference; did not check the figure bar values, the appendix code, the GitHub artifacts, any cited reference, or the correctness of the Verus-form and VL inferences (these are the study's own).

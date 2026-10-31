@@ -3,10 +3,6 @@
 
 This is a field guide for agents that must turn a vague request into a specification and a checked proof. The recipes and agent workflow below are **my synthesis and recommendations**. Source cards supply short verbatim evidence, with pointers to the original text. “Verified” always means a particular theorem under particular assumptions.
 
-Research checked on 6 October 2026 (the brief gives 7 October). Scope: 37 distinct papers, plus tool documentation and courses; 26 new PDFs saved. Thirty-one papers have a PDF intake record in [the manifest](/ssd1/sichangheagent/verus_distributed/lit_b/research_verified/formulation/paper_manifest.json); three existing Verus/Verdi papers were read without downloading again; three historical/survey papers were located through metadata but their full text was unavailable. PDF page numbers below count from the first PDF page unless a printed page is specified. Quotations normalize line wrapping, PDF ligatures, and typographic symbols.
-
-## The recipes
-
 ### 1. Describe states, allowed steps, and observations
 
 **Use for:** protocols, controllers, operating systems, and services that keep running.
@@ -145,7 +141,6 @@ Proof engineering means organizing and maintaining proofs, not just finding a de
 Historical cost anchors, quoted exactly below: IronFleet reports about 3.7 person-years for its methodology and two systems; seL4 reports about 20 person-years for the correctness proof, including framework work; CertiKOS reports under two person-years for supporting concurrency; CompCert reports about three person-years for that version's formalization and proof; Anvil reports around 2.5 person-months to implement and verify each controller [S8–S10, S14, S18]. These have different scopes, baselines, reuse, and counting methods. **Inference:** use them to budget proof layers and library construction, not as a universal cost per line.
 
 AWS's account describes useful results after learning TLA+, but it concerns design specification and model checking rather than a code-refinement proof [S13]. Verus's 2024 evaluation measures verifier feedback and proof overhead, including ports and new components [S30]. **Inference:** fast feedback, reusable lemmas, stable abstraction boundaries, and incremental replay are practical requirements for agent workflows.
-
 
 The seL4 process study reconstructs how design, implementation, and proof evolved together [S35]. Its effort studies distinguish observed associations from a predictive cost model [S36–S37]. Verdi's *Planning for Change* gives a concrete maintenance recipe: hide invariant definitions behind interfaces, use reusable induction principles, and write tactics that match hypothesis structure [S34]. **Inference:** agents should preserve proof interfaces while adding facts, and measure rework after changes rather than judging only the first successful proof.
 
@@ -320,8 +315,6 @@ Quotations are brief to respect source quotation limits. Ellipses below do not r
 
 **Empirical Study Towards a Leading Indicator for Cost of Formal Software Verification.** Daniel Matichuk, Toby Murray, June Andronick, Ross Jeffery, Gerwin Klein, and Mark Staples. ICSE, 2015. [Paper](https://trustworthy.systems/publications/nicta_full_text/8318.pdf). Studies the relationship between formal statement size and proof size in Isabelle developments. §IX, PDF p. 10: “the investigation did not yield a predictive model as the precise relationship changes between proofs.” Useful limitation when estimating agent effort: an observed correlation does not establish a transferable forecasting model.
 
-## Documentation and learning routes
-
 ### D1
 
 **Verus Tutorial and Reference: Breaking proofs into smaller pieces.** Verus contributors; living documentation, checked October 2026. [Chapter](https://verus-lang.github.io/verus/guide/breaking_proofs_into_pieces.html). “one can improve solver performance by breaking that function down into smaller pieces.” The “Moving a subproof to a lemma” section gives the concrete recipe. Useful for isolating dependencies and shrinking solver context. I did not find a current guide chapter specifically named “structuring system proofs”; this chapter plus D2 and S8 supply the verified matching material.
@@ -357,8 +350,6 @@ Quotations are brief to respect source quotation limits. Ellipses below do not r
 **Suggested order, my recommendation:** C1 for procedure proofs; S1 and S8 for state machines and layers; S2–S3 for refinement; S6–S7 and D2 for concurrent ownership; S12 and S10 for large-proof engineering. Follow the Dafny/F*/Why3 teaching links when choosing those tools. Iris's project page has lectures and hands-on proof-mode tutorials [S7].
 
 ## Search record and remaining gaps
-
-Searched with the web tool first; it failed with an HTTP 404 at `/alpha/search`. Google HTTP search returned a JavaScript challenge; DBLP connections reset; arXiv search endpoints returned rate limits. Continued through author pages, USENIX, Crossref, GitHub raw files, institutional publication indexes, and publisher records. Search terms covered refinement/history/prophecy, forward/backward simulation, QED at Large, industrial formal-methods practice, Civl, Anvil, Verus system-proof structuring, IronKV, and seL4 effort. HTTP source snapshots and extracted paper text are in [research_verified/formulation](/ssd1/sichangheagent/verus_distributed/lit_b/research_verified/formulation/).
 
 Read the methodological sections and relevant limitations/effort sections of the main papers, rather than counting an abstract as a full-paper reading. All saved PDFs were checked for `%PDF`; an incorrect guessed arXiv ID and an unrelated guessed seL4 publication were rejected before collection intake. Author seL4 PDFs had leading whitespace before `%PDF`; intake removed that whitespace. Existing PDFs were reused. DOI metadata and paper front matter distinguish dates and venues; no guessed URL establishes a paper's identity.
 

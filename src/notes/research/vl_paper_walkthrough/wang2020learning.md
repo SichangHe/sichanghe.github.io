@@ -5,8 +5,6 @@ Tag: `wang2020learning`, [paper](https://arxiv.org/abs/2002.07019)
 ## scope and result
 This paper addresses sparse formal-proof data by training a generator that creates new theorems together with proofs, then using those synthetic proofs to train a prover. The authors call the generator MetaGen and instantiate it in Metamath with Holophrasm. Their abstract says: “we propose to learn a neural generator that automatically synthesizes theorems and proofs for the purpose of training a theorem prover” (abstract, p. 1). The generator performs forward inference; the prover later searches backward for a specified target. The paper states that “each of our synthetic theorem is guaranteed to be correct and its proof is automatically available” (section 2, p. 3). Inference: this guarantee holds only if the source proof trees and the inference implementation are correct, and usefulness is measured empirically, not guaranteed.
 
-## technique 1: forward synthesis with proof-tree grafting
-
 ### when to use it
 Inference: use this when human-written theorem/proof pairs are too few to train a search policy, which is the motivation in the paper's introduction. MetaGen starts from training proof tasks and repeatedly applies an existing theorem with a substitution to produce a new theorem. The new proof tree can then be reused as an existing tree.
 
@@ -35,21 +33,11 @@ Inference: train a Verus-lemma generator by imitation from verified proof traces
 
 Holophrasm uses Monte Carlo Tree Search with a payoff network, relevance network, and substitution network to search backward from a target theorem (section 4.2, pp. 6–7). The relevance and substitution networks are trained on human plus synthetic proofs, while the payoff network is trained on human-written proofs only (Appendix F.2, p. 17). The authors filter “trivial” proof steps from relevance-network training: “A goal is trivial if it is reachable from the assertion of a background theorem b and b has no hypotheses”, because it can be decomposed without generating new subgoals (section 5, implementation details, p. 8). The paper reports that this filtering raises proofs found from 574 to 600 (Table 3, p. 8; section 5.1, p. 9).
 
-Inference: in VL, augment a proof-search model with synthetic, independently verified Verus lemmas and proof traces. Filter steps that merely invoke an unconditional lemma if the goal is to learn useful decomposition, but keep them in a separate corpus if they matter for runtime proof completion. The paper's MCTS is not a Verus primitive; the final acceptance criterion remains a successful verifier run.
-
 ## evidence and denominators
 
 The `iset.mm` corpus has 463 axioms and 8,916 theorem tasks split into 7,123 train, 890 validation, and 903 test tasks. `set.mm` has 1,099 axioms and 27,218 tasks split into 21,786 train, 2,712 validation, and 2,720 test tasks (section 5, p. 7). With 7,123 human proofs on iset.mm, adding 1M MetaGen-IL synthetic proofs raises test proofs found from 378 to 398 (Table 3, p. 8; denominator 903 test tasks). On set.mm with 2,179 human proofs (10%), MetaGen-IL raises proofs from 454 to 472 of 2,720 test tasks; 1M MetaGen-Rand reaches 457 (Table 3, p. 8). With 21,786 human proofs (100%), 10M MetaGen-IL reaches 600/2,720 after trivial-step filtering; without that filtering it reaches 574/2,720 (Table 3, p. 8).
 
 For the substitution network on set.mm with 10% human proofs, accuracy is 58.91% without synthetic data and 66.56% with 1M MetaGen-IL examples (Table 2, p. 8). With 100% human proofs, accuracy rises from 81.57% to 83.90% with 10M MetaGen-IL examples (Table 2, p. 8). These percentages are validation-token accuracy, not theorem-proving success. The paper also reports its own GPU re-implementation of Holophrasm at 557 proofs with 100% human proofs, and 565 with 10M MetaGen-Rand (Table 3, p. 8). The paper notes a comparability caveat: Polu and Sutskever report 29.22% of test theorems, but they “appear to use a different version of the set.mm knowledge base which has about 38k proofs” and their time limit is not mentioned, while this paper reports 22.06% (section 5.1, p. 9).
-
-## what is proved, trusted, and assumed
-
-Inference: the neural networks only choose proof trees and substitutions, so a Metamath proof checker (not discussed in the paper) could validate each result; the generator's “guarantee” depends on source proofs being correct and on substitution/grafting code preserving entailment. The authors identify a broader risk: “bugs in the prover can lead to catastrophic failure” (Broader Impact, p. 10). Inference: for VL, the trusted boundary includes Verus, its solver and specifications, proof erasure/compiler, and any external contracts. Synthetic data does not expand that boundary; it expands search training after each candidate is checked.
-
-## implications for VL
-
-Inference: the strongest transferable idea is verified synthetic-data bootstrapping. Generate many small lemmas from existing verified proof trees, graft them into deeper proofs, and use the resulting traces to train premise and tactic selection. The paper demonstrates this pattern in Metamath, including imitation versus adversarial reward, tree reuse by grafting, trivial-step filtering, and separate relevance/substitution networks; it does not evaluate Verus or any Rust verifier, and VL should not treat these ideas as unexplored. The threat to agent-written verified Rust is indirect but real: synthetic examples can bias search toward shallow or vacuous contracts, so corpus admission must require the intended contract and a successful Verus check.
 
 ## techniques for the catalog
 
@@ -57,5 +45,3 @@ Inference: the strongest transferable idea is verified synthetic-data bootstrapp
 - imitation or adversarial generator training: learn tree selection and substitutions from human proofs or a continuous similarity reward
 - synthetic prover augmentation: train backward proof search on verified synthetic traces alongside human traces
 - trivial-step filtering: remove proof steps that invoke a hypothesis-free theorem without creating subgoals when training relevance selection
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our GPU re-implementation of Holophrasm finds 557 proofs trained on 100% of human proofs, more than the number reported in Whalen (2016)."): I read the whole paper text, including the appendix, and checked every quotation word for word, the dataset sizes, Tables 1-3 numbers cited, section and page references, and the generator and prover procedure steps. I changed the abstract quote capitalization, the Related Work page (p. 3, not p. 2), the description of the trivial-step filter, which networks use synthetic data, the claim that meaningless theorems are prevented (Appendix D says grafting can still produce them), the link (now arXiv, from the paper header), and marked unsupported conclusions as Inference. I did not check the Verus-related inferences against any source, the cited prior work, the GitHub code, or whether the reported results vary across runs (the paper reports one count per setting).

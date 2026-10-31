@@ -5,8 +5,6 @@ Tag: `lee2026metaharness`, [paper](https://arxiv.org/abs/2603.28052)
 ## what the paper contributes
 Meta-Harness searches over executable harness programs that wrap a frozen language model. A harness controls prompts, retrieval, memory, and tool orchestration. The outer proposer reads a filesystem of earlier harness code, scores, and raw execution traces, then proposes and evaluates new code. The abstract says: “We introduce Meta-Harness, an outer-loop system that searches over harness code for LLM applications.” (abstract, p.1)
 
-Inference: For VL, the harness is the agent loop that edits Rust and invokes Verus. The proposed transfer is to search that loop using proof outcomes and full traces. Meta-Harness does not prove Rust properties; Verus must remain the final checker.
-
 ## technique 1: optimize executable harness code with a persistent filesystem
 
 What it is. The paper defines a stateful harness H around model M and task distribution X, with reward r over rollout τ. Its objective is `H* = arg max E r(τ,x)` (Section 3, p.4). The authors write: “A harness is a stateful program that wraps a language model and determines what context the model sees at each step.” (Section 3, p.4)
@@ -57,12 +55,6 @@ Verus form. Inference: log harness diffs and proof outcomes so a regression can 
 
 Evidence. On TerminalBench-2’s 89-task benchmark, Meta-Harness reaches 76.4% with Claude Opus 4.6 versus Terminus-KIRA 74.7%, and 37.6% with Claude Haiku 4.5 versus Goose 35.5% (Table 7, p.9). On Opus 4.6 the paper ranks it #2, behind ForgeCode at 81.8%, whose result the authors could not reproduce from public code (Section 4.3, p.9); #1 is claimed only for Haiku 4.5. Appendix B.3 (p.21) says the discovered harness gains over Terminus-KIRA on 7 of 89 tasks, and its main change is an environment-snapshot bootstrap. This search and final evaluation use the same benchmark, so the paper explicitly checks overfitting by manual inspection and regex audits for task-specific leakage (Section 4.3, p.9). The same-setting evaluation is a limitation for generalization.
 
-## what is trusted and what VL should learn
-
-The framework trusts the candidate evaluator, benchmark tasks, model APIs, filesystem records, and proposer’s code edits. Its reported improvements are empirical; no theorem says the best harness is globally optimal. The paper notes that all three domains use one strong coding-agent proposer and that broader proposer studies remain future work (Section 5, p.10). TerminalBench-2’s same-benchmark search and evaluation increases overfitting risk despite audits.
-
-Inference: existing VL should not duplicate generic prompt optimization. It should adapt the raw-trace filesystem, interface validation, Pareto selection, and regression isolation to Verus harness code. The threat to agent-written verified Rust is primarily operational: a harness may optimize benchmark pass rates by weakening specifications, suppressing failures, or selecting easier obligations. Require immutable specifications, independent held-out tasks, and a final Verus run outside the proposer’s control.
-
 ## techniques for the catalog
 
 - executable harness search: evolve valid harness programs around a frozen model using a persistent code-and-trace filesystem
@@ -70,4 +62,3 @@ Inference: existing VL should not duplicate generic prompt optimization. It shou
 - Pareto selection: retain non-dominated candidates over quality and context or verification cost
 - retrieval-policy search: evolve when and what evidence the harness retrieves
 - regression isolation: compare shared edits across failed candidates, isolate confounds, then compose additive fixes
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "A search run completes in a few hours of wall-clock time, yet produces readable, transferable strategies that can be reused across models, including future, stronger ones."): read the whole paper text (main text and Appendices A to E) and checked every quotation, number, table and section/page reference and the Algorithm 1 steps; tag and arXiv link match the paper's arXiv stamp (2603.28052); changed the Figure 3 page (p.6, not p.7), the Table 6 caption attribution, the Appendix A.1 scope (TerminalBench-2 run only), the ablation interpretation quote and split caveat, the math model-seen caveat, the ForgeCode and 7-of-89 context, and the iteration 8 wording; added run sizes and validation details from Sections 4 and D. Not checked: the Pareto and Verus steps are the study's own inference and were not tested; external links and the released code; the figures beyond their numbers.

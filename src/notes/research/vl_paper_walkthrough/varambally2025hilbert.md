@@ -72,11 +72,7 @@ Inference: The verifier checks Lean proofs under the supplied Mathlib environmen
 
 Inference: The results do not establish that recursive decomposition works for systems specifications, unsafe Rust, concurrency, or Verus. The architecture suggests how an agent might generate verified Rust: spend large adaptive budgets generating and repairing small proof obligations while a sound checker filters the output. The main product risks are incorrect specifications, missing preconditions, solver or library assumptions, and compute cost; Hilbert's reasoner can declare a subgoal correct, but that declaration is not trusted once Lean rejects the proof.
 
-Section 3.2 (page 4) states the input and first action: “Given a formal statement in Lean 4, we first attempt direct proof using the Prover.” Inference: VL should reuse the staged architecture and verifier feedback, while independently specifying Rust behavior, ownership, concurrency, external-library contracts, and the environmental assumptions that Verus leaves outside a proof.
-
-## what VL should not redo
-
-Inference: VL should not repeat the paper's already demonstrated math-agent pattern: theorem retrieval, `have`/`sorry` decomposition, prover fallback, shallow repair, recursive splitting, and checker acceptance are established for Lean benchmarks. New VL work should measure whether analogous stages reduce proof effort or defect rates on real Rust APIs and Verus specifications, including dependency upgrades and concurrency.
+Section 3.2 (page 4) states the input and first action: “Given a formal statement in Lean 4, we first attempt direct proof using the Prover.”
 
 ## techniques for the catalog
 
@@ -84,4 +80,3 @@ Inference: VL should not repeat the paper's already demonstrated math-agent patt
 - checked proof sketches: express intermediate claims as independently syntax-checked subgoals, then assemble calls to their proofs
 - staged recursive solving: try a specialized prover, validate the subgoal, shallow-solve with retrieved facts, and recursively split failures to a depth bound
 - verifier-directed repair: feed compiler errors back to the reasoner, augment missing theorem identifiers, and accept only a checker-verified candidate
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Algorithm 1 provides the main entry point and high-level control flow, while Algorithm 2 details the subgoal resolution strategies."): read the entire paper text and study; checked quotations, numbers, section/page references, and technique steps; corrected quotation boundaries, the proof-length page reference, and the unsupported correction-attempt count; clarified subgoal correctness judgments and added the PutnamBench retry/compute qualification; did not reproduce experiments, execute Lean/Verus proofs, or inspect the implementation. The mid-paper quote is from Appendix A.1, page 14.

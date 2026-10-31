@@ -71,11 +71,8 @@ Inference: adapt the repeated-run measurements to Verus, recording success in at
 
 The framework submits C programs, generated ACSL specifications, and target properties to a verification tool (section 2.2, p. 5). Its success metric counts programs for which the tool returns success (section 3.4, p. 7). Inference: this does not establish semantic equivalence to an external requirement. Axioms are assumed true (section 2.1, p. 4), and the dataset contains 49 programs. The authors explicitly identify “Dataset Size Limitations” and say the study uses only 49 programs (section 5, p. 16). They argue that contract design, lemmas, and axiomatization are common deductive-verification paradigms, but cross-language transfer remains their argument rather than a Verus experiment.
 
-Inference: threat to agent-written verified Rust is high where an LLM can choose axioms or overly abstract helper predicates. The useful result for VL is to constrain generation to verifiable lemmas and to measure repeated proof stability and verifier cost. VL should not redo this paper's basic guess–verify–repair loop without adding a Rust/Verus-specific benchmark and checking assumptions against executable behavior.
-
 ## techniques for the catalog
 
 - guess–verify–refine: propose specifications, verify them, then delete or repair failed candidates using verifier feedback
 - construct-bounded prompting: compare basic, verifiable-lemma, axiom, and full construct sets under explicit prompt constraints
 - stability-aware evaluation: count repeated-run verified programs and verifier calls in addition to one-pass success
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "These observations indicate that the progressive modification of specifications effectively suppresses the randomness introduced by logical constructs, thereby making verification outcomes more reproducible across repeated experiments."): checked the whole paper, quotations, numbers, section and page references, construct sets, and refinement steps; corrected the five-model denominator, page references, placeholder paper link, mandatory-construct rules, and unsupported verifier and Verus claims; marked recommendations as Inference; did not inspect code or data, reproduce experiments, or validate the proposed Verus adaptations.

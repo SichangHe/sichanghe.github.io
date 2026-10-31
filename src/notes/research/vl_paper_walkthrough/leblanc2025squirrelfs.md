@@ -68,8 +68,6 @@ The evaluation uses a two-socket 32-core machine, 128 GB RAM, and a 128 GB Intel
 
 The paper warns that incorrect ordering rules, buggy trusted implementation code, or compiler bugs can still cause crash-consistency bugs (Sec. 1, p. 2). The implementation assumes x86 persistence semantics and relies on VFS locking (Sec. 3.4, pp. 7–8). Alloy and testing provide additional evidence rather than a proof of the implementation. The paper explicitly contrasts the approach with full verification: “In contrast, our typestate-based approach can only check ordering-based invariants.” (Sec. 3.5, p. 8). It cannot express universally quantified properties over unknown-size sets, such as all pages having a state; the authors resorted to range typestate, which centralizes more logic in transitions (Sec. 4.3, p. 10).
 
-Inference: VL could combine typestate APIs for operation ordering with Verus contracts for transition bodies and metadata invariants, using bounded models to find specification errors. The reported four Chipmunk bugs illustrate the limits of ordering checks: they occurred in transition code and volatile-structure rebuilding (Sec. 5.7, p. 14).
-
 ## techniques for the catalog
 
 - synchronous soft updates — make persistent updates durable in order and use a rename pointer to obtain crash-atomic rename
@@ -77,5 +75,3 @@ Inference: VL could combine typestate APIs for operation ordering with Verus con
 - ownership-enforced partial orders — use Rust ownership and typed function signatures to prevent out-of-order updates at compile time
 - Alloy plus compiler checking — model bounded crash traces, compile typestate code, and use frame-condition checks to find design errors
 - layered testing — combine xfstests and crash fuzzing for volatile and transition-body bugs outside typestate coverage
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each typestate operation on such a range performs the operation on all pages in the range."): checked all paper text, study quotations, numbers, section and PDF-page references, technique steps, and stated limits; corrected the checked version’s year and link, references, mount measurements, model-checking description, and testing scope; did not check source code, reproduce experiments, or validate the proposed Verus adaptations.

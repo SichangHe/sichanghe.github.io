@@ -6,8 +6,6 @@ Tag: `dwivedula2027vulcan`, [paper](https://doi.org/10.1145/3842654.3848582)
 
 Vulcan synthesizes resource-management heuristics by exposing only decision logic to an LLM and keeping state and integration in trusted runtime code. The authors identify three requirements: performance, execution safety, and system integration (Section 2.2, PDF p. 3). A second boundary is Anvil, a restricted language in which “every well-formed program satisfies the execution-safety properties in Table 3 by construction” (Section 5, PDF p. 7). The overview also states that “memory safety, leak freedom, and termination are guaranteed by construction without the need for human review” (Section 3.1, PDF p. 5).
 
-Inference: VL can apply the same boundary to agent-written Rust: let an agent synthesize a pure policy over a fixed feature API, while developer-owned, verified code handles memory, state, and integration. The implementation uses C++ and Python bindings for libVulcan and lowers Anvil to C (Sections 4.5 and 5, PDF pp. 6–8): “Python-based systems use the same APIs via pybind11 [41] bindings.”
-
 ## technique 1: isolate stateless Rank and Value decisions
 
 Use case. Apply when a systems policy can be expressed either as one scalar control output or as an ordering of candidates. The paper defines Value as `Value(X) → Y`, with `Y` a scalar, and Rank as `Rank(X,O) → R`, where candidates are ordered and the mechanism enacts the choice (Section 4.2, PDF pp. 5–6). Examples include congestion-window or frequency control (Value), and cache eviction, CPU scheduling, or page promotion (Rank).
@@ -44,12 +42,8 @@ Evidence. Vulcan evaluates three domains: spot VM scheduling, cache eviction, an
 
 The paper identifies broader semantic verification as future work: “An important next step is to explore how far this boundary can be expanded, for example by using stronger end-to-end semantic verification to safely expose a larger synthesis surface” (Section 10, PDF p. 14).
 
-Inference: an implementation would also rely on its compiler and toolchain for execution correctness, and on raw signals, evaluators, and workload models for meaningful performance results. A VL study could verify listener contracts, measure proof and repair effort for generated policies, and test feature-model assumptions against deployments. Safety proofs alone do not establish policy quality or generalization.
-
 ## techniques for the catalog
 
 - Rank/Value synthesis boundary — expose stateless scalar or candidate-scoring functions while trusted code owns triggers, mutation, and integration
 - listener feature stores — attach reusable aggregates to raw signals, review and verify their implementations once, and query them from generated decisions
 - Anvil-style safety restriction — reject pointers, arrays, containers, heap allocation, recursion, and unbounded loops, then require linked externs to satisfy P1–P3
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Across the 32 instances, Vulcan-generated heuristics outperform all baselines in two instances and rank among the top three heuristics for 13 instances."): read all 21 PDF pages in the supplied text, including references and appendices; checked quotations, numbers, section and PDF page references, and technique steps; corrected page references, the publication year and paper link, the four-action scheduler description, developer responsibilities, the conditional safety claim, and inference labels; removed unsupported prior-work claims and revised proposed Verus adaptations; did not reproduce experiments, inspect artifact code, or verify Verus implementations.

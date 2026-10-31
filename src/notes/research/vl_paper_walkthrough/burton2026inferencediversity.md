@@ -8,8 +8,6 @@ The paper studies whether independent sampling explores enough proof strategies 
 
 The benchmark has 244 theorems, Lean 4 v4.9.0-rc1, Mathlib commit 7fa489a5, temperature 0.6, top-p 0.95, 120-second verification timeout, and 8-way sharding (Section 3.2, p. 3). The primary model is V1.5-RL with a paired V1.5-Base checkpoint; cross-model controls are RL-trained V2-7B and SFT-trained Goedel-Prover.
 
-Inference: VL proof generation should measure strategy diversity, not assume that more random samples give more independent Rust/Verus proofs. A fixed prefix schedule can be a cheap diagnostic and search aid.
-
 ## technique: fixed tactic-skeleton schedule
 
 What it is. A structured query is theorem statement plus a tactic skeleton. The schedule is a deterministic 15×8=120 grid: 15 hand-selected Lean tactic skeletons crossed with 8 goal-hint comments, with no repeated pair for k≤120 (Section 3.1, p. 2). The first k entries are sampled; randomness comes only from temperature sampling.
@@ -52,7 +50,7 @@ V1.5-Base proves 0/244 at every budget with or without skeletons, while V1.5-RL 
 
 To measure opening diversity, the paper extracts the leading identifier on the first line of each proof body and counts distinct identifiers per theorem across its k=64 i.i.d. outputs (Section 4.7, p. 7). Analysis of 13,159 V1.5-RL samples finds `have` 37.2%, `rw` 14.1%, and `norm_num` 14.0%, together 65.3% (Section 4.7, p. 7). Table 9 reports one distinct opening for 49.2% of theorems at k=64 and median Shannon entropy 0.27 bits (p. 8). The paper argues: “If i.i.d. sampling has diminishing returns far earlier than assumed, then simply increasing k is wasteful.” (Section 5, pp. 7–8)
 
-The paper's experiment uses single-pass attempts with “no compiler feedback, proof-state reflection, or interactive repair” (Section 5, p. 9). Its RL-specific interpretation is strongest for the paired V1.5 checkpoints; only one SFT control and no paired bases exist for other models. The paper cautions that the cross-model evidence is “compatible with both accounts rather than as decisive for the RL-specific reading,” referring to saturation and RL-specificity (Section 5, pp. 8–9). The k=32-to-64 plateau is single-seed; three-seed replication covers k=16 on V1.5-RL and Goedel (Section 5, p. 9). Inference: for VL, skeleton diversity is complementary to verifier-feedback repair, but this paper does not measure interactive agents, Verus, or semantic contract drift. Inference: for VL, this creates a moderate engineering threat through wasted verifier calls and repeated failures, while strict Verus checking still rejects invalid candidates.
+The paper's experiment uses single-pass attempts with “no compiler feedback, proof-state reflection, or interactive repair” (Section 5, p. 9). Its RL-specific interpretation is strongest for the paired V1.5 checkpoints; only one SFT control and no paired bases exist for other models. The paper cautions that the cross-model evidence is “compatible with both accounts rather than as decisive for the RL-specific reading,” referring to saturation and RL-specificity (Section 5, pp. 8–9). The k=32-to-64 plateau is single-seed; three-seed replication covers k=16 on V1.5-RL and Goedel (Section 5, p. 9).
 
 ## techniques for the catalog
 
@@ -60,4 +58,3 @@ The paper's experiment uses single-pass attempts with “no compiler feedback, p
 - structural ablation — compare tactic stems, natural-language hints, paraphrases, and irrelevant comments to isolate useful diversity
 - leave-one-out difficulty — stratify diversity gains by other-model solvability on the exact formalization
 - first-action entropy — measure distinct opening proof actions to detect inference-time mode collapse directly
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Paraphrase (C1) shows only a small redistribution between easy and trivial; comment (C2) shows uniform degradation across easy and trivial."): checked all quotations, numbers, section/page references, and technique steps against the full paper including appendices; corrected citations, attempt-budget wording, post-processing, ablation descriptions, and frontier scope, removed an unsupported Verus syntax example, and clarified the differing NEW-solve comparisons and limitations; did not reproduce experiments, inspect code or logs, or test the proposed Verus adaptations.

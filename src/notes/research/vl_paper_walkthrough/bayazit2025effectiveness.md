@@ -33,10 +33,6 @@ Inference: use this when evaluating whether proof generation scales beyond toy g
 
 Inference: Verus form: maintain benchmarks partitioned by proof-obligation size and compare generated proof text plus semantic acceptance. A short proof is valuable only if it verifies against the unchanged specification; do not reward deleting or weakening obligations.
 
-## what is proved and threat to VL
-
-Success means SerAPI’s `sertop` accepts the generated proof in the original context (section 4, PDF pages 5–6). Inference: this supports the stated Rocq theorem, not independent correctness of the Haskell translation or the adequacy of a distributed-system specification. The experiment uses single-pass generation without feedback, indexes only files in the same project, and does not verify assumed model knowledge of external libraries. Its two-project scope limits generalization. Exact Rocq versions are 8.10.2 for hs-to-coq and 8.11.0 for Verdi (section 4, PDF page 5; limitations, PDF pages 9–10). Inference: for VeruLaw, the direct lesson is to provide dependency-aware context and benchmark proof generation by obligation size, while preserving exact contracts and checking with the current Verus toolchain. Inference: insufficient local specification and mistaking short proofs for broader correctness are risks to examine in agent-written verified Rust; the paper does not measure or rank these risks.
-
 ## techniques for the catalog
 
 Inference: the following catalog entries adapt the paper’s techniques to proof-generation workflows.
@@ -46,4 +42,3 @@ Inference: the following catalog entries adapt the paper’s techniques to proof
 - structural proof patterns: use induction, simplification, rewriting, constructors, and existing contrapositives
 - reflection-based reasoning: case-analyze inductive propositions that connect executable predicates to equality
 - proof-size stratification: report success by tactic-count interval and compare exact script identity as evidence of possible memorization
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "A low temperature (0.1) is a possible factor, but we did not run further experiments to test this hypothesis."): checked all study quotations, numbers, section and PDF page references, and technique descriptions; corrected methodology and table pages, context-ablation details, proof descriptions, memorization caveats, and inference labels, and replaced the link with the paper’s DOI; did not rerun experiments, inspect the artifact, or verify the proposed Verus adaptations.

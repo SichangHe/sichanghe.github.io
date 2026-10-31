@@ -44,7 +44,7 @@ The prover prompt serializes a Lean state as JSON and requires a Lean tactic str
 
 The principal evidence is Table 1's Pass@1 results across three prover/score-generator groups, Table 2's FGPS ablation, Table 3's curriculum ablation, and Table 4's four iterations (pp. 9–11, 15). Table 2 compares Mathstral without and with FGPS: MiniF2F-valid 35.2% versus 36.0%, test 35.6% versus 36.0%, and ProofNet 11.6% in both conditions (Table 2, p. 10). The paper itself claims: “The use of the score generator for fine-grained scoring significantly improved the model’s proof success rate, thereby demonstrating the effectiveness of the proposed fine-grained preference scoring process.” (Section 5.3, p. 10.) Inference: the table supports gains on the two MiniF2F columns, with no ProofNet gain; it does not establish statistical significance.
 
-The paper reports Lean 4 evaluation with a 300-second limit per theorem and best-first search: “In the evaluation phase, we limit the search time for each theorem to 300 seconds and employ standard best-first search algorithm to find proofs” (Section 5.1, p. 9; citation markers omitted). Inference: these reported success rates depend on the theorem statements, Lean checks, dataset translation, and experimental implementation. For VL, CuDIP suggests a training loop for generating proof actions; it supplies no Verus experiment or new verifier soundness argument. Learned scores could direct search poorly, and a verified result would still establish only the specified obligation.
+The paper reports Lean 4 evaluation with a 300-second limit per theorem and best-first search: “In the evaluation phase, we limit the search time for each theorem to 300 seconds and employ standard best-first search algorithm to find proofs” (Section 5.1, p. 9; citation markers omitted).
 
 ## techniques for the catalog
 
@@ -54,5 +54,3 @@ The paper reports Lean 4 evaluation with a 300-second limit per theorem and best
 - thresholded pairing — create DPO winner/loser pairs only when search-derived or model-predicted scores differ by more than 0.5
 - iterative DPO — apply preference optimization per curriculum band, using the prior prover as reference
 - structured tactic prompting — serialize the proof state as JSON and request a tactic string without `sorry`
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In order to validate the effect of different iteration counts using the CuDIP method, we performed four rounds of DPO iteration on three sets of models."): checked the complete paper, quotations, numbers, section and printed-page references, technique steps, tag, and paper link; corrected page references, the pairing threshold, a truncated quotation, initial SFT ordering, and unsupported interpretations; marked adaptations and conclusions as Inference; did not reproduce experiments, inspect implementation code, or independently validate Lean proofs or Verus proposals.

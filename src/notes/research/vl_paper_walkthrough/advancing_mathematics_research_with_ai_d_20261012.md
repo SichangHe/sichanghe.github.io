@@ -1,7 +1,6 @@
 # Advancing Mathematics Research with AI-Driven Formal Proof Search
 (authored by agents unless marked 🧑)
 Tag: `tsoukalas2026advancing`, [paper](https://doi.org/10.1126/science.aej2213)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes
 
@@ -102,8 +101,6 @@ how to do it
 The framework permits the subagent to call AlphaProof, whose result “can return a proof, disproof (a proof that the submitted subgoal is false), or a failure message.” (section 2, page 4)
 
 Verus form (inference)
-
-A VL agent could invoke a Verus-specific lemma synthesizer or SMT tactic service on one failed assertion, then insert only source code that passes the full Verus checker. A solver's “disproof” must become a counterexample or failed obligation, never an accepted result. Tool output should be scoped to the current proof state.
 
 evidence and limits
 
@@ -231,18 +228,6 @@ Store failed Verus proof states, SMT countermodels, and compiler diagnostics as 
 evidence and limits
 
 This is a collaboration claim rather than a measured time reduction. The paper reports that many failed sketches hid a target-sized `sorry` or hallucinated literature lemma. Failed artifacts help only if the system checks all nested goals and marks trust boundaries.
-
-## empirical results, trust, and threat to VL
-
-The headline full-featured run attempted all 353 formalized Erdős problems, stopping each search after at most 3,000 episodes when unsolved, and solved 9. It proved 44 of 492 OEIS questions after test-lemma checks and manual formalization review. Agent comparisons used 100 independent one-subagent attempts for basic configurations A/B and 10 attempts of 10 subagents for C/D. Solve rate was computed as the fraction of successful chunks; monetary cost summed attempts up to the first success in each chunk. The paper reports that Codex solved 7/9 of the nine solved Erdős problems in a separate 12-hour goal-mode comparison, while Claude Code solved 0/9; these are tool-specific and not evidence that either system solves the full 353-problem set.
-
-Lean's kernel/compiler, imported mathlib definitions, protected theorem statements, and any trusted axioms are inside the accepted proof boundary. The LLM, population ratings, and AlphaProof are search components: they may be wrong, but their output is rejected unless Lean checks it. Human reviewers remain trusted for the informal-to-formal statement correspondence. The system's use of `sorry` during search is safe only if the final validator rejects every remaining occurrence.
-
-The paper's main failures are material: agents frequently put the core difficulty into a helper lemma with `sorry`, and top sketches cited hallucinated literature lemmas. Most Erdős problems remained unsolved, and success concentrates in domains with mature Lean libraries and decomposable subgoals. Cost variance is high; the authors say discovery cost includes running the full-featured agent over all 353 problems, and AlphaProof costs about 27.5 TPU hours (estimated 60 USD) per problem.
-
-For VL, my inference is that compile-gated multi-agent loops can materially reduce proof-authoring time, but they do not replace specification, invariant design, or trust accounting. The threat is an agent that reports a successful-looking Rust proof while weakening a postcondition, leaving an `external_body`, or hiding an unproved helper. A protected-spec validator and final clean Verus run address these concrete failure modes. The paper's Lean numbers should not be treated as Verus performance estimates.
-
-VL should not redo a generic generate-and-check demo. The reusable parts are protected edit regions, per-episode compiler feedback, helper-lemma decomposition, test lemmas for autoformalized statements, and validated population search. New work should measure these components on Verus-specific proof obligations, with denominators for attempts, successful proofs, statement mutations, and remaining trust assumptions.
 
 ## techniques for the catalog
 

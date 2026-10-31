@@ -1,6 +1,5 @@
 # Dissect-and-Restore: AI-based Code Verification with Transient Refactoring
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes
 
@@ -93,14 +92,6 @@ Evidence and limits. DFS can miss a successful branch because ordering is heuris
 What it is. Users may provide a lightweight textual sketch of intended reasoning. Prometheus includes it in the root and node prompts to guide decomposition, while Dafny remains the checker. This is useful where the model cannot infer the required induction structure.
 
 Verus form (inference). Accept a proof outline describing invariant meaning, induction cases, and helper lemmas; treat it as untrusted guidance. Convert it into candidate annotations, then require Verus proof. Do not treat prose as a specification or evidence.
-
-## measured results, trust, and product threat
-
-The abstract reports 86% success versus 68% baseline on the curated dataset, with specification-complexity success rising from 30% to 69% and proof-outline cases from 25% to 87% (p. 1). Table 1 (p. 8) reports 19/22 (86%) Prometheus success on TitanBench (baseline 15/22, 68%), 10/10 on the column headed with nested loop (10 tasks; baseline 6/10) and 9/12 (75%) on the column headed without nested loop (baseline 9/12); the paper's text says 12 of the 22 tasks have nested loops, which disagrees with those column sizes. On MBPP-DFY-153 Prometheus solves 90/90 (100%) and the baseline 89/90 (98%). Table 2 (p. 9) reports restoration rates such as 7/8 verification and 7/7 restoration for Full-Sharing. The 90 programs are the MBPP-DFY-153 selection, not the larger-program experiment. That experiment (Sec. 4.4, Table 4, p. 10) has eight LeetCode-derived tasks with five runs each: Prometheus verifies 7 of the 8 at least once (the task with 487 verification lines fails), and the baseline verifies only the two simplest. Denominators vary by benchmark subset, so headline rates must not be combined.
-
-Proved: only the verifier-checked Dafny output. Measured: search success under chosen prompts, timeouts, temperatures, and curated tasks. Trusted: Dafny semantics, refactoring/restoration correctness, parser and tree bookkeeping, and the model's assumption that generated contracts are adequate. The system does not independently prove semantic equivalence between original and transiently refactored code.
-
-VL should reuse transient helper extraction, proof trees, verifier feedback, and rollback. It should not let an LLM silently weaken contracts or preserve a helper proof without checking the original Rust. Threat to an agent-written verified-Rust product (inference): high for specification drift and medium for proof soundness if Verus checks restored code. A weak helper contract, incorrect restoration, or branch bookkeeping bug can produce a verified artifact that no longer implements the intended behavior. Require equivalence checks, complete source snapshots, and explicit rejection of `assume`-based repairs.
 
 ## techniques for the catalog
 

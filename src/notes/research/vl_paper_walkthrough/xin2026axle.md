@@ -50,12 +50,6 @@ Verus form. Inference: Extract Rust items together with crate/module dependencie
 
 Verus form. Inference: Turn an unsolved Verus assertion or loop obligation into a separate `proof fn` with generalized parameters and preconditions, solve it independently, then call it from the original proof. Inference: Apply only semantics-preserving simplifications and roll back any edit that makes `cargo verus` fail. Inference: Automated repair must never add `external_body` or weaken `ensures`; those would defeat strict verification.
 
-## what is proved, trusted, and threat to VL
-
-AXLE proves or measures service-level properties: Lean kernel acceptance, tool outputs, latency, throughput, and paired verdict agreement. Trusted components include the Lean kernel, loaded environment, metaprogram implementations, sandbox boundary, and benchmark sampling. The paper explicitly says AXLE “does not re-verify the environment from scratch” (Section 4.1, p. 3), and its limitations exclude arbitrary multi-file projects and interactive proof-state sessions (Section 7.1, p. 7). The 1,000-request strict comparison uses production traffic; the 5,000-proof throughput study drops candidates with non-Mathlib dependencies and normalizes imports to `Mathlib` (Appendix A.1, p. 9).
-
-Inference: The product threat to VeruLaw is high at the workflow layer: an agent that writes verified Rust needs strict, isolated, version-pinned checking and deterministic decomposition/repair to avoid rewarding merely compiling or weakened code. AXLE already covers this infrastructure pattern for Lean; VL should not redo generic queueing, sandboxing, and proof-fragment management without a Rust-specific need. Inference: The semantic checker and trusted environment remain the core product-specific work.
-
 ## techniques for the catalog
 
 - strict proof gate: compare a candidate with a separately pinned statement and reject sorry, unapproved axioms, unsafe code, and signature mismatches
@@ -63,4 +57,3 @@ Inference: The product threat to VeruLaw is high at the workflow layer: an agent
 - declaration extraction and merge: emit dependency-closed declarations and recombine fragments by equivalence, topological order, and conflict renaming
 - sublemma extraction: generalize an unresolved proof state into a standalone lemma that an agent can solve and call back
 - deterministic proof repair: iterate semantics-preserving simplification and localized repair with rollback on compilation errors
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

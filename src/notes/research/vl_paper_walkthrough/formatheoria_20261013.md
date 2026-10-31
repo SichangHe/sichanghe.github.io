@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `nie2026formatheoria`, [paper](https://arxiv.org/abs/2608.10894)
 
-Audit: audited 2026-10-13 against the paper; checked every number, percentage, table, page and quotation, and the steps of algorithms 1 to 3; changed the Appendix B page range, the claim that all four root statements are independent, the 4.2x explanation, the whole-project reconciliation share, two unmarked inferences and a claim of little human input; Verus forms are unchecked against Verus sources.
-
 source: Nie, Zhang, Tang, Testa, Yau, Li, Zhou (Tsinghua, Warwick), arXiv:2608.10894v1, 11 Aug 2026; 57 pages; appendix A (the four theorems) and appendix B (prompts) included. Pages are the printed ones.
 
 The paper is about Lean 4 and group theory. It has no Verus. Every Verus form below is an inference, as is the reading of a source theorem as a requirement and a Lean statement as a specification.
@@ -301,21 +299,6 @@ evidence: the four statements in Appendix A. For Brauer–Suzuki the authors not
 - token rate in §6.1: 3,038,587,634 tokens over 12.3 h is 247.0 million per hour; the text says 247.4 million (rounding of the hours would explain it).
 - everything else checked holds: Table 6 row sums (284; 10,417), 219/284 = 77.1%, 242/5,246 = 4.6%, 13/1,626 = 0.8%, Table 7 shares, Table 8 total 16 and 30 rounds, Table 9 totals and the 52,971 and 1,386 remainders, Table 3 page and line sums, 357 + 680 = 1,037, graph ratios, Table 10 and 12 percentages.
 - not reported at all: how many times a human was called, how many reconciler calls were made, the model used for the main construction, and the cost in money.
-
-## what VL should not redo
-
-Inference:
-
-- inventing a completion rule: Algorithm 2 with a per-role reviewer is the same idea as the verification gate in SemaPLC, arrived at independently, and is specified well enough to copy
-- showing that parallel agents trade tokens for time, or that a reviewer giving reasons beats one giving a verdict; both are measured here, if thinly
-- a taxonomy of why a formal statement fails to match its source: DEF/MAL/INT covers the cases and comes with worked examples
-- hoping statement review alone catches vacuous specifications: the (12.6) case passed review and was caught by a downstream use
-
-What VL would have to build that this paper does not supply: a Verus counterpart of kernel-level statement hashing and of `comparator`.
-
-## what a million agent-written Lean lines mean for VL
-
-Inference: the paper is not a competitor; it formalizes mathematics in Lean. It is the strongest evidence in this batch that the approach VL sells works at scale: agents, a mechanical checker, frozen specifications and a reviewer produced about a million checked lines in about seven months; the paper does not report how much human intervention this took. Two things it shows cut against a naive product. First, the output is 15 times the size of the human proof and partly unused, so verified is not the same as maintainable. Second, the only parts with assurance beyond an LLM's opinion are the four root statements; a product whose specifications are written by the same agents that prove them has the intermediate-declaration level of assurance, not the root level. The same recipe is available to anyone with the token budget, which the paper puts at 64B tokens.
 
 ## techniques for the catalog
 

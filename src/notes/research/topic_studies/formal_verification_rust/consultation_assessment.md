@@ -33,8 +33,5 @@ advice not treated as established fact
 - no experiments were implemented or run
 
 provenance
-- confirmed final response: /tmp/cx-four-study-consultation-answer.md on the agent host
-- earlier captured response: /tmp/cx-four-study-consultation-answer.partial.md on the agent host
-- tooling-owner recovery record: /tmp/chatgpt_consult_recovery_1008.md on the agent host
 - saved conversation handle: `pbtab_FV1ANoHtOPbFHNOLNXWDBIrU`
 - these local paths record provenance; they are not public links

@@ -55,12 +55,6 @@ The RustSFQ description is two files totaling 24,885 bytes; generated SPICE is 2
 
 Inference: Verus could prove the finite-field algorithm against a mathematical RS specification and prove structural graph invariants, while Icarus/JoSIM remain external simulation evidence. The paper's simulations establish these four test messages and this circuit configuration, not universal RS correctness or hardware reliability.
 
-## trusted boundary and VL implications
-
-RustSFQ has already addressed ownership-based single-consumer checking, loop and counter-flow APIs, parametric typed circuits, net naming, and SPICE/Verilog generation. VL should not redo these DSL mechanisms. A Verus follow-up should target properties Rust ownership does not capture: timing constraints, pulse conservation across generated netlists, semantic equivalence between the Rust graph and SPICE/Verilog output, and the RS encoder's mathematical correctness.
-
-Inference: The threat to agent-written verified Rust is moderate for graph-structure errors because the compiler rejects the multiple-receiver defect of Listing 5 and warns on the no-receiver defect of Listing 6 (Section II-C, p. 3). It remains substantial for generator bugs, gate-library semantics, netlist interpretation, clock timing, and analog behavior; none is formally verified in this paper. Inference: A VL integration can treat RustSFQ's ownership-typed DSL as a front-end and require Verus proofs for graph and encoder contracts before trusting generated netlists.
-
 ## techniques for the catalog
 
 - ownership-typed wires — consume each wire exactly once through gate methods and outputs to enforce SFQ input-output consistency
@@ -68,4 +62,3 @@ Inference: The threat to agent-written verified Rust is moderate for graph-struc
 - parametric typed circuits — use generic port counts and reusable subcircuits with ownership-preserving loops
 - automatic net naming — assign explicit names selectively and generate conflict-free names for the rest
 - simulation-backed case study — validate a Reed–Solomon encoder with digital and analog simulators on four messages
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Addition in GF(2a ) is performed as an XOR operation on the binary representations, whereas multiplication is performed as the product of the power representations."): read all 6 pages; checked every quotation, number, listing, section and page reference, and the technique steps; changed several page and section references (II-B is p. 2, II-D and Listing 7 are p. 3, simulation is Section IV and tables are p. 6), the Listing 6 claim (a warning, not a rejection), the delay-circuit naming step, and added the counter-flow clock detail and the 48-cycle caveat; marked the productivity remark as Inference; did not check the Verus inferences beyond consistency with the paper, the cited references, or the figures (images).

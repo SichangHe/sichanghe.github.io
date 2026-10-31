@@ -64,11 +64,8 @@ Concrete failures establish why this matters. In Appendix A.5, an `o1` baseline 
 
 The paper measures generated Lean compilation, BEq+ equivalence, GTED similarity, error categories, and bootstrap intervals. The implementation reports byte-identical outputs for 50 repeated paired API requests per GPT model and uses temperature 0 for open-weight models. The study therefore supports a causal association between controlled surface edits and typed generation failures in these models and datasets. It does not prove that every paraphrase is semantically equivalent, that larger models behave identically, or that a repair intervention will improve performance.
 
-Inference: for VL, the direct threat is substantial whenever user wording or agent-generated specification prose changes. A proof checker catches a wrong or unproved Verus result, but an agent can still emit code that fails to compile, invoke a nonexistent API, or prove a weaker contract. The paper’s failure taxonomy suggests that VL should log verifier diagnostics and test behavior-preserving rephrasings before treating a generated proof as robust. The product should not redo this paper’s basic paraphrase benchmark; it should adapt the paired, compiler-diagnostic design to Rust and Verus and measure real project APIs.
-
 ## techniques for the catalog
 
 - deterministic paraphrase suite — apply guarded, reference-backed single-axis rewrites outside protected math/specification spans and compare paired formalizations
 - layered robustness measurement — separate compilation, equivalence checking, and structural similarity, then classify compiler failures
 - dataset-specific repair targeting — map dominant diagnostics to retrieval for unknown identifiers or compiler-feedback training for syntax/elaboration failures
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

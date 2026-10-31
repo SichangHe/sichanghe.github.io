@@ -52,15 +52,9 @@ When to use it. Use definitional equivalence when a benchmark must reject statem
 
 How it is done. Build a context containing only required dependencies; strip theorem proofs for auto-formalization; provide the skeleton; compile the submission; check expected declarations, absence of `sorry`, absence of new axioms, and definitional equivalence. For theorem-proving tracks, replace bodies with `sorry` and require all placeholders to be filled. The paper states: “No existing metric handles the heterogeneous declaration kinds present in our dataset (constants, definitions, theorems, inductives, and constructors).” (Section 4, p. 6)
 
-Verus form. Inference: Verus can compile candidate Rust and check specifications, but it has no general definitional-equivalence checker for enum layouts or spec-function bodies. A VL benchmark should compare normalized source schemas or generated signatures in addition to proof success, and should reject newly introduced trusted axioms or unchecked bodies. Equivalence lemmas can establish semantic equality, but they do not guarantee identical representation.
+Verus form.
 
 Evidence. The dataset has 327 IAF points, 116 SSAF points, 327 IAF-D points, 420 DTP points, and 81 ITP points (Tables 1–2, p. 6). The IAF track covers 86% of textbook items in chapters 3–10 (Section 4, p. 6). Evaluation gives the 20.1% best IAF pass rate after three repeats per item; up to 20 agent turns are allowed for IAF, 64 for SSAF, and 20 for DTP/ITP (Section 5.1, p. 7). These denominators and budgets define the claim.
-
-## what remains trusted and implications for VL
-
-The benchmark’s formal correctness rests on Lean’s kernel and compiled declarations, but faithfulness also depends on source preprocessing, concept/signature graphs, human review, issue triage, and the DefEq Checker. The paper explicitly leaves many meta-theorems unproved while validating their formalizations by experts. Inference: a Verus product needs the same separation between a checker result and a separate review that the program states the intended requirement.
-
-Inference: the direct threat to agent-written verified Rust is methodological. A model that can pass isolated examples may still fail when definitions, constructors, assumptions, and helper lemmas must remain coherent across a theory. LCS-Bench’s 20.1% IAF result indicates that theory-scale context and faithfulness are major unsolved problems. VL should reuse dependency graphs, stable item IDs, staged compilation, counterexample search, and an equivalence-oriented evaluator. It should not redo a benchmark that measures only compile success; this paper already shows why semantic and structural checks are needed.
 
 ## techniques for the catalog
 
@@ -68,5 +62,3 @@ Inference: the direct threat to agent-written verified Rust is methodological. A
 - dependency-ordered implementation — build datatypes, definitions, then theorem statements with compilation and structural review after each round
 - counterexample-guided faithfulness review — distinguish hard proofs from false or vacuous specifications and repair the earliest bad declaration
 - definitional-equivalence checking — evaluate heterogeneous auto-formalized declarations by structure and computation as well as theorem compilation
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

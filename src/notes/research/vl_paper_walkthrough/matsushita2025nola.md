@@ -14,8 +14,6 @@ A naive invariant-access rule would open an invariant `P`, run an atomic express
 
 The paper classifies alternatives: avoid higher-order ghost state; use finite time credits; or use transfinite step-indexing. It explains why Rust ownership needs higher-order ghost state, why finite bounds fail when another process can write unboundedly large integers to a shared reference, and why transfinite indexing loses the commutativity laws of later with `∃` and `∗` that RustBelt's lifetime logic relies on (Sec. 1.1, p. 5). Inference: this diagnostic is itself a technique: identify whether a termination proof requires nested mutable sharing before choosing a separation-logic encoding.
 
-Inference: Verus does not use Iris's later modality, but the same diagnostic applies to any VL extension that encodes liveness with a step-indexed or bounded resource. A Verus `decreases` proof over a mathematical measure is closer to Nola's meta-logic induction than to time credits; importing Nola wholesale would be unnecessary unless VL develops semantic ownership proofs.
-
 ## technique: parameterized later-free invariants
 
 Nola introduces two client parameters: `Fml`, a data type encoding separation-logic propositions, and a semantics `J·K : Fml → iProp`. The invariant access rule `thoare-inv` accepts a formula `P ∈ Fml` and opens its semantic content `JP K` without applying later. The paper summarizes the key move: “The first is the set of SL formulas, or the data type that encodes SL propositions, named Fml. The second is the semantics J K: Fml → iProp, i.e., how to decode Fml.” (Sec. 1.2, p. 6)
@@ -52,15 +50,11 @@ Inference: the closest Verus workflow is a recursive function with `decreases le
 
 Nola's direct invariant token cannot support semantic equivalences such as commutativity or rewriting inside nested invariants, because the token is modeled by plain agreement on `Fml`. The paper introduces “magic derivability” as an approximate fixed-point mechanism. The client defines a judgment type (for example, `P <=> Q`), parameterizes formula semantics by derivability candidates `δ`, and defines a judgment semantics `J K+`; the library defines `Deriv` as the smallest set of candidates closed under `J K+` and under conjunction over any subset, and `der` as the conjunction over `Deriv`. The resulting rules support semantic alteration of nested invariants and subtyping rules over references (Sec. 6, pp. 16–18).
 
-Inference: this is relevant to VL only if a semantic ownership library needs extensible equivalence or subtyping. A practical Verus system would instead prove explicit equality or refinement lemmas; no magic-derivability encoding should be invented without a soundness model.
-
 ## mechanization, trust, and limits
 
 The Rocq development mechanizes parameterized invariants and borrows with soundness of each proof rule, parameterized view shifts and Hoare triples with new adequacy theorems, an extension of λRust, magic derivability, extensible formula construction, the paper's verification examples, its paradoxes, and the RustHalt prototype. The paper states: “Our Rocq mechanization does not depend on any axioms except uniqueness of identity proofs.” (Sec. 8, p. 21) Inference: trusted components therefore include Rocq's kernel and that axiom, plus the semantic model and the correctness of the encoded Rust language.
 
 Nola cannot store arbitrary `iProp` later-free: total Hoare triples, view shifts, and impredicative quantifiers cannot be handled later-free (Sec. 1.2, p. 6); stratifying formulas into levels recovers some of these, such as a total Hoare triple over lower-level invariants (Sec. 4, p. 14); arbitrary propositions can still be stored under later. Concurrent termination currently does not assume fair scheduling. The paper reports no benchmarks or performance numbers; evidence is mechanized soundness and examples, not a product-scale evaluation.
-
-Inference: Nola is a high conceptual threat to any VL claim that ownership reasoning plus termination is already solved by ordinary safety proofs. It is a lower direct threat to agent-written Verus Rust because Verus's SMT/decreases model differs from Iris semantics. VL should reuse the separation between safety and termination, explicit well-founded measures, and prophecy-style mutable-borrow specifications; it should not redo Nola's Rocq library unless a semantic Rust soundness proof is a product goal.
 
 ## techniques for the catalog
 
@@ -70,4 +64,3 @@ Inference: Nola is a high conceptual threat to any VL claim that ownership reaso
 - prophetic mutable references — pair current and eventual lender values and resolve the prophecy when write access ends
 - meta-logic termination induction — extract a natural or lexicographic measure and use ordinary induction for recursive calls
 - magic derivability — approximate semantic fixed points to support sound equivalence and subtyping over nested ghost state
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Borrows are an advanced type of higher-order ghost state that serves as the semantic foundation for the ownership type system of Rust [Matsakis and Klock 2014]."): checked every quotation, section and page reference, rule name, example, and technique step against the paper text; fixed writes "update the prophecy" (paper: writes retain it), "implication" (paper: magic wand), "reborrow" in the share rule, page references for Secs. 1.1, 2.1–2.2, 6 and 7, and the magic-derivability construction; added the borrow rules of Fig. 10, the stratification nuance, and RustHalt's partial coverage of RustHornBelt; marked agent conclusions "Inference:"; did not check the formula notation against the PDF rendering, the Rocq artifact, or the Verus/VL inferences.

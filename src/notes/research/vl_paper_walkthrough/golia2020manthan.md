@@ -24,7 +24,7 @@ how to do it (Algorithm 2, p. 10):
 
 The paper's example finds `y3` positive unate because it appears only positively and sets `ψ3=1` (Section 5.1, p. 14).
 
-Verus form (Inference: this is a transfer from SAT synthesis): represent a Boolean output and its specification as `spec fn`; prove a constant case with a `proof fn` whose `ensures` states the specification equivalence, then use that lemma before generating code. Inference: Verus does not provide the paper's SAT substitutions or symbolic Skolem-vector API, so a tool around Verus would perform this preprocessing externally and emit Rust contracts. Inference: the useful artifact for VL is the precomputed constant contract, not a runtime branch.
+Verus form (
 
 evidence and limits: Preprocess solves 66 instances in every row of Table 3 (CryptoMiniSat, QuickSampler, BiasGen, AdaBiasGen), as expected since it runs before sampling (Table 3, p. 19). Inference: unateness is a sufficient condition (Theorem 2, p. 5), not a necessary one; variables that are not unate may still have simple functions.
 
@@ -84,12 +84,6 @@ Verus form (Inference): this maps to a proof-producing outer loop: a tool propos
 
 evidence and limits: removing MaxSAT localization drops solved instances to 204/609 (Section 6.5, p. 20), compared with 356/609 for full Manthan. Self-substitution is a fallback when a candidate exceeds a threshold of 10 refinements (Section 6.6, p. 21): 75 of 356 solved instances used it, and 51 of those 75 needed substitution for only one variable (Section 6.6, p. 21). Section 4.3 (p. 9) instead says “less than 20% of the instances solved required self-substitution, and for over 75% of these instances, only one variable needed self-substitution”; the Section 6.6 counts give about 21% and 68%, so the two statements disagree. Table 4 gives five examples: refinements fall from 319 to 10 and time from 35.88 s to 19.22 s for `kenflashpo2-all-bit`; from 741 to 10 and 184.11 s to 115.07 s for `pdtpmssfeistel` (p. 22). Self-substitution can cause exponential formula growth, so the fallback is not universally safe.
 
-## trusted boundary, contradictions, and product threat
-
-Inference: the final error-formula check, SAT/MaxSAT/PicoSAT results, and Boolean-function representation are the paper's correctness boundary. Training samples, ID3 choices, impurity threshold 0.005, refinement threshold 10, and the unsat-core repair heuristic are search assumptions. The benchmark evidence uses 609 instances and the listed hardware/settings; it does not establish general performance. Table 1's “All Tools” count is 476/609, while individual tool counts are not additive because instances overlap (Table 1, p. 16).
-
-Inference: VL should reuse candidate generation followed by an independent verifier check, counterexample-guided repair, dependency ordering, and a fallback for poorly learned functions. VL should not redo the already demonstrated 609-instance comparison or assume model-generated proof text is evidence. Inference: threat to agent-written verified Rust is moderate for candidate search but high for specification drift: a Verus proof of an incorrectly synthesized contract can pass while missing the intended behavior. Inference: the paper's final UNSAT-style check is the part that directly protects against approximate learning.
-
 ## techniques for the catalog
 
 - unate preprocessing — replace positive/negative unate outputs with constants after SAT checks
@@ -99,5 +93,3 @@ Inference: VL should reuse candidate generation followed by an independent verif
 - MaxSAT fault localization — preserve most outputs while identifying the few functions to repair from a counterexample
 - unsat-core repair — derive a literal conjunction from an infeasibility core and update the faulty candidate
 - self-substitution fallback — after a refinement threshold, set a poorly learned function to the specification with the variable fixed to 1 (self-substitution)
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We used PicoSAT for its ease of usage and we expect further performance improvements by upgrading to one of the state of the art SAT solvers."): I read the whole paper text and checked every quotation, number, algorithm step, section and page reference, the tag line (authors, year, arXiv link from the paper text) and the Table 1, 3 and 4 values; I changed the page of Table 3 (19, not 18), the page of the 60-instance sentence (p. 18), the self-substitution step 6 (it concerns `Y \ Ŷ`, not later outputs) and added the CheckSubstitute condition, the Section 4.3 versus Section 6.6 disagreement on self-substitution rates, the hedged explanation of the impurity trend, and Inference markers on Verus claims; I did not check the PDF figures (Figures 1 to 8 are only partly in the text), the cited prior work, or any Verus statements, which are my own inferences.

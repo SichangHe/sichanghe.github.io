@@ -8,8 +8,6 @@ WhyRel is an auto-active verifier for relational properties of pointer programs 
 
 The target properties include conditional equivalence, representation independence, and noninterference. The user supplies specifications, loop invariants, assertions, and alignment hints; the tool performs the translation and generates proof obligations. Inference: for Verus, the central lesson is that relational verification needs an explicit two-run state model and a disciplined way to relate their heaps. A single-run postcondition is not enough for equivalence of two implementations.
 
-## technique: dynamic regions and boundaries for modular heap reasoning
-
 ### what it is and when to use it
 
 A region is a set of references. A dynamic boundary is a footprint naming a module’s internal locations. A client may not directly read or write boundary locations; it must use module methods. Field-image expressions expand a region into locations such as every `o.f` for objects `o` in the region. The `any` datagroup abstracts over all fields. The paper explains, “Encapsulation is specified using a kind of dynamic frame, called a dynamic boundary: a footprint that captures a module’s internal locations.” (Section 1, p. 2)
@@ -32,8 +30,6 @@ Inference: in Verus, represent the abstract state with a ghost or specification 
 
 The paper reports that boundary and coupling lemmas often require manual proof because image expressions contain existentials and nontrivial region set operations. “Manual effort involves applying a series of Why3 transformations (or proof tactics) and introducing intermediate assertions.” (Section 5, p. 15) Inference: the method therefore improves modular structure without eliminating proof engineering. The source language also has no pointer arithmetic, and references support only equality (Section 4, p. 10).
 
-## technique: relational specifications with couplings
-
 ### what it is and when to use it
 
 A relational specification describes two executions at once. Variables are written as a left/right pair, and formulas can require equality or another relation between the two values. Pointer correspondence is represented by a partial bijection between allocated references, rather than strict pointer equality. A coupling relation connects two concrete representations through a shared abstraction, such as two stacks having equal mathematical contents. The paper states, “Strict pointer equality is too strong as it would not allow for modeling allocation as a nondeterministic operation or permit differing allocation patterns between programs being related.” (Section 2, p. 7)
@@ -51,12 +47,6 @@ Use this technique when two modules have different layouts but should implement 
 The paper’s complete Stack workflow is explicit: “(i) build the STACK interface in WhyRel, with public invariants clients can rely on and a boundary that designates encapsulated locations; (ii) develop two modules refining this interface, ArrayStack and ListStack, and verify that their implementations conform to STACK interface specs, relying on any private invariants that capture conditions on encapsulated state; (iii) provide a bimodule relating the two stack modules and prove equivalence of stack operations, relying on a coupling relation that captures relationships between pointer structures used by the two modules; (iv) verify the client with respect to specs given in STACK and prove it respects WhyRel’s encapsulation regime; and finally (v) develop a bimodule for the client and verify equivalence using relational specs for stack methods.” (Section 2, p. 8)
 
 Inference: in Verus, define a `spec fn` relation over two abstract states and prove paired operations with `proof fn`s whose `ensures` preserve that relation. Rust references should be related through an abstract identifier or mathematical map, not by requiring address identity. This is an inference because Verus does not provide WhyRel’s bimodule syntax.
-
-### evidence and limits
-
-Inference: the approach assumes that the coupling and each method contract are strong enough to imply the desired client relation, and a relational proof can succeed while the coupling omits a behavior that matters to the product. VL should treat coupling definitions as specifications requiring review, not as evidence that two implementations are equivalent in every observable respect.
-
-## technique: alignment as a biprogram
 
 ### what it is and when to use it
 
@@ -78,8 +68,6 @@ Inference: Verus can encode a paired execution as a ghost/spec record containing
 
 Adequacy is a syntactic condition in WhyRel: the left and right projections must equal the original programs. For conditionally aligned loops, the translation requires a condition `A` to be invariant, stating that until both sides terminate the loop can perform a lockstep or a one-sided iteration (Section 4, p. 14). If the alignment is wrong, a relational proof does not entail the intended relation. Inference: alignment generation is a product risk for agent-written proofs because a too-restrictive alignment can silently omit executions unless adequacy is checked.
 
-## technique: data-dependent one-sided alignment
-
 ### what it is and when to use it
 
 Lockstep alignment fails when one program performs extra iterations. WhyRel therefore supports alignment guards that select left-only, right-only, or lockstep iterations. In the multiplication example, an inner loop with `m` increments is aligned with one right-side addition of `m`. In the public-list example, a side whose current node is nonpublic iterates alone while the other side pauses, and both sides iterate together when both nodes are public.
@@ -99,8 +87,6 @@ Inference: in Verus, encode each branch as a separate proof lemma with branch-sp
 ### evidence and limits
 
 The paper says WhyRel restricts guards because arbitrary quantified formulas cannot be translated into the required Why3 conditional. The technique therefore trades expressiveness for an executable product-program encoding. It does not infer alignments or invariants: users provide them, and inference is explicitly out of scope (Section 1, p. 2).
-
-## technique: translation to a two-state WhyML model
 
 ### what it is and when to use it
 
@@ -130,14 +116,6 @@ The evaluation covers representation independence, optimizations such as loop ti
 
 The strongest evidence is therefore qualitative and case-study based: the examples exercise dynamic framing, representation couplings, and several alignment patterns. The paper reports that basic heap-effect reasoning is generally simple, while boundary and coupling lemmas require considerable manual effort and image-expression reasoning (Section 5, p. 15). It also reports that well-formedness VCs form a substantial fraction of replay time. These measurements do not establish a universal runtime or proof-effort advantage over another verifier.
 
-## trusted scope, contradictions, and threat to VL
-
-The paper says soundness is proved for the relational logic in a separate paper, "of which our prototype is a faithful implementation" (Section 1, p. 2); this paper does not prove the WhyML encoding correct. WhyRel’s own checks include syntactic projection adequacy, client boundary checks, intermediate disjointness assertions, and framing lemmas (Section 4, pp. 13–15). Inference: solver soundness, the source-to-WhyML translation, generated axioms, and the adequacy of user-supplied alignments (which WhyRel checks syntactically) remain trusted or separately justified assumptions.
-
-Inference: the direct threat to VeruLaw is high for any agent that writes relational proofs over mutable Rust without an explicit coupling, frame model, and alignment check. A proof can establish that two executions agree under a chosen relation while the relation omits an observable field or the alignment omits a trace. The paper’s modular method is a useful design target, but its manual image-expression obligations show that generated proofs will still need domain-specific lemmas.
-
-Inference: VL should reuse dynamic abstract state, explicit coupling predicates, relational loop invariants, and adequacy checks. It should not redo WhyRel’s translation to WhyML (implemented in OCaml) or its region-logic soundness theory unless a Rust-specific semantics is required. The novel work for VL would be the correspondence between Rust ownership and a two-run heap relation, plus checks that generated contracts mention all product-relevant observations.
-
 ## techniques for the catalog
 
 - dynamic boundaries: represent module footprints as regions and enforce client access through interface methods
@@ -146,5 +124,3 @@ Inference: VL should reuse dynamic abstract state, explicit coupling predicates,
 - data-dependent alignment: use left-only, right-only, and lockstep guards for differing control flow
 - relational frame translation: encode heap effects with explicit two-state maps and postconditions for untouched locations
 - adequacy and encapsulation checks: project biprograms and generate boundary, disjointness, and framing obligations before proving the relation
-
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Well chosen alignments help decompose relational verification, allowing for the use of simple relational assertions and loop invariants."): I read the whole paper text (arXiv v1, pp. 1–18) and the whole study, and compared every quotation, section and page reference, figure reference and technique step. I corrected several page references (Fig. 1 is on p. 4, state invariants on p. 11), the encapsulation check description (static check covers boundary variables; heap updates get disjointness assertions), the loop-invariant and public-list descriptions, the adequacy-condition wording, the evaluation list and the trusted-scope paragraph, and marked my own conclusions with the word Inference. Quotations were already word for word. I did not check the cited related work, the Zenodo artifact, or the companion TOPLAS paper on the logic; the Tag link is the arXiv link already present, and the paper text shows arXiv:2303.14314v1 (the arXiv title differs and reads The WhyRel Prototype for Modular Relational Verification of Pointer Programs).

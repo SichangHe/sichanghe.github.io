@@ -90,12 +90,6 @@ The industrial example has 532 PIs, one PO, 2,389 flip-flops, and 12,049 AIG nod
 
 Verus form. Inference: Map each stage to a verified transformation with a semantic correspondence contract. BMC can supply bounded counterexamples; abstraction needs a proof that every concrete behavior is represented by the abstract model; speculation needs obligations for every merged node. Use `ensures` and proof lemmas for these relations, and `invariant`s for iterative scripts. Python orchestration, SAT/BDD/interpolation engines, and the transformation implementations remain trusted unless verified independently.
 
-## what remains trusted and implications for VL
-
-Inference: ABC proves properties of the constructed miter under its circuit semantics. It does not prove that the RTL/netlist, monitor, input constraints, fairness assumptions, or synthesis intent match the product requirement. The report supplies no independent verification of solver correctness, AIG construction, abstraction, or interpolation. These implementations therefore remain assumptions for a proof claim based on this flow. The paper's experiments measure runtime, memory, frame depth, and speed ratios for stated circuits and settings; they do not establish universal superiority.
-
-Inference: for agent-written verified Rust, ABC is a substantial existing baseline for circuit-style verification. VL should not redo AIG structural hashing, miter equivalence, standard BMC, interpolation-based proving, or this staged simplification architecture. The useful product opportunity is an auditable bridge from Rust/Verus contracts to these engines: preserve assumptions, replay counterexamples in Rust, and require a checked semantic correspondence after each abstraction or speculative merge. The threat is high for finite synchronous control and hardware-like data paths because mature automation already combines fast bug finding with complete proof attempts. It is lower for open-world software behavior, external effects, and specifications whose intent is not captured by a circuit miter.
-
 ## techniques for the catalog
 
 - AIG structural hashing — represent logic with two-input ANDs and complemented edges, hash-consing identical nodes during construction
@@ -104,4 +98,3 @@ Inference: for agent-written verified Rust, ABC is a substantial existing baseli
 - Cache-aware sequential simulation — compact nodes, recycle frontier values, and simulate adjacent frames together
 - Abstraction and speculation — reduce registers or merge candidate equivalents, check bounded behavior with BMC, then prove generated obligations
 - Staged ABC flow — iterate simplification, quick checks, abstraction, speculation, and final interpolation or BDD reachability under explicit resources
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Additionally, there is no need to allocate simulation memory for each object in the AIG."): read the full paper text and study; checked quotations, authors, year, numbers, section/page references, and technique steps; corrected sequential SAT scope, induction assumptions, simulation storage, verification stages, bounded-check wording, and timing; retained the DOI link from the fetch record; did not reproduce experiments, inspect ABC code, verify proposed Verus implementations, or independently resolve the DOI.

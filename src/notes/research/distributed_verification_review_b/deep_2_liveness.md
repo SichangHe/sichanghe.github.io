@@ -1,8 +1,6 @@
 # Liveness proofs: statements, assumptions, proof methods, costs, and cases
 (authored by agents unless marked 🧑)
 
-Research date: 6 October 2026 (local date). Inventory: 34 numbered papers/books; 19 new PDFs saved, with existing collection copies reused. Two numbered works remain without inspected original full text: P32, P34; PBFT was read in official HTML. This is the liveness slice of the review requested in [BRIEF.md](/ssd1/sichangheagent/verus_distributed/lit_b/BRIEF.md). Source summaries below come from the linked papers or official repositories, except P34’s explicitly labeled bibliographic metadata and Semantic Scholar-indexed abstract; recommendations and interpretations are explicitly labeled. Page references use the paper's printed page where available; PDF page means the page counted from the cover. Short quotations preserve the source wording; where only a phrase is quoted, it is an excerpt rather than the full sentence, and the surrounding prose supplies its scope. A missing effort figure means it was not established, not that the proof was cheap.
-
 For this project's next step, I would start with Anvil/Welder for Verus properties and environment contracts, IronFleet/LiDO for implementation-connected progress proofs, LVR/implicit rankings for automation, and VeruSAGE for agent evaluation. Lion is a promising fresh lead whose full text remains unavailable. These are my recommendations, based on the evidence below.
 
 ## What matters for turning a vague request into a proof
@@ -35,8 +33,6 @@ A human's “eventually works” can mean any of the following. None should be s
 Weak fairness means, from any point onward, an action that stays enabled must eventually execute. Strong fairness also covers an action that becomes enabled infinitely often but is repeatedly disabled. Fairness is usually attached to each relevant action or participant. Fairness of “some next step occurs” alone permits one participant to starve.
 
 **P01. Defining Liveness.** Bowen Alpern and Fred B. Schneider. *Information Processing Letters* 21, 1985, pp. 181–185. [Paper](https://www.cs.cornell.edu/fbs/publications/DefLiveness.pdf). Defines liveness using the ability to extend every finite execution prefix to a satisfying infinite execution. This explains why ordinary finite tests cannot establish eventual success. Evidence, abstract, p. 181: “Every property is shown to be the intersection of a safety property and a liveness property.” Relevance: separate a user's combined requirement into “nothing bad happens” and “something eventually happens,” while preserving both.
-
-## TLA-style proofs and their embeddings
 
 ### P02. The Temporal Logic of Actions
 
@@ -469,7 +465,6 @@ Original Paxos, Raft, PBFT, HotStuff, and Tendermint papers above supply protoco
 Main theorem abstracts sufficient environment/calling assumptions and instantiates them per runtime; a bijection connects abstract log events to concrete actions. Abstract performance quote: “at least 95% of unverified-runtime throughput on nine real-world workloads”. **Inference:** this is especially relevant to deriving progress proofs across real Rust modules and supports investigating a different liveness encoding than Anvil's infinite-execution predicates. It is not evidence of automatic informal-spec generation or LLM assistance. Crossref and Semantic Scholar metadata report an open CC-BY PDF, but ACM PDF URL returns HTML access challenge; guessed author sites failed.
 
 Exact environmental assumptions, proof/code size, workloads and artifact remain unverified. No PDF saved.
-
 
 ## Suggested evaluation, inferred from the evidence
 

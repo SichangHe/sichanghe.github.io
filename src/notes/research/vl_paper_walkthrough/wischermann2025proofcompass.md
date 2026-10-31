@@ -25,13 +25,8 @@ The paper describes miniF2F as containing 488 problems (Section 4.1, p. 6); Tabl
 
 Ablations isolate the channels: only lemma guidance gives 51.6% at 32 and 53.3% at 128; only informal proof gives 52.0% and 52.9% (Table 1, p. 7). Inference: these ablations support both channels contributing for this model and budget; they do not establish the same gains for Verus or other provers. Section 6 identifies the CoT-specific guidance format and limited attempt budget as limitations. The PDF states a maximum of 2^7 = 128 attempts per problem (p. 8); the extracted text flattens the superscript into “27”. This agrees with the pass@128 setup.
 
-## what is proved, trusted, and relevant to VL
-The acceptance rule is explicit: “A proof attempt is deemed successful if the Lean REPL returns no error messages and the generated proof does not contain any sorry placeholders.” (Section 4.1, p. 7) Inference: the LLM selects search targets, while Lean verification decides whether the generated proofs satisfy their formal statements. A Verus adaptation should preserve the selected lemmas’ preconditions and verify the assembled proof. Whether failure-derived lemmas improve Rust verification repair remains an untested question in this paper.
-
 ## techniques for the catalog
 - natural-language proof seeding — summarize a capable model's proof strategy and inject it into a specialized prover's chain-of-thought input
 - failure-derived lemma mining — extract intermediate `have` statements from failed attempts, syntax-check them, and select justified candidates
 - conditional proof decomposition — obtain a main proof assuming selected lemmas, prove those lemmas under ordered dependencies, and verify the assembled proof
 - budgeted verified retries — count every specialized-prover call, verify with Lean, and stop on the first complete proof
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For our methodology, an “attempt” in the Pass@k calculation corresponds to any call made to the DSP-v1.5 model."): checked all paper text, study quotations, numbers, section and page references, method order, and arXiv identity; corrected the conditional-main-proof order, page references, dataset scope, attempt accounting, and the PDF superscript misreading; marked interpretations as Inference and removed unsupported trust and Verus claims; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

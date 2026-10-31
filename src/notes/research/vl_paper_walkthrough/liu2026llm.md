@@ -61,8 +61,6 @@ A repeated deepseek-v3.2 sampling study increased cumulative generated lemmas fr
 
 Runtime is measured on an Intel i9-14900, 24 cores, 32 GB RAM, with Tamarin `+RTS -N -RTS --auto-sources` (Section IV-D, p. 10). Baseline reference lemmas: 91 lemmas, 59.91 seconds total, 0.66 seconds per lemma. Generated sets cost 238.24–1267.76 seconds total and 2.51–6.79 seconds per lemma for the four reported models (Table V, p. 10). Thus generated verification is roughly 4×–21× slower than baseline, with the denominator for each mean being that model's listed lemma count.
 
-Inference: threat to agent-written verified Rust is moderate. LLMs can produce useful proof obligations, but the strongest failure is semantic phase confusion, analogous to an invariant referring to the wrong program state. The paper has already evaluated few-shot prompting, proof-skeleton coverage, mutation validation, sampling saturation, and verification overhead; VL should not repeat these as novel without Rust-specific proof artifacts and task distributions.
-
 ## what is proved and trusted
 
 The paper proves properties of CRoST under its finite-footprint and random-overlap assumptions, and empirically validates correlation with mutation flips. It does not prove that a high-CRoST lemma is semantically equivalent to the human lemma. Trusted components include Tamarin's parser, symbolic semantics, deterministic proof-search configuration, reference lemmas, mutation design, and model/provider behavior. Inference: in Verus, the analogous trusted boundary includes the verifier, solver, proof-obligation extraction, compiler, and the correctness of the generated specification.
@@ -74,4 +72,3 @@ The paper proves properties of CRoST under its finite-footprint and random-overl
 - few-shot property generation: prompt LLMs with protocol rules and example lemmas, then parse and autoprove outputs
 - mutation-based metric validation: inject controlled protocol flaws and correlate proof-coverage scores with verification flips
 - cost and saturation analysis: measure syntax yield, coverage by security family, repeated-sampling gains, and verification time
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `woodcock2026contractaware`, [paper](https://arxiv.org/abs/2608.18822)
 
-Audit: audited 2026-10-13 against the paper; checked every number, table count, page and section reference, quotation, the steps of techniques 1 to 5, the R1 to R10 list and the arithmetic; changed four slips (audit classes taken from the separate declaration map in 7.1, seam-definition rule widened beyond the paper, v0.10 called the skeleton, clean build claimed throughout) and softened one unchecked claim about Mathlib names; Verus forms are labelled inference and unchanged, with assume_specification not confirmed in the Verus reference.
-
 source: Woodcock, Leite, Sampaio, Wei, arXiv:2608.18822v1 (19 Aug 2026), 15 pages, no appendix; submitted to Formal Methods for Autonomous Systems 2026; artefact at Zenodo doi 10.5281/zenodo.21981425 (not read)
 
 relation to earlier notes: the tool used here, CAPRI, has its own paper by the same authors, studied in `capri_20261013.md` in the walkthrough directory. That study covers the acceptance rule Build ∧ Conforms, the contract file format, the outcome labels, the classifier controls and the 180-run experiment. This paper is the field report: one development that drifted before the tool existed, how the drift was measured, and how the development was rebuilt under contracts. Only what this paper adds is written out below.
@@ -53,7 +51,7 @@ what it found (Table 2, p.7), 16 changed of 100, 84 identical:
 - 2 end-to-end interface: three requirements moved into the premises of the public claim
 The four counts sum to 16. Of the ten obligations left open at the start: “Among the ten original unfinished obligations, six were proved unchanged and three only after reformulation.” (§6, p.7); the tenth, the unconditional end-to-end theorem, stayed open.
 
-Verus form. Inference: the universe is every `spec fn`, every `proof fn` signature, every executable function's `requires` and `ensures`, and every type definition in the first version of the crate that carried the intended contracts. The unchanged test is textual equality of the signature and clauses for functions and of the body for `spec fn`s after formatting. Step 2 is a script over two source trees; step 3 stays manual. Inference: for VL this audit is the after-the-fact counterpart of freezing contracts, and it is the only one of the two that can be run on work already done.
+Verus form.
 
 evidence: one development, one audit, by the people who wrote the development.
 
@@ -116,7 +114,7 @@ how it is done:
 
 the paper's summary of the habit: “An unresolved semantic bridge has been given a stable identifier and an explicit statement, rather than being folded into an assumption or hidden behind an overbroad theorem name.” (§8, p.11)
 
-Verus form. Inference: the gap named DT-R011 is the gap between a proof about a model and a proof about the code. In Verus it is closed when the executable function's `ensures` states the property and the verifier checks the body against it; it is open when the property is proved only as a `proof fn` over `spec fn`s that describe what the code is supposed to do. A VL deliverable should say for each headline property which of the two it is. Inference: writing the open link as a `proof fn` with a body of `admit()` would put the name in the code but breaks the no-admissions rule of the release, so the paper's choice of keeping the statement outside the accepted build is the one to copy.
+Verus form.
 
 evidence: none beyond the case.
 
@@ -157,11 +155,6 @@ Inference: keeping every state is the practice that made the audit possible at a
 - the eleven relationship classes for a declaration map
 - the four architectural invariants
 - the escalation rule of technique 3, step 4
-- the three definitions quoted at the top; "theory drift" and "semantic seam" name things VL will need words for
-
-## threat to VL
-
-Inference, all of it. As a competitor, none: one small Isabelle model of a control system, no code verified, a tool specific to Isabelle. As evidence about the product's central risk, strong and specific: an unconstrained model-assisted proof effort by formal-methods experts changed 16% of the original declarations and ended with a headline theorem that assumed three quarters of what it claimed, while Isabelle accepted the final 16-theory development. A product that sells agent-written verified Rust has to be able to show this did not happen to it, which means frozen contracts checked outside the verifier, and a drift audit of the kind in technique 1 for anything produced before the freeze. The paper also shows the residue such controls leave: even the governed reconstruction ended with the hardest link unproved and the final step done under widened authority whose content the reader cannot see.
 
 ## techniques for the catalog
 

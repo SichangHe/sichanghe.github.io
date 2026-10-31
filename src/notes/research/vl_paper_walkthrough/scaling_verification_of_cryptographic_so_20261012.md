@@ -1,6 +1,5 @@
 # Scaling Verification of Cryptographic Software with Aeneas, Rust, and Lean
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and trust boundary
 
@@ -37,12 +36,6 @@ For each architecture, Charon extracts once and merges LLBC ASTs, deduplicating 
 ## technique 6: stateful APIs, ghost histories, and termination
 
 To relate SymCrypt's incremental SHAKE API to one-shot FIPS specifications, add ghost byte histories. Predicates `absorbing` and `squeezing` connect runtime state to bytes consumed and emitted. This exposed a real extract bug: a lane copy restarted at offset zero after a partial lane, overwriting output. The proof agent drafted a report; differential testing independently found it. For ML-KEM rejection sampling, prove termination at specification level by proving Keccak is a permutation on its finite state space and deriving a bound; then prove the implementation terminates.
-
-## evidence, contradictions, and VL relevance
-
-The project verifies SHA-3, ML-KEM, AES/GCM, and experimental ML-DSA, FrodoKEM, and HPKE, with 16,680 Rust lines and 124,777 Lean proof lines in the reported table (the abstract separately says 16.7 KLOC and 237 KLOC total Lean including generated definitions). Agents produce proofs, but standards, intrinsics, and public theorem statements require human review. Bugs found include an NTT assertion fixed from `x < Q` to `x ≤ Q`, and a constant-time comparison shift fixed from `>> 8` to `>> 16`. These findings show that verified proofs can expose incorrect code and incorrect comments, but only relative to the formalized specification.
-
-For VL, the key pattern is separating a small trusted semantic layer from large generated proofs, using ghost state for streaming APIs, and making unsupported intrinsics explicit axioms or reviewed models. The threat to agent-written verified Rust remains specification and axiom correctness: Lean cannot detect a standards transcription error, an incomplete public contract, or an unsound intrinsic model. The paper itself says: “Side channels are out of scope at the Rust level”. Experimental implementations are not claimed production-ready.
 
 ## techniques for the catalog
 

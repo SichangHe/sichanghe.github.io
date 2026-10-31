@@ -72,8 +72,6 @@ Evidence. At K=8, Table 2 gives average base-discovery calls of 1.23, 1.29, and 
 
 The matched-base ablation supports the authors’ structural-reuse explanation: on the matched OlympiadBench/AMC-AIMO/AIME set, independent formalization has GT-pass 81.9%, candidate pass 81.2%, and accuracy 39.3%; first verified base has 98.2%, 91.7%, and 47.1%; random verified base has 95.4%, 91.2%, and 45.6% (Table 8, Section 6, pp. 8–9).
 
-Inference: For VL, the analogous optimization is to formalize or verify one shared Rust/spec scaffold and instantiate candidate-specific values, while counting Verus invocations and preserving proof obligations. The measurable benefit is cost reduction; it does not reduce the need to verify each edited candidate.
-
 ## additional controls and limitations
 
 Appendix B (p.13) retains the already type-checked base without re-editing it, avoiding failures from edits that fail to reconstruct the same base. It also routes unsafe direct substitutions, such as natural-language labels, to the learned tier even if literal matching succeeds. Both controls complement the main cascade.
@@ -88,10 +86,6 @@ The paper measures statement type-check rates, answer selection accuracy, proof-
 
 Inference: For agent-written verified Rust, BASE presents a threat and an opportunity. Reusing a verified scaffold can reduce model calls and structural drift, but a wrong base specification can propagate the same mistake to every candidate. Verus proof success certifies the edited contract, not that the contract expresses the user's problem. A safe integration needs explicit answer-slot boundaries, independent semantic checks, and proof-complete verification for any result presented as a guarantee.
 
-## BASE lessons for Verus candidate generation
-
-Inference: for Verus candidate generation, the paper offers rank-ordered base discovery, structurally filtered local edits, compiler-filtered rewriter training, and separate accounting for type-checks versus proofs. BASE already establishes this amortization strategy for Lean, so VL should adapt its slot-preserving edits to Rust specifications and retain independent semantic checks for every edited contract.
-
 ## techniques for the catalog
 
 - ranked base discovery — formalize candidates in solver rank order and reuse the first statement accepted by the formal compiler
@@ -100,5 +94,3 @@ Inference: for Verus candidate generation, the paper offers rank-ordered base di
 - statement/proof separation — distinguish compiler well-formedness from kernel-checked proof and select with the strongest available signal
 - amortized formalization — pay one base and one reusable rewrite prediction instead of K independent autoformalizer calls
 - shared-scaffold ablation — compare first and random verified bases to test whether reuse, rather than base quality, causes gains
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Prior work on provers typically reports pass@k with a large k, sampling many proof attempts per theorem."): read the entire supplied 15-page paper text, including references and appendices A–H, and the entire study; compared quotations, experiment values, procedures, and page references; corrected page locations and paper link/tag, qualified constant-cost and denominator claims, distinguished type-checking from completed proofs, and added substitution safeguards, prover-swap details, and matched-ablation exclusions; did not run Lean or the pipeline, inspect code or training data, reproduce reported results, validate references, or visually inspect PDF figures.

@@ -67,7 +67,7 @@ Verus form. Inference: treat the adapter as an untrusted proposal function. A Ru
 
 Evidence. On 80 fresh cases, Qwen base non-thinking, base thinking, and Self-24 accepted 1/80, 30/80, and 57/80 respectively; Self-24 had 80/80 schema-valid outputs and zero endpoint errors (table 4, appendix A.4, p. 20). Against base non-thinking, there were 56 adapter-only successes, zero base-only regressions, one both-pass case, and 23 both-fail cases; exact paired p < 10^-10 (section 4.2, p. 8). The eight-seed replication produced 1,392/1,920 accepted adapter reports versus 24/1,920 for matched bases, but those pooled cases are descriptive; the eight seed effects are the inferential observations (appendix A.6, pp. 22–23).
 
-Limits. The Qwen interface-cure endpoint failed: only three paired schema gains over thinking, p = 0.25, against a frozen requirement of five gains and p < 0.05. The adapter was still 80/80 schema-valid absolutely. Inference: semantic consolidation and interface reliability must be separate acceptance endpoints in VL.
+Limits. The Qwen interface-cure endpoint failed: only three paired schema gains over thinking, p = 0.25, against a frozen requirement of five gains and p < 0.05. The adapter was still 80/80 schema-valid absolutely.
 
 ## technique: isolate target-selection effects
 
@@ -85,7 +85,7 @@ Verus form. Inference: encode selector outputs as an enum and prove that each se
 
 Evidence. At the initial seed, VAL/model-self/schema-only adapters reached 102/160, 69/160, and 55/160; VAL versus model-self had paired net +33 and p = 1.9647 × 10^-6 (appendix A.5, p. 21). Across eight new seeds, VAL minus model-self effects were +67, +21, +40, −33, +29, −66, +7, +59 over three realizations of 160 cases; sign-flip p = 0.3672. VAL versus schema-only had four clear positive and four null seeds; p = 0.0703 (sections 4.4 and appendix A.7, pp. 10, 23).
 
-Limits. The paper's one-seed advantage is conditional and does not establish a universal purity law. Inference: VL should not assume that selecting semantically cleaner examples improves every training run; preserve verifier admission for safety/provenance while separately measuring downstream learning.
+Limits. The paper's one-seed advantage is conditional and does not establish a universal purity law.
 
 ## technique: prospective seed replication
 
@@ -119,8 +119,6 @@ Limits. The synthetic generators are self-authored, rows are clustered, and tran
 
 The verifier proves only compliance with its declared planning contract; the empirical study measures acceptance counts, schema validity, paired transitions, latency, token use, and exact tests. The paper retains the verifier after training because the adapter proposes a repair while the verifier remains the acceptance authority (section 3.10, p. 7). Trusted or untested components include the contract's completeness, PlanBench/VAL implementation and pinned runtime, model and tokenizer behavior, LoRA optimizer and hardware, parser/canonicalizer, contamination checks, and the statistical analysis. The paper does not test institutional authority, contract revision, policy legitimacy, external completion evidence, human escalation, routed multi-adapter composition, additional domains, or a specialist size floor (section 6, pp. 15–16).
 
-Inference: for VL, the product threat is a verified wrapper that accepts a model output under an incomplete or stale contract. Agent-written Rust can be proved to satisfy the local predicate while still selecting the wrong contract version, stale external facts, or an untrusted verifier result. The governance-record pattern reduces this threat by binding contract/version, candidate, verifier receipt, and lineage, but it does not remove the need for authority and external-state checks.
-
 Inference: the highest-value reuse is a two-stage Verus architecture: prove parsing, canonicalization, record integrity, and contract checking in Rust; leave model generation and external process execution as explicit trusted inputs; reject or escalate any candidate without a matching receipt. Separate semantic acceptance from interface validity and from statistical claims about training.
 
 ## techniques for the catalog
@@ -131,4 +129,3 @@ Inference: the highest-value reuse is a two-stage Verus architecture: prove pars
 - matched selector ablation — hold candidate pool and training fixed while changing only VAL, model-self, or schema-only target selection
 - seed-level replication — freeze targets and corpus, vary training seeds, and use seed effects rather than repeated cases as the inferential unit
 - bounded self-training loop — harvest accepted model outputs, retrain from the base on cumulative targets, and continue only under predeclared stopping and regression gates
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

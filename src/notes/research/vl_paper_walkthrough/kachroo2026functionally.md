@@ -6,8 +6,6 @@ Tag: `kachroo2026functionally`, [paper](http://arxiv.org/abs/2610.04371v1)
 
 FEAGENT audits whether two programs preserve observable behavior when direct execution or complete symbolic models are unavailable. The paper explicitly distinguishes this from proof: “FEAGENT cannot prove universal equivalence from finitely many queries and model predictions.” (section 1, PDF p.2). It instead fixes an assessment specification Σ containing an input domain D, observable fields O, environment assumptions Γ, and resource policy τ (section 3, PDF p.4). Verdicts are `EQUIVALENT`, `INEQUIVALENT`, or `UNCLEAR`; uncertainty is retained when evidence or coverage is incomplete.
 
-Inference: for VL, FEAGENT is a pre-proof audit that can find behavioral differences between generated Rust and a reference implementation, especially when Verus cannot model a dependency. It should not be presented as a replacement for a Verus proof.
-
 ## technique 1: typed program-pair graphs and anchor obligations
 
 What it is. Each program becomes a typed attributed graph with repository, file, namespace, type, function, parameter, statement, variable, literal, and external-symbol nodes (section 4.1, PDF p.5). The system aligns entry points by qualified names, signatures, types, documentation, and call context, then expands to public inputs/outputs, exceptions, mutations, effectful calls, branch and loop predicates, transitive callees, data dependencies, and environment assumptions (section 4.2, PDF p.5).
@@ -48,14 +46,9 @@ Verus form. Inference: implement the gates as executable Rust over a ledger, and
 
 Evidence. On 1,200 EquiBench pairs, 230 disagreements were challenged and 216 were verified genuine (93.9% of disagreements), giving 18.0% execution-confirmed divergence (216/1,200) (Table 1, PDF p.8). On SWE-bench Verified, 331 test-passing patches produced 109 flags; 94 were confirmed, so 28.4% (94/331) diverged from the reference patch (section 5.4, PDF p.8). These denominators and settings are essential: the latter is only patches that already passed all tests.
 
-## what is proved, trusted, and relevant to VL
-
-The evidence ledger, graph bounds, surrogate predictions, observable schema, external-environment contract, and direct-execution confirmation are trusted in different stages. `EQUIVALENT` is scoped support, not universal equivalence. The paper reports no quantitative causal attribution for graph context because its matched ablation is future work (section 5.5, PDF p.8). Inference: threat to agent-written verified Rust is high as an audit concern: tests and proof obligations can miss behavioral differences in effects, dependencies, or reference semantics, while this method can produce concrete counterexamples. It still cannot repair a wrong Verus specification, prove behavior outside D, or replace a complete formal refinement proof. VL should reuse the explicit `UNCLEAR` state, frozen scope Σ, and evidence ledger before escalating a candidate to formal verification.
-
 ## techniques for the catalog
 
 - typed graph obligations — align program anchors and turn interface, control, data, effect, and environment differences into checkable questions
 - bounded citable analysis — constrain graph queries and require node, path, and source-span evidence for every claim
 - blinded surrogate execution — generate branch-targeting typed inputs and independently predict source and target observables
 - selective reconciliation — gate evidence into equivalent, inequivalent, or unclear without forcing uncertain judgments
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -65,14 +65,9 @@ How: (1) choose a FEMA P-695 far-field record by spectral-shape misfit; (2) scal
 
 Inference: Verus form: model the held-out result as a separate postcondition and require it alongside the in-loop predicate. The numerical simulator and record-selection code remain trusted unless separately verified.
 
-## what remains trusted and threat to VL
-The paper proves search lemmas under a monotone-margin assumption and measures benchmark pass rates, ablations, and paired comparisons. The trusted base includes finite-element/OpenSeesPy modeling, code limits, load records, perception and extraction, and held-out model fidelity. Certified success remains below one half in the reported main runs, and the paper notes that every tested system produced some unbuildable designs without the gate. Inference: the threat to VL is high when an agent can nominate its own acceptance evidence; an independent deterministic checker with per-constraint margins is a reusable defense. VL should not treat a passing self-reported test or a single in-loop model as proof of deployment safety.
-
 ## techniques for the catalog
 - margin oracle — normalize each physical/code demand and accept only when every margin is nonnegative
 - certificate gates — require static, held-out dynamic, and constructability checks before counting success
 - independent adjudicator — let a deterministic engine decide while the LLM only proposes revisions
 - violated-set repair — feed failed constraint identities back as a process signal for discrete repairs
 - constructability projection — enforce analytic geometry constraints before expensive simulation
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

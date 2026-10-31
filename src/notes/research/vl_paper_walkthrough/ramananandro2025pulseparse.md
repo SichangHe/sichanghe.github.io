@@ -6,8 +6,6 @@ Tag: `ramananandro2025pulseparse`, [paper](https://arxiv.org/abs/2505.17335v2)
 
 PulseParse is a verified library of parser and serializer combinators in F*/Pulse separation logic. EverCBOR formalizes CBOR and emits verified C and safe Rust. EverCDDL checks CDDL well-formedness and emits verified parsers and serializers. The paper states: “All our code is proven memory safe, arithmetically safe, and functionally correct, and the formats we formalize are all proven non-malleable.” (Section 1, p. 2.) Here non-malleable means that one high-level value has a unique accepted byte representation under the specified format.
 
-Inference: this is directly relevant to VL’s verified Rust parser work, but its proofs are in F*/Pulse and its generated Rust is extracted code. A Verus port must re-establish the memory, arithmetic, functional, and uniqueness theorems; the paper’s theorems do not transfer automatically.
-
 ## technique 1: specification and implementation combinators
 
 What it is. A parser specification is a pure function from a byte sequence to an optional value and consumed length. A serializer is a value-indexed byte sequence refined by the property that the parser returns the value and the complete length. Primitive combinators compose into pairs, integers, bit fields, lists, dependent pairs, and rewrites under bijections. The authors say: “PulseParse follows this approach too.” (Section 2, p. 2.) They separate pure specification combinators from implementation combinators that refine them to low-level code.
@@ -20,7 +18,7 @@ How to apply it.
 4. Implement validators, jumpers, accessors, readers, and writers that operate on arrays and preserve the specification through separation-logic triples. (Section 2.2.)
 5. Extract first-order C or safe Rust after proving the Pulse implementation. (Section 1 and Fig. 1.)
 
-The pair serializer requires the prefix property: once a parser accepts (n) bytes, any input sharing that prefix must produce the same result. This property is needed to prove that concatenating serializers parses back to the pair (Section 2.1). Inference: this is a reusable proof obligation for VL combinators; an implementation should expose it as a Verus `requires`/`ensures` contract on the specification function, then prove each concrete combinator preserves it.
+The pair serializer requires the prefix property: once a parser accepts (n) bytes, any input sharing that prefix must produce the same result. This property is needed to prove that concatenating serializers parses back to the pair (Section 2.1).
 
 Verus form. Inference: model parser specifications as `spec fn`s over `Seq<u8>` returning an option-like result, and serializers as executable functions with `requires` that the output buffer is large enough and `ensures` relating bytes written to the parser result. Use `proof fn`s or lemmas for pair composition and non-malleability. Use `invariant` clauses for loops over input arrays. These are Verus adaptations; the paper uses F*/Pulse syntax.
 
@@ -40,7 +38,7 @@ The paper’s pair example states that the postcondition gives ownership of two 
 
 Verus form. Inference: represent ownership with Verus ghost permissions or linear ghost tokens tied to a slice and range, and prove disjointness of subranges before returning borrows. Use Rust slices and lifetimes for the executable aliasing boundary; use `requires` for valid serialization and `ensures` for unchanged bytes and returned-value relations. Inference: a Verus adaptation would need an ownership-recovery abstraction; the paper provides no Verus encoding. Footnote 2 (p. 3) clarifies the implementation: “Our proofs use Pulse’s trades, which have a slightly different semantic model than magic wands, but we only rely on usual proof rules that are valid for both the traditional magic wand and Pulse trades.”
 
-Failure boundary. Zero-copy values borrow the input buffer. Inference: VL callers must retain the buffer for the borrow lifetime or copy into owned data. The paper’s no-heap claim concerns its parser representation, not arbitrary application memory.
+Failure boundary. Zero-copy values borrow the input buffer.
 
 ## technique 3: bounded writers and arithmetic-safety checks
 
@@ -110,10 +108,6 @@ For COSE, Table 2 signs and verifies an 896-byte payload with Ed25519 on an Inte
 
 What is proved: memory safety, arithmetic safety, and functional correctness of the implementations, and non-malleability of the formalized formats. Inference: using the generated code requires assessing the proof system, extraction and compilation, and whether the formal specifications match the application’s intended meaning. This study does not audit those dependencies. The verified COSE application uses HACL★, while the comparison application using OpenSSL is unverified (Section 5.2, p. 14). The authors explicitly do not support floating-point CBOR because of missing F* support and leave extended data models, such as conflating tagged long integers with standard integers, to future work (Section 3.3, p. 9). They reject recursive CDDL as a security risk from input-proportional stack use (Section 4.1, p. 11). They also qualify the backend: “PulseParse is not tied to Rust, and Pulse can in general be used to produce verified C code or verified, safe Rust code, though support for the latter is not fully complete.” (Section 6, pp. 14–15.)
 
-## transfer to VL and product threat
-
-Inference: VL must establish that its format specification matches the intended application and that its implementation preserves that specification. A streaming design would also need to account for processing input before complete validation, which this paper avoids. The reusable design is strong: separate pure format semantics, low-level ownership predicates, bounded arithmetic, iterative validation, and generated code checked against the same specification. The paper is prior art for verified Rust binary parsing, canonical serialization, zero-copy ownership, and schema-driven generation. VL should not redo those general claims. A distinct VL result would need a Verus implementation, explicit trust accounting, and a meaningful extension such as verified resumable arrival semantics while respecting PulseParse’s whole-buffer validation boundary.
-
 ## techniques for the catalog
 
 - specification/implementation combinators: define pure parser/serializer semantics and refine them into compositional low-level implementations
@@ -122,5 +116,3 @@ Inference: VL must establish that its format specification matches the intended 
 - constant-stack recursive validation: replace recursive execution with a counter loop proved against a recursive specification
 - deterministic non-malleable encoding: prove canonicalization at specification level, check input encodings, and sort application-built maps before serialization
 - CDDL elaboration and generation: reject ambiguous schemas, prove injective semantics, and emit verified parsers and serializers
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We only support non-recursive CDDL descriptions; while we investigated the formal semantics of recursive CDDL descriptions, we ultimately deem them a security issue because they would give rise to stack consumption proportional to the size of the input."): checked quotations, numbers, section/page references, technique steps, and limitations; corrected quotations, writer preconditions and failure behavior, recursive fuel, canonicalization versus implementation, stack-proof scope, COSE limits, and trust claims; changed the link to the paper’s arXiv identifier; did not check artifacts, rerun benchmarks, or verify proofs or proposed Verus adaptations.

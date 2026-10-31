@@ -65,8 +65,6 @@ The setup uses GPT-5, Yosys or PyVerilog with Slang for ASTs, OpenTitan document
 
 The key failure condition is underspecification. The paper reports missed detections when documentation omits intended latch/mask behavior or reset semantics and says “the lack of explicit functional contracts makes automatic property construction difficult for ATLAS.” (§5.2.1, p. 7.) Multiple related CWEs may be returned for one asset; the authors give CWE-1220 and CWE-1262 for a debug scenario and explain that both describe the same privilege rule from different angles (§5.2.3, p. 8).
 
-Inference: threat to VeruLaw is substantial only for the property-generation boundary: an agent can produce a formally proved but incomplete security contract when requirements or adversary models are missing. The paper's context intersection and manual escalation are useful safeguards, but they do not remove specification risk. Inference: VL should not redo the paper's CWE database plus three-context RTL pipeline; its transferable research question is whether the same evidence discipline catches weak Rust contracts and external-library assumptions.
-
 ## techniques for the catalog
 
 - standardized threat template: represent adversary, assets, attack surface, vulnerability, and threat in a fixed record
@@ -74,4 +72,3 @@ Inference: threat to VeruLaw is substantial only for the property-generation bou
 - three-context prompting: combine design documents, RTL AST, and a security-centric summary before generating assertions
 - non-vacuity and proof loop: add covers, run JasperGold, refine assumptions, and escalate inconclusive results
 - CWE-to-assertion mapping: bind each detected weakness to signal-level properties and inspect proof or counterexample outcomes
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

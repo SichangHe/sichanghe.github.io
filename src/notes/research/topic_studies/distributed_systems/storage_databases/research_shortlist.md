@@ -106,7 +106,6 @@ remaining work
   - these notes contain proposals rather than results
 - consultation
   - GPT-6.1 Sol with Extra High completed on 8 Oct 2026
-  - [saved conversation](https://chatgpt.com/c/6ac7beb1-8ac4-832e-b2f7-f046c874ccbd)
   - it supplied leads rather than independent validation
     - primary checks confirmed Rocq isolation characterizations, S3 Tables, lakeFS mirroring, and GoTxn
     - Ferrite's primary PDF was subsequently recovered from its project site

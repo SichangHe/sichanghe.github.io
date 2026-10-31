@@ -36,16 +36,6 @@ Failure analysis separates specification and proof errors. The authors write: �
 
 The authors compare symbolic tools too: UAutomizer passes 92/133 Code2Inv, 1/47 SV-COMP-47, and 374/1,000 SV-COMP; ESBMC passes 68/133, 1/47, and 358/1,000. Lemur-GPT-4 passes 107/133 and 25/47 where reported (Table 2, p. 9). Inference: these counts should be compared within each benchmark.
 
-## what is proved, trusted, and risky for VL
-
-For acceptance, the authors state: “If proof is passed by Isabelle proving environment, we consider it a successful verification.” (Sec. 5.1, p. 8). They also acknowledge: “Additionally, semantic alignment between lemma statements and program specifications is an unexplored area of research.” (Appendix A, p. 15). Inference: an accepted proof establishes the generated lemma; correctness of the intended C property additionally depends on the translation and the lemma's alignment with that property.
-
-Preprocessing is part of the evaluated pipeline. Appendix E.1, p. 24, excludes floating-point samples and defines SV-COMP-47 as the Lemur subset with multiple nested loops, and SV-COMP-1,000 as a random sample of the full benchmark. Appendix E.2, p. 24, removes functions containing string literals, retains the abort declaration, fixes illegal function names, replaces assertions and assumptions with conditional returns, and declares `unknown` externally. The authors claim: “Note that all assertions appear in the “main()” function, so the semantics before and after the replacement are equivalent.” Inference: this claim is not an independent proof that preprocessing preserves each benchmark property.
-
-Appendix D.2 reports a separate theorem-proving evaluation (Table 6, p. 22): Mistral improves from 26 to 74 of 1,077 test lemmas and from 19 to 49 of 852 test-hard lemmas; Llama improves from 39 to 88 and from 27 to 64, respectively. Its explanation for low pass rates includes: “The current whole proof paradigm requires generating the proof in one go without the help of the proof state information, which poses a significant challenge.” (p. 22).
-
-Inference: for agent-written verified Rust, FVEL suggests generating a contract, verifying it, then repairing obligations with diagnostics while independently checking that the contract expresses the intended requirement. Its measured code-verification coverage remains limited: the best fine-tuned model in Table 2 passes 84/1,000 SV-COMP tasks, compared with 374 for UAutomizer and 358 for ESBMC. Inference: VL can adapt dependency extraction, proof-state datasets, and separate accounting of statement and proof errors to Verus; the paper does not evaluate that transfer.
-
 ## techniques for the catalog
 
 - interactive specification-and-proof loop: translate code to theorem facts, generate a lemma, verify each proof step, and feed prover errors back
@@ -53,4 +43,3 @@ Inference: for agent-written verified Rust, FVEL suggests generating a contract,
 - step-wise proof-state dataset: store each command with Isabelle's resulting state and split by lemma
 - verifier-aware fine-tuning: fine-tune on complete formal proofs, then accept only proofs checked by the theorem prover
 - statement-versus-proof error audit: classify failures by incorrect specification versus failed proof generation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We convert the training data into the alpaca format, where all training samples use the same instruction, the input is the lemma specification, and the output is a complete proof written in Isabelle."): read the full paper, including references and appendices, and the whole study; checked quotations, numbers, section/page references, workflow, extraction, training, inference, and limitations; corrected citations, quotation wording, unsupported per-model timing, test-hard depth description, inference-procedure ambiguity, and best SV-COMP count; marked recommendations and conclusions as Inference; retained the arXiv link identified on p. 1; did not reproduce experiments, inspect implementation/data, or validate the proposed Verus transfer.

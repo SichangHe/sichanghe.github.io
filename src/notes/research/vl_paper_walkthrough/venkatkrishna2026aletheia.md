@@ -14,7 +14,7 @@ Steps from the paper: (1) filter CodeContests+ questions using >.9 true-positive
 
 Verus form: Inference: build evaluation prompts containing multiple Rust/Verus candidates, run the Verus checker once per candidate, and use “verified” as the unambiguous winner. Construct Hard sets from candidates that differ by subtle invariant or boundary errors; construct Adv sets with semantics-preserving formatting and misleading comments. Use ListAcc for selecting a proof and Kendall τ-b for ranking repair candidates. Verus’s checker, compiler version, libraries, and trusted axioms become the testbed’s trusted execution boundary.
 
-Evidence and limits: each metric is averaged over N prompts with 16 generations and a stated 95% confidence interval (§2.2). Kendall τ-b discards unparseable verdicts as ties, so the paper warns that DPO-Think-1.5B’s apparently competitive τ is noisy because only 43% of final answers parse (RQ2, p.9). Inference: VL must report parseability and denominators alongside verification accuracy.
+Evidence and limits: each metric is averaged over N prompts with 16 generations and a stated 95% confidence interval (§2.2). Kendall τ-b discards unparseable verdicts as ties, so the paper warns that DPO-Think-1.5B’s apparently competitive τ is noisy because only 43% of final answers parse (RQ2, p.9).
 
 ## technique 2: thinking-trace and budget ablation
 What it is: compare GRPO-Instruct (short/no reasoning style) against GRPO-Think with maximum trace lengths 4k, 8k, and 16k tokens, holding training updates fixed (RQ1, §3.1, p.6). The paper states: “Thinking traces are crucial for Easy-to-Hard generalization.” (Summary Of Findings For Best-of-N 1, p.6)
@@ -37,12 +37,8 @@ Steps: sample candidate list; execute and label each; train on all positive and 
 
 Verus form: Inference: retain rejected proofs with their exact Verus diagnostics and train contrastively against accepted proofs. Negative examples should include syntax failures, missing invariants, and semantically wrong specifications. The checker’s rejection is the label; do not infer rejection from model confidence.
 
-## what is trusted and what VL should learn
-The work measures selector and ranker behavior; it does not prove that a surrogate verifier is sound for arbitrary code. SandboxFusion test execution, test-case quality, pass-rate labels, prompt parsing, and the model checkpoints are trusted. The paper explicitly notes that paired accuracy is “only weakly predictive of downstream performance” (§2.1, p.3), and its τ metric can hide unparseable outputs (§3.2, p.9). Inference: VL should maintain disjoint easy, subtle-error, API-shift, and adversarial proof sets, publish parse rates, and evaluate both winner selection and full ranking. Inference: the threat to agent-written verified Rust is that a learned verifier could reward plausible but unchecked proof text; only Verus’s actual checker can close that gap.
-
 ## techniques for the catalog
 - execution-grounded listwise evaluation: create candidate lists with one checker-confirmed winner and test OOD shifts
 - trace-budget ablation: vary reasoning style and maximum tokens by model scale
 - on-policy verifier training: compare current-policy sampling with offline and batch-online alternatives
 - negative-sample learning: train on rejected candidates and checker diagnostics, not positives alone
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

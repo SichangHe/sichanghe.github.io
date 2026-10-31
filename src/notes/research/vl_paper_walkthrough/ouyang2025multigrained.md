@@ -58,10 +58,6 @@ Evidence: conformance checking found inconsistent message types, incorrect condi
 
 TLC checks safety invariants over configured state spaces, subject to exploration limits. The authors define ten protocol invariants and four code-level invariant types containing eleven instances (Section 4.2, Table 2, pp. 9–10). Conformance checking compares sampled model traces with instrumented code and checks safety rather than liveness (Sections 3.4–3.5.2, p. 8). Inference: the evidence depends on the specifications, invariant definitions, action-to-code mappings, instrumentation, TLC, and runtime behaving as intended. Random trace sampling gives incomplete conformance coverage. A Verus proof can establish modeled transition and invariant properties, but the specification-to-implementation mapping still needs validation.
 
-## what VL should reuse and what it should not redo
-
-Inference: VL should reuse interaction-variable analysis, mixed-granularity composition, deterministic trace replay, and separate reporting of safety evidence and conformance coverage. It should not claim that a passing replay proves unmodeled behavior absent; the paper states the checker is unsound and random exploration incomplete. For agent-written verified Rust, the major threat is a coarse abstraction that hides a concurrent interleaving or a mapping that omits an externally visible event.
-
 ## techniques for the catalog
 
 - interaction-preserving coarsening — abstract internal module steps while preserving dependency and shared interaction variables
@@ -69,5 +65,3 @@ Inference: VL should reuse interaction-variable analysis, mixed-granularity comp
 - continuous conformance checking — replay model traces against implementation traces and revise mismatches iteratively
 - deterministic fault replay — coordinate code-level interleavings and inject faults to reproduce model safety violations
 - modular invariant reuse — attach protocol and code-level invariants to composed specifications at the needed granularity
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "With BFS, once an invariant is violated, we can obtain the buggy trace with minimal depth."): checked all quotations, numbers, section/page references, and technique steps against the full text, including appendices and references; corrected the paper link, recursive interaction-variable rules, trace-equivalence guarantee, setup citation, Table 4 description, conformance quotation, and Verus inferences; did not execute the artifact, reproduce experiments, or independently validate the proposed Verus adaptations.

@@ -8,8 +8,6 @@ The paper predicts the relative ranking of software-verification tools on a veri
 
 The authors' central design is to represent each source program as a graph combining control flow, data/control dependence, and syntax, then compare graphs with Weisfeiler–Lehman subtree kernels. They feed those similarities to ranking-by-pairwise-comparison (RPC), whose base learners are support vector machines (SVMs). The abstract summarizes the claim: “Our kernels employ a graph representation for software source code that mixes elements of control flow and program dependence graphs with abstract syntax trees.” (abstract, p. 1).
 
-Inference: For VeruLaw, this is a portfolio-selection technique. A learned model could predict which verifier or proof strategy is likely to work on a generated Rust task, but the prediction is a heuristic and cannot replace running Verus or checking its result.
-
 ## technique 1: construct an abstraction-preserving verification-task graph
 
 What it is. Raw source strings are brittle: renamed variables or equivalent loop syntax can look different, while a structurally hard and structurally easy assertion can look nearly identical. The paper builds a directed multigraph `G=(N,E,s,t,ρ,τ,ν)`. Nodes are AST roots and their expression nodes; `ρ` gives abstract labels such as `Loop`, `Assign`, `Assert`, or size classes for integer literals. Edges carry dependence type: control flow (CF), control dependence (CD), data dependence (DD), or syntactic/AST containment (SD); `ν` records true/false branch valuation for control dependence (§2, pp. 3–4; Definition 2.2, p. 4). The paper's Definition 2.2 prints the last tuple component as η in the heading and ν in the bullets; the bullets and Algorithm 1 use ν.
@@ -23,8 +21,6 @@ How to apply it.
 5. The property is typically an assertion written into the program (Definition 2.1, p. 2), so it enters the graph as an Assert node and its expression nodes, up to the abstraction (Fig. 2, §2, p. 3).
 
 The representation deliberately omits some detail. Two programs differing only in `assert(i == n)` versus `assert(i != n)` can be indistinguishable under the chosen labels and dependencies, even though one may be hard and the other quickly refuted (Fig. 3, §2, p. 3; discussion p. 4). The authors conclude: “Here, we clearly see the limits of any learning approach based on structural properties of programs.” (§2, p. 4)
-
-Inference: A VL implementation could build analogous graphs from Rust/Verus syntax: nodes for executable statements, specification expressions, loop invariants, and proof blocks; edges for control, data, call, and specification dependencies. It should preserve annotations that predict proof difficulty, such as quantifier and trigger structure, while treating the graph as metadata. No Verus graph encoding or proof-difficulty theorem appears in the paper.
 
 ## technique 2: Weisfeiler–Lehman subtree kernels over selected relations
 
@@ -56,7 +52,7 @@ How to apply it.
 5. Sum pairwise preference degrees and sort tools into a complete ranking (§3.2, p. 5).
 6. Compare the predicted permutation with the observed ranking using Spearman correlation (§3.1, p. 4).
 
-RPC predicts relative performance from previous outcomes; it does not verify anything. Inference: its ranking can be wrong when a task contains behavior absent from training data or when a tool version changes (the paper does not test either), and a VL system could use the ranker to order Verus tactics, SMT settings, or external tools, then execute the selected candidates and retain proof artifacts. It should treat UNKNOWN and tool failures as explicit outcomes instead of converting them into proof success. The paper identifies tools only by name, so it cannot rank a tool absent from training (§5, p. 8).
+RPC predicts relative performance from previous outcomes; it does not verify anything.
 
 ## technique 4: cross-validation and denominator-aware evaluation
 
@@ -68,14 +64,6 @@ Evidence must retain the table's dataset and denominator. For SV-COMP 2015, the 
 
 Training/testing cost is setting-dependent. On 2015 SAFETY, the weighted combination trains in 349 ± 9.13 seconds and tests in .019 ± .0 seconds per fold run; on 2017 SAFETY it trains in 3,809 ± 99.4 seconds and tests in .294 ± .022 seconds (Tables 4–5, p. 9). The times use precomputed Gram matrices (§4, p. 8); the implementation uses CPAChecker, JGraphT and scikit-learn (§4, pp. 7–8).
 
-Inference: A VL portfolio evaluator should report task counts, tool counts, fold protocol, and whether predictions are made on unseen repositories or only held-out benchmark tasks. It should measure proof success, time, and repair effort after selection; Spearman correlation alone does not establish a useful end-to-end proof workflow.
-
-## what is proved, trusted, and useful for VL
-
-The one formal result is positive semi-definiteness of the graph kernel (Theorem 3.3, §3.4, p. 6); the paper says “For the proof, we refer to [5]” (a master's thesis), so the proof is not in the paper. The theorem is stated as: “The kernel kη1,η2,z is positive semi-definite.” (§3.4, p. 6) The learning claims are empirical: cross-validation on SV-COMP datasets, with code and 2015 data released at the repository cited in §1 and §4. The graph construction uses CPAChecker's C parser, reaching-definition analysis and control-dependence computation (§4, pp. 7–8); “complex dependencies introduced by pointers” were ignored (§4, p. 8). Inference: the method therefore also depends on those analyses, the abstract labels, the SVM implementation, and the assumption that past tool rankings predict future rankings. Figure 3 shows that structural abstraction can miss semantically important assertion differences (§2, pp. 3–4).
-
-Inference: The threat to agent-written verified Rust is low to moderate and operational. A wrong prediction can waste solver time or choose a weak backend, but it does not invalidate a proof that Verus independently checks. The greater risk is policy misuse: treating a predicted top-ranked tool as evidence of correctness, or training on benchmark families that do not represent generated code. The useful catalog lesson is to make backend choice data-driven while keeping proof acceptance entirely checker-based.
-
 ## techniques for the catalog
 
 - verification-task graph abstraction — combine CFG, control/data dependence, and AST edges while replacing concrete names with structural labels
@@ -83,5 +71,3 @@ Inference: The threat to agent-written verified Rust is low to moderate and oper
 - pairwise ranking with SVMs — train one binary preference model per verifier pair and aggregate calibrated pair scores into a ranking
 - denominator-aware cross-validation — use 10 folds, report task/tool counts, and compare Spearman means with standard deviations and baselines
 - verifier portfolio selection — inference: rank Verus tactics or backends before execution, then rely on independent proof checking for acceptance
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Intuitively, the kernels count the number of equally labelled nodes in all iterations, where the iteration bound steers to what extent subtrees of root ASTs nodes are considered"): read the whole paper text and compared every quotation, number, page and section reference, and technique step against it; corrected page references throughout, Table 2 TERMINATION best (.711 ± .007) and Table 3 MEMSAFETY best (.757 ± .007), the RPC pair count wording (unordered pairs), the kernel definition (sum over iterations, depth as inclusion bound), the claim that the paper proves Theorem 3.3 (proof deferred to [5]), and the six-variants count; marked unsupported statements as Inference. Did not check: the cited works, the GitHub repository, the master's thesis proof, and the Inference paragraphs beyond their consistency with the paper; the link is the arXiv abs link already in the file, whose id matches the arXiv stamp in the paper text.

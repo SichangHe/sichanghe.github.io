@@ -8,8 +8,6 @@ The paper tests whether an LLM can verify and repair its own answers on formally
 
 The central experimental decomposition has three roles: answer generation, binary verification, and critique generation. The method says, “Though only two types of prompts are sent, the LLM can be seen as playing three separate roles: as an answer guesser, a (binary) verifier, and a critique generator.” (Section 4, PDF p. 6.) The authors then replace or remove these roles one at a time to identify which component changes performance.
 
-Inference: For VeruLaw, this is evidence about an architectural boundary. An LLM should propose Rust specifications, code, or proof hints, while a sound checker decides acceptance. The paper does not evaluate Rust or Verus, so the transfer to Verus is an inference.
-
 ## technique 1: choose independently checkable tasks with varied instances
 
 What it is. The evaluation domain is selected so instances can be generated or varied, answers have many possible solutions, and an executable checker can decide correctness. The authors reject benchmarks whose answers are only judged by another model or by human taste. Their stated reason is that “it is crucial to test them on formal tasks–ones where machine-verifiable ground truths are available for both generation and criticism.” (Section 1, PDF p. 2.) They also require arbitrary generation to reduce memorization risk and avoid multiple-choice spaces where repeated guessing trivially enumerates options (Section 2, PDF pp. 3–4).
@@ -89,12 +87,6 @@ Limits and assumptions. Inference: repeated sampling uses more model calls to im
 
 The paper measures empirical accuracy, false-positive and false-negative rates, and critique accuracy. It does not prove that GPT-4 reasons correctly. Its soundness claims concern the external task checkers and the formal task definitions, not the LLM. The experiments use 100 generation instances per domain (Table 1) and larger verification sets with explicit fractions (Table 2). The paper's key inference is that model verification errors compound over rounds; the direct evidence is the measured collapse and the high false-negative fractions.
 
-Inference: in a VeruLaw product, the strongest product threat identified here is accepting model-authored proof text because the model says it is correct. A Verus run can reject an invalid proof, but a passing proof still depends on the specification, trusted libraries, solver behavior, erasure, compiler, and environment. Inference: the safer design is to treat the agent as a proposal generator and require an independently rerun Verus check before release. The paper's results support this architecture at the level of verifier soundness, but they do not quantify risks from generated Rust, dependency changes, or specification mistakes.
-
-## what VL should not redo
-
-Inference: VL should not spend product effort on an LLM self-critique loop whose acceptance signal is another unconstrained LLM judgment. This paper already measures the failure mode and supplies the relevant baselines. VL should instead invest in reliable Verus invocation, candidate isolation, checker diagnostics, and repeated search with sound verification. The paper does not test Verus-specific proof repair, so those remain open engineering questions.
-
 ## techniques for the catalog
 
 - formal checker benchmark design — generate varied instances with machine-verifiable validity and avoid memorized or tiny answer spaces
@@ -103,5 +95,3 @@ Inference: VL should not spend product effort on an LLM self-critique loop whose
 - graded verifier feedback — compare no detail, first error, and all errors while holding the sound decision fixed
 - sampling with sound verification — repeatedly query the unchanged prompt and return the first candidate accepted by the sound checker
 - verifier error accounting — report accuracy, false-positive rate, and false-negative rate with explicit numerators and denominators
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each of these prompts, we sent a query to the LLM asking it to verify the plan and critique it in a certain format."): checked all paper text, quotations, reported numbers, section and PDF page references, and technique steps; corrected page references, linked the paper's arXiv identifier, qualified feedback and sampling claims, added prompt and budget limits, and marked recommendations as inferences; did not rerun experiments or validate Verus-specific proposals.

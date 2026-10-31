@@ -18,8 +18,6 @@ For each of K autoformalizer LLMs, the pipeline samples N candidate statements p
 
 The steps are: (1) sample N candidates from each of K models, (2) compile the candidates, and (3) send the survivors to the next filter. Figure 1 illustrates formalizing convexity, boundedness above, and continuity using explicit Lean hypotheses (p. 2). The paper does not specify numerical K and N values for this autoformalization procedure, so its aggregate results do not give an exact sampling configuration.
 
-Inference: In VL, several candidate `requires`/`ensures` contracts could be generated for the same Rust function. Compiler acceptance would be a prerequisite check before semantic comparison. Sampling increases the available alternatives; it does not select the contract that expresses the intended API behavior.
-
 ## multi-LLM semantic verification by back-translation
 
 Multiple general-purpose LLMs, with o1-mini and Claude 3.5 Sonnet given as examples, check alignment between a source problem and its formalization. Appendix G says the semantic prompt is provided to five LLMs (p. 29). Each checker is instructed to (1) back-translate Lean into English, (2) compare the translation with the original problem, and (3) return True or False. The prompt requests only the binary answer, rather than a visible explanation.
@@ -44,8 +42,6 @@ The authors recruited 12 International Mathematical Olympiad medalist-level expe
 
 Table 2 reports 72.09% preservation during expert verification, $6.89 per statement, and 22 days (p. 6). Thus 72.09% is the fraction surviving manual review of the last automated stage, not the fraction of all collected problems accepted before manual review. The final 21.7% uses the original source collection as its denominator. The paper describes experts checking alignment; it does not give a detailed revision protocol for rejected statements.
 
-Inference: VL could record each requirement, candidate contract, checker outcome, and human decision. Keeping stage-specific counts and denominators would distinguish compiler rejection, semantic disagreement, disproof, and expert rejection.
-
 ## benchmark proving methods and verification scaling
 
 Section 4.1 evaluates best-first tree search and single-pass generation (pp. 6–8). Search prioritizes intermediate proof states and proposes tactics at each expansion. Its budget is N × S × T: search attempts, tactics per expansion, and expansion iterations. Single-pass generation samples complete proof trajectories. Pass@K measures the fraction of problems with at least one valid proof among K attempts (pp. 6–7).
@@ -58,12 +54,6 @@ On Lite, STP rises from 48.59% at Pass@32 to 53.17% at Pass@3200, a 4.58 percent
 
 Inference: Verus experiments should state the problem subset, sampling budget, and contract being checked. The paper supports testing whether comments help proof generation; it does not establish that natural-language guidance always hurts.
 
-## what is proved, trusted, and risky for VL
-
-The compiler validates generated Lean proofs. Statement construction separately relies on semantic LLM judgments and expert review to align the Lean proposition with its informal source. FormalMATH supplies formalized statements requiring proof completion, so inclusion in the benchmark does not mean the authors have proved every statement (Section 2, p. 4).
-
-Inference: For VL, this separates two obligations: establish that the contract expresses the requirement, then establish that the program satisfies the contract. A successful verifier result addresses the encoded statement under the verifier's assumptions. It does not by itself validate the source-to-contract translation. Back-translation, negation attempts, and expert review are candidate checks for that translation; the paper evaluates them in Lean mathematics, not verified Rust.
-
 ## techniques for the catalog
 
 - compile-and-filter autoformalization: generate statement pairs and retain candidates accepted by the formal compiler
@@ -72,5 +62,3 @@ Inference: For VL, this separates two obligations: establish that the contract e
 - negation-based disproof: prove a transformed negation to reject the original formalization
 - expert funnel review: check statement alignment manually and record preservation with explicit denominators
 - parallel proof verification: centralize expensive library imports and check proofs concurrently
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each prover, we randomly sampled 100 failed proofs from a variety of Lean 4 statements and processed them through our two-stage diagnosis and classification pipeline."): checked the entire paper, quotations, numbers, section and page references, and technique steps; corrected preservation accounting, unsupported reproducibility and review claims, mathematical quotations, example and verifier page references, and the distinction between formalized statements and completed proofs; noted inconsistent preservation and vanilla-generation figures; did not reproduce experiments, inspect released code or data, or independently validate Lean or Verus behavior.

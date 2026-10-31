@@ -46,7 +46,6 @@ reading rule
   - external validity to ordinary software work remains unresolved
   - the paper inconsistently reports 169 versus 170 tasks and 11 versus 12 frontier models
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/Measuring AI Ability to Complete Long Software Tasks, Thomas Kwa, Ben West, Joel Becker, et al., NeurIPS, 2025/Measuring AI Ability to Complete Long Software Tasks, Thomas Kwa, Ben West, Joel Becker, et al., NeurIPS, 2025.md>)
 
 ## tau-bench
 
@@ -86,7 +85,6 @@ reading rule
   - sampled simulator error was under 4%
   - real-human validity and alternate valid outcomes remain unknown
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/tau-bench- A Benchmark for Tool-Agent-User Interaction in Real-World Domains, Shunyu Yao, Noah Shinn, Pedram Razavi, Karthik Narasimhan, ICLR, 2025/tau-bench- A Benchmark for Tool-Agent-User Interaction in Real-World Domains, Shunyu Yao, Noah Shinn, Pedram Razavi, Karthik Narasimhan, ICLR, 2025.md>)
 
 ## ultrahorizon
 
@@ -123,7 +121,6 @@ reading rule
   - judge agreement used only 30 trajectories per environment
   - the paper inconsistently reports eight versus nine error types
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/UltraHorizon- Benchmarking Agent Capabilities in Ultra Long-Horizon Scenarios, Haotian Luo, Huaisong Zhang, Xuelin Zhang, et al., ICML, 2026/UltraHorizon- Benchmarking Agent Capabilities in Ultra Long-Horizon Scenarios, Haotian Luo, Huaisong Zhang, Xuelin Zhang, et al., ICML, 2026.md>)
 
 ## theagentcompany
 
@@ -163,7 +160,6 @@ reading rule
   - only two scaffolds were evaluated
   - the simulated firm favors straightforward evaluable work over a natural job distribution
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/TheAgentCompany- Benchmarking LLM Agents on Consequential Real World Tasks, Frank F. Xu, Yufan Song, Boxuan Li, et al., NeurIPS, 2025/TheAgentCompany- Benchmarking LLM Agents on Consequential Real World Tasks, Frank F. Xu, Yufan Song, Boxuan Li, et al., NeurIPS, 2025.md>)
 
 ## swe-agent
 
@@ -203,7 +199,6 @@ reading rule
   - HumanEvalFix success is reported as both 87.7% and 88.3%
   - model snapshots are old
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/SWE-agent- Agent-Computer Interfaces Enable Automated Software Engineering, John Yang, Carlos E. Jimenez, Alexander Wettig, et al., NeurIPS, 2024/SWE-agent- Agent-Computer Interfaces Enable Automated Software Engineering, John Yang, Carlos E. Jimenez, Alexander Wettig, et al., NeurIPS, 2024.md>)
 
 ## swe-bench-pro
 
@@ -243,7 +238,6 @@ reading rule
   - conclusion reports about 23%
   - serving snapshots, costs, and false-negative rates remain unclear
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/SWE-Bench Pro- Can AI Agents Solve Long-Horizon Software Engineering Tasks, Xiang Deng, Jeff Da, Edwin Pan, et al., ICML, 2026/SWE-Bench Pro- Can AI Agents Solve Long-Horizon Software Engineering Tasks, Xiang Deng, Jeff Da, Edwin Pan, et al., ICML, 2026.md>)
 
 ## swe-lancer
 
@@ -283,7 +277,6 @@ reading rule
 - uncertainty
   - one repository and marketplace, one rollout, sparse task categories, and imperfect tests or labels limit generalization
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/SWE-Lancer- Can Frontier LLMs Earn $1 Million from Real-World Freelance Software Engineering, Samuel Miserendino, Michele Wang, Tejal Patwardhan, Johannes Heidecke, ICML, 2025/SWE-Lancer- Can Frontier LLMs Earn $1 Million from Real-World Freelance Software Engineering, Samuel Miserendino, Michele Wang, Tejal Patwardhan, Johannes Heidecke, ICML, 2025.md>)
 
 ## osworld
 
@@ -321,7 +314,6 @@ reading rule
   - the curated sample is not statistically representative
   - applications evolve and the abstract's below-12.2% claim conflicts slightly with the 12.24% table row
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/OSWorld- Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments, Tianbao Xie, Danyang Zhang, Jixuan Chen, et al., NeurIPS, 2024/OSWorld- Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments, Tianbao Xie, Danyang Zhang, Jixuan Chen, et al., NeurIPS, 2024.md>)
 
 ## paperbench
 
@@ -361,7 +353,6 @@ reading rule
 - uncertainty
   - 20 papers, high seed variance, three-paper comparable human baseline, and imperfect judge make small gaps unreliable
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/PaperBench- Evaluating AI's Ability to Replicate AI Research, Giulio Starace, Oliver Jaffe, Dane Sherburn, et al., ICML, 2025/PaperBench- Evaluating AI's Ability to Replicate AI Research, Giulio Starace, Oliver Jaffe, Dane Sherburn, et al., ICML, 2025.md>)
 
 ## re-bench
 
@@ -401,7 +392,6 @@ reading rule
   - seven short environments, noisy scores, high variance, and best-of-k selection limit labor forecasts
   - months-long research direction, data creation, distributed training, and hardware diagnosis are absent
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/RE-Bench- Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts, Hjalmar Wijk, Tao Lin, Joel Becker, et al., ICML, 2025/RE-Bench- Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts, Hjalmar Wijk, Tao Lin, Joel Becker, et al., ICML, 2025.md>)
 
 ## utboost
 
@@ -438,7 +428,6 @@ reading rule
   - false negatives remain unknown because generated tests are not exhaustive
   - the gold-equivalence oracle can reject a legitimate alternative implementation
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/UTBoost- Rigorous Evaluation of Coding Agents on SWE-Bench, Boxi Yu, Yuxuan Zhu, Pinjia He, Daniel Kang, ACL, 2025/UTBoost- Rigorous Evaluation of Coding Agents on SWE-Bench, Boxi Yu, Yuxuan Zhu, Pinjia He, Daniel Kang, ACL, 2025.md>)
 
 ## webrl
 
@@ -476,7 +465,6 @@ reading rule
   - current-version author order and content differ from the collected v1 extraction
   - transfer outside the five-site task ecosystem is unknown
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/WebRL- Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning, Zehan Qi, Xiao Liu, Iat Long Iong, Hanyu Lai, Xueqiao Sun, Jiadai Sun, Xinyue Yang, Yu Yang, Shuntian Yao, Wei Xu, Jie Tang, Yuxiao Dong, ICLR, 2025/WebRL- Training LLM Web Agents via Self-Evolving Online Curriculum Reinforcement Learning, Zehan Qi, Xiao Liu, Iat Long Iong, Hanyu Lai, Xueqiao Sun, Jiadai Sun, Xinyue Yang, Yu Yang, Shuntian Yao, Wei Xu, Jie Tang, Yuxiao Dong, ICLR, 2025.md>)
 
 ## workarena
 
@@ -516,7 +504,6 @@ reading rule
   - ten instantiations per task and no held-out task families limit generalization
   - no human study maps the score to real knowledge work
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/WorkArena- How Capable Are Web Agents at Solving Common Knowledge Work Tasks, Alexandre Drouin, Maxime Gasse, Massimo Caccia, et al., ICML, 2024/WorkArena- How Capable Are Web Agents at Solving Common Knowledge Work Tasks, Alexandre Drouin, Maxime Gasse, Massimo Caccia, et al., ICML, 2024.md>)
 
 ## browsecomp
 
@@ -556,9 +543,6 @@ reading rule
   - alternate-answer rate, judge-model version, budget, and post-release contamination remain unknown
   - the PDF lists Amelia Glaese while the OpenAI page displays Mia Glaese
 - raw evidence
-  - [official-page capture](/ssd1/sichangheagent/work_logs/agent_frontier_20260726/source_pages/browsecomp.json)
-  - [local PDF](</hdd1/sichanghe/paper_collection/BrowseComp- A Simple Yet Challenging Benchmark for Browsing Agents, Jason Wei, Zhiqing Sun, Spencer Papay, et al., OpenAI, 2025.pdf>)
-  - [local OCR](</hdd1/sichanghe/paper_collection/BrowseComp- A Simple Yet Challenging Benchmark for Browsing Agents, Jason Wei, Zhiqing Sun, Spencer Papay, et al., OpenAI, 2025/BrowseComp- A Simple Yet Challenging Benchmark for Browsing Agents, Jason Wei, Zhiqing Sun, Spencer Papay, et al., OpenAI, 2025.md>)
 
 ## scienceagentbench
 
@@ -599,7 +583,6 @@ reading rule
 - uncertainty
   - automatic metrics, model judging, leakage checks, and the unmatched human comparison remain incomplete
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/ScienceAgentBench- Toward Rigorous Assessment of Language Agents for Data-Driven Scientific Discovery, Ziru Chen, Shijie Chen, Yuting Ning, et al., ICLR, 2025/ScienceAgentBench- Toward Rigorous Assessment of Language Agents for Data-Driven Scientific Discovery, Ziru Chen, Shijie Chen, Yuting Ning, et al., ICLR, 2025.md>)
 
 ## mle-bench
 
@@ -640,7 +623,6 @@ reading rule
   - no clean contamination guarantee exists, especially for o1 and later models
   - medal performance is not equivalent to open-ended ML research
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/MLE-bench- Evaluating Machine Learning Agents on Machine Learning Engineering, Jun Shern Chan, Neil Chowdhury, Oliver Jaffe, et al., ICLR, 2025/MLE-bench- Evaluating Machine Learning Agents on Machine Learning Engineering, Jun Shern Chan, Neil Chowdhury, Oliver Jaffe, et al., ICLR, 2025.md>)
 
 ## memoryagentbench
 
@@ -683,7 +665,6 @@ reading rule
   - the four-competency taxonomy is an operational choice
   - synthetic overwrite tasks and explicit instructions do not establish real-world memory quality
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/MemoryAgentBench- Evaluating Memory in LLM Agents via Incremental Multi-Turn Interactions, Yuanzhe Hu, Yu Wang, Julian McAuley, ICLR, 2026/MemoryAgentBench- Evaluating Memory in LLM Agents via Incremental Multi-Turn Interactions, Yuanzhe Hu, Yu Wang, Julian McAuley, ICLR, 2026.md>)
 
 ## multiagentbench
 
@@ -723,7 +704,6 @@ reading rule
   - judge alignment is weak for planning
   - key values exist only in figures and main results lack clear repeated-seed confidence intervals
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/MultiAgentBench- Evaluating the Collaboration and Competition of LLM Agents, Kunlun Zhu, Hongyi Du, Zhaochen Hong, et al., ACL, 2025/MultiAgentBench- Evaluating the Collaboration and Competition of LLM Agents, Kunlun Zhu, Hongyi Du, Zhaochen Hong, et al., ACL, 2025.md>)
 
 ## agentdojo
 
@@ -761,7 +741,6 @@ reading rule
 - uncertainty
   - reported attack rates are lower bounds against tested attacks, not security guarantees
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/AgentDojo- A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents, Edoardo Debenedetti, Jie Zhang, Mislav Balunovic, et al., NeurIPS, 2024/AgentDojo- A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents, Edoardo Debenedetti, Jie Zhang, Mislav Balunovic, et al., NeurIPS, 2024.md>)
 
 ## agentharm
 
@@ -800,7 +779,6 @@ reading rule
   - harm score is a bounded proxy on English sandbox tasks
   - it does not measure real side effects or advanced open-world autonomy
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/AgentHarm- A Benchmark for Measuring Harmfulness of LLM Agents, Maksym Andriushchenko, Alexandra Souly, Mateusz Dziemian, et al., ICLR, 2025/AgentHarm- A Benchmark for Measuring Harmfulness of LLM Agents, Maksym Andriushchenko, Alexandra Souly, Mateusz Dziemian, et al., ICLR, 2025.md>)
 
 ## st-webagentbench
 
@@ -842,7 +820,6 @@ reading rule
   - exact AWM completion is figure-dependent
   - the official landing-page TLDR says 222 tasks while the paper and abstract say 375
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/ST-WebAgentBench- A Benchmark for Evaluating Safety and Trustworthiness in Web Agents, Ido Levy, Ben Wiesel, Sami Marreed, et al., ICLR, 2026/ST-WebAgentBench- A Benchmark for Evaluating Safety and Trustworthiness in Web Agents, Ido Levy, Ben Wiesel, Sami Marreed, et al., ICLR, 2026.md>)
 
 ## ai-control
 
@@ -882,4 +859,3 @@ reading rule
   - 92% is conditional on the simulator, sampling, red-team strength, and narrow threat model
   - it is not a deployment guarantee
 - raw evidence
-  - [local OCR](</hdd1/sichanghe/paper_collection/AI Control- Improving Safety Despite Intentional Subversion, Ryan Greenblatt, Buck Shlegeris, Kshitij Sachan, Fabien Roger, ICML, 2024/AI Control- Improving Safety Despite Intentional Subversion, Ryan Greenblatt, Buck Shlegeris, Kshitij Sachan, Fabien Roger, ICML, 2024.md>)

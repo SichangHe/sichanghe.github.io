@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `pappas2026translation`, [paper](https://doi.org/10.1145/3832783.3837412)
 
-
 ## scope and result
 
 Inference: the paper addresses C preprocessor macros, motivated by C-to-Rust translation; MerC itself translates macros to C, so that downstream C translators can handle them. Existing translators preprocess first, which removes macro abstractions; the paper instead identifies macro uses whose semantics overlap with C variables, enums, or functions. The authors state: “We introduce the first formally-specified, semantics-aware macro translator.” (Section 1, p. 2) The tool is MerC, and the benchmark is MacroBench.
@@ -67,18 +66,9 @@ Inference: failures include compile-time errors, runtime behavior changes, and n
 
 Inference: unsupported cases remain substantial. Thirty macros are never translated by any approach; the paper says these “use features like token-pasting [20] that lack a direct C equivalent” (Section 5.4, p. 8). MerC does not handle syntax fragments, variadic macros, some nested macro analyses, conditional-preprocessor semantics, or macros whose behavior depends on call-by-name evaluation. Repeatedly running MerC can peel nested macro layers, but that is an implementation workaround stated under threats to validity (Section 6.1, p. 10). In the whole-program run MerC found and translated 8,211 of 100,711 invocations (8%), which the authors attribute partly to macros defined in shared headers and to macros called within other macros (Section 6.2, p. 11).
 
-## what is proved, trusted, and relevant to VL
-
-Inference: MerC's claim is conditional translation correctness: if a macro satisfies one rule's premises and Maki's semantic properties are correct, the rewrite preserves the relevant C behavior. The study does not prove Maki, Clang, GCC, the C standard library, cloud LLM behavior, or the benchmark's representativeness. Human labels decide 20% of LLM failures and the co-author resolves disagreements (Section 5.2, p. 7). The paper's own correctness argument rests on Maki's semantic properties, which have a 95-test suite (Section 2.5, p. 5).
-
-Inference: for VeruLaw, the reusable idea is a formally screened translation boundary before agent generation. A Rust/Verus pipeline can classify C constructs into (a) direct function or constant encodings with contracts, (b) constructs needing specialized ghost state or proof lemmas, and (c) constructs rejected for manual handling. Verus proofs can establish functional equivalence of the accepted translation, but cannot recover preprocessor behavior that was discarded or prove that an LLM's rejected translation is safe. This is a product inference, not a result measured by the paper.
-
-Inference: the threat to agent-written verified Rust is concentrated in semantic mismatches that compile successfully: duplicated macro arguments, conditional compilation, aliasing, memory layout, and side effects. The tag team lowers exposure by keeping rule-based rewrites ahead of the LLM and requiring validation of every LLM result, but it still leaves unsupported translation decisions and the correctness of the target specification trusted.
-
 ## techniques for the catalog
 
 - seven-rule semantic macro translation — classify every macro invocation with semantic premises, then rewrite only eligible object-like and function-like macros to C constructs
 - MerC analyzer pipeline — compute Maki properties, select one rule, emit a definition, and preserve original call sites
 - MerC–LLM tag team — translate safe cases formally first and send only the remainder to an LLM followed by compile and behavior validation
 - translation validation — check compilation, runtime tests, and non-functional preprocessing/layout behavior, with denominators reported over attempted cases
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Figure 6 shows the total time each LLM spent translating the test cases not first translated by MerC."): read the full paper text and checked every quotation, number, rule description, technique step and section/page reference (page numbers recounted from the 13-page layout); changed the source of two quotes (Section 1, p. 2, not the Abstract), most page references, the Rule II enum description, the evaluation-procedure step (built-in tests were used only in the whole-program experiment, not on MacroBench), the tag-team description (no separate pipeline run is described), and the timing citation (Section 5.5, not 5.6); added the prompt details, the 8% whole-program coverage and the Maki test-suite note; did not check the cited external references, the artifact, or the Verus and VeruLaw inferences against anything beyond the paper.

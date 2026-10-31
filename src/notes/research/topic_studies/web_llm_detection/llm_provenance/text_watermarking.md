@@ -162,8 +162,6 @@ The honest summary is a slope. Copy-paste and cropping cost nothing. Light edits
 - the old green-list schemes do: [Downstream Trade-offs of a Family of Text Watermarks](https://arxiv.org/abs/2311.09816), Anirudh Ajith, Sameer Singh, Danish Pruthi, EMNLP Findings 2024, "drops of 10 to 20% in CLS tasks in the average case"; [New Evaluation Metrics Capture Quality Degradation due to LLM Watermarking](https://arxiv.org/abs/2312.02382), Karanpartap Singh, James Zou, arXiv 2023, "current watermarking methods are detectable by even simple classifiers"; [WaterBench](https://arxiv.org/abs/2311.07138), Shangqing Tu, Yuliang Sun, Yushi Bai, Jifan Yu, Lei Hou, Juanzi Li, ACL 2024
 - the deployed family does not, as far as vendors and one outside test show: Google's 20 million responses; OpenAI's benchmark table (for example "Terminal-Bench 4.0 53.90%" without and "56.06%" with); Nemecek et al.: "On prose, the measured effect of the watermark does not exceed that of changing the sampling seed"
 
-## Attacks
-
 ### Finding out that a model is marked
 
 - [Black-Box Detection of Language Model Watermarks](https://arxiv.org/abs/2405.20777), Thibaud Gloaguen, Nikola Jovanović, Robin Staab, Martin Vechev, ICLR 2025

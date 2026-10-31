@@ -76,8 +76,6 @@ Two cautions on the order.
 Step 3 runs late on purpose: the Move paper found that running weakest preconditions before invariant synthesis gave vacuous specifications.
 Step 6 is a filter, not a judgment: a clause that survives can still say the wrong thing.
 
-## variants by paper
-
 ### documentation-derived requirements, implementation-blind
 
 [KaPilot study](../vl_paper_walkthrough/kapilot_20261012.md), Kani, unsafe Rust.

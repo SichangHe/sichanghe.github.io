@@ -14,7 +14,7 @@ When to use it. Use this front end when the input is an informal mathematical so
 
 Steps from the paper are: (1) ask for a chain of propositional lemmas; (2) require each premise to be either given, an earlier conclusion, or an easy fact; (3) require one conclusion per lemma; (4) require each lemma to be human-easy to formalize; and (5) reject or revise outputs that deviate substantially. Small deviations are normalized by the next script. A word problem may additionally require a fixed variable set and fixed types (Section 3.3, p. 4).
 
-Verus form (Inference: the paper uses Lean). Prompt an agent to emit Rust/Verus-oriented claims with one postcondition per lemma and explicit types. Represent each claim as a `spec fn` or a `proof fn` with `requires` and `ensures`; keep executable code separate from proof code. Verus does not automatically preserve the paper's natural-language-to-lemma correspondence, so a sidecar mapping from each sentence to a proof function is an inference needed for VL.
+Verus form (
 
 Failure and evidence. The authors say that severe structural deviation makes a problem unverifiable unless a new prompt is developed (Section 3.3, p. 4). They report that Qwen3-8B was the easiest public ≤8B Solver model to steer, but this is a model-selection observation, not a universal result (Section 3.2, p. 3).
 
@@ -50,7 +50,7 @@ The paper evaluates an “easy” set of 10 Math-500 problems and a “similar�
 
 A comparison uses 200 solutions: 110 original (50 correct and well explained, 60 incorrect), plus 90 constructed cases. Qwen produced 85 false positives; the pipeline approved 43 correct solutions automatically, all 50 with user feedback, and evaluated all incorrect solutions as incorrect (Section 5.1, p. 9). The paper identifies false-positive risk for very easy problems where Lean can prove a theorem despite poor structure, and says it observed no wrong hard solution translated into a correct proof (Section 4.1, p. 8). The latter is an empirical non-observation, not a guarantee.
 
-Lean's kernel and compiler checking remain trusted; Translator and Prover LLMs are untrusted generators. Interactive `sorry`, user-provided translations, and any accepted fact are trusted assumptions. The pipeline excludes all geometry in its current form, much higher mathematics lacking suitable Lean theorems, and solutions the Solver cannot structure (Section 4.2, p. 8). Inference: threat to agent-written verified Rust is high for specification drift and missing premises, but low for code that reaches a complete Verus proof with no external assumptions. VL should reuse dependency extraction, per-step compilation and reports; it should not redo a generic Lean pipeline unchanged.
+Lean's kernel and compiler checking remain trusted; Translator and Prover LLMs are untrusted generators. Interactive `sorry`, user-provided translations, and any accepted fact are trusted assumptions. The pipeline excludes all geometry in its current form, much higher mathematics lacking suitable Lean theorems, and solutions the Solver cannot structure (Section 4.2, p. 8).
 
 ## techniques for the catalog
 
@@ -60,5 +60,3 @@ Lean's kernel and compiler checking remain trusted; Translator and Prover LLMs a
 - translation fidelity checking: compare generated formal statements with source text and verify types and structure
 - dependency linking: find a premise-to-target path and construct the final proof from verified lemma edges
 - explicit variable typing: prompt for a fixed set of variables and types when text problems leave them implicit
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

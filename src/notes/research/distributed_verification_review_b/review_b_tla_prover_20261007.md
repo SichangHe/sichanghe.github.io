@@ -58,7 +58,6 @@ artifact observations
 
 - [public repository](https://github.com/LUC-AI4FM/TLA-Prove/tree/6427de950cea25a3a2bb681314e6eb02be3ce33d)
     - inspected commit 6427de950cea25a3a2bb681314e6eb02be3ce33d on 7 October 2026
-    - cloned to /ssd1/sichangheagent/verus_distributed/lit_b/repos/TLA-Prove
 - two different case lists
     - data/processed/diamond_eval_holdout.jsonl has 30 rows
         - three rows from each of ten domains

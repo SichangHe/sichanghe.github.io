@@ -6,8 +6,6 @@ Tag: `schkufza2012stochastic`, [paper](https://arxiv.org/abs/1211.0557)
 
 Schkufza, Sharma, and Aiken formulate loop-free binary superoptimization as stochastic search. The abstract says, “We formulate the loop-free, binary superoptimization task as a stochastic search problem.” (abstract, PDF p. 1.) STOKE searches candidate x86 instruction sequences, balancing a correctness cost against a performance cost, and later sends promising candidates to a sound SMT validator. The method is incomplete: the paper explicitly trades exhaustive coverage for a larger, less expert-constrained search space. Its headline example starts from a binary compiled by `llvm -O0` (116 lines) for an OpenSSL big-number Montgomery-multiplication kernel and produces a program that is, in the paper's words, “16 lines shorter and 1.6 times faster than the code produced by gcc with full optimizations enabled” (Introduction, PDF p. 2). Section 2 calls it an “11 instruction kernel” and the Figure 1 caption says it is “slightly faster than expert handwritten assembly” (PDF p. 2).
 
-Inference: this is relevant to VeruLaw as a search architecture for verified Rust transformations or proof repairs. The paper's correctness during search is first approximated by test cases, then checked by an SMT procedure over bit vectors; it is not a Verus proof and it does not establish Rust semantics.
-
 ## technique 1: cost minimization with correctness and performance
 
 What it is. Let T be the target and R a rewrite. The cost is `c(R;T)=eq(R;T)+perf(R;T)`. Correctness is zero only when the two programs have equal live outputs for every machine state agreeing on live inputs; performance can encode runtime, code size, or another resource (Section 3.1, PDF p. 3). The paper states that “the competing requirements of correctness and speed can be defined as terms in a cost function over the complex search space” (Introduction, PDF p. 1).
@@ -37,8 +35,6 @@ How to apply it.
 3. Evaluate the candidate's approximate correctness and performance cost.
 4. Accept every improvement; accept a worse candidate with the Metropolis probability, then continue until the time budget expires (Section 3.2, PDF pp. 3–4).
 5. Keep the lowest-cost validated sample and optionally rerank top candidates by actual runtime (Sections 4.2–4.3, PDF pp. 5–6).
-
-Verus form (inference). A VL searcher could mutate Rust syntax, ghost annotations, or lemma calls and use the Verus verifier as the final predicate. The proposal distribution must preserve parseability and type-checking; a fast syntactic proxy can rank candidates before full verification. MCMC's probabilistic acceptance provides no soundness claim, so only a candidate accepted by Verus should be emitted.
 
 ## technique 3: testcase-guided approximate equality
 
@@ -75,8 +71,6 @@ The evaluation uses a 25-program Hacker's Delight benchmark, SAXPY, linked-list 
 
 Inference: what is proved is equivalence of a final loop-free candidate under the validator's bit-vector model, not equivalence of arbitrary loops, floating-point behavior, or the complete x86 ISA. Inference: what remains trusted includes STP, instruction semantics, sandbox handling, testcase generation, user annotations, uninterpreted multiply/divide assumptions, performance model, and the compiler that produced the target. The paper says STOKE “uses a sound procedure for validating the equality of two sequences of loop-free assembly” (Section 5.2, PDF p. 9); the paper also states two simplifying assumptions (stack addresses as constant offsets, uninterpreted 64-bit multiply/divide), so Inference: the soundness claim is scoped to its model and those assumptions.
 
-Inference: product threat to agent-written verified Rust is moderate but bounded. The stochastic-search pattern could find optimizations or proof repairs that deterministic templates miss, but its test-guided phase can be unsound and its final model is narrower than Rust/Verus. VL should not redo MCMC or testcase smoothing as research contributions; it should evaluate whether verifier-backed mutation improves proof completion and whether candidate cost models predict maintenance and runtime costs.
-
 ## techniques for the catalog
 
 - cost-minimizing superoptimization — combine an equality term and a resource term and retain low-cost candidates
@@ -85,5 +79,3 @@ Inference: product threat to agent-written verified Rust is moderate but bounded
 - misplaced-value reward shaping — reward correct intermediate values even when they are in the wrong register
 - acceptance early termination — stop testcase evaluation once a candidate cannot meet the sampled acceptance bound
 - SMT equivalence validation — encode live machine-state effects in bit-vector formulas and search for counterexamples
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The two phases share the same search implementation; only the starting point and the acceptance functions are different."): read all 12 pages in reading-order text and the layout text; checked every quotation, number, section and page reference and technique step against the paper; changed the link to the arXiv page given in the paper text, fixed one misquote (Section 4.6), the throughput sentence (50,000 is testcases per second), section numbers for 5.3 and 6.3, the linked-list description, page ranges, and marked trust and soundness conclusions as Inference; did not check the Verus-form inferences beyond labeling them as inference, did not open the reference list papers, and did not check figure data values (Figures 2, 3, 5, 7, 8, 10, 12) beyond captions and text.

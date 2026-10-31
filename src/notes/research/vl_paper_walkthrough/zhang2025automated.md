@@ -79,10 +79,6 @@ Verus form: Inference: encode a transition as a Rust struct with a `spec fn` val
 
 Evidence and limits: Inference: Table I's ensemble NAS F1 of 91.14% exceeds the individual models by 5.85–22.37 percentage points (p. 7). The ensemble still has false positives and false negatives (Section V-A, p. 9). Inference: the described manual alignment limits the claim of complete automation.
 
-## what remains trusted and threat to VeruLaw
-
-Inference: the trusted base includes each LLM's output, the manually built Release 17 reference, text cleaning and section parsing, the overlap threshold, and the evaluator's FSM definition. Verus could check a generated FSM's explicit invariants and transition contracts, but it cannot validate that prose extraction captured every requirement. The paper's 91.14% F1 and 14.87% direct-prompt result show a useful candidate-generation front end, not a proof-producing verifier. For VeruLaw, the threat is medium: SpecGPT could accelerate converting protocol prose into a reviewed model, while hallucinated or omitted transitions could become unsound assumptions if generated FSMs are treated as complete. A safe integration would require human review and proof obligations that independently cover protocol properties rather than trusting extraction metrics.
-
 ## techniques for the catalog
 
 - section-tree paragraph merging — build hierarchical section windows bottom-up to preserve context in long specifications
@@ -91,4 +87,3 @@ Inference: the trusted base includes each LLM's output, the manually built Relea
 - cross-reference retrieval — resolve referenced sections by section-number prefixes without an embedding database
 - multi-model overlap alignment — align transitions by exact states and 0.75 action/condition span overlap
 - majority-vote ensemble — aggregate aligned outputs to reduce individual hallucinated transitions
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To further enhance overall reliability and accuracy, we adopt a model ensemble strategy that aggregates outputs from multiple LLMs, thereby mitigating individual model biases and improving extraction robustness."): checked the entire paper against the study's quotations, numbers, page and section references, and technique steps; corrected metric denominators, Algorithm 1's page and merging description, cross-reference and Release 15 page references, output validation, retrieval placement, and manual alignment; marked recommendations and conclusions as Inference and added reported runtime ranges; did not reproduce experiments, inspect implementation code, independently validate annotations, or check the proposed Verus adaptations.

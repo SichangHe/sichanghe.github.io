@@ -35,5 +35,3 @@ The authors identify possible training-data contamination, manual correctness as
 - symbolic inference followed by LLM transformations — use 3C without bounds heuristics, then replace nested arrays, infer bounds, and annotate remaining globals and fields
 - explicit uncertainty — allow unknown bounds and remove conflicting or out-of-scope annotations
 - compiler validation with manual completion — use Checked C checks, while recognizing that MSA output may need further edits
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In order to account for the randomness in the LLM’s response, MSA asks for multiple completions (i.e., responses) for each LLM query."): checked every study quotation, number, section and page reference, and technique step against the full paper; corrected the paper link, patch-quotation page, transformation sequence, validation scope, and unsupported trust claims; added voting, uncertainty handling, and end-to-end limitations; did not inspect supplementary artifacts, reproduce experiments, or independently validate annotation correctness.

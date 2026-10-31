@@ -28,8 +28,6 @@ On TransCoder, Figure 5 reports LDB gains of 1.2 points on Easy, 4.8 on Medium, 
 
 The paper's limitation is explicit: “The correct test cases are mandatory in LDB so that LDB can execute the program and compare the execution flow against the task description.” (Limitation, PDF p. 9). Inference: test accuracy does not prove that the full natural-language task is satisfied. The trace supplies concrete execution values, but the LLM's correctness judgments can still be wrong. Appendix H evaluates localization only on successfully debugged cases using GPT-4 judgments (PDF p. 15), so it does not establish correctness for all attempted repairs.
 
-Inference: LDB offers a possible debugging aid for VL through block-local runtime feedback. The paper does not evaluate Rust, Verus, or VL, so it does not establish a threat level or a benefit for those systems. A trace-guided proposal would still need verification against the intended contracts.
-
 ## what is proved, measured, and trusted
 The paper reports empirical results rather than a semantic correctness theorem for LDB. It measures Pass@1, iteration curves, token cost, decomposition comparisons, runtime overhead, and GPT-4-assessed localization (Secs. 3.3–3.7; Appendices D–H). Inference: applying the method requires confidence in the visible tests, runtime instrumentation, and test harness; generalizing its measured accuracy requires confidence that the evaluation tests represent intended behavior. LLM verdicts guide regeneration, while passing tests determine when the loop stops.
 
@@ -38,4 +36,3 @@ The paper reports empirical results rather than a semantic correctness theorem f
 - block-wise verdicts — ask an LLM to classify and explain selected intermediate states against the task
 - selective batching — select blocks to fit context and query all selected states in one request
 - targeted regeneration — feed localized verdicts back into the generator and repeat until visible tests pass or the iteration limit is reached
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The correct test cases are mandatory in LDB so that LDB can execute the program and compare the execution flow against the task description."): checked the entire paper, quotations, method steps, reported numbers, section and PDF page references, tag, and arXiv link; corrected quotations and references, seed-generator attribution, difficulty gains, token costs, and the TransCoder test-visibility exception; removed unsupported Verus/VL assertions and marked proposed applications and conclusions as inferences; did not reproduce experiments or verify implementation code or external Verus/VL sources.

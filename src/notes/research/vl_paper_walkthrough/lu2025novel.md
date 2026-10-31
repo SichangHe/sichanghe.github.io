@@ -14,7 +14,7 @@ When to use it. Inference: use this when a solver exposes a compositional strate
 
 How to do it. (1) Choose a training set P and a timeout. (2) Encode the strategy grammar as deterministic leftmost expansions. (3) Build an MCTS tree whose nodes are partial strings. (4) In each simulation perform selection with UCT, expansion with unexplored productions, random rollout to a terminal strategy, and backup of the reward; these are the four steps listed in Section 3.3 (p. 7). (5) Use max-backup, retaining the best observed return rather than an average (Section 4.2, p. 8). (6) Stop at a simulation or wall-clock budget and return the highest-reward strategy (Section 4.2, p. 8).
 
-Verus form. Inference: VL could treat a Verus proof-search configuration as a grammar program whose terminals are solver hints, lemma exposure choices, invariant templates, or backend options. An external harness would run `verus` on each benchmark and return a numeric score; the Rust proof itself remains ordinary Verus code with `requires`, `ensures`, loop invariants, and `proof fn` lemmas. Inference: this tunes proof orchestration, not the soundness of Verus, Z3, or the specification.
+Verus form.
 
 Evidence and limits. Z3alpha was evaluated on six SMT logics against default Z3 and cvc5; FastSMT was included except in the QF_S user-defined-tactic experiment (Section 5.2.1, p. 15). Table 1 (p. 13) reports percentages of solved test instances with explicit denominators: for example, at a 10-second timeout, Sage2 QF_BV has 6,444 test instances and Z3alpha solves 52.9%; AProVE QF_NIA has 1,712 and Z3alpha solves 94.8%. Table 2 (p. 16) reports PAR-2 scores, whereas the search reward uses PAR-10. The study used one core and 1.5 GB per solver-instance pair (Section 5.2.2, p. 15), and Section 5.2.3 says the six family experiments were averaged over five random seeds while later experiments used one run. The authors caution that the infinite search space and empirical scoring make rigorous global optimization impractical (Section 1.1, pp. 2–3).
 
@@ -42,17 +42,9 @@ Evidence. Section 5.2 (pp. 14–15) specifies 800 first-stage simulations to sel
 
 The paper uses six explicit simplifications (Section 4.5, p. 12): do not end a sequence with a simplifier or put a solver in an intermediate position; avoid nested `try-for`; restrict `if` to depth three and forbid it after tactic application; discretize continuous parameters; avoid repeating theory transformations such as `nla2bv`; and apply `bit-blast` immediately after `simplify`. Appendix A lists tactic/parameter pools separately for QF_BV, QF_NIA, QF_NRA, QF_LIA, QF_LRA, and QF_S (pp. 21–24).
 
-Inference: a VL implementation should make such restrictions explicit configuration, record which candidate pool was used, and treat excluded strategies as an unsearched region. The authors warn that simplification rules “might eliminate parts of the search space that include effective strategies” (Section 4.5, p. 12).
-
-## proof boundary and VL relevance
-
-The paper reports benchmark performance and does not establish global optimality (Sections 1.1 and 5–6). Inference: applying its approach relies on Z3 tactic implementations, the grammar and domain restrictions, benchmark representativeness, timeout measurements, and the correctness of the evaluation harness. Inference: for agent-written verified Rust, an optimizer could select a proof configuration that passes sampled obligations while degrading coverage or reproducibility on unseen code. This paper supplies MCTS, parameter decomposition, staged caching, and solver-strategy benchmarks. Inference: a useful VL experiment is to tune proof-search settings on training crates, hold out crates and dependency revisions, and require every selected configuration to pass full Verus verification.
-
 ## techniques for the catalog
 
 - grammar MCTS — search solver-strategy derivations with UCT selection, random rollout, max-backup, and an empirical terminal reward
 - layered parameter bandits — optimize each tactic occurrence's parameter values in separate MABs outside the main tree
 - staged cached synthesis — discover linear strategies first, then compose them through branches using cached per-instance results
 - domain-restricted strategy search — shrink the grammar with tactic-order, depth, repetition, and discretization rules while recording excluded space
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Both tools constructed their strategies from the identical tactic and parameter candidates, which is described in Appendix A."): checked quotations, numbers, section and page references, technique steps, and inference labels; corrected the DOI link, cross-page references, FastSMT comparison scope, parameter-interaction attribution, caching conditions, and QF_IDL deficit; distinguished PAR-10 search reward from PAR-2 reporting; did not reproduce experiments or inspect the implementation or external sources.

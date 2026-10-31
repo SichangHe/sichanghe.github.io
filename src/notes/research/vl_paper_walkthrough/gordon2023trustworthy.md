@@ -18,8 +18,6 @@ Inference: Steps: (1) declare `Cat` and `interp`; (2) add `lexicon` instances fo
 
 > “When invoked with a tree of strings s, Lean will search for an instance of Synth s S — a parse of the string tree as a complete sentence.” (Sec. 3.3, p. 57)
 
-Inference: For VL, this gives a mechanical way to retain the natural-language requirement beside a Verus predicate: use a typed grammar or restricted DSL whose denotation is a Verus/SMT proposition, and retain the derivation as an audit artifact. Verus does not execute Lean typeclass search.
-
 ## technique: polymorphic lexical meanings and quantifiers
 Inference: A word can have multiple category-indexed meanings. The paper defines “is” both as adjective application and equality, and gives quantifiers a category that first consumes a common noun and then a sentence fragment. Adjectives are predicates over the noun type; “every natural is even” therefore becomes `∀ n : Nat, even n`.
 
@@ -36,16 +34,12 @@ Inference: Typeclass resolution constructs a `Synth` instance containing the gra
 
 > “These possible forms of attack highlight the main sources of trust added when considering natural language specifications in the approach we describe: the grammatical rules for combining phrases, well-formedness of the lexicon, and the definitions of words in the lexicon.” (Sec. 5, p. 60)
 
-Inference: Steps for an audit: check each lexicon denotation has the declared `interp` type; check grammar instances preserve the intended rules; detect multiple derivations with different semantics; record the chosen derivation; and prove a bridge lemma if the expert’s manually written predicate differs from the parsed predicate. This maps directly to VL’s need to audit agent-written `requires`/`ensures` against a prose requirement.
-
 ## technique: controlling parser search
 Inference: Naive binary-tree parsing explores Catalan-many associations. The implementation uses difference-list spans, numeric start/end indices, Lean tabled resolution (memoization), normal-form derivation pruning, a bound on coordinator lifting, and Lean’s heartbeat timeout. These are engineering controls, not changes to the logical meaning.
 
 > “The direct implementation approach described above becomes quite slow for sentences over a few words, so we apply a number of optimizations, all well-established in the computational linguistics literature.” (Sec. 3.4, p. 57)
 
 > “We exploit several classic optimizations from work on parsing natural langauges with Prolog.” (Sec. 3.4, p. 57)
-
-Inference: For a VL specification DSL, impose a bounded grammar and explicit timeout; a timeout must be reported as “unparsed,” never treated as a proof. Difference-list style indexing is useful if requirements are parsed repeatedly in a build.
 
 ## evidence and measurements
 The case study (Sec. 6, Table 1) takes 10 Verified Functional Algorithms specifications: 5 from Chapter 2 (sorting, list properties) and 5 from Chapter 3 (multisets). All five Chapter 2 specifications are translated to logically equivalent formal statements, four of them α-equivalent; for row 5 the generated statement has an extra existential quantifier because of the article “a”. Lean does not synthesize row 8, although the authors say its explicitly provided entries give α-equivalent semantics. One further Chapter 3 specification (“multisets in a nested union can be swapped”) is not translated.
@@ -58,13 +52,6 @@ Reported times (Table 1, p. 61) are 6 s, 5.32 s, 7.4 s, 1.84 s, 5.72 s for rows 
 
 Inference: The denominator is 10 specifications, not a corpus-wide accuracy claim; the experiment measures successful translation after adding lexicon entries and rewording some English, not proof completion. The paper reports no independent human-translation error rate. The case study is a feasibility demonstration, not an accuracy benchmark.
 
-## limits and VL threat
-The prototype covers a small English fragment; the paper names true ambiguity (e.g., quantifier scope), misdefined words, and universe-size problems for polymorphic specifications in later VFA chapters as open issues. The authors reject machine-learning autoformalization for this purpose partly because:
-
-> “few machine learning approaches produce an auditable trail of evidence for why that translation was produced by the trained model, and no way to precisely fix misunderstandings of specific words.” (Sec. 1, p. 51)
-
-Inference: The lexicon and grammar remain trusted unless independently checked. VL should reuse typed denotation, derivation certificates, ambiguity reporting, and bridge lemmas; it should not redo generic English parsing. Threat to an agent-written verified Rust product is high at the requirements boundary: a sound Verus proof of the wrong predicate is still a product failure. The approach reduces this threat only when the lexicon, grammar, and human-readable bridge are reviewed.
-
 ## techniques for the catalog
 
 - categorial grammar denotation — parse natural-language specification fragments into typed logical forms inside the proof assistant
@@ -72,4 +59,3 @@ Inference: The lexicon and grammar remain trusted unless independently checked. 
 - proof-carrying semantic parse — retain the typeclass derivation showing how words and grammar rules produced the proposition
 - ambiguity and trust audit — check lexicon types, competing parses, grammar rules, and bridge lemmas before trusting a theorem
 - parser search controls — use span representations, memoization, normal forms, bounds, and timeouts to make parsing interactive
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This explicit term persists into the compiled forms Lean already produces, and could be identified by an independent proof checker that wished to also validate the natural language interpretation."): checked every quotation word for word, every number, section and page reference, and the technique steps against the whole paper text including references; changed Abstract page references from p. 1 to p. 50, completed the truncated Sec. 3.2 quote, fixed `A\\B` to `A\B`, corrected that typeclass resolution passes the instance (not its denotation) to pspec, corrected the evidence section (row 8 is not synthesized by Lean and has no time, one Chapter 3 specification is untranslated, row 5 has an extra existential, timing machine differs from the 25%/2.6GB machine), added quotes on missing ambiguity detection and on the machine-learning objection, and removed an unsupported sentence claiming the paper has no contradictory percentages and a repeated recommendation; did not check the Lean artifact, the cited works, or the PDF figures beyond the text extraction.

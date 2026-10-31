@@ -6,8 +6,6 @@ Tag: `kafle2018iterative`, [paper](http://arxiv.org/abs/1804.05989v1)
 
 Kafle et al. infer sufficient (safe) initial conditions for programs represented as constrained Horn clauses (CHCs). Their abstract says: “We present a method for automatic inference of conditions on the initial states of a program that guarantee that the safety assertions in the program are not violated.” (Abstract, p. 1). The method over-approximates unsafe initial states with abstract interpretation, complements that result, and iteratively specializes the CHCs to reduce precision loss. The authors state: “Here we develop an iterative specialisation algorithm to give more precise, and in some cases optimal safety conditions.” (Abstract, p. 1).
 
-Inference: this is useful for VL when an agent needs a `requires` condition that is sufficient for a Rust function's assertion or postcondition. The paper computes a Boolean combination of linear constraints over initial variables; it does not generate Verus annotations or reason about Rust ownership.
-
 A CHC set is safe when it is consistent, and `false` represents an error predicate (Sections 1–2, pp. 2–4). A safe precondition `φ` strengthens every initial clause with `φ` and must prevent any derivation of `false` (Definition 3, p. 5). The weakest safe precondition is generally not computable, so the algorithm seeks a weak, useful approximation.
 
 ## technique 1: partial evaluation (PE)
@@ -71,14 +69,6 @@ The authors chose three iterations because for the literature and hand-crafted b
 
 Verus form. Inference: use the inferred formula as a candidate `requires`, then verify the actual Rust implementation with `ensures`, loop `invariant`, `assert`, and `proof fn` helpers. Inference: each refinement round can propose a weaker precondition, but Verus must still prove that the executable function satisfies its contract.
 
-## evidence, trust, and product threat
-
-The benchmark contains 241 programs: 188 safe and 53 unsafe, with a five-minute timeout (Table 1, p. 14). At `n = 3`, the method returns non-trivial safe preconditions for 160 of 188 safe programs and generalizes the original conditions for 131 of 188; unsafe I has 17/17 non-trivial results, and unsafe II has 12/36 (Table 1, p. 14). These fractions use the category denominators stated in the table. Average time for safe instances rises from 1.45 seconds at `n = 0` to 36.73 seconds at `n = 3`; unsafe II rises from 3.38 to 70.91 seconds (Table 1, p. 14). At `n = 0`, the paper reports 63% of safe and 37% of unsafe instances getting non-trivial preconditions in under 10 seconds (Section 4.3, p. 15). Inference: I could not reproduce the 37% from Table 1, where the n = 0 non-trivial unsafe counts are 16 + 9 = 25 of 53 (47%). Among 119 non-trivial safe cases, 101 are generalized (Section 4.3, p. 15), so 101/119 is 84.9%.
-
-What is proved: each specialization preserves derivations of the selected goal; Proposition 2 gives `presafe(P) → (presafe(Pm) ∧ ψm)`, and the paper says it “establishes the correctness of the algorithm used in Section 4” (Sections 3.1 and 3.2, pp. 6–11). Inference: what stays trusted: CHC translation, abstract-interpretation implementations, Yices 2.2, Parma Polyhedra Library, tree-automata operations, and the original assertion model. Inference: a Verus deployment additionally trusts the Rust compiler, Verus translation and erasure, solver behavior, external contracts, and whether the inferred precondition captures the product requirement. Inference: the paper assumes every derivation of `false` uses an initial clause (Section 3, p. 5), tests only linear-arithmetic benchmarks of up to about 500 lines of code (Section 4.1, p. 13), and has no Rust or Verus component.
-
-Inference: product risk from agent-written verified Rust is moderate. The method can automatically propose useful `requires` clauses and expose unsafe initialization regions, but it reasons over linear arithmetic CHCs and may return trivial conditions or time out. VL should reuse the idea of iterative precondition synthesis and trace splitting rather than reimplementing this exact Ciao Prolog pipeline.
-
 ## techniques for the catalog
 
 - partial evaluation — unfold constrained deterministic CHC calls and finitely abstract their contexts
@@ -88,4 +78,3 @@ Inference: product risk from agent-written verified Rust is moderate. The method
 - trace elimination — remove selected feasible or infeasible error traces and add their initial-state exclusions
 
 - iterative precondition refinement — alternate PE, CS, and TE, then complement specialized initial constraints
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "AND-trees for false are obtained naturally from transformations such as partial evaluation or constraint specialisation."): read the whole paper text start to end and compared every quotation, number, section and page reference and technique step in the study; the arXiv link is the one given in the paper text (arXiv:1804.05989v1) and the tag author and year are right; changed the trace elimination quote page (p. 10, not p. 11) and section range, the definition of the constraint theta in Lemma 4, the iteration-schedule rationale and stopping rule, the claim about what Proposition 2 proves, added the timeout, Fischer and scope limits, and marked trust and Verus statements as inferences; I could not reproduce the paper's 37% unsafe figure from Table 1 and said so; did not check the cited external works, the PDF figures beyond the text layer, or any Verus claim.

@@ -5,8 +5,6 @@ Tag: `mehtiyev2026behavioral`, [paper](https://arxiv.org/abs/2604.02547)
 ## what the paper studies
 The paper analyzes 9,374 trajectories from 19 coding agents, 8 frameworks, 14 LLMs, 500 SWE-bench Verified tasks, and 12 Python repositories. Its central findings are that trajectory length is confounded by task difficulty while trajectory structure discriminates success from failure consistently, and that the LLM, not the framework, is the primary determinant of which tasks get solved (per-task agreement and resolution-rate gaps; no variance decomposition is reported). The abstract states: “We present a large-scale empirical study analyzing 9,374 trajectories from 19 agents (8 coding agent frameworks, 14 LLMs) on 500 tasks.” (abstract, p.1)
 
-Inference: This is evidence about repair-agent behavior, not formal verification. For VL, the useful transfer is to instrument proof-writing trajectories and reward context gathering, controlled edits, and validation with Verus. The paper does not establish that these behaviors produce sound proofs.
-
 ## technique 1: use a complete agent-by-task matrix
 
 What it is. Every agent attempts every benchmark task, allowing comparisons within the same task. The authors explain: “Since every task is attempted by every agent, this enables within-task comparisons that control for task difficulty, a confound that prior studies with 1–3 agents could not address.” (Section 3.1, p.3) Three agents have 443–499 runs because of timeouts or infrastructure failures, so the matrix is nearly, not perfectly, complete (Section 3.1, p.3).
@@ -45,7 +43,7 @@ How to apply it. Inference: this procedure is my reading of the paper's metric d
 
 The result is stable across task complexity. Figure 7 plots the three metrics against four patch-size bins and finds nearly flat lines per agent. The authors conclude: “Agents apply a fixed strategy regardless of what the task demands, suggesting that current agent designs lack mechanisms to assess task complexity and adjust their approach accordingly.” (Section 4.2.2, p.7; Figure 7 on p.8)
 
-Verus form. Inference: for VL, alert if an agent edits a specification or proof before reading the relevant Rust module and existing lemmas; track the first successful Verus check and the share of steps spent rerunning Verus. A useful intervention is to require a read and a small compile/check before more edits. This can prioritize runs for review, but it cannot replace checking.
+Verus form.
 
 Limits. Validation correlates with success but is not necessary: Trae/doubao reaches 78% resolution with near-zero validation, while SWE-agent/gpt-4 validates 13% of steps and resolves 23% (Section 4.2.2, p.7). The paper therefore presents association, not a universal rule.
 
@@ -59,12 +57,6 @@ The framework gap narrows across Claude generations from 19.4 percentage points 
 
 Verus form. Inference: evaluate Verus agents factorially across model and harness, fixing the proof task and tool budget. This avoids blaming the Rust/Verus orchestration layer for failures caused by model reasoning. Compare proof success, specification-edit behavior, solver retries, and time, but retain an independent specification review.
 
-## what is established, trusted, and risky for VL
-
-The measured claims are benchmark associations, supported by 9,374 trajectories and nonparametric tests, not formal theorems. The study trusts its regex feature extraction, outcome labels, benchmark harness, and one-run trajectories. The authors state that 13-symbol encoding abstracts away finer reasoning and that task labels depend on the evaluated agent population (Section 5, p.9). The 12 never-solved simple-patch tasks are especially relevant: the best agent found the gold-patch file in 12/12 tasks and edited it in 10/12, yet no agent solved any of them (Table 5, p.5; Table 3, p.4). Ten failures were architectural judgment errors, one behavioral abandonment, and one domain-knowledge gap (Table 5, p.5).
-
-Inference: existing VL should not repeat the paper’s generic resolution-rate analysis. It should reuse the controlled paired design and outcome-aware trace encoding for proof repair. The threat to a product that emits agent-written verified Rust is indirect: premature edits and wrong-layer fixes can waste compute and produce plausible but incorrectly specified proofs. Verus checking blocks unsound proof code, but it does not detect a specification that proves the wrong property; the product needs specification review and behavioral tests around the verified code.
-
 ## techniques for the catalog
 
 - complete task matrix: run every agent on the same tasks to control task difficulty
@@ -72,4 +64,3 @@ Inference: existing VL should not repeat the paper’s generic resolution-rate a
 - paired confound control: fix agent or task and use nonparametric paired comparisons
 - structural monitoring: measure read-first behavior, opening patch intensity, and validation effort
 - factor decomposition: hold LLM or framework constant to separate their contributions
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "On the same task, the agents that succeed take more steps than the agents that fail."): read the whole paper text and the whole study; checked every quotation, number (9,374 trajectories, 19 agents, 55/416/29 task split, Table 6 percentages and counts, correlations in Figure 6, agreement and gap figures in Section 4.3, prompt sizes), Algorithm 1 steps, and section, table, figure and page references against the paper and the PDF page breaks. Changed: page references for Table 6 (p.7 to p.6), Figure 5 (p.6 to p.7), Section 4.2.2 (p.8 to p.7), Section 4.3, Figure 9 and Figure 10, and Section 5 (p.11 to p.9); moved the 'avoid premature patching' quotation from the abstract to the Answering RQ2 box (the abstract does not contain it); corrected 'all agents found the gold-patch file' to the best agent (Table 5 caption); fixed the quote start of Section 3.4.3 to match the original lowercase; reworded the central-findings sentence and the alpha note; marked the how-to-apply procedures as Inference. Not checked: the supplementary material, the cited references, the Verus transfer claims (labelled Inference), and numbers read only from figure graphics.

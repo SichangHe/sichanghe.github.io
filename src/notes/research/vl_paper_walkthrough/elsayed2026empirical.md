@@ -8,8 +8,6 @@ The paper evaluates 240 Rust samples generated for AES-256-GCM and ChaCha20-Poly
 
 The measured pipeline had four stages: extract generated code and dependencies, compile with Clippy, run CodeQL, then run a crypto-specific analyzer. Only 56/240 samples compiled (23.3%, 95% CI [18.4%, 29.1%]). Among compiled samples, the specialized analyzer found vulnerabilities in 32/56 (57.1%), including two critical findings (2/56, 3.6%). CodeQL emitted two findings, both false positives, so its measured true-positive rate was 0/2 (0%) in this experiment. These denominators matter: percentages about compilation use all 240 samples, while vulnerability percentages use the 56 compiled samples.
 
-Inference: For VeruLaw, compilation and ordinary static analysis should be treated as gates before proof work, not as evidence that cryptographic invariants hold. A Verus proof would need an explicit model of key and nonce behavior, and the resulting theorem would still depend on the specification matching the security requirement.
-
 ## technique 1: controlled generation and staged evaluation
 
 What it is. The study fixes three independent variables—model, algorithm, and prompt strategy—and generates ten samples per combination. It fixes temperature at 0.0 and applies the same prompts and decoding parameters to every model. The paper says: “All samples were evaluated through a four-stage automated pipeline as presented in Figure 1.” (§3.2, p.3)
@@ -89,8 +87,6 @@ Verus form. Inference: Represent encryption history in a ghost sequence or map a
 
 The paper measures compilation, analyzer detections, and statistical associations. It manually verifies all findings in generated samples and validates the analyzer on 26 cases. It does not prove confidentiality, integrity, unpredictability, or resistance to attacks. CodeQL, the custom analyzer, the Rust compiler, crate implementations, and manual classification are trusted components in the evaluation. The authors explicitly limit generalization to authenticated encryption, Rust, and the tested crates (§6, p.8).
 
-Inference: A VeruLaw product threat is substantial for agent-written cryptographic Rust if it accepts compilation as completion. The paper’s 32/56 vulnerability rate among compiled code and the 2/56 critical rate show why domain contracts and proofs are needed. Existing work already supplies a useful screening pattern—provenance plus structural lifecycle checks—so VL should avoid redoing a regex-only detector as its main contribution. A stronger contribution would prove the nonce-history contract for the actual implementation and state which RNG, crate, and foreign-code assumptions remain trusted.
-
 ## contradictions and numerical checks
 
 The abstract says the analyzer identified vulnerabilities in 57% of compiled samples; the detailed result is 32/56 = 57.1%, consistent after rounding (§4.2.2, p.6). The abstract says AES compilation was 34.2% and ChaCha20-Poly1305 12.5%; Table 5 totals are 41/120 = 34.2% and 15/120 = 12.5%, respectively (§4.1.1, p.5). The conclusion calls CoT five times worse than zero-shot; 35.0/6.7 = 5.22, so this is rounded. The paper’s Table 7 lists DeepSeek’s compiled count as 20 and says all were AES zero-shot or constraint-based, a confound that the authors themselves flag (§4.3, p.7).
@@ -102,4 +98,3 @@ The abstract says the analyzer identified vulnerabilities in 57% of compiled sam
 - provenance-aware secret detection: follow assignments so initialize-then-fill buffers are distinguished from hardcoded secrets
 - structural nonce lifecycle checking: track nonce arguments across calls and brace-delimited loops for missing regeneration
 - domain-specific validation: combine CWE rules with benchmark cases, confidence intervals, and explicit false-positive and false-negative accounting
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -64,15 +64,8 @@ Inference: The paper instantiates two activity diagrams (`AD2`, `AD3`) for insur
 
 Inference: The denominator is four properties over two diagrams in one illustrative domain; there is no benchmark suite, error rate, or independent oracle. The paper says the method scales by summing specifications from more activity diagrams, but reports no measured scale. It also leaves implementation of the generation module and selection of a concrete prover as future work (section 8, p. 23).
 
-## trust, assumptions, and VL relevance
-
-Inference: The trusted elements are the engineer's use cases, scenarios, activity diagrams, predefined pattern formulas, the translation algorithm, and the tableau prover. The consistency and completeness discussion assumes the predefined pattern specifications are themselves consistent and complete, with “the logician is responsible for consistency of predefined specifications” (section 6, p. 19). The paper calls it an “open question” whether the algorithm preserves consistency, then gives informal arguments based on nesting and disjoint atomic activities rather than a proof (section 6, pp. 19–20).
-
-Inference: Threat to agent-written verified Rust is moderate. The paper already supplies a requirements-to-property pipeline and a reusable recursive generation algorithm; VL should not redo these ideas as a new contribution. The product risk is semantic drift: an automatically generated contract can be internally valid while the UML model or pattern formula omits a requirement. A VL integration would need traceability from each generated obligation to its source activity and human review of `Q`.
-
 ## techniques for the catalog
 
 - requirements decomposition: derive atomic activities from use-case scenarios and structure activity diagrams with sequence, concurrency, branch, and loop patterns
 - recursive temporal-spec generation: translate nested pattern expressions into formula sets using joined entry and exit summaries
 - tableau property checking: negate `C(L)⇒Q`, decompose the temporal tableau, and accept only when every branch closes
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The proposed algorithm for automatic extraction of logical specifications is based on the assumption that all workflows for activity diagrams are built using only well-known workflow patterns"): read the whole paper text (pages 1-23 plus references) and the whole study; checked every quotation, section and page reference (page numbers are PDF page numbers, 1-23 of the arXiv v1 file), the six methodology steps, Algorithm 1 steps, the tableau steps, the example properties and the author, year and arXiv link; changed page numbers throughout (they were wrong), the claim that open branches beat forward resolution (the paper compares with the axiomatic approach), the open-branch step (it said counterevidence), the claim that consistency is treated as unresolved (the paper gives informal arguments), and added that no tableau or prover is shown for the example; did not check the cited external works, the Verus-form inferences (my own, not from the paper), or the figures beyond their text labels.

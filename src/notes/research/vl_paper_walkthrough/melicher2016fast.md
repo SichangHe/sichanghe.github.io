@@ -4,7 +4,7 @@ Tag: `melicher2016fast`, [paper](https://www.usenix.org/conference/usenixsecurit
 
 ## scope and formal-verification relevance
 
-This paper presents a neural-network model of password guessing and a compressed browser implementation. It does not teach a formal verification method, proof system, specification language, or verified implementation. Its evidence is empirical: training models, enumerating or estimating guesses, and measuring accuracy, size, and latency on password datasets. Inference: a VeruLaw reader should treat this as security-measurement methodology that could be verified for implementation properties, not as prior work that proves a password checker correct.
+This paper presents a neural-network model of password guessing and a compressed browser implementation. It does not teach a formal verification method, proof system, specification language, or verified implementation. Its evidence is empirical: training models, enumerating or estimating guesses, and measuring accuracy, size, and latency on password datasets.
 
 The abstract states: “We propose using artificial neural networks to model text passwords’ resistance to guessing attacks and explore how different architectures and training methods impact neural networks’ guessing effectiveness.” It also states: “Building on these results, we implement in JavaScript the first principled client-side model of password guessing, which analyzes a password’s resistance to a guessing attack of arbitrary duration with sub-second latency.” (Abstract, p. 175.)
 
@@ -59,4 +59,3 @@ Inference: using these results for a deployment assumes that leaked datasets rep
 - client model compression — quantize, fixed-point encode, ZigZag encode, and gzip weights
 - Bloom-filter guess estimates — store frequent passwords in thresholded filters for compact lookup
 - conservative responsive estimation — precompute mappings, cache prefixes, use worker threads, and bias estimates downward
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We consider this result to be exploratory both due to our low guessing cutoff and because other options for tuning the tokenization could produce better results."): checked all quotations, numbers, section and printed-page references, technique steps, and the publisher link printed on the cover; corrected the beam-search quotation, transfer-learning training-set scope, encoding and scaling steps, and references; clarified empirical limits and marked recommendations as inferences; did not reproduce experiments, inspect implementation code, or validate the proposed Verus proofs.

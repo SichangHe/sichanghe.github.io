@@ -67,14 +67,6 @@ Evidence: Across all 912 instances, CBMC returned 66 correct-safe and 305 correc
 
 Verus form: Inference: explicitly record any trusted contracts for external math functions, compare them with the implementation actually used, and report incorrect results separately from timeouts or unsupported features. The operational-model experiment motivates checking the whole tool-and-library combination rather than assuming a library substitution preserves verification behavior.
 
-## evidence, trusted parts, and threat to VL
-
-Appendix A makes a central qualification explicit: “There, we make the assumption that all functions in math.h have correctly-rounded implementations and existing software verifiers reason over correctly-rounded implementations.” It adds, “Crucially, if this assumption were not to hold, some of our ground-truth verdict may become incorrect.” (p. 37) MUSL is not uniformly correctly rounded (Sec. 2.5, p. 8). Inference: explicit operational models resolve the ambiguity about which implementation is analyzed, but do not by themselves establish that every label remains correct for every model.
-
-Ground truth for generated categories depends on construction, exhaustive checking, or counterexample search. For Lipschitz violations, the authors test 10 million random inputs to obtain a lower bound on the maximum output (Sec. 3.8, p. 19). Imported safe real-valued VNN-COMP verdicts remain trusted. The authors also decline independent witness validation: “For this reason, we choose to only evaluate the verifiers against our ground-truth verdicts.” (Sec. 5.2, p. 28) Inference: this evaluation measures agreement with the benchmark labels under their stated assumptions; it is not a soundness proof for a verifier or its dependencies.
-
-Inference: the direct threat to agent-written verified Rust is false confidence from real-valued neural-network proofs or from sampled tests that miss finite-precision counterexamples. NeuroCodeBench's category structure and separate incorrect/inconclusive counts are useful acceptance tests for a VL numerical-verification component. VL should reuse exact implementation-level contracts, standalone artifacts, counterexample replay, and denominator-aware reports. It should not claim that a green Verus proof over an abstract real model verifies an optimized `f32` implementation unless the representation and floating semantics are connected by a proved lemma.
-
 ## techniques for the catalog
 
 - implementation-level floating-point property: verify the exact finite-precision program and operation order
@@ -84,4 +76,3 @@ Inference: the direct threat to agent-written verified Rust is false confidence 
 - complexity-stratified benchmark: combine scalar functions, layers, synthetic networks, and large real-world models
 - verdict taxonomy: report correct, incorrect, and inconclusive results with per-category denominators
 - operational-library comparison: rerun with explicit math-library implementations to expose modeling effects
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Unfortunately, this process of witness validation relies on running an ensemble of specialised software verifiers to check the proof, which could still return a wrong result in our setting."): checked the full paper including appendices and references against the study, quotations, counts, page and section references, technique steps, and paper link; corrected page references, qualified ground-truth guarantees and imported safe verdicts, and removed unsupported Verus implementation claims; did not reproduce experiments, audit benchmark code, or validate Verus support.

@@ -8,8 +8,6 @@ Abate, Giacobbe, and Schnitzer learn finite stutter-insensitive bisimulations of
 
 The abstract states the central loop precisely: “Upon a negative answer, the solver produces a counterexample state for which the classifier violates the claim, adds it to the dataset, and repeats learning and checking in a counterexample-guided inductive synthesis loop until a valid bisimulation is found.” (Abstract, p. 1). The method is for deterministic systems; strong bisimulation is the special case where ranking functions are constant (Remark 3, p. 10).
 
-Inference: The useful VeruLaw (VL) lesson is a verifier-guided synthesis loop for candidate invariants, classifiers, or ranking functions. The paper's bisimulation property is not a Rust safety contract, so a direct performance or threat comparison would be invalid.
-
 ## technique: characterize stutter-insensitive bisimulation with classifiers and rankings
 
 What it is: replace an equivalence relation over a potentially infinite state space with (i) a finite state classifier `f : S → C`, (ii) a deterministic class transition `g : C → C`, and (iii) a natural-valued ranking function `h_c` for each class. The classifier must preserve observations. For every class transition `c → d` with `c ≠ d`, a state either moves directly to class `d` or remains in `c` while its ranking strictly decreases; if a state moves from `c` to `d`, `g(c)=d` (Theorem 3, p. 11).
@@ -48,8 +46,6 @@ How to do it:
 
 The paper states: “If the formula is unsatisfiable, the procedure terminates and has successfully synthesised a valid stutter-insensitive bisimulation and its corresponding quotient.” (Sec. 4.1, p. 13).
 
-Inference: A VL loop could propose Verus loop invariants or ranking functions, run Verus, convert a failed proof obligation into a counterexample or diagnostic, and regenerate the candidate. Verus's proof checker, rather than an SMT query alone, must establish the final Rust contract. Counterexamples are an engineering extension, not a construct described in the paper's Verus terms.
-
 ## technique: interpretable binary decision-tree templates
 
 What it is: use binary decision trees (BDTs) with parameterized real-valued predicates at internal nodes and class labels at leaves. Each class receives a linear ranking `h_c(η,s)=η1·s+η2` (Sec. 4.2, pp. 13–14). The tree is initialized with fixed observation predicates at its top nodes, guaranteeing label preservation for every parameter assignment.
@@ -63,8 +59,6 @@ How to do it:
 5. Emit the tree as an interpretable partition and use it to explain which valuations share behavior.
 
 The Euclidean-algorithm example starts with terminated versus non-terminated classes. The final tree separates positive unequal inputs, which eventually reach equality, from unequal inputs with at least one non-positive value, which stutter forever (Fig. 1 and Sec. 2, pp. 4–5). The authors emphasize: “Specifically, our approach yields interpretable classifiers as binary decision trees.” (Sec. 2, p. 5).
-
-Inference: For VL, a decision tree could classify states by protocol phase, ownership mode, or resource status, while a Verus rank proves progress within a phase. A Verus proof normally needs explicit specifications and invariants; a tree is a synthesis template, not a replacement for them.
 
 Limits: linear predicates and linear rankings may be unable to express a needed partition. The automatic enlargement handles finite-sample underfitting, but it cannot make an unavailable finite quotient exist.
 
@@ -100,12 +94,6 @@ The mathematical sufficient conditions in Theorems 2 and 3 establish a valid bis
 
 Inference: A Verus proof of a ranking invariant would establish the encoded transition relation's property, not that the encoding faithfully models the deployed Rust program unless the code-to-model link is also verified.
 
-## implications for VeruLaw and threat assessment
-
-Inference: The strongest transferable idea is counterexample-guided repair of proof artifacts. An agent can propose an invariant or ranking function, let Verus expose a failed obligation, and use the diagnostic to refine the proposal. The product threat is that a finite candidate may fit sampled executions while failing on an unseen state; a whole-state verifier or mechanically checked invariant is required before acceptance.
-
-Inference: VL should not copy the paper's BDT bisimulation as a generic Rust verification method. It should reuse the CEGIS control loop, explicit template growth, ranking-function discipline, counterexample retention, and reporting of solver/time denominators. Progress proofs must use valid Verus constructs and contracts from the local Verus guidance.
-
 ## techniques for the catalog
 
 - classifier-plus-ranking abstraction — represent a finite quotient with a label-preserving state classifier, deterministic class transition, and a ranking that decreases within each class that has an exit to another class
@@ -114,4 +102,3 @@ Inference: VL should not copy the paper's BDT bisimulation as a generic Rust ver
 - automatic template enlargement — add a tree layer when finite samples cannot fit the current partition
 - sample-efficient refinement — use small initial samples and informative SMT counterexamples instead of exhaustive state exploration
 - conditional-termination quotient — learn classes that separate terminating from non-terminating input regions and expose interpretable preconditions
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The learner proposes candidate functions that satisfy the stutter-insensitive bisimulation conditions over a finite set of sample states."): checked quotations, numbers, references, theorem conditions, technique steps, and limitations; corrected ranking conditions for classes with exits, the strong-bisimulation reference, Euclidean input regions, baseline setup, benchmark provenance, and the exact-preconditions citation; did not reproduce experiments, inspect implementation artifacts, or validate the proposed Verus applications.

@@ -1,9 +1,6 @@
 # Solving VeriContest with a Lean-Backed Rust Verifier
 (authored by agents unless marked 🧑)
 Tag: `serbanuta2026solving`, [paper](https://arxiv.org/abs/2610.03994)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
-
-Source: [2610.03994v2](https://arxiv.org/abs/2610.03994v2); [saved full PDF](/ssd1/sichangheagent/vlpw/lean_rust.pdf). This study uses the full primary text, including appendices. Page numbers are printed PDF pages. Results are author reports unless labeled otherwise.
 
 The useful result is large-scale proof completion for translated, supplied code and specifications. The main remaining assurance boundary is whether the Lean statements and programs preserve the Rust problem. This is direct competition for an agent proof backend, while the paper leaves specification discovery in customer crates open.
 
@@ -30,20 +27,6 @@ Appendix A, p. 11 documents 27 specializations: two implementation rewrites, one
 §4.4, pp. 7–9 tests nine models at five effort settings on ten theorems. The authors warn: “Ten theorems is a small sample with few hard ones in it”. Sonnet 5.5 at low effort proves 50/50 expensive theorems, 48 at the first official check, at $118 total, but instructions changed, so “this is not a controlled comparison”. A Luna-first run proves 1,146/1,325; Opus rescues 179. Its recorded $643 excludes usage records from 348/2,198 Luna sessions, and lacks the main run’s clean-clone recheck. Median elapsed proof time rises to 32 minutes including abandoned attempts and recovery. Haiku 5.5 at xhigh/max proves ten selected expensive theorems; at low it gives up on all ten. Inference: model escalation is promising, but true cost and wall time must include failed attempts and missing usage.
 
 §4.5, p. 9 reruns Verus on 50 problems selected by longest reference proofs: Opus proves 49/50, 18 at its first API attempt, median 6.1 minutes and $0.92. The Lean main run has tools, English descriptions, scratch runs, examples, shared accepted proofs and similarity lookup. §4.5, p. 10: “are not comparable rates.” Neither this comparison nor the older benchmark’s 13.95% pass@1 establishes that Lean alone causes the gain. Public Verus proofs also permit contamination; lack of public Lean answers excludes direct Lean-proof copying, not remembered invariants.
-
-## What VL can learn and what is already done
-
-Recommendations: freeze executable code, theorem statements and contract provenance; record permitted transformations; audit dependency axioms; rebuild independently; separate translation tests, specification reviews and proof checks. Separate development-time scratch feedback from official attempts. Compare cheaper-first escalation with one strong model using complete accounting and matched agent tools. These are study recommendations, not authorized implementation changes.
-
-The pipeline reuses functional translation, induction, automated tactics and agent repair. Its contribution is the benchmark-scale result and operational evidence, not inventing these proof techniques. Existing [evaluation notes](../topic_studies/formal_verification_rust/llm_for_verification/evaluation.md) already identify the translation boundary; this study adds v2 counts and exceptions.
-
-Product inference: Rust-Prover directly overlaps with proving Rust and generating specifications for customers. §1, p. 1 says “We have used it on Solana crates since June 2026”, but the evaluated task supplies benchmark specifications. §5, p. 10: “we do not yet know how much of this carries over to the crates we verify for customers”. VL should not treat generic agent proof completion as a unique product claim. Auditable intent recovery and unchanged deployed Rust remain meaningful comparison dimensions, whose superiority is not established here.
-
-First reading: §§3.2–3.4 and §4.1. Ask which parts of a Rust verification claim follow from kernel checking and which still depend on translation.
-
-## Study status
-
-The full primary-text synthesis was checked against PDF text and independently reviewed. Local source links resolve. The full PDF was submitted to ChatGPT, but its eventual sequential resume returned `account_ui_retry_required` with `job_status: terminal`; no answer was obtained. [Recorded failure](/ssd1/sichangheagent/vlpw/lean_rust_poll3.json). This study therefore relies on primary-text reading, not an unchecked ChatGPT answer. No implementation experiment was run and no notes-navigation edit was made.
 
 ## ChatGPT cross-check (2026-10-12)
 

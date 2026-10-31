@@ -24,7 +24,7 @@ what it is and when to use it. Saturation produces many trivial, redundant, or u
 
 how it is done. (1) Give AGInTRater the complete derivation graph, not isolated formulas. (2) Compute a complexity/weight score that penalizes large statements. (3) Compute surprisingness from how rarely function and predicate symbols co-occur in the original axioms. (4) Compute usefulness as the ratio of interesting descendants to total descendants. (5) Retain the top-scoring items for each domain and proof-depth setting. The paper warns that this is a heuristic: “We use it to prioritize non-trivial theorems in a principled way, without claiming alignment with human judgments of mathematical interest.” (Section 3.2, PDF p. 4.)
 
-evidence and limits. The paper reports no evaluation of agreement with human interest judgments. Inference: high scores need not indicate relevance to a product. For VeruLaw, supplement generic scores with proof length, solver time, API coverage, and human review, then report the filtering threshold and retained/removed counts.
+evidence and limits. The paper reports no evaluation of agreement with human interest judgments.
 
 Verus form. Inference: score candidate Verus lemmas from their dependency graph and verification cost, but keep scoring outside specifications. A score cannot justify a lemma; the final `verus` run and its explicit contracts do that. Avoid turning an untrusted generated clause into a trusted axiom merely because AGInTRater ranks it highly.
 
@@ -70,8 +70,6 @@ Verus form. Inference: represent a candidate proof as a dependency DAG of Verus 
 
 The experiments measure zero-shot scores for gpt-5-nano, gpt-5-mini, and gpt-5 with low reasoning effort (§5.1, PDF p. 7). The paper works exclusively in CNF (§7, PDF p. 9), describes the 3,000-problem evaluation as a proof of concept (§7), and proposes fine-tuning, iterative saturation, and support for full first-order logic as future work (§6, PDF p. 9). Inference: the symbolic results depend on the input axioms, parsers, prover implementations, and scoring code. They do not demonstrate improvements from training on the generated data.
 
-Inference: the relevance to VeruLaw is symbolic training data and proof-planning evaluation. Saturation can provide large, machine-checked training and regression sets for premise selection and proof-graph planning, but it does not generate Rust/Verus specifications or test environmental assumptions. VL should not redo generic TPTP saturation; it should adapt the extraction/validation pattern to Verus dependency graphs and publish denominators, solver versions, and timeouts. Existing work already covers symbolic data generation, so a new VL contribution would need evidence that Verus-specific graphs improve verified Rust proof completion or maintenance.
-
 ## techniques for the catalog
 
 - saturation generation: run E-prover without a conjecture to record a consequence DAG
@@ -80,5 +78,3 @@ Inference: the relevance to VeruLaw is symbolic training data and proof-planning
 - perturbed entailment tasks: vary premises and label whether they entail a target
 - minimal premise selection: prune a sufficient set with prover checks, then add distractors
 - proof-graph reconstruction: shuffle binary proof DAGs and score structural plus logical validity
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "All evaluations were conducted in a strict zero-shot setting, where models were given only the problem description and format instructions, without any in-context examples."): checked all paper text, quotations, numbers, section and page references, and technique steps; corrected the paper link, quotation transcription, validation scope, premise-selection claims, Table 1 scope, and the high-effort reconstruction contradiction; did not check released code/data, rerun experiments, or verify the proposed Verus adaptations.

@@ -12,8 +12,6 @@ A strategy derivation is a deterministic Markov decision process: a state is a s
 
 Application steps are: select a finite training set P; encode the grammar and domain restrictions; repeatedly select a leaf with UCT; expand unexplored actions; randomly finish the partial strategy; evaluate the strategy on P; and back up the terminal reward until the simulation budget is reached. The paper states, “The MCTS stops when a simulation budget is reached.” Reward is based on PAR-10, which averages runtimes across instances, using the measured runtime for a solved instance and ten times the timeout for an unsolved instance. Lower PAR-10 is better (Sections 4.1–4.2, p. 4; Appendix B.2, p. 10). The staged method below replaces direct solver evaluation in its second stage with cached results.
 
-Inference: for VL, the terminal evaluator could invoke Verus on a crate and assign reward from proof success, verification time, and resource use. MCTS could choose a proof orchestration policy while Verus checks its output. This proposed use does not establish that an omitted proof obligation is irrelevant; the paper evaluates SMT strategy synthesis, not Verus proof generation.
-
 ## layered MCTS for parameter tuning
 
 The paper's first heuristic prevents parameter combinations from multiplying the grammar tree. It says, “our layered search method approaches the tuning of each tactic parameter as a separate Multi-Armed Bandit (MAB) problem” (Section 4.3, p. 5). Each arm represents a candidate parameter value. A parameter MAB is attached to a tree edge representing one particular tactic application, so two uses of `simplify` receive independent parameter learners.
@@ -28,13 +26,11 @@ Staged search addresses the cost of evaluating nested branches. Stage one search
 
 Procedure: (1) run first-stage MCTS on linear derivations; (2) build a portfolio greedily, adding the candidate that most improves a virtual-best oracle that chooses the best strategy per training instance, measured by average PAR-10; (3) measure each selected candidate on all of P and cache results; (4) in stage two, combine candidates through branching, using constructs such as `if`, `or-else`, and `try-for`; (5) evaluate a combined strategy by determining its equivalent sequence of linear-strategy applications on each instance and deriving performance from cached results (Section 4.4, p. 5; Appendix A, p. 10). The paper's example first tries `(then simplify sat)` for four seconds and then applies `smt` if needed. A smaller subset P1 may be used for stage-one exploration, with the selected candidates then evaluated on P (Appendix A, p. 10).
 
-The method also supports long timeouts: explore candidates with a short limit, re-evaluate the selected candidates at the intended long limit, and then compose them using those results (Section 4.4, pp. 5–6). Inference: a VL analogue could cache per-crate outcomes of alternative proof plans and search bounded fallback policies over those outcomes. Reusing such outcomes would require checking whether changes to Verus, dependencies, specifications, or the execution environment invalidate them.
+The method also supports long timeouts: explore candidates with a short limit, re-evaluate the selected candidates at the intended long limit, and then compose them using those results (Section 4.4, pp. 5–6).
 
 ## grammar restrictions
 
 Appendix A (p. 10) lists six domain rules: a standalone tactic must be a solver wrapper, while the first tactic in `then` cannot be a solver wrapper; do not apply `try-for` to a strategy already assigned a `try-for` timeout; limit `if` to the first three syntax-tree depths and disallow it after any tactic application; preselect numerical parameter values, timeouts, and probe comparisons; do not repeat `nla2bv` within a tactic sequence; and apply `bit-blast` only immediately after `simplify`. The restriction on `if` preserves the staged method because tactics may change formula measures. The authors concede that “certain simplification rules might eliminate parts of the search space that include effective strategies” (Appendix A, p. 10).
-
-Inference: equivalent restrictions in VL could be explicit configuration choices. They reduce search cost but express assumptions about useful proof structure rather than proving that excluded strategies are ineffective.
 
 ## experimental evidence
 
@@ -46,10 +42,6 @@ For the full-logic QF_LIA, QF_LRA, and QF_S experiments, the training set contai
 
 For Sage2 at 60 and 300 seconds, Table 2's PAR-2 values are 43.57 and 163.26 for Z3alpha versus 43.82 and 181.00 for FastSMT; CVC5 has lower values of 38.77 and 80.71 (p. 11). Z3alpha synthesizes new strategies for these timeouts, while FastSMT reuses its short-timeout strategy (Section 5.1, p. 6). Inference: these results support benchmark performance comparisons under the reported setup, not formal optimality or general superiority to every solver.
 
-## trust boundary and product threat
-
-The paper expects generalization rather than establishing a guarantee: “P is intended to be a representative subset of the broader benchmark set Q, which is of interest to the user, with the expectation that a strategy performing well on P generalizes effectively to Q.” (Section 1.1, p. 2). Inference: transferring this method to agent-written verified Rust would depend on Verus correctness, representative training crates, reliable timing, and a valid conversion from combined proof plans to cached outcomes. A controller could overfit a benchmark or reuse stale results. VL experiments could therefore test proof-specific state, cache validity, and unseen dependency revisions before adopting the method.
-
 ## techniques for the catalog
 
 - MDP grammar search — represent a solver strategy as production-rule decisions and use UCT MCTS with terminal reward based on PAR-10
@@ -57,5 +49,3 @@ The paper expects generalization rather than establishing a guarantee: “P is i
 - staged linear portfolio — discover branch-free strategies, greedily retain complementary candidates, and compose them with cached per-instance results
 - virtual-best selection — choose each next portfolio member by its improvement to an oracle that picks the best candidate per instance
 - restricted grammar — prune nesting, depth, repetition, and numerical choices to make expensive strategy evaluation tractable
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Both tools constructed their strategies using the identical tactic and parameter set offered by Z3, and executed these strategies with Z3."): checked the complete paper, quotations, numerical results, section and PDF-page references, grammar restrictions, and technique steps; corrected references, five-family seed counts, training splits, reward wording, and experimental comparisons, removed unsupported resource limits and benchmark-overlap claims, and marked VL conclusions as inferences; did not reproduce experiments or inspect implementation code.

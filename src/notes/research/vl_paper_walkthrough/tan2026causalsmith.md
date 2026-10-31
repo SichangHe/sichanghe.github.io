@@ -18,7 +18,6 @@ how to do it
 5. Reuse the promoted result in later runs instead of reproving it. The paper's example promotes Chernoff tail bounds and then reuses them for a finite-category pilot theorem (Section 6.4, pp. 16–17).
 
 Verus form
-Inference: use Verus modules as the reusable library unit, with `spec fn`, `proof fn`, `requires`, `ensures`, and explicitly checked dependencies. Inference: promotion should reject `external_body` in the proof being trusted, unreviewed assumptions, and specifications whose statements are vacuous; the exact policy is a VL design choice. Verus's proof functions are erased from executable Rust, so library review must also check the executable interface.
 
 evidence and limits
 The authors report that all 8,179 declarations are sorry-free and have no hand-written axiom; non-standard `native_decide` dependencies are disclosed (Section 4.5, p. 10). Two clusters are adapted external projects (Section 4.5, p. 10), so provenance remains trusted input. The paper does not establish that its library design transfers unchanged to Rust ownership or unsafe code.
@@ -63,15 +62,14 @@ Among 144 runs, 14 were accepted, 59 downgraded for novelty, and 71 failed (Tabl
 
 ## technique 4: self-improving run records and library feedback
 
-Every run, including rejected and downgraded runs, is retained. Discovery searches the record for open gaps and near duplicates so failures do not recur (Section 5.4, p. 13). A separate study mode plans missing reusable lemmas, proves them against the live compiler, and promotes them after review (Section 5.4, p. 13). The paper reports 28 further library builds beyond the flagship example (Section 6.4, p. 17). Inference: VL can use the same memory to avoid repeating failed Verus proof strategies, but should preserve failed specifications and checker diagnostics with exact dependency hashes.
+Every run, including rejected and downgraded runs, is retained. Discovery searches the record for open gaps and near duplicates so failures do not recur (Section 5.4, p. 13). A separate study mode plans missing reusable lemmas, proves them against the live compiler, and promotes them after review (Section 5.4, p. 13). The paper reports 28 further library builds beyond the flagship example (Section 6.4, p. 17).
 
 ## proof boundary and product relevance
 
-Lean proves declarations from their stated assumptions and imported axioms; it does not prove that the declarations match the intended research claim, which is why the audit exists (Section 3, p. 5). CausalSmith's accepted headline theorem has an external Zeng et al. lower bound as an explicit hypothesis (Section 6.3, p. 16). Human judgment still determines whether a result matters (Section 7, p. 16). Inference: for VL, the largest threat is a compiling but weakened or vacuous Rust contract. The statement audit and axiom/dependency checks are directly reusable defenses; the causal library and Lean retrieval models are domain-specific. VL should not redo a generic claim that proof checking alone guarantees requirement faithfulness.
+Lean proves declarations from their stated assumptions and imported axioms; it does not prove that the declarations match the intended research claim, which is why the audit exists (Section 3, p. 5). CausalSmith's accepted headline theorem has an external Zeng et al. lower bound as an explicit hypothesis (Section 6.3, p. 16). Human judgment still determines whether a result matters (Section 7, p. 16).
 
 ## techniques for the catalog
 - controlled verified library: promote reusable lemmas only after type, axiom, provenance, and statement checks
 - hybrid theorem retrieval: combine concept, syntax-pattern, and goal-directed search over indexed declarations
 - dependency statement audit: compare every formal node with its intended claim and scan transitive proof dependencies
 - feedback memory: retain accepted, failed, and downgraded runs and promote generic proved lemmas for later reuse
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

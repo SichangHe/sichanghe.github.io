@@ -22,7 +22,7 @@ How to do it.
 
 Verus form. Inference: represent each benchmark as a Rust crate or module with a deterministic entry function, a `requires`/`ensures` contract, and a harness that records whether Verus verifies or reports a counterexample. Inference: the paper’s three-valued result maps naturally to proved, refuted, and unknown/timeout, while a Verus proof artifact or failing verification log can occupy the witness field. Inference: YAML task manifests can list Rust source files and feature flags, but Java compilation and `Main`-class requirements do not carry over.
 
-Evidence and limits. The paper’s initial suite has 368 tasks: 177 JBMC-regression (89 safe, 88 unsafe, average 25 LOC), 104 JPF-regression (52/52, average 52 LOC), 23 JayHorn-recursive (14/9, average 35 LOC), and 64 minepump (8/56, average 62 LOC), totaling 163 safe and 205 unsafe with average 40 LOC (Table 3, p. 4). These denominators are the paper’s counts. The authors explicitly say this is “a good start” but not representative of the breadth of Java verification challenges (Section 4, p. 4). Inference: a VL benchmark should report both class balance and source-size distribution, and should treat this suite as a seed rather than product coverage.
+Evidence and limits. The paper’s initial suite has 368 tasks: 177 JBMC-regression (89 safe, 88 unsafe, average 25 LOC), 104 JPF-regression (52/52, average 52 LOC), 23 JayHorn-recursive (14/9, average 35 LOC), and 64 minepump (8/56, average 62 LOC), totaling 163 safe and 205 unsafe with average 40 LOC (Table 3, p. 4). These denominators are the paper’s counts. The authors explicitly say this is “a good start” but not representative of the breadth of Java verification challenges (Section 4, p. 4).
 
 ## technique 2: property and nondeterminism normalization
 
@@ -34,7 +34,7 @@ How to do it. Replace each uncontrolled random or external operation with a benc
 
 Verus form. Inference: use `spec fn` models for pure nondeterministic choices, `requires` to constrain their ranges, and explicit `assume`-style proof preconditions in a harness; avoid Rust OS calls in benchmark kernels. Inference: safety assertions become `ensures` clauses or `assert` statements inside `proof fn`; Verus does not use Java LTL syntax, so a temporal “globally” claim must be reduced to an invariant over every loop iteration or recursive call.
 
-Evidence and limits. The property checks assertion safety only; it does not establish termination, liveness, or behavior of disallowed system calls. JayHorn is sound only for single-threaded Java without dynamic class loading and complex static initializers (tool description, p. 1). Inference: VL claims should state the supported execution model and assumptions rather than treating UNKNOWN as a proof failure.
+Evidence and limits. The property checks assertion safety only; it does not establish termination, liveness, or behavior of disallowed system calls. JayHorn is sound only for single-threaded Java without dynamic class loading and complex static initializers (tool description, p. 1).
 
 ## technique 3: reproducible resource-controlled execution
 
@@ -42,7 +42,7 @@ What it is. BenchExec supplies a tool interface, resource measurement, logs, str
 
 How to do it. Install the verifier in BenchExec’s base directory; add its tool-info module and XML definition; invoke `bin/benchexec spf.xml`; optionally select task subsets or override limits; preserve the timestamped logs and `.xml.bz2` result files; generate HTML tables, scatter plots, and quantile (cactus) plots with the table generator (Section 3 and Section 5, pp. 3–4). A cactus plot’s x-axis is the number of fastest solved tasks and its y-axis cumulative time (Section 5, p. 4).
 
-Verus form. Inference: wrap `verus` or a VL orchestration command in BenchExec’s tool-info interface, map successful verification to TRUE and failed obligations to FALSE or UNKNOWN according to a declared policy, and retain proof logs as witnesses. Inference: pin compiler, Verus, SMT solver, CPU, memory, and timeout versions; otherwise comparisons can confound verifier changes with resource changes.
+Verus form.
 
 Evidence and limits. The infrastructure generates comparable measurements but does not itself establish semantic soundness. The authors note that Java verifiers need to be extended to produce witness files and that Java witness checkers still need development (Section 6, p. 5): “witness checkers for Java verifiers also need to developed in order to check validity of the verification results” (sic, “be” missing in the paper). Inference: an agent-written verified-Rust product remains threatened by unsound wrappers, unsupported language features, or a forged result unless independent witness checking or proof replay is added.
 
@@ -52,19 +52,17 @@ What it is. SV-COMP assigns points per task: UNKNOWN gets 0; a correct FALSE get
 
 How to use it. Compute scores from the declared verdict and ground-truth classification, retain the denominator (all tasks in the category), and report score together with solved-task count and runtime plots. Penalize false alarms and missed bugs heavily enough that a fast but unsound tool cannot win by guessing.
 
-Verus form. Inference: score a VL verifier per proof obligation or benchmark, with a positive reward for checked proofs and a strong penalty for accepting an invalid contract; retain a separate UNKNOWN for timeout or unsupported constructs. Inference: because Verus produces proof obligations rather than Java assertions, the unit of scoring must be declared (crate, function, or obligation) before results are compared.
+Verus form.
 
-Evidence and limits. The paper shows only a per-task excerpt of results (Figure 1, p. 3, jbmc-regression tasks for JayHorn, JBMC, and SPF) and links the full results (footnote 13); it gives no aggregate score table for the four tools; therefore no tool ranking or percentage can be inferred from this paper alone. Inference: VL should publish the complete per-task result archive, not only a headline score.
+Evidence and limits. The paper shows only a per-task excerpt of results (Figure 1, p. 3, jbmc-regression tasks for JayHorn, JBMC, and SPF) and links the full results (footnote 13); it gives no aggregate score table for the four tools; therefore no tool ranking or percentage can be inferred from this paper alone.
 
 ## what is proved, measured, and trusted
 
-The paper defines and measures task verdicts, CPU time, memory and processor limits, benchmark composition, and score calculations. It does not prove that any verifier implementation is sound. Trust includes each verifier, its Java front end and models, BenchExec’s measurement and output parser, benchmark classifications, Java 1.8 and OS behavior, and the absence of witness checking in this Java category. Inference: for VL, Verus’s trusted base, SMT solver, compiler model, external-body declarations, and benchmark harness must be listed explicitly; a green run is evidence only under those assumptions.
+The paper defines and measures task verdicts, CPU time, memory and processor limits, benchmark composition, and score calculations. It does not prove that any verifier implementation is sound. Trust includes each verifier, its Java front end and models, BenchExec’s measurement and output parser, benchmark classifications, Java 1.8 and OS behavior, and the absence of witness checking in this Java category.
 
 ## contradictions, omissions, and product implications
 
 The benchmark table totals correctly: 177 + 104 + 23 + 64 = 368, and safe plus unsafe is 163 + 205 = 368. The paper calls the set “a good start to launch a Java category” but “not yet fully representative”; this is a scope limitation rather than a contradiction. No denominator is supplied for any tool’s aggregate success rate in the paper, so percentages should not be invented. The initial category has no Java witness checking even though witness validation is identified as necessary future work (Sections 2.1 and 6, pp. 2 and 5).
-
-Inference: VL should already implement the reusable parts—versioned task manifests, explicit assumptions, fixed resource limits, structured logs, independent result checking, and correctness-weighted reporting—because these are engineering patterns rather than Java-specific research. Inference: VL should not redo the paper’s Java-specific category design, `Main` conventions, or LTL encoding. Inference: the threat to an agent-written verified-Rust product is medium for evaluation integrity: benchmark normalization and scoring are straightforward, but unsupported Rust semantics, unsound harness assumptions, and missing proof witnesses can invalidate an apparently successful agent output.
 
 ## techniques for the catalog
 
@@ -72,4 +70,3 @@ Inference: VL should already implement the reusable parts—versioned task manif
 - property and nondeterminism normalization — replace uncontrolled environment behavior with constrained benchmark stubs and explicit safety properties
 - reproducible BenchExec execution — integrate each verifier through a runner and manifest, fixed limits, logs, and comparable plots
 - correctness-weighted scoring — reward correct proofs and bug finds while heavily penalizing false alarms and missed bugs
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The higher score and penalty for the TRUE case is justified because it is usually more difficult to prove a program correct than to find a bug"): read all 5 pages; checked every quotation, number (Tables 1-3, limits, benchmark counts), section and page reference, and technique steps against the paper; changed page references (Table 2 is on p. 4, Section 3 spans pp. 3-4, assume and the while-loop warning are on p. 3), the Conclusion label (Section 6), the contribution quote location (Section 1), the witness-checker quote (the paper's own wording, which lacks "be"), the `.prp` step (the YAML holds the expected verdicts), the training-period wording, the representativeness claim, and the results-table statement (Figure 1 is a per-task excerpt, not aggregate scores); did not check the cited references, the linked SV-COMP result pages, or the Verus-form and product-implication inferences beyond marking them Inference. Link is the arXiv ID printed in the paper (arXiv:1809.03739v2).

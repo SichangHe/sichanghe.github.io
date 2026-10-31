@@ -57,7 +57,7 @@ The paper says: “About ten percent of the uops and operations still require hu
 
 Verus form.  Inference: use pure `spec fn` arithmetic and bit-vector functions for each uop, and a Rust implementation with `ensures` equality to that spec.  For loops, use `invariant` clauses and `decreases`; for difficult arithmetic, prove case lemmas as `proof fn`s.  Keep proof functions ghost-only; do not call them at runtime.
 
-Evidence and trust.  GL's BDD/AIG algorithms are ACL2-verified, while external SAT solvers are used and, per the paper, “the proofs from the SAT solvers are checked for validity” (Section 2.4, PDF pp. 5–6).  Inference: the trusted boundary still includes the VL/SV translation of the RTL, the formal model's assumptions (for example the unverified blocks and the memory model), and the proof checker for solver output.
+Evidence and trust.  GL's BDD/AIG algorithms are ACL2-verified, while external SAT solvers are used and, per the paper, “the proofs from the SAT solvers are checked for validity” (Section 2.4, PDF pp. 5–6).
 
 ## technique 3: decode proofs generated from an instruction table
 
@@ -89,9 +89,7 @@ All models are executable in ACL2, enabling concrete tests and waveforms for fai
 
 Reported as proved: exec-correctness for about 600 uops in one project; generated decode-correctness lemmas.  The paper uses SHRD and VPSHRDQ as illustrative examples and does not say how many instructions have complete single-instruction proofs beyond “a small subset”.  Reported timings: 5–10 seconds per generated decode lemma, around 10 seconds for candidate population, and about ten percent of uops and operations needing human assistance.  These numbers use the authors' Centaur setup and denominators; they are not universal rates.
 
-The conclusion lists bugs the approach can miss: “There are bugs that our approach can indeed miss—e.g., in the memory system (load/store uops, caches), scheduler (operand dependency and forwarding), register mapping, pipelining (interactions among instructions), etc.” (Section 8, PDF p. 17).  It also says only a small subset of the 3400 variants has single-instruction proofs.  Inference: for agent-written verified Rust, the main threat is false confidence from proving a local handler while omitting memory, scheduler, concurrency, or ISA-table assumptions.  VL should record each abstraction and require composition checks at boundaries.
-
-The paper already demonstrates industrial divide-and-conquer, generated proof obligations, executable models, symbolic simulation, and SAT.  VL should not repeat a generic instruction-decoder case study.  Inference: a differentiated project would measure maintenance under ISA-table and microcode changes, and check whether Verus contracts expose stale assumptions automatically.
+The conclusion lists bugs the approach can miss: “There are bugs that our approach can indeed miss—e.g., in the memory system (load/store uops, caches), scheduler (operand dependency and forwarding), register mapping, pipelining (interactions among instructions), etc.” (Section 8, PDF p. 17).  It also says only a small subset of the 3400 variants has single-instruction proofs.
 
 ## techniques for the catalog
 
@@ -100,4 +98,3 @@ The paper already demonstrates industrial divide-and-conquer, generated proof ob
 - instruction-table decode generation: derive parsing and exception lemmas from structured instruction metadata
 - fixed-uop prechecks: check that symbolic translation yields a fixed uop opcode sequence before expensive proofs
 - executable proof debugging: run the same ACL2 models concretely to diagnose failed proof cases and generate waveforms
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The benefit of working with the entire EXEC block instead of a specific sub-module for uop verification is that the hardware interface of EXEC changes a lot less frequently than that of the sub-modules"): read the whole paper text and checked every quotation, number, section and page reference and technique step against it; changed the link to the arXiv page given in the paper text (arXiv:1912.10285), corrected PDF page references (decode timings and inst.lst parsing are on p. 12, candidate population on p. 13, Section 2.1 on pp. 2-3), made the 600-uop quote exact, rewrote the fixed-uop precheck technique (the fixed-opcode check is described in Sections 3 and 6, and the XLATE/UCODE proof compares shrd-spec effects with the symbolic micro-program run), added that SAT proofs are checked, and softened claims that SHRD proofs were completed; did not check the cited references, the publisher DOI (dropped as it is not in the paper text), or the ACL2 artifacts.

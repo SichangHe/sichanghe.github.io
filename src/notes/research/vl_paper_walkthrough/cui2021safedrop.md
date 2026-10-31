@@ -49,8 +49,6 @@ how to use it:
 4. for recursion, push a function ID once, use a default false relation on the first visit, then re-execute affected stack functions until a fixed point (p.7)
 5. cache the union of valuable-path summaries and reuse them at subsequent calls (p.7)
 
-Inference: a VL verifier can use modular Verus contracts as summaries: a callee’s `requires`/`ensures` contract is the interface, while proof lemmas establish the summary. Recursive Rust code still requires a termination argument and inductive invariant in Verus; SafeDrop’s alias fixed point is a separate static-analysis algorithm.
-
 limits: SafeDrop "heavily relies on the query optimized_mir" for callee MIR and "cannot capture some MIR such as specific trait implementations" (Section 5.4.1, p.10). For some inline functions the query returns MIR "containing empty information", so SafeDrop loses some alias relationships. The authors also list unsupported primitive arrays, closures, raw-pointer offset and function pointers as sources of false negatives (Section 5.4.2, p.10).
 
 ## technique 4: taint-based invalid-drop rules
@@ -74,15 +72,9 @@ For the nine CVEs (two UAF, three double-free and four invalid-memory-access cas
 
 The paper classifies warnings as TP/FP by manual checking (Section 5.3.1, p.8). Inference: SafeDrop's results depend on MIR generation, compiler query results, its alias rules, the path-pruning refinement, and that manual classification. The paper reports no soundness proof and admits false negatives for unsupported constructs (Section 5.4.2, p.10). Inference: for a product producing agent-written verified Rust, the threat is complementary to functional-proof failure: unsafe code and panic paths may remain outside specifications even when ordinary Verus contracts pass. Running SafeDrop-like MIR checks before proof generation could catch deallocation patterns, but the final claim must still be checked against the exact unsafe implementation and unwind model.
 
-## what VL should not redo
-
-Inference: VL should not claim that ordinary ownership checking alone covers unsafe deallocation; this paper documents concrete CVEs and compiler-internal blind spots. It also should not rebuild a generic MIR path analyzer without comparing against SafeDrop’s Tarjan, field-sensitive alias, inter-procedural cache and taint rules. A novel VL contribution would need evidence that these checks integrate with Verus specifications, proof repair or product-scale CI.
-
 ## techniques for the catalog
 
 - Tarjan path extraction — collapse SCCs, resolve enum-branch conflicts, and enumerate valuable CFG paths without redundant cycle traversal
 - field-sensitive union-find aliases — track pointer-bearing fields and flow-sensitive alias sets while filtering irrelevant Copy values
 - fixed-point callee summaries — recursively analyze optimized MIR, iterate recursive summaries to a fixed point, and cache results
 - taint-based drop checks — propagate dropped or uninitialized resources through aliases and flag UAF, double-free, dangling-pointer and invalid-access patterns
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "It adds the dropping variable into the taint set and marks it as the taint source when finding Drop() in the terminator."): read the full arXiv text and PDF pages; checked every quotation, the abstract overhead figure, Table 1 and Table 2 values cited, the three-run Intel/Ubuntu setup, section names and the technique steps against Sections 3 to 5; changed the page references (the previous ones were mostly off by one or two pages; pages here are PDF pages 1 to 11, matching the arXiv footer), the 1.0% versus 1.2% overhead wording, the optimized_mir and false-negative limits (they sit in 5.4.1 and 5.4.2 respectively), the Listing 2 page, and marked my own readings as Inference, and added the paper's own CVE-count mismatch between the Section 5.2 text and Table 1; did not check the cited CVEs or crates outside the paper, the Verus-related Inference paragraphs beyond marking them as inference, or the reference list.

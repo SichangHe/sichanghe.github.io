@@ -100,8 +100,6 @@ Evidence: Table 1 shows eager ReVerC never uses more bits than default and reduc
 
 The proved claims are circuit/interpreter equivalence, cleanup correctness, interpretation preservation, and ancilla reset. The conclusion qualifies certification: “The implementation of the interpreter may have subtle bugs, which ideally would be verified against a more straightforward adaptation of the semantics using a relational definition.” (Section 7, PDF pp. 17–18). The experiments compare ReVerC and Revs on 13 arithmetic/cryptographic benchmark rows, measuring bits, operations, and Toffolis under default/eager modes (Table 1, PDF p. 17). The paper reports Linux with 8 GB RAM (Section 6, PDF p. 16). Section 5 reports 11 unproven axioms about lookup tables and sets. Parameter-interference analysis is omitted and deferred to the extended version (Section 4.2, PDF p. 12); the paper also does not describe the initial interpretation values needed for the final equivalence argument (Section 5.2, PDF p. 16). Inference: this study cannot establish the correctness of those omitted details, F# quotation handling, or the F* toolchain from the paper alone.
 
-Inference: for VeruLaw, the reusable ideas are the explicit resource invariant, restricted-inverse cleanup, and proofs through a shared evaluator relation. The paper does not establish general Rust verification or a competitive ranking against VeruLaw. Its source semantics concern Boolean/register programs with no dynamic control. The proposed Verus forms above are sketches, not implementations or checked proofs.
-
 ## techniques for the catalog
 
 - reversible source restriction — require statically bounded, straight-line Boolean programs with explicit cleanup
@@ -109,5 +107,3 @@ Inference: for VeruLaw, the reusable ideas are the explicit resource invariant, 
 - restricted-inverse cleanup — reverse a circuit while protecting target bits to restore temporary values
 - interpretation-parametric partial evaluation — prove compiler correctness by relating standard, circuit, and cleanup interpreters
 - eager cleanup expressions — maintain per-bit inverse expressions and recycle dead ancillas during assignment
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "In this way, evaluating a program and compiling a program to a circuit look almost identical."): read the whole paper and study; checked quotations, numerical results, section/page references, algorithms, proof assumptions, and the arXiv link in reference 3; corrected allocation order, partial evaluation type, the Lemma 2 description, benchmark reduction count, and unsupported trust/competitive claims; flagged the eager-assignment formula/prose discrepancy and marked proposed uses as Inference; did not inspect implementation code, rerun experiments, check external references, or validate Verus sketches.

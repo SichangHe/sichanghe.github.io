@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `ji2025leanabellproverv2`, [paper](https://arxiv.org/abs/2507.08649)
 
-Audit: audited 2026-10-13 against the paper; checked numbers in Tables 1-6, pages, quotations, steps of techniques 1-7 and Verus forms; fixed unsupported claim that Lean statements are fixed text and a Lean-feedback description, an invented per-failed-trajectory reading of the 32-# budget, an unmarked inference on zero advantage and on the 1.7K/3.8K link, hand-set for pre-defined power values, and removed a wrong doubt about Qwen-2.5-72B; external_body and solver timeouts in Verus forms unchecked.
-
 source: Ji, Liu, Wang, Zhang, Yue, Shi, Sun, Zhang, Zhou, Gai (Kuaishou), arXiv:2507.08649v1, 11 Jul 2025; 24 pages with appendices A-D. Page numbers below are the printed ones.
 
 ## what the paper is, in one paragraph
@@ -142,19 +140,6 @@ Verus form. Inference: Verus has no tactic trace; the nearest analogues are proo
 - Section 2.2 announces four scenarios; the first two carry the same label (failed, then corrected) and differ only in what is input and what is output.
 - Section 3 describes Figure 5's validation curve as pass@32; the figure's axis says “Test Score avg@32”.
 - The abstract's “3.2%” and “2.0%” are absolute point differences at 128 samples (70.4 − 67.2 and 78.2 − 76.2), and they match Table 1.
-
-## what was already done, so VL need not redo it
-
-- the tag protocol, the cold-start recipe and the masked, pass/fail-rewarded RL loop are specified well enough above to reuse; code, data and models are stated as released (Abstract, p.1)
-- the comparison RL with verifier feedback in context against RL without it under one algorithm and reward exists for Lean (Table 2)
-- graded rewards from proof-trace features were tried and did not beat pass/fail (Table 6)
-- sample-level loss averaging was tried and collapsed on long trajectories (Appendix C)
-
-Inference: not done, and open for Verus: any of this on program verification, where the model may alter the statement; any measurement at equal total generation and checker cost; any training with more than one feedback round.
-
-## how much this threatens VL
-
-Inference: low and indirect. The paper is about competition mathematics in Lean with 7B models and reports gains of 1 to 5 points on MiniF2F-test, vanishing on the stronger base. It does not touch Rust, specifications or program proofs. Its relevance is as a recipe a competitor (or VL) could apply to train a small, cheap Verus repair model from verifier-filtered traces; the evidence here says such training helps weak models noticeably and strong models little, and frontier general models already do the in-context repair loop without this training.
 
 ## techniques for the catalog
 

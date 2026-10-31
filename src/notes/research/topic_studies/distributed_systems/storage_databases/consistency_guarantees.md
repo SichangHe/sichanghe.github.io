@@ -244,7 +244,6 @@ what I could not cover
 - not searched: PODC and DISC 2024 to 2026 theory on consistency models, OT-based collaborative editing, geo-replicated causal stores after 2022
 - ChatGPT Extra High, original worker: no opinion obtained
   - one attempt on 7 Oct failed with transport_prepare_deadline, a second stayed stuck at pending_prepare because the browser was not signed in; the coordinator then said to stop
-  - the self-contained prompt is saved for a later run: /tmp/claude-30033/-ssd1-sichanghe-github-io/85361e00-9330-4e62-a177-9736b46ce5e5/scratchpad/consistency/chatgpt_prompt_to_send.md
   - the candidates above were therefore not challenged by an outside reviewer
 
 checker proof comparison follow-up

@@ -21,9 +21,9 @@ How to do it.
 3. Have the referee build or check the submitted artifact and record its exit status and result line. The protocol says that a passing result requires exit 0 and a parseable results line (Section 3.1, p. 4).
 4. Treat the referee's result, rather than the agent's narrative, as the outcome.
 
-Verus form. Inference: for VL, place the Verus source and contracts in a sealed checkout, copy only the candidate artifact into a fresh referee crate, and run a pinned Verus binary with a withheld probe suite. Use ordinary Verus `requires`, `ensures`, loop `invariant`, `assert`, `proof fn`, and `spec fn` in the candidate source; keep the referee harness outside the agent's edit permissions. Inference: the harness should classify exit status, verifier diagnostics, and withheld probe results independently, because a successful Verus proof only proves the contracts supplied to Verus.
+Verus form.
 
-Evidence and limits. SaltBench reports a cost experiment in which “No cell of the run carried a correctness verdict at the time it was scored” (Section 4, p. 8). The later correctness pass is explicitly post hoc. Therefore the paper's cost result cannot establish that the method makes code more correct. Inference: VL should never turn a proof-cost comparison into a correctness claim without an independently timed correctness measurement.
+Evidence and limits. SaltBench reports a cost experiment in which “No cell of the run carried a correctness verdict at the time it was scored” (Section 4, p. 8). The later correctness pass is explicitly post hoc. Therefore the paper's cost result cannot establish that the method makes code more correct.
 
 ## technique 2: measure the isolation fence
 
@@ -40,7 +40,7 @@ How to do it.
 
 Verus form. Inference: the analogue is a harness-level isolation test that checks that candidate code cannot read the frozen contract library, mutate the referee crate, or invoke an unpinned Verus executable. Verus specifications cannot prove that the operating system enforced this boundary; retain the probe result and environment digest as trusted harness evidence.
 
-Evidence and limits. The paper reports instrument findings showing why isolation must be measured, not assumed (Section 3.2, p. 6). It does not claim that one successful probe proves all future executions isolated. Inference: a VL benchmark should report fence coverage and failed probes as first-class denominators.
+Evidence and limits. The paper reports instrument findings showing why isolation must be measured, not assumed (Section 3.2, p. 6). It does not claim that one successful probe proves all future executions isolated.
 
 ## technique 3: pre-registration and dated freeze
 
@@ -57,7 +57,7 @@ How to do it.
 
 Verus form. Inference: freeze the candidate task set, Verus version, standard-library assumptions, contract files, and scoring script in a commit. A later change to an `ensures` clause or to the withheld probes must be an amendment and a new run, never a silent repair of a failed proof.
 
-Evidence and limits. The paper's pilot matrix has 200 conditions over four models, with 181 results of record, 16 inexpressible conditions, and 3 declared unreached at the cost cap (Abstract, p. 1). These denominators show why an unqualified success percentage is misleading. Inference: VL reports every excluded, censored, and unreached condition beside any pass count.
+Evidence and limits. The paper's pilot matrix has 200 conditions over four models, with 181 results of record, 16 inexpressible conditions, and 3 declared unreached at the cost cap (Abstract, p. 1). These denominators show why an unqualified success percentage is misleading.
 
 ## technique 4: budget stops and censoring
 
@@ -72,7 +72,7 @@ How to do it.
 3. Exclude the halt from a correctness denominator unless the protocol explicitly defines a separate estimand. SaltBench's post-hoc reading records 10 cells censored at a registered budget and 4 unscorable cells (Abstract, p. 1).
 4. Report lower bounds or interval limits when a cap binds one arm more often than another (Sections 5.1–5.3, pp. 18–30).
 
-Verus form. Inference: a VL proof run should distinguish `verified`, `rejected`, `timeout`, `tool-error`, and `unscorable`. A timeout is not evidence that the Rust code violates its Verus contracts. Inference: compare timeout rates and verification cost separately from proof acceptance rates.
+Verus form.
 
 Evidence and limits. The paper explains that a cap can bind the salt-diet arm more often and that bounded costs are lower bounds (Section 5.1, pp. 18–19). A bound based on surviving cells cannot support a population-wide cost ratio. Inference: this prevents a product claim such as “verification costs 2×” when the numerator is censored.
 
@@ -89,19 +89,13 @@ How to do it.
 3. Keep censored, void, declared, and unscorable cells out of denominators when the protocol says they do not carry the relevant verdict.
 4. Compare arms only within the same model, problem, and treatment. SaltBench's registered sign test at k = 4 reached no verdict: 3 of 4, p = 0.3125 (Abstract, p. 1).
 
-Verus form. Inference: a VL evaluation should report proof acceptance k/n, runtime or token cost over the exact cells of record, and withheld functional checks as different quantities. Use Verus only to establish the candidate's stated contracts; use the external probes to measure whether behavior meets independently authored properties.
+Verus form.
 
 Evidence and limits. SaltBench's post-hoc pass-rate intervals lie wholly below plain on 8 greenfield and 5 brownfield rows and wholly above plain on 2 greenfield rows, but the paper calls this descriptive and gives no test of arm effect (Abstract, p. 1). Inference: these intervals are useful diagnostics, not evidence of a general treatment effect.
 
 ## what is proved, trusted, and left unresolved
 
-The machine referee decides acceptance for the benchmark's frozen artifacts. The paper measures its authored population, its pinned toolchain, and its recorded conditions. It does not prove that salt-diet improves correctness or that the cost premium generalizes. The referee wrapper, operating-system fence, authored requirements, withheld suite, Verus implementation, and interpretation of censored cells remain trust boundaries. Inference: for VL, the most important untrusted input is the specification itself: a verified Rust agent can satisfy a weak `ensures` clause while missing the product requirement.
-
-## what VL should reuse and threat to agent-written verified Rust
-
-Inference: VL should reuse the external referee, sealed artifact copy, measured isolation probe, dated freeze, explicit halt status, and separate cost and correctness denominators. These controls directly address an agent that can edit proofs, contracts, tests, or build files.
-
-Inference: SaltBench exposes a substantial threat to a product of agent-written verified Rust. An agent may reduce measured proof cost by changing the contract, exploit an accessible harness, or produce a proof that is never checked against independent behavior. The paper's protocol gives VL a concrete defense: freeze the specification, run Verus outside the writable seat, and score independently authored probes with every denominator visible.
+The machine referee decides acceptance for the benchmark's frozen artifacts. The paper measures its authored population, its pinned toolchain, and its recorded conditions. It does not prove that salt-diet improves correctness or that the cost premium generalizes. The referee wrapper, operating-system fence, authored requirements, withheld suite, Verus implementation, and interpretation of censored cells remain trust boundaries.
 
 ## techniques for the catalog
 
@@ -110,5 +104,3 @@ Inference: SaltBench exposes a substantial threat to a product of agent-written 
 - pre-registered freeze — commit population, arms, predictions, and adverse outcomes before execution
 - budget censoring — treat caps as halts and report lower bounds rather than failures
 - separated estimands — report cost and correctness with distinct cells and denominators
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

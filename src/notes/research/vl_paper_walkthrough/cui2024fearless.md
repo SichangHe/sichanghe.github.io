@@ -6,8 +6,6 @@ Tag: `cui2024fearless`, [paper](https://arxiv.org/abs/2412.06251v2)
 
 Cui et al. study how unsafe Rust API documentation can state safety requirements in a uniform, complete, and usable form. They review standard-library APIs, classify requirements as safety properties, reorganize rustdoc text, and expose the result through a rust-analyzer hover plugin. The abstract reports: “We defined a category of Safety Properties (22 items in total) that learned from the documents of unsafe APIs in the standard library.” (p. 1). The paper analyzes 438 public unsafe APIs, 419 Rust CVEs, and unsafe-API usage in 103,516 crates.io repositories. Its final taxonomy has 13 major properties and 22 sub-properties, divided into preconditions and postconditions (Introduction, p. 3).
 
-Inference: this is directly useful for VL because the taxonomy can seed preconditions, loop invariants, postconditions, and review checklists around unsafe or low-level Rust. The paper is a documentation and empirical study; it does not prove the APIs or CVE classifications with Verus.
-
 ## technique: pre-filter an API corpus before labeling
 
 Inference: use pre-filtering when multiple namespaces and monomorphizations would overweight near-duplicate APIs. The authors inspect Rust 1.75's `std`, `core`, and `alloc`, including stable and nightly channels (Section 3.1.2, p. 6). They apply three filters:
@@ -31,8 +29,6 @@ The review process audits five sources for every API: functional description, sa
 5. R5 rewrites documents by linking each document slice to a property and the relevant argument in the signature (Section 3.2.3, p. 7)
 
 Conflicts in property creation or modification require unanimous author agreement; labeling conflicts require more than three authors to agree, otherwise the original decision remains (Conflict Resolution, p. 8). The design goals are generality, unambiguous Rust terminology, non-overlap, composability, essentiality, practicality, and excluding FFI requirements (Section 3.1.1, p. 6). The paper states: “A new item will be defined whenever a safety description cannot be categorized under the existing scheme.” (Section 3.2.1, p. 7).
-
-Inference: for Verus, use this staged review to derive contracts for a VL API library. Review executable code, existing comments, call sites, and proof obligations; propose a property only when the obligation cannot be expressed by existing reusable predicates. Resolve taxonomy changes explicitly and retain disagreement records. A Verus `requires` clause should encode a precondition property; an `ensures` clause or invariant should encode the resulting postcondition. The taxonomy itself is a human-designed abstraction and needs independent validation.
 
 ## technique: separate precondition and postcondition safety
 
@@ -81,19 +77,13 @@ For RQ3, the authors search CVEMitre for “Rust”, sort IDs from CVE-2017-2000
 
 The CVE-2021-45709 case shows the procedure: inspect the source, identify `slice::from_raw_parts_mut`, compare the input slice's constraints with the unsafe call, and classify the violated `Layout: Aligned` property (Figure 6 and Section 5.1.1, pp. 16–17). The paper says: “In the final dataset (198 CVEs in total), 86.36% of them were attributed to misuse of unsafe APIs within the standard library.” (Section 5.1.1, p. 16).
 
-Inference: for Verus, build a benchmark of failed Verus proofs, unsound `unsafe` wrappers, and historical vulnerabilities. For each case, record the violated contract predicate, whether the defect was a missing precondition, invalid postcondition, ownership protocol, or environment assumption, and have two reviewers confirm the label. Use this corpus to test whether VL's generated contracts cover known failure modes.
-
 ## technique: measure ecosystem exposure with source mining
 
 The crates.io analysis reports mining the latest crates as of 2023-01-30. Section 5.2.1 describes active repositories as its database; the reported total also identifies yanked crates. It finds 21,506 crates containing unsafe code among 103,516 crates, with 3,614 yanked (Section 5.2.2, p. 18). The authors build a dictionary of 140 unsafe API name strings, remove 20 names that also identify safe functions, and filter out cases where the source code does not use the `unsafe` keyword (Section 5.2.1, p. 18). They count both crates containing each string and total occurrences without compiling, to avoid overhead. Frequent categories include transmutation, allocation/deallocation, unchecked constructors, deferred initialization, unchecked indexing, raw-pointer references, and non-overlapping copies (Section 5.2.2, p. 18).
 
-Inference: for Verus, mine VL repositories for unsafe blocks, external-body boundaries, raw-pointer wrappers, and calls to APIs with trusted specifications. Use fully qualified paths and syntax-aware parsing instead of names alone. Count projects and occurrences separately, then prioritize review or model training by exposure multiplied by observed defect frequency.
-
 ## what is proved, measured, and trusted
 
 Reported: taxonomy size and labels, property correlations, CVE classification, and crates.io source-string counts. The paper also describes document revision and editor integration, without a quantitative usability evaluation of the revised plugin. The paper does not mechanize the taxonomy, prove all revised documents, or show that a rust-analyzer hover prevents a vulnerability. The labels rely on manual reviews, expert judgments, and standard-library documentation. The authors acknowledge that the standard library may not cover every safety category, that programmers may disagree about property boundaries, and that future language versions can add or deprecate APIs (Section 6, pp. 18–19).
-
-Inference: a generated Verus proof can establish a chosen contract while leaving the contract incomplete, especially for `SystemIO`, `Thread`, FFI, hardware, and allocator assumptions. The taxonomy is a useful checklist and benchmark schema; it is not a replacement for executable specifications and proof review. The paper lists analyzers that detect some scenarios for particular properties: Table 6 lists Rudra for `Initialized`, `Thread`, and `DualOwned`; SafeDrop for `Allocated`, `Initialized`, `DualOwned`, and `Freed`; MirChecker for `Bounded` and `DualOwned`; FFIChecker for `Allocated` and `Leaked`; and rCanary for `Leaked` (p. 19). Inference: VL can use these bug classes when reviewing its contracts and trusted assumptions.
 
 ## techniques for the catalog
 
@@ -107,4 +97,3 @@ Inference: the following catalog entries summarize reusable methods from this st
 - editor-integrated safety prompts — serialize structured obligations and show them at the unsafe call site through hover
 - CVE coverage audit — classify historical vulnerabilities by violated safety property and double-check the code review
 - ecosystem exposure mining — count unsafe API names in crates.io source to prioritize common operations and risks
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For the native documents, we split the text into sentences and determine whether each sentence can be included in the safety properties."): checked all study quotations, counts, section and page references, and technique steps against the full paper; corrected page references, the small-dataset filtering description, Table 5 average coefficients, document-revision scope, CVE exclusions and counts, and claims about measured results; marked Verus recommendations as inferences; did not inspect the plugin implementation, reproduce the analyses, or validate the proposed Verus adaptations.

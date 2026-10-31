@@ -5,8 +5,6 @@ Tag: `woodruff2026accelerating`, [paper](http://arxiv.org/abs/2602.03837v3)
 ## what the paper contributes
 This large case-study paper documents researchers using Gemini to generate hypotheses, proofs, algorithms, code, and adversarial reviews across theory, physics, economics, and optimization. Its formal-verification-relevant method is a human–model–checker loop. The paper reports that Gemini can produce useful lemmas and derivations but requires checking: “While this accelerated their work, it required careful verification to catch ‘human-like’ errors.” (§8.7, p.142).
 
-Inference: for VL, treat the model as a proposal generator and reviewer, while Verus, compilation, tests, and a human-owned specification remain acceptance authorities. The paper is not evidence that Gemini-generated Rust is verified.
-
 ## technique: external dependency validation and sanity checks
 The methods section says to ask the model to list every external theorem, find the formal statement in a textbook or authoritative source, feed that statement back, and then generate a self-contained proof (§2.5, p.9). It also recommends checking notation consistency and verifying every theorem precondition (§2.4, p.9). Apply this as: inventory dependencies; copy exact statements and assumptions; prove local obligations under those assumptions; audit symbols and side conditions; only then compose the result. Inference: each dependency should become a Verus `requires` fact or a separately proved lemma, never an unrecorded model assumption.
 
@@ -36,4 +34,3 @@ The paper gives many case studies but no aggregate success denominator for forma
 - lemma-first prompting — demand elementary lemmas, explicit assumptions, and a stop-on-gap outcome
 - adversarial proof repair — review generated proofs for counterexamples, repair assumptions, and rerun every lemma
 - code-checked derivation — execute generated checks to prune invalid branches before formalizing the surviving argument
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

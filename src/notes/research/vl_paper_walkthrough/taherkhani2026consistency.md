@@ -44,9 +44,6 @@ Inference: this is useful as a pre-proof filter for agent-written Verus code, bu
 ## evidence and denominators
 Table I reports percentages for BigCodeBench (BCB) and Less Basic Python Problems (LBPP), across CodeQwen3, Gemma3.3 and GPT-5-Mini. For example, BCB CodeQwen3 rises from holistic VR 62, LC 81, MS 57 over 1,808 tests to SCTG VR 76, LC 88, MS 67 over 2,187 tests (Table I, p.7). On LBPP Gemma3.3, VR rises from 38/100 to 53/100, LC from 60/100 to 76/100 and MS from 44/100 to 57/100; the table’s denominator is percentage metrics over generated suites, with test counts 1,595 and 2,938 respectively. Table II’s ConVerTest BCB CodeQwen3 row reports recall 91, precision/VR 91, F1 91, LC 87 and MS 67; the corresponding SC row has precision 76, LC 88 and MS 67 (Table II, p.8). The paper reports up to 39% precision gain, but this is the absolute percentage-point change 51→90 for Gemma3.3 on BCB or 53→84 on LBPP, not a relative percent.
 
-## trusted boundary, limits and VL threat
-The consensus proxy assumes independently generated candidates and tests; shared model errors can agree. Ground-truth implementations are still used for benchmark validity metrics, even though they are not required to generate the artifacts. The authors observe a small adequacy loss after filtering: BCB GPT-5-Mini LC 89→87 and MS 63→61 (Table II, p.8). Inference: use this pipeline to prioritize proof work and catch hallucinations, but never treat execution agreement as Verus soundness. Threat to agent-written verified Rust is high when test consensus becomes the only oracle; moderate when it gates generation before formal verification.
-
 ## techniques for the catalog
 - two-stage self-consistency — generate diverse stubs, then majority-select assertion completions
 - AST functional grouping — compare tests by behavior while ignoring formatting and names
@@ -54,4 +51,3 @@ The consensus proxy assumes independently generated candidates and tests; shared
 - dual execution agreement — cluster candidate solutions by pass/fail test signatures
 - consensus scoring — rank clusters by passed-test coverage and number of agreeing solutions
 - verification metrics — report validity, precision, recall, F1, line coverage and mutation score with dataset/model denominators
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

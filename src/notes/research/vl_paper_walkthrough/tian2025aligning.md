@@ -66,16 +66,9 @@ Ablation Table 2 uses all 20 subjects. The paper reports full Specine’s averag
 
 The authors’ manual analysis of 60 failures found 23 caused by poor generated tests and 25 by incorrect aligner-rule application; 12 involved inaccurate lifted specifications (Discussion §6.1, PDF pp. 9–10). Generated-test accuracy is only 60.17%–72.92% on average across models and benchmarks (Discussion §6.3, PDF p. 10). Inference: These results support treating tester, lifter, and aligner outputs as fallible signals.
 
-## what is proved, measured, and relevant to VL
-
-Specine measures private-test correctness (Pass@1 and AvgPassRatio), time and token overhead, iteration behavior, and component ablations. Inference: The reported test results establish neither specification equivalence nor soundness of lifted requirements; generated-test accuracy is assessed empirically. The authors repeat Specine’s experiments three times across 20 subjects; standard deviations are 0.008 for Pass@1 and 0.022 for AvgPassRatio, and all cross-run Wilcoxon p-values exceed 0.55 (Threats to Validity §7, PDF p. 11).
-
-Inference: VL should not redo the generic result that explicit requirement repair can improve ordinary code generation. It should adapt the lift-and-align loop to Verus contract synthesis, but make Verus proof checking and trusted domain specifications acceptance criteria. Inference: the threat to agent-written verified Rust is high when a model’s perceived contract silently omits an invariant; it is reduced when the lifted contract is reviewed, aligned against the original requirement, and then checked by Verus plus independent tests. Inference: The reported failure counts support independently checking generated tests and alignment outputs.
-
 ## techniques for the catalog
 
 - misalignment identification — use independent public and generated tests to decide whether deeper specification repair is needed
 - specification lifting — translate generated code into a structured DSL of perceived requirements for comparison
 - rule-based alignment — add selected background, purpose, input, output, examples, edge, API, error, and hint ingredients
 - hierarchical iterative search — retain aligned specifications only when trusted public-test ratio, then secondary ratio, improves
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For the specification lifting component, existing agent-based code generation techniques typically rely on the coarse-grained execution results of test cases as feedback to repair incorrect code."): checked the full paper, quotations, numbers, references, technique steps, tag, and DOI; corrected the test-failure trigger, page references, ablation percentage direction and variant name, iteration stopping rule, and inference labels; did not reproduce experiments or inspect source code or datasets.

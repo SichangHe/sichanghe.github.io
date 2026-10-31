@@ -6,8 +6,6 @@ Tag: `chen2023nl2tl`, [paper](https://arxiv.org/abs/2305.07766)
 
 The paper builds a cross-domain pipeline from English instructions to signal temporal logic (STL). Its central representation hides domain-specific atomic propositions (APs), leaving the model to learn logical structure. The abstract states: “We publish a dataset with 28K NL-TL pairs.” (Abstract, PDF p. 1). It reports “During the further finetuning, our model achieves higher accuracy (>95%) using only <10% training data” (Abstract, PDF p. 1).
 
-Inference: for VeruLaw, this is a specification-front end: English can be transformed into a lifted logical skeleton before AP names are bound to Rust state predicates. It does not prove the resulting property.
-
 ## technique 1: lifted representations
 
 What it is: replace each concrete AP (for example, `create_Slack`) with a placeholder `prop_i`, while preserving operators and nesting. The authors explain, “Instead of taking this approach, we hide all the APs in our data during finetuning, acquiring a lifted model on lifted NL-to-TL transformation.” (Introduction, PDF p. 2). Lifted pairs are defined in Section 2.2 (PDF p. 3): “each AP is replaced with a placeholder prop_i.”
@@ -52,18 +50,14 @@ Verus form: Inference: use the generated formula only as a draft; translate it t
 
 At deployment, GPT-3 recognizes AP spans and replaces them with `prop_i`; T5 predicts lifted STL; placeholders are swapped back. Table 2 reports T5-large + GPT-3 AP detection at 95.13 ± 1.42% (Circuit), 95.03 ± 1.20% (Navigation), and 96.73 ± 1.03% (Office email), while Table 3 reports AP detection 98.84 ± 0.41%, 99.03 ± 0.53%, and 100.00 ± 0.00% respectively (Tables 2 and 3, PDF p. 7). The paper says, “Hence, dividing the whole task into AP recognition and semantic parsing are more data-efficient and flexible than pure end-to-end method.” (Section 7.1, PDF p. 7).
 
-Inference: the decomposition could separate predicate naming from proof synthesis in VL, but AP errors can yield a perfectly proved wrong contract.
-
 ## what is proved, measured, and trusted
 
 Measured: exact binary translation accuracy, model-size and format ablations, and cross-domain tests. Trusted: GPT-3 outputs, human annotations, AP recognizer, T5 implementation, STL semantics, and all downstream planner or verifier assumptions. No theorem proves semantic equivalence between English and STL. Inference: threat to agent-written verified Rust is medium: it can automate contract drafts, but a Verus proof only establishes the generated contract.
 
-Earlier work to avoid repeating: the paper already supplies lifted cross-domain parsing, GPT-assisted synthesis, AP decomposition, and extensive ablations. Inference: VL should focus on connecting generated predicates to concrete Rust state and checking intent, rather than reimplementing this translation stack.
+Earlier work to avoid repeating: the paper already supplies lifted cross-domain parsing, GPT-assisted synthesis, AP decomposition, and extensive ablations.
 
 ## techniques for the catalog
 - lifted NL-to-logic representation — hide domain APs to train reusable logical-structure translators
 - GPT-assisted formula synthesis — generate and human-correct diverse formula/sentence pairs with a back-translation filter
 - in-order T5 parsing — fine-tune a pretrained text-to-text model on operator words and lifted formulas
 - AP recognition decomposition — detect predicates separately, parse the lifted formula, then restore predicate names
-
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Finetuning on T5 model improves the accuracy by around 14.5% compared to the Seq2Seq model."): read the whole paper text start to end; checked every quotation word for word, the Table 1, 2, 3 and 7 numbers, the 15108/5K/8K/80/120/150 figures, section and PDF page references, and the technique steps against Sections 2.2, 4.1, 4.2, 5, 6, 7 and Appendices B, C, F, H; changed the link to the arXiv page from the paper text (arXiv:2305.07766), corrected page and section references (Table 1 discussion is Section 5, not Section 6), rewrote the lifting and data-generation steps (synthesized formulas start lifted; pre-order is converted to in-order before prompting; no explicit accept/reject rule for Framework 2 is stated), removed the unsupported "no denominators" remark, and marked one conclusion as Inference; did not check the figures' plotted values, the GitHub artifacts, the transfer-learning results of Section 7.2 beyond what is cited, or the Verus-related inferences (these are the study's own).

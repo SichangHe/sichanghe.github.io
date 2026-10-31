@@ -278,6 +278,5 @@ provenance and gaps
   - Fairneris manuscript; Padon POPL2018
 - discovery: primary HTTP retrieval, Crossref, GitHub, inherited sources, parent Google leads
   - web search API failed; no successful Scholar search claimed
-- source audit: [full working note](/ssd1/sichangheagent/verus_distributed/lit_b/liveness_cases.md)
 - unresolved: pinned proof reproduction, Fairneris artifact/venue, Shipwright completion
 - unresolved: complete case-specific fairness contracts and effort beyond proof-line counts

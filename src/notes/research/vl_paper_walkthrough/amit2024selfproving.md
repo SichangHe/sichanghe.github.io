@@ -57,12 +57,6 @@ The paper contains conflicting experimental descriptions. Section 7.1 says "a da
 
 The representation study trains on 68 bases, with 17 bases for each count of distinct prime divisors from one through four. Figure 5 reports a correlation between that count and verifiability. The authors describe the difference as a few percentage points and attribute its size to using 10% as many training samples (Section 7.3 and Figure 5, PDF pp. 15–16).
 
-## trusted boundary, limitations, and VL impact
-
-The manually defined verifier and its soundness guarantee support rejection of incorrect outputs, independently of the learned prover. Architecture, optimization, and training-distribution assumptions support learning and average-case acceptance; they do not establish soundness (Definitions 3.2 and 3.4, PDF pp. 5–6; Theorem A.2, PDF pp. 26–29). The authors identify separate models for each ground-truth capability and bias from backward data generation as limitations (Section 8, PDF pp. 17–18).
-
-Inference: the arithmetic experiment does not establish performance on concurrent Rust, unsafe code, quantified heap properties, or nontermination. VeruLaw could test accepting proof transcripts, verifier-based rewards, and generated intermediate annotations. Each resulting crate would still need checking against its required specification. Average-case verifiability does not imply that every generated crate verifies.
-
 ## techniques for the catalog
 
 - self-proving verifier interface — emit an answer, then interact with a verifier whose soundness bounds false acceptance for each input/output pair
@@ -70,5 +64,3 @@ Inference: the arithmetic experiment does not establish performance on concurren
 - reinforcement learning from verifier feedback — emulate verifier queries and update only after an on-policy transcript is accepted
 - annotated transcript learning — generate intermediate computation and extract the answer sent to the verifier
 - TL convergence analysis — bound samples using transcript length, parameter norm, log-probability gradient bounds, and target error under concave agreement and realizability assumptions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In our current learning methods, each individual ground-truth capability requires training a separate Self-Proving model."): checked all paper text, quotations, numerical results, references, algorithm steps, and the study's inferences; corrected soundness wording, TL token selection and probability weighting, page references, formal convergence assumptions, experiment inconsistencies, and the trust boundary; replaced the paper link with its arXiv identifier; did not reproduce experiments, inspect implementation code, independently prove the theorems, or validate the proposed Verus adaptations.

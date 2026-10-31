@@ -2,7 +2,6 @@
 
 collection
 
-- paper root: `/hdd1/sichanghe/paper_collection`
 - paper records: [papers.tsv](papers.tsv)
 - retrieval audit: [download_log.tsv](download_log.tsv)
 - extraction audit: [ocr_log.tsv](ocr_log.tsv)

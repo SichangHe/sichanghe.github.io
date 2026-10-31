@@ -22,8 +22,6 @@ Inference: in Verus, the Router can select a proof-retrieval, compile, counterex
 ## technique: keep symbolic solving as the correctness gate
 Use this when LLM output proposes formulas, explanations, or repairs but hard constraints must remain authoritative. The capability ontology is transformed into SMT, and the solver returns either a plan or a minimal unsatisfiable constraint set (§II-B and §III-A, pp. 3–4). The LLM does not replace this check; it grounds requests, explains solver output, and proposes graph edits. The paper states that pure LLM planning “cannot be relied upon to satisfy hard logical and physical constraints consistently” (§II-C, p. 3).
 
-Inference: a VL implementation should generate or edit Verus code/specifications with an LLM, run Verus, and accept only code that verifies. Explanations and repair suggestions remain untrusted text. A successful Verus run proves the stated contracts under Verus's assumptions, not that the natural-language goal was modeled correctly.
-
 ## technique: turn UNSAT into an approved adaptation loop
 Use this when a valid plan may become possible after changing capabilities or constraints. The paper's four steps are: analyze the UNSAT set or reported change; derive a targeted knowledge-graph proposal; present it for HitL approval; apply the approved update and retry planning (§III-C, p. 6). The loop ends at a satisfiable plan or an unresolvable conflict. Runtime failures first identify affected provided capabilities, then remove or update them with confirmation (§III-C, p. 6).
 
@@ -34,11 +32,8 @@ Inference: Verus can represent each proposed adaptation as an edit to a spec pre
 ## evidence, trust, and limits
 Table I counts success only when every criterion is fully satisfied across all repetitions (§V-B, p. 7): knowledge query 9/10 (one omitted parameter-range justification), SAT 4/4, UNSAT 3/4, and adaptive planning 5/5. The 3/4 UNSAT result includes the reproducibility error above. No hallucinations were observed in 10 knowledge queries, but this is one laboratory modular-production model and qualitative criteria, not a statistical reliability guarantee (§V-A–B, pp. 6–7). The implementation uses GPT-4o mini for agents, GPT-4o for analysis, temperature zero, JSON schemas, GraphDB/SPARQL, and an external SMT planner (§IV, p. 6). Trusted elements include the SMT solver, ontology, graph update code, and user approvals; the LLM, prompts, and chain-of-thought are not correctness proofs. The paper notes a single use case and user-triggered runtime reports as limitations (§VI, p. 8).
 
-Inference: the threat to agent-written verified Rust is moderate. The architecture can reduce proof-context and diagnosis friction, but an incorrect repair can weaken specifications or omit intended behavior while still verifying. VL should log every generated edit, require review of contract changes, and preserve the verifier as the acceptance gate.
-
 ## techniques for the catalog
 - routed specialist workflow — classify intent and dispatch fixed graph branches with explicit approval checkpoints
 - symbolic back-end gate — let the SMT/verifier, not the LLM, decide constraint satisfaction
 - UNSAT adaptation cycle — analyze conflicts, propose a targeted model edit, obtain approval, apply, and retry
 - shared-state traceability — pass machine-readable intermediate results among narrowly scoped agents
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

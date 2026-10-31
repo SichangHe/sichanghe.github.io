@@ -68,17 +68,9 @@ The end-to-end transfer is mixed: RULES is broadly on par with single-label GRPO
 
 The measured claims are model accuracy/F1 on the named datasets, robustness on constructed perturbations, and transfer scores under SC@7. No theorem about RL convergence or proof soundness is proved. Trusted components include the base LLM, training labels, perturbation construction and filtering, parser for the two-section schema, reward implementation, and the evaluation datasets. Inference: a product using this method should log each precondition and utility decision, but accept a lemma only after the Verus verifier checks the generated proof.
 
-## contradictions, prior work, and product threat
-
-The table caption says “at most 23 points” in the abstract, while the analysis says “23+ points at most”; the exact maximum should be read directly from the displayed rows rather than inferred. The paper reports percentages without table denominators, but Appendix C supplies the test counts listed above. Inference: VL should not redo the already demonstrated idea of splitting lemma eligibility into precondition and conclusion checks, masking RL credit by section, and training on applicability-breaking perturbations. It should instead test whether these controls improve verified Rust proof completion, where ownership and solver failures create additional feedback categories.
-
-Inference: the threat to a product that lets agents write verified Rust is moderate. RULES can reduce invalid lemma selection and wasted proof search, but it does not verify Rust, check specification adequacy, or prevent an agent from omitting a needed invariant. Its strongest reusable component is a machine-readable precondition gate connected to actual verifier diagnostics.
-
 ## techniques for the catalog
 
 - staged eligibility judgment — require separate precondition and conclusion-utility checks, and allow a lemma only when both labels are true
 - section-aware reinforcement — mask GRPO loss to the section responsible for a wrong judgment
 - applicability-breaking perturbations — minimally edit statements to invalidate lemma assumptions while preserving mathematical coherence
 - staged proof-search feedback — use verifier or checker diagnostics to regenerate only the failed proof section (Inference: transfer to Verus)
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

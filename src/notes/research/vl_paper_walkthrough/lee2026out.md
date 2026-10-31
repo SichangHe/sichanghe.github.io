@@ -65,9 +65,7 @@ Verus form. Inference: Verus already expresses this pattern directly with `requi
 
 Humans designed implementations, specifications, abstractions, and invariants; LLM agents wrote most Rocq proof scripts. The authors report one week for core refinement, three weeks for system inclusion, under a day for most module proofs, and three days for the large load-store queue including planning (Section 6.2, p. 24). Their workflow keeps agents from changing implementation/specification without consultation; when a goal is unprovable, the agent reports a counterexample for human repair. The paper states: “Every proof the agent produces must pass the kernel, so an accepted proof is correct regardless of how it was found.” (Section 6.2, p. 25)
 
-Inference: this is a useful VL division of labor: let agents expand settled invariants and produce proof scripts, but require human review of the model and invariant design. The proof scripts are longer than human scripts, inflating the 64k LOC measure. Kernel checking protects proof soundness under the stated Rocq TCB, but it does not protect against a wrong specification, axiomatized memory, or missing liveness property.
-
-Threat to agent-written verified Rust. Inference: high for systems with weak memory, concurrency, or speculation because the intermediate-model and invariant patterns address exactly the state explosion that makes direct proofs difficult. The threat is bounded by the paper's scope: hardware semantics and Rocq, not Rust ownership, unsafe code, external libraries, or executable product requirements. VL should reuse the decomposition and counterexample-driven workflow; it should not redo generic claims that kernel-checked LLM proofs are sound.
+Threat to agent-written verified Rust.
 
 ## techniques for the catalog
 
@@ -79,4 +77,3 @@ Threat to agent-written verified Rust. Inference: high for systems with weak mem
 - kernel-checked LLM proof workflow — keep human model design and use agents to elaborate proofs whose scripts must pass the kernel
 - folded pipeline specification — relate a clean abstract transition to several internal pipeline steps with a ghost fold
 - stable identifier reservation — preserve unique queue identities and reserve in-flight response identifiers to prevent ABA reuse
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

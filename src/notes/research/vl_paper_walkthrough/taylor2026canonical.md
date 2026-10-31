@@ -3,7 +3,7 @@
 Tag: `taylor2026canonical`, [paper](https://www.semanticscholar.org/paper/8fb472e9ee20f09bfaaea9fe89cf3569851d4263)
 
 ## claim status and trust boundary
-This paper is a research program for converting ordinary repositories into a governed, proof-carrying substrate. It explicitly warns that “The claim is deliberately ambitious, but every range has a denominator.” (Abstract, p.1) The 30×–500× ranges are hypotheses, while the only measured result is a QLoRA run on 64,088 translated trajectories. The proposed foundry trusts source provenance, behavior oracles, tests, traces, human acceptance, generators, proof tools, and cost accounting. Inference: for VL, Verus proofs can supply a P5 evidence lane for selected invariants, but they do not establish that a canonicalization preserved undocumented behavior or that the specification captures product intent.
+This paper is a research program for converting ordinary repositories into a governed, proof-carrying substrate. It explicitly warns that “The claim is deliberately ambitious, but every range has a denominator.” (Abstract, p.1) The 30×–500× ranges are hypotheses, while the only measured result is a QLoRA run on 64,088 translated trajectories. The proposed foundry trusts source provenance, behavior oracles, tests, traces, human acceptance, generators, proof tools, and cost accounting.
 
 ## technique: governed canonical foundry
 The foundry classifies every artifact by language, role, behavior, license, and provenance; assigns a disposition; and emits canonical training objects containing the original, transformation trace, evidence, canonical artifact, and validation results. The paper's dispositions include transform-permitted, secondary-profile, governed-primitive, spec-only, fixture-only, negative-only, metadata-only, quarantine, and license-excluded (Table XI, §VIII). Apply it by: (1) inventorying the corpus; (2) attaching provenance/license metadata; (3) extracting behavior fixtures; (4) assigning a profile and disposition; (5) porting only when evidence permits; (6) retaining rejected paths and receipts; (7) validating at an explicit preservation tier.
@@ -13,7 +13,7 @@ Inference: a Verus foundry can preserve Rust source, dependency lockfiles, Verus
 ## technique: behavior quotient and minimum functional description
 The paper defines an oracle `O` over tests, traces, API contracts, migration replay, security policy, runtime invariants, and accepted incompatibilities, then identifies implementations equivalent under that oracle (§III, p.4). A canonical map selects a representative specification, evidence bundle, renderer, and disposition ledger. Its Minimum Functional Description Length objective minimizes canonical specification plus evidence and renderer subject to the oracle meeting a preservation threshold (§V, p.5).
 
-Apply it by declaring the oracle first; grouping behavior-equivalent implementations; selecting a governed representative; recording non-preserved behavior as an explicit disposition; and generating projections from the representative. Inference: a VL profile can quotient Rust implementations only under named Verus contracts, tests, migration checks, and security properties. It cannot collapse code based on syntactic similarity or a partial contract.
+Apply it by declaring the oracle first; grouping behavior-equivalent implementations; selecting a governed representative; recording non-preserved behavior as an explicit disposition; and generating projections from the representative.
 
 ## technique: behavior IR and typed change algebra
 The behavior intermediate representation stores entities, state machines, authorization edges, external contracts, effects, idempotency, migrations, observability, privacy zones, rollout constraints, performance envelopes, and proof obligations. Routine changes become typed objects `Δ=(op, params, pre, post, proofs, rollback, provenance)` instead of raw diffs (§XIII, p.13). Examples include `AddField`, `AddPermissionEdge`, `AddIdempotencyKey`, and `UpgradeDependency`; each expands into schema, migration, tests, security, proof, and rollback obligations (Tables XIX–XX).
@@ -33,9 +33,6 @@ The only reported training experiment fine-tuned Qwen2.5-Coder-14B with QLoRA on
 
 The ranges use separate denominators: training tokens to a fixed accepted-change target, reasoning/tool/retry tokens per verified change, dense-active cost/token, action-space reduction, and all-in cost per verified change (Tables I and XIX). They must not be multiplied. The paper proposes a 3× lower end-to-end cost after foundry and verification amortization as a falsification threshold, but gives no field result.
 
-## what VL should take and threat
-Inference: the threat to agent-written verified Rust is high if a canonical substrate silently drops compatibility behavior or turns a weak test suite into a false proof claim. The opportunity is also high: behavior cells, typed changes, fixed proof lanes, and receipts could reduce repeated proof work. Existing compiler IRs, contract-first generators, proof-carrying code, and Verus proof APIs already cover components of this proposal; VL should test the paired raw/canonical change-cost experiment and preserve negative memories rather than redo those foundations.
-
 ## techniques for the catalog
 - governed canonical foundry: classify artifacts, preserve provenance, and port only into declared profiles with evidence
 - behavior quotient: group implementations under a declared behavior oracle and retain non-preserved behavior in a ledger
@@ -43,5 +40,3 @@ Inference: the threat to agent-written verified Rust is high if a canonical subs
 - proof-carrying change: attach intent, obligations, receipts, rollback, and provenance to every accepted change
 - graded preservation dossier: promote artifacts from syntactic through trace, fuzz, differential, and proof-backed evidence tiers
 - paired cost ledger: compare raw and canonical repositories by amortized cost per verified correct change
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -50,5 +50,3 @@ What is trusted and limited. The method depends on simulator fidelity, baseline 
 - symbolic branch reachability — run bounded KLEE analysis on patch-containing functions and test concrete substitutions
 - physical-distance mutation — mutate simulator inputs to increase differences between unpatched and patched physical features
 - invariant-aware learned oracle — select physical properties by patch type and classify numerical features with an SVM
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "To confirm if the bugs they cause can be reproduced on a real vehicle, we manually inspected the found bugs’ code location."): checked the full text, quotations, numbers, section and page references, and technique steps; corrected taint-analysis details, forced-branch testing, self-sabotaging input handling, baseline selection, invariant selection, and evaluation attribution; clarified the firmware-inspection basis of the real-vehicle claim and used the publisher link printed in the paper; did not reproduce experiments, inspect implementation artifacts, or verify the proposed Verus adaptations.

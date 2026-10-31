@@ -95,12 +95,6 @@ Section 8 says: “We provide brief proof sketches for using our formalism to ve
 
 The paper proves soundness of its hybrid type system relative to its operational semantics, zero-crossing definition, differential reasoning premises, and assumed ODE solutions. It does not prove numerical solver correctness, floating-point behavior, liveness under Zeno execution, or safety for exogenous events. The authors explicitly assume that floating-point representations are precise enough to treat them as reals and defer floating-point error treatment to prior work (Section 4.1, p. 8). Inference: a Verus product must mark the real-number abstraction, flow oracle, and external-event model as trusted assumptions.
 
-## what VL should reuse and threat to agent-written verified Rust
-
-Inference: VL can reuse the paper's phase structure: model a segment, identify the first event, prove continuous preservation, prove reset preservation, and repeat. Its active-guard idea is useful for APIs where a precondition is guaranteed until a monitored transition. Verus can encode the state predicates and reset contracts with `spec fn`, `requires`, `ensures`, `assert`, `proof fn`, and loop `invariant`.
-
-Inference: the threat to agent-written verified Rust is specification drift at the event boundary. An agent may prove a discrete postcondition while omitting continuous evolution, choose an event priority inconsistent with runtime code, or assume a guard is active when its derivative condition is false. A VL checker should therefore require an explicit event model and a proof that the executable reset corresponds to the modeled transition.
-
 ## techniques for the catalog
 
 - zero-crossing definition — define event time from a maximal zero interval and one-sided sign behavior
@@ -108,5 +102,3 @@ Inference: the threat to agent-written verified Rust is specification drift at t
 - flow-and-reset semantics — model ODE evolution to the first event and deterministic reset selection
 - active-guard reasoning — combine guard-protected domains with differential invariants
 - segment induction — prove initial state, flow, reset, and next-segment preservation in sequence
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This is desirable for the proof because it requires no knowledge of the dynamical system’s explicit solution."): checked the complete text including appendices, quotations, numbers, section and page references, and technique steps; corrected quotation punctuation, page references, the braking description, and coverage of the supplied appendices; did not independently validate the mathematical proofs, execute an implementation, or validate the Verus inferences.

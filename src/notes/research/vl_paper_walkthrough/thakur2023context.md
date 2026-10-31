@@ -198,13 +198,6 @@ limits: Inference: a distinct proof text does not show the model had not seen th
 - on Coq, 98 of the 118 theorems were chosen because PROVERBOT9001 proves them (the paper says “For fairness”), and COPRA proves 57 within 60 queries. Inference: the set is therefore not a random sample and says little about the 501-theorem set. The text claims only that COPRA “slightly outperforms” PROVERBOT9001 at the same number of queries (Section 4, p.9); Figure 16 (p.25) is a plot with no printed numbers, in which, read by eye, COPRA is ahead at every query count and the curves are about 57 and 54 at 60
 - Section 4 (p.6) writes “Learn experiments” where Lean is meant
 
-## COPRA parts VL can take as given
-
-Inference, all of it.
-- the loop of propose one step, execute, feed back the error, list past failures, backtrack is published, with code released (abstract); treat it as a baseline, not a contribution
-- a claim that stepwise feedback beats whole-proof generation needs no new experiment for tactic provers; whether it holds for Verus, where the checker returns failures and not goals, is the open part
-- BM25 over lemma statements is the cheap retrieval baseline to beat before building anything learned
-
 ## how much COPRA threatens agent-written verified Rust
 
 Inference: low as a competitor, high as a commodity. COPRA targets Lean 3 and Coq, proves 75 of 244 competition problems at best, and its only software-verification evidence is 57 of 118 CompCert lemmas, 98 of which were selected because PROVERBOT9001 proves them. It writes no specifications and no code. Its loop is simple enough that any competitor can reimplement it (not checked against the released code), so a product cannot be defended by it.
@@ -221,4 +214,3 @@ Inference: low as a competitor, high as a commodity. COPRA targets Lean 3 and Co
 - cheap-first staged ensemble: run the shortest-prompt configuration first and spend the remaining shared budget on retrieval and hints only for unsolved goals
 - pass@k-with-n-queries: report attempts times model queries with the time limit beside each success rate
 - proof-overlap leakage audit: compare each found proof with the published one by exact match, first step and shape, and report the share that is not a copy
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "The informal proofs are used more like informal sketches for the formal proof and are generated in a separate few-shot invocation of the LLM."): I read the whole paper text (pages 1 to 27, including appendix figures and prompts) and viewed Figure 16 in the PDF. I checked every quotation, number, table cell, figure line number and page reference against it, and the derived percentages and ratios. I changed: "one-shot" to "few-shot" for the baseline (the paper says few-shot); the Figure 18 description (four incorrect steps shown with an elision; its prompt has no [STEPS] or [DEFINITIONS] block, those come from Figure 13); the citation for re-asking on format errors; the Figure 16 comparison; and unsupported or loaded claims about COPRA being open source since 2023, being a few hundred lines, and a baseline-biased Coq set. I did not check: the released code, the cited related work, the full text of Figures 13 and 14 beyond the shown excerpts (the paper truncates them), or the exact values read from Figure 16 (by eye only). The link is the arXiv page named in the paper text.

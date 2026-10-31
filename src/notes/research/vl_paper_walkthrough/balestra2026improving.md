@@ -49,15 +49,8 @@ Verus form. Inference: run baseline and augmented pipelines on the same Rust/Ver
 
 evidence and limits. The study uses 43 Java methods and three LLMs, but only one augmentation iteration. Its threats section identifies external validity (chosen inference tool and LLMs), internal validity (tooling, model variation and nondeterminism), and construct validity (training-data leakage). Temperature was set to 0.1 to reduce nondeterminism (Section IX, p. 10). Inference: results on these Java methods do not establish effectiveness on Rust/Verus programs.
 
-## what stays trusted and threat to VL
-
-Inference: the workflow relies on the Java compiler, SpecFuzzer’s execution and filtering, the evaluation checkers, and the ground-truth encodings. Compilation establishes neither assertion failure nor correctness. A concrete violating execution falsifies a candidate; it does not establish the validity of surviving candidates. The 6.34-point precision change is a difference between averages over 43 methods; the 54.52-point change for Polyupdate sm is specific to that method (Table I, p. 8).
-
-Inference: a possible VL use is finding agent-generated contracts that disagree with executable behavior or an independent model of intent. The study does not measure Verus contract repair, vacuity detection, proof cost, or Rust correctness. Given the 55.12% RQ2 precision, a model’s invalidity label should be checked before rejecting a contract.
-
 ## techniques for the catalog
 
 - targeted LLM counterexample generation — ask a model to turn each surviving candidate contract into an executable violating test
 - executable validation and ground-truth checking — compile witnesses, execute them in the inference tool, and compare against independently encoded ground truths
 - controlled comparison and model replication — compare baseline and augmented inference on fixed subjects and repeat across model families with explicit denominators
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In this paper, we only perform one SpecFuzzer re-execution, after counterexample tests have been added, we do not iterate the process."): checked the entire paper, quotations, numbers, section/page references, workflow steps, and study claims; corrected the abstract quotation, references, precision-change interpretation, Table I decreases, and conflicting test/recall reports; removed the unsupported Rust code and revised Verus adaptations as Inference; did not reproduce experiments, inspect the replication package, or validate Verus adaptations.

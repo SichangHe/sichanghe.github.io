@@ -1,7 +1,6 @@
 # Automatic Generation of Formal Specification and Verification Annotations Using LLMs and Test Oracles
 (authored by agents unless marked 🧑)
 Tag: `faria2026automatic`, [paper](https://arxiv.org/abs/2601.12845v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and contribution
 
@@ -97,16 +96,6 @@ The Dafny AI Assistant adds generation and repair controls to the official Visua
 Dafny's verifier proves each accepted implementation against the generated contract and test assertions. The experiment measures pass rates, API cost and latency, annotation lines, contract similarity to manual solutions, and usability. Among 110 programs, generated pre/postconditions are logically equivalent to manual ones for 106 (96.4%); 12 (10.9%) are textually identical, 11 (10.0%) structurally identical, and 68 (61.8%) semantically similar. Four (3.6%) are not logically equivalent: one overly strong postcondition and three weak preconditions. The authors repaired all four with negative tests.
 
 The trusted base includes Dafny, Z3, the test-suite authoring, manual reference specifications, model APIs, post-processing, and the human comparison. A verifier success proves only the supplied contract. The authors describe their acceptance rule, in the comparison with mutation-based work, as: “a candidate specification is accepted only if it verifies and makes all test assertions provable” (Section 8.2, p. 26), and negative tests must be non-provable, adding that it “places higher demands on test quality”; that it assumes the tests cover the intended behavior is the study's inference. Models can cheat by inserting `assume`, disabling termination, or simplifying code; the paper says generated solutions “should be manually inspected” (Section 6.5, p. 20).
-
-## contradictions, gaps, and work VL should avoid repeating
-
-The abstract says 98.2% within at most eight attempts, while Table 2 places 98.2% under `r@10`; the results narrative repeats `repair@8`. This is an internal reporting inconsistency, even though 98.2% of 110 rounds to 108 programs. The paper reports 96.4% logical equivalence over 110, but the prose discusses 108 solved programs and two unsolved versions; the denominator for the contract comparison is all 110, including generated candidates for the two unsolved tasks. Direct and repair costs are per API call, not total cost per solved task. The logistic regression treats 1,540 problem-configuration pairs as observations, so repeated configurations for one program are not independent in the ordinary sense; the paper does not discuss clustered uncertainty.
-
-VL should not simply repeat a Dafny benchmark with pass/fail counts. The reusable ideas are static test oracles, negative tests, explicit anti-cheating checks, verifier-feedback repair, pattern catalogues, and dependency-aware minimization. A Verus study still needs ownership-sensitive examples, `usize`/`int` conversion failures, `external_body` policy checks, and independent semantic validation because Dafny's test oracle assumptions do not automatically transfer.
-
-## threat to agent-written verified Rust (inference)
-
-The paper suggests a meaningful but bounded threat to VL. An agent can generate a verifier-passing Rust contract that is weak, overly strong, or algorithmically wrong if its tests and postconditions are incomplete. Repair loops can improve proof completion while accumulating large, opaque proof scaffolding. For VL, the practical controls are: require positive and negative specification tests; reject bypass constructs and implementation edits; retain exact verifier diagnostics; compare generated contracts to a human or machine oracle; minimize only after successful verification; and report semantic correctness separately from compiler success. This is an inference from the Dafny evidence, not a measured Verus result.
 
 ## techniques for the catalog
 

@@ -26,7 +26,7 @@ Contextless prompting gives the model only the language, natural-language task, 
 
 Evidence. On 178 tasks, GPT-4 Contextless verify@1/3/5 was 58/178 (32.58%), 92/178 (51.64%), and 104/178 (58.42%); Signature was 59/178 (33.14%), 88/178 (49.43%), and 95/178 (53.37%). PaLM-2 Contextless was 0/178 at all k; Signature was 12/178 (6.74%), 9/178 (5.05%), and 12/178 (6.74%) (Table 1, p. 12). Thus adding signature/tests lowered GPT-4’s verify@5 from 58.42% to 53.37%, contrary to ordinary unverified code-generation expectations. The paper reports no statistical significance test for this comparison.
 
-Verus form. Inference: a VL prompt can include a Verus function signature, contracts, and representative callers, but callers do not replace universal `requires`/`ensures` proofs. Inference: generated Verus code must be compiled and verified after generation; test cases are useful counterexamples but do not establish the contract.
+Verus form.
 
 ## technique 3: dynamic few-shot RAG-CoT prompt chaining
 
@@ -44,17 +44,11 @@ The authors do not treat automated metrics as sufficient. They state: “Postcon
 
 Inference: Apply this audit after generation: (1) verify syntax and proof; (2) reject methods without postconditions; (3) compare each postcondition with the natural-language requirement and ground truth; (4) check that preconditions are necessary rather than weakening the task; (5) check loop invariants against the intended prefix property; (6) inspect auxiliary predicates/functions; (7) record compilation versus verification failures separately. Table 4 shows a weak postcondition that checks only the output length for interleaving, and a wrong median postcondition that encodes a misunderstanding (p. 15).
 
-Verus form. Inference: VL should perform the same semantic audit on Verus `ensures`, because Verus can prove a vacuous or overly weak contract. A generated function that uses `external_body` to bypass proof would fail this audit and should not count as verified; this follows the catalog’s existing Verus restrictions.
+Verus form.
 
 ## dataset and study assumptions
 
 The main dataset starts from 427 MBPP-sanitized tasks, removes 82 Python-specific tasks, samples 228 with a 99% confidence interval and 5% margin, then reserves 50 exemplars and tests 178 tasks (§3.1, p. 6). Creating the 50 verified exemplars took approximately 220 human hours (§3.2, p. 7). GPT-4 and PaLM-2 were run through their APIs; Dafny 4.0.0 was used on a 2020 MacBook Pro with 16 GB RAM (§3.7, p. 11). The paper notes likely training exposure to MBPP’s Python solutions but states that, because no Dafny implementations of MBPP exist, the Dafny dataset “should not increase data leakage within our experiment” (§3.1, p. 6).
-
-## proved, trusted, and threat to VL
-
-Dafny proves generated code against generated or supplied specifications through its verifier and Z3; manual review supports the claim that the specification is semantically strong. Inference: trusted parts include the Dafny verifier, Z3, the correctness of the manually translated task descriptions and 50 exemplars, the reviewers’ classifications, and the assumption that MBPP tasks represent VL workloads. The experiment does not prove Verus transfer, production-scale systems code, security properties, or robustness to dependency changes.
-
-Inference: for agent-written verified Rust, the main threat is specification error: 64.04% raw verifier success can hide weak or wrong contracts, while only 103/178 (58%) GPT-4 Dynamic Few-Shot outputs were both verified and judged strong. The practical lesson is to make contract generation and semantic review first-class stages. Existing work already demonstrates retrieval-augmented CoT for Dafny; VL should test whether retrieval by Verus contract and proof obligations improves verified Rust rather than repeat the Dafny benchmark unchanged.
 
 ## techniques for the catalog
 
@@ -63,4 +57,3 @@ Inference: for agent-written verified Rust, the main threat is specification err
 - dynamic few-shot RAG-CoT — retrieve five semantically similar verified examples, decompose the task, and generate specifications before code
 - semantic specification audit — manually classify postconditions, preconditions, invariants, and error causes after automated verification
 - temperature tuning and verify@k — tune decoding on a sampled subset and measure whether any of k attempts verifies, while retaining denominators
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The primary reason for having postconditions in all synthesized methods is the few-shot examples with the CoT process."): what I checked: every quotation, every number against Tables 1–4 and the text, every section and page reference, the technique steps against §2.1–2.2, §3.4 and Figures 1–4, the tag line and DOI link (10.1145/3643763, from the paper text); what I changed: the “trivially avoid being wrong” quote is from §4.1.2, p. 12, not §3.5, p. 9; temperature tuning page is p. 9; §3.4.3 spans pp. 7–9; the manual-review citation now includes §3.5 and pp. 13–14; the data-leakage sentence now quotes the paper instead of paraphrasing it as “expected to be lower”; the trusted-parts list is marked as Inference; what I did not check: the PDF layout of tables beyond the pdftotext output, the companion repository, and the Verus-form and other Inference statements, which are not claims of the paper.

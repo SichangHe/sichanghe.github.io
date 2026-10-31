@@ -6,8 +6,6 @@ Tag: `przybocki2026doubly`, [paper](http://arxiv.org/abs/2604.21187v1)
 
 The paper studies doubly saturated Ramsey-good graphs: a graph with no `K_s` and no independent set of size `t`, where adding or removing any edge destroys that property. Its main proved result is an infinite family: for every `t ≥ 4`, a doubly saturated `R(4,t)`-good graph on `6t−11` vertices. The abstract describes the workflow as “combining SAT solving with bespoke LLM-generated code to discover infinite families of such graphs” and says that LLMs were used “to generate and formalize correctness proofs in Lean” (Abstract, p. 1). The mathematical theorem is a useful case study in turning finite computation into a general construction and then checking the proof in a proof assistant.
 
-Inference: for VL, the transferable lesson is the separation of discovery, executable search, conjecture formation, informal proof, and machine-checked proof. The paper does not verify Rust programs and does not establish that an LLM-generated proof is safe without Lean checking.
-
 ## technique 1: compact SAT encoding of double saturation
 
 What it is. For parameters `s,t,n`, the authors construct a CNF formula satisfiable exactly when a doubly saturated `R(s,t)`-good graph on `n` vertices exists. Edge variables `e_{i,j}` represent graph edges. The no-clique and no-independent-set constraints are direct clauses over every `s`- and `t`-vertex subset. The paper states, “To encode that the graph contains no s-clique, we use the following clauses” (Section 2, p. 6), and notes that direct Ramsey-goodness uses `C(n,s)+C(n,t)` clauses (the extracted text prints these binomial terms in interleaved notation).
@@ -42,7 +40,7 @@ The resulting proof checks four obligations: clique number below four, independe
 
 Verus form. Inference: this is a specification-discovery workflow for Verus. Generate candidate Rust data structures and test cases, but require a Verus `proof fn` to establish each of the four predicates for symbolic `t`. Store finite SAT assignments as regression fixtures, not as the general proof. The cyclic-gap and interval arguments would become arithmetic lemmas over `int` and sequence membership; any generated code remains untrusted until Verus checks its postconditions.
 
-Evidence and limits. The theorem is proved for all `t≥4`; the conjectural `R(3,t)` family was only checked through `t≤63` and remained unproved (Section 4.1, p. 12). The paper's SAT data therefore supports conjectures but does not establish their universal claims. Inference: VL should distinguish finite counterexample search from quantified verification in its product reports.
+Evidence and limits. The theorem is proved for all `t≥4`; the conjectural `R(3,t)` family was only checked through `t≤63` and remained unproved (Section 4.1, p. 12). The paper's SAT data therefore supports conjectures but does not establish their universal claims.
 
 ## technique 3: LLM autoformalization with Lean
 
@@ -67,9 +65,9 @@ Verus form. Inference: encode the imported theorem as a trusted library lemma on
 
 ## what is proved, measured, and trusted
 
-Proved: the `6t−11` construction for every `t≥4`, its four graph properties, and the lower bound `DS(s,t)≥2s+2t−7` as formalized in Lean. Measured or searched: finite SAT existence/nonexistence instances, counts of isomorphism classes, 18 satisfying assignments for one `R(3,7)` instance, over 100 `R(3,10)` graphs on 39 vertices, and Paley-graph checks through `s=20` (Section 4, pp. 11–12). Conjectural: the broad existence conjecture and the `R(3,t)` family. Trusted: graph definitions, the Lean kernel and libraries, generated formalization, SAT encodings and solver behavior, and the LLM's candidate discovery. Inference: the threat to VL is moderate. LLMs can discover useful invariants and proof decompositions, but only a sound Verus check can turn them into product guarantees; finite search and an accepted proof must never be conflated.
+Proved: the `6t−11` construction for every `t≥4`, its four graph properties, and the lower bound `DS(s,t)≥2s+2t−7` as formalized in Lean. Measured or searched: finite SAT existence/nonexistence instances, counts of isomorphism classes, 18 satisfying assignments for one `R(3,7)` instance, over 100 `R(3,10)` graphs on 39 vertices, and Paley-graph checks through `s=20` (Section 4, pp. 11–12). Conjectural: the broad existence conjecture and the `R(3,t)` family. Trusted: graph definitions, the Lean kernel and libraries, generated formalization, SAT encodings and solver behavior, and the LLM's candidate discovery.
 
-The workflow already covers SAT encoding, symmetry breaking, model-assisted conjecture discovery, explicit case proofs, and autoformalization. Inference: VL should reuse these components and focus new work on Rust/Verus certificate checking, specification extraction, and trusted-base reporting rather than repeating generic LLM theorem-proving demonstrations.
+The workflow already covers SAT encoding, symmetry breaking, model-assisted conjecture discovery, explicit case proofs, and autoformalization.
 
 ## techniques for the catalog
 
@@ -77,4 +75,3 @@ The workflow already covers SAT encoding, symmetry breaking, model-assisted conj
 - computation-to-conjecture pipeline — use finite SAT/code searches, canonicalize isomorphic structures, and extract a symbolic family before proving it
 - LLM proof proposal with Lean checking — require a detailed informal proof, autoformalize it, and iterate on verifier diagnostics until the kernel accepts the theorem
 - modular saturation lower bound — import a degree theorem, rule out universal vertices, and compose complement and graph degree inequalities
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

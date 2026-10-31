@@ -6,8 +6,6 @@ Tag: `matsushita2026pureborrow`, [paper](http://arxiv.org/abs/2604.15290v4)
 
 Matsushita and Ishii present Pure Borrow, a library and calculus that adds Rust-style non-local borrowing to Linear Haskell. The abstract claims: “We answer this question affirmatively with Pure Borrow, a novel framework that realizes Rust-style borrowing in Linear Haskell with purity.” (Abstract, p. 1). The design aims to combine affine mutable borrowers, pure results, lazy evaluation, first-class polymorphism, parallel mutation, and leak freedom. This is a programming-language design with a Haskell implementation, a parallel quicksort case study, and a formal metatheory. It is not a Verus study and the authors leave two central metatheory properties as conjectures.
 
-Inference: for VL, the transferable idea is to make borrowing and lifetime transitions explicit in contracts and ghost state. The Haskell type syntax and runtime representation do not carry over directly to Verus.
-
 ## technique 1: separate a lender, borrower, and lifetime
 
 what it is: borrowing an owner `T` produces a mutable borrower `Mutα T` and a lender `Lendα T` for a lifetime `α`. The borrower may be split or dropped; after the lifetime ends, the lender reclaims the owner. The paper states, “A mutable borrower can freely mutate the data during the lifetime α. Notably, borrowers are affine: they can be freely split ... and dropped at any time before the end of α.” (Section 3.1, p. 5).
@@ -104,12 +102,6 @@ Verus form. Inference: verify partition bounds, disjoint slice regions, and perm
 
 evidence and denominators: benchmarks used randomly generated integer vectors of varying sizes, compared Introsort, sequential quicksort, Naïve budgets 4/16/32, and work-stealing with 4/8/10 workers. They ran on a 2024 MacBook Pro with Apple M3, 4 performance cores, 6 efficiency cores, 16 GB RAM, and `+RTS -N10` (Section 4.2, p. 14). Figure 18 reports wall-clock time and allocation; the PDF provides curves but no tabulated run count or numeric denominator. The authors state their parallel versions were faster than sequential quicksort and work stealing generally faster than naïve, but neither beat industrial introsort (Section 4.2, p. 14). These claims are therefore measurements for the stated machine and configurations, not universal speedups.
 
-## what is proved, trusted, and relevant to VL
-
-The formal results are strong confluence of the denotational semantics, well-typedness implying association, and safety implying leak freedom. Progress and bisimulation remain conjectures, and the implementation's unsafe concurrent queues remain trusted. The semantics abstracts GHC, runtime scheduling, and machine memory. The authors also note that `Mutα` is invariant in its body type because it is shared mutably between borrower and lender (Section 3.2, p. 10), a variance condition a Verus API must preserve.
-
-Inference: the threat to a product of agent-written verified Rust is moderate. Explicit lifetime tokens, disjoint-region splitting, and reclaim contracts can reduce aliasing and cleanup mistakes, but they do not prove unsafe queue code, scheduler correctness, or adequacy of the specification. VL should not redo Pure Borrow's type design or quicksort benchmark. It could adapt the history idea to ghost region maps, then measure proof effort and bug detection for agent-generated borrow-heavy components against ordinary Verus references.
-
 ## techniques for the catalog
 
 - lender-borrower lifetime split — return a borrower and lender, then reclaim only after a dead-lifetime token
@@ -118,5 +110,3 @@ Inference: the threat to a product of agent-written verified Rust is moderate. E
 - scoped reborrowing — derive shorter borrowers with lifetime intersection and restore the parent borrower
 - history-based semantics — record path updates on lifetime tokens and replay them at reclamation
 - borrow-aware integration benchmark — test safe parallel mutation with quicksort and work stealing
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

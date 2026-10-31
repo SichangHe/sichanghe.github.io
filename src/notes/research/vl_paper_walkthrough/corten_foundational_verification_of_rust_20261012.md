@@ -1,11 +1,8 @@
 # Corten - Foundational Verification of Rust Programs
 (authored by agents unless marked 🧑)
 Tag: `farka2026corten`, [paper](https://arxiv.org/abs/2609.04372v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## paper and scope
-
-František Farka, Carmine Abate, Sven Linker, and Sebastian Ertel present Corten, a foundational Rust verifier implemented in Rocq and built on Iris separation logic. The paper's concrete contribution is a layered route from compiler-produced THIR (Typed High-level Intermediate Representation), through a weakest-precondition (WP) semantics and Iris program logic, to syntax-directed proof tactics. The target reader is building VeruLaw (VL), whose agents write Rust verified with Verus. Corten is therefore both a source of reusable proof-engineering ideas and a warning about what must be trusted when a Rust frontend is not itself verified.
 
 The abstract states: “We present Corten, a foundational verification framework for Rust programs in the Rocq theorem prover, built on the Iris separation logic framework.” (Abstract, p. 1). It claims “By operating at THIR rather than on internal compiler representations, Corten proof goals display the THIR AST, which pretty-prints to surface Rust” (Abstract, p. 1). This is a design claim supported by the examples and architecture, not evidence that all Rust syntax has this property.
 
@@ -19,12 +16,6 @@ Use Corten's pipeline when the goal is a proof that can compose with other Rocq/
 4. Let the program-logic layer reshape the raw WP goal (sealing, safe reordering, joins, and compact continuation stacks).
 5. Run `wp_engage` and specialised tactics (`wp_fn`, `wp_call`, `wp_if`). Finish stalled separation-logic obligations manually in Iris Proof Mode.
 6. Check the resulting proof in the Rocq kernel. Corten separately relates the WP axioms to an interaction-tree (ITree) operational model where adequacy proofs exist.
-
-The running example is a branch-sensitive function that either returns `1` or performs an early return of `0` inside an argument to `identity`. The paper gives the actual tactic shape: “The tactics-based proof script mirrors the structure of the function itself” (Sec. 2, p. 4), specifically `wp_fn`, `wp_call`, and `wp_if`. This is a practical recipe for VL: preserve a syntax-directed tactic vocabulary so a generated proof follows the Rust control-flow structure, while exposing a manual escape hatch.
-
-**Verus translation (inference).** Verus already parses Rust plus specification/ghost code and sends verification conditions to SMT. The analogous VL pipeline would keep Verus's `requires`/`ensures` and loop invariants as the specification surface, then use a Rust-AST or MIR/THIR pass to generate obligations in source order. Corten's kernel-checked Rocq term has no direct Verus equivalent; a Verus proof remains solver-checked. THIR pretty-printing is a useful UX requirement, but changing VL's trusted frontend would be a major soundness decision.
-
-## memory and ownership techniques
 
 ### fractional points-to forest
 
@@ -42,10 +33,6 @@ A move out of `ℓ` is encoded by exchanging `ℓ ↦ v` for `ℓ ↦uninit [[v]
 
 For `ref mut r`, the appendix gives a concrete rule requiring full ownership of the borrowed location, returning it behind a separating implication, and binding `r` to a fresh pointer location. The authors explain: “The borrow’s end is not a separate event: it coincides with whichever later WP rule is the next to consume ℓ ↦ 𝑣 again” (Appendix H.1, p. 40). This turns a temporal lifetime fact into a spatial ownership transfer. The same appendix reports that allocator methods thread the single `self ↦ v` fact through every `&mut self` call.
 
-**Verus translation (inference).** Verus's borrow checker remains useful for Rust well-formedness, but VL should make ownership predicates explicit when proving unsafe code or alias-sensitive APIs. A move can be represented by a ghost state transition from initialized to uninitialized; a mutable reborrow can transfer a `Tracked` permission and return it in the postcondition. Verus lifetime syntax alone does not provide Corten's generic fractional separation algebra.
-
-## weakest-precondition semantics
-
 ### control-flow-sensitive specification monad
 
 Use a WP predicate transformer when expressions can return, break, continue, fail pattern matching, or complete normally. Corten's `CF A` has six outcomes (`seqCF`, `returnCF`, `breakCF`, `continueCF`, `nomatchCF`, `matchCF`). The specification monad `wpCF A = (CF A -> iProp) -> iProp` combines a continuation monad with an exception transformer over Iris propositions. A `throw` forces an exceptional postcondition; `guard` catches a specific control-flow tag and resumes normal sequencing.
@@ -53,8 +40,6 @@ Use a WP predicate transformer when expressions can return, break, continue, fai
 To verify a function: evaluate argument patterns (`wppats`), evaluate the body under the resulting frame, wrap it in `return`, then guard `returnCF`. To verify `if`, first prove the condition then branch; for `match`, each arm runs its pattern and expression and emits `matchCF`, while `nomatchCF` invokes the next arm. Loops are one-unfoldings guarded by `continueCF` and `breakCF`; a user-supplied invariant connects iterations. Calls evaluate arguments in order and apply `wpfn` to the callee.
 
 The paper describes the reason for the design: “Evaluation of an expression can have six possible outcomes: a value is produced and evaluation continues sequentially; a return expression terminates the current function frame passing its operands value; a break expression terminates the corresponding loop body; a continue expression resumes evaluation at the beginning of the loop body; a pattern match fails; and a completed match expression passes control to the remainder of the program.” (Sec. 4.1, p. 9). Corten currently has no labelled breaks/continues or break values.
-
-**Verus translation (inference).** Verus specifications normally encode normal return values; early return and loop control are handled by Rust control flow plus branch-specific assertions. VL could adopt an explicit outcome datatype in ghost reasoning for nested `?`, `return`, and `match`, then discharge each branch with `ensures` and invariants. This would improve generated proof structure but would not replace Verus's solver encoding.
 
 ### place/value distinction and expression rules
 
@@ -69,8 +54,6 @@ The arithmetic rule is deliberately partial: unsigned negation is unsatisfiable 
 Function specs are persistent Iris propositions, reusable at every call site. A caller can assume a callee's proven `fn_item_ok` instead of inlining its body; this is the main scaling technique for a crate. In the buddy allocator, `alloc` requires ownership of `self`, an abstract `buddyRep`, a `layoutRep`, and size/alignment bounds, and returns a new representation while existentially hiding concrete allocator lists.
 
 Corten's soundness method is modular ITrees. First define an ITree denotation with heap and undefined-behavior events; then attach a logical handler assigning pre/postconditions to events; derive `wpi`; and prove each WP axiom adequate. Adding an event type requires one adequacy lemma and does not invalidate completed proofs. The paper's arithmetic example proves `Binop-add` under `nooverflow`; the heap example proves assignment by combining ownership of old and new locations. The authors caution: “full soundness establishes only internal consistency– the axioms are satisfied by an operational model– and does not guarantee that the axioms capture the intended semantics of Rust as a programmer would expect” (Sec. 5, p. 19). Thus the method needs both adequacy and independent validation against the Rust Reference.
-
-**Verus translation (inference).** VL should separate (a) solver proof of each verification condition from (b) evidence that its encoding matches Rust execution. A lightweight executable semantics or differential tests against rustc/Miri can test the latter, but cannot make Z3 certificates foundational. Incremental event/feature adequacy is a sound architecture for extending VL's trusted model.
 
 ## program-logic proof compression
 
@@ -99,8 +82,6 @@ The allocator is approximately 300 lines of idiomatic Rust with extensive matche
 
 The complete Rocq development is approximately 2,800 lines: about 250 function specifications, 800 generic Rust-construct reasoning (including 100 lines of join-point pre/postconditions), 1,400 domain-specific free-list invariant lemmas, and a remainder of generic Rocq lemmas. Core functions are used under unproven specifications. This denominator matters: automation removes proof duplication, but most work is domain invariant design, not generic Rust automation.
 
-**Verus translation (inference).** Encode `buddyRep`, `layoutRep`, and list well-formedness as `spec fn` predicates; use `requires`/`ensures` to thread `&mut self` ownership and existentially quantify updated lists; use loop invariants at each free-list traversal. Expect the same domain-specific invariant burden. Do not infer that Corten's 2,800 lines predicts VL's annotation size because Rocq and Verus proof representations differ.
-
 ## what is proved, measured, and trusted
 
 Proved or mechanized: the THIR WP rules are Rocq definitions/lemmas; completed ITree adequacy covers literals, unary/binary operators, expression statements, and let statements. The remaining table lists variable/place, borrow, tuple/ADT, if/block, match, loop, call/return, and all pattern clauses as pending. The program logic derives from the axioms. The allocator proof is a checked Rocq proof relative to its specifications and the covered semantics.
@@ -118,14 +99,6 @@ Trusted: Rocq kernel; rustc parser/name resolver/type checker; the hax/hax2rocq 
 - internal consistency with ITrees does not establish agreement with Rust; the hand-authored test oracle is a second, non-independent trust point
 - the `ifs` automation result (140 auto vs 112 raw lines) contradicts a blanket claim that automation always shortens proofs; the paper correctly reports it as an anomaly
 - the allocator's stated safety result is narrower than functional allocator correctness and is relative to unproven core-library specs
-
-## what VL should reuse and what it should not redo
-
-VL should reuse the architecture ideas: source-near proof goals, explicit normal/exceptional control flow, ownership as affine/fractional resources, modular persistent function contracts, join-point invariants, controlled unfolding, deterministic syntax-directed automation, and construct-by-construct semantic validation. These address recurring generated-proof failure modes: duplicated branches, nested continuation terms, and opaque MIR-level goals.
-
-VL should not redo Corten's Rocq/Iris formalization or copy its pending axioms as trusted facts. Instead, test Verus encodings against rustc/Miri, keep frontend translation and standard-library contracts explicit in the TCB, and prioritize executable/differential validation for constructs whose semantics are still axiomatic. Reuse the allocator's invariant decomposition as a benchmark, but do not claim coverage from one 300-line case study.
-
-**Threat to a product of agent-written verified Rust (inference).** The source-near, deterministic pipeline could substantially reduce agent proof repair cost. The larger threat is semantic confidence: if VL accepts generated contracts against an unverified Rust-to-VC translation or trusted library specification, a solver-successful proof can certify the wrong program behavior. Corten's explicit TCB and pending adequacy table suggest product requirements: record every trusted frontend/library boundary, reject unsupported control flow, and differentially test generated semantics. This is an inference from the paper's architecture and limitations, not a measured exploit rate.
 
 ## techniques for the catalog
 

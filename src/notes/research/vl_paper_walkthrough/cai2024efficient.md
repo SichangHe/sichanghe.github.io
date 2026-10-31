@@ -69,13 +69,9 @@ For the 15 non-constant-time cases, the authors state: “Both CT-Prover and ct-
 
 The authors identify a trusted-toolchain limit: “The major internal threat to our evaluation is the correctness of the implementation of CT-Prover which relies on various open-source frameworks and tools.” (Sec. 5.3, p. 19) Their benchmarks use clang-12 at O0 followed by `-mem2reg`, rather than broad optimization settings, to reduce compiler-introduced leakage (Secs. 5 and 5.3, pp. 15, 19). The paper also distinguishes theoretical completeness from practical limits of safety verification (Sec. 1, p. 2).
 
-Inference: the transferable idea for VL is the staged proof structure and explicit relational observation model. A Verus adaptation would still need justified secret labels, a memory model, and a connection from verified operations to executable behavior. This study does not validate such an adaptation.
-
 ## techniques for the catalog
 
 - staged taint and safety verification — discharge easy non-leaks with IFDS, then analyze unresolved sources more precisely
 - lightweight IFDS taint — propagate secret dependence to a fixed point with sparse definition-use flow
 - taint-directed semi-cross-product — track scalar and array-element taint in a Boolean lockstep product
 - taint-directed self-composition — compare observations of executions with equal public inputs and independently chosen secrets
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Moreover, for those variables that have not been tainted, we can simply assign the value of the original variable to the shadow one instead of copying the computation, which can further improve the efficiency of safety verification."): checked the full text, quotations, numbers, section and page references, technique steps, and paper link; corrected quotation wording, references, transfer rules, model assumptions, and evaluation limits, and marked proposed Verus adaptations as inferences; did not rerun experiments, inspect the implementation or external references, or validate Verus adaptations.

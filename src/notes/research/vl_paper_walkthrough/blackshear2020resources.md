@@ -76,17 +76,9 @@ evidence, assumptions, limits
 
 The proof covers the call-free subset's operational semantics and explicitly excludes stronger verifier properties such as no dangling references; the paper says a well-formed state “may still contain dangling references ... as well as aliasing between references.” (Section 5, text after Definition 5.5, PDF p. 16). The theorem therefore establishes resource conservation under its state and transition definitions, not complete memory safety of the full VM.
 
-## implementation evidence, trust, and VL threat
-
-The authors report an implementation of the compiler and VM in about 17K lines of Rust, a Libra adapter of about 1K lines of Rust, and a Move standard library of 40 modules totaling about 3K lines of Move source (Section 6.1–6.2, PDF pp. 17–18). These are implementation sizes, not verified-line counts or proof percentages. The paper gives no benchmark denominator for security incidents avoided and no end-to-end proof of Libra; for the `Coin` conservation invariant it says only “This can be verified with straightforward local reasoning over the Coin module” (Section 6.2, PDF p. 19). Inference: trusted components therefore include the VM/compiler implementation, bytecode verifier, linker, Rust compiler, cryptographic and storage layers, and module-specific invariants; the paper does not list them.
-
-Inference: the threat to VL is high wherever agent-written Rust represents money, permissions, ownership, or scarce handles as copyable structs or integer fields. Move already supplies the reusable design: linear transfer, private constructors, capability resources, and preservation proofs. VL should not redo the generic conservation theorem as if it were new. Inference: a product opportunity is a Verus library and coding discipline that connects Rust ownership to explicit ghost inventories and module invariants, including rollback and cross-module APIs. Inference: the Move theorem concerns Move bytecode semantics and says nothing about Rust unsafe code, external libraries, concurrency, or hardware ownership.
-
 ## techniques for the catalog
 
 - linear resource types — make values move-only and reject duplication, loss, and destructive overwrite
 - resource capabilities — use private, transferable resource values as unforgeable authority
 - bytecode preservation — prove well-formedness for every interpreter step and derive resource conservation by induction
 - transactional rollback — restore the pre-state on abort so temporary stack or local resources cannot be lost
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The rules of Figure 9 lift the small-step semantics presented so far to semantics of call-free Move programs that can model loops and conditional branching using unstructured control-flow."): I read the whole paper text and checked all six quotations, the implementation sizes (17K, 1K, 40 modules, 3K lines), the technique steps, and the section and PDF page references. I corrected page references (the capability quote is on p. 5, Theorem 5.10 on p. 17), the tag description (resource tag or U, not types), the claim that call rules are formalized (they are not), the MoveTo wording (it aborts), and the arXiv link; I marked the trusted-components list and the scope remark as Inference. I did not check the cited external works, the Verus-form paragraphs beyond marking them Inference, or the proof details of the instruction rules other than reading them.

@@ -1,26 +1,7 @@
-# 🤖 VeriSkill and Midas Lex: August 2026
-
-- focus
-  - how VeriSkill changes the competitive position of AutoVerus and Midas Lex
-  - which mechanisms are worth testing in our verification-agent work
-  - which evidence does not support the paper's broadest interpretation
+# 🤖 VeriSkill: August 2026
 
 ## decision
 
-- danger to current demonstrated Midas Lex capability: medium
-  - VeriSkill does not evaluate Verus, Rust, repository-wide target discovery,
-    intent recovery, production linkage, or full-project generation
-  - Midas Lex currently claims focused Verus proof work and partial named-target
-    specification work, not automated skill evolution
-  - source: [current capability summary](</ssd1/sichangheagent/VeruLaw/docs/current_capability_summary.md>)
-    - classification: verified current capability
-- danger to a future reusable-guidance novelty claim: high
-  - VeriSkill directly automates the part Midas Lex currently curates as
-    reusable guidance
-  - it learns persistent guidance from failures, validates revisions, and
-    reports gains across Dafny, Frama-C, VeriFast, Claude Code, and Codex
-  - a future claim such as first self-improving verification skill is no longer
-    credible without a narrower differentiator
 - strongest remaining differentiator
   - provenance-constrained Verus guidance whose value is judged by semantic
     strength, source-disjoint transfer, and production-linked evidence
@@ -96,12 +77,6 @@
 
 ## one-CLI guidance enhancement loop
 
-- preserve the product decision
-  - there is one evolving Midas Lex CLI, with versioned approved guidance
-  - current-versus-candidate checks are release gates inside that product, not
-    a third arm in the research evaluation
-  - the periodic cumulative study remains `E0_NO_CLI` versus the latest frozen
-    `E1_CLI`
 - candidate cycle
   - collect failed `E1_CLI` trajectories and immutable verifier evidence
   - attribute each failure before learning from it
@@ -252,43 +227,6 @@
     source-disjoint split
   - the Frama-C benchmark population size is unstated
 
-## relation to AutoVerus and Midas Lex
-
-- AutoVerus
-  - AutoVerus repairs one Verus proof artifact through specialized agents and
-    verifier feedback
-  - VeriSkill explicitly cites that staged error handling as related diagnostic
-    organization
-  - VeriSkill's distinct claim is persistence across tasks through an evolved
-    skill
-- demonstrated Midas Lex boundary
-  - Midas Lex is a repository-level Verus proof-synthesis harness whose machine
-    oracle is final verifier output
-  - source: [Midas Lex README](</ssd1/sichangheagent/VeruLaw/README.md>)
-    - classification: verified current capability
-  - current proof strength is focused L1 closure with approved specifications
-  - current specification strength is partial L2 named-target work
-  - source: [current capability summary](</ssd1/sichangheagent/VeruLaw/docs/current_capability_summary.md>)
-    - classification: verified current capability
-- current reusable-guidance boundary
-  - Midas Lex exposes reusable guidance but requires approved provenance and
-    can exclude guidance mined from the same target project
-  - hidden answers, solved patches, private logs, sibling artifacts, and
-    evaluator reasoning are forbidden guidance sources
-  - source: [guidance source policy](</ssd1/sichangheagent/VeruLaw/docs/guidance/source_policy.md>)
-    - classification: current policy, not measured capability
-- current evaluation advantage
-  - the Midas plan freezes guidance hashes, isolates sibling arms, blinds
-    semantic scoring, separates semantic adequacy from verifier green, and
-    requires cross-project holdouts for a paper-level claim
-  - source: [CLI evaluation plan](</ssd1/sichangheagent/VeruLaw/docs/roadmap/cli_vs_no_cli_evaluation_plan.md>)
-    - classification: current experiment standard, not completed evidence
-- current VeriSkill advantage
-  - it has a complete implemented self-evolution loop and multi-tool benchmark
-    results
-  - Midas Lex has no durable evidence that it automatically attributes failures,
-    edits reusable guidance, and validates the result across held-out tasks
-
 ## concrete lessons for our work
 
 - extend the failure taxonomy before learning from trajectories
@@ -307,15 +245,6 @@
   - concrete agent steps
   - expected diagnostic change
   - project deny tags and review owner
-- strengthen VeriSkill's admission rule for VL
-  - same-pattern transfer improvement
-  - frozen global improvement
-  - no per-item proof or semantic regression
-  - no executable, specification, or trust-boundary weakening
-  - non-vacuity and intended-strength judgment
-  - source-disjoint and project-disjoint transfer
-  - bounded guidance size, cost, and retrieval overhead
-  - independent human approval before ordinary-agent exposure
 - separate product optimization from research evaluation
   - internally compare the current CLI with one candidate CLI version only as
     a release-promotion test
@@ -358,10 +287,8 @@
   - access uncertainty: no public submission history, exact-title venue record,
     code release, or public implementation repository resolved
 - stable local artifacts
-  - PDF: `/hdd1/sichanghe/paper_collection/VeriSkill- A Self-Evolution Framework for Program Verification Skills, Changguo Jia, Tianqi Zhao, Zhiyou Xiao, Weiming Zhang, Minghui Zhou, arXiv, 2026.pdf`
     - bytes/pages: `731456`, `9`
     - sha256 `a96e6681d5ede80b669f057b07f0c82fa542409b1b55c232cc463972e3c7c3e5`
-  - extracted Markdown: `/hdd1/sichanghe/paper_collection/VeriSkill- A Self-Evolution Framework for Program Verification Skills, Changguo Jia, Tianqi Zhao, Zhiyou Xiao, Weiming Zhang, Minghui Zhou, arXiv, 2026/VeriSkill- A Self-Evolution Framework for Program Verification Skills, Changguo Jia, Tianqi Zhao, Zhiyou Xiao, Weiming Zhang, Minghui Zhou, arXiv, 2026.md`
     - sha256 `45250c80443079b86964721516e6dbc22aab0a8b76ce01bf302c451c2e45fcef`
 - citation linkage
   - claim: the paper explicitly cites and contrasts AutoVerus
@@ -413,7 +340,6 @@
     - “skill optimization as the maximization of an expected reward function”
     - “modeled as a Zeroth-Order (ZO) Oracle”
   - location: extracted lines 35, 49, and 145
-  - PDF: `/hdd1/sichanghe/paper_collection/SkillOpt-Lite- Better and Faster Agent Self-evolution via One Line of Vibe, Yifei Shen, Bo Li, Xinjie Zhang, arXiv, 2026.pdf`
     - sha256 `4e7d36b233673a3793b95e7834e588acf19bcea3b292c7168781a95df792797d`
   - extracted Markdown sha256
     `7fae5bc495242aeb2b90d20005dfe9d71e6b9ff65675e5242a250edf5a3a43df`
@@ -425,43 +351,14 @@
     - inspected head `36f6f04952293d7054145550c2b9f0b0411bff1c`
   - exact excerpts: “iterative failure analysis”; “held-out validation set”
   - location: extracted lines 11, 23, and 61
-  - PDF: `/hdd1/sichanghe/paper_collection/EvoSkill- Automated Skill Discovery for Multi-Agent Systems, Salaheddin Alzubi, Noah Provenzano, Jaydon Bingham, Weiyuan Chen, Tu Vu, arXiv, 2026.pdf`
     - sha256 `61cc0e44c3489a82435ce1b3c9e8d7db5cd21798e18c8c204b0f99b124baa615`
   - extracted Markdown sha256
     `15fb60477f99781bada19b0f69c517263dac4a72f2188da25578bedaf3a6eda4`
-
-## VL evidence freeze
-
-- freeze time: 2026-08-03 PDT
-- [Midas Lex README](</ssd1/sichangheagent/VeruLaw/README.md>)
-  - sha256 `fe8f3f065390dbc9637e5f73a5657734d2c37f1b52d632460b10bd256f0dd069`
-- [current capability summary](</ssd1/sichangheagent/VeruLaw/docs/current_capability_summary.md>)
-  - sha256 `609be32f7b363ca6ae57fbfc3ba5634ad6538569a1b443be9d6b188094de3480`
-- [guidance source policy](</ssd1/sichangheagent/VeruLaw/docs/guidance/source_policy.md>)
-  - sha256 `c50c55ee337e0e59c79ab4435dd7267eb894eae2fcc8bee8337dab45cbb42acc`
-- [CLI evaluation plan](</ssd1/sichangheagent/VeruLaw/docs/roadmap/cli_vs_no_cli_evaluation_plan.md>)
-  - sha256 `4183ab6849bd00c5628c09970d2c56d69ddd5f4545b67c633b42075b773c5de0`
-- [guidance evaluation research standard](</ssd1/sichangheagent/VeruLaw/docs/roadmap/guidance_evaluation_research_standard.md>)
-  - sha256 `51c03110e3a300b7da498a3df7a2e388eebf9569e84172c95d3b6db896727886`
-  - current standard requires paired `E0`/`E1`, blinded scoring, uncertainty,
-    and a minimum credible pilot of 30 opportunities across three projects
-  - classification: current experiment standard, not completed evidence
-- [specification guidance](</ssd1/sichangheagent/VeruLaw/docs/guidance/spec/README.md>)
-  - sha256 `9e82f0ba564fc8d2ddcc6bb92df76ca331116f1e3b98ff92aed5080c35ddb082`
-- boundary
-  - capability documents support only the current proof and specification
-    claims stated above
-  - policy and evaluation documents describe controls and intended experiments,
-    not completed efficacy evidence
-  - no routing prose or agent self-report is treated as technical evidence
 
 ## confidence and review question
 
 - high confidence in source identity, version, saved bytes, methods, and
   reported numbers
-- medium confidence in competitive ranking
-  - VeriSkill is a fresh v1 preprint without a released artifact
-  - its tools and benchmark populations differ from Verus and current VL work
 - low confidence that its learned skills preserve intended specification
   strength
   - the reported oracle does not directly test that property

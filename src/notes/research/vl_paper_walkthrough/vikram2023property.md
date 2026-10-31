@@ -83,8 +83,6 @@ Verus form. Inference: mutation testing can evaluate whether a generated Verus l
 
 GPT-4 with two-stage prompting generated a valid and sound test function in 2.4 samples on average (Section 4.2, p. 7), and its average soundness over valid test functions was 87% (Figure 10, p. 9). The study identifies hallucinated properties and missed edge cases as the soundness failures it observed (Section 4.3, p. 8). The authors list threats to validity in Section 5 (p. 9), including that the results may not generalize beyond Python and Hypothesis, and that equivalent mutants remain possible. Inference: trusted elements include API documentation, Hypothesis execution, random generation, and human labels. No formal proof of generated tests is provided.
 
-What VL should reuse. Inference: reuse the validity/soundness/coverage decomposition, two-stage property extraction, bounded-domain generator design, and mutation-based regression. VL should not treat a passing property test as a universal contract; Verus must discharge the contract over all permitted states.
-
 Threat to a product of agent-written verified Rust. Inference: medium threat. Property generation can improve specification discovery and test quality, but unsound inferred properties can encode the wrong behavior; requiring Verus proofs against reviewed specifications turns this from an assurance claim into a candidate-generation aid.
 
 ## techniques for the catalog
@@ -94,4 +92,3 @@ Threat to a product of agent-written verified Rust. Inference: medium threat. Pr
 - validity screening: detect runtime errors and constrain generators to valid API domains
 - soundness screening: measure assertion failures and compare them with human specification labels
 - property mutation coverage: inject documented-property violations and count killed mutants
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We compared these labels to the labels resulting from our soundness metric and found that our metric has a precision of 100% and recall of 97.14%."): read the whole paper text and checked every quotation, number, table and figure reference, technique step, and section and page number (printed pages equal PDF pages) against it; changed the link to the arXiv page (the paper's DOI is a placeholder), corrected page references (most were off by one or more), fixed the Section 3.2.2 and 4.2 attributions, removed an unsupported claim about generator repair and a wrong "best samples" wording for Table 4, added model, library and setup counts, and marked the trusted-elements sentence as inference; I did not check the cited prior work, the figure images beyond their captions and visible code, or the Verus-form inferences, which are my own and not in the paper.

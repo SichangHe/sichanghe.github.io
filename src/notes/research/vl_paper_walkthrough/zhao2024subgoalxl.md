@@ -39,7 +39,7 @@ Algorithm 1 gives the concrete loop:
 6. fine-tune statement, proof, and subgoal generators on initialization data plus samples from the current iteration (Algorithm 1, p. 5)
 7. use only the formal-proof generator at test time (Section 3.3, p. 4)
 
-The implementation intentionally increases diversity. Four proof generators combine two prompt templates and two proof lengths; proof lengths 1, 2, and 3 are dropped at rates 0.8, 0.6, and 0.4 for one training variant. Each expert-learning iteration reinitializes components from Llama-3-8B rather than continuing from the preceding checkpoint (Section 3.3, p. 5). Inference: reinitialization and diversity are engineering choices that VL could test for proof generation, not formal guarantees.
+The implementation intentionally increases diversity. Four proof generators combine two prompt templates and two proof lengths; proof lengths 1, 2, and 3 are dropped at rates 0.8, 0.6, and 0.4 for one training variant. Each expert-learning iteration reinitializes components from Llama-3-8B rather than continuing from the preceding checkpoint (Section 3.3, p. 5).
 
 Inference: a Verus adaptation would store generated candidates with a proof-check result and a subgoal-reconstruction score. A checker can reject candidates that fail Verus, then use successful candidates to train the next round. The paper's probabilistic optimum is not itself a proof of correctness; it only changes which examples are sampled.
 
@@ -57,7 +57,7 @@ Ablation isolates subgoals with a search budget of 64. The full model reaches 46
 
 Section 4.1 describes kernels as “carefully checking each theorem to ensure it is correctly recognized by the ITP” (p. 6). Inference: kernel verification establishes the formal theorem; it does not establish that a generated formal statement faithfully captures the informal problem, or validate the annotations, training, filtering, or benchmark representativeness. The paper provides no theorem that generated subgoals are complete before Isabelle checking. Inference: a Verus product should keep the verifier as the acceptance boundary and treat subgoal generation as an optimization layer whose failures cost search time, not soundness, provided no unverified output is executed.
 
-The evaluation uses Isabelle and miniF2F high-school mathematics (Section 4.2, p. 6); the paper reports no measurements of Rust compilation, Verus verification time, concurrency, unsafe code, or agent-written systems. Inference: threat to VL is medium for proof-planning quality and low for kernel soundness. The main reusable idea is to align proofs with structured intermediate obligations and resample data using generator likelihood scores, with Isabelle checking formal proofs. VL should not redo generic Isabelle comparisons; it should test whether subgoal schemas for Rust invariants, ownership, and state transitions transfer to Verus and whether solver feedback gives a useful posterior score.
+The evaluation uses Isabelle and miniF2F high-school mathematics (Section 4.2, p. 6); the paper reports no measurements of Rust compilation, Verus verification time, concurrency, unsafe code, or agent-written systems.
 
 ## techniques for the catalog
 
@@ -66,5 +66,3 @@ The evaluation uses Isabelle and miniF2F high-school mathematics (Section 4.2, p
 - posterior subgoal scoring — score a formal proof by the likelihood that a fixed posterior generator reconstructs its subgoal sequence
 - diversity through prompt and length variants — train multiple proof generators and reinitialize each iteration to widen the candidate pool
 - proof-assistant prerequisite check — count a theorem only after cheating-keyword filtering and Isabelle verification
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Overall validation performance increased consistently from 58.20% in iteration 0 to 61.89% in iteration 3."): checked all quotations, numbers, section and page references, and technique steps; corrected annotation wording, iteration data reuse, dataset-count ordering, inference details, citations, and unsupported claims; did not check the implementation, reproduce experiments, or independently validate cited papers.

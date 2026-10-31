@@ -77,8 +77,6 @@ evidence and limits: For ICPC, GPT-5 verification cost ranges from 5.4 to 5.8 su
 
 The Codeforces judge, problem statements and hidden tests, model endpoints, browser credentials, and experiment scripts are trusted or assumed. A-ProS does not prove C++ semantics, contract adequacy, or system behavior outside contest tests. Its external-validity warning is explicit: competitive programming differs from real software systems involving collaboration, maintenance, and open-ended requirements (§7, p. 32). The paper's claim that stateful gains are 2.2–2.3× larger than matched multi-round stateless gains uses the 47-problem Table 17 comparison; the 8.5–10.6-point gaps use Table 12. These statements are consistent only when their different denominators and baselines are kept separate. The abstract's “over 2× greater gains” is not a universal accuracy multiplier.
 
-What VL should not redo: the paper already establishes a concrete multi-model generator–critic loop, persistent versus stateless context ablation, structured verdict capture, calibration metric, and denominator-aware cost reporting. Inference: VeruLaw should reuse the context and measurement design while replacing Codeforces acceptance with Verus verification and executable tests. The threat to agent-written verified Rust is high for workflow reliability but limited for the verifier itself: persistent context can reduce repeated repair mistakes, yet it cannot ensure that a weak `ensures` contract expresses the intended requirement. Inference: a VL deployment should freeze contracts, log every Verus run, reject trust escapes, and report verifier acceptance separately from specification review and runtime evidence.
-
 ## techniques for the catalog
 
 - role-separated multi-model repair — use one model for candidate code and specialized critics for structured diagnosis before each repair
@@ -86,4 +84,3 @@ What VL should not redo: the paper already establishes a concrete multi-model ge
 - persistent repair context — retain the complete per-problem conversation and compare it with a matched stateless reset
 - denominator-aware feedback metrics — distinguish incremental and cumulative solves, total submission cost, repeated verdicts, and calibration
 - paired context ablation — hold models, problems, temperature, judge, and attempt budget fixed while varying only history retention
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -1,7 +1,6 @@
 # Automated Proof Generation for Rust Code via Self-Evolution
 (authored by agents unless marked 🧑)
 Tag: `chen2024automated`, [paper](https://arxiv.org/abs/2410.15756v3)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and contribution
 
@@ -89,12 +88,6 @@ Verus form (inference). Feed the model exact compiler diagnostics that identify 
 Proved by the system: each retained proof passes the Verus verifier, whose SMT backend discharges Rust specifications and annotations. Measured: benchmark Accuracy@K, where a task counts as one only if at least one sampled proof verifies; denominators are 139 VerusBench tasks and 1,435 CodeNet-Test tasks. The paper also measures specification scores over test sets and mutations.
 
 Trusted or assumed: GPT-4o translations preserve intended semantics; docstrings and generated tests express the intended contract; Verus, its libraries, and SMT solver are sound; benchmark specifications are meaningful; model outputs are not accepted without verifier checking. The authors report that SAFE fails on 20.86% of VerusBench programs “even after sampling 100 proofs and 100 debugged proofs for each incorrect proof (i.e., Accuracy@100)” (appendix F.3, p. 25). This disagrees with Table 1 (p. 8), whose best Accuracy@100 is 70.50% (10 initial proofs and 10×10 debugged proofs, so 29.50% fail), while the introduction (p. 3) says 79.14%; the paper's own figures are inconsistent. Removal-of-odds needs `assert` and `reveal`; the authors “suspect that the reveal feature is never synthesized in any finetuning dataset” (appendix F.3), a suspicion, not a measured fact. SAFE targets small function-level algorithms; dependencies in large projects and deep proof decomposition remain unresolved.
-
-## implications for VL and product threat (inference)
-
-VL should reuse the verifier-filtered data loop, correctness/completeness filtering, and error-conditioned repair. It should not redo a generic prompt-only proof benchmark or train on low-quality contracts: the paper's controlled low-quality comparison shows large drops. It also should not assume function-level success transfers to a product with cross-module dependencies, unsupported Rust features, or specifications that encode weak behavior.
-
-The threat to a product that accepts agent-written verified Rust is medium to high (inference). Verification catches proof and implementation obligations only relative to the supplied specification; SAFE's own gcd case (`ensures result > 0`, appendix F.4) demonstrates a weak contract that yields an extremely simple proof. Translation and generated tests can silently change intent, and benchmark failure remains (20.86% per appendix F.3). Product use therefore needs human-owned specifications, dependency-aware verification, and explicit review of trusted Verus/SMT components.
 
 ## techniques for the catalog
 

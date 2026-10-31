@@ -63,16 +63,9 @@ The ground truth comprised 79 production requirements in a 38-page SSCS document
 
 In the end-to-end TRACE run, 67 correctly translated properties were supplied without manual intervention; 63/67 were successfully verified across modules (Table 5, p. 15). Module counts were remote control 17/17, gyroscope 13/15, attitude determination 10/12, control calculation 5/5, mode switch 6/6, fault handling 8/8, and thruster output 4/4. These are downstream tool-verification counts, not proof that the 67 formulas describe the human requirement.
 
-## assumptions, trusted parts, and threat to VL
-
-The framework trusts PDF extraction, BERT classification, expert mappings, the LLM's NL-to-TNL rewrite, deterministic translation rules, the expert ground truth, and TRACE/KLEE/GDB semantics. The paper's 79-requirement case study is one production system, and Section 4.5 warns that complete aerospace systems can exceed 1,000 behavioral requirements; dynamic SpaceKG construction and LLM latency then become bottlenecks. The 3 excluded summaries show that deciding what is temporal remains a human/domain judgment.
-
-Inference: the threat to VeruLaw is medium to high at the requirements boundary. VL can adopt the sequence context reconstruction → typed grounding → structured intermediate contract → deterministic proof obligation. SpaceKG maps naturally to typed Rust constants and verified predicates; SpaceRDL maps to explicit state-machine transitions and invariants. However, generated LTL or Verus contracts can be perfectly proved while naming the wrong signal, threshold, timing point, or mode. VL should retain source traceability from every `requires`/`ensures` clause to interface evidence and require review of mappings before treating a proof as product assurance.
-
 ## techniques for the catalog
 
 - dual-stream context reconstruction: preserve complete requirement paragraphs and interface tables before formalization
 - SpaceKG grounding: map domain terms, aliases, values, and empirical conditions to typed implementation atoms
 - SpaceRDL templating: force mode, condition, timing, component, and action fields into an explicit intermediate contract
 - deterministic formal synthesis: translate grounded TNL by fixed rules and feed the resulting LTL to a verification tool
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -66,10 +66,6 @@ verus form
 
 Inference: Check generated Verus contracts by checking a trusted reference behavior or independently proved witness before accepting them into an agent loop. Use `assert`/`proof fn` to validate repaired arithmetic facts, but keep the reference implementation, external libraries, and environment as explicit trust assumptions. A contract that verifies can still reject valid product behavior when its specification is too strong.
 
-## implications for VL
-
-The paper finds that omission is harder to expose than over-inclusion under its review conditions. For the word-list tasks, a reviewer can challenge a listed invalid member but must discover an omitted valid member. The code mechanism differs: invented requirements and wrong expected outputs exclude correct implementations (Section 3.4, PDF p. 10). In RLVR experiments, authored keys cost 1.9 accuracy points on complete truth and 18.5 points on the WordNet-relative task (Abstract, PDF p. 1; six paired seeds, two-sided p=0.031). Inference: Agent-written verified Rust may contain silently omitted cases and invented preconditions. VL should prefer executable, machine-checked predicates and external probes over asking an agent to enumerate obligations from prose. Existing Verus proof checking addresses candidate validity, while this paper highlights the separate problem of whether the generated contract covers the intended behavior.
-
 ## techniques for the catalog
 
 - judging–authoring split: measure pointwise correctness separately from the acceptance region induced by a generated artifact
@@ -78,4 +74,3 @@ The paper finds that omission is harder to expose than over-inclusion under its 
 - known-correct-probe check: trust a generated verifier only after it accepts independently known-correct behavior
 - execution-based expectation repair: replace wrong expected outputs with outputs from a trusted reference and repeat the probe check
 - omission-focused review: search for missing acceptable behavior, since written over-inclusions are easier to detect
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The two families also differ in base accuracy (0.90 numeric vs. 0.57 lexical), a second non-key determinant."): checked all paper text, quotations, reported numbers, methods, section/page references, and the arXiv identifier on PDF p. 1; corrected table page references, suite-pool scope, audit qualification, probe-check results and limitations, and reasoning scope; did not reproduce experiments or validate the proposed Verus adaptations.

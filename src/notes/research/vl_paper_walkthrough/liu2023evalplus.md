@@ -26,7 +26,7 @@ The basic mutations are type-directed (Table 1): integers and floats increment o
 
 Evidence. For each HumanEval task, they use around 30 ChatGPT-generated seeds from three prompts and run type-aware mutation for 1,000 additional inputs under a one-hour budget (Section 3). HumanEval+ therefore increases test scale by 80× (Abstract; Section 3). The authors state that ChatGPT “is unsuitable for large amounts of automated test generation due to undesired speed and cost of querying such a large model”, which is why mutation performs the expansion (Section 2.1).
 
-Verus form. Inference: A VL test generator can ask an LLM for seed Rust values, then mutate them according to Rust types and explicit `requires` predicates. Verus can prove that a mutator preserves a data-shape invariant, but it cannot prove that an LLM-selected seed reaches an untested semantic corner. Keep generated tests as adversarial evidence and run the verified function against them; do not treat passing tests as a proof of universal correctness.
+Verus form.
 
 ## technique 2: differential testing against a trusted implementation
 
@@ -41,7 +41,7 @@ How to apply it:
 
 The same differential check, run between the authors’ re-implemented ground truth and the original HumanEval ground truth, exposed 18 defects in the original ground truths, 11% of problems: five unhandled edge cases, ten bad-logic implementations, and three performance issues (Section 3). One date-validation ground truth incorrectly rejects `12-31-1999`; an added test found the operator-precedence bug that base tests missed (Figure 4 and Section 3).
 
-Verus form. Inference: The closest VL analogue is comparing a generated implementation with a specification reference on generated values, while separately running Verus to prove the contract. Differential testing can reveal executable mismatches but cannot replace a proof over all inputs. The reference implementation itself must be audited or verified; EvalPlus demonstrates that an assumed ground truth can be wrong.
+Verus form.
 
 ## technique 3: contract-based input filtering
 
@@ -74,15 +74,13 @@ How to apply it (Inference: the paper gives the requirement types, the set-cover
 
 HumanEval+-Mini averages 16.1 tests per task, 47× fewer than HumanEval+’s 764.1, while the paper says it achieves “almost the same pass@1⋆ drop” on a subset of the models (Section 3; Table 4). Table 4’s caption gives HumanEval+’s average as 774.8, which differs from Table 2’s 764.1; the Table 4 column counts include the base tests. The authors report that empirical sample killing is the most effective single metric, reaching the same effectiveness as the full approach, but consumes more tests than the theoretical metrics; coverage and mutation analysis “still serve as the base guarantees for the theoretical test adequacy” (Section 3).
 
-Verus form. Inference: A VL regression suite can define requirements as proof obligations, counterexample classes, and branch or state coverage. Greedy reduction can preserve representative failures, but only Verus verification establishes the contract; reduced tests are a diagnostic and performance tool.
+Verus form.
 
 ## evaluation evidence and contradictions
 
 Across 26 models, HumanEval+ lowers pass rates relative to HumanEval by up to 23.1% for greedy pass@1, 19.3% for pass@1, 24.9% for pass@10, and 28.9% for pass@100 (Section 3). For ChatGPT, Table 3 reports greedy pass@1⋆ 73.2 to 63.4, pass@1 69.4 to 62.5, pass@10 88.6 to 82.1, and pass@100 94.0 to 91.1 (base to +extra). GPT-4 greedy pass@1⋆ falls from 88.4 to 76.2 (Table 3). The paper reports reductions of 12.6% for ChatGPT and 13.1% for GPT-4 without defining the formula here; I did not reconcile these with the Table 3 values. The paper reports the maxima as 23.1% (pass@1⋆), 19.3% (pass@1), 24.9% (pass@10), and 28.9% (pass@100); each metric must be cited with its column and setting. The paper also finds ranking reversals in pass@1⋆: WizardCoder-CodeLlama and Phind-CodeLlama are no better than ChatGPT on base HumanEval (73.2 and 71.3 versus 73.2) but outperform it on HumanEval+ (64.6 and 67.1 versus 63.4) (Section 3; Table 3). Other reversals: SantaCoder-1B surpasses InCoder-6.7B, and Vicuna-7B outperforms InCoder-1.3B (Section 3).
 
 What is measured is test-suite detection under a specified ground truth, model sampling regime, timeout, and 164-task benchmark. What remains trusted is the repaired reference implementation, contracts, generated test validity, and differential oracle. HumanEval+ can expose wrong code but cannot prove correctness for arbitrary inputs. The authors say that “future work can look into how to integrate EvalPlus with more formal verification (e.g., Dafny [32]) or validation techniques (e.g., translation validation [36]) to provide stronger guarantees of the evaluation results when applicable” (Section 5).
-
-Inference: The threat to VL is false confidence from passing a small test suite or trusting an unverified reference. EvalPlus already supplies automated seed generation, mutation, differential checking, contract filtering, and reduction; VL should not redo these as generic benchmark claims. The product should instead combine them with Verus proofs, retain all failing inputs and diagnostics, and report denominators and generation settings so an agent cannot hide weak test coverage behind a high pass rate.
 
 ## techniques for the catalog
 
@@ -92,4 +90,3 @@ Inference: The threat to VL is false confidence from passing a small test suite 
 - contract filtering: encode preconditions to reject invalid inputs and clarify intended semantics
 - greedy test reduction: preserve branch coverage, killed mutants, and killed candidate samples with a set-cover subset
 - rigorous benchmark accounting: report task count, test denominators, sampling temperatures, timeout rules, and metric columns
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Nonetheless, this motivates future research to look more closely on the effect of temperature with respect to the robustness of the evaluation tests, esp. those edge-cases."): read all of the paper text (abstract through Appendix A), and checked the abstract quote, the three other quotes, Tables 1, 2, 3 and 4 values cited, Figures 1, 2 and 4, the evaluation setup (temperatures, GPT-4 and ChatGPT exceptions, timeout, float tolerance), the 18 ground-truth defects, the 83 contracts, and the arXiv link and tag. Changed: fixed the Section 1 quotation to full wording, removed a garbled ChatGPT numbers sentence and replaced it with Table 3 values, weakened “explicitly propose” on Dafny to the paper’s own wording, corrected the ingredient mechanism purpose, the stopping rule (one-hour budget), the sampling exceptions for GPT-4 and ChatGPT, and the ground-truth defect detection method, added the Table 2 versus Table 4 average-test discrepancy, and marked the set-cover and contract steps as Inference where the paper gives no procedure. Not checked: the cited references, the percentage-reduction formula behind 12.6% and 13.1%, Figure 3 contents, and the external EvalPlus repository or leaderboard.

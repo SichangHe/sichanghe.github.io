@@ -29,7 +29,7 @@ Treat the generated Rust `requires`/`ensures` contract as a candidate statement,
 
 limits
 
-`Js` is learned, so its fidelity is not kernel-guaranteed. The paper calls the output a “soft certificate: formally sound with respect to s, but only as relevant to q as the generated statement is faithful” (§2.3, p. 4). Inference: VL must independently review security-sensitive contracts and should test adversarial under-specification; accepting a judge label alone leaves the same gap.
+`Js` is learned, so its fidelity is not kernel-guaranteed. The paper calls the output a “soft certificate: formally sound with respect to s, but only as relevant to q as the generated statement is faithful” (§2.3, p. 4).
 
 ## technique: error attribution and routed correction
 
@@ -63,15 +63,9 @@ Verus form (Inference:)
 
 Record wall time, Verus invocations, solver time, generated proof size, and retries separately. Report denominators and whether calls include hidden sub-processes. A lower external-call count is not lower total cost when the verifier or agent performs concealed local work.
 
-## trusted boundary, contradictions, and product threat
-
-Lean/SafeVerify checks elaboration, forbidden constructs, and proof validity, but the learned formaliser and judges determine what is being proved. The paper’s conclusion is explicit: “verification guarantees correctness only relative to the generated formalisation, not unconditionally with respect to the original problem” (§6, p. 9). Inference: for agent-written verified Rust, the same boundary includes Rust compilation, Verus, solver assumptions, external crates, and the semantic match between VL requirements and generated contracts. The product threat is under-specification or a wrong routed diagnosis, not merely a failed proof. Existing work already demonstrates statement checking, verifier-guided repair, and budget curves; VL should measure these on its Rust APIs and security requirements instead of claiming Lean benchmark rates transfer.
-
 ## techniques for the catalog
 
 - statement adjudication — reject elaborated formal statements that do not faithfully encode the natural-language requirement and candidate answer
 - error-attribution routing — classify a failed proof as mathematical or implementation error and revise only the responsible component
 - diagnostic-conditioned repair — preserve context on syntax errors and regenerate proof code from verifier diagnostics
 - budget-aware certification — report verified coverage as a function of explicit statement, proof, token, and internal-call budgets
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

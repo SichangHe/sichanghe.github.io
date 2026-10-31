@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `lahiri2024evaluating`, [paper](https://arxiv.org/abs/2406.09757)
 
-Audit: audited 2026-10-13 against the paper (text and PDF page layout); checked the 64 of 153 and 41.8% arithmetic, 0.6 score, 5 mutants, mutation operators, task ids 61, 145, 161, 234, 240, 445, the 0.66 threshold, every quotation and page reference, the harness code, and the Verus forms (reveal_with_fuel, broadcast use, old, triggers are supported by the Verus papers); changed: the conjecture sentence is wholly on p.4, not spanning pages 3-4; the fuel claim now says unrolled in proportion to length, as the paper does, not exactly as many times as the length; the Appendix B objection now says too strong, as the paper does. Not checked: the cited earlier notes, the dataset and repository outside the PDF.
-
 source: Shuvendu K. Lahiri (Microsoft Research), Formal Methods in Computer-Aided Design 2024; arXiv:2406.09757v2, 15 Oct 2024; 6 PDF pages, of which 5 are text with Appendices A and B on p.5. Artifact named in the paper: https://github.com/microsoft/nl-2-postcond.
 
 earlier notes: `distributed_verification_review_b/deep_6_intent_to_spec.md` (entry P12) and `deep_7_evaluation.md` (the part on user-intent formalization) give the idea in a paragraph each: concrete input/output pairs checked symbolically, mutated outputs for strength, 64 of 153 specifications, the shared-elements case, and the caution about reading a failed proof as a refutation. Added below: the two metrics as definitions, the harness construction line by line, the mutation operators, the proof obstacles and their workarounds, the rejected alternatives, the Verus form, and where the reported evidence is thin.
@@ -138,15 +136,6 @@ A further point made about the source dataset (Misu et al., MBPP-DFY), which kee
 - “a subset written by humans” (p.4) and the running example's specification, described as GPT-4-generated, leave the mix of human and model specifications among the 153 unstated.
 - The harness figure's first assertion compares `a` with `a2` (see technique 1).
 - The summary names F*, Dafny and Verus as targets (Section I-A, p.2); only Dafny is implemented.
-
-## already established here; VL need not rediscover it
-
-- Inference: that a test can be turned into a proof obligation on the specification alone, that mutated outputs give a strength score, and that human strong/weak labels miss implication-for-equivalence errors. A Verus port is engineering, and the paper's obstacles (fuel, instantiation, parsing by regex) say where the effort goes.
-- Inference: not established and worth doing: a measured agreement rate, mutants proved rejected instead of assumed, preconditions and mutable state, and tests not written by the specification's author.
-
-## bearing on a product of agent-written Rust verified by Verus
-
-Inference: none as a product; it is an evaluation method from a group that works on Dafny, F* and Verus tooling, and a small one (the tool is “a 400 line Python script”, Section II, p.4). Its bearing is the reverse: any offering of agent-written verified code will be asked how its specifications were validated, and this is the cheapest published answer. A competitor adopting it gains a number to show for specification quality; VL can adopt it as easily.
 
 ## techniques for the catalog
 

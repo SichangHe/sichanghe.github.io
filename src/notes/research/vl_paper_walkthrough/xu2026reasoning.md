@@ -6,9 +6,7 @@ Tag: `xu2026reasoning`, [paper](http://arxiv.org/abs/2606.09449v1)
 
 The paper proposes a reference-free evaluator for autoformalization. Instead of comparing a generated artifact with one gold formalization, it checks a vector of local properties and uses the failed coordinate to choose a repair. “We introduce a reference-free proxy-judge framework for AF that replaces gold-standard matching with a vector of per-axis property checks.” (Abstract, p. 1)
 
-The framework targets formalization of mathematics and natural-language inference. It separates global kernel checks, module-local checks, and cross-domain alignment to the informal source. Its theory assumes bounded judge noise and a contraction condition, then derives geometric convergence to a noise-dependent plateau. Inference: for VeruLaw, this provides a design for judging generated Rust/Verus contracts when no manually authored specification exists, but the theorem applies only if the property axes are sufficient and the drift assumption is credible.
-
-## technique: represent a candidate as modules and audit axes
+The framework targets formalization of mathematics and natural-language inference. It separates global kernel checks, module-local checks, and cross-domain alignment to the informal source. Its theory assumes bounded judge noise and a contraction condition, then derives geometric convergence to a noise-dependent plateau.
 
 ### what it is and when to use it
 
@@ -23,10 +21,6 @@ Use this decomposition when a single scalar score cannot say what to repair. Eac
 3. define module checks for syntax, type consistency, binding integrity, and grounding (Section 3.1, p. 3)
 4. define source-alignment and coverage checks against the natural-language input and facts Γ (Section 3.1, p. 4)
 5. aggregate binary audit-unit results into an axis score ξk(P̂), using the axis’s audit-unit count Nk(P̂) (Appendix A.1, pp. 10–11)
-
-Inference: for VL, useful axes include Rust parsing, Verus verification, ownership and binding integrity, invariant framing, contract-to-requirement alignment, and coverage of stated safety requirements. The axis list must be adapted to Verus; the paper does not define Rust checks.
-
-## technique: reflective refinement localizes repairs
 
 ### what it is and when to use it
 
@@ -50,8 +44,6 @@ The method’s convergence claim is conditional. Assumption 2 states that expect
 
 The paper models repeated independent judge calls on one audit unit. With T calls and per-call error η, majority vote has `ηeff ≤ exp(−2T(1/2−η)^2)` (Lemma 1, p. 5). Substituting ηeff into the plateau gives an asymptotic gap proportional to ηeff/λ. Apply it by running the same local judge several times, taking the majority verdict, and using that verdict for localization and repair.
 
-Inference: VL can majority-vote semantic checks of a `requires` or `ensures` clause, but calls are not truly independent when the same model, prompt, and context are reused. The bound is therefore a planning model, not evidence of a guaranteed error rate.
-
 ## technique: prover-grounded return policy
 
 The framework distinguishes LLM-judged semantic axes from kernel-decided axes. A repair may fix a semantic issue while breaking syntax, type, or proof validity. The return policy always keeps the latest iterate accepted by the prover and rolls back when a kernel axis regresses (Section 3.1, p. 4). In a Verus implementation, “prover accepted” means the exact generated Rust and Verus proof pass the configured verifier; semantic review cannot override that result.
@@ -60,7 +52,7 @@ The framework distinguishes LLM-judged semantic axes from kernel-decided axes. A
 
 For candidate quality, the paper defines a latent property vector q and observable judge vector ξ. With nonnegative weights summing to one, intrinsic quality is `μ⋆(P̂)=⟨w,q(P̂)⟩` and proxy quality is `μ̂(P̂)=⟨w,ξ(P̂)⟩` (Section 4.1, p. 5). Assumption 1 says q=1 implies every prover-decidable check passes and every cross-domain axis aligns with the source. This is audit sufficiency, not full semantic correctness.
 
-The paper is explicit about that boundary: “Our notion of correctness is audit-sufficient rather than fully semantic.” (Limitations, p. 9) Inference: a VL proxy score should be described as evidence over named checks. It should never be reported as proof that the natural-language requirement is complete or that the implementation matches an unstated requirement.
+The paper is explicit about that boundary: “Our notion of correctness is audit-sufficient rather than fully semantic.” (Limitations, p. 9)
 
 Lemma 2 bounds one-step proxy error by judge noise plus a finite-sample term, `η + sqrt(log(2m/δ)/(2Nmin))`, with Nmin the smallest active audit-unit count (Appendix A.1, p. 10). Whole-object axes have one unit, so their concentration bound can be vacuous; repeated judging is the relevant mitigation. This denominator and scope matter when interpreting scores.
 
@@ -78,14 +70,6 @@ On ProofNet, judge capacity changes final pass rate from 65.9±5.3% for Llama-3.
 
 The proxy trajectory follows the external oracle qualitatively, but the paper reports a scale mismatch: on Qwen-3.5-9B ProntoQA, proxy score rises while the oracle remains flat because the proxy accepts surface-level repairs that do not change the dataset label (Section 5.3, p. 8). This is evidence against treating proxy improvement as semantic improvement without calibration.
 
-## trusted scope, limitations, and threat to VL
-
-The theorem trusts Assumption 1’s audit sufficiency and Assumption 2’s bounded contractive drift. The judge-error model assumes bounded per-unit noise and the majority bound assumes independent calls. The empirical oracle is itself benchmark-specific: a GPT-5.4 judge compares Lean candidates with gold references, while an Isabelle ATP checks e-SNLI and ProntoQA labels (Section 5.3, p. 7). The paper’s four-dataset slice does not establish dataset-independent generality; the limitations explicitly say generalization beyond these datasets remains future work (Limitations, p. 9).
-
-Inference: the direct threat to VeruLaw is false confidence from a high proxy score. An agent-written verified Rust contract can pass every named axis while omitting an unmodeled failure mode. The mitigation is to make the audit catalog explicit, keep prover acceptance separate from semantic judgment, calibrate judges on human-reviewed examples, and report denominators and judge noise.
-
-Inference: VL should reuse per-axis checks, localized repair, rollback on prover regression, and calibration against an external oracle where available. It should not claim the paper’s convergence theorem without measuring whether Verus repair actually contracts the unresolved obligation set.
-
 ## techniques for the catalog
 
 - audit-axis vectors: score global, module, and source-alignment properties separately
@@ -95,5 +79,3 @@ Inference: VL should reuse per-axis checks, localized repair, rollback on prover
 - audit-sufficient proxy: treat a weighted property score as evidence over named checks, not full semantic correctness
 - per-axis feedback: use decomposed verdicts when scalar feedback cannot identify the repair
 - drift convergence model: bound expected unresolved gap by contraction plus judge-noise residual
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -74,14 +74,6 @@ Verus form. Inference: model diagnostics and candidate revisions as ghost record
 
 Evidence and limits. The pipeline's return guarantee is only that L1 passed; L2 is advisory. The paper's regression threshold is a heuristic chosen to limit repair damage. A repair can preserve objective value while changing an untested constraint, and rollback cannot detect that unobserved semantic regression.
 
-## measured results, trust, and VL threat
-
-RetailOpt-190 has 190 instances, organized as 38 archetypes times five numerical variants (Table 5, PDF p. 7). Under the strict (10^{-4}) accuracy tier, Claude rises from 22.6% direct to 31.1% with ReLoop; DeepSeek rises from 0.5% to 5.8%; Qwen3-32B, OptMATH-32B, and SIRL-32B remain at 0% (Table 8, PDF p. 9). At a (10^{-2}) tier, Claude is 35.3% and DeepSeek 11.1% after ReLoop. On the external MAMO-ComplexLP benchmark (203 instances), Claude rises from 70.4% to 79.8% and DeepSeek from 60.1% to 62.6%; IndustryOR has 100 instances, with Claude 66.0% to 68.0% and DeepSeek 50.0% to 62.0% (Table 7, PDF p. 9). All runs are pass@1 with greedy decoding; the solver uses Gurobi 11.0, 60-second timeout, 1% MIP gap, one thread, and seed 0 (Appendix G, PDF p. 36).
-
-The paper proves no semantic equivalence theorem. It assumes perturbation sensitivity, relies on LLM extraction of candidate terms, and uses the solver's objective response as an oracle. Trusted components include Gurobi, data and reference formulations, prompt/parser/extractor code, thresholds, and benchmark labels. The authors report a residual audit in which 42 of 43 true modeling errors were structural, showing why perturbation cannot solve all silent failures (Section 5.4, PDF p. 10).
-
-Inference: threat to agent-written verified Rust is medium to high for semantic omissions. The transferable pattern is useful: separate blocking compilation/proof checks from diagnostic metamorphic tests, make diagnostics specific, and guard repairs with rollback. For VL, replace solver execution with Verus verification and differential/property tests; keep a frozen contract and reject any candidate that changes it. Inference: behavioral tests complement formal verification but cannot replace it. A Verus pass can prove a vacuous or incomplete contract, just as a feasible optimization model can encode the wrong problem.
-
 ## techniques for the catalog
 
 - structured generation: separate understanding, formalization, code synthesis, and grounded completeness checks
@@ -89,4 +81,3 @@ Inference: threat to agent-written verified Rust is medium to high for semantic 
 - CPT/OPT behavioral testing: perturb parameters and classify objective-response ratios to detect missing constraints or objective terms
 - diagnosis-guided repair: target WARNING components while treating ambiguous signals as logged INFO
 - regression-guarded verification loop: enforce safety checks, rerun the blocking verifier, and roll back objective/status regressions
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

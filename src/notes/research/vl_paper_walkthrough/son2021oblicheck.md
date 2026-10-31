@@ -32,11 +32,8 @@ Table 8 reports DecisionTree at 9,305.51 s for MultiSE and 0.19 s for OSM+ISU, w
 
 The paper limits its guarantee to algorithm models: “ObliCheck primarily aims to verify the oblivious property of an algorithm, not the actual implementation of the algorithm.” (Section 1, p. 2220). It assumes proper encryption at the observable boundary (Section 3.2, pp. 2223–2224). Its deterministic trace condition does not establish probabilistic ORAM obliviousness or timing security; both are discussed as future work (Sections 8.1–8.2, pp. 2233–2234).
 
-Inference: for VL, memory safety alone would not establish independence of observable addresses or message lengths from secrets. Applying this approach would require an explicit observation model and justified assumptions about unobservable memory and encryption. Trust would also depend on instrumentation, symbolic execution, loop summaries, and solver correctness.
-
 ## techniques for the catalog
 - relational symbolic execution: compare observable traces of two secret-distinct runs
 - optimistic state merging: merge unobservable path states with taint-aware symbolic summaries
 - iterative state unmerging: refine merges implicated by false-positive verification conditions
 - loop summarization: infer induction-variable deltas and replace input-dependent loops with postconditions
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "In the next iteration, ObliCheck backtracks the execution, locates operations where the merging should be avoided and re-runs the program symbolically."): checked the complete paper text, quotations, numbers, section and page references, technique steps, and limits; corrected the abstract page, publisher link, taint and unmerging rules, Figure 4 reference, performance comparisons, and unsupported Verus claims; did not check the implementation, reproduce experiments, or validate the proposed Verus proofs.

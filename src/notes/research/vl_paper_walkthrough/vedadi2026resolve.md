@@ -50,15 +50,8 @@ how to do it
 Verus form
 Inference: The transferable pattern is two verified implementations linked to one precise specification. In Verus, write `requires`/`ensures` around a mathematical real or integer model only where the model is supported, and use proof functions/lemmas to connect each implementation to it. Do not claim floating-point equivalence from an unproved approximation relation; Verus syntax and floating-point support must be checked against the local Verus reference.
 
-## evidence, trust, and threat to VL
-On the 14 RKB kernels carried through full workflow, determinism median was 1.47 minutes, reduction 29.31 minutes, and specification/proof 112.18 minutes; median total was 142.96 minutes and 5.72M input tokens plus 73.4K output tokens (Table 2, p. 9). The cost and specification remain agent-heavy, while determinism testing uses no agent. Four reported mega-kernel issues were found, including two clear bugs; repairs changed warmed latency by −1.4%, −1.6%, +0.8%, and +10.5% (Table 4, p. 12). These percentages are per repaired kernel, not a benchmark average.
-
-The trusted boundary includes NVBit/runtime behavior, test-input coverage, hash/equality checks, reduction correctness links, Kuiper/F*/Pulse semantics, and human review of specification tightness. The paper says each inspected RKB specification was tight, but that inspection is not automated. Inference: this threatens VL's verification product mainly as a workflow idea: agents can optimize aggressively, then use testing to discover concurrency failures and a verifier to certify a simpler semantic target. It does not replace Verus proofs of Rust code, and its binary-level blind spots and GPU-specific semantics make direct reuse limited. VL should not redo tolerance-only testing or assume a clean race campaign is a proof; it should consider test–reduce–prove pipelines for agent-written concurrent code.
-
 ## techniques for the catalog
 - conflict-directed determinism testing — count and trace binary memory events, perturb only potential conflicts, and compare complete state bitwise across seeded inputs
 - concurrency reduction — rewrite a kernel to the least concurrency needed, rejecting synchronization-heavy constructs while preserving bitwise outputs on tests
 - shared-specification equivalence — prove reduced implementations satisfy one tight algebraic specification, avoiding arbitrary numeric tolerances
 - agent repair with revalidation — use determinism reports to localize causes, patch code, and rerun the same tester, while labeling this weaker than formal proof
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

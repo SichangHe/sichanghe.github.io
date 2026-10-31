@@ -4,7 +4,7 @@ Tag: `noroozian2019platforms`, [paper](https://www.usenix.org/conference/usenixs
 
 ## scope and verification relevance
 
-Noroozian et al. study MaxiDed, a bullet-proof hosting marketplace, from backend data seized during a law-enforcement takedown. The paper is an empirical security measurement study. It does not present a formal specification, proof system, model checker, theorem, verified program, or formal verification technique. The paper's central statement is: “This paper presents the first empirical study of BPH based on comprehensive internal ground-truth data.” (Section 1, p. 1341). Inference: the empirical methods could inform verified data-processing code, but the paper supplies no formal specification to translate into a Verus proof. Its useful lessons for VL concern evidence handling, data-integrity checks, and explicit assumptions.
+Noroozian et al. study MaxiDed, a bullet-proof hosting marketplace, from backend data seized during a law-enforcement takedown. The paper is an empirical security measurement study. It does not present a formal specification, proof system, model checker, theorem, verified program, or formal verification technique. The paper's central statement is: “This paper presents the first empirical study of BPH based on comprehensive internal ground-truth data.” (Section 1, p. 1341).
 
 The dataset covers “over seven years of records (Jan 2011 – May 2018)” (Section 1, p. 1342), including packages, transactions, provisioned servers, tickets, prices, and payments. The authors connect the recovered database to external WHOIS, DNS, blacklist, and other sources. They ask how a BPH provider's anatomy, economics, and potential disruption points can be characterized. They report servers at 394 upstream providers (Section 7.3, p. 1348), median price markups of 40–54% for BP versus non-BP packages (Section 7.5, p. 1349), and $3.4 million revenue over seven years (Section 10, p. 1351). Table 6 gives $280,618 as MaxiDed profit before unmeasured personnel, office, and equipment costs (Section 10, p. 1352). Section 1 estimates profits at “significantly less than 280K USD over 7 years.” (p. 1342).
 
@@ -14,7 +14,7 @@ What it is. Obtain a legally seized administrative system, resurrect its databas
 
 The Dutch investigative team resurrected the administrative backend and granted the researchers access to its data and source code. The researchers inspected the code and observed how administrative pages queried records, then analyzed the operation's supply, demand, and finances (Section 4, p. 1343). Inference: this is a measurement pipeline whose interpretation depends on the recovered system, rather than a formal proof of the data's authenticity.
 
-Verus form. Inference: VL could represent a similar evidence pipeline with typed Rust records and Verus postconditions stating that aggregation preserves sums and filters preserve membership. Such postconditions would verify data-processing code, but they would not prove that seized records are complete, authentic, or representative. Those claims remain assumptions about the external evidence.
+Verus form.
 
 ## technique 2: integrity checks and triangulation
 
@@ -22,7 +22,7 @@ The authors include an explicit integrity-check stage before substantive analysi
 
 Inference: a reusable procedure is to (1) define the data field and external source; (2) document the matching key, such as IP or domain; (3) count matches and discrepancies; (4) report coverage and time range; and (5) avoid treating absence from a feed as proof of benign behavior. Section 9.3 reports that only a small fraction of MaxiDed resources appeared in the feeds and notes that historical feed data was not always available (pp. 1351–1352).
 
-Verus form. Inference: use datatypes for source-tagged observations and prove only local consistency properties such as every joined record having the same normalized IP. A proof cannot manufacture the missing external observation or justify the source's classification policy. A VL system should keep provenance and denominators in the data type so a later report cannot silently change the population.
+Verus form.
 
 ## technique 3: relational reconstruction and classification
 
@@ -32,12 +32,6 @@ The reported methods connect user and supplier tables to identify merchants (Sec
 
 Verus form. Inference: a Rust implementation could prove that joins do not duplicate keys and that a rate's numerator is a subset of its declared denominator. It cannot prove that “explicitly allowed abuse” equals actual abuse without an independently verified specification of language and operator intent.
 
-## evidence, limits, and relevance to VL
-
-The paper's measured facts are about MaxiDed's recovered operation, not a universal BPH population. For example, Table 6 reports MaxiDed revenue of $3,395,444, costs of $3,114,825, and profit of $280,618; the text separately reports $679,741 if a $399,123 DepFile debt is excluded (Section 10, p. 1352). The $679,741 figure adds back that debt to the reported $280,618; neither figure deducts the unavailable personnel, office, and equipment costs. The authors caution: “Recall that the cost of personnel, office space, and equipment also has to be taken from this amount.” (Section 10, p. 1352). The paper's limitations say comparisons with other markets are difficult and MaxiDed's prominence was not systematically explored (Section 12, p. 1353).
-
-Inference: the analysis depends on seized-data integrity, the interpretation of source code, table joins, pseudonymization, external-feed coverage, and the decision rules for labels and risk groups. Inference: the threat to agent-written verified Rust is indirect but concrete. A verified aggregation can still produce a misleading security conclusion if its input provenance, population, or denominator is wrong. The strongest reusable VL lesson is to make those assumptions explicit in specifications and reports, then prove the bookkeeping properties that are actually formalizable. The paper itself does not evaluate Verus, Rust, agent-generated code, or formal verification.
-
 ## techniques for the catalog
 
 Inference: the following catalog entries summarize the methods above and proposed verification applications.
@@ -46,4 +40,3 @@ Inference: the following catalog entries summarize the methods above and propose
 - integrity triangulation — compare independent feeds and report coverage, matches, and limitations instead of treating one source as ground truth
 - relational classification — join operational tables, define labels and denominators, and separate offered, sold, active, and expired populations
 - provenance-aware aggregation — preserve source and accounting assumptions so verified arithmetic cannot hide unverified evidence claims
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We randomly sampled 10 BP servers for each of these 22 providers and manually inspected their IP WHOIS information."): checked all paper text, quotations, numbers, section and printed-page references, and method descriptions; corrected the merchant quotation, profit caveat, attribution of backend recovery, risk-group construction, and inference labels; kept the publisher link printed in the paper; did not inspect the seized data, reproduce the measurements, or verify proposed Verus applications.

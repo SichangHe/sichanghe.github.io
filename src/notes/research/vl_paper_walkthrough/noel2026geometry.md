@@ -56,12 +56,9 @@ Inference: this distinction is useful for Verus agents because a failed verifica
 
 Facts established by the reported experiments: seven models, four architectural families, 16× parameter range, nested-CV accuracy 82.8–85.9%, calibrated accuracy 89–95%, and effect sizes as high as `d=3.30` (Sections 4.1–4.3, pp. 5–6). The study has no Verus or Rust experiment. It assumes access to model internals and attention matrices; it uses MiniF2F, so the denominator is theorem-proof pairs rather than deployed programs. Sliding-window attention changes the selected feature from HFER to smoothness, with `d=2.09` and `p<10⁻48` (Abstract, p. 1), showing architecture dependence. The paper reports no evidence that a spectral score catches all semantic errors, and compiler rejection can be caused by technical failures.
 
-Inference: threat to VeruLaw is low to medium. The method may reduce proof-search cost, but it cannot certify agent-written Rust and could rank a confidently wrong candidate highly. VL should test it only as a best-of-k ordering heuristic and measure verified-proof yield, timeout rate, and false-negative rate against an always-verify baseline.
-
 ## techniques for the catalog
 
 - attention graph construction: symmetrize and aggregate transformer attention into a token graph
 - spectral diagnostics: use Laplacian eigenvalues, HFER, entropy, energy, and smoothness as training-free features
 - threshold validity classifier: calibrate one held-out threshold and report nested cross-validation separately
 - logical-validity controls: compare technically rejected valid proofs and deliberately corrupted proofs to test what the signal tracks
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

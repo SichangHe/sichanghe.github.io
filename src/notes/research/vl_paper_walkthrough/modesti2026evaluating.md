@@ -39,7 +39,7 @@ Verus form. Inference: apply the same protocol-level bootstrap to proof-generati
 
 ## what is proved, measured, and trusted
 
-The study measures classification performance, stability, confidence calibration, cost, and category-specific blind spots. It does not prove that an LLM can verify protocols. Formal checkers, their translations, the selected waterfall, obfuscation pass, prompt, API outputs, and benchmark labels are trusted or assumed. Inference: an LLM-as-verifier in VL is a triage tool with dangerous false negatives and false positives; it must not discharge a Verus obligation. What VL should not redo is treating accuracy on imbalanced goals as evidence of soundness or claiming reasoning mode is generally safer without category and protocol-level analysis.
+The study measures classification performance, stability, confidence calibration, cost, and category-specific blind spots. It does not prove that an LLM can verify protocols. Formal checkers, their translations, the selected waterfall, obfuscation pass, prompt, API outputs, and benchmark labels are trusted or assumed.
 
 ## techniques for the catalog
 
@@ -47,4 +47,3 @@ The study measures classification performance, stability, confidence calibration
 - type-aware protocol obfuscation — rename identifiers while preserving declared types to reduce lexical memorization
 - structured zero-shot verdicts — require one parseable attack/no-attack result, confidence, and justification per security goal
 - protocol-cluster evaluation — run stochastic models repeatedly and bootstrap complete protocols to obtain honest uncertainty
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

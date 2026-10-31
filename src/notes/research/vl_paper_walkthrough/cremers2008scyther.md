@@ -8,8 +8,6 @@ The paper presents Scyther, a push-button analyzer for security protocols. Its i
 
 The author targets three practical problems: finding attacks, proving claims for an unbounded number of sessions, and understanding classes of behaviors rather than one trace. He states: “Novel features include the possibility of unbounded verification with guaranteed termination, analysis of infinite sets of traces in terms of patterns, and support for multi-protocol analysis.” (section 1, p. 414) The tool has a GUI, command-line interface, and Python scripting interface: “The command-line and scripting interfaces facilitate the use of Scyther for large-scale protocol verification tests.” (section 2, p. 414)
 
-Inference: For VeruLaw, the transferable lesson is to provide a scriptable checker that distinguishes attacks, unbounded correctness, and bounded results. Mechanically checkable proof certificates are a possible extension, not a feature established by this paper; section 3, p. 417 places them in future work.
-
 ## technique: claim verification and falsification
 
 What it is. A role may contain claim events asserting secrecy of a value or authentication properties about communication partners. Scyther checks whether each claim holds under its protocol semantics; if not, it produces a falsifying behavior. The paper says: “The input language of Scyther allows for specification of security properties in terms of claim events, i.e., in a role specification one can claim that a certain value is confidential (secrecy) or certain properties should hold for the communication partners (authentication).” (section 2, p. 415)
@@ -40,8 +38,6 @@ How to apply it.
 
 The purpose is a quick assessment: “This enables users to quickly assess the properties of a protocol.” (section 2, p. 416)
 
-Inference: A comparable VeruLaw workflow could generate candidate contracts from a protocol API for review against the intended security requirement. Generated claims alone would not establish that the chosen properties express that requirement.
-
 Evidence and limits. The described automatic claims cover authentication and secrecy. Inference: A requirement outside those generated claims needs a separate specification. The paper gives no independent precision or recall measurement for generated claims.
 
 ## technique: trace characterization by finite patterns
@@ -57,8 +53,6 @@ How to apply it.
 
 The Needham–Schroeder example has two responder patterns: “one is the correct behaviour of the protocol, and the other is the well-known man-in-the-middle attack.” The author concludes: “Hence, there are no other possible ways of executing the responder role.” (section 2, p. 416)
 
-Inference: A possible VeruLaw analogue would prove that every modeled execution belongs to one of several stated classes. State invariants alone would not reproduce Scyther's characterization of traces; that would require defining the execution classes and proving their coverage.
-
 Evidence and limits. Pattern depth is bounded to ensure termination, while each pattern represents an infinite class of traces. The paper explains: “Scyther addresses the undecidability of the security problem by (1) significantly improving and extending the class pruning theorems from [5] and (2) introducing a parameter that limits the pattern size, ensuring termination.” (section 2, p. 416) Inference: The size limit ensures termination, but does not guarantee an unbounded correctness result for every protocol.
 
 ## technique: multi-protocol analysis
@@ -70,8 +64,6 @@ How to apply it.
 1. Write each protocol in a separate SPDL description file (section 2, p. 415).
 2. Concatenate and verify the descriptions. The paper says this analysis “can be performed by simply verifying the concatenation of multiple protocol description files.” (section 2, p. 415)
 3. Inference: Inspect any attacks for interactions between the protocols; the paper does not give a separate step-by-step multi-protocol example.
-
-Inference: A VeruLaw version could model the combined protocol state and permit transitions from either component. It would need to justify any assumptions separating their messages or keys; the paper provides no Rust composition method.
 
 Evidence and limits. The author reports: “With the performance provided by the Scyther tool, multi-protocol analysis has become feasible” (section 2, p. 415). No separate multi-protocol sample count or timing table is given in this paper, so the claim is qualitative here.
 
@@ -85,8 +77,6 @@ What is proved or measured. The paper describes verification, falsification, bou
 
 The paper identifies a proof-output limitation: “In future work we aim to turn the informal Scyther proof output into a proof object that can be verified by mechanical theorem provers.” (section 3, p. 417) Inference: A result described here should not be presented as an independently checked proof certificate. Assessing the algorithms, implementation, and protocol semantics would require material beyond this tool paper.
 
-Inference: For a product that generates Verus-verified Rust, useful ideas include automatic attack search, finite behavior summaries, and batch interfaces. A transfer to VeruLaw would need its own protocol model and justification that the generated Rust follows that model; this paper establishes neither.
-
 ## techniques for the catalog
 
 - explicit claim verification: encode secrecy or authentication claim events in protocol roles and verify or falsify them
@@ -94,5 +84,3 @@ Inference: For a product that generates Verus-verified Rust, useful ideas includ
 - trace characterization: refine protocol executions into finite patterns representing classes of traces for manual inspection
 - multi-protocol analysis: verify the concatenated descriptions of multiple protocols to expose cross-protocol interactions
 - pattern pruning and size limits: combine class-pruning theorems with a pattern-size parameter to guarantee termination while retaining infinite trace classes
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Even though the pattern depth size is limited, Scyther can perform unbounded veriﬁcation of the majority of protocols, as each pattern represents an inﬁnite class of traces."): checked the whole paper, quotations, numbers, section and page references, and technique steps; corrected automatic-claim page references, preserved the qualification on the speed claim, distinguished guaranteed termination from unbounded verification, marked transfer recommendations as inferences, and identified the link as from the fetch record; did not check cited works, run Scyther, reproduce benchmarks, or verify the external link.

@@ -22,8 +22,6 @@ Inference: In Verus, a graph node can correspond to a Rust module, executable fu
 
 Inference: Use this when a specification may omit relevant capabilities. ZeroRepo uses the EpiCoder Feature Tree as a structured knowledge base, described as “an ontology of 1.5M software capabilities” (§3.2, p. 4). Table 7 (p. 15) lists seven level counts totaling 784,524. Inference: this conflicts with the stated ontology size. Each iteration retrieves top-k paths aligned with the repository description, samples unvisited regions, and asks an LLM to propose missing features. The LLM filters candidates and checks batches before inserting accepted paths. Finally, it extracts feature groups, merges or moves related branches, and refines names and hierarchy into cohesive modules (Appendix B.1, Algorithms 1–2, pp. 14–15). This combines both search strategies within iterations rather than alternating them.
 
-Inference: For VL, a capability ontology could propose proof obligations such as parsing, ownership, crash recovery, and adversarial inputs before code generation. The ontology is a planning aid, not evidence that a proposed obligation is required or correctly specified.
-
 ## technique: graph-guided generation and localization
 
 Inference: Use this when implementing or repairing one part of a large repository. ZeroRepo traverses RPG in topological order. At each leaf it derives tests from the specification, implements the function/class, and revises failures until tests pass or the iteration limit is reached. The paper states: “Only functions that pass all tests are committed, enabling incremental expansion while preserving stability.” (§4, p. 5) For repairs, it localizes before editing; localization tools support functionality fuzzy search, interface-body retrieval, and dependency exploration without prescribing a fixed order for those tools (§4, p. 5; Appendix D.1, pp. 33–34).
@@ -40,12 +38,6 @@ ZeroRepo with o3-mini averaged 271.5 files, 23,977 LOC, and 260,761 tokens; with
 
 Graph-guided localization reduced mean steps from 13.3 to 6.2 for integration testing, 10.8 to 6.8 for incremental development, and 8.5 to 5.8 for debugging on MLKit-Py (Table 4, p. 9). The EpiCoder Feature Tree ablation reached 87.2% coverage without the tree at iteration 30, versus 95.7% with it (Table 6, p. 10). The EFT-free run reached 97.9% at iteration 40; the authors state: “Removing EFT introduces a temporal delay rather than a performance ceiling” (§8, p. 10). The same section reports linear fits R²=0.98 and 0.97 for LOC growth without and with the tree. These are measured results on MLKit-Py with o3-mini, not guarantees for other repositories.
 
-## what remains trusted and implications for VL
-
-The benchmark uses o3-mini for automated evaluation (§5.1.3, p. 7). Its manual audit found 91 of 100 adapted tests correct for Claude Code and 90 of 100 for ZeroRepo (Appendix E.5.4, Table 17, p. 48). Inference: model judgments and adapted tests remain sources of error despite validation. The experiments cover six Python repositories (§5.1.1, p. 6). Inference: these results do not establish correctness for Rust unsafe code, FFI, compilers, or Verus specifications.
-
-Inference: RPG overlaps with VL’s repository-scale planning layer through persistent dependency structure and staged validation; this paper alone does not establish the competitive threat. Its graph should not replace Verus proofs. VL should reuse explicit capability-to-module-to-function mapping, typed data-flow edges, topological generation, and graph-guided repair, while adding proof obligations and refusal when a contract or lemma is missing. Inference: the main residual product risk is a coherent but incorrectly specified graph; passing generated tests cannot show that the graph captures the intended safety or security property.
-
 ## techniques for the catalog
 
 - repository planning graph — encode capabilities, files, functions, interfaces, and data flows as a persistent dependency graph
@@ -53,4 +45,3 @@ Inference: RPG overlaps with VL’s repository-scale planning layer through pers
 - graph-guided generation — traverse dependencies topologically, generate leaf code with tests, and commit only passing components
 - graph-guided localization — use functionality search, repository code views, and dependency exploration before edits
 - staged test validation — combine unit, regression, integration, and majority-vote diagnosis across graph subtrees
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We provide the prompt templates that guide the transformation from graph subtrees into modular code skeletons."): checked all paper text, study quotations, numbers, section/page references, technique steps, and inference labels; corrected the opening quotation, implementation-page references, proposal search procedure, localization description, voting-rate interpretation, ablation scope, and unsupported competitive characterization; noted conflicting feature-tree counts and differing evaluation-round descriptions; did not reproduce experiments, inspect the released code, or independently validate the benchmark.

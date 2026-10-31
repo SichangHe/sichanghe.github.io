@@ -21,8 +21,6 @@ How to apply it.
 
 Evidence. In the main matrix there are 35 valid model–game cells. “All end with a self-score of at least 0.70. Yet 15 of the 35 completed policies score below their game’s random reference, including six policies at Pong’s -21.0 floor.” (Finding 1, p. 6). This denominator is the 35 completed model–game cells, not individual episodes. The Atari setup uses five hidden deployment seeds and six complete episodes per seed for each run; each run has ten outer rounds and reports three-seed means with half-ranges (Experimental Setup, p. 5).
 
-Verus form (Inference). For VL, retain two separate artifacts: the Verus-checked proof source and an external evaluation of the resulting behavior. A compiling `ensures` establishes only the stated Rust postcondition; deployment tests must exercise the actual API and environment. Inference: a product dashboard should show proof status and hidden acceptance results separately, because conflating them recreates this gap.
-
 ## technique 2: sealed exogenous acceptance loop (SEAL)
 
 What it is. SEAL is a harness-side, executable audit that compares a candidate policy with the current accepted policy on hidden instances. The audit is separate from final deployment truth and from the agent's tests. The authors emphasize: “SEAL adds a fixed harness-side audit A that compares the candidate and incumbent on hidden instances disjoint from training, self-tests, and the final deployment evaluation.” (Sealed Exogenous Acceptance Loop, p. 3). For hidden seeds `S_A`, dynamics `D_A`, and m repeats, the audit is the mean rollout score. The gate computes `b_t=A(π_t)`, `c_t=A(π'_t)`, and `δ_t=max(δ_min,ρ|b_t|)`, accepting only when `c_t ≥ b_t−δ_t`.
@@ -56,13 +54,9 @@ How to apply the diagnostic.
 
 Evidence. In Breakout, SEAL exceeds the unprotected condition for all core models; for Gemini, final truth is 7.9 without protection versus 30.0 with SEAL (Figure 4, p. 7). Revealing scores can hurt: Doubao changes from 35.1 under SEAL to 12.7 under leaky-anchor (Table 5, p. 7). The cross-game retention analysis reports lower normalized peak-to-final loss in 9 of 12 comparisons and unchanged loss in two (Figure 6, p. 9). These percentages use the 12 model–game comparisons shown, not all Atari runs.
 
-Verus form (Inference). A VL evaluation should include ablations for visible compiler diagnostics versus a sealed pass/fail gate, and should measure regressions after proof-preserving refactors. A numeric score returned to an agent can become a proxy target; a boolean compilation result plus hidden tests limits that channel, though it does not validate the specification's meaning.
-
 ## what is proved, trusted, and still assumed
 
 The paper proves an information-limit inequality for endogenous evidence, `α+β ≥ 1−TV(P_+,P_−)`, where α is false rejection and β false acceptance; when agent-visible distributions for regressing and non-regressing candidates are close, no endogenous-only gate can make both errors small (Information Limit, p. 3). This is a conditional limit, not a claim that every self-test is useless. The empirical claims are Atari-specific and use hidden deployment dynamics, five seeds, six episodes per seed, ten rounds, and three-seed aggregation. Trusted components include the task-native audit implementation, hidden seeds/dynamics, rollout scorer, benchmark environment, and the specification of what counts as a valid policy. The paper does not establish that SEAL orders policies correctly under every deployment distribution, nor that the hidden audit is independent of all future agent information.
-
-Inference: threat to a product generating agent-written verified Rust is high when the agent controls tests and release decisions. The paper already covers generic self-test failure, endogenous gates, score leakage, and conservative rollback; VL should not redo those generic Atari ablations. VL-specific work should test specification drift, dependency changes, external-crate assumptions, and whether a sealed compile-plus-behavior harness catches regressions that Verus proofs do not express.
 
 ## techniques for the catalog
 
@@ -70,5 +64,3 @@ Inference: threat to a product generating agent-written verified Rust is high wh
 - sealed exogenous acceptance loop: compare candidate and incumbent on hidden task-native audits and expose only accept/reject
 - conservative non-regression gate: use relative and absolute slack to reject clear regressions while permitting neutral edits
 - leakage and retention ablations: test internal test constraints, score disclosure, proposal-matched runs, and peak-to-final loss
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

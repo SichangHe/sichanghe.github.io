@@ -30,8 +30,6 @@ Steps (Section 4.1, pp.1299–1300):
 6. Add a tool when at least two existing entries refer to it (light snowballing, Section 4.1.3, p.1300).
 7. Develop and refine the megamodel from the collected tool descriptions, then classify tools with written justifications. Double-check classifications among authors and consult source papers for disputes. Use “no PV” for false positives and “frameworks” for collections whose mixture of levels prevents a sensible single-level assignment (Sections 4.1.4–4.1.5, p.1300).
 
-Inference: for VL, harvest Verus/vstd tools and studies into one page per verifier, preserving paper, repository, language, contracts, trusted base, and evidence fields. Its CAV/TACAS sample does not establish coverage of Rust verification; searching systems and Rust sources would extend that scope.
-
 ## technique 3: ontology-based data enrichment
 What it is: preserve a human-readable template while mapping entries to an ontology whose classes connect tools, repositories, articles, concepts, PV levels, conferences, writers, and code contributors. Inference: use ontology enrichment when links and metadata must remain queryable and updateable without rewriting hand-curated descriptions.
 
@@ -53,19 +51,12 @@ Steps (Sections 4.1.2 and 4.2, pp.1299, 1301):
 3. Manually inspect papers that do not match the heuristic and confirm whether a detected item is actually a PV tool.
 4. Preserve hand-added descriptions while scripts add or refresh machine-derived fields.
 
-Inference: this is useful for VL's local database, but extraction must never turn a paper's mention of Verus into evidence that the paper verifies Rust. The enrichment success counts reported in Section 4.3.1 measure metadata retrieval, not the accuracy of detecting tools from titles.
-
 ## technique 5: trend analysis and dataset quality checks
 What it is: summarize category counts, enrichment coverage, and source composition to assess what the dataset can support. Inference: use denominators alongside counts so a catalog does not imply unsupported completeness.
 
 Evidence: ProVerB contained 427 tools, 26 specification formats, and 71 tags (Section 4.3, p.1302). The reported classification counts were PV0 16, PV1 98, PV2 84, PV3 74, PV4 101, PV5 13, PV6 13, plus 46 no-PV and 8 to-categorize (Section 4.3, pp.1302–1303). Inference: the seven PV-level counts sum to 399; adding the other two categories gives 453. The paper does not reconcile these classification totals with its 427-tool total, so they should not be treated as one consistent denominator. Of 519 selected papers, 351 (68%) had identifiable tools, 54 (10%) unnamed prototypes, and 114 (22%) no tool (Table 3, p.1303). Inference: the rounded 78% implementation figure is (351+54)/519. The table’s Tools column counts papers with identifiable tools, rather than establishing 351 distinct tools. Light snowballing added 76 tools (Section 4.3, p.1303).
 
 Enrichment covered 400 of 427 Markdown files; APIs succeeded for 256 of 269 repositories and 518 of 525 articles (Section 4.3.1, p.1303). The authors identified 1,419 code contributors and 1,188 authors; exact-name matching found 273 same-as relationships and 169 tools with at least one overlapping expert, while they expect more because only exact matches were counted (Section 4.3.1, p.1303).
-
-## what is trusted, what fails, and VL impact
-The authors state: “All the PV-classifications that we have performed, come from our personal interpretations of the contents of a fairly large body of fairly complex academic papers.” (Section 6.1, p.1307) They acknowledge possible misclassifications despite mutual checking and unknown biases from selecting CAV and TACAS (Section 6.1, pp.1307–1308). Unavailable API data limit enrichment, and exact-name matching can miss author–contributor relationships (Section 4.3.1, p.1303). Inference: title heuristics and excluding unnamed prototypes also constrain coverage. This observational classification does not establish tool effectiveness or causal adoption benefits.
-
-Inference: VL could reuse the catalog structure to inventory tools and identify missing coverage. Rust/Verus-specific fields could distinguish checks on executable behavior, contracts, compiler output, and models. This inventory would not establish correctness of agent-written Rust or eliminate specification errors; those require examination of the specifications and verification evidence.
 
 ## techniques for the catalog
 - PV0–PV6 megamodel: classify tools by user input and proof/verifier role
@@ -74,4 +65,3 @@ Inference: VL could reuse the catalog structure to inventory tools and identify 
 - ontology enrichment: connect tools to repositories, articles, concepts, and people
 - API refresh workflows: update commits and metadata automatically with reviewable changes
 - coverage accounting: report counts with source and enrichment denominators
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This can provide valuable information about who to contact when someone has questions about a tool."): checked quotations, numbers, section/page references, and technique descriptions; corrected PV-level definitions, inclusion criteria, quotation wording, and count references, removed the unsupported Verus classification, and flagged inconsistent reported totals; did not inspect external repositories, test API behavior, or reproduce the data collection.

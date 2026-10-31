@@ -52,12 +52,6 @@ How to do it (paper, §3.3.2): collect triplets `(q, c+, c−)` where a chosen s
 
 Inference: for Verus, preference alignment can rank contracts by usefulness, but never bypass compilation or proof checking. Keep the reference index and library version fixed when measuring regressions. Human and LLM votes are trusted labels, not formal correctness evidence.
 
-## what remains trusted and relevance to VeruLaw
-
-The paper reports retrieval measurements and user preferences, not a formal proof of retrieval correctness. Its prover evaluation is limited: “Evaluation on MiniF2F (Zheng et al., 2022), ProofNet (Azerbayev et al., 2023), PutnamBench (Tsoukalas et al., 2024), and FATE-M (Shen et al., 2025) shows that integrating Lean Finder yields performance that is mostly consistent with the non-integrated setting, with modest improvements on certain benchmarks.” (§4.3, PDF p. 10) Table 9 (PDF p. 22) includes declines for REALProver on ProofNet (23.7% to 23.1%) and FATE-M (51.1% to 49.6%).
-
-Inference: VL could train intent-aware Verus lemma search on proof failures and verified contracts. Retrieval would still depend on library declarations, generated descriptions, and preference labels. An agent could select a similar but unsuitable contract and prove the wrong obligation. Show the exact declaration and version, check the selected contract against the intended obligation, and require verification of its use.
-
 ## techniques for the catalog
 
 Inference: the following are reusable technique labels.
@@ -67,4 +61,3 @@ Inference: the following are reusable technique labels.
 - multimodal statement indexing — index informalizations, proof states, declarations, and synthetic queries together
 - contrastive lemma retrieval — train embeddings with positives, in-batch negatives, and noisy-query augmentation
 - preference-aligned ranking — combine human/LLM retrieval preferences with a contrastive objective via DPO
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "A mathematician might therefore want to search not only from the proof state itself, but also conditioned on their intended path forward."): checked every study quotation, number, section/page reference, and technique against all 36 pages; corrected discussion collection scope, proof-state retrieval targets, the contrastive-training quotation, preference construction, and unsupported conclusions; did not reproduce experiments or inspect external code, data, or services.

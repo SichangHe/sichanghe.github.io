@@ -128,11 +128,6 @@ These are opinions of the authors; the paper gives no measurement for any of the
 
 Inference for an agent writing Verus: the three places are the three edits an agent can make after a failed run, and the paper's second obstacle is the reason to write code and proof together instead of verifying finished code.
 
-## already done, not to be redone by VL
-
-- Tokeneer as a benchmark exists with a Z specification and an Ada implementation; the paper says the original project was delivered in 2003 “within 260 days of effort” (Section II.A, p.2), and cites an Event-B treatment [14] and this Eiffel one. Inference: a Verus Tokeneer would be a fourth data point on a benchmark whose earlier points report incomparable metrics; this paper's 38-obligation count is too small and too under-described to compare against
-- a usability study of AutoProof with non-expert users is the cited [13] (Furia, Poskitt, Tschannen, F-IDE 2015), not this paper; this paper says of its own result that it is “though not comparable to others seen in literature [13]” (Section IV, p.5)
-
 ## how much this threatens agent-written verified Rust: not at all
 
 Inference: none. The work is a 2016 partial case study in Eiffel with 22 of 38 obligations proved, no automation of annotation writing, and no agent. Its use is as a small source of contract patterns and as a caution on reporting: a headline of two thirds from a count of 58%, and a caption saying verified beside a 42% failure count, are the kind of claim a reader of a verified-Rust product would check first.
@@ -145,4 +140,3 @@ Inference: none. The work is a 2016 partial case study in Eiffel with 22 of 38 o
 - contracts from a formal specification, clause by clause: turn each schema equation into one postcondition, unchanged-state marks into frame equalities, enumerated real-world types into a constants type with a membership invariant.
 - three-way obligation count: report proved, unproved and tool-error obligations separately, with the total, when stating how automatic a verifier was on a code base.
 - no object construction inside contracts: keep contracts to pure expressions; the paper says attempts to create objects in a contract were the basic cause of the tool's internal errors (8 of 38).
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Second, and this aspect is less general and more peculiar to the auto-active verification approach, a tool like AutoProof is as much effective and usable as is its ability to discharge verification conditions completely automatically, without feeding the code of annotation overhead or requiring particular tweaking."): I read all six pages and checked every quotation, page and section reference, the figure contents (Figures 2 to 8), the 38/22/8/8 counts and percentages, the cited work [13] and [14], and the arXiv link against the paper text; I changed the "no method section" claim, marked the step order and "when to use" lines as inferences, softened the claim that each Z line becomes a clause, noted the paper says "proof" not "obligations", and corrected the list of contract contents; I did not check the Verus code or Verus claims (not run, not in the paper), did not read the cited Tokeneer documents or [13], and did not view Figure 4 as an image (the prime marks come from text extraction only).

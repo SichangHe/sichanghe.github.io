@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `li2026natural`, [paper](https://arxiv.org/abs/2605.11315)
 
-Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 and 2 and the sums quoted from them, the scoring arithmetic, page and section references, the appendix schema fields, quotations and the Verus forms; fixed the appendix page range (A starts on p.11), a quotation used for a reason the paper does not give (syntax failures), the claim that every library summary may be null (memsafe is not), a no-variance claim the paper does not make, an unmarked trusted-base inference, an unmarked cache-layout purpose, and the next page that is the same page; Verus forms left as sound.
-
 source: Zhaorui Li, Chengyu Song (UC Riverside), arXiv:2605.11315v1, 11 May 2026; 27 pages, of which pages 11 to 27 are appendices (A broader impact, B licenses, prompt templates C.1 to C.8, dataset lists D, model settings E)
 
 earlier notes: the entry NLForge (2026) in distributed_verification_db/topic_agents.md gives a four-line summary and three numbers, and is marked as read in part. This study adds the pipeline steps, the prompt schemas, the table arithmetic and the inconsistencies.
@@ -13,8 +11,6 @@ earlier notes: the entry NLForge (2026) in distributed_verification_db/topic_age
 Nothing is proved. NLForge is a pipeline in which an LLM both writes per-function contracts in English-plus-JSON and then judges whether each C function body respects them; no SMT solver, type checker or proof assistant checks the LLM's verdict. The paper measures, on a subset of SV-COMP 2026 memory-safety tasks, how often that verdict matches the benchmark's expected answer. Its own conclusion on the first research question: “LLMs can act as high-coverage, high-recall memory-safety verifiers that are useful for bug finding and triage, but the observed false positives and false negatives mean that they cannot yet serve as standalone, sound verifiers for memory-safety properties.” (Section 4.2, p.7)
 
 Inference: the trusted base, in the sense that an error there goes undetected, is every LLM-written summary, the LLM's final judgement, the call graph (direct calls only), and the LLM's recollection of libc behavior.
-
-Inference: for VL the paper is useful as a design for how an agent should carry facts across a call graph before a real verifier is run, and as measured evidence that an LLM's "this is safe" is wrong often enough that it cannot replace Verus.
 
 ## technique 1: typed natural-language contract records
 
@@ -119,12 +115,6 @@ evidence: none separate from the end-to-end tables.
 - within Table 2, Sonnet-4.6's control-flow baseline row sums to 107 and its compositional row to 105.
 - the conclusion says that on valid-memsafety “Sonnet-4.6 reaches 89.6% accuracy with 99.8% recall” (Section 6, p.9). No table is broken down by property, and Section 4.1 promises accuracy, precision and recall that no table reports. Inference: from Table 1's totals over all 2786 instances, Sonnet-4.6's accuracy is (1262 + 1166)/2786 = 87.2% and recall 1262/1266 = 99.7%, so the conclusion's figures come from a subset the paper does not show.
 - the abstract page footer names NeurIPS 2026, and the text says the Juliet experiments were still running; the results are preliminary by the authors' own word in the abstract.
-
-## what was already done, and threat
-
-Already done, so VL need not rebuild it: a callee-first driver over strongly connected components with cached per-function summaries; a property-by-property split of memory-safety facts; prompt schemas for each (Appendix C). The paper proposes, but does not build, reuse of the cache across commits: “Cached summaries could support incremental analysis in continuous integration, reducing both latency and token cost by re-verifying only affected procedures.” (Section 5, p.9)
-
-Inference: threat to a product of agent-written verified Rust is low. NLForge gives no guarantee, targets C and C++ memory errors that safe Rust excludes by construction, and by the paper's printed scoring formula loses heavily to existing symbolic tools. The part that competes for attention is the claim that prose contracts are enough for compositional reasoning; the false-positive counts and the Gemini regression in Table 2 are the evidence against relying on it. The background figure the paper cites from another benchmark is the stronger argument for VL's direction, that composing verified functions is the unsolved part: models with over 58% verification on single-function benchmarks fall to “just 3.69% verification on compositional tasks” (Section 1, p.2, citing its reference [26]).
 
 ## techniques for the catalog
 

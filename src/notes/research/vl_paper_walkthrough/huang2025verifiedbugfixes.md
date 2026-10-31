@@ -53,7 +53,7 @@ how to apply it, following the proposed strategy:
 4. rank suggestions rather than treating all alternatives as equally useful (Section 9.3, PDF p. 9)
 5. stop pursuing an unverified answer when further variations lack a sound basis; consider starting afresh (Section 9.3, PDF p. 10)
 
-Verus form: Inference: provide a VL agent with candidate Rust and Verus diagnostics, request a diff, review the proposed changes, and run Verus again. Keep patch history and proof outcomes distinct from model explanations. This adapts the paper's advice; it does not establish its effectiveness for VL.
+Verus form:
 
 evidence and limits: the paper reports that 97.7% of prompts contained natural language, 48.3% code, and 43.7% tool output (Section 8.2, PDF p. 8). It explains: “The total is more than 100% since a prompt can contain elements of several kinds.” Solved tasks used 2.8 prompts on average, compared with 3.6 for unsolved tasks. Half of participants did not copy-paste from LLM answers; others did so less than once per task except one participant with 18 copy-pastes. The precise final-code observation is: “Only once was the copy-pasted result part of the final version.” (Section 8.2, PDF p. 8). This does not say that an entire copied answer became the final solution.
 
@@ -74,17 +74,9 @@ Verus form: Inference: retain Rust candidates, Verus invocations and diagnostics
 
 evidence and implications: Section 9.2 reports approximately 91% success for collaborators, copy-paster behavior at 38%, and approximately 33% helpfulness for that behavior (PDF pp. 9–10). The paper does not clearly define these percentages' denominators; they should not be presented as task-level or participant-level rates. Section 8.2 reports average prompt counts of 4.9 for experienced programmers (median 4) and 25 for non-experienced programmers (median 23), and output-use averages of 0.9 (median 0) and 10.0 (median 7), respectively (PDF p. 8). These are observations in this small sample, not experimentally isolated effects of experience.
 
-## trusted scope and what VL should not redo
-
-Inference: the reusable contribution for VL is the combination of explicit specifications, verifier outcomes, and session evidence. This makes it possible to distinguish proof success from a plausible model answer and to examine how a repair was reached. Reusing that method still requires evaluation in Rust/Verus; the paper supplies no direct evidence about VL. Its conclusion states the boundary as correctness “in the specific sense of satisfying the stated specification, and within the limitation of proof tools” (Section 10, PDF p. 10).
-
-Inference: VL should record specification changes, trusted assumptions, tool versions, attempted patches, and proof results. The paper does not establish that testing is useless, that copy-paste always fails, or that one prompting strategy has a universal advantage. Its own single-model limitation is explicit: “The study does not provide insights into how participants would have fared with another LLM.” (Section 7, PDF p. 6).
-
 ## techniques for the catalog
 
 - GQM verified-repair experiment — define goals, queries, and metrics before sessions, randomize AI access, and assess fixes with a prover
 - contract-based repair loop — verify each candidate and distinguish submission from compilation and proof success
 - collaborator prompting — provide code and verifier output, request a diff, review it, and reconsider unproductive attempts
 - behavior and hallucination taxonomy — inspect recordings for prompt contents, copy-paste, unranked advice, and repeated failed repairs
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The metrics should be interpreted with caution given the small size of the samples, but we believe that they do identify relevant trends."): checked all study quotations, numbers, section and PDF page references, and technique steps against the full paper; corrected page references, verifier semantics, specification-bug handling, submission criteria, taxonomy coverage, and unsupported percentage denominators; marked proposed VL adaptations as inferences; did not reproduce the experiment, inspect supplementary artifacts, or validate Verus behavior.

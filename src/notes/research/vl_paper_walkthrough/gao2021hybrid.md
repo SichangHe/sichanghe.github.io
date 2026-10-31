@@ -8,8 +8,6 @@ Gao, Xie, Song, and Chen verify higher-order masking security for arithmetic cry
 
 Inference: HOME checks a distributional property of arithmetic expressions. It proves nothing about Rust memory safety or about whether the probing model matches a real device's power leakage.
 
-Inference: For VeruLaw, this is a reusable architecture for security proofs where a cheap sound analysis handles common cases and an exact fallback resolves the residual cases. The mapping to Verus is an inference because HOME targets C-like arithmetic expressions, not Rust or Verus.
-
 ## technique 1: staged hybrid verification
 
 HOME first preprocesses a masked program by unrolling static loops, inlining calls, and converting to SSA. The paper states: “Given a masked program P and the order d, the pre-processor unfolds the static loops (i.e., loops with a predetermined bound of iterations) and inlines the procedure calls, and then transforms the program into the SSA form.” (overview, §3.2, p. 8). It then checks every size-`d` observable set with the type system. If no type can be inferred, pattern matching compares its expression with a known set; if that fails, model counting decides exactly. The result is fed back and cached for later pattern matching (overview, §3.2, p. 8). The authors summarize: “This procedure gives a sound and complete approach for verification of higher-order security.” (§3.2, p. 8). In the implementation, pattern matching and model counting are not applied to sets larger than `d` (§6, p. 26).
@@ -46,8 +44,6 @@ Two benchmarks had potential leaky sets with the same count as [6]: Sbox [96] at
 
 Inference: The claims depend on the probing leakage model, uniform independent random inputs, finite byte arithmetic, straight-line programs, parser/SSA correctness, and soundness of the transformations and solvers. These assumptions are trusted components when a Verus product calls an external cryptographic analyzer.
 
-Inference: Product threat is high if an agent emits masked cryptographic Rust without explicit leakage-model contracts: ordinary functional verification can pass while a joint observable set leaks a key. VL should reuse the staged pattern (cheap proof, structural reuse, exact fallback) and record model, order, set counts, and trusted tool boundaries. Existing HOME already covers the paper's higher-order arithmetic workflow; VL should not claim novelty for simply adding type inference plus model counting.
-
 ## techniques for the catalog
 
 - staged hybrid security checking — preprocess to SSA, apply sound type inference, resolve residual sets by pattern matching, then exact model counting
@@ -56,4 +52,3 @@ Inference: Product threat is high if an agent emits masked cryptographic Rust wi
 - exact model counting — decide unresolved leakage by satisfiability/counting formulas and cache each result
 - pattern matching — prove equal distribution types for normalized, type-respecting isomorphic observable expressions and reuse solved cases
 - verus translation (inference) — model distribution facts as ghost predicates and prove normalization/reuse lemmas, while trusting external solvers or GPUs unless verified
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "In order to avoid (costly) model-counting, we propose a novel pattern matching based method, which allows to resolve potential leaky observable sets more efficiently."): I read the whole arXiv v1 text (sections 1-8) and checked every quotation, number, section/page reference and technique step against it; I changed wrong page references (Theorem 4.5, Proposition 5.1, §5.3, Theorem 5.9), removed the unsupported claims of extra public/key/random types and of intentional incompleteness, corrected SimplyCol (it collapses same-kind variables, not common subexpressions), replaced the pattern-reuse and "two potential-leak cases" claims with what §5.4, §6.1 and §6.2 say, added the unresolved Sbox [96] case, the speed-up setup caveat and the maskVerif exception, and marked assumptions as Inference; I did not check the reference list, the proofs in detail, or the Verus mapping (all Inference). The tag year 2021 follows the published version (the arXiv text says 2020) and was not checked against the paper; the link is the arXiv id from the paper text (its printed DOI is a placeholder).

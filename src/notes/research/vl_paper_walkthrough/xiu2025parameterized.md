@@ -58,13 +58,9 @@ Table I reports completion for all 17 protocols: 7 cache-coherence and 10 distri
 
 The paper does not report repeated-run statistics or confidence intervals. Inference: the results support empirical capability on these models, not a correctness or performance guarantee for arbitrary protocols. Using the results requires trust in the protocol models and verification tools; the concrete search and parameterization must ultimately support the claimed inductive proof.
 
-Inference: a possible VL contribution is to connect these mined candidates to checked Rust/Verus state-transition models and expose failed initialization or preservation obligations. The paper already supplies an automated invariant-search approach, but does not establish the feasibility or cost of that integration.
-
 ## techniques for the catalog
 
 - counterexample obligation construction — encode guards, assignments, unchanged variables, and a negated post-invariant; negate solution equations into candidate clauses
 - heuristic Generalize — intersect prior and solution equation terms, enumerate differences, simplify, check legality, and fall back to regular search when needed
 - type-saturation quantifier inference — distinguish the original-clause N+1 test from the extended-group test, then combine existential groups by disjunction
 - invariant merging and symmetry reduction — merge equivalent, implied, or strengthened clauses and add symmetric assertions to prevent repeated search
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Some different auxiliary invariant concretizations may parameterize to identical parameterized invariants via Hybrid Quantifier Generalization Based on Type Saturation."): checked the full paper, quotations, equations, algorithm descriptions, numerical results, section references, PDF page references, authors, year, and arXiv identifier; corrected page and section references, the extended-group quantifier decision, negation scope, merging prerequisites, and unsupported Verus claims, and noted printed formula/pseudocode ambiguities and a table/prose discrepancy; did not rerun experiments, inspect implementation artifacts, validate cited papers, or test the proposed Verus adaptations.

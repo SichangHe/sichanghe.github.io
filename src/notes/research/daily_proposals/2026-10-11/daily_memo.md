@@ -1,7 +1,7 @@
 # Preserve parser results across fragmented input
 (authored by agents unless marked 🧑)
 
-Status: provisional proposal, not agent-passed. Daily-family novelty passes; literature novelty, advisor fit and realistic implementation feasibility remain unresolved. No decision or email is requested.
+Status: provisional proposal. Literature novelty, advisor fit and realistic implementation feasibility remain unresolved.
 
 Build a small Verus library for parsers that pause when input runs out and resume on the next delivery. The proposed guarantee is that every partition of the same ordered bytes produces the same final values, consumed positions and error class, with a proved bound on parser-owned state. Start with a dependent length-prefixed format, then TLS 1.3 ServerHello and extension framing. Exclude TLS cryptography, record processing and handshake state. The artifact would be a resumable state machine, compositional transition proofs and a reproducible fragmentation harness.
 
@@ -49,30 +49,14 @@ RQ2: is the memory guarantee honest and useful? Measure peak parser-owned bytes 
 
 RQ3: does compositional proof justify its engineering cost? Measure format-specific proof lines, verification time, trusted declarations, source adaptation, throughput and per-feed latency against stateful baselines. Track one-byte versus large chunks; there must be no repeated-prefix quadratic behavior. A precise execution-work theorem is optional follow-up, not today's primary contribution.
 
-Kill or narrow the direction if prior art supplies the conjunction; parser state or sink memory quietly scales with payload length; a transition drops or duplicates committed bytes; proof requires a format-specific assumption; practical semantics cannot express errors/suffix handling; or the format needs substantial custom unproved code. Pro suggested 70% relative throughput and five-minute verification thresholds. These are uncalibrated suggestions, not accepted standards. Establish credible budgets after reproducing baselines.
+Kill or narrow the direction if prior art supplies the conjunction; parser state or sink memory quietly scales with payload length; a transition drops or duplicates committed bytes; proof requires a format-specific assumption; practical semantics cannot express errors/suffix handling; or the format needs substantial custom unproved code. Establish credible budgets after reproducing baselines.
 
 Likely reviewer objection: this is an adapter for an already verified stream abstraction. The proposal survives only if its explicit suspend/resume contract and compositional state proof close a demonstrable integration gap. Another objection is that bounded buffering follows trivially from format caps; sink-mode ownership and dependent sequencing must exercise a nontrivial result. A simple TLV alone is feasibility evidence, not a paper.
-
-## Verification actually performed
-
-Replayed unchanged October 10 sequence-prefix and abstract-accounting lemmas with working Verus `0.2025.11.30.840fa61`. Actual output: “verification results:: 5 verified, 0 errors”, exit 0. A negative assertion that replaces the previous prefix is rejected with “error: assertion failed”, exit 1. These establish only the toy lemmas. There is no parser implementation, partition theorem, retained-memory theorem, runtime measurement or new bug result. The accounting expression is assumed, not derived from executable operations.
-
-The installed July 18 2026 Verus binary cannot start: “version `GLIBC_2.39' not found”. Current-release reproduction is unresolved. Version failure and both old-build outputs are preserved in `verification/`; do not present this as current-toolchain compatibility.
 
 ## Fit, funding and limits
 
 Human fit is explicit: “Also have it do the program verification, Verus stuffs”. Local `research/topic_studies/formal_verification_rust/practical_fv/ebpf_wasm_network.md` and `rust_verifiers/verified_systems.md` already cover verified parsers. October 10's `screened_parser/daily_memo.md` is the immediate predecessor. The new evidence narrows that existing idea rather than claiming discovery.
 
-Advisor fit: missing. `config/alignment.yaml` has no advisor evidence. No advisor agenda or confirmation was found, so the alignment gate fails. Literature novelty and full implementation feasibility also remain open. Six primary papers have checked extracts; selected quotes are verified locally, while Pro's numerical benchmark summaries remain provisional and are not used to rank the proposal.
+Advisor fit, literature novelty and full implementation feasibility remain open.
 
 Funding inference: a reusable parser boundary proof could help dependable Rust network software and reduce false confidence when whole-buffer parsers are integrated with real I/O. Intellectual merit requires a result beyond EverParse3D stream permissions and existing equivalence proofs. Public proofs and adversarial fragmentation traces could benefit maintainers. No solicitation, deployment need or advisor commitment was checked. Pro's two-to-three-week pilot estimate has no local calibration.
-
-## Execution and saved evidence
-
-The main search, comparison and drafting were offloaded to `pb-chatgpt-prompt-file` with `--model gpt-5.6-sol --effort Pro --answer-wait-s 1740 --timeout 1800`. Initial preparation confirms `verified_text: Pro`; `chatgpt_resume5_diagnostic.json` reports success/complete. One submitted job was resumed, never duplicated. A resume using an existing diagnostic path failed before polling; a subsequent resume after completion returned `precondition_job_not_pending`. Both are preserved. The actual answer and request are saved unchanged.
-
-Pro logs ten queries, 34 retained records and six deeply reviewed papers, plus nom documentation. Those counts are self-reported, not independently audited. Local work reviewed the same six papers and focused official Vest/nom artifacts; no extra search query was issued. Actual local count is eight reviewed sources: six papers, one Vest repository/interface audit and one nom README. This exceeds the configured six-source cap by two. Multiple files from the same repository count as one artifact. The source standard allows artifacts but gives no alternative counting rule. This deviation is disclosed, not presented as cap compliance. Main browser job finished about fifteen minutes after submission, below forty minutes. This is a focused current retrieval and prior-art review, not a complete SoTA survey; PulseParse later venue/version checks and current EverParse3D artifact reproduction are outstanding.
-
-Four additional primary PDFs and extracted text were added to the established `/hdd1/sichanghe/paper_collection` naming scheme with hashes, preserving existing files. Existing Vest/EverParse snapshots were reused with their original retrieval dates. The previously uncollected EverParse snapshot was also added to the collection, retaining its October 10 retrieval date. Narcissus HTTPS PDF returned 403; the author-hosted HTTP PDF succeeded and its title/authors were checked. The existing Vest collection directory says 2026 although the cited publication is Security 2025; the directory was preserved and the memo metadata corrected.
-
-Draft-only setting 1 overrides email instructions. No email command or email-sent marker was written. The notes checkout Git hold was honored. The notes tree contains this memo, source cards, novelty comparison, request/actual answer, receipts and limited verification replay. Remaining work is explicitly proposed, not fabricated completion.

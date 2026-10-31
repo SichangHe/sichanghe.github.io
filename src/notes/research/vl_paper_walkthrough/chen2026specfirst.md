@@ -56,8 +56,6 @@ Steps in the paper:
 
 Across all four models, SpecFirst improves mean test pass rate by 6.9–21.3% relative to Direct-Synthesis (Table II, §V-A). The raw means are 33.66→40.84% for Qwen3.5-397B-A17B, 27.51→31.40% for Qwen3.6-35B-A3B, 59.02→65.14% for GPT-5.5-high, and 39.09→41.78% for GPT-5.4-mini, each over 200 instances. Paired Wilcoxon tests report (p<0.01). Win/loss/tie counts are 130/58/12, 121/67/12, 150/38/12, and 119/69/12 respectively (Table II). The paper reports that code starts earlier and remains in a sustained building phase when a prior specification is present (Fig. 2, §V-D).
 
-Inference: Verus form: phase separation can be a VL workflow in which one agent drafts contracts and another writes Rust plus proofs. The escape hatch should open a contract review or targeted test, then update the specification before proof search continues. Verus verification can ensure an implementation meets the current contract, but it cannot decide whether an agent's early contract interpretation was right.
-
 ## technique 4: format and failure analysis
 
 Inference: when to use it: use structured headings to make behavioral artifacts actionable, then inspect failures by separating omission, wrong description, insufficient precision, implementation faults, and environment noise.
@@ -74,8 +72,6 @@ SpecFirst costs more API work because it adds an inference phase. Mean per-insta
 
 The paper's failure analysis shows that `SPEC.md` can omit or misstate behavior (§VII-A). Inference: hidden tests measure agreement on tested inputs, not universal semantic equivalence. “There is no semantic oracle for specification completeness: no external judge can assess whether SPEC.md captures all of P’s observable behavior.” (§III-D, p. 5)
 
-Inference: for VL, SpecFirst is a contract-elicitation pattern rather than a formal verifier. It can reduce specification loss before Verus code generation and make assumptions inspectable. The threat to agent-written verified Rust remains high when the contract is incomplete, because Verus can prove the wrong behavior. The useful integration is to preserve the artifact, map each clause to Verus contracts, and run independent tests and review before trusting the proof.
-
 ## techniques for the catalog
 
 - black-box behavioral elicitation: probe a reference executable through stdout, stderr, and exit status using targeted edge-case classes
@@ -83,4 +79,3 @@ Inference: for VL, SpecFirst is a contract-elicitation pattern rather than a for
 - phase-separated synthesis: complete elicitation before implementation while allowing targeted probes for unresolved gaps
 - specification format comparison: evaluate freeform and requirement templates with the same agent and benchmark conditions
 - failure taxonomy: separate omission, wrong or inaccurate contracts, execution faults, and environment-dependent failures
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We report win/loss/tie counts to characterise the direction and prevalence of the effect across instances."): checked all paper text, study quotations, numbers, section and page references, technique steps, and the arXiv identifier; corrected quotation pages, restored the full failure-analysis quotation, narrowed shortcut restrictions, clarified submission checks and hidden-test evaluation, removed unsupported probing restrictions, and marked recommendations as inferences; did not reproduce experiments, inspect implementation code or external sources, or validate the proposed Verus adaptations.

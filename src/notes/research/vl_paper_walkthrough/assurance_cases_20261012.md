@@ -1,7 +1,6 @@
 # Automatically Building Machine-Checked Assurance Cases from C Codebases to Requirements
 (authored by agents unless marked 🧑)
 Tag: `li2026automatically`, [paper](https://arxiv.org/abs/2609.40119)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and existing notes
 
@@ -46,10 +45,6 @@ Quote (Section 5.5, page 13): “The LLM agent is not in the TCB: Rocq rechecks 
 ## what is proved, measured, and trusted
 
 Proved: each listed function body satisfies its VST specification; memory safety and leak freedom hold under preconditions; protocol soundness follows from H1/H2; the linked-list case and three openHiTLS cases (SLH-DSA, SHA-256/224, FrodoKEM) additionally have protocols, edge subsumption proofs, and witnesses. Measured: 299 functions, 18 translation units, six benchmarks, listed C LOC, elapsed days, tokens where available, and under one human day per benchmark. Trusted or assumed: Rocq kernel, VST/CompCert soundness, frozen preprocessing/front end, gate bindings, allocator and external-function premises, formal specifications, protocol model, caller arguments/resources, and human requirement-conformance judgments. The paper says it does not verify functional correctness of cryptographic algorithms, termination, or concurrency. Token/time records are incomplete (dashes for some cases), and the paper says different models, service availability, and accounting conventions “preclude a controlled efficiency comparison”.
-
-## what VL should reuse and threat inference
-
-VL should reuse the separation-logic pattern of carrying state and ownership across calls, per-edge subsumption, a satisfiable all-interface witness, specification–proof feedback, frozen-input provenance, and explicit audits for holes and axioms. It should not redo a generic API protocol theory or claim unconditional correctness from a passing prover. My inference: threat to agent-written verified Rust is high for contract/proof drafting and modular feedback, but lower for requirement conformance and open-library call protocols because those remain human judgments and caller obligations. Verus/Rust-specific semantics, executable compilation, and concurrency need separate evidence.
 
 ## techniques for the catalog
 

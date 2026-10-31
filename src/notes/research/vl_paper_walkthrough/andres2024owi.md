@@ -20,8 +20,6 @@ Evidence. The B-tree test with a changed comparison reports `Assert failure: fal
 
 Failure and assumptions. The paper says complete bug absence requires the entire execution tree and is generally infeasible; Owi currently explores branches without prioritization heuristics (Section 4, p. 12; Section 6.3, p. 28). Undefined behavior can be obscured by compilation because one Wasm program is only one interpretation of an undefined source program (Section 5.2, p. 19). Inference: Analysis depends on solver behavior, supported Wasm features, and accurate environment models.
 
-Inference: For VL, symbolic failure inputs could complement contract proofs by supplying concrete examples of violated properties. The paper does not establish how to integrate this with Verus.
-
 ## technique 2: value-parametric interpreter
 
 What it is. The concrete evaluator is abstracted over Wasm value operations with an OCaml functor. A `Value_intf` module supplies abstract `Int32.t` and `Int64.t` types and operations such as `add`, `gt`, and `eqz`; the evaluator can use different value representations and operations; symbolic execution additionally requires abstracting the evaluation strategy (Section 3.1–3.2, pp. 6–9). The paper says: "To generalize the concrete interpreter, we introduce a parametric version by abstracting over value types." (Section 3.2, p. 8).
@@ -34,8 +32,6 @@ Evidence. The paper reports that this parameterization supports changing base op
 
 Failure and assumptions. Listing 2 omits Wasm type-error cases (p. 7). Section 5.2.1 states: "Owi can handle all Wasm features (except SIMD instructions) and thus complex C programs." (p. 20). Inference: An inaccurate implementation of the abstract value operations could invalidate analysis.
 
-Inference: VL could reuse the separation between interpreter semantics and value operations. A verified implementation would need contracts for those operations; the paper provides no Verus implementation.
-
 ## technique 3: monadic evaluation strategy
 
 What it is. The evaluator is additionally parameterized over a `Choice_intf` monad with `return`, `bind`, and `select`. `select` turns a symbolic truth value into a monadic Boolean, leaving branch scheduling to the chosen monad. The paper says: "However, to do symbolic execution, we need to not only abstract over the types of values but also over the evaluation strategy itself." (Section 3.3, p. 8). It also says: "In summary, the monadic functorization allows us to share most of the code between concrete and symbolic interpreters, enabling flexible evaluation strategies with minimal overhead." (Section 3.3, p. 12).
@@ -47,8 +43,6 @@ How to do it. (1) Define `'a t`, `return`, `bind`, and a branching `select`. (2)
 Evidence. The same evaluator code serves concrete and symbolic modes; only the `Value` and `Choice` modules change (Section 3.3, pp. 8–11). This sharing is the basis for Owi's later Wasm, C, and Rust front ends.
 
 Failure and assumptions. The paper leaves branch-priority heuristics as future work (Section 4, p. 12). Inference: The monadic interface alone does not establish efficient exploration.
-
-Inference: VL could separate execution effects from instruction semantics, but translating the OCaml design into verified Rust would require additional design and proofs.
 
 ## technique 4: multicore choice monad and cooperative scheduler
 
@@ -90,17 +84,9 @@ Evidence. Owi finds a function-pointer integer-overflow counterexample, a signed
 
 Failure and assumptions. Every environment primitive must be modeled accurately; the paper explicitly calls out disk/network/system calls and C `malloc`, `realloc`, and `free`. Compiler optimization can erase an indirect call, so the function-pointer experiment uses `-O0`; the broader benchmark uses LLVM/clang `-O3` (Section 5.2.1, p. 22; Section 6.1, p. 26). Rust's safety does not protect an undersized buffer when the overflow is in called C code (Section 5.2.3, p. 25).
 
-Inference: VL could use harness properties to help define proof obligations and expose assumptions at foreign calls. The paper does not establish a translation to Verus contracts.
-
 ## what is proved, measured, and trusted
 
 The paper measures Owi's execution time, reached bugs, timeouts, and false-negative counts under specified datasets, hardware, solver, compiler, worker count, and time limit. It demonstrates concrete counterexamples and reports one accepted Rust-library fix. The paper presents no correctness proof of Owi's interpreter or its dependencies. Inference: The reported timeouts prevent a claim of bug absence across all 1,215 analyzed tasks. The Table 2 percentage arithmetic is consistent with the stated denominator: KLEE's 65 “Nothing” results divided by 782 + 65 = 847 equals 7.67%; Symbiotic's 69 divided by 489 + 69 = 558 equals 12.37%; Owi's 0 divided by 676 equals 0.00%.
-
-Inference: For a VeruLaw product that generates verified Rust, Owi could complement proofs by finding concrete failures in generated code and dependencies compiled to Wasm. Its mixed-language examples motivate checking foreign interfaces and their assumptions; the paper does not assess VL or Verus.
-
-## what VL should reuse and what it should not redo
-
-Inference: The reusable ideas are value/effect separation, explicit path conditions, solver-produced witnesses, copy-on-write state, and cross-language harnesses. The paper already supplies a multicore symbolic engine for Wasm/C/Rust and a benchmarked implementation, so rebuilding a generic parallel symbolic executor would duplicate established work. Remaining product work is to connect these ideas to Verus specifications, check generated Rust and FFI boundaries, and preserve explicit assumptions in reviewable contracts.
 
 ## techniques for the catalog
 
@@ -110,5 +96,3 @@ Inference: The reusable ideas are value/effect separation, explicit path conditi
 - multicore choice scheduler — represent branches as resumable coroutines and distribute them through a synchronized worker queue
 - lazy symbolic memory — share parent memory and record only per-state byte modifications, resolving reads through the state chain
 - cross-language harness checking — compile C and Rust to a common Wasm target, generate symbolic inputs, and assert functional or bit-level equivalence
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In this example, we define symbolic values for an integer x and a floating-point value y using Owi’s exposed functions."): checked every quotation, number, section and page reference, and technique step against the full paper; corrected page references, solver-reporting and WASP-speedup inconsistencies, coroutine results and solver storage, and unsupported replay and memory-sharing details; marked recommendations as Inference and removed unsupported Verus-specific claims; did not rerun experiments, inspect implementation code, or independently verify external Verus claims.

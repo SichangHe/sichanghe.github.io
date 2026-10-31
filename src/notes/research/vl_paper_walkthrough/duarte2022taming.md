@@ -53,15 +53,9 @@ The macro checks graph reachability/usefulness and generated Rust types restrict
 
 Inference: agent-written verified Rust benefits because typestate rejects protocol-order mistakes before proof search. The threat is that a wrong automaton specification can make an incorrect protocol appear valid; Verus contracts are still needed for data invariants and method semantics.
 
-## prior work VL should not redo
-
-The paper already supplies a practical Rust DSL, graph validation rules, non-deterministic outcomes, cross-automaton states, and DOT export. Inference: VL can reuse these API patterns and focus verification effort on semantic contracts; assess the reported basic generics/lifetime support before adoption.
-
 ## techniques for the catalog
 
 - typestate DSL: encode legal API call sequences as Rust states and consuming transitions
 - graph validation: reject unreachable or unproductive states during macro expansion
 - outcome and cross-state encoding: use enums and typed nested states for branching and protocol relations
 - protocol visualization: emit DOT graphs and macros for repetitive participant code
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "From the CardPresent state, the reader can issue an authentication operation, done by checking the PIN with the one stored in the card."): read the complete supplied paper text, including references, and the whole study; checked quotations, page and listing references, transition rules, implementation scope and case studies; corrected partial generics/lifetime support, visualization formats, Listing 14 page, Listing 4/5 attribution and inconsistent Dead branch, and separated inferences from paper claims; did not execute the macro, inspect its repository, verify Verus adaptations, or reproduce examples.

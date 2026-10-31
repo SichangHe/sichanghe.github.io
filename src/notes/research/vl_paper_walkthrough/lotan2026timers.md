@@ -47,10 +47,6 @@ Inference: in Verus, represent β as a ghost predicate and prove its initial and
 
 The tool takes a first-order transition system, FO-LTL property, composed implicit ranking, inductive invariant, and optional finite approximations; it generates the timer reduction and verification conditions and discharges them with Z3 (section 6, PDF p. 16). Timers are encoded as interpreted integers, with ∞ represented by −1; quantifier hints and timer-free invariant checks are optimizations (section 6, PDF p. 16). Evaluation uses a MacBook Pro Apple M1 Pro and Z3 4.13.3 (section 6, PDF p. 16). Table 2 reports seconds per example: Ticket 2, Paxos 101, ABP 4, HRB-Correct 135, HRB-Relay 56, Ackermann 0.8, LexArray 0.08, TimestampedQueue 0.5, CascadingQueue 1.2, ReorderingQueue 2.3, MutexRing 0.5, LeaderRing 0.3, ToyStabilization 0.3, Dijkstra k-State 64.8, BinaryCounter 0.02, SAT-Backtrack 0.3, and SAT-CDCL 5.3 (Table 2, PDF p. 16). These are one reported run per example; the table gives no repeated-run denominator or confidence interval. Proof inputs are user-provided rankings and invariants, so Z3 validates supplied obligations rather than discovering all ranking arguments.
 
-The paper contrasts its proofs with liveness-to-safety proofs: for shared examples, its proofs avoid a monitored copy and finite abstraction, and are often shorter (section 6, PDF p. 17). Existing liveness-to-safety methods and their abstractions are work VL should not redo as the same idea. The paper does not prove that a Verus implementation correctly realizes its FO-LTL model, nor that the chosen invariants are complete.
-
-Inference: threat to a product producing agent-written verified Rust is moderate to high for liveness claims. Timers plus rankings give VL a principled way to turn temporal requirements into termination obligations, but the hard parts—ranking choice, invariant discovery, finite-set assumptions, and semantic correspondence—remain trusted human or synthesis inputs. VL should reuse timer/ranking decomposition and SMT-style obligation generation; it must add Rust ownership, panic, integer-overflow, and executable-state correspondence checks.
-
 ## techniques for the catalog
 
 - prophecy timer reduction — augment a transition system with subformula timers and reduce FO-LTL satisfaction to termination of the negated-property product
@@ -59,5 +55,3 @@ Inference: threat to a product producing agent-written verified Rust is moderate
 - inductive invariant validation — discharge initial, preservation, and decrease verification conditions with SMT
 - inductively finite approximation — prove finiteness in infinite domains using a bounded-growth over-approximation
 - timer-aware termination — use decreasing prophecy timers as components of a well-founded ranking
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

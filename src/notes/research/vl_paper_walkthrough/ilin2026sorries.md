@@ -11,15 +11,13 @@ The study compares State A, the first sorry-free version, with State B after an 
 
 What it is. Treat a completed proof as the start of review, not the terminal condition. The review inspects definitions, theorem statement generality, namespaces, file organization, and public APIs as artifacts that future users must compose. “Formal libraries as shared interfaces” (Section 2, p. 2) is the paper's framing: definitions must combine and APIs must support reasoning without unfolding implementations.
 
-When to use it. Use this technique whenever an agent is contributing to a reusable verification library, not merely answering an isolated benchmark theorem. It applies directly to VL because verified Rust APIs are product interfaces: a proof can pass while a future agent cannot safely reuse the definitions.
-
 How to apply it. (1) Run the formalization loop until the project builds without `sorry` or forbidden axioms. (2) Freeze that artifact as State A. (3) Have an expert inspect the source as library code, not just the target theorem. (4) Convert comments into a checklist covering definitions, theorem surfaces, proof style, namespaces, file structure, and API composition. (5) Ask the agent to implement explicit local checklist items. (6) Run a second expert review of State B and record which issues remain global design judgments. The paper's conclusion recommends: “after the proof checks, ask an expert to review the public definitions, theorem statements, namespaces, and API surface, then measure how well the system responds.” (Conclusion, p. 8.)
 
 Verus form. Inference: after `verus` proves a Rust crate, review public structs, traits, contracts, `spec fn`s, and proof APIs for generality and composability. Freeze executable behavior while allowing proof-only refactors; require a second review before calling the crate reusable. Verus proves contracts, not API quality.
 
 Evidence. State A was sorry-free, yet Table 2 records confusing file names, unnecessary definitions, over-specific intermediate theorems, repeated unfolding instead of an API, and long proof walls (Table 2, p. 4). State B fixed file names and specific requested theorem changes; definitions remained the weakest category and API design improved only partially (Table 2, p. 4). This before/after result is qualitative and based on two reviews, not a benchmark percentage.
 
-Failure and assumptions. Expert review is expensive and the paper does not provide an automated metric for future reuse. “The case study shows why” proof completion is incomplete, but it does not prove that every formal project requires the same review schedule (Section 1, p. 2). Inference: VL should treat expert review as evidence about product suitability rather than as a replacement for kernel proofs.
+Failure and assumptions. Expert review is expensive and the paper does not provide an automated metric for future reuse. “The case study shows why” proof completion is incomplete, but it does not prove that every formal project requires the same review schedule (Section 1, p. 2).
 
 ## technique 2: design definitions at the right abstraction level
 
@@ -47,7 +45,7 @@ Verus form. Inference: for a Rust verified data structure, create proof-facing l
 
 Evidence. After review, the dedicated cohomology API substantially cleaned later files, but its own file became nearly 800 lines with 24 highly specific lemmas (Section 4, p. 5). The topological Krull dimension API was closer to library quality because the object was simpler and prompting was specific (Section 4, p. 6). This mixed result shows that “API exists” is not enough.
 
-Failure and assumptions. The paper reports that the agent could not identify many generality mistakes without explicit requests and remained weak at global choices (Section 4, p. 6). A short or compiling API can still be noisy or over-broad. Inference: VL needs API review criteria tied to expected client use, not only line counts or proof success.
+Failure and assumptions. The paper reports that the agent could not identify many generality mistakes without explicit requests and remained weak at global choices (Section 4, p. 6). A short or compiling API can still be noisy or over-broad.
 
 ## technique 4: decompose expensive proofs and use bounded external proving
 
@@ -65,8 +63,6 @@ The Lean kernel proves the final theorem terms; compilation gates detect syntact
 
 Inference: trusted components include the theorem statement supplied by humans, the expert's mathematical judgment, Lean/mathlib definitions, the checker, and any external libraries. The paper does not claim that State B is a universally good API or that its qualitative review predicts future maintenance.
 
-Inference: the threat to VL is substantial at the specification and API layers. Agent-written verified Rust can satisfy a narrow or awkward contract while imposing future transport costs on every client. VL should not redo the paper's generic observation that proof completion alone is insufficient. A useful extension is to measure contract generality, client proof reuse, and refactor transport cost across multiple Rust libraries.
-
 ## techniques for the catalog
 
 - post-proof expert review — inspect definitions, theorem surfaces, namespaces, and APIs after kernel success
@@ -74,5 +70,3 @@ Inference: the threat to VL is substantial at the specification and API layers. 
 - principled proof API construction — replace repeated unfolding with a small set of reusable properties and lemmas
 - proof decomposition under resource limits — split expensive proofs and cache instances instead of raising global budgets
 - bounded external lemma assistance — use external provers for local suggestions while retaining the main kernel as oracle
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

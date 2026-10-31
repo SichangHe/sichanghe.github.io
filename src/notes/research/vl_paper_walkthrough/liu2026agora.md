@@ -55,7 +55,7 @@ Verus form: Inference: define protocol-mode-specific `spec fn` predicates for cr
 
 The complete system using Gemini 3.0 Pro Preview finds 11 protocol-level bugs; across four LLM backends it finds 15 unique bugs (Section 4.2, p. 7). Among 46 generated reports, 34 are real protocol-level bugs, giving a 26.1% false-positive rate (Section 4.2, p. 7). Baseline LLMs find 22 implementation bugs, demonstrating a different target rather than a directly comparable proof result (Section 4.2, p. 7). The system reports an average 5.32M tokens per discovered bug, approximately $40 (Section 4.3, p. 8).
 
-Trusted: repository code and test infrastructure, bug-pattern summaries, protocol constraints, LLM outputs, and manual classification of reports. Inference: Agora is useful to VL as a counterexample and scenario generator for Verus proofs of distributed Rust. It can expose missing invariants around recovery, persistence, message binding, and topology before proof engineering. It does not replace formal verification or prove absence of bugs. Threat to agent-written verified Rust is high if agents accept generated tests as proofs or silently change fault assumptions; it is reduced when every scenario becomes a reproducible test and a Verus lemma obligation.
+Trusted: repository code and test infrastructure, bug-pattern summaries, protocol constraints, LLM outputs, and manual classification of reports.
 
 ## techniques for the catalog
 
@@ -65,4 +65,3 @@ Trusted: repository code and test infrastructure, bug-pattern summaries, protoco
 - protocol-constraint filtering — constrain CFT/BFT scenarios to the deployment’s actual fault model
 - bug-pattern exploitation — use historical bug instances to derive deeper related scenarios
 - global-state deduplication — summarize explored states so agents avoid repeating equivalent attacks
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

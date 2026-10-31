@@ -24,8 +24,6 @@ The extraction algorithm (Appendix H, p. 16; Algorithm 1, p. 17) is operational:
 
 The filtered corpus contains 156,684 functions and 324.5 million tokens, although the main experiments sample about 4,000 code and 4,000 mathematical examples. A 10-gram contamination analysis reports no meaningful overlap with the downstream test sets (Method §3.1, p. 4). The paper's repository sample for structural statistics is 200 repositories (Figures 3–4, p. 4); that denominator is not the filtered corpus size.
 
-Inference: For VL, the same decomposition can build training pairs from Rust: doc comments become a natural-language contract, a root function becomes the implementation target, and called helper functions become dependency context. Rust trait dispatch, macros, unsafe blocks, and Verus specifications do not automatically map to Lean or Verus claims; the paper's structural transfer does not establish semantic equivalence. A Verus version should preserve the exact `requires`/`ensures` and invariant text alongside each function instead of inferring it from a docstring.
-
 ## technique 2: code autoformalisation (CAF) objective
 
 TopoAlign turns each aligned code tree into a synthetic formalization task. The input x is a docstring or mathematical problem statement plus dependency set d. The target y is the root code function for a code example or a Lean formal statement for a math example. Training uses next-token negative log likelihood for both tasks. If α is the fraction of mathematical samples, the combined objective is L = αLmath + (1−α)LCAF (Method §3.2, pp. 4–5).
@@ -33,8 +31,6 @@ TopoAlign turns each aligned code tree into a synthetic formalization task. The 
 The experimental settings compare four training configurations. Baseline uses the pretrained model. Math fine-tunes only on Herald formal-math data (α = 1.0). Code fine-tunes only on unaligned Stack-V2 code. TopoAlign mixes 4,000 aligned code examples with 4,000 Herald examples at α = 0.5; the number of examples is held equal across settings (Experiments §4, p. 6). The paper says: “This combined approach integrates mathematical knowledge and structure with problem-solving capabilities from code, while also mitigating catastrophic forgetting during fine-tuning.” (Method §3.2, p. 5.)
 
 The balanced mixture generally performs best, but the denominator and metric matter. In the DeepSeek-Math ablation (Table 3, p. 8), MiniF2F-valid BEq@1 is 11.84% at α = 0.25, 14.47% at α = 0.50, and 10.96% at α = 0.75; MiniF2F-test is 7.56%, 16.89%, and 14.67%; Putnam is 0%, 0%, and 0%; and ProofNet is 6.15%, 9.09%, and 8.29%. These measure statement typechecking and equivalence under pass@1, rather than theorem-proof generation.
-
-Inference: A VL data pipeline can use the same multitask structure: condition a model on a natural-language contract and verified helper specifications, then generate Rust plus Verus annotations. This is an extrapolation from the paper’s structural alignment method; the experiments do not test Rust or Verus. Acceptance still requires compiling and verifying the generated Rust in Verus.
 
 ## technique 3: two-level evaluation of autoformalization
 
@@ -54,12 +50,6 @@ The paper's main experiments use only a subset of approximately 4,000 code and 4
 
 Inference: the evaluation depends on the Python AST parser and dependency resolver, Qwen-3's generated summaries, the selected data filters, Lean's compiler, the BEq LLM judge and tactics, benchmark reference statements, and the training setup. Inference: the 10-gram check addresses lexical overlap but does not establish semantic independence. BEq depends on proving equivalence to the supplied reference; it does not independently establish that the reference captures the intended problem. Inference: because Code uses unaligned code alone while TopoAlign mixes aligned code with math, their comparison does not isolate alignment from the effect of adding math.
 
-Inference: The threat to agent-written verified Rust is training a model to produce syntactically acceptable annotations that do not encode product intent. TopoAlign's Type 1 and Type 4 errors are direct analogues of missing preconditions and inconsistent representations in Verus. The useful transfer is structural retrieval of helper APIs and specifications; the unsafe transfer would be treating generated contracts as ground truth. VL should use external Verus verification and independent counterexamples for every generated contract.
-
-## what VL should reuse
-
-Inference: VL should reuse the function-level dependency graph, explicit separation of structure from semantics, balanced mixtures of code and formal data, and two-level evaluation. It should not redo a generic code-pretraining study without measuring whether generated Verus specifications are semantically equivalent to human contracts. The paper already tests unaligned code as a control and finds that raw code can degrade semantic accuracy, so a VL study should include that control rather than assuming more code is better.
-
 ## techniques for the catalog
 
 - function-level dependency extraction — parse ASTs, resolve calls and imports, filter project-internal edges, and build a breadth-first dependency tree
@@ -68,4 +58,3 @@ Inference: VL should reuse the function-level dependency graph, explicit separat
 - repository filtering — retain moderate dependency depth and breadth to match formal-proof structure
 - two-level evaluation — measure compiler/typecheck validity separately from bidirectional semantic equivalence
 - contract error taxonomy — classify missing conditions, structural alternatives, type mismatches, and representation inconsistencies before improving data or models
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Since TopoAlign provides structural alignment rather than additional mathematical knowledge, models with stronger inherent reasoning capabilities benefit more substantially, as they can actively leverage the aligned structure."): read the full paper text and study; checked quotations, reported numbers, section and PDF-page references, technique steps, limitations, and the arXiv link; corrected page references, a TC decrease described as a rise, the error-count calculation, unsupported aggregate and causal interpretations, and Python’s corpus share; added the Goedel result and Qwen checkpoint discrepancy; did not reproduce experiments, inspect source code or datasets, or validate the proposed Rust/Verus extensions.

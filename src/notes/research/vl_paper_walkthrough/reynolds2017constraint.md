@@ -20,8 +20,6 @@ Use purification before model finding so the DPLL(T) engine receives ground clau
 
 The paper's Example 1 turns `¬P(b,c) ∧ (Q(b,c) ⇔ ∀x P(b,x))` into ground clauses `F := {¬P(b,c), ¬P(b,k) ∨ Q(b,c), a ∨ ¬Q(b,c)}` and `A := {a ⇔ ∀x P(b,x)}` (§5, p. 11). The authors state, “This conversion from ψ to F and A can be done so that ψ and F ∪ A are equisatisfiable.” (§5, p. 11)
 
-Inference: In Verus, purification could separate quantifier-heavy `spec fn` obligations from a ground solver query by introducing Boolean ghost facts and fresh witness values. This is an orchestration pattern, not a Verus language feature. Verus's specifications and solver translation already perform their own encoding; a VL tool should not assume that manually introducing proxies preserves the intended Rust contract without proving the equivalence.
-
 ## technique: FM-Solve finite-model loop
 
 Use FM-Solve when a quantified formula is expected to have a small model over its free sorts. The algorithm in Figure 3 is the operational core (§5, p. 12):
@@ -91,8 +89,6 @@ Apply the method as follows:
 
 The paper's Example 8 shows `eval` finding that `g(x2,b)` is constant in x2 and therefore returns no critical variable for that subterm (p. 28). Example 9 runs Hm over a three-element domain and returns the single substitution {x1 ↦ b, x2 ↦ a}, which stands for the falsified instances with x1 = b and any x2, rather than enumerating all nine pairs (p. 30). The authors note that their implementation adds the whole set I before recomputing a model, although any nonempty subset is logically enough to force revision (§8.2, p. 30).
 
-Inference: For VL, this suggests a counterexample-guided instantiation layer for quantified Verus lemmas: evaluate a candidate model, identify which quantified variables affect the failing formula, and emit only representative counterexamples. Verus's SMT encoding does not expose the paper's Σ-map or critical-argument index, so implementing this requires an external model representation and a proof that skipped instances are equivalent for the chosen abstraction.
-
 ## technique: E-matching enhancement
 
 Use heuristic E-matching before model-based instantiation when ground terms in the current assignment provide useful patterns (§8.3, pp. 30–31). If E-matching returns instances, use them; otherwise fall back to Hm. The authors recommend delaying E-matching until a candidate finite assignment has bounded equivalence classes, because unrestricted E-matching may not terminate. The bounded domain ensures only finitely many terms are unique up to congruence (§8.3, pp. 30–31).
@@ -109,12 +105,6 @@ For TPTP 5.4.0, Figure 14 contains 12,406 unsatisfiable and 1,958 satisfiable pr
 
 Model-based instantiation scaled to large possible-instance counts: cvc4+f solved only 13 problems with more than 100,000 possible instances (maximum about 5.6 million), whereas cvc4+fm solved 123 such problems, with a maximum above 2.8 trillion (§9.2, p. 37). On 13,041 Isabelle benchmarks, cvc4+fmi solved 824 satisfiable cases and cvc4+i solved 3,858 unsatisfiable cases within 300 seconds (Fig. 16, pp. 37–38). These results are benchmark-specific; they do not imply that finite-model finding dominates ordinary SMT solving. On the Intel unsatisfiable benchmarks the authors observe that “cvc4 with finite model finding is orders of magnitude slower than the SMT solvers on these benchmarks”, and attribute this to exhaustive instantiation with increasing cardinality bounds (§9.2, p. 34).
 
-## trusted boundary and VL threat
-
-The trusted boundary includes purification correctness, the DPLL(T) framework, FCC congruence and cardinality procedures, candidate-model construction, the quantifier-instantiation heuristic, cvc4's implementation, and the semantic assumption that a finite model is relevant to the query. The paper's sat guarantee is conditional on the heuristic's empty-set soundness; it does not prove that arbitrary quantified formulas have finite models. Its experiments use fixed hardware (Xeon E5-2670 for §9.1, E5-1650 for the other experiments, §9.2 p. 33), cvc4 version 1.2 for the TPTP runs, comparison solvers of the versions the paper lists (e.g. cvc3 2.4.1, Yices 1.0.32, z3 4.1 or 4.3), selected benchmark families, and timeouts. Inference: the reported wins support engineering value in those settings, not universal performance.
-
-Inference: This work is a high threat to a product that generates agent-written verified Rust if VL currently treats an SMT `unknown` as a dead end. A finite-model layer could produce concrete counterexamples, guide lemma instantiation, and explain why a quantified contract is too strong. The threat is lower for soundness: a model finder can guide repairs, but Verus must still prove the repaired contract. VL should preserve the paper's separation between candidate-model evidence and proof acceptance, record denominators and timeout settings, and avoid claiming completeness outside bounded abstractions.
-
 ## techniques for the catalog
 
 - purification with proxies — replace quantified subformulas by Boolean proxies and ground witnesses while preserving equisatisfiability
@@ -123,4 +113,3 @@ Inference: This work is a high threat to a product that generates agent-written 
 - defining-map model construction — build finite interpretations from congruence-class representatives and function tables
 - model-based instantiation — evaluate critical variables and enumerate only representative falsifying substitutions
 - E-matching fallback — prioritize syntactic instances, then use finite-model instantiation after domain bounds are established
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "If the number of equivalence classes is less than or equal to k, then the procedure returns true, indicating that M is FCC-satisfiable."): read the whole paper text and checked every quotation, section and page reference, the purification, FM-Solve, FCC (Figures 4-8), defining-map, eval and Hm steps, and all benchmark numbers against the text and Figures 12-16; changed purification page references (p. 11, not p. 10), removed unsupported completeness and indefinite-revision claims, rewrote the defining-map and Figure 9 steps to match Definition 4 and Figure 9, flagged the paper's own text-versus-table disagreements (900 s claim, 3781 vs 3798), and marked own conclusions "Inference:"; did not check the cited external papers, did not re-derive the proofs, and read Figures 12-16 only from the text layer (no scatter plot values).

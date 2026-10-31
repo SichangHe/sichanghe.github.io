@@ -57,12 +57,9 @@ Catalia's implementation preprocesses testers/selectors, uses Spacer/Eldarica/Ho
 
 The authors state that Catalia is stronger on satisfiable instances but weaker than Spacer and Eldarica on unsatisfiable instances (Section 6.2, p. 18). Linear templates cannot express some invariants involving the last list element; conditional templates are future work. The completeness discussion assumes sound and complete backend CHC and SMT solvers. Relative completeness requires finite parameter sets and increasing ranges and degree so the whole considered class is eventually covered; the displayed implementation sequence above grows the ranges at degree 3. Refutational completeness requires fair generation of resolution proofs of the same shape. The authors caution: “The assumption on the fairness above may be too strong in practice; in fact, we do not think an existing CHC solver satisfies that property.” (Section 5.3, pp. 15–16)
 
-Inference: The relevant opportunity for VeruLaw is to synthesize recursive data summaries, then prove their use in verified Rust. This might reduce repeated list/tree proof work. The paper does not evaluate VeruLaw or establish how well this adaptation would work.
-
 ## techniques for the catalog
 
 - catamorphism abstraction: map ADT constructors to integer structure maps and retain an admissibility predicate to obtain sound integer CHCs
 - counterexample-guided refinement: reconstruct spurious abstract resolution proofs, test their ADT counterexamples, and add their universally closed negations as proof obligations
 - template CEGIS: synthesize bounded linear fold parameters from ground counterexamples, increasing degree and parameter ranges as needed
 - model lifting: substitute the catamorphism into an abstract CHC model to construct a model of the original ADT clauses
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To ensure the progress even with this relaxation, we accumulate the necessary conditions Θ for the template parameters of T inside the synthesis loop (line 9) and return Θ to Procedure 1."): checked all paper text including appendices, study quotations, numbers, section/page references, and technique steps; corrected admissibility semantics, synthesis guarantees, timeout handling, completeness conditions, and the Procedure 1 section reference, added RInGen counts, and marked proposed Verus uses as inferences; did not reproduce experiments, inspect the linked artifact, or validate the proposed Verus applications.

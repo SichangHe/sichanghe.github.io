@@ -84,12 +84,6 @@ Inference: the soundness argument relies on TensorRight DSL denotational semanti
 
 Inference: in a Verus product, trusted components include the Rust compiler, Verus translation, solver, tensor model, and every external library contract. TensorRight's finite-rank reduction is a reusable design pattern for generic data structures, but its theorem does not prove a Verus encoding sound. Inference: verifying a few concrete shapes in Rust would leave a gap for arbitrary-rank rewrites unless a separate bound theorem applies. The paper does not measure risks in agent-written Rust. Appendix G (page 61) also limits the bound argument for input aliasing: the per-tensor access counts assume distinct input tensors do not alias. It states, “To account for such cases, (1) one can verify a different rewrite capturing the aliasing relation, or (2) adjust the sufficient rank to account for additional cross-tensor interactions and constraints introduced from them.”
 
-## contradictions and what VL should not redo
-
-The abstract calls TensorRight the first automatic system for arbitrary rank and size within its supported model, while the introduction acknowledges earlier manual proof-assistant work and bounded automatic systems (Sections 1 and 2.3, pages 2–3 and 5–6). Inference: this novelty claim concerns automatic verification; it is consistent with the cited manual unbounded proofs. Reductions still need the user hints described above. Table 1 reports 121 represented and 115 verified rules, whereas Section 8.2 reports 118 implemented and 115 verified; the paper explains that three represented rules were not implemented, so the denominators differ.
-
-Inference: VL should not redo a generic bounded-to-unbounded argument without comparing against this rank-class and counterexample-projection method. A useful new study would test whether the same bound inference works for Verus sequences, maps, and iterator transformations, and measure proof repair under changes to generic dimensions. The paper already establishes the tensor-specific technique and its 115/175 result.
-
 ## techniques for the catalog
 
 - aggregated-axis DSL: represent arbitrarily many uniformly treated dimensions with named and aggregated axes
@@ -98,4 +92,3 @@ Inference: VL should not redo a generic bounded-to-unbounded argument without co
 - counterexample projection: lower a higher-rank failure to a lower-rank instance using rank-independent semantic factors
 - preconditioned rewrites: include attribute and validity predicates in the equivalence obligation
 - reduction index bijections: check user-supplied relations and equality of corresponding reduction terms
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For any rewrite rule, TensorRight symbolically executes the LHS and RHS tensor expressions using operator semantics and interprets them under a general access with symbolic indices, chosen from the domain of accesses of the two expressions."): checked every quotation, number, section/page reference, and technique against all 61 pages, including appendices; corrected references, replaced an inexact quotation, specified the bound and full verification conditions, added reduction hints and aliasing limits, corrected the overlapping precondition category, and removed unsupported Verus claims; did not run TensorRight, reproduce benchmarks, validate a Verus implementation, or independently prove the paper’s theorems.

@@ -123,8 +123,6 @@ The ten longest router paths executed 2.5 times as many instructions as the comm
 
 Inference: the assurance depends on correct symbolic execution and composition, valid data-structure contracts, and the absence of shared mutation outside the stated interfaces. The paper does not independently prove the verification infrastructure correct.
 
-Inference: for VeruLaw, the closest reusable pattern is bottom-up contract composition: verify packet-processing modules and bounded data structures once, then prove a pipeline property from their contracts. Rust ownership can enforce much of the packet/private-state discipline, while Verus can discharge loop, array-bound, and functional contracts. Inference: the paper supplies a reusable verification architecture, but does not evaluate agent-written Rust or Verus, so it does not establish a competitive threat level for VL.
-
 ## techniques for the catalog
 
 - bottom-up symbolic composition — summarize each pipeline element, tag suspect segments, and test candidate paths by composing constraints
@@ -133,5 +131,3 @@ Inference: for VeruLaw, the closest reusable pattern is bottom-up contract compo
 - verifiable key/value abstraction — replace large structures with proved interfaces backed by bounded arrays
 - stateful over-approximation — search arbitrary typed private states, then refine suspects using reachability
 - property-specific proof — reduce crash, instruction-bound, and filtering claims to path feasibility and composed summaries
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "In the first sub-step, we assume that the private state can take any value allowed by its type (i.e., we over-approximate)."): checked the entire paper, study quotations, numbers, section and printed-page references, technique steps, and claimed scope; corrected quotations, Table 1 and Condition 3 page references, path-composition scope, insertion-failure semantics, and evaluation and stateful-verification limits; did not reproduce experiments, inspect implementation code, read technical report [16], or validate the proposed Verus adaptations.

@@ -87,12 +87,6 @@ Translation fidelity is uneven. Table 2 reports 100% feasibility accuracy for AS
 
 The symbolic pipeline provides certificates: clingo either returns an answer set or proves none, and optimization solutions have zero optimality gap (§7, p. 7). The paper notes that missing constraints that still yield a satisfiable encoding are caught only by the external oracle during evaluation, not by the repair loop (§8, p. 8). This is a decisive limitation for production.
 
-## what is trusted, prior work, and product threat
-
-Trusted components are clingo, the ASP grounder, the fixed decision contract, core-extraction implementation, and the benchmark oracle. The LLM translation, repair decisions, prompts, and model-written constraints are untrusted. The core does not prove that the natural-language problem is encoded correctly; it proves only that named generated constraints conflict. The paper states: “The benchmark uses templated descriptions and a single assign/2 decision relation, which fits discrete constraint and optimization problems but not problems with derived numeric quantities.” (§8, p. 8) The benchmark is templated, uses one relation, and has limited numeric optimization (§8).
-
-Inference: VL should not redo the generic idea of solver-backed generation, typed diagnostics, minimal conflict extraction, or leakage-free repair. It should test how Verus or SMT diagnostics can identify conflicting Rust specifications while preserving immutable contracts. Inference: threat to agent-written verified Rust is high for specification drift and moderate for proof search. A verifier can reject invalid code, but a missing or over-strong contract can still produce a formally verified wrong program. Minimal-core feedback helps only when the failure is an explicit contradiction; it does not detect every under-specification.
-
 ## techniques for the catalog
 
 - fixed decision contract — normalize generated constraints under one relation and classify solver outcomes deterministically
@@ -101,4 +95,3 @@ Inference: VL should not redo the generic idea of solver-backed generation, type
 - leakage-free core repair — return only constraints from the model's own program, never the ground-truth answer
 - generic-error ablation — compare core feedback with identical repair using only the raw solver message
 - verifier-pattern triage — transfer domain-specific failure categories to Rust/Verus specification repair (Inference)
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

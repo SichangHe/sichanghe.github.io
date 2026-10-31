@@ -5,8 +5,6 @@ Tag: `wang2024proving` , [paper](https://arxiv.org/abs/2405.14414v1)
 ## result
 POETRY (PrOvE Theorems RecursivelY) searches a proof sketch level by level. It replaces detailed intermediate proofs with Isabelle’s `sorry`, verifies the outline, then recursively proves each deferred conjecture. “This approach allows the theorem to be tackled incrementally by outlining the overall theorem at the first level and then solving the intermediate conjectures at deeper levels.” (abstract, p. 1)
 
-Inference: this is a search-control technique, not a way to accept incomplete proofs. A final theorem is accepted only after all `sorry` placeholders are replaced by verified proofs. A possible VL application is searching long Verus proofs with nested helper lemmas; the paper does not evaluate Verus.
-
 ## technique 1: extract level-specific proof sketches
 
 method
@@ -42,11 +40,7 @@ The case study proves `n_mult_closed` in 71.2 seconds with two levels, while GPT
 
 The search uses 32 candidates per expansion, beam-search decoding, at most 128 expansion steps, recursion depth at most 10, a 10-second proof-step timeout, a 600-second global timeout, and a 120-second local timeout below the first level (§A.2, pp. 14–15). The appendix also describes 600 seconds as five minutes (§A.1, p. 14), an arithmetic error; §A.2 repeats 600 seconds. The limits remain explicit: “Although this leads to consistent performance improvements, there is no theoretical guarantee that it will avoid the problem of infinite action space for each proof step generation and the problem of exponential search space with respect to the depth of the search tree.” (§6, p. 10)
 
-Inference: VL could test whether helper-lemma hierarchies produce similar gains under fixed verification budgets. This paper supports a search strategy, not a measured assessment of its effectiveness for verified Rust.
-
 ## techniques for the catalog
 - level-specific sketch extraction: retain current-level proof steps and replace deeper subproofs with explicit deferred children
 - recursive best-first search: pause at a verified outline, solve child conjectures recursively, and backpropagate failure or success
 - complete deferred proofs: require proofs of every conjecture skipped by `sorry` before marking the root PROVED
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "From this case, we can see that by recursively proving the theorem, the proof with 11 steps is broken down into 3 proof sketches with a maximum length of 4."): checked the full paper, quotations, numbers, section and page references, sketch extraction, recursive search, and limitations; corrected the arXiv link, footnote misreading, search-tree description and references, removed unsupported trust claims, and qualified Verus proposals; did not reproduce experiments, inspect implementation code, or test Verus adaptations.

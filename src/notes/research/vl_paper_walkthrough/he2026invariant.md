@@ -36,8 +36,6 @@ Verus form. Inference: model residuals, tolerances, and hold-rate as mathematica
 
 The authors claim three properties for the deterministic stage. Exhaustive enumeration gives determinism. Solver screening plus confidence acceptance gives soundness relative to the solver and data assumptions. Monotone completeness means any unknown invariant that holds at least as often and on at least as much data as a known accepted one is accepted too, because the confidence bound is monotone (section 3, p. 5). The paper says these properties are sketched and defers formal proofs to future work; they are therefore claims, not established theorems.
 
-Inference: a Verus proof could formalize monotonicity for a finite confidence rule, but would not prove the statistical model or LLM grammar quality. This distinction is essential for VL: deterministic checking of a confidence computation does not establish that the inferred relation is a real network invariant.
-
 ## evidence and denominator checks
 
 The public evaluation uses Abilene and GEANT WAN traffic-matrix snapshots packaged in CrossCheck format, plus a production WAN with O(100) routers and O(1000) links (section 4, pp. 5–6). Figure 3 reports 100% recall of the expert catalog for Autogram on both Abilene and GEANT; NetNomos reaches 19.8% on Abilene and 15.1% on GEANT. Table 1 reports production hold-rates: two-end counter agreement 96.5%; router and network flow conservation 92.3–97.5%; non-negativity and zero self-demand 100%; topology and demand presence symmetry 92.4–97.3%; demand conservation termination 73.2%; origination 68.6%. These percentages are hold-rates for the listed invariant families, not percentages of benchmarks or candidates.
@@ -46,7 +44,7 @@ The paper reports that NetNomos emits 1,645 rules on GEANT, including 946 vacuou
 
 ## proved, measured, and trusted
 
-The system measures recall, hold-rate, rule counts, and runtime on the stated datasets. It does not provide formal proofs of the claimed guarantees, a complete false-discovery denominator, or evidence that metadata is correct. The LLM grammar proposal, variable annotations, solver implementation, confidence calibration, residual assumptions, and expert catalog are trusted inputs or components. Inference: for agent-written verified Rust, Autogram's strongest reusable pattern is a narrow untrusted semantic proposer followed by deterministic, checkable synthesis. The threat is specification drift: if a grammar omits a needed relation or metadata is wrong, Verus can faithfully prove the wrong contract. VL should not redo generic LLM invariant generation; it should connect generated contracts to checked executable behavior and record uncertainty explicitly.
+The system measures recall, hold-rate, rule counts, and runtime on the stated datasets. It does not provide formal proofs of the claimed guarantees, a complete false-discovery denominator, or evidence that metadata is correct. The LLM grammar proposal, variable annotations, solver implementation, confidence calibration, residual assumptions, and expert catalog are trusted inputs or components.
 
 ## techniques for the catalog
 
@@ -57,4 +55,3 @@ The system measures recall, hold-rate, rule counts, and runtime on the stated da
 - residual-derived tolerance — infer a per-candidate soft tolerance from residuals
 - calibrated confidence acceptance — accept only when held-out hold-rate clears a proxy-calibrated bound
 - monotone completeness claim — use an accepted invariant as a threshold for candidates with at least its coverage
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

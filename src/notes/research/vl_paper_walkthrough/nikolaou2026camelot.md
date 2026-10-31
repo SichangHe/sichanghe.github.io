@@ -84,15 +84,9 @@ Evidence. Across 97 AgentDojo tasks, exact required side effects were recovered 
 
 Limits. Extraction accuracy is benchmark-specific and depends on a fixed vocabulary. Static checks can over-taint and cannot see dynamic readers; accepted plans may still be rejected by CaMeL at runtime (Section 6, pp. 18–19).
 
-## proved, trusted, and product threat
-The paper measures policy coverage, agreement, temporal-property detection, extraction accuracy, and controlled enforcement. In AgentDojo, static coverage was 22/28 CaMeL policies; the remaining six needed runtime state (Section 5.1, p. 12). Across 97 tasks, both systems had 42 passes, 22 failures, and 17 blocks; CaMeLoT-only pass was 9 and CaMeL-only pass 7 (Table 3, p. 13). Trusted components include AST extraction, typed grounding/compiler, nuXmv, and CaMeL runtime enforcement. The finite model is an abstraction, so model-checking a plan does not prove tool internals or dynamic confidentiality.
-
-Inference: Threat to agent-written verified Rust is medium to high for temporal safety and workflow ordering: a pre-execution model can reject unsafe sequences and provide useful counterexamples, but finite abstraction and over-tainting can block valid plans. VL should not redo generic CTL model checking or typed-grounding lessons; it should connect such a gate to Verus proof checking, ownership effects, and explicit runtime side effects.
-
 ## techniques for the catalog
 - AST-to-FSM abstraction: convert restricted agent plans into finite control-flow models with labelled effects
 - provenance taint lattice: conservatively propagate trust levels and expose taint propositions to policies
 - CTL temporal policies: express safety, ordering, next-step, until, and liveness requirements over plan states
 - counterexample-guided plan repair: feed model-checker traces back to the planner and repeat verification
 - typed obligation grounding: compile constrained LLM proposals to CTL through trusted vocabulary checks
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -51,8 +51,6 @@ Where a step below is marked inference, it is mine, not a study's.
 Inference, not in the studies as a recipe: log the toolchain version with every kept proof.
 A proof verified by one Verus version may not verify on another.
 
-## variants by paper
-
 ### verifier-filtered self-evolution (SAFE)
 
 Study: [SAFE](../vl_paper_walkthrough/automated_proof_generation_for_rust_code_20261012.md).

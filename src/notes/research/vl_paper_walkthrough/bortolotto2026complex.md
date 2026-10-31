@@ -77,13 +77,7 @@ Verus form. Inference: a finite approximation can have a contract stating its er
 
 The formalized results are Lemma 2.1, Lemma 2.2, Theorem 1.1 for polynomials and entire functions, and Corollary 1.2 (Section 4, p. 13). The authors state: “The library builds with Lean v4.30.0 against Mathlib v4.30.0” (Section 4, p. 13). There is no performance experiment or comparison of LLMs on proof completion in this paper. The authors state: “The ideas in this manuscript are completely devised by humans.” They also write: “The main part where LLMs were instrumental was in the Lean formalization part.” (LLM Usage, p. 4.) Section 4 says: “All Lean statements reproduced or cited in this section were also read and checked by a human against the corresponding mathematical statements in the note.” (p. 13.)
 
-The paper states: “The trusted base is therefore Lean’s kernel together with the pinned Mathlib” (Section 4, p. 13). Inference: a VL review should likewise identify the checker, its dependencies, the encoded specification, and any unproved external assumptions.
-
-## contradictions, scope boundaries, and prior work VL should not redo
-
-The paper consistently limits its claim to squares. It explicitly says that the argument does not prove stability for arbitrary G in Fock space and lacks the broader theorem of the companion work (Section 3.1, p. 12). Theorem 1.1 and Corollary 1.2 assert the existence of absolute positive constants (p. 4). Section 4.1 explains the formal phase distance as “the infimum of a set of real numbers rather than replaced by a chosen minimizing phase” (p. 14); the coercivity theorem also takes the infimum over all real c.
-
-Inference: explicit definitions, lemma decomposition, axiom inspection, and a proof-to-code correspondence table should be treated as demonstrated practices, not claimed as new VL techniques. Inference: any claim of a new contribution for Rust or Verus needs evidence beyond this Lean case study.
+The paper states: “The trusted base is therefore Lean’s kernel together with the pinned Mathlib” (Section 4, p. 13).
 
 ## threat to a product of agent-written verified Rust
 
@@ -96,4 +90,3 @@ The paper reports human-directed LLM assistance for a Lean analysis proof, with 
 - side-condition verification — formalize weight bounds, Jacobians, integration-by-parts conditions and convergence obligations
 - finite-to-infinite approximation — prove polynomial cases, establish norm convergence, and pass to the entire-function limit
 - kernel and axiom audit — pin Lean/Mathlib versions, reject `sorry`/`admit`, and inspect reported axioms
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To apply the change-of-variables formula to Φθ , we check that this map is one-to-one and that its Jacobian determinant is bounded away from zero."): checked the full text, quotations, theorem scope, constants, proof steps, section/page references, formalization reports, and arXiv identifier; corrected the malformed measure quotation, coefficient-identity page, outer-shift quotation, integration-by-parts count, and approximation terminology, and removed unsupported Verus claims while marking transfer advice as inference; did not independently build Lean, inspect the linked repository, or verify cited papers.

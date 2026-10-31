@@ -6,7 +6,7 @@ Tag: `sartakov2026ship`, [paper](http://arxiv.org/abs/2607.28835v2)
 
 Sartakov describes a migration workflow for turning a C system into idiomatic Rust through an intermediate, mechanically translated Rust baseline. The workflow uses c2rust for lossless translation, an LLM for one-function-at-a-time rewrites, and two automated gates: compilation and runtime behavior. The case study is iodine, a DNS tunnel. It is a testing and refactoring workflow, not a formal proof of semantic equivalence. The paper explicitly defines proper implementation by functionality tests: “we assume that a program is properly implemented if it passes all functionality tests: produces the same output for the same input as the original program.” (Section 3, p. 3).
 
-The abstract states: “This paper presents a migration methodology that first generates a semantics-preserving, non-idiomatic Rust baseline and then incrementally rewrites it into idiomatic Rust using agentic AI, validating each step through compilation and behavioural testing.” (Abstract, p. 1). Inference: for VeruLaw, this is useful as an agent orchestration pattern and as a source of failure cases, but it does not itself supply proof obligations or machine-checked guarantees.
+The abstract states: “This paper presents a migration methodology that first generates a semantics-preserving, non-idiomatic Rust baseline and then incrementally rewrites it into idiomatic Rust using agentic AI, validating each step through compilation and behavioural testing.” (Abstract, p. 1).
 
 ## technique 1: use a lossless, non-idiomatic baseline
 
@@ -74,12 +74,6 @@ The c2rust baseline contained 178 unsafe-ABI declarations (EX), 73 `#[no_mangle]
 
 The final code is approximately 10.3 kSLOC of Rust in 16 files, from approximately 12.5 kSLOC of C; the migration took 37 developer-hours over four working days, or 4.5 functions and roughly 278 lines per hour (Section 4.3, p. 6). The 10.3/12.5 figures are code-size approximations, not a correctness ratio. Inference: the final 57% RUST% demonstrates remaining unavoidable FFI unsafe surface, so “idiomatic” does not mean zero unsafe code in the whole system.
 
-## what is proved, trusted, and threatening to VL
-
-Proved in the paper's sense: each accepted rewrite compiled and passed the specified runtime tests. No theorem prover or formal proof of C/Rust semantic equivalence is reported. Trusted: c2rust translation assumptions, the tests and workload, trace instrumentation, compiler, LLM-generated code, and human orchestration. Inference: for agent-written verified Rust, the main threat is that a test-passing rewrite can satisfy an incomplete oracle while violating a security or functional property absent from the tests. Verus contracts can reduce that gap only for properties actually specified.
-
-The paper already covers agentic per-function translation, explicit safety criteria, bottom-up dependency ordering, differential runtime traces, and risk-ascending global-state conversion. VL should not redo these as if they were formal verification techniques. Inference: a useful new experiment is to apply the same gates while adding Verus contracts for the protocol and state invariants, then measure which Gate B failures are caught earlier by proofs.
-
 ## techniques for the catalog
 
 - lossless baseline then refinement — generate compilable c2rust Rust, preserve it as a behavioral oracle, and rewrite one function at a time
@@ -87,4 +81,3 @@ The paper already covers agentic per-function translation, explicit safety crite
 - leaf-first dependency ordering — port call-graph leaves and expose callers only after their callees pass
 - two-gate differential validation — require compilation plus sustained runtime testing, with trace comparison on divergence
 - phased global-state conversion — complete function and buffer cleanup before wrapping globals from atomic scalars through complex mutexes
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

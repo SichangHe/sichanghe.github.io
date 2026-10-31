@@ -93,12 +93,6 @@ Trusted components include the soundness of the U-to-D approximation, D's model 
 
 The principal failures are incompleteness and search-space dependence. Natural proofs and quantifier instantiation can fail even when a U proof exists; no candidate in H can be synthesized if P omits a necessary predicate; and finite-H convergence says nothing about the truth of the specification. Inference: agent-written verified Rust remains threatened by missing or misleading predicates, vacuous contracts, and model extraction that overfits a reduction artifact. The technique lowers manual invariant search cost, but it does not establish that the chosen Rust contract expresses the product requirement.
 
-## what VL should reuse and should not redo
-
-Inference: VL should reuse the CD-NPI loop, the CD-NPI-to-ICE reduction, Houdini's fixed-point conjunction learner, and template-based predicate generation. These are complete operational techniques in the paper's stated setting and can guide a Verus-side candidate generator.
-
-Inference: VL should not redo a generic claim that solver failures can guide invariant search; this paper already gives the extraction rules, reduction theorem, convergence theorem, and two benchmark implementations. A new VL contribution would need evidence on Rust ownership, Verus diagnostics, or predicate discovery beyond the fixed-template setting.
-
 ## techniques for the catalog
 
 - cd-npi invariant synthesis — extract weakening, strengthening, or inductivity constraints from models of failed reduced verification conditions and iterate candidates
@@ -106,4 +100,3 @@ Inference: VL should not redo a generic claim that solver failures can guide inv
 - houdini conjunction learning — compute the strongest conjunction consistent with propagated ICE examples and stop in at most n + 1 rounds when one exists
 - natural-proof heap templates — instantiate shape, key, size, and heaplet predicates over program variables before learning heap invariants
 - bounded-quantifier invariant learning — reduce quantified obligations to finite ground instances, then feed failed models into the same CD-NPI learner
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The number of semantically different hypotheses in the hypothesis space H is finite because the set P is finite."): read the whole paper text (pp.1-23 including Appendix A) and checked every quotation, the Table 1 numbers quoted (inverse, sparseMatrixMul, 12 rows), the 82-routine and ten-suite counts, the hardware description, and the technique steps against the text; the tag and arXiv link (1712.05581v2) match the paper. Changed: the inductivity-constraint step (the paper requires non-provability, ⊬B, not η ⇒ γ or γ ⇒ χ); the pages of the natural-proof, extraction-rule, worked-example and Definition 3 citations; the Related Work label for the fixed-predicates quote; the predicate-template source in §4 (pre-/post-conditions, not arbitrary expressions); the annotation-hole description in §3; the simplified-programs wording; added the paper's stopping condition. Did not check: the PDF layout of the two-column figures beyond the text extraction, Figure 4 box-plot values, the cited external works, and the Verus-form inferences (these are marked Inference and are not claims of the paper).

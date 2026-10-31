@@ -57,12 +57,9 @@ The authors explicitly limit confidence in their manual labels: “While we are 
 
 Inference: Verification claims depend on the encoded property and execution model. A product using agent-written verified Rust should separately examine its specifications, external-library contracts, environment models, and verifier correctness. The reported false positives suggest testing whether omitted callbacks or external state changes could invalidate its claims.
 
-Inference: VL should reuse the benchmark design, explicit soundness weighting, and adversarial semantic probes instead of building another unlabelled collection of examples. It should add Rust/Verus implementations and independently checked violating executions, because Solidity's EVM-specific account and balance semantics do not transfer directly.
-
 ## techniques for the catalog
 
 - ground-truth verifier benchmark: maintain informal properties, multiple satisfying/violating implementations, tool encodings, and an explicit judgement for every task
 - soundness-weighted scoring: score strong and weak claims separately, make false positives more costly, and give non-expressible tasks and timeouts zero
 - semantic boundary probes: isolate external calls, reentrancy, asynchronous balance changes, caller identity, temporal sequences, and liveness in minimal contracts
 - reproducible toolchain: automate task generation, verifier execution, and result aggregation across every benchmark task
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Certora fails to understand that a call to an address may lead to additional code execution, including a further call to one of the methods of the contract."): checked quotations, numbers, sections, pages, scoring, technique steps, and the arXiv link against the full paper; corrected the scoring quotation, category totals and strong-claim counts, distinguished guarded and unguarded probes, added tool versions, and marked proposed Rust/Verus adaptations as inference; did not rerun the benchmark, inspect its repository, or independently establish the ground truth.

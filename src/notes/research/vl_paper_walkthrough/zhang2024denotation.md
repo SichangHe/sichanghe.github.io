@@ -50,8 +50,6 @@ The authors report mechanization: “All results of this article are formalized 
 
 The connection to CompCert's original small-step semantics remains incomplete. The supplementary equivalence proof covers extended WHILE and CFG with I/O events, but: “However, this proof does not yet cover three features of Clight—namely, procedure calls, unconditional branching (e.g., goto), and structured control flow (e.g., break and continue).” (Section 11, p. 54). Other scope limits are explicit: “Moreover, we have not yet addressed concurrent settings or higher-order features (i.e., features of higher-order languages).” and “Furthermore, unlike interaction trees or small-step semantics, our semantics is not directly executable.” (Section 11, p. 57).
 
-Inference: for VL, the useful experiment is explicit behavior refinement for a Rust API or transformation with a justified state relation. This paper does not establish Rust/Verus results, and its reported Rocq development was not independently rebuilt in this check.
-
 ## techniques for the catalog
 
 - behavior-set denotations — separate normal, aborting, and divergent behaviors and compose their traces algebraically
@@ -59,5 +57,3 @@ Inference: for VL, the useful experiment is explicit behavior refinement for a R
 - state-matching behavior refinement — relate source and target representations and preserve behavior up to the source-abort policy
 - refinement algebra — compose refinement obligations using preservation laws, then solve the resulting relation algebra
 - Kripke interface composition — index query/reply relations by worlds and compose compilation phases and modules
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Since the union and composition operators are ubiquitous in the semantic definition of composite statements, we define the following enhanced RAs to facilitate structured compiler verification."): checked the whole paper and study, quotations, numbers, section/page references, technique steps, and scope; corrected the author/year tag and DOI link, quotations and references, explained refinement algebra and divergence, marked adaptations as Inference, and added the incomplete Clight semantics-equivalence proof; did not rebuild Rocq proofs, inspect the implementation, or verify the proposed Rust/Verus adaptations.

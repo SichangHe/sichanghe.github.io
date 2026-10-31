@@ -65,11 +65,7 @@ Steps: commit the waiver beside ADL; review it in a pull request; run downstream
 
 The paper evaluates expressiveness, latency, rule coverage, detection accuracy and deliverable generation on three piki samples (section 6.1, PDF p. 20). Telecom has 42 ADL files and 30 applicable rules; modular datacenter has 38 files and 34 rules; mechanical keyboard has 29 files and 28 rules (Table 7, PDF pp. 20–21). Samples 02 and 03 passed all L2–L4a checks with 13 and 27 passes respectively (section 6.2, PDF p. 21).
 
-SD-HWE-Bench is designed to test agents generating ADL from natural-language requirements. Its metrics are Pass@1, Pass@k, latency, requirement coverage and human sign-off; the initial domain uses discrete rack slots, algebraic constraints and enumerable interfaces to keep piki feedback near 200ms (section 6.4, PDF p. 23). Inference: VL can adapt this design by measuring first-pass Verus verification, repair pass@k, verifier latency, contract coverage and expert acceptance, while retaining failed proof obligations as traces.
-
-## trust, reuse and product threat
-
-The trusted boundary includes ADL parsing, pydantic schemas, rule implementations, AABB approximations, CAD/CAE tools, waiver approvers and human sign-off. The information representation hypothesis and RLVR predictions are claims awaiting the planned agent experiments; SD-HWE-Bench is still in design and task authoring is in progress (section 6.4, PDF p. 23). Inference: the threat to agent-written verified Rust is high if a source representation omits intent or if a waiver becomes an unreviewed escape hatch. VL should reuse orthogonal declarations, layered diagnostics, waiver audit trails, violation injection and CI stage policies; it should not redo generic DSL design without deciding which Rust invariants are represented and which remain external.
+SD-HWE-Bench is designed to test agents generating ADL from natural-language requirements. Its metrics are Pass@1, Pass@k, latency, requirement coverage and human sign-off; the initial domain uses discrete rack slots, algebraic constraints and enumerable interfaces to keep piki feedback near 200ms (section 6.4, PDF p. 23).
 
 ## techniques for the catalog
 
@@ -79,4 +75,3 @@ The trusted boundary includes ADL parsing, pydantic schemas, rule implementation
 - diagnostic CI integration: emit machine-readable failures with stage-specific blocking policies
 - violation injection: evaluate detection with known semantic edits and report denominator, latency and false positives
 - agent benchmark design: score pass@k, latency, requirement coverage and human sign-off on generated declarations
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

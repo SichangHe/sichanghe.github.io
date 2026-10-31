@@ -37,7 +37,7 @@ Verus form. Inference: retain executable witness tests to check whether the beha
 
 To test whether explicit instructions fix generation, the authors reran 50 prompts from an earlier v1 corpus for five models with a system prompt requiring overflow guards and security best practices (§4.4, PDF p.4). The baseline mean was 64.8% (162/250 artifacts) and secure-prompt mean 60.8% (152/250), a four-percentage-point reduction. The paper states: “Explicit security instructions reduced the mean vulnerability rate by only 4 percentage points—from 64.8% to 60.8%.” (§4.4, PDF p.4). Llama worsened from 68% to 70%; Mistral improved from 66% to 54% (Table 4, PDF p.5). The v1/v3 model mismatch is explicit: Claude's row uses Claude 3.5 Sonnet, while the main leaderboard uses Claude Haiku 4.5 (§4.4, PDF p.4).
 
-Verus form. Inference: prompting is a generation intervention, not a proof technique. VL should treat any generated contract or arithmetic guard as untrusted until Verus discharges it. The authors describe the result as “suggesting that security instructions do not override low-level memory management patterns learned from training data.” (§4.4, PDF p.4). This proposed explanation was not tested directly.
+Verus form.
 
 ## technique 4: static-tool differential comparison
 
@@ -53,8 +53,6 @@ The authors state: “We fed all 89 valid Z3-proven artifacts back to their gene
 
 Inference: the SMT results establish satisfiability of encoded vulnerability conditions; treating them as program exploits additionally requires correspondence between the encoding and source semantics. Measured in the paper: generation rates, selected PoC runtime faults, static-tool recall, prompt ablation, and self-review recall. Inference: assumptions or untested matters include prompt representativeness, COBALT's pattern extractor, each Z3 encoding's correspondence to source semantics, compiler/sanitizer behavior, and untested CWE categories. The authors state: “All models were tested at temperature 0; higher temperatures may yield different distributions.” They also state: “We did not test multi-turn interactions or retrieval-augmented generation contexts.” (§5.5, PDF p.7). Go, Rust, and JavaScript are proposed future targets (§6, PDF p.7).
 
-Inference: VL work can reuse the pattern-to-SMT method and executable witness tests, recording model settings, denominators, and which properties the encoding covers. The reported percentages do not measure the security of Verus-verified Rust.
-
 ## techniques for the catalog
 
 Inference: these are reusable descriptions of the paper’s methods.
@@ -64,4 +62,3 @@ Inference: these are reusable descriptions of the paper’s methods.
 - secure-prompt ablation — compare identical prompt corpora with and without explicit security instructions
 - differential static-tool evaluation — measure each analyzer's recall against the Z3-proven denominator
 - generation–review asymmetry test — ask the generating model to review its own formally proven outputs and report false negatives
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We fed all 89 valid Z3-proven artifacts back to their generating model and asked it to review the code for security vulnerabilities."): checked all paper text, study quotations, numbers, section and PDF page references, and technique steps; corrected quotations and page references, clarified corpus differences and witness limits, marked proposed adaptations as inferences, and used the paper's arXiv identifier for the link; did not inspect the dataset, rerun experiments, or verify COBALT encodings or Verus proposals.

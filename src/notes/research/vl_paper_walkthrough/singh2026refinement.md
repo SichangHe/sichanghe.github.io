@@ -36,17 +36,9 @@ Inference: In Verus proof repair, map failed `assert`/postcondition obligations 
 
 Evidence: removing MCS causes measurable drops in the paper's ablation (Table 3, §4.2, pp. 6–7); the paper also reports that ProofWriter is an exception where PoT reaches 98.4% versus VERGE's 89.9% (§4, p. 6). The authors explain this as overhead from decomposition/routing on synthetic deductive tasks, not as a contradiction of the other benchmark results.
 
-## trust, limits, and product threat
-
-The solver proves only the translated formulas. The paper warns that SMT can verify a “semantically incorrect SMT code” when translation is wrong (§6, p. 9), and that commonsense claims lack mathematical guarantees (§6, p. 9). Greedy MCS is polynomial-time and order-dependent; exact MCS is computationally intractable (Appendix B, pp. 15–16). The system adds latency: the paper reports over two seconds for standard chain-of-thought versus the VERGE loop (§6, p. 9). Its experiments use GPT-OSS models, six benchmarks, and a maximum of three iterations (§4, p. 6).
-
-Inference: For a product that emits agent-written verified Rust, VERGE is a substantial process threat and opportunity: it can localize contradictory generated specifications before Verus proof repair, but it cannot establish that a natural-language requirement was translated faithfully or that an SMT abstraction matches Rust behavior. The product should keep the natural-language claim, generated predicate, solver result, and Verus proof as separate evidence layers. Existing VERGE work means VL should not redo generic MCS feedback for arbitrary LLM claims; a novel contribution would need Rust/Verus-specific translation and measured soundness.
-
 ## techniques for the catalog
 
 - semantic routing — classify atomic claims and send formal types to SMT while using ensemble checks for vague or commonsense claims
 - consensus autoformalization — generate three SMT formulas and accept only a solver-proven majority equivalence
 - MCS repair — compute a minimal clause-removal set from UNSAT feedback and feed the named claims back into iterative generation
 - variance-aware acceptance — combine claim scores, joint satisfiability, and a standard-deviation penalty before stopping
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

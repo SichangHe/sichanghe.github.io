@@ -1,7 +1,6 @@
 # Interactive Safety Verification of Distributed Protocols by Inductive Proof Decomposition
 (authored by agents unless marked 🧑)
 Tag: `schultz2026interactive`, [paper](https://doi.org/10.1007/978-3-032-28079-4_1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes
 
@@ -54,8 +53,6 @@ how to do it
 In the SimpleConsensus example, the authors first analyze a Decide CTI, add `LeadersDecide`, then analyze a BecomeLeader CTI, add `LeaderHasQuorum`, and finally add `NodesVoteOnce`. They report that once `NoConflictingValues` and `LeadersDecide` are discharged, “we no longer need to consider these lemmas in our reasoning.” (section 4.2, page 12)
 
 Verus form (inference)
-
-When `cargo verus` reports an unproved postcondition, isolate the transition branch and capture a concrete failing model if available from SMT. Add a ghost lemma that excludes the model, then prove its preservation under every transition. Rust proofs do not expose TLA+ CTIs in the same UI, so VL would need to retain SMT countermodels or generate bounded executable traces. The backward order is a workflow discipline, not a Verus language feature.
 
 evidence and limits
 
@@ -131,8 +128,6 @@ how to do it
 The paper identifies three practical problems—“CTI Management,” “Localization,” and “Proof Status and Structure” (section 4.1, page 10)—and uses node-local status to address each. The AsyncRaft graph exposed cycles involving local log properties and message properties, which would be difficult to see in a flat conjunction.
 
 Verus form (inference)
-
-A VL proof orchestrator can index verification failures by Rust function and transition branch, retain model values, and render a dependency graph from lemma calls. This would make agent iteration local and auditable. The underlying Verus checker still validates the complete contracts; a graph UI cannot establish soundness.
 
 evidence and limits
 
@@ -220,12 +215,6 @@ Scimitar's five TLA+ benchmarks are SimpleConsensus (6 variables, 5 actions, 111
 All final proof graphs were checked by TLAPS, but the paper gives no number of local obligations, prover runtimes, failed candidate lemmas, or independent reviewers. The model-checking runs use finite bounds and are therefore exploratory. The graph theorem proves safety only under the stated transition model and initiality conditions. Trusted elements include TLA+ semantics, TLC/Apalache CTI generation, TLAPS, the specification itself, and the assumption that bug-finding occurred before proof; the paper explicitly says systems are “assumed to be correct” because bug-finding methods were applied upfront (section 2, page 4).
 
 I found no arithmetic contradiction in Table 1: each reported median is at most its total variable count, and the LOC/lemma columns are internally plausible. The paper's claim that AsyncRaft is beyond recent automated invariant tools is comparative and tied to the cited tools and specification complexity; it is not evidence that no future automated tool can solve it.
-
-## implications for VL
-
-The direct opportunity, my inference, is a Verus proof workbench that stores a graph of ghost lemmas and transition branches, captures SMT countermodels, computes conservative field slices, and asks an agent to propose one support lemma at a time. This could keep agents from repeatedly rewriting a monolithic invariant and make proof progress inspectable. The main threat to a product of agent-written verified Rust is incomplete invariant development: an agent may prove a few local postconditions while missing a support edge, an action branch, or an initial-state obligation. The paper's workflow makes those omissions mechanically visible, but does not automate the invention of the missing lemma.
-
-VL should not redo a generic invariant-workbench pitch. The reusable contribution is the exact graph semantics, the slice formula, node-local CTIs, and the bounded-search/final-proof split. New work should measure Verus-specific costs: ownership and aliasing in slices, trait/action decomposition, useful CTI formats, and whether explicit graph guidance reduces agent iterations on real Rust protocols.
 
 ## techniques for the catalog
 

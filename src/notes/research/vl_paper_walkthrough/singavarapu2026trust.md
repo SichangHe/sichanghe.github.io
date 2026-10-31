@@ -5,8 +5,6 @@ Tag: `singavarapu2026trust`, [paper](https://doi.org/10.48550/arxiv.2609.38237)
 ## purpose and core claim
 The paper evaluates a deterministic exporter from C to a small Lean 4 interpreter. It separates explicit translator holes from translated code that is type-correct but semantically wrong. “A construct the translator declined to handle leaves an explicit, labeled gap, and coverage counts it.” (introduction, §1, p. 2) By contrast, “a construct the translator handled incorrectly produces well-typed output that type-checks, is counted as translated, and computes the wrong answer.” (introduction, §1, p. 2)
 
-Inference: this distinction is directly relevant to VL because a Verus pass can certify only the encoded specification and translated assumptions; it cannot by itself show that a generated model matches the intended Rust behavior.
-
 ## technique 1: a three-tier trust ledger
 
 what it is
@@ -40,11 +38,7 @@ Inference: use a reference Rust implementation or compiled baseline as the execu
 limits and trust boundary
 The Core interpreter, Lean kernel, Joern parser, C compiler, fixture coverage, and pinned toolchains remain trusted. The paper notes that Joern parses C without preprocessing, so absent definitions can evade the ledger (§2, p. 4). Its claims are existential; it does not estimate defect frequency or transfer magnitudes to another codebase (§1, p. 2). “Coverage is therefore an accounting of what was attempted, not of what the codebase contains.” (pipeline, §2, p. 4)
 
-## relevance to VL
-Inference: the threat to agent-written verified Rust is high when evaluation reports only verifier pass rate or placeholder-free output; silent semantic mismatches can survive both. A ledger plus differential execution should accompany Verus attestations, especially for generated specifications, external calls, parser behavior, and unsafe boundaries. Existing VL work should not redo the generic observation that coverage and fidelity can diverge; it should test the narrower Verus question with fixed contracts, reference executions, and explicit denominators.
-
 ## techniques for the catalog
 - three-tier trust ledger: report hole-free, call-closed, and dynamic-hole-risk populations with construct-level causes
 - differential execution oracle: compare generated semantics with a real implementation on isolating fixtures and retain negative controls
 - denominator audit: attach every percentage to its exact exported population and distinguish metric movement from behavior movement
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

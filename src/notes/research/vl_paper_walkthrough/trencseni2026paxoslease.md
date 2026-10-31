@@ -76,8 +76,6 @@ Evidence and limits: the abstract composition checks the lease/Paxos boundary an
 
 Proved or checked: lease exclusivity, activation quorum, timer containment, quarantine participation, and composition admission invariants within finite TLC configurations; timing arithmetic in TLAPS; executable replay in Python (Sections 4–5, pp. 4–5; Appendix B, pp. 9–10). Inference: the study treats the following as trusted: TLA+/TLC/TLAPS implementations, the model-to-code correspondence, clock-rate and message assumptions, and the abstract Paxos composition boundary. The paper finds algorithmic failures and implementation risks involving stale messages, scalar quorum counting, unsafe wall clocks, learner delivery assumptions, and unsigned-expiry races (Section 7, pp. 6–7; Appendix D, pp. 11–13). The audit did not run these executions against the shipped binaries (Section 9, p. 7).
 
-Inference: VL should reuse this pattern—executable transition model, invariant proof, mutation-based negative tests, and explicit timing assumptions—before attempting verified Rust. Reimplementing PaxosLease’s basic lease rules would duplicate work; the open product risk is refinement from the checked model to asynchronous Rust handlers, clocks, transports, and learner visibility. The threat to agent-written verified Rust is high when agents silently weaken timer start, identity counting, release matching, or restart-incarnation checks; it is lower when those rules are represented as proof obligations and mutation tests.
-
 ## techniques for the catalog
 
 - executable state-machine specification — encode proposer and acceptor actions, timers, crashes, and messages as a checked transition system
@@ -85,5 +83,3 @@ Inference: VL should reuse this pattern—executable transition model, invariant
 - rule mutation counterexamples — weaken one guard at a time and require a safety trace
 - quorum identity discipline — count distinct acceptor identities and preserve exact owner-and-ballot matching
 - lease/Multi-Paxos composition — control recovery and fast-path admission with a live lease while keeping Paxos state independent
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The two executions of Section 6 come from directed searches whose state constraints only prune behaviors, so each is a behavior of the full specification."): checked all quotations, numbers, section and page references, and technique steps; corrected the safety-rule claim, model scope, state-count description, composition details, references, and paper link using its arXiv identifier; did not rerun TLC, TLAPS, Python witnesses, or historic binaries, or verify the proposed Verus adaptations.

@@ -116,12 +116,6 @@ Verus form
 
 Inference: encode the symbolic matrix relation as a Verus `spec fn` and prove the solver's returned entry against the relation. Use trace structures and `ensures` to connect local repairs to the relation. The paper's Prolog engine and benchmark generator are external; Verus can check a ported solver, not the LLM's choice of abstraction.
 
-## evidence, trust, and VL implications
-
-The paper proves no theorem that ABPR finds a correct latent rule. It measures Pass@2, solved-task fractions, repeated-run variance, and ablations. Trusted elements include background predicates, training labels, Prolog semantics, the meta-interpreter, LLM oracle and repairer, prompts, model APIs and weights, benchmark scoring, and the human interpretation of the intended rule. Inference: this is a strong pattern for VL's proof repair loop: generate code, extract a machine-checkable semantic trace, localize a failed contract, propose a small patch, and rerun Verus. The threat is circularity if the same agent both invents the specification and judges its repair; Verus should remain the independent checker.
-
-The paper already covers APD-style proof-tree localization, stochastic top-k search, execution-feedback baselines, and ensemble variance control. VL should not redo these as generic claims. A distinct VL experiment would measure whether Verus proof obligations provide a better trace than Prolog derivations for Rust repairs, with denominators for accepted repairs and regressions.
-
 ## techniques for the catalog
 
 - bottom-clause initialization: construct a most-specific explanation and have an LLM generalize it into an executable hypothesis
@@ -129,5 +123,3 @@ The paper already covers APD-style proof-tree localization, stochastic top-k sea
 - localized abductive repair: use a failed trace to identify faulty predicates and propose a local hypothesis change
 - bounded top-k refinement: iterate verifier-guided repairs while retaining the highest-coverage candidates in a fixed history
 - parallel diversity search: run independent seeded trajectories and select two diverse, verification-consistent outputs
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

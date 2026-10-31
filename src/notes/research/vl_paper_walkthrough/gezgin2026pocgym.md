@@ -26,8 +26,6 @@ Assumptions and failure: the benchmark vulnerable locations are correct, AspectJ
 
 What it is: combine CVE and CWE descriptions, an LLM-generated goal and validation check, repository metadata, revision/build constraints, and a formatted static trace. The generated guidance forces exactly two sections, Goal and Validation, converting prose into an observable exploit target.
 
-Steps: (1) supply CVE/CWE text and source tree to an LLM; (2) require one concrete exploit outcome and one programmatic check; (3) add CWE reference examples (for example, path traversal checks file contents and command injection checks creation of `/tmp/command-injected`); (4) append vulnerable revision, execution environment, and output requirements (Sections 4.1.1 and 4.1.3). In the paper's Plexus example, the goal is `touch /tmp/command-injected`, and validation tests whether that file exists (Section 4.1.1, p. 4).
-
 Verus form (Inference): translate the goal into a specification over state, such as an `ensures` relation between attacker input and permitted filesystem effects. Keep environmental effects abstract or behind trusted specifications; Verus cannot prove an external Java build or a shell side effect without a modeled interface.
 
 Evidence and limits: the paper gives this as a design component, not an ablation isolating guidance quality. A generic or inaccurate CVE description propagates into a simulated exploit; CVE-2018-1002200 is the paper's example (Section 5.2.1, p. 9).
@@ -52,11 +50,8 @@ Verus form (Inference): turn each category into a proof boundary review: prove t
 
 Measured: runtime-valid and post-hoc-valid counts, average trace coverage, and qualitative causes. Trusted inputs include CWE-Bench-Java's vulnerable locations, CodeQL's trace extraction, AspectJ instrumentation, build environments, and the LLM-generated guidance. The paper's conclusion is that “dynamic trace validation is necessary to avoid overestimating true exploit correctness.” (Section 7, p. 10)
 
-Inference: for VL, the direct threat is methodological: an agent can satisfy an `ensures`-looking test or a harness assertion while proving the wrong function or specification. A Verus proof checker closes a stronger gap than a runtime marker, but incorrect specifications and trusted `external_body` code remain analogous sources of false confidence. VL should already have a post-generation audit that checks the claimed property, call target, and trusted assumptions before treating a verified Rust artifact as product evidence.
-
 ## techniques for the catalog
 - runtime/post-hoc split — accept a fast execution predicate only provisionally, then compare an instrumented trace with trusted vulnerable locations
 - structured vulnerability prompt — force a concrete exploit goal, validation check, repository constraints, and trace context
 - ranked taint traces — score CodeQL source-to-sink paths against LLM-extracted vulnerability components and retain the top five
 - feedback loop and taxonomy — regenerate with execution/coverage feedback and classify hardcoding, simulation, bad validation, benign use, and brute-force failures
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

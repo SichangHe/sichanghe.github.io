@@ -38,8 +38,6 @@
   - pure mathematics, sequential data-structure exercises, compiler syntax tests and puzzles were excluded; concurrent resource protocols and crash/storage protocols remain explicitly labeled
   - papers found: 0; PDFs saved: 0 in this source-only slice; neighboring review slices collect papers separately; human effort figures were not found in the inspected source evidence
 
-## TLA+ source cases
-
 ## TLA+, PlusCal, TLAPS and Apalache source inventory
 
 - measurement and status convention
@@ -4535,8 +4533,6 @@
 - property extraction is a first pass over named local definitions and theorem statements, supplemented by exact model configuration checks; arbitrary unnamed assertions and indirectly imported properties need manual follow-up
 - no model checker or proof assistant was executed; repository status evidence should not be read as independent verification
 - no papers downloaded for this source-only inventory
-
-## TLA+ external sources and extra proof artifacts
 
 ## TLA+ external source repositories and author source archives
 
@@ -12656,10 +12652,7 @@ Rows distinguish source proof artifacts from fresh verification runs. Counts are
   - PoWER API soundness arguments are verification-method proofs rather than a concrete protocol case, so the storage rows do not count them separately
   - Proof presence does not establish that every declaration is proved: platform/network/crash models and explicit assumptions remain trusted; ARC/Rc overflow assumptions and ignored experimental examples are marked in their rows
 
-## Isabelle and Lean
-
 ## Isabelle/HOL source cases
-
 
 Property descriptions are plain-English interpretations of the linked declarations. Counts include comments and blank lines. A source theorem is evidence of a proof artifact, not a successful build in this inventory. A lexical omission scan can miss imported axioms and can match prose.
 
@@ -14673,4 +14666,3 @@ Property descriptions are plain-English interpretations of the linked declaratio
   - tool/status: Lean 4 / Veil; Veil source model; trust false proof reconstruction configured; not built here
   - size: 513 physical lines across 1 .lean files in this file; imports outside this scope excluded
   - source: [exact file](https://github.com/larskuhtz/cadence/blob/54ee1d41f0949d6ab140ee1a20b274fd361f23d6/Cadence/FallbackReceipt.lean)
-

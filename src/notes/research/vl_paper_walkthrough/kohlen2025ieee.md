@@ -80,12 +80,6 @@ evidence: The generated LLVM implementation replaces mcsta’s unverified interv
 
 Verus form: Inference: use ownership and slices to express the sparse arrays, with `requires` for non-overlapping ranges and valid indices and `ensures` for representation invariants. A corresponding proof would need to establish the sparse representation relation and account for the compilation boundary. The paper does not establish this proposed Rust translation.
 
-## trusted boundary, contradictions, and VL implications
-
-The paper describes Isabelle’s kernel as the trusted proof checker: “a small, trusted kernel implements the inference rules of the logic.” (Section 2.1, p.125). Inference: the verified LLVM theorem should be distinguished from assumptions about its execution and integration; the IEEE, IRF and LLVM formal models describe behavior, while actual hardware, compilation and unverified mcsta code must satisfy those models and theorem preconditions. The authors state that “As long as parts of the toolchain remain unveriﬁed, we rely on the correctness of the mcsta implementation for the preprocessing.” (Section 5, p.139). The experiments measure 49 QVBS instances, not all MDPs; observed convergence does not prove universal floating-point convergence.
-
-Inference: what has already been done that VL should not redo: the paper supplies a complete pattern for top-down refinement from an abstract specification to executable low-level code, including explicit numerical rounding relations and memory representation proofs. VL can reuse the pattern for Rust verified components rather than inventing ad hoc floating-point error estimates. Inference: for agent-written verified Rust, this suggests examining floating-point contracts, compilation and parser assumptions alongside source-level invariants; the paper does not measure any threat to Verus or agent-written code.
-
 ## techniques for the catalog
 
 - MEC reduction — transform MDPs to trivial/bottom end components while proving reachability preservation
@@ -93,4 +87,3 @@ Inference: what has already been done that VL should not redo: the paper supplie
 - directed-rounding refinement — relate real values to lower/upper IEEE floats and prove bound-preserving operations
 - separation-based code refinement — synthesize LLVM from abstract programs while proving data and heap relations
 - end-to-end Hoare triple — compose abstract, numeric and data refinements into one executable correctness statement
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The IRF allows us to reuse the correctness proofs of the abstract speciﬁcation, and reason about the correctness of the implementation in isolation."): checked every study quotation, number, section and printed-page reference, technique step, and stated proof boundary against the full paper; corrected quotations, page references, comparison semantics, FMA preconditions, the four-list/two-index representation, convergence wording, and unsupported Verus and trusted-base claims; did not check the proof artifact, generated LLVM, hardware behavior, or reproduce benchmarks.

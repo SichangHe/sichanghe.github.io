@@ -16,7 +16,7 @@ How to apply it. (1) Define the positive set `S` and message channels. (2) Choos
 
 The paper warns that learning this equilibrium is difficult for two reasons: worst-case loss is harder than expected loss, and Stackelberg equilibria are bilevel optimization problems. A standard timescale-separated update makes the prover’s learning rate larger than the verifier’s (`αv = o(αp)`), with a Hessian correction; the authors discuss LOLA as an approximation when the inverse Hessian is intractable. They caution: “While LOLA may fail to converge, interpolating between the LOLA update and LookAhead (Zhang & Lesser, 2010) leads to local convergence to stable fixed points in differentiable games under self-play (Letcher et al., 2019).” (Section 4.2, p. 7.)
 
-Verus form. Inference: a VL implementation can use the game only to generate candidate explanations or test cases. The Rust checker should express the actual safety property in `requires` and `ensures`; a `proof fn` can establish each protocol step, and loop `invariant`s can preserve the relation between the concrete state and an abstract specification. Neural equilibrium, reward design and worst-case sampling remain outside the Verus proof. Acceptance in such an implementation should require the candidate code to pass Verus.
+Verus form.
 
 ## technique: adversarial worst-case learning
 
@@ -40,7 +40,7 @@ What it is. The `zk-nip` protocol adds a second verifier and a simulator. The si
 
 How to apply it. (1) Define the verifier’s observable message distribution. (2) Add a simulator that receives the instance and label but does not interact with the prover. (3) Train the second verifier to maximize the worst-case transcript distance and the simulator to minimize it. Give the prover a lexicographic objective: first minimize the original nip loss, then minimize the simulator loss among those minimizers. (4) Check statistical closeness for both labels, as this paper’s stronger condition requires. The hierarchy has more than two levels: the deciding verifier commits before the prover, which commits before the second verifier and simulator; their zero-sum subgame is solved at a Nash equilibrium (Section 5.2, p. 8). The proof states: “we would like the prover to minimise ϵk conditional on the system being valid, as opposed to reducing ϵk while potentially violating the validity of the system.” It also assumes a tight zero-knowledge bound, zero approximation error for the second verifier and simulator, and strong Stackelberg tie-breaking in favor of the prover (Appendix C.1, pp. 26–27, footnote 9).
 
-Verus form. Inference: zero-knowledge is usually outside VL’s functional goal. If secrecy matters, model an allowed observation as a specification and prove that proof-only state is erased; do not claim distributional indistinguishability from a deterministic `proof fn`. Verus can prove that an implementation exposes no designated secret field through its API, but cryptographic or probabilistic indistinguishability needs an appropriate formal model.
+Verus form.
 
 ## evidence: graph isomorphism
 
@@ -52,12 +52,6 @@ The second experiment uses APPS. GPT-4o-mini modifies human solutions into valid
 
 All protocols modestly improve final test accuracy over an isolated verifier. The paper reports: “The nip and mnip protocols see the greatest improvements in accuracy (around 11%).” The prose does not specify whether this means percentage points or a relative percentage (Section 6.2, p. 9). To assess worst-case behavior, the authors sample 10 rollouts per test point and count points on which the verifier is always wrong. Most protocols improve over the solo baseline, with MNIP best. Vanilla expert iteration can collapse toward rejection because only correct verifier rollouts enter training. “Stabilised” expert iteration replaces the verifier guess with the true label for an annealed partition, beginning at 80% and decreasing linearly to zero. This greatly reduces mode collapse and improves the measured always-wrong fraction for every protocol. The solo verifier obtains much higher mean accuracy; mean accuracy changes are small and mixed for the interaction protocols (Section 6.2, p. 10; Appendix D.2.3, p. 33). Inference: the always-wrong fraction measures repeated failures on held-out points; it does not bound error over all inputs and replacement provers.
 
-## trusted boundary and VL threat
-
-The paper supplies proofs of its equilibrium theorems and releases code, datasets and generation scripts. It does not prove that neural training reaches the required equilibria, that APPS bugs represent real software faults, or that two domains generalize to real systems. Its Ethics Statement says the methods are “far from being ready to enforce safety in complex real-world applications” and that the research “should not – in its current form – be understood as guaranteeing safety.” (p. 11.) The discussion also notes that the graph experiments omit the more advanced methods of Sections 4.1–4.2 and the code experiments omit RL-based learning (Section 7, p. 10).
-
-Inference: neural interactive proofs offer VL a useful adversarial review architecture, especially multi-agent counterexample generation and worst-case evaluation. A verifier verdict cannot replace a Verus proof: a learned verifier can accept a subtle bug, while training incentives can teach a prover to persuade it. The safe division is to use NIP-style agents to propose tests and proof obligations, then let Verus’s checked `requires`/`ensures` contracts decide acceptance.
-
 ## techniques for the catalog
 
 - worst-case prover–verifier game — train a verifier against a strategic prover with worst-case rather than only average loss
@@ -65,4 +59,3 @@ Inference: neural interactive proofs offer VL a useful adversarial review archit
 - multi-prover cross-examination — use provers separated during interaction; the validity theorem requires an approximate correlated Stackelberg equilibrium
 - zero-knowledge simulator — minimize transcript distance after satisfying the original prover objective; statistical closeness limits information beyond the answer
 - stabilised expert iteration — replace verifier guesses with true labels on an annealed training partition to reduce rejection collapse
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We next prove the correspondence result for nip games, which avoids the issues with Proposition 16 by considering approximate equilibria and by not blurring the distinction between soundness and completeness when considering worst-case outcomes."): checked the full text, quotations, numbers, section and page references, protocol steps, theorem assumptions and experimental scope; corrected the zero-knowledge loss sign and objective priority, multi-prover separation, equilibrium qualifications, graph and code result wording, and Ethics Statement attribution; did not rerun experiments, inspect the released code, or independently verify the mathematical proofs or Verus adaptations.

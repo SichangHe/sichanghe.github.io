@@ -41,13 +41,9 @@ On ten larger RepoTransBench projects (9,973–91,588 LoC), EvoC2Rust with DeepS
 
 The authors state: “The main internal threat comes from correctness verification, which currently relies on predefined test cases.” (section 5, p. 9) They limit the evaluated settings to single-threaded user-level C with ISO C standard library dependencies and identify multithreading, third-party libraries, and kernel code as future work (section 5, p. 9). They also acknowledge possible training-data leakage and limited evaluation across foundation models. The scale analysis attributes high SafeRate partly to encapsulating low-level operations in a relatively fixed set of unsafe blocks (section 4.4, p. 8).
 
-Inference: VL could reuse the skeleton, retrieved mappings, and repair ordering, but compilation, tests, and SafeRate do not establish semantic equivalence or a Verus proof. The implementation and safety of the custom abstractions would need separate examination.
-
 ## techniques for the catalog
 - project skeleton: parse metadata and compile a Rust module skeleton with typed `unimplemented!()` placeholders before body translation
 - safety-preserving mappings: encode C/Rust type, conversion, macro/function, control-flow, operator, global, and variadic correspondences as transformation patterns
 - top-K pattern retrieval: select patterns by embedding similarity and inject them with paired demonstrations into translation prompts
 - cascading repair: run bracket repair, regex rule repair, then LLM refinement, retaining candidates that reduce compiler errors
 - incremental evaluation: insert translated modules into the skeleton and revert modules that fail compilation
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To avoid this issue and ensure a meaningful evaluation, we remove components in reverse order, beginning with the final step (LLM refinement)."): checked all study quotations, numbers, technique steps, section references, and PDF page references against the full paper; corrected page references, benchmark/model scope, metric interpretation, the tag year and paper link, and unsupported Verus claims; recorded the conflicting Vivo-Bench module results; did not inspect source code, run translations, reproduce experiments, or validate the proposed Verus adaptations.

@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `baumgartner2026scicoqa`, [paper](https://arxiv.org/abs/2601.12910)
 
-
 ## scope and result
 
 SciCoQA defines paper-code discrepancy detection as a cross-modal verification task: given a scientific paper and its repository, identify meaningful semantic conflicts between the described method and its implementation. The paper defines a discrepancy as “a semantic conflict between the scientific method described in the publication and its actual implementation in the codebase, such that the code does not faithfully reproduce the reported method.” (Section 3, p. 4) It excludes ordinary bugs, configurable hyperparameter defaults, and trivial engineering details.
@@ -72,12 +71,6 @@ Inference: use a two-input checker: the paper's claimed contract and the Rust/Ve
 
 Inference: implement the code-only ablation by asking an agent to inspect Rust and Verus annotations without seeing the prose specification. Compare its detections with the paper-plus-code run; a large drop indicates that the requirement is not recoverable from code. Use Verus's `assert`, `requires`, `ensures`, loop `invariant`, and `proof fn` constructs only for claims that can be formalized. A checker must not treat a proof that passes as evidence that the specification is complete.
 
-## what is proved, trusted, and relevant to VL
-
-Inference: SciCoQA measures detection against curated discrepancy labels; it does not prove that every real mismatch was found, that synthetic diffs represent natural errors, or that an LLM judge is sound. The dataset construction, source repositories, model prompts, judge, manual filtering, and annotation policy are trusted. The paper itself states that its synthetic set is "a short-term response" and that real-world performance should be read from the real subset (Section 7, pp. 9-10). The authors conclude: “current LLMs show promise as assistants, they cannot yet serve as autonomous verifiers of paper-code faithfulness.” (Section 6, p. 9)
-
-Inference: for VeruLaw, the threat is direct. An agent can produce Rust whose Verus proof passes while omitting a requirement stated only in a design document, or can implement a different algorithm under a compatible but weaker contract. SciCoQA's paper-plus-code alignment task suggests a separate review stage that extracts requirements, checks code and proof annotations against them, and reports omissions as first-class failures. The measured 46.7% real-case recall warns against using an LLM as the sole check; proof success validates the formalized contract, not the completeness of the requirement source.
-
 ## techniques for the catalog
 
 - discrepancy taxonomy — classify semantic paper-code conflicts as Difference, Paper Omission, or Code Omission and label Algorithm, Model, Loss, Evaluation, Data, or Training
@@ -85,4 +78,3 @@ Inference: for VeruLaw, the threat is direct. An agent can produce Rust whose Ve
 - controlled synthetic generation — create exact-match code diffs across CS and non-CS repositories while retaining real cases for absolute evaluation
 - cross-modal verification — prompt an LLM with paper plus code, judge predicted discrepancies against verified labels, and measure recall
 - code-only ablation — remove the paper to quantify how much detection depends on explicit cross-modal evidence rather than code or model memory
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We fill the prompt up to 90% of the context size to leave space for the reasoning (if supported by the model) and output."): read the whole paper text (main text and Appendices A-F) and the whole study; checked every quotation, number, section and page reference (PDF page numbers) and technique step; changed the sections and page numbers (definition p. 4, Table 1 p. 6, synthetic data p. 5, Section 5.1 and 5.2 p. 8, Table 2 p. 9, r values p. 10), the paper count (204 synthetic papers, 72 real, 276 total), the wrongly worded quote of the definition ("alteration to"), the judge validation (20 discrepancies, not 20 papers; the 91.9% F1 is Qwen3 32B against the GPT-OSS judge), the reproducibility-report sources, and added the Table 8 versus Table 2 discrepancy; removed the word "independently" and the unsupported "found during analysis"; marked own conclusions "Inference:"; kept the tag and the arXiv link (arXiv:2601.12910 matches the paper header); did not check the cited works, the figures, the example tables (Tables 12-13), or the dataset itself, and the Verus mapping sections are the study author's inference, not checked against the paper.

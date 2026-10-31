@@ -109,13 +109,7 @@ CatCoder can use all relevant APIs and still miss algorithmic behavior. Its disp
 
 ## what is proved, measured, and trusted
 
-The study measures compilation, unit-test pass rates, CodeBLEU, model generalization, and prompt-construction latency. It does not prove semantic correctness with a formal verifier. Inference: Compilation and test results depend on the repository and benchmark tests; they do not establish correctness for all inputs. Inference: For VL, CatCoder’s most valuable transfer is a repository index that feeds declarations and existing contracts into the model before Verus checking; the paper’s pass@k numbers cannot be treated as proof rates.
-
-## contradictions, limitations, and product threat
-
-The abstract reports up to 14.44% and 17.35% improvements over RepoCoder in compile@k and pass@k, while the generalizability section reports an 8.4% average Rust pass@1 improvement over RepoCoder (abstract, p. 1; section 5.3, p. 17). Inference: These are maxima on Java using CodeLlama-13B-Instruct versus an average on Rust across six models, so the claims are compatible. Timing excludes inference, so the 25× speedup concerns prompt construction (section 5.4.1, p. 19).
-
-Inference: The threat to agent-written verified Rust is moderate and direct: better repository context can reduce invented APIs and improve compilation, but it cannot guarantee that a generated proof establishes the intended contract. The paper already evaluates Rust generation, yet it does not evaluate Verus specifications or proof obligations; VL should reuse the context architecture while retaining Verus and behavioral checks.
+The study measures compilation, unit-test pass rates, CodeBLEU, model generalization, and prompt-construction latency. It does not prove semantic correctness with a formal verifier.
 
 ## techniques for the catalog
 
@@ -123,4 +117,3 @@ Inference: The threat to agent-written verified Rust is moderate and direct: bet
 - static type-context extraction: resolve dependent types with a static analyzer and serialize their fields and method signatures
 - integrated repository prompt: combine target code, retrieved chunks, and type context before frozen-LLM generation
 - cached context construction: cache embeddings and analyzer state to amortize repository indexing across sequential tasks
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This suggests that CatCoder offers a more substantial advantage in the context of the evaluated Java projects."): read the full paper and study; checked quotations, numbers, section/page references, technique steps, tag year, and paper link; corrected references, sampling semantics, type-context scope, result scope, and the version year/link, and noted the Table 5/7 discrepancy; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

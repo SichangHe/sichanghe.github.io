@@ -53,14 +53,6 @@ The parameter studies show a tradeoff. Smaller (N') gives a longer robustness ta
 
 The paper states a limitation: “However, when the fraction of fake users is large (e.g., 49%), the derived r and the corresponding certified Precision@N/Recall@N/F1-Score@N may reduce to 0.” (section 7, p. 1714). The threat model permits each fake user to rate all 1,682 MovieLens-100k items; the authors suggest bounding the number of ratings per fake user to improve certificates (p. 1714). The proof applies to arbitrary randomized base algorithms, and the paper states: “Hard voting has to be used to derive the theoretical guarantee of the ensemble recommender system.” Bounds on the reach of targeted promotion attacks remain future work (p. 1715).
 
-## what is proved, trusted, and relevant to VL
-
-The formal contribution is a lower-bound theorem for the defined ensemble (Theorem 1, p. 1708) and a confidence theorem for the finite estimator (Theorem 2, p. 1709). Inference: these theorems do not verify implementations of IR, BPR, random sampling, or Beta quantiles, nor do they establish that an input matrix is clean or that (I_u) captures the user's actual interests. The empirical evaluation covers three MovieLens datasets (section 5, pp. 1710–1714).
-
-Inference: VL can reuse the architecture for verified decision layers around untrusted ranking code. A Verus wrapper can prove row sampling, duplicate exclusion, item-set bounds, deterministic tie handling, vote-count conservation, certified-metric denominators, and that a displayed certificate corresponds to the stored counts. It cannot derive the paper's probability theorem from ordinary Rust contracts without formalizing finite probability and the base algorithm. For agent-written verified Rust, the product threat is that a certificate can be mathematically valid for a clean matrix while the matrix is already poisoned, or while the chosen (I_u) does not represent the real requirement. Provenance and model assumptions must therefore remain explicit trusted inputs.
-
-Inference: VL could separate executable sampling and ranking from certificate computation, with explicit denominators and confidence assumptions in the API. The paper's experiments do not validate such a Verus implementation.
-
 ## techniques for the catalog
 
 - random-submatrix hard voting — train any base recommender on many random user subsets and return the top items by vote frequency
@@ -68,4 +60,3 @@ Inference: VL could separate executable sampling and ranking from certificate co
 - confidence-certified estimation — estimate item probabilities with Clopper–Pearson Beta bounds and Bonferroni correction over items and users
 - certificate search — solve the certified intersection optimization by monotone feasibility checks and binary search
 - certified ranking metrics — convert the certified intersection (r) into lower bounds for precision, recall, and F1 with explicit denominators
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The reason is that PORE jointly considers multiple items when deriving the certified intersection size."): checked quotations, numerical results, theorem and algorithm descriptions, threat scope, and section/page references; corrected the publisher link, certificate interpretation, sampling description, per-user confidence, experiment settings, page references, and inference labels; did not reproduce experiments, independently re-prove the theorems, or verify code or numerical libraries.

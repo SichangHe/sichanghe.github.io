@@ -29,15 +29,10 @@ Verus form (Inference): use immutable Rust records for trace history and certifi
 ## technique: certification-boundary metrics
 Use these metrics to separate unsafe admission from conservative rejection. For generator distribution μG, define generated permissibility risk GapΠ(MG)=Pr[τ∉LΠ], certified-but-impermissible risk uΠ=Pr[τ∈Lcert\LΠ], missed-certification risk mΠ=Pr[τ∈LΠ\Lcert], and executable yield yΠ=Pr[τ∈Lcert] (Sec. 7, pp. 10–11). Theorem 4 states yΠ=1−GapΠ−mΠ+uΠ; under soundness uΠ=0. The denominator for every probability is generated traces sampled from μG, not all possible traces. Boundary distance is μG(Lcert△LΠ)=uΠ+mΠ.
 
-Inference: VL evaluation can report proof acceptance, rejection, and escalation with these same denominators, while separately measuring generated Rust traces. A high yield is unsafe if uΠ is nonzero; a sound but incomplete checker exposes mΠ.
-
 ## technique: privacy-preserving certification
 Use zero-knowledge certificates when evidence itself is sensitive. A privacy policy can constrain who accessed which data, purpose, component, logging, retention, and release. A query budget Nτ(u,R,W)≤B captures cumulative access (Sec. 8, pp. 12–13). The paper states: “A zero-knowledge certificate can prove selected properties of an execution trace without revealing the sensitive trace itself.” (Sec. 8, p. 13)
 
 Inference: a Verus implementation could verify a commitment-opening or proof-verifier result while keeping raw prompts and records outside the verified program. The paper does not specify a zero-knowledge protocol, so cryptographic soundness and privacy are unproved here.
-
-## limitations and VL threat
-The paper explicitly presents a research framework, not a completed verification stack. Its assumptions—sound certification, policy correctness, and execution conformance—are exactly where an implementation can fail. Inference: for VeruLaw, the strongest reusable idea is an API-level “no certificate, no execution” gate around generated Rust and external effects, with proof-memory records for provenance and policy version. The threat to a product of agent-written verified Rust is high if generated code can invoke effects without an independently checked witness; it is reduced when the gate and certificate types are themselves verified. This paper does not replace Rust semantic proofs, compiler trust arguments, or Verus-specific methodology.
 
 ## techniques for the catalog
 - PCE trace gate: separate generation, certification, and execution, authorizing only certificate-bearing traces
@@ -45,4 +40,3 @@ The paper explicitly presents a research framework, not a completed verification
 - proof-memory certificates: retain history and compose obligation-specific witnesses into a certificate stack
 - boundary metrics: measure unsafe certification, missed certification, and executable yield over generated traces
 - zero-knowledge trace certification: prove policy properties while withholding sensitive trace contents
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

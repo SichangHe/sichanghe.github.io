@@ -9,8 +9,6 @@ QUARK is a browser whose small kernel is implemented and verified in Coq while l
 
 Tab non-interference compares the same tab request under valid traces where that tab is focused in both traces or neither. Responses are equal, except that forwarding to cookie processes may use different channels with the same payload for the same domain. Its scope is limited: “It is also important to understand that tab NI proves the absence of interference as caused by the kernel, not by other components, such as the network or cookie processes.” (Sec. 5.5, p. 12) Network communication and cookie sharing between tabs of the same domain remain possible.
 
-Inference: VeruLaw can apply this architecture by putting security decisions in a small Rust/Verus mediation core, isolating parsers and complex agents behind message contracts, and proving the core's transitions and security properties. This would require explicit assumptions about component isolation and external effects.
-
 ## technique: isolate complex components behind a small kernel
 Partition the browser into a kernel and separate tab, input, graphical-output, and cookie processes. The network is a resource managed by the kernel, not a separate network process described by this architecture. Tabs use modified WebKit and a Python wrapper to request resources from the kernel. The kernel can pass connected socket descriptors to tabs, which then read and write those sockets without reconnecting them to another host or port (Secs. 3–3.3, pp. 3–5).
 
@@ -43,17 +41,8 @@ The authors first wrote a non-verified kernel to debug interfaces, then develope
 
 Inference (Verus form): prototype message protocols in ordinary Rust, then verify the minimal kernel and its security lemmas as features are added. This is development guidance, not a proved property.
 
-## what is proved, trusted, and useful to VL
-Coq proves that the kernel implementation satisfies its trace specification and that the specification implies the security properties. The paper lists the trusted computing base as Coq's core calculus and type checker, the formal security-property statements, Ynot and QUARK primitives, the OCaml compiler/runtime, the operating-system kernel, and the chroot sandbox. It excludes WebKit, Python, and the proved kernel code from this list (Sec. 6, p. 13).
-
-The final version's mean page-load overhead was 24% relative to stock WebKit, measured over ten loads of each of ten Alexa sites. Shared-memory bitmaps, rectangle rendering, batched I/O, connected-socket transfer, CDN whitelists, and cookie caching are described as optimizations (Secs. 3.3–3.4 and 6, pp. 5–6, 13). The paper does not formally verify the full same-origin policy; enforcing how loaded data is used would require reasoning inside the complex tab implementation (Sec. 6, p. 14).
-
-Inference: VL can reuse the separation between implementation-to-trace proofs and trace-to-security proofs. Incorrect external-effect models or failed isolation would undermine such an argument, even if the core's local proofs passed.
-
 ## techniques for the catalog
 - formal shim architecture: isolate complex components and prove a small mediation kernel
 - trace-based specification: prove implementation traces valid, then derive security properties from valid traces
 - policy-checked IPC: enforce socket and cookie policies through kernel messages
 - incremental verification: prototype interfaces, add features gradually, and preserve a simple kernel
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Now we want to show that kcorrect is an invariant that holds throughout execution of the kernel."): checked every quotation, numerical claim, section and page reference, architecture, technique step, policy exception, proof scope, and trusted assumption against the full paper; corrected quotation boundaries and provenance, removed the separate network process, clarified socket transfer and reverse trace ordering, added the proof invariant and non-interference qualifications, and replaced the scripted-only status; did not rerun the browser, inspect its implementation or proof artifacts, reproduce performance measurements, independently validate the fetch-record link, or verify the proposed Verus/VL adaptations.

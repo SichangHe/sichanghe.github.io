@@ -54,12 +54,6 @@ There is a printed constant mismatch: `example_7` uses `t = ⌈8*ln(1/δ)⌉`, b
 
 Inference: a Verus port could verify the deterministic sum, square, average, and median computations, then connect them to separate probability lemmas. It would need explicit parameter ranges as well as the stream-domain assumption.
 
-## what is proved, trusted, and useful for vl
-
-The paper presents verified algebraic, graph, probability, and algorithm results in Isabelle. Section 6.5, page 81, describes deterministic code export and a separate framework for exporting randomized algorithms by externalizing randomness as a lazy stream of coin flips. It says, “The resulting code can then be executed in the target language using any source of randomness (for example, a hardware random number generator).” This study did not inspect the Isabelle developments, execute exported code, or validate a Verus translation.
-
-Inference: for VL, the transferable idea is a library of composable specifications whose users prove algorithm properties without reopening field and graph internals. A direct Verus port would require substantial probability and analysis foundations.
-
 ## techniques for the catalog
 
 - composable pseudorandom object — hide finite sampled data behind a seed selector and reusable sampling lemmas
@@ -67,4 +61,3 @@ Inference: for VL, the transferable idea is a library of composable specificatio
 - finite-field foundation — construct non-prime fields and irreducibility tests as verified library infrastructure
 - expander-walk sampling — replace independent draws with strongly explicit walks and a spectral tail bound
 - estimator composition — combine averaging, pairwise seeds, medians, and expander bounds while lifting component lemmas
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The resulting code can then be executed in the target language using any source of randomness (for example, a hardware random number generator)."): checked the entire paper, quotations, publication year, link, page and section references, numerical bounds, and technique steps; corrected the year and DOI, memory description, page references, proof-status claims, and Verus inferences, and recorded the example_7 constant mismatch; did not inspect or rerun Isabelle proofs, exported code, cited papers, or a Verus implementation.

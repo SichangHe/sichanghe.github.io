@@ -27,7 +27,7 @@ Inference: express the extensional contract as a `spec fn` over abstract inputs 
 
 what evidence and limits show
 
-The paper excludes execution-time properties by design and restricts attention to well-synchronized programs “at least for the time being” (Section 1, p. 4). The paper does not claim to cover timing or data races. Inference: a VL product that promises latency, or behavior under unsynchronized unsafe code or arbitrary OS interactions, needs additional specifications and proofs.
+The paper excludes execution-time properties by design and restricts attention to well-synchronized programs “at least for the time being” (Section 1, p. 4). The paper does not claim to cover timing or data races.
 
 ## technique: oracle semantics for runtime context
 
@@ -116,7 +116,7 @@ The paper reports that the angelic semantics lets the existing CompCert simulati
 
 ## technique: modular compiler correctness by bisimulation
 
-The compiler is proved correct in the angelic semantics of each intermediate language, preserving the common observable behavior. CompCert's existing simulation lemmas are adapted to the oracle/observable interface (Section 8, p. 12). The proof plan (pp. 2–3) lists as separate obligations: program-logic soundness with respect to the decorated semantics, decorated-to-angelic correspondence, compiler correctness with respect to the angelic semantics, equivalence of weak and sequentially consistent memory executions in the angelic semantics (marked as not begun), and angelic-to-erased correspondence; Section 9 (p. 12) says the weak-memory proof “should be possible” but is not done. Inference: VL could use the same decomposition for a Rust verified library, separating function-contract proofs from an independently justified compiler or runtime model.
+The compiler is proved correct in the angelic semantics of each intermediate language, preserving the common observable behavior. CompCert's existing simulation lemmas are adapted to the oracle/observable interface (Section 8, p. 12). The proof plan (pp. 2–3) lists as separate obligations: program-logic soundness with respect to the decorated semantics, decorated-to-angelic correspondence, compiler correctness with respect to the angelic semantics, equivalence of weak and sequentially consistent memory executions in the angelic semantics (marked as not begun), and angelic-to-erased correspondence; Section 9 (p. 12) says the weak-memory proof “should be possible” but is not done.
 
 ## technique: foundational trusted-base theorem
 
@@ -128,10 +128,7 @@ what remains trusted
 
 The paper says VST's analyzer and compiler are written in Gallina and depend on Coq's proof checking (s1), Coq's translation of Gallina to ML (s2), the OCaml compiler (s3), and the OCaml runtime (s4); “bugs in the si can render the proved theorem useless” (Section 11, p. 15). Foundational PCC previously reduced its trusted base to less than 3000 lines of source code: about 800 for a proof checker written in C, a few lines for the representation of higher-order logic in LF, and about 1500 for Sparc instruction encodings and semantics (Section 10, p. 14). These are line counts for that FPCC project, not VST's size.
 
-Inference: for VL, the corresponding trusted boundary includes Verus, its solver and translation, the Rust compiler, external libraries, hardware, and the correctness of the specification. The paper's closing warning is that mechanical proof checking prevents a mistake in the proof's steps but not a theorem statement that is not what was intended (Section 12, p. 15). Inference: the product threat is therefore specification and interface drift across agent-written code, dependencies, and runtime assumptions. Inference: VL should reuse the paper's end-to-end contracts, witness checking, staged erasure, and observable-behavior framing rather than claim that a local loop proof covers the deployed binary.
-
 ## techniques for the catalog
-
 
 - observable extensional contracts — specify source and machine behavior through common input-output observations that survive optimization
 - oracle semantics — factor runtime and concurrency context into an abstract oracle shared by source and target executions
@@ -140,5 +137,3 @@ Inference: for VL, the corresponding trusted boundary includes Verus, its solver
 - staged semantic erasure — relate decorated, angelic, and erased semantics while preserving observations
 - bisimulation compiler proof — prove each compiler phase preserves the shared observable semantics
 - foundational trusted-base theorem — state the final analyzer/compiler/machine implication directly over the desired specification
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Impredicativity is necessary for reasoning about data abstraction, where the abstract types in the interface of one module can be themselves implemented by abstract types from the interface of another module."): read the whole paper text (pp. 1–16) and compared every quotation, page and section reference, number, and technique step; the paper text gives no DOI, so the link is from the fetch record. Changed: corrected page references (Section 5 and its footnote 4 are on p. 9, not p. 10; the end theorem is on p. 14; the proof plan is on pp. 2–3); replaced unsupported steps (oracle step 4, the "reject any witness" step, the scheduler mention, and the permission-lattice wording) with what the paper says; added the paper's own status caveats (plan items in early stages or not begun, CompCert not yet fully ported, Mansky's experiment only "almost" proved and not using the witness checker); marked remaining own conclusions "Inference:". Not checked: the PDF layout of the two-column pages beyond the text extraction, the plan's bullet markers (some were lost in extraction, so the status of the compiler-correctness item is not asserted), cited works, and Verus behavior claims (Inference only).

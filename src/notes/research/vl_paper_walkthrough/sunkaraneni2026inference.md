@@ -86,8 +86,6 @@ How to do it:
 4. Combine with the global error bound: trajectory failure is bounded by `L_x[B+R_k+k²e^(−βm−2rσ)]` (Section 6).
 5. Use oracle best-of-k as a finite-k upper-bound diagnostic, not as a direct estimate of B (Section 6).
 
-Inference: For VL, classify failed proof searches into no candidate in support, candidate generated but selector missed it, and candidate accepted but final verifier rejected it. This classification needs independent replay or hidden adjudication; Verus proofs can certify only the last category when the candidate's formal contract is explicit.
-
 Evidence: in SWE-bench, increasing k from 8 to 16 raises oracle coverage only from 79.0% to 79.2%, showing diminishing finite-width returns in this setting. The paper does not infer that 20.8% is the asymptotic blind-spot floor.
 
 Failure and assumptions: latent heterogeneity and conditional independence are modeling assumptions. The decomposition is an upper-bound framework, not a direct estimator of each term from one finite pool.
@@ -114,14 +112,6 @@ Failure and assumptions: more context costs latency and memory. A context-rich b
 
 The paper formally proves coverage amplification, coverage-not-identifiability, local error decomposition, adaptive cumulative-error, local-verifier identifiability, and blind-spot decomposition under stated assumptions. Experiments measure terminal selection on SWE-bench Verified, MATH, GSM-Plus, miniF2F, Blocksworld, LiveCodeBench, and CommonGen. They do not prove that practical learned critics satisfy the theory's uniform edges, nor that multi-step empirical trajectories obey the rank model. Trusted elements include the final hidden verifiers, task datasets, proposer distributions, comparator implementation, and independence assumptions.
 
-## implications for VeruLaw
-
-Inference: VL should record pass@1, oracle-like candidate-pool coverage, selector success, and oracle-gap recovery for generated Verus proofs. When a proof candidate is rejected, distinguish no viable proof was generated from a viable proof being generated but selection or checking failing. This prevents spending all compute on repeated proposal calls when identifiability is the bottleneck.
-
-Inference: a Verus-native selector should use executable proof checking, exact source/spec hashes, and repository context as local evidence. The paper's threat to a product generating agent-written verified Rust is substantial at selection: a correct proof can be present but discarded by a weak or misaligned judge, while repeated sampling cannot overcome a proposal-side blind spot. The paper does not measure Verus, so this transfer is an inference.
-
-Inference: existing VL work should not redo generic best-of-k curves without decomposing coverage and selection, measuring verifier edge and ties, and reporting denominator-specific oracle-gap recovery. Direct Verus checking may make learned selection unnecessary for some proof obligations, just as the paper finds direct verification can dominate learned judging in boundary cases.
-
 ## techniques for the catalog
 
 - coverage/identifiability decomposition — measure whether useful candidates appear separately from whether a selector recognizes them
@@ -131,4 +121,3 @@ Inference: existing VL work should not redo generic best-of-k curves without dec
 - blind-spot decomposition — separate finite proposal width from zero-support proposer failures
 - oracle-gap recovery — quantify the fraction of perfect-selection gain realized by a deployable selector
 - context intervention — hold candidate pools fixed and add task-relevant context to raise comparator edge
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

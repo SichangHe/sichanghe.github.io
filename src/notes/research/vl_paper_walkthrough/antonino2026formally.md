@@ -8,8 +8,6 @@ Noir is a Rust-like language for zero-knowledge arithmetic circuits. A Noir prog
 
 Inference: NAVe targets a specific gap in zero-knowledge programming: unconstrained code can compute a witness value for the prover without adding a circuit constraint, so a missing `assert` can make the circuit relation weaker than the programmer intended. NAVe checks developer-supplied relations against the compiled ACIR constraints. Its proof is about the formalized ACIR subset and the chosen field encoding, not about the entire Noir compiler or ZK proving system.
 
-## technique 1: finite-field and integer encodings of ACIR
-
 ### what it is and when to use it
 
 Section 3.1 formalizes ACIR opcodes as SMT-LIB formulas in two ways: cvc5’s finite-field theory of prime order and standard integer arithmetic modulo the field prime. The paper explains that ACIR expressions are degree-at-most-two polynomials containing quadratic witness products, linear witness terms, and a constant.
@@ -32,8 +30,6 @@ The formalization omits ACIR `Call` and some `BlackBoxFuncCall` behavior. Only t
 Inference: In Verus, represent field elements with a mathematical modular specification and executable integer representation, then state an equivalence lemma between the representation and field operations. Use `spec fn` for encoded expressions and `ensures` for opcode translation correctness. Memory versions can be represented by a sequence or map indexed by mutation count, with proof functions showing reads observe the latest write and writes preserve other indices.
 
 Inference: A Verus adaptation would need separate proofs that the modeled field operations and each opcode translation preserve the chosen semantics. The paper supplies no Verus implementation or proof of these obligations. Compiler correctness, solver correctness, and Brillig computation would still require separate justification.
-
-## technique 2: verification obligations with `verify_assert`
 
 ### what it is and when to use it
 
@@ -96,4 +92,3 @@ The paper emphasizes a central failure mode: unconstrained code “does not cont
 - stable-IR verification — verify ACIR instead of a fast-changing source DSL to reuse semantics across front ends
 - backend portfolio (proposed future work) — run finite-field split, finite-field gb, and integer encodings concurrently and return the first result
 - range-check stress testing — track range-opcode count and maximum bit width because bitsum constraints can cause long runs or timeouts
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This model represents a counterexample detailing how the verification condition is falsified, which is passed back to the developer to help debug the program."): read the complete paper and study; checked quotations, numbers, section and page references, encodings, opcode coverage, obligation construction, and evaluation claims; corrected quotation wording, the disjunct-removal example, the Nargo fork scope, hardware wording, and proposed-backend status, noted the Table 2 caption conflict, clarified Verus inferences, and used the paper’s arXiv identifier for the link; did not run NAVe, reproduce measurements, inspect its implementation, or validate the proposed Verus adaptations.

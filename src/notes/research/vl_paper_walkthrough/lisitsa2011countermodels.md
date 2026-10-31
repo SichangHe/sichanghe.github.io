@@ -83,12 +83,9 @@ The Two-way Token protocol uses finite-state processes in a binary tree; a token
 
 Proved: adequacy of automaton/transducer encoding, safety corollaries, relative completeness against RTMC, and relative completeness against monotonic abstraction when its fixed point terminates. Measured: six named protocols in Table 6.2 and two in Table 6.1, with ten attempts per reported Mace4 time. Inference, trusted: first-order theorem/model-finder implementation, correctness of input automata and rewrite rules, finite-domain search, and the abstraction’s relation to concrete code.
 
-Inference: for VeruLaw, finite model certificates suggest a useful external-certificate workflow for parameterized Rust data structures, but tree automata and generic finite model finding are not themselves Verus proofs. Existing work already establishes the core FCM/RTMC reduction; VL should focus on checked certificate import and concrete Rust refinement rather than reproduce the reduction.
-
 ## techniques for the catalog
 
 - first-order RTMC encoding: translate tree automata and transducers into Horn clauses and a transitive reachability predicate
 - finite countermodel invariant: use a finite model of the negated reachable-unsafe formula as a safety certificate
 - monotonic tree abstraction: compute backward unsafe closure under embedding until a well-quasi-order fixed point
 - model-finder certificate checking: validate finite interpretations and disjointness before connecting them to implementation code
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Each process stores a single bit which represents the fact that the process has a token."): read all 18 pages of the arXiv text (Sections 1–8, Mace4 listings, tables, references); checked the quotations, the encoding steps (clauses 1–11, Propositions 1–2, Corollary 1, Theorems 1–2), the monotonic-abstraction steps, the 0.02/0.03/0.04 s and 1h15m25s figures, hardware, averaging over 10 attempts, and the tag and arXiv link; changed all page references to the arXiv PDF pagination (the old ones were off), fixed the Theorem 1 domain description, removed the unsupported "one run" claim (the paper says averages of 10 attempts) and flagged the 0.04 s vs 0.03 s mismatch, and marked the invariant, certificate-checking and trust statements as Inference; did not check the cited papers [3], [5], [6], the Mace4 input files at [14], or any run of Mace4, and did not verify the proofs beyond reading them.

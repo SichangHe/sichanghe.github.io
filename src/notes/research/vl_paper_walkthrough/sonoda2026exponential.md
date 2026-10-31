@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `sonoda2026exponential`, [paper](https://arxiv.org/abs/2602.10512)
 
-
 ## what the paper proves
 
 Sonoda, Akiyama, and Uezato model verifier-guided theorem proving as offline imitation learning in a deterministic finite-horizon Markov decision process. A flat student predicts tactic actions from fully inlined proof traces. A hierarchical student predicts a reusable proof DAG, high-level graph actions, and local tactics; solved blocks are memoized. Their result is a statistical guarantee: when flattening duplicates a shared subproof exponentially many times, the sufficient sample count certified by their bounds can be exponentially larger for the flat learner. This is a theorem about explicit upper-bound certificates under assumptions, not an empirical benchmark result and not a minimax lower bound.
@@ -65,7 +64,7 @@ how to do it:
 
 evidence: Theorem 4 gives policy error `inf e(π)+O(r_τ,N)` where `r` includes a geometric learning term, confidence term, and posterior mismatch; Theorem 5 gives graph coverage from a graph log-loss bound plus irreducible coverage floor `ζ_M` (Section 5, pp. 7–8). The paper's theorem does not provide a task-count denominator or an implementation benchmark.
 
-limits: completed traces are available to the training posterior but not at test time. A poor posterior can bias all three learners. Graph labels remove posterior mismatch only in Corollary 1. Inference: for VL, a similar posterior could infer reusable Verus lemmas from proof traces, but the resulting lemma boundaries must be checked against the actual Verus specification; inferred structure is a search hint, not a proof.
+limits: completed traces are available to the training posterior but not at test time. A poor posterior can bias all three learners. Graph labels remove posterior mismatch only in Corollary 1.
 
 ## technique 4: flat versus hierarchical sufficient-sample comparison
 
@@ -85,10 +84,6 @@ evidence and denominator discipline: Theorem 6 compares sufficient thresholds ce
 
 limits and Verus form: the separation disappears for a flat learner with perfect canonicalization, or if search often finds alternate proofs. Inference: the Verus analogue is a benchmark family with shared lemmas versus inlined repeated assertions, measuring proof-agent samples and repair cost while Verus checks every candidate. The paper's MDP and learning bounds are not Verus constructs; only the reusable-lemma architecture maps directly to `proof fn` and `ensures` contracts.
 
-## what remains trusted and VL implications
-
-The verifier transition and proof checker are assumed correct; teacher traces, candidate generators, posterior inference, policy learning, search completeness, and the graph coverage assumption are outside the logical proof. Inference: for agent-written verified Rust, the paper suggests organizing generated proofs around reusable, independently checked lemmas and preserving their interfaces across tasks. This is a moderate threat reduction for repeated obligations, but it does not address wrong specifications, missing invariants, Rust ownership, unsafe code, or environmental assumptions. VL should not redo the paper's abstract claim that sharing can reduce sample requirements; it should test whether Verus proof traces exhibit the required repeated substructures and whether graph inference improves real repair throughput.
-
 ## techniques for the catalog
 
 - verifier-MDP modeling — represent proof search states, verifier transitions, finite candidate lists, and success probability explicitly
@@ -96,4 +91,3 @@ The verifier transition and proof checker are assumed correct; teacher traces, c
 - memoized proof DAGs — solve reusable proof blocks once and reuse compatible certificates
 - latent-graph posterior training — infer soft DAG labels from inlined traces and train graph and local policies jointly
 - sharing-aware sample comparison — compare flat inlining and hierarchical representations under explicit duplication and no-rescue assumptions
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

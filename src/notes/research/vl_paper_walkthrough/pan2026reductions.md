@@ -6,8 +6,6 @@ Tag: `pan2026reductions`, [paper](https://www.semanticscholar.org/paper/30b1aaec
 
 The paper presents a Rust library and CLI for computationally hard problem reductions. In about three months it reports 190 problem types (220 variants), 265 reduction rules, 170k lines of Rust, 129 types with an ILP path, and 78 reachable from 3-SAT (§4.1, p.8). Its central claim is harness engineering: “Our harness combines a no-code contribution route for domain experts, a multilayer verification stack ranging from type-level checks to agentic feature tests (AI agents role-playing as end users), and a fully automated implementation-review-integration pipeline.” (Abstract, p.1)
 
-Inference: This is engineering assurance rather than formal proof of the Rust implementation. Its layered tests and human review are relevant process controls for VeruLaw, but they do not replace Verus contracts or prove cryptographic or memory properties.
-
 ## technique 1: uniform reduction interfaces and executable round trips
 
 What it is. Every problem type has input, solution, and size-measure interfaces. Every reduction has a forward map, inverse map, and multivariate-polynomial overhead. The canonical instance for each type drives tests and the manual example (§2.2, p.4).
@@ -77,8 +75,6 @@ Evidence. In the team-split case study, each configuration used ten random insta
 
 Measured artifacts include code volume, graph counts, test outcomes, feature-test defects, and the ten-instance case study. Trusted components include Rust’s compiler, HiGHS and other solvers, symbolic expression implementation, agent outputs, human review, and the correctness of problem definitions and canonical examples. The paper explicitly leaves four responsibilities to humans: selecting reductions, verifying algorithms, constructing canonical examples, and authorizing merges (§3.2, p.6).
 
-Inference: The threat to a VeruLaw product is process-level: an agentic harness can scale verified-looking Rust while leaving specifications and external solver assumptions trusted. VL should reuse the explicit separation between implementation, review, and user-facing tests, but its central gate must include Verus proofs of the intended contract and a manifest of trusted code.
-
 ## techniques for the catalog
 
 - uniform reduction contracts: pair forward and inverse maps with size-overhead expressions and canonical instances
@@ -86,5 +82,3 @@ Inference: The threat to a VeruLaw product is process-level: an agentic harness 
 - six-layer harness: combine issue, compile, unit, round-trip, fresh-user, and human checks
 - staged skills pipeline: move contributions through proposal, validation, implementation, review, merge, and expert verification
 - symbolic path routing: compose and compare overhead expressions before selecting a solver path
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

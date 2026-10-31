@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `miculicich2025veriguard`, [paper](https://arxiv.org/abs/2510.05156)
 
-Audit: audited 2026-10-13 against the paper; checked every number, table cell, page reference, quotation, step, the Verus sketch (sound) and the conflict list (all confirmed); changed: black box credited to Nagini only, error messages go to the code generator only, precision reading and Nagini-passed assumption marked as inference, ASB gain wording softened, largest-gain claim removed, five strategies in the catalog line, own when-to-use lines marked; no wrong numbers.
-
 source: Miculicich, Parmar, Palangi, Dvijotham, Montanari, Pfister, Le (Google Cloud AI Research, Google DeepMind), arXiv:2510.05156v1, 3 Oct 2025, 22 pages; appendix A holds the prompts
 
 earlier note in the human's notes: research/distributed_verification_review_b/deep_12_second_pass_intent_eval.md has four paragraphs on this paper. It covers the pipeline in outline, the LLM argument extractor as a trust gap, the default assumptions chosen without a person, and two headline numbers. This study adds the step-by-step method with the prompts' contents, the Verus form, the enforcement strategies with their numbers, and the places where the paper's text and tables disagree.
@@ -151,11 +149,7 @@ Inference on what the ASB result shows: the LLM-only guard also reaches 0.0 ASR,
 
 ## what is already done, and the threat
 
-Already done, so VL need not invent it: the pipeline shape of clarify, generate code and constraints, test, verify, guard at run time; the prompts for each stage, printed in full in appendix A; and the comparison of four responses to a denied action.
-
 Not done: any measurement of the verification step; any defence against the loop weakening its own constraints; any check of the extractor; Rust or Verus. No code link appears in the paper.
-
-Inference on the threat to VL, a product of Rust written by agents and verified: low as a competitor, since the verified artifact is a short Python allow or deny function and nothing shows the proof mattered to the results. It is a useful warning for such a product: a proof of LLM-written code against LLM-written contracts, with the loop free to edit both, was presented as a formal guarantee while the paper's own limits section hands the guarantee back to manual review.
 
 ## techniques for the catalog
 

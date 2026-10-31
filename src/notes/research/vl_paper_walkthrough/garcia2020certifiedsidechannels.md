@@ -74,12 +74,9 @@ Evidence. Of 500 signatures, 422 remained after signal filtering and 172 remaine
 
 The authors patched OpenSSL by computing cofactors from field cardinality and generator order using the Hasse Bound, setting `BN_FLG_CONSTTIME` on vulnerable paths, replacing variable-time GCD, canonicalizing explicit curves to named curves where possible, and adding Triggerflow tests; no POIs triggered after applying all fixes across non-EOL OpenSSL branches and the development branch (section 5, p. 2034). Inference: these path checks and experiments do not establish that all library paths are constant-time.
 
-Inference: the product threat to agent-written verified Rust is a trusted dependency whose parser selects a weaker implementation despite a mathematically valid input. VL should make serialization canonical where feasible, specify behavior for omitted fields, and include path-equivalence and constant-time checks beside functional Verus proofs. Existing Triggerflow and the published fixes mean VL should not redo generic side-channel test infrastructure; it should verify the Rust-level contracts and audit the external cryptographic library boundary.
-
 ## techniques for the catalog
 
 - Triggerflow regression auditing — annotate leakage POIs, execute format-specific triggers, and keep path checks in continuous integration
 - encoding differential testing — compare execution paths for mathematically equivalent keys and optional-field variants
 - remote timing lattice attack — select short-nonce signatures from network latency and solve a hidden-number lattice
 - EM trace attack — align, filter, and template-match side-channel traces before lattice key recovery
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This significant bit length difference between mbedtls_mpi_inv_mod inputs makes this algorithm extremely vulnerable to SCA [8]."): checked all quotations, numbers, section and page references, technique steps, and the publisher link; corrected POI-hit interpretation, RSA leakage details, timing terminology, EM filtering and alignment, and page references; removed unsupported recovered-key validation steps and marked Verus proposals as inference. Did not reproduce experiments, inspect library source or cited works, or validate the proposed Verus models.

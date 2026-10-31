@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `xu2026agentic`, [paper](https://arxiv.org/abs/2601.03768)
 
-Audit: audited 2026-10-13 against the paper; checked every number, Table 1 sums, page and section references and quotations; corrected unmarked advice (marked Inference), widened claims (agents often fail to start decompositions; instruction file persists across sessions, not read every session; the human wrote every definition, not every statement), unsourced step details (error layout rule, in order, one run per edit) and the invented citation basis for the loop in technique 4; Verus sketch checked, no change.
-
 source: Yichen Xu and Martin Odersky (EPFL), arXiv:2601.03768v1, 7 Jan 2026, 21 pages; main text pp.1-15, Appendix A (definitions of System Capless) pp.19-21. Pages cited are positions in the PDF; the printed numbers agree with them.
 
 ## what is measured, what stays trusted
@@ -171,19 +169,11 @@ Steps (§3.1, p.12):
 5. label each task with one of five outcomes: success, success with intervention, partial (holes left), failure, problem identified
 6. per category report total, successes, partial, failures, mean checker calls, mean lines changed, share needing intervention
 
-Verus form. Inference: the unit and the labels transfer directly; `lean4check` calls become verifier runs, and partial means `assume` or `admit` left in the file. For VL a seventh category would be needed, writing or changing a specification with no human statement, which this study does not contain because the human wrote every definition.
+Verus form.
 
 Evidence and arithmetic. 164 of 189 is 86.8%, printed as 87%. 9 of 189 is 4.8%, printed as 5%. 43 of 48 is 89.6%, printed as 90%. The weighted mean of the per-category check counts is 5.87, matching the printed 5.9.
 
 Inconsistencies. §3.1 defines Success as completion “without human intervention” and gives success with intervention as a separate outcome, while the Table 1 caption folds the two together; the 87% is the folded number. §3.2 says Query and Chore reach 100% success “as they involve no proof synthesis”, yet Chore shows 9% intervention, which is 1 of 11. The Repair row and the Total row do not sum, as described under technique 3.
-
-## what VL should not redo, and how much threat
-
-Already shown here, for one project: off-the-shelf coding agents plus a compile-and-render tool are enough to carry the proof work of a 14,000-line metatheory development when a human supplies every definition (the agent stated some theorems itself, technique 4). Inference: building custom proof search, retrieval or fine-tuning before trying this plain setup on Verus would repeat a step the paper shows can be skipped; the open part is the one the paper leaves to the human, deciding what to define and, per technique 4, reviewing what the agent states.
-
-The authors claim generality without testing it: “The agentic proof automation scheme illustrated by our case study generalizes beyond Lean and scales with frontier model improvements.” (§5, p.15) The study has one development, one prover, and by its own words “Our case study examines a single formal development in Lean 4.” (§5, p.15)
-
-As a threat to selling agent-written verified Rust. Inference: low as a competitor, since this is a workflow description with no product, no Rust and no automation of specification writing. It is a threat to any claim that agent-driven proof needs special infrastructure: the paper's result is that it does not, so the value of a product has to lie in what this study did by hand, namely choosing and checking the statements, and in running without a prover expert in the loop, which the paper says is still needed (“Currently, human intervention remains necessary, which requires expertise in the proof assistant from the human.”, §2.5, p.11).
 
 ## techniques for the catalog
 

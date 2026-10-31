@@ -56,10 +56,6 @@ Evidence and limits: the paper's large RBAC benchmark has 1,000 synthetic users,
 
 The paper measures exact query answers, latency, token counts, and benchmark accuracy for the stated synthetic tasks. It demonstrates executable proof trees and deterministic outputs, but it does not provide a mechanized proof of Euclid-IR semantics, sanitizer completeness, SWI-Prolog correctness, or LLM translation fidelity. Inference: the trusted base therefore includes the parser, lowering code, SWI-Prolog, the encoded facts/rules, and the benchmark ground truth. For agent-written verified Rust, the strongest reusable idea is to shrink this base by verifying IR parsing, policy predicates, and certificate checking in Verus, while clearly labeling the LLM and backend adapters as assumptions.
 
-## what VL should reuse and what it should not redo
-
-Inference: VL should reuse the typed-state loop, explicit proof/certificate objects, bounded and sanitized execution, and counterfactual map-update testing. It should not redo a generic LLM-vs-engine RBAC demonstration unless it changes the language, verifier, or threat model; this paper already reports 5/5 versus 2/5 on its five-question large benchmark. The remaining product threat is specification integrity: a verifier can establish implementation correctness while an agent silently omits a requirement or encodes the wrong closed-world assumption.
-
 ## techniques for the catalog
 
 Inference: the following are reusable patterns drawn from the paper.
@@ -69,4 +65,3 @@ Inference: the following are reusable patterns drawn from the paper.
 - validate–translate–inspect–repair — use knowledge-base validation, execution, diagnosis, repair, and what-if exploration as a feedback loop
 - proof-tree explanations — return bindings with fact/rule/and derivations for successful queries and use diagnosis to analyze failed queries
 - policy counterfactuals — apply explicit additions/removals to a knowledge base and compare deterministic before/after results
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This query checks whether a specific user has a specific permission via the role hierarchy."): checked the entire paper and study, quotations, benchmark numbers, section/page references, tool contracts, and technique steps; corrected the unrelated DOI to the paper’s arXiv link, page references, default timeout wording, unsupported expressivity and scaling claims, catalog wording, and inference labels; did not inspect the implementation, rerun benchmarks, or validate the proposed Verus adaptations.

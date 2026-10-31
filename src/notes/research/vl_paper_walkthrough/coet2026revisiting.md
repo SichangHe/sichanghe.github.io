@@ -66,12 +66,6 @@ When to use it: use MFDDs when path-sensitive environment sets have repeated str
 
 How: (1) create a node for each map key; (2) label edges with abstract values; (3) share common subgraphs; (4) represent missing keys with dashed edges; (5) apply union/intersection/update operations as graph transformations; (6) hash-cons nodes to maintain uniqueness. Inference: a Verus prototype could specify MFDD invariants and prove graph operations preserve represented map sets, but executable performance and memory behavior require separate measurement.
 
-## trust, boundaries, and product threat
-
-The paper's formal claims concern MIMIR semantics, type rules, and abstract-transfer rules for its modeled subset. It omits the full type-soundness proof and has no large-program evaluation, no runtime denominator, and no comparison against Rust's compiler beyond examples. The prototype is linked by the paper but its production readiness is not established. Inference: using this checker for a compiler would require trusting or separately verifying the source-to-MIMIR translation, analysis implementation, and backend, as well as validating the formal model. The paper supplies no machine-checked proof of that complete chain.
-
-Inference: accepting more memory-safe programs does not establish their functional correctness. The paper's lessons are useful for ownership abstractions and compiler-level checking, but VL's Verus proofs still require explicit functional contracts, data-structure invariants, and reviewed specifications. 
-
 ## techniques for the catalog
 
 - language-agnostic MIMIR — lower multiple source languages to an ownership-aware IR before analysis
@@ -82,5 +76,3 @@ Inference: accepting more memory-safe programs does not establish their function
 - alias and initialization transfer — update abstract environments for borrows, assignments, calls, and dereferences
 - MFDD compression — encode sets of abstract maps as shared decision diagrams for branching programs
 - abstract-domain refinement — increase precision while preserving over-approximation and soundness
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "In this rule, the place denoting the callee is first evaluated and must resolve to a function identifier."): read all 16 pages of paper text, including references and author biographies, and the whole study; checked quotations, formalization scope, analysis steps, examples, limits and page references; corrected tag, subtype direction, proof status, example context, liveness pages, combined-analysis details and unsupported risk ratings; did not execute the prototype or rustc, inspect source, prove the rules sound, reproduce examples, or visually inspect the PDF.

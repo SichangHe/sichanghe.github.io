@@ -9,8 +9,6 @@ The counterexample uses X=N, Y={1,2,3}, a true hypothesis u assigning (1/2,1/2,0
 
 The theoretical loss is −log p(y) + λSα(p), where Sα(p)=(Σ_y p(y)^α)^(1/(1−α)), S0(p)=|supp(p)|, and S1(p)=exp(H(p)); H is Shannon entropy. Theorem 4.5 assumes a finite induced support class, a uniform lower bound η>0 on every nonzero probability, and a demonstrator h* in the hypothesis class whose support contains only correct answers. Empirical minimization PAC-learns verifier risk when λm increases to infinity and 0<αm<1 decreases to zero (section 3.1, p. 4; section 4, pp. 6–8). Corollary 4.6 gives λm=m and αm=1/m. The proof sketch states: “This transformation is crucial because even though H may be infinite and cross-entropy may overfit to the sample, the class of functions LH is finite and will generalize as the sample size increases.” (p. 8).
 
-Inference: for VL, the idea concerns training models to produce verifier-accepted Rust programs. It does not establish the correctness of Rust programs, Verus, or their specifications.
-
 ## technique 1: diagnose CE/support mismatch
 The counterexample illustrates the authors' distinction between probability on the observed answer and probability on all rejected answers (section 3.2, p. 5).
 
@@ -44,8 +42,6 @@ For GSM8K, Appendix D.4 checks extracted numerical answers using string matching
 
 Appendix G also evaluates sampled Pass@1: the fraction of accepted completions, using temperature 0.8, full tempered softmax without top-k or top-p truncation, eight samples per GSM8K problem and four per MBPP/MATH problem. It cautions: “Only T = 1 recovers R(h) exactly.” (Appendix G.1, p. 29). GSM8K's sampled sweep uses three seeds and a coarser λ grid; MBPP and MATH keep their main-paper grids and seed counts.
 
-Inference: for VL, replace these task checks with Verus verification against the intended Rust contracts. Report problems, samples per problem, seeds, model, λ, and decoding settings. Count compilation or proof failures as rejected candidates.
-
 ## trusted boundary, limitations, and threat
 The guarantee depends on the stated support, probability-floor, and realizability assumptions. Inference: a finite vocabulary and bounded sequence length do not alone establish a uniform positive probability floor over an unrestricted model class. The practical token-level Shannon objective also differs from the theorem's Sα objective and limiting schedules.
 
@@ -59,5 +55,3 @@ Inference: objective mismatch may reduce the quality of generated program candid
 - support-mismatch diagnosis — compare demonstrated-output CE with probability of verifier rejection
 - entropy-regularized CE — add a response-token Shannon penalty in practice; distinguish this from the theoretical Sα penalty and schedules
 - verifier-based evaluation — check outputs and report acceptance with model, data sizes, seeds, and decoding settings
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To ensure full reproducibility, we detail the hyperparameters, data processing, and evaluation metrics used in our empirical validation."): checked all paper text, study quotations, numbers, section/page references, and technique steps; corrected the counterexample description, separated theoretical Sα regularization from practical Shannon training, added evaluation denominators and reported limitations, and removed unsupported Verus claims; did not reproduce experiments, audit implementation, independently validate proofs, or test the inferred Verus applications.

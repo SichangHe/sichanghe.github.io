@@ -14,7 +14,7 @@ When to use it: Inference: use it when a manipulation requirement depends on obj
 
 How to do it: (1) represent each time step and relevant object pose; (2) choose geometric predicates and margins/tolerances; (3) compose atoms with temporal operators G, F, U over intervals and Boolean operators ¬, ∧, ∨, →; (4) evaluate the resulting robustness on ξ. The paper’s example instruction “Between time 0 and 10, the red block is always left of the blue block.” becomes `G[0,10] LeftOf(obj r, obj b)` (section IV-B, p. 4). Section III-B (p. 3) states: “Evaluating the pose sequence induced by ξ against φ yields the robustness value ρ(ξ , φ , 0), which summarizes the satisfaction margin of the entire execution.”
 
-Verus form: Inference: define geometric state and predicate formulas as `spec fn`s, and prove lemmas connecting discrete pose updates to predicate inequalities; use `requires` for valid object indices and radii and `ensures` for robustness sign properties. A runtime monitor should be an executable Rust function whose result is checked against a `spec fn`; do not put executable logic in a proof function. Verus does not provide SpaTiaL operators automatically, so the temporal fold and geometric arithmetic must be encoded and proved by the VL implementation.
+Verus form:
 
 Evidence and limits: Section III-B (p. 3) states: “Once these geometric predicates are composed through the STL operators in Eq. (1), they induce a trajectory-level robustness measure that evaluates not only whether a manipulation task is satisfied, but also how strongly it is satisfied or violated over time.” Inference: correctness assumes poses and object radii supplied by the system are accurate and that the chosen margins model the physical safety requirement; collision dynamics and VLA behavior remain outside the translation proof.
 
@@ -42,10 +42,6 @@ Verus form: Inference: encode the grammar as constructors and prove renderer rou
 
 Evidence and limits: HLT trained with 600 pairs reaches 64.0% on D4 B3 versus flat trained with 3,000 pairs at 52.7% (section VI-E, p. 6; 600 and 3,000 are training-pair counts; accuracy is reported CM on the 150-instance evaluation set). HLT with 200 unique skeletons × 5 paraphrases reaches 70.4%, versus 1,000 skeletons × 1 paraphrase at 70.0%; flat rises from 48.9% to 59.3% on D4 B3 when formula diversity is increased. Section VII (p. 8) states: “A current limitation is that training primarily supervises the final nested JSON output, while richer hierarchical annotations—such as node-level descriptions and aligned intermediate subformulas—remain underutilized.”
 
-## deployment, trust, and VL implications
-
-For passive monitoring, the paper deploys generated formulas on LIBERO trajectories from π0.5 and reports stage-wise robustness, including failed grasp attempts (section VI-F, p. 7). For active filtering, π0 proposes short-horizon rollouts; the system scores each against the formula, rejects violating trajectories, and selects the highest robustness. Section VI-F (p. 7) states: “This confirms that our one-shot HLT translations successfully serve as executable, interpretable trajectory verifiers for reliable downstream deployment.” Inference: the verifier depends on perception, predicate definitions, renderer implementation, and VLA rollout state. For VL, the transferable pattern is a typed intermediate representation plus a small verified interpreter; the threat from agent-written verified Rust is semantic mismatch in the generated specification and unmodeled physical state, rather than merely Rust memory unsafety.
-
 ## techniques for the catalog
 
 - quantitative SpaTiaL robustness: evaluate signed geometric and temporal margins over trajectories
@@ -53,4 +49,3 @@ For passive monitoring, the paper deploys generated formulas on LIBERO trajector
 - deterministic rendering: validate tree arity and intervals, then recursively emit executable logic
 - logic-first synthesis: sample valid formulas, render canonical language, and diversify with formula-conditioned paraphrases
 - runtime generate-and-test: score VLA rollouts and reject candidates with negative robustness
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To reduce template bias and improve robustness to natural-language variation, we generate paraphrased variants of each canonical description."): checked the full text including references and Appendix A, quotations, numerical comparisons, section/page references, and technique steps; corrected the reversed HLT data-allocation results, quotations, metric descriptions, and inference labels; did not reproduce experiments, inspect code, or validate the proposed Verus encodings.

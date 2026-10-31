@@ -60,8 +60,6 @@ The implementation combines blocked/fixed status with VSIDS activity scores and 
 
 The implementation records trails for finding paths, finding blocked stages, and updating clause feasible sets, so backtracking can restore state (Section VI.A, p. 8). It also returns UNSAT directly when blocked clauses involve only a single variable: there is no earlier variable assignment to revise (Section VI.C, p. 9).
 
-Inference: these changes require access to solver state. Applying them to VL would require a solver modification or a separate proof-generation strategy; the paper does not establish that ordinary Rust verification can expose these mechanisms.
-
 ## evidence and measured results
 
 The evaluation uses all 12,134 SMT-LIB QF NRA instances, a 1,200-second limit per instance, and an Intel Xeon Platinum 8153 at 2.00 GHz (Section VII.A, p. 9). It compares Z3 4.13.1, CVC5 1.0.2, YICES2 2.6.2, original NLSAT, and clauseSMT (Section VII, pp. 9–10). Mainstream solvers retain their portfolios; the NLSAT baseline disables other tactics (Section VII.B, p. 9).
@@ -74,14 +72,6 @@ Table IV (p. 11) compares static ordering, dynamic VSIDS, and propagation-based 
 
 The paper states: “Our algorithm demonstrates competitive performance compared to state-of-the-art solvers such as Z3 and CVC5.” (Section VII.B, p. 9). It releases implementation, experimental data, and scripts at https://github.com/yogurt-shadow/ClauseSMT_ASE2025 (Section I.D and footnote 2, p. 2).
 
-## what remains trusted and threat to VL
-
-The implementation relies on Z3's root isolation, polynomial operations, algebraic-number representation, and CAD conflict explanation (Sections I.B, II.C and IV.B, pp. 2–3, 6). The implementation-correctness discussion states: “Results were carefully verified, and satisfiable instances were validated to ensure correctness.” (Section VII.E, p. 11). That is the author's report, not an independent validation performed for this study.
-
-The randomness discussion concerns NLSAT's semantic decisions and clause/literal reordering: “These mechanisms are preserved in our solver, so they do not affect comparisons.” (Section VII.E, p. 11). Section VII.C (p. 10) separately explains that changed witness intervals can produce different assignments with identical random seeds.
-
-Inference: these benchmarks establish measured performance on the stated SMT-LIB corpus and configuration. They do not validate Verus's translation or show that solver-aware ordering improves agent-written verified Rust. For VL, the supported opportunity is to test whether nonlinear verification obligations benefit from these solver techniques; no direct product-threat ranking follows from this paper.
-
 ## techniques for the catalog
 
 - feasible-set look-ahead — intersect feasible sets of clauses univariate in the same variable and choose one arithmetic witness shared by selected literals
@@ -89,5 +79,3 @@ Inference: these benchmarks establish measured performance on the stated SMT-LIB
 - propagation-based branching — prioritize blocked and fixed variables before VSIDS
 - watched-variable incremental updates — watch two variables per clause and eagerly update feasible sets when the clause becomes univariate
 - projection-order discipline — use inverse assignment order when all atoms are in root format
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The search engine backtracks to the highest decision level of the new lemma and attempts to unit propagate the negation of previously decided literals."): read the full paper; checked quotations, author, version, link, algorithms, counts, and section/page references; corrected the author attribution, references, SAT-count interpretation, ablation comparisons, and unsupported completeness and Verus claims; did not inspect the implementation, run the experiments, or independently validate models.

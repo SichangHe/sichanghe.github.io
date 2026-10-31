@@ -49,9 +49,6 @@ The survey groups data into extracted formal libraries, manually formalized benc
 
 Inference: report proof assistant, dataset split, automation, time, number of attempts, and contamination controls. Autoformalization needs semantic equivalence checks; premise selection needs recall/MRR but should account for alternative valid premises; theorem proving usually reports solved fraction. The survey emphasizes that “results across different proof assistants are not directly comparable” because automation such as Isabelle's Sledgehammer changes outcomes (section 6.1, page 9).
 
-## proof boundary and VL implications
-The survey identifies verified code generation as a future direction: “one can train or prompt LLMs to synthesize program invariants” or generate programs in verification-friendly languages, including Verus (section 6.2, page 10). Inference: apply premise retrieval, repair using verifier feedback, and explicit evaluation budgets to verified Rust. Check separately whether generated contracts express the intended requirement. The survey does not evaluate these proposed Verus applications.
-
 ## techniques for the catalog
 - structured autoformalization: translate informal statements through sketches, subgoals, and prover feedback
 - premise retrieval and reranking: select relevant library lemmas with learned dense or graph representations
@@ -60,4 +57,3 @@ The survey identifies verified code generation as a future direction: “one can
 - learned proof search: guide beam, best-first, MCTS, A*, or RL exploration with policy and value models
 - synthetic proof data: generate controlled theorems, add successful proofs, or reuse failed trajectories through hindsight replay
 - lemma discovery: extract, conjecture, or prompt reusable subgoal lemmas and add checked results to the library
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Without a specific application as the context, it is unclear what evaluation setting makes the most sense."): read the full paper including references and Appendix A; checked quotations, numbers, section/page references, technique descriptions, and the arXiv link; corrected page references, retrieval metrics, pipeline descriptions, and Thor attribution, removed unsupported implementation claims, and marked proposed applications as inferences; did not independently check cited studies, reproduce experiments, or test Verus applications.

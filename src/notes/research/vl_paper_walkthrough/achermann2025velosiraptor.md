@@ -6,10 +6,6 @@ Tag: `achermann2025velosiraptor`, [paper](https://doi.org/10.1145/3676641.371199
 
 The paper targets OS code that configures memory-translation and protection hardware. Its abstract says: “We present Velosiraptor, a system that automatically generates correct, low-level OS code that programs the memory hardware of a machine.” It also says: “The Velosiraptor toolchain transforms this specification into a verified implementation that can be linked directly with the rest of the operating system.”
 
-Inference: The reusable idea for VL is specification-directed synthesis: describe the behavior and environment once, search over a restricted implementation language, and discharge correctness conditions with an SMT solver before emitting code. The paper’s “verified” claim is conditional on the behavioral model, OS environment specification, solver, and generated-code backend; it is not a proof of the hardware, OS, or compiler as a whole.
-
-## technique 1: behavioral model and compositional DSL
-
 ### what it is and when to use it
 
 Section 2 models a mapping unit as a partial function from input address, access mode, and hardware state to an output address. The paper states: “Abstractly, all memory hardware units either successfully map an address or raise an exception.” A state contains registers and in-memory structures such as page tables; an atomic control transition consumes arguments and a state and returns a new state.
@@ -34,8 +30,6 @@ The target contracts are explicit. Listing 1’s `addmap` postcondition requires
 Inference: Encode the state and mapping relation as Rust structs and `spec fn`s. Use `requires` for address alignment and valid-state assumptions, and `ensures` for postconditions of `addmap`, `setperms`, and `delmap`. Use executable Rust for register writes and memory updates, with proof code and loop invariants for the state-machine transitions. A `spec fn` can define the abstract `map` relation, while a proof function can establish that an implementation step preserves the relation.
 
 Inference: The DSL’s `enum` and StaticMap composition correspond to Rust enums and collections plus invariants about disjoint ranges and variant tags. Verus can prove the modeled composition properties, but calls to actual MMIO, allocator implementations, hardware, and foreign OS APIs require contracts or remain trusted. This is an inference because the paper uses its own Rust/Z3 DSL, not Verus.
-
-## technique 2: grammar-constrained candidate synthesis
 
 ### what it is and when to use it
 
@@ -112,4 +106,3 @@ Inference: The product threat to agent-written verified Rust is specification dr
 - balanced-tree synthesis — combine partial candidates in a tree so failed combinations are rejected before full Cartesian-product search
 - delayed-write modeling — synthesize first under immediate visibility, then add buffers, cache operations, and barriers and re-verify
 - SMT query caching — cache pending and completed candidate checks and schedule higher-level tree queries first
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The query scheduler assigns priorities to the SMT queries based on their position in the tree."): checked every quotation, numerical result, section and listing reference, technique step, tag, and DOI against the full paper; completed truncated quotations, corrected DSL spelling and measurement descriptions, removed an unsupported kernel-build measurement count, added the unchanged-range contract, and flagged inconsistent illustrative arithmetic; did not run the artifact, reproduce benchmarks, or independently validate the proposed Verus adaptations.

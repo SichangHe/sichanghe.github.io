@@ -59,12 +59,8 @@ Verus form: Inference: use a Rust function with `ensures` for `result >= 0`, a s
 
 Trusted and measured: Lean’s kernel checks the generated proof; the LLM, Newton arithmetic, rational recovery, and benchmark harness remain outside that kernel until their outputs are rechecked. The paper does not report proof-kernel bugs or a complete accounting of trusted preprocessing.
 
-## implications for VL
-Inference: NSPI’s separation of heuristic generation from exact checking matches VL’s agent workflow: let an agent search for a certificate, but make Verus prove the final algebraic contract. The main threat is certificate complexity and dimension-driven failure, not unsoundness when the exact checker rejects bad candidates. Existing work already covers SOS/Lean pipelines; VL should reuse the certificate pattern rather than redo an LLM conjecturer unless it needs Rust-specific arithmetic.
-
 ## techniques for the catalog
 - SOS certificate: prove polynomial nonnegativity by an exact sum of polynomial squares
 - neural SOS conjecture: train an LLM to propose and rank Gram-matrix structures
 - symbolic correction: refine numerical candidates and recover exact rational coefficients
 - template formalization: instantiate a fixed Lean proof template and let the kernel check equality and nonnegativity
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

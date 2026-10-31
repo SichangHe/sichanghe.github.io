@@ -89,14 +89,6 @@ Verus form (Inference, not from the paper). The same workflow can instrument Rus
 
 Evidence and limits. Across prompt variants and models, 64 unique Defects4J bugs were distinguished from 525 considered (12.2%), involving 70 buggy methods (section 4.2.2, p. 14). The paper does not model exceptional postconditions; most TOGA-caught bugs are “exceptional” bugs that nl2postcond fails to find (section 4.3.1, pp. 16–17).
 
-## comparison, trust, and implications for VeruLaw
-
-Compared with TOGA, postconditions are expected to hold for all inputs, can be checked at runtime on unseen inputs, and can be arbitrary Boolean expressions; TOGA assertions apply to a specific test prefix (section 4.3.1, p. 16). The two methods are complementary: among 101 bugs caught by at least one, only 5 overlap, 37 are TOGA-only, and 59 are `nl2postcond`-only (section 4.3.1, p. 16). Daikon generated postconditions for 78/101 evaluated bugs, but only three were bug-discriminating, and two of those three overfit the regression tests (section 4.3.2, pp. 17–18).
-
-Inference: the generated assertions and LLMs are not trusted proof components; trust still requires a sound verifier, a correct specification language, and human validation of intent. The paper identifies black-box model behavior, data leakage, model updates, limited bug samples, taxonomy generality, and mutant-set dependence as threats (section 6, pp. 19–20). It also reports that only 1.1% of the 900 manually annotated EvalPlus postconditions were test-set false positives (all from one problem, #122), while HumanEval's smaller tests would give 7% false positives for GPT-4 accept@10 (section 3.2.1, p. 9).
-
-Inference: for VeruLaw, the practical pattern is to have an LLM propose small Verus postconditions from comments, compile and prove them, test them against generated mutants, and require human acceptance before treating them as requirements. Inference: this can reduce specification-writing effort but threatens the product if a plausible predicate is weaker than intent, if generated code is overfit to tests, or if the model invents an invalid ownership/frame claim. Inference: VL should not redo the paper's metric definitions, finite-mutant completeness idea, or prompt tradeoff; it should adapt them to Rust ownership, Verus proof obligations, and a requirement review trail.
-
 ## techniques for the catalog
 
 - test-set correctness — check a candidate postcondition on every reference test and report accept@k over sampled candidates
@@ -106,4 +98,3 @@ Inference: for VeruLaw, the practical pattern is to have an LLM propose small Ve
 - context-aware real-bug instrumentation — generate predicates from comments plus call-graph context and compare fixed versus buggy versions
 - qualitative predicate taxonomy — classify generated assertions and compare categories by prevalence and mutant discrimination
 - proof-plus-test pipeline (Inference, not from the paper) — treat generated assertions as proposals, then compile, test, verify, and obtain human intent validation
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our initial investigations found that without some file-level context, LLMs rarely generate meaningful postconditions that also compile."): checked every quotation, number, table value, section and page reference, and technique step against the paper text; changed page references (Figure 1 p. 3, section 4.2.2 p. 14, sections 4.1.1 and 4.2.3 pages), the Defects4J subset wording (reproducible with Java 8 syntax, not "compile"), the Figure 1 set assertion description, the Daikon overfit wording, the category-correctness finding, noted the StarChat 24-vs-25 mismatch between Table 4 and section 4.2.2, and marked agent conclusions (Verus forms, trust, ranking step, proof-plus-test) as Inference; did not check the Figure 3 prompt text (an image absent from the text extraction) or the authors' released artifacts.

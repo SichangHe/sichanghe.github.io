@@ -59,8 +59,6 @@ IsaSAT’s SML and LLVM theorems state end-to-end refinement from the executable
 
 Evaluation used every SAT Competition 2022 benchmark on an Intel Xeon E5-2620 v4 at 2.10 GHz, turbo disabled, with 7 GB memory and a 5,000-second timeout. IsaSATSML solved 40 instances, the first LLVM port 98, and the current inprocessing version 166; out-of-memory counts were 335, 23, and 19 respectively (section 6, pages 216–217). Inference: these numbers support this implementation’s engineering gains, not a universal claim that verified SAT solvers outperform unverified ones. Variable elimination remains unsupported because it changes models and requires further PCDCL extensions (section 7, page 217).
 
-Inference: for VL, the most reusable design is to separate a small abstract transition calculus from optimized Rust and prove a refinement relation, while tracking every unverified parser, FFI, output, and bounded-resource assumption. The PCDCL clause-set trick and accessor-based state refinement are domain-specific adaptations, not ready-made Verus libraries.
-
 ## techniques for the catalog
 
 - active/discarded clause splitting — retain original literals while allowing inprocessing to ignore transformed clauses
@@ -68,4 +66,3 @@ Inference: for VL, the most reusable design is to separate a small abstract tran
 - refinement-driven LLVM synthesis — refine abstract rules to deterministic arrays and generate lower-level code
 - accessor-based state decomposition — replace tuple case-splits with getter/setter refinement to make synthesis tractable
 - timing-guided proof engineering — collect runtime statistics to find scheduling and allocation bugs in verified implementations
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Before porting the development to LLVM, we removed our only remaining source of unbounded integers: the clause indices during the garbage collection."): read the whole paper text and checked every quotation, number, section and page reference and technique step against it; tag, authors, year and the DOI link (printed in the paper header) are correct; changed the three-sets description, the clause-set removal wording, learn-rule side conditions, the SML precondition wording, the accessor/pointer experiment details, the timing-example pages and caveat, the claim that statistics exposed the reduce/GC inversion (the paper says the statistics were inverted too), the section 5.2 page range, and the "plus proof"/"parallel development" claims on the two-hour check time; did not check the cited external papers, the figure 1 curves, or the Isabelle formulas beyond what the text states.

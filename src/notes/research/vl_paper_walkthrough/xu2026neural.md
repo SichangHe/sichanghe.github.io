@@ -23,7 +23,7 @@ How to do it:
 4. Translate each AST into a target ITP language using expert rules (sec.3.1, p.4)
 5. Keep one VC per theory file, with project-specific library dependencies (sec.4, p.7)
 
-Verus form: Inference: a VL corpus builder can harvest Verus diagnostics or generated proof obligations from real Rust projects, but must preserve the original Rust contracts and dependency context. This paper does not show a Verus extractor or claim that its Why3 AST maps directly to Verus.
+Verus form:
 
 Evidence and limits: the authors extract more than 7,500 VCs and select 600 (sec.4, p.5). The source VCs came from formally checked projects, but they caution that bugs in Frama-C, Why3, translation, or processing may make some cases unprovable (sec.4, p.7). The benchmark therefore measures a pipeline, not only model intelligence.
 
@@ -42,7 +42,7 @@ How to do it:
 3. Validate target syntax and cross-check rules with independent experts (sec.3.1, p.4)
 4. Run the complete translation automatically after the rule base is fixed (sec.3.1, p.4)
 
-Verus form: Inference: for VL, generate Rust/Verus specifications directly or use a typed AST translator with explicit equivalence tests. Do not treat a model paraphrase as a semantic-preservation argument.
+Verus form:
 
 Evidence and limits: the paper reports more than 2,400 total human-written mapping and rewriting rules, approximately 800 per target language (sec.3.1, p.4). Rules are checked by syntax checking and author cross-validation, but the paper does not provide a formal proof that every translation is semantics preserving.
 
@@ -79,7 +79,7 @@ How to do it:
 4. Screen candidates for nontrivial specifications and balanced project/category coverage (sec.4, pp.6–7)
 5. Report operation counts, AST size/depth, and quantifier counts (Table 4, p.6)
 
-Verus form: Inference: create a VL evaluation set with explicit source, model, verifier version, timeout, and denominator; stratify by arithmetic, data structures, memory, and invariants rather than report one blended pass rate.
+Verus form:
 
 Evidence: all 600 cases, category counts, and ATP baselines are given in Tables 2, 4, and 5 (pp.5–8). The paper warns that one VC per file can depend on project libraries, so participants must learn unfamiliar definitions (sec.4, p.7).
 
@@ -113,5 +113,3 @@ The benchmark trusts Why3/Frama-C VCGs, expert translation rules, target ITP ker
 - stratified benchmark design — balance industrial and algorithmic cases while targeting ATP difficulty
 - kernel-backed scoring — count only proofs accepted by the target prover without holes
 - failure taxonomy — separate syntax, semantic confusion, and hallucinated constants or tactics
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

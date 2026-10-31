@@ -47,5 +47,3 @@ The input boundary remains important. The first workflow step in §5, p. 12 is: 
 - reference big-step semantics: define executable source meaning, including initialization, failure, timeout, and saved states
 - verified weakest-precondition VCG: separate sound logical rules from condition generation, including framing and termination
 - forward-simulation compiler proof: relate Dafny and CakeML states and preserve successful source evaluation
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To ensure that the loop terminates, we need to check whether the expression in decreases actually decreases."): checked the entire paper, quotations, numbers, section and PDF-page references, technique steps, theorem assumptions, and example coverage; corrected semantics, VCG soundness direction, compiler scope, evidence and trust claims, and the paper link using its arXiv identifier; did not inspect the implementation, rerun HOL4 proofs, or independently verify the proposed Verus adaptations.

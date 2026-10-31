@@ -71,12 +71,6 @@ How to apply it.
 
 Inference: a possible Verus form. Represent the resource by a ghost `Multiset` or finite map and state `ensures` that the output multiset equals the input multiset. This is a useful contract for a consuming Rust transform. Ownership can enforce that each element is moved once, while the Verus proof establishes that no element is dropped or duplicated. It cannot, by itself, prove the stronger ordered theorem because commutative resources intentionally erase order.
 
-## what is proved, trusted, and relevant to VL
-
-The paper gives proofs of the fundamental theorem, compositionality lemmas, ordered list and fold properties, and the linear permutation theorem. Theorem 14 states tree-traversal properties with a partial proof sketch (sections 3–9). The development fixes an operational semantics and typing rules, requires the relevant monoid laws and contractive, purely positive recursive types, and assumes termination once expression recursion is added. These are mathematical results, not empirical measurements or a reported machine-checked verification.
-
-Inference: for agent-written verified Rust, a resource model could omit a required property. VL could use ordered ghost sequences for sequence contracts and commutative ghost multisets for permutation contracts. Applying the paper’s conclusions would also require a connection between the executable code and that model; ordinary ownership checking alone does not supply the logical-relations argument.
-
 ## techniques for the catalog
 
 - algebra-indexed logical relation: parameterize value predicates by a monoid or commutative monoid to track ordered or linear resources
@@ -84,4 +78,3 @@ Inference: for agent-written verified Rust, a resource model could omit a requir
 - ordered free theorems: use a free noncommutative monoid to force identity, reversal, folds, and tree traversals
 - linear free theorem: use a free commutative monoid to prove that list transforms are permutations
 - Inference: algebra-to-Verus encoding: model resources as ghost sequences or multisets and prove contracts with `spec fn`, `ensures`, and proof lemmas
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In other words, we now have a nested inductive definition of the logical predicate, first on the type, and when the type is purely positive, on the structure of the value."): checked the full paper, quotations, arXiv identifier, type signatures, theorem numbering, printed pages, technique steps, and termination restrictions; corrected page references, the fold signature, the scope of append and tree claims, and the implementation description; marked Verus applications as inference and removed unsupported comparisons with other notes; did not independently reconstruct every proof, inspect the unprovided type checker, or validate the proposed Verus encodings.

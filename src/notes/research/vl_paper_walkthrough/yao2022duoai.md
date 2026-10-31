@@ -5,8 +5,6 @@ Tag: `yao2022duoai`, [paper](https://www.usenix.org/conference/osdi22/presentati
 ## scope and core result
 DuoAI searches formula space for inductive invariants of nondeterministic distributed protocols, including invariants with existential quantifiers. It combines top-down weakening of a candidate set with bottom-up strengthening of a universal core. Section 1, p. 486, states: “DuoAI runs these two methods for refining candidate invariants in parallel, a top-down refinement that weakens the candidates and a bottom-up refinement that strengthens the candidates, returning the result from the method that succeeds first.”
 
-Inference: the useful VL lesson is to separate universal invariants that are cheap to prove from existential witnesses that are expensive, then search only the small witness combinations needed for the safety theorem. An adaptation to VL would assist proof search; Verus would still need to check the resulting Rust proofs.
-
 ## technique 1: minimum implication graph
 
 what it is and when to use it
@@ -107,17 +105,9 @@ Section 7, pp. 494–495, distinguishes conjunction-implied formulas from equiva
 
 For `P1 ∧ ... ∧ Pk ⇔ Q`, never retain `Q` as an additional candidate. Lemma 6 builds a graph for each conjunction, connecting literals that share an existential variable. Multiple connected components allow equivalent decomposition. For universal formulas, this eliminates conjunctions. A second decomposition separates equal and unequal assignments of leading universal variables.
 
-Inference: an external VL candidate generator could apply these reductions, provided the emitted proofs justify the implication or equivalence used.
-
 ## search expansion and parallel execution
 
 Section 6, pp. 493–494, expands the search after `NotProvable` by increasing total literals, ORed conjunctions, ANDed literals, existential variables, or per-domain variable counts, in round-robin order. Defaults are `max_literal = 4`, `max_or = max_and = 3`, and `max_exists = 1`, raised to the safety property’s existential-variable count if that count is at least two. Initial per-domain counts come from the largest occurrence count for that type in a relation. A separate universal-only instance runs top-down refinement in parallel.
-
-## trust boundaries and VL threat
-
-Inference: the finite-search-space theorems and Ivy checks concern the protocol model. An implementation proof would additionally need a justified mapping from code to that model. Simulation filters candidates; the final SMT check must establish their inductiveness independently of sample coverage. Table 1’s IC3PO footnote (p. 497) says: “However, they retrofitted the protocols and manually provided clauses with quantifier alternation that could appear in the invariants, which is difficult to do without first knowing the ground-truth invariants.”
-
-Inference: DuoAI is a medium-to-high proof-search threat to VL's manual invariant work, especially for distributed protocols with witness-style invariants. It does not automatically verify Rust ownership, I/O, cryptography, memory safety, or refinement from code to protocol. VL should borrow graph-ordered candidate generation, universal-core decomposition, and counterexample-guided witness search, while requiring Verus transition proofs and explicit model-refinement evidence.
 
 ## techniques for the catalog
 
@@ -128,4 +118,3 @@ Inference: DuoAI is a medium-to-high proof-search threat to VL's manual invarian
 - bottom-up subset search — try small noncore subsets, pruning those that cannot exclude recorded counterexample source states
 - mutual implication pruning — omit conjunction-implied formulas temporarily and equivalently decomposable formulas permanently
 - decidable quantifier ordering — constrain alternating quantified types to preserve an SMT-decidable formula fragment
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "If there exists one counterexample state s on which all invariants in the subset hold, or in other words, the counterexample cannot be excluded, the monotonic weakening algorithm is bound to fail, because if a stronger invariant cannot exclude the counterexample, then its weaker forms cannot either."): checked the full paper, quotations, numbers, references, and technique steps; corrected sample pruning, graph construction, refinement, noncore membership, trial attribution, and the publisher link; added mutual-implication pruning and search defaults; did not reproduce experiments or validate the proposed Verus adaptations.

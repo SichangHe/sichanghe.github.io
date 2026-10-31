@@ -6,8 +6,6 @@ Tag: `lu2024proofautomation`, [paper](https://doi.org/10.1145/3691620.3695521)
 
 The paper (ASE 2024, printed pages 1509–1520) studies why language models produce invalid Coq proof scripts and presents PALM, a generate-then-repair pipeline. Its abstract reports: “By analyzing 520 proof generation errors made by GPT-3.5, we found that GPT-3.5 often identified the correct high-level structure of a proof, but struggled to get the lower-level details correct.” (abstract, p. 1509). PALM retrieves premises, prompts an LLM for a script, executes each tactic in Coq, applies a repair when a tactic fails, and invokes backtracking when repair fails (section 4.1, Algorithm 1, p. 1512). The abstract calls this “a novel generate-then-repair approach that first prompts an LLM to generate an initial proof and then leverages targeted symbolic methods to iteratively repair low-level problems.” (abstract, p. 1509)
 
-Inference: for VeruLaw, the central transferable pattern is to let an agent propose proof structure while a trusted checker supplies error states and a repair loop edits only the failing step. The paper is about Coq and does not establish that the same repair rules work for Verus.
-
 ## formative error analysis
 
 Inference: use the error taxonomy to decide which repairs to automate. The authors ran GPT-3.5 on 579 theorems from the Verdi project, sampled one proof script per theorem, recorded the first Coq error, and manually categorized the 520 collected errors (section 3, p. 1511). Table 1 gives the complete denominator: wrong theorem application 258/520 (49.6%), invalid reference 79/520 (15.2%), incorrect rewrite 61/520 (11.7%), redundant introductions 56/520 (10.8%), tactic misuse 44/520 (8.5%), bullet misuse 19/520 (3.7%), and miscellaneous 3/520 (0.6%) (section 3, p. 1511).
@@ -49,8 +47,6 @@ Runtime is a trade-off: successful proofs average 32.89 seconds (Passport 3.1, P
 
 Inference: the trusted result is Coq's kernel acceptance of each completed script. The LLM, TF-IDF/KNN/BM25 retrieval, repair rules, CoqHammer, timeout policy, and selected Coq versions are parts of the search procedure and benchmark setup, not of the trust base. The paper does not evaluate Verus, whether specifications are correct, or whether proofs survive library changes.
 
-Inference: VL should not redo a generic “generate then repair” claim without Verus benchmarks and denominators. A useful new experiment is to compare Verus repair policies on the same failed obligations, record checker acceptance and repair cost, and test whether proofs survive dependency and specification changes.
-
 ## techniques for the catalog
 
 - error taxonomy — classify checker failures by wrong applications, references, rewrites, introductions, tactic misuse, and structure
@@ -58,4 +54,3 @@ Inference: VL should not redo a generic “generate then repair” claim without
 - targeted repair — replace names, rename binders, fix structure markers, and augment premises based on diagnostics
 - proof backtracking — undo failed high-level steps and search alternative proof structure with a symbolic prover
 - generate-then-repair evaluation — report successes, ablations, denominators, overlapping failure categories, and runtime settings
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Thus, when CoqHammer fails to solve a goal, it is clear that PALM needs to backtrack to an earlier point in the proof to see if it can be solved instead."): what I checked: every quotation, number, section and page reference, and technique step against the full paper text; what I changed: replaced all page references with the printed pages 1509–1520, added BM25 reranking to retrieval, corrected bullet transformation (unsolved-goal case goes to backtracking), corrected the benchmark description (not just Coq 8.10–8.12 compatibility), corrected "all four LLMs together" to PALM with all four LLMs, renamed failure causes to the paper's terms, added baseline and LLM-alone numbers and the run-once and initial-proof limits, removed the unsupported claim that missing-premise failures show checker-approved proofs omit premises, marked advice as Inference; what I did not check: figures shown only as images (Figures 4, 9, 10, 11, 12), the Verus statements in Inference paragraphs, and the link beyond matching the DOI printed in the paper.

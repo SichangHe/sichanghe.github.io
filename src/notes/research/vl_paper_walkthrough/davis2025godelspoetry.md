@@ -63,10 +63,6 @@ Steps. (1) If a node is a leaf, return its verified formal proof (section 3.4, S
 
 Inference: A Verus implementation should rerun its verifier after assembling parent and child proofs. Regex replacement is unsafe for nested syntax; a Rust AST or span-based rewrite should preserve binders and contracts. The final verifier run is necessary because individually valid child proofs may not fit the parent context.
 
-## evidence, limitations, and product threat
-
-The only headline performance number for this system is the inherited 90.4% miniF2F pass@32 without decomposition, using the default configuration (abstract, p. 1; section 5.4, p. 10). The paper says recursive decomposition with RAG “is significantly improved but has yet to be fully benchmarked” (section 5.4, p. 10). Therefore no denominator or verified percentage is supplied for the claimed improvement. The implementation is about 5,000 lines with 18 agent types, but this is implementation size, not proof quality evidence (section 5.2, p. 9). Inference: LLM formalization, semantic judgments, retrieval, AST extraction, and reconstruction can introduce errors; they are distinct from Lean’s check of a completed formal proof. For agent-written verified Rust, this approach could make proof search more local, while adding orchestration complexity and opportunities for incorrect contracts or mismatched lemma assumptions. Its candidate reusable mechanisms are the explicit proof tree, context-preserving child extraction, and bounded ancestor backtracking. The paper does not evaluate Verus or verified Rust.
-
 ## techniques for the catalog
 
 - staged semantic validation: syntax-check generated formalizations, then give a semantic checker veto power before proof search
@@ -75,4 +71,3 @@ The only headline performance number for this system is the inherited 90.4% mini
 - AST subgoal extraction: traverse a proof AST to recover unproved propositions with complete context
 - recursive breadth-first proving: solve child obligations with depth limits and ancestor backtracking
 - proof reconstruction: substitute verified child proof bodies into parent sketches; Inference: re-verify the assembled artifact
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The architecture naturally supports parallelization at the subgoal level, as sibling subgoals are independent and may be proved concurrently."): checked the entire paper including appendices against the study’s quotations, numbers, references, and technique steps; corrected page references and the extraction quotation, clarified dependent subgoals and parallel processing, removed unsupported VL claims, and marked final re-verification and Verus transfer as inferences; did not run the implementation, reproduce benchmarks, or check external code and cited papers.

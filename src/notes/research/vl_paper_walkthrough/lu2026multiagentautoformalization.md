@@ -98,8 +98,6 @@ Verus form (Inference). When Verus lacks a library theorem, isolate a local lemm
 
 The Lean kernel checks the formal declarations and proof terms, and the reported core has no `sorry` placeholders. The blueprint and reviews provide evidence that statements were compared with literature, but six review rounds found 10–30 issues per round, chiefly missing hypotheses, mismatched definitions, and overly general claims (End Matter, p. 9). The authors explicitly state that the full one-dimensional SPT classification is not formalized; the result stops at a cohomological invariant. Some deep inputs outside the FT-MPS and symmetry chains remain assumed (Appendix B.1, p. 15). Trusted layers include Lean, Mathlib, external Brouwer code, source translations, blueprint metadata, agent prompts, human strategic review, and the theorem statements themselves.
 
-Inference: threat to a product of agent-written verified Rust is high at the specification boundary and moderate in proof construction. The paper already demonstrates multi-agent decomposition, persistent memory, blueprint synchronization, review–repair, finite-scope auditing, and library-gap workarounds; VL should not redo a generic multi-agent Lean workflow. VL-specific work should measure whether a Verus blueprint catches overstrong contracts, whether proofs survive dependency changes, and whether hidden behavioral tests agree with the verified specification.
-
 ## techniques for the catalog
 
 - synchronized blueprint: link source statements, dependencies, status, and Lean declarations in a checked human-readable layer
@@ -110,5 +108,3 @@ Inference: threat to a product of agent-written verified Rust is high at the spe
 - review–repair cycle: compare literature, blueprint, and code, then patch and repeat with a bounded reviewer loop
 - finite canonical proof decomposition: reduce to canonical form, separate blocks at finite lengths, and combine gauge results
 - local library replacements: prove missing mathematical prerequisites from available primitives and record their assumptions
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

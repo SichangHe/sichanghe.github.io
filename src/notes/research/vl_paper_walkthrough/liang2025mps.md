@@ -8,8 +8,6 @@ MPS-Prover is a Lean 4 stepwise automated theorem prover. At each iteration an L
 
 The method has two separate parts. First, expert iteration produces formal theorems and state/step pairs; curation removes short proofs and ineffective tactics. Second, multi-perspective search samples tactics from up to four retained nodes, pools their resulting states, and retains up to four distinct candidates: one chosen by a learned distance critic and one by each of three heuristics. Every final proof is concatenated and checked by the Lean compiler. The reported model is a 7B Qwen2.5-Math-7B-base fine-tuned for three epochs on about 3.5 million question-answer pairs; training used eight H20 80G GPUs for about three days (§3, p. 5).
 
-Inference: for VL, this is a search and data-engineering pattern for agents that emit Verus proof steps. The paper is about Lean tactics and mathematics, not Rust or Verus. A Verus adaptation would replace Lean's proof state with a Verus verification state, use the compiler/verifier as the acceptance oracle, and preserve the multi-branch search and heuristic selection ideas. It would need new state serialization, tactic validity checks, and benchmarks for Rust specifications.
-
 ## technique 1: expert iteration for stepwise proofs
 
 What it is. Expert iteration repeatedly uses the current prover to discover accepted proofs, then trains the next model on those proofs. The paper lists three steps: “(1) autoformalization of natural language problems into formal proofs; (2) attempting proofs or disproofs using the model trained in the previous iteration; and (3) integrating newly proved theorems and the proofing steps into subsequent training iterations.” (§2.1, p. 3)
@@ -26,7 +24,7 @@ How to do it.
 
 Inference: a Verus agent could collect Rust snippets, contracts, current verification states, and accepted proof edits after each round. The acceptance condition should be a clean Verus verification run, with generated scripts rechecked from scratch. This is an adaptation; MPS-Prover does not measure Verus proof repair or Rust code correctness.
 
-Evidence and limits. The 26 rounds and 30,000/6-million counts describe this paper's data-generation run, not a general scaling law. The paper does not report how many attempted proofs failed at each round or how much of the final corpus was independently deduplicated beyond its curation rules. Inference: without those denominators, VL should treat training-data growth as an engineering input, not evidence that more rounds necessarily improve soundness.
+Evidence and limits. The 26 rounds and 30,000/6-million counts describe this paper's data-generation run, not a general scaling law. The paper does not report how many attempted proofs failed at each round or how much of the final corpus was independently deduplicated beyond its curation rules.
 
 ## technique 2: curation by proof length and tactic effect
 
@@ -42,8 +40,6 @@ How to do it.
 4. Inference: implement the no-progress filter by comparing the proof state before and after a tactic; §2.2 (p. 3) describes the filtering criterion but does not specify the comparison procedure.
 5. Remove tactics that make no meaningful state change; the reported removal rate is about 5% (§2.2, p. 3).
 6. Train on the remaining state/step pairs together with whole-proof and critic data (§3, p. 5).
-
-Inference: for Verus, “proof length” must be defined in terms of accepted proof edits or verified proof-function steps, because a single macro or lemma can hide substantial work. “No progress” should compare normalized verification goals and context, not just source-text equality. These are design choices for VL, not results of this paper.
 
 Evidence. The ablation on miniF2F uses a fixed MPS pass@64 budget and 244 problems. Full MPS proves 177/244; removing curation proves 176/244 (§3.3, p. 7; Table 3, p. 8). Thus curation saves 40% of training data in the authors' setup while changing the ablation result by one problem (176/244 versus 177/244). Inference: the result supports a data-cost reduction in this benchmark and model, but it does not prove that filtering is harmless for other theorem distributions.
 
@@ -81,21 +77,13 @@ How to do it.
 4. Concatenate accepted steps into one proof script (§3, p. 5).
 5. Recheck the complete script with the Lean compiler (§3, p. 5).
 
-Inference: VL should apply the same two-stage rule to Verus: incremental verification for search feedback, then a clean end-to-end Verus invocation on the generated Rust and proof code. Record pass@k denominators and timeouts so an agent cannot inflate success by counting an intermediate state as a finished proof.
-
 ## evidence and boundaries
 
 The main benchmarks are miniF2F-test and ProofNet-test. The paper describes ProofNet as containing 371 undergraduate-level problems and reports results on its test split; it does not give the test-split size (§3, p. 5). MPS's ProofNet result is 32.97%, compared with 29.6% for DeepSeek-Prover-V2 CoT and lower listed 7B baselines (Table 2, p. 6). For problems solved by both MPS (pass@64) and BFS (pass@256), Figure 4 reports mean proof lengths of 3.2 and 7.2 steps, respectively, and mean tactic-diversity scores of 0.91 and 0.80. Diversity is the number of unique tactics divided by proof length (§3.4, p. 8; Figure 4, p. 9). A separate comparison uses 170 miniF2F problems solved by MPS, Kimina, and DeepSeek-Prover-V2: mean lengths are 3.44, 15.91, and 52.16 steps, respectively (§3.5 and Table 4, p. 8). Both comparisons condition on commonly solved problems; the paper gives the 170-problem count only for the latter comparison.
 
 The model is a 7B Qwen2.5-Math-7B-base model trained with three data sources: curated stepwise proofs, concatenated whole proofs, and critic-training data (§3, p. 5). The paper compares against models of different sizes and sampling budgets in Table 1, including 72B and 671B whole-proof models. Inference: those cross-size rows are useful context but do not isolate the search algorithm's effect; the fixed-budget MPS/BFS comparison is the stronger evidence for search diversity.
 
-Inference: what stays trusted includes the Lean proof checker/compiler, the formalization of the theorem statements, the model and search implementation, and the benchmark's problem set. The paper's final compiler check addresses REPL misinterpretation, but it does not prove that the theorem statements express the intended informal mathematics. Inference: for agent-written verified Rust, the direct product threat is proof-search reliability rather than verifier unsoundness: repetitive or overconfident agents can waste budget or generate vacuous specifications. VL should preserve compiler rechecking, explicit theorem-contract review, and denominators for every reported success rate.
-
 The authors also identify a limitation in generating and proving new intermediate lemmas during stepwise interaction: “While our multi-perspective search can find efficient paths using existing tactics, it does not inherently support the generation and in-line proving of new, non-trivial lemmas in the same way a whole-proof generator might plan for.” (Appendix A, p. 13)
-
-## what VL should not redo
-
-MPS-Prover reports expert iteration, short-proof and no-progress curation, multi-criterion tree search, verifier-in-the-loop rechecking, fixed-budget comparisons, and proof-length/diversity analysis. Inference: a VL study should reuse these as baselines and test the missing Rust/Verus questions: how to serialize verification states, which heuristics predict useful proof obligations, and how proof search behaves under changing APIs and specifications.
 
 ## techniques for the catalog
 
@@ -105,5 +93,3 @@ MPS-Prover reports expert iteration, short-proof and no-progress curation, multi
 - verifier rechecking — concatenate generated steps and run the complete script through the compiler
 - fixed-budget evaluation — report pass@k with explicit passes, perspectives, iterations, samples, and benchmark denominators
 - proof diversity analysis — compare tactic diversity and step counts on the same commonly solved problems
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The goal is to guide the search towards more direct and structured proofs by favoring steps that represent significant logical advancements."): checked every quotation, number, section and page reference, technique step, and the paper identifier after reading the full paper; corrected pooled search selection, ablation descriptions and page references, ProofNet split wording, and the distinct proof-length comparisons; marked recommendations and implementation assumptions as Inference and added the stated intermediate-lemma limitation; did not reproduce experiments, inspect implementation code, or independently verify generated Lean proofs.

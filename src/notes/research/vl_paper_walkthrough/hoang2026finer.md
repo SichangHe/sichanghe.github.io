@@ -8,8 +8,6 @@ FINER-SQL trains small language models (SLMs, 0.5B–3B parameters) for Text-to-
 
 The reported headline is conditional on the paper's BIRD and Spider development settings. FINER-SQL 3B reaches 67.73% execution accuracy on BIRD Dev and 85.0% on Spider Dev (Table II, PDF p. 8), with 5.57 seconds per sample and about 10 GB VRAM on BIRD Dev (Table III, PDF p. 8). These are benchmark results, not formal-verification results.
 
-Inference: for VL, the transferable idea is to replace a single pass/fail proof signal with interpretable partial obligations that identify which contract or invariant is missing. The paper does not discuss Rust, Verus, or proof checking, so all Verus mappings below are inferences.
-
 ## technique 1: reasoning-bank distillation and supervised initialization
 
 What it is. The authors query four large teachers—DeepSeek-R1, GPT-oss-120B, Qwen-2.5-72B-Instruct, and GPT-4o—with a fixed system prompt requiring a `<think>` reasoning trace followed by one executable SQLite statement (Section IV-A-a, PDF p. 3). They aggregate the outputs into a Reasoning Bank, then supervised-fine-tune the SLM only on completion tokens (reasoning and SQL), excluding prompt tokens such as schema descriptions (Section IV-A-b, PDF p. 4). The canonical mapping is “⟨q, schema⟩ → ⟨< think > reasoning < /think > SQL⟩” (Section III-B/IV-A, PDF pp. 2–3).
@@ -85,19 +83,11 @@ Verus form. Inference: decompose a target proof into typed obligations—precond
 
 FINER-SQL generates candidates and selects by majority vote. The paper reports that increasing candidates from 1 to 50 improves Pass@K and EX%, with gains saturating beyond 30; its stated operating point is 20–30 candidates (Section V-D, PDF p. 9). Temperature 1.0 with 50 candidates gives the best reported configuration in that analysis (Section V-D, PDF p. 9). Table III reports 5.57 s/sample for FINER-SQL 3B at about 10 GB VRAM, versus 1,800–2,500 s/sample and up to about 80 GB for Alpha-SQL 14B/32B under the listed deployment settings (Table III, PDF p. 8).
 
-Inference: for VL, candidate proof generation can be parallelized, but selecting a proof by majority text vote is unsound. Select only candidates whose Verus checks pass; use proof diversity to reduce search time, not to waive checking.
-
 ## what is proved, measured, and trusted
 
 The paper measures execution accuracy, Pass@K, latency, memory, reward ablations, candidate and temperature sensitivity, training-step progress, and reasoning length on Spider and BIRD development sets (Section V, PDF pp. 7–10). It does not prove SQL semantic equivalence mathematically, and it does not provide formal verification of the reward functions or memory store. Its acceptance signal trusts SQLite execution, the benchmark's gold queries and databases, AST parsing, embedding behavior, and implementation of the reward code.
 
 The 3B model improves from 42.9% to 49.3% EX after 2,000 GRPO steps for the 0.5B model's reported curve, while Pass@K rises from 55.9% to 66.3% (Section V-E, PDF p. 10). The exact model and BIRD Dev setting should be retained with those numbers when comparing runs. Inference: these are empirical outcomes under one training recipe, not a guarantee that dense rewards transfer to other tasks.
-
-## threat to VL and work not to redo
-
-Inference: the threat to agent-written verified Rust is indirect. FINER-SQL shows that partial feedback can stabilize search, but a heuristic partial reward could steer an agent toward a specification-shaped proof that omits the real safety property. VL should preserve a hard final Verus check and treat all learned similarity, retrieved patterns, and proof-progress scores as search guidance.
-
-Inference: VL should not redo the paper's generic ideas of multi-stage initialization, dense progress signals, cross-context memory retrieval, or operation-level decomposition. The unresolved VL work is to define sound proof-progress signals, measure whether retrieved lemmas reduce proof repair time, and detect when a specification is weak despite a passing proof.
 
 ## techniques for the catalog
 
@@ -108,4 +98,3 @@ Inference: VL should not redo the paper's generic ideas of multi-stage initializ
 - atomic operation reward — AST-decompose SQL and use shaped maximum Jaccard overlap against equivalent references
 - reference enrichment — sample candidates, execute them, and retain denotationally matching SQL as structural references
 - candidate selection — tune candidate count and temperature, then select by majority vote under measured latency/accuracy trade-offs
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

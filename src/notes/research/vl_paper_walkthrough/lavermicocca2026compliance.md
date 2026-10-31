@@ -20,7 +20,7 @@ What it is. The researchers take the top 100 adult websites by traffic in each c
 
 How to apply it (agent recommendation). (1) Define the population and sampling frame. (2) Access each target under the relevant jurisdiction. (3) Record presence, provider, method, and workflow integration. (4) Preserve country-specific observations rather than collapsing them. (5) Use a codebook and independent annotation to reduce subjective drift. (6) Report non-exclusive method counts with their denominator.
 
-Verus form. Inference: this is a test-harness pattern rather than a Verus proof. A VL verification pipeline can encode a deployment record as a ghost map and prove that every observed acceptance decision is classified against the same property predicate. The data-collection and human-adjudication steps remain external evidence.
+Verus form.
 
 Evidence and limits. The paper identifies 15 providers, anonymized as VP1–VP15 (§6.2, p. 5458). Table 4 reports age estimation on 60 UK, 36 France, 6 Germany, and 3 Italy sites, and ID checks on 14, 5, 5, and 2 respectively; “Counts are non-exclusive: a website may offer multiple methods” (Table 4, p. 5459). The paper observes “no use of national eID or eIDAS-style credentials” (§6.2, p. 5459).
 
@@ -46,12 +46,6 @@ The authors test provider accounts across multiple devices and networks, website
 
 Verus form. Inference: model an authorization token with explicit audience, device/session binding, expiry, nonce consumption, and server-side authorization state. Prove with `requires`/`ensures` that content is returned only after an accepted authorization transition; use state-machine invariants for consumed nonces and account/device relations. Inference: no proof can recover a server-side check that the actual product omits, so end-to-end refinement testing remains necessary.
 
-## trust, findings, and implications for VL
-
-Table 10 rates each approach Low/Medium/High on P1 robustness, P2 replay resistance, and P3 unlinkability; for P1, “Low means that the approach is exploitable in more than 75% of providers, Medium that exploitation is observed in 25%–75% of cases, and High if exploitable in fewer than 25%” (§9, p. 5465). The paper states: “With the exception of credit-card checks, all evaluated verification methods were susceptible to one or more attacks. Every provider exhibited at least one exploitable weakness” (§9, p. 5465). Email could not be completed even in legitimate scenarios (Table 10, p. 5465). The method is black-box testing; the authors note that “Some observed behaviors may be influenced by undisclosed factors” and that measurements “depend on client-side observations, such as cookie persistence, browser state, and access decisions” (§10, p. 5467). Inference: trusted components include browsers, VPNs, devices, provider servers, and the researchers' threat-model assumptions.
-
-Inference: for agent-written verified Rust, this work is a medium threat to claims about secure end-to-end workflows because it shows that a verified local checker can be defeated by integration state and bearer artifacts. VL should not redo this paper's generic website census. It should reuse explicit adversary/property templates and test generated Rust services for replay, client-side authority, cross-device sharing, and unlinkable data flow. The paper's related work cites anonymous credential systems (Idemix, U-Prove) and Privacy Pass as supporting unlinkable attribute disclosure (§3, p. 5456); Inference: these already address parts of P2/P3, and the gap is checking their concrete Rust integration.
-
 ## techniques for the catalog
 
 - explicit adversary/property model — define evasion, replay, and unlinkability requirements before testing
@@ -63,4 +57,3 @@ Inference: for agent-written verified Rust, this work is a medium threat to clai
 - client-side overlay removal test — remove DOM/CSS blur after content delivery
 - jurisdictional VPN evasion — compare access under enforcing and non-enforcing exit countries
 - end-to-end property rating — map observed bypasses to robustness, anti-replay, and unlinkability scores
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "We note that the evaluated bypasses are automatable (e.g., scripted session orchestration and media replay), which lowers the marginal cost of repeated attempts once an attacker identifies a strategy."): what I checked: every quotation, number, section and page reference, and technique step against the full paper text; what I changed: link to the publisher page in the paper text; page labels to proceedings pages and wrong pages fixed (Tables 3–4 p. 5459, red-flags quote p. 5466, §8 pp. 5462–5465); A3 named as the paper's AVaaS actor; media count noted as "eight" in text but six described; document-attack steps, cookie and VPN wording made exact; benign-client quote completed; added the paper's 22/26 vs 13/15 inconsistency; deleted the unsupported generalization claim; marked agent conclusions "Inference:" or "agent recommendation"; what I did not check: Tables 3, 5, 6, 8 per-cell values beyond the totals cited, the released dataset, and the Verus claims.

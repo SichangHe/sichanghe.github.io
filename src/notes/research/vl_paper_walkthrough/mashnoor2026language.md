@@ -66,12 +66,6 @@ Table III is the 36-design ablation noted above: removing RAG gives 90.9/70.9, r
 
 For the five-trial Design2SVA comparison, Qwen3.5-35B obtains `Func@1` 0.412 on pipeline designs and 0.860 on FSM designs, and `Func@5` 0.896 and 0.958 respectively (Table IV, p. 4). The table compares against prior models but does not repeat the per-category design denominator; the setup says each design has five independent trials (Sec. IV-E, p. 4). The conclusion reports a combined pass@1 of 0.636; that aggregate is not directly derivable from the two displayed Qwen category values without category weighting, so it should be treated as the paper's reported metric.
 
-## trust, gaps, and VL implications
-
-JasperGold is the final formal checker for SVA syntax and bounded properties. The LLM, retrieval database, parser, and ReAct controller are untrusted proposal machinery. The paper does not report JasperGold version, timeout, hardware runtime, or a trusted-code base; all experiments used NVIDIA H100 GPUs (Sec. IV-A, p. 3). The benchmark measures generated assertion correctness, not end-to-end RTL implementation correctness or coverage of all design intent.
-
-Inference: the strongest reusable idea for VL is a verifier-feedback controller that first retrieves authoritative program structure, then makes localized proof repairs from exact diagnostics, and separately checks vacuity or satisfiability. Existing work already demonstrates this for SVA with JasperGold; VL should avoid redoing a generic RAG-plus-loop claim and instead solve Verus-specific ownership, trait, lifetime, and quantified-invariant diagnostics. Inference: threat from agent-written verified Rust is high when an agent chooses an under-specified postcondition or ignores a counterexample, and lower for syntax and local invariant repairs that Verus rejects or proves explicitly.
-
 ## techniques for the catalog
 
 - AST-indexed retrieval: parse RTL into semantic chunks and retrieve only design fragments relevant to an assertion
@@ -80,4 +74,3 @@ Inference: the strongest reusable idea for VL is a verifier-feedback controller 
 - solver-in-the-loop repair: submit generated assertions to the solver and apply localized fixes from errors or counterexamples
 - vacuity checking: test proven or undetermined assertions for unreachable antecedents before accepting them
 - ablation accounting: measure retrieval, structural analysis, and verification feedback separately on a fixed design subset
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

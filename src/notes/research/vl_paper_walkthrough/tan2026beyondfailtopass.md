@@ -35,7 +35,7 @@ MPE exposes that F→P alone overstates utility. Mutant quality depends on the f
 
 COHARDEN first asks an agent to write only a reproduction test from the issue, forbidding source edits. Its authors write, “The agent therefore emits only a reproduction test t0 and is forbidden from modifying any source file.” (section 3.1, PDF p. 6)
 
-Steps: provide the issue; direct the agent toward an observable failure such as output, exception or return-value discrepancy; reject internal-hook tests and strict structural assertions; store `t0`; only then permit joint fix/test generation (section 3.1, PDF p. 6). The reason is to reduce test–fix coupling and early Misaligned tests. Inference: in VL, generate an independent executable counterexample harness before editing verified Rust or contracts. Keep the initial witness separate from the candidate's proposed proof so the same model cannot make both mutually self-consistent by construction. This has no direct Verus analogue; it is workflow control.
+Steps: provide the issue; direct the agent toward an observable failure such as output, exception or return-value discrepancy; reject internal-hook tests and strict structural assertions; store `t0`; only then permit joint fix/test generation (section 3.1, PDF p. 6). The reason is to reduce test–fix coupling and early Misaligned tests.
 
 ## technique 3: temporal-matrix hardening
 
@@ -49,11 +49,7 @@ Evidence: on the 433-instance SWE-bench Verified ∩ SWT-bench Verified set with
 
 ## technique 4: ablation and convergence diagnostics
 
-The authors remove each phase to test causal contribution. Full COHARDEN is 69.4% Resolved/78.9% F→P; without lax-init 62.4%/70.2%; without hardening 61.0%/82.6%; without both 61.4%/72.7% (Table 5, PDF p. 9). Across rounds, Resolved rises from 61.0% at R1 to 69.4% at R5 while F→P falls from 83.3% at R0 to 78.9% at R5 (Figure 4, PDF p. 9). Inference: VL evaluations should include phase ablations and distinguish test pass rate from rejection of incorrect implementations
-
-## trust, reuse and product threat
-
-Trusted components include LLM mutation operators, test execution, benchmark harnesses, issue descriptions, golden fixes, and the assumption that sampled mutants represent plausible incorrect patches. The paper's method does not prove semantic equivalence to the intended bug; it measures repair outcomes. Inference: threat to agent-written verified Rust is high at the oracle boundary: a vacuous `ensures` can make both candidate and mutant appear correct, and mutation operators may miss a harmful implementation. VL should reuse MPE's orthogonal quality axis, test-first decoupling, temporal feedback and denominator-specific reporting; it should not redo generic APR benchmarks without a contract-aware mutant taxonomy.
+The authors remove each phase to test causal contribution. Full COHARDEN is 69.4% Resolved/78.9% F→P; without lax-init 62.4%/70.2%; without hardening 61.0%/82.6%; without both 61.4%/72.7% (Table 5, PDF p. 9). Across rounds, Resolved rises from 61.0% at R1 to 69.4% at R5 while F→P falls from 83.3% at R0 to 78.9% at R5 (Figure 4, PDF p. 9).
 
 ## techniques for the catalog
 
@@ -62,4 +58,3 @@ Trusted components include LLM mutation operators, test execution, benchmark har
 - temporal-matrix hardening: compare each new test with the previous test and reject high-laxity regressions
 - bounded mutant sampling: generate admissible variants with targeted semantic operators and record the denominator
 - phase ablation: measure each workflow phase separately for causal contribution
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

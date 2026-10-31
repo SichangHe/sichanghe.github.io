@@ -34,13 +34,13 @@ The paper reports no participants, completed runs, success fractions, or statist
 
 ## technique: concrete boundary-case catalogs
 
-Use tables of normal, boundary, and invalid inputs to force the generator to confront branch conditions. The discount example has eight cases, including 499.99/474.99, exactly 500/450, exactly 1,000/850, zero, and an inconsistent row pairing order total 100.00 with “Invalid input” (Table 4, PDF p. 11; the code is on p. 12). The last row contradicts both the function, which treats 100 as valid, and row TC2 of the same table, which gives 100.00 a final price of 95.00; the paper does not discuss or repair this inconsistency. Inference: VL should reject or flag contradictory fixtures before using them as specifications.
+Use tables of normal, boundary, and invalid inputs to force the generator to confront branch conditions. The discount example has eight cases, including 499.99/474.99, exactly 500/450, exactly 1,000/850, zero, and an inconsistent row pairing order total 100.00 with “Invalid input” (Table 4, PDF p. 11; the code is on p. 12). The last row contradicts both the function, which treats 100 as valid, and row TC2 of the same table, which gives 100.00 a final price of 95.00; the paper does not discuss or repair this inconsistency.
 
 Inference (Verus form): encode a table's valid rows as executable tests and universal ranges as `requires`/`ensures`; encode invalid rows only when the contract explicitly defines rejection. Do not weaken a contract to make a contradictory fixture pass.
 
 ## what is proved, measured, and trusted
 
-Nothing is formally proved. The proposed measurements are code quality, feature completeness, debugging and modification accuracy, confidence/control/usefulness ratings, and prompt quality (Section 3.6, PDF p. 9). The trusted parts are GPT output, human-written tests, the Python/Excel runtimes, survey instruments, and the proposed analysis. Inference: for agent-written verified Rust, the technique is a useful specification-prompting discipline but a low-to-moderate threat reduction by itself; a passing test suite cannot establish universal behavior or that tests express the real requirement. VL should reuse test-first decomposition and log capture, while it should not claim this paper has demonstrated formal verification.
+Nothing is formally proved. The proposed measurements are code quality, feature completeness, debugging and modification accuracy, confidence/control/usefulness ratings, and prompt quality (Section 3.6, PDF p. 9). The trusted parts are GPT output, human-written tests, the Python/Excel runtimes, survey instruments, and the proposed analysis.
 
 ## techniques for the catalog
 
@@ -48,4 +48,3 @@ Nothing is formally proved. The proposed measurements are code quality, feature 
 - boundary-case catalogs — enumerate normal, edge, and invalid inputs before generation and inspect contradictory rows
 - controlled TDD comparison — compare mandatory TDD+LLM with optional-testing LLM-only users using pre/post code, logs, and surveys
 - verification transfer — map cases to Verus contracts, executable tests, and proof lemmas, marking the mapping as an inference
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This stratification approach is particularly important in the context of a small sample size, to ensure balanced group comparisons and reduce confounding effects."): read the whole paper text and checked every quotation, number, example, table row, section name and PDF page against it; changed the PDF page references (the earlier ones were shifted by one to two pages), added the paper's hypotheses H1–H4, the absence of any Rust example, the compound-interest code versus TC4 mismatch, the TC8 versus TC2 conflict in Table 4, and the "randomly allocated" wording in Section 3.5.2; marked the link as from the fetch record because the paper text gives no arXiv or DOI; did not check the cited works or the arXiv version against the PDF layout, and the Verus mappings are my own inferences, not claims of the paper.

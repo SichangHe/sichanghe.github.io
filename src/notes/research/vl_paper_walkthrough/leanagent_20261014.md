@@ -73,15 +73,9 @@ Verus form: Inference: explore search over candidate proof edits using Verus fee
 
 evidence and limits: the procedure executes tactic candidates in Lean (Section 3.4, p. 5). However, the alternate PFR commit permits two proofs by reflexivity involving an unfinished definition and five proofs through a placeholder theorem stating `0 = 1` (Appendix A.5, pp. 29–30). The authors write: “As such, it proves False, allowing it to derive anything, including 0 = 1.” (p. 30). Appendix A.5 also describes a Mathematics in Lean Source proof that references another theorem still unproven at that point (p. 24). Inference: successful Lean execution does not establish that every dependency is free of unfinished proofs or false placeholders; inspect those dependencies when evaluating generated proofs.
 
-## what VL should take from this
-
-Inference: test a versioned lemma database and incremental retriever training, measuring both retained retrieval performance and new proof success. Record the model, repository commit, verifier version, and evaluation split with each result. Inspect proof dependencies for unfinished proofs and contradictory assumptions. LeanAgent's results support these experiments in Lean; their value for VL remains untested.
-
 ## techniques for the catalog
 
 - complexity curriculum — classify theorem difficulty from proof-step complexity and order repositories by easy-theorem counts
 - dynamic proof database — retain versioned theorem, premise, import, tactic, and proof-state metadata for reuse
 - progressive retriever training — train one epoch per new dataset and track stability and plasticity with R@10
 - dependency-filtered best-first proving — retrieve accessible premises, generate and execute tactic candidates, and backtrack under a time limit
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The validation and test split each contain 2% of the total theorem and proofs, following the methodology from LeanDojo."): read the full paper, including appendices and references; checked all study quotations, numbers, section/page references, and technique steps; corrected the publication-year tag, citations, curriculum order, dataset details, retrieval-setting ambiguity, and claims about proof dependencies; removed unsupported Verus details and marked proposed adaptations as Inference; did not rerun experiments, inspect implementation code or repository proofs, or validate Verus behavior.

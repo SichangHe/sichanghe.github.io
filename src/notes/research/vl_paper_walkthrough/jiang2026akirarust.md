@@ -6,8 +6,6 @@ Tag: `jiang2026akirarust`, [paper](http://arxiv.org/abs/2602.21681v1)
 
 The paper presents AkiraRust, an LLM-driven framework for repairing undefined behavior (UB) in Rust. Its central mechanism is a finite-state machine (FSM) that chooses repair agents and reasoning modes from runtime semantic feedback. The abstract states: “AkiraRust introduces a dual-mode reasoning strategy that coordinates fast and slow thinking across multiple agents.” (Abstract, p. 1) The abstract also says: “Each agent is mapped to an FSM state, and a waveform-driven transition controller manages state switching, rollback decisions, and semantic check pointing, enabling context-aware and runtime-adaptive repair.” (Abstract, p. 1)
 
-Inference: For VL, the transferable idea is a verification-driven controller around an LLM repair loop: generate a candidate, observe executable or verifier feedback, select a specialized next action, and roll back when the candidate drifts. This is an architectural transfer; the paper repairs unsafe Rust with Miri and generated tests, rather than proving Rust contracts in Verus.
-
 The paper evaluates on a Miri dataset covering “47 common UB types, including allocation errors, concurrency, data races, and borrow violations” (Sec. 5, p. 5). It uses GPT-4, GPT-5, and Claude-3.5 at default temperature 0.5 (Sec. 5, p. 5). The reported metrics are pass rate, code passing Miri, and exec rate, code passing TestGenAgent semantic checks (Sec. 5, p. 5).
 
 ## technique 1: defect-feature agent selection
@@ -101,13 +99,7 @@ The paper’s overall comparison reports 92% semantic correctness for AkiraRust,
 
 ## what is proved, measured, and trusted
 
-The paper measures Miri pass rate, TestGenAgent exec rate, agent invocations, and execution time. It does not provide a machine-checked proof that the FSM, waveform, generated tests, or LLM repairs preserve the original program intent. Inference: for VL, the untrusted LLM/controller may propose arbitrary annotations or code, but Verus must check the final contracts; any `assume`, `axiom`, `external_body`, or unverified specification remains part of the trusted base and must be audited.
-
-Inference: The product threat is substantial when “passing” means only compilation, Miri, or generated tests: these checks can accept a semantically wrong repair. The paper itself motivates this gap by observing that repairs can pass security tools while deviating from intended semantics (Sec. 1, p. 1). VL should reuse the feedback-loop architecture while retaining proof obligations as the acceptance gate.
-
-## what VL should not redo
-
-Inference: VL should not reimplement a generic finite-state controller, fast/slow routing, rollback on worsening feedback, or intent-guided test generation from scratch. These are already explicit in AkiraRust. VL still needs a Verus-specific signal taxonomy, specification-repair actions, proof-state persistence, and a policy for trusted assumptions because those are outside this paper.
+The paper measures Miri pass rate, TestGenAgent exec rate, agent invocations, and execution time. It does not provide a machine-checked proof that the FSM, waveform, generated tests, or LLM repairs preserve the original program intent.
 
 ## techniques for the catalog
 
@@ -116,4 +108,3 @@ Inference: VL should not reimplement a generic finite-state controller, fast/slo
 - FSM orchestration: represent agents and modes as states and transition using runtime verification feedback
 - intent-guided test generation: infer behavioral constraints and accept candidates that pass generated tests
 - waveform rollback: aggregate runtime error signals, evaluate stable regions, and roll back on semantic drift
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -44,5 +44,3 @@ Inference: confidence depends on prerequisite coverage, the chosen policy and te
 - paired behavior and attack tests — combine normal behavior with expected rejection of the illustrated attack
 - concrete resource comparison — compare unrestricted and limited-gas transfers with Forge
 - symbolic access-policy test — constrain an unauthorized symbolic caller and expect the restricted call to revert
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "If access policies are correctly implemented, this call should revert for any user who is not the contract’s owner, and the test should pass."): checked the entire paper, quotations, categories, numbers, printed page and section references, listings, and technique steps; corrected the category list, DOI link, incomplete-implementation status, reentrancy assertions, concrete gas procedure, access-control result interpretation, and catalog; noted the paper's access-control contradiction and a harness concern; did not execute the Solidity tests, reproduce experiments, or validate the proposed Rust/Verus extensions.

@@ -52,8 +52,6 @@ scope
   - see the [follow-up source assessment](research_shortlist.md)
   - this matches the human's Agave work; see research ideas
 
-## landscape
-
 ### verified consensus implementations (prove the code)
 
 - IronFleet, Hawblitzel et al., SOSP 2015 (Dafny; C# not Rust)
@@ -255,8 +253,6 @@ scope
 - simulators miss what they do not model (disk corruption, real fsync, clock skew); Jepsen-NATS corruption results need exactly those faults
 - evidence is mostly vendor blogs and abstracts for 2026 items; I could not independently check the bug counts
 
-## research ideas
-
 ### 1. repeat Fonseca's study on Rust/Verus-era verified systems
 - what exists: Fonseca 2017 (Dafny, Coq); IronSpec 2024 for spec bugs; PK toolkit
 - search result: this review did not establish an incident-based evaluation of those Verus systems at their verified/unverified boundary
@@ -302,8 +298,6 @@ scope
 - risk: medium; I found none, but a private or recent project is plausible; check the Verus mailing list and Verus projects page
 
 ## sources
-
-(P = saved to /hdd1/sichanghe/paper_collection by me this session; C = already in collection)
 
 - Fonseca et al., An Empirical Study on the Correctness of Formally Verified Distributed Systems, EuroSys 2017 (C)
 - Hawblitzel et al., IronFleet, SOSP 2015 (C)

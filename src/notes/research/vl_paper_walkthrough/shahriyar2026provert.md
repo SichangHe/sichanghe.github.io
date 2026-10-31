@@ -95,8 +95,6 @@ evidence and limits: the paper's success criterion requires all sections of a sk
 
 The ROCQ kernel/compiler, PROSA library, imported MathComp libraries, retrieval corpus, extraction validator, integrity checker, and the source paper's intended invariant statements form the effective trust boundary. The paper's mechanized result is conditional on those formal statements and imported definitions; a proof can compile while formalizing the wrong reading of a schedulability claim. The paper reports 44.7% in the abstract and Table II for dense retrieval; Table II also reports hybrid 123/300 and BM25 126/300. The 41.0% and 42.0% figures therefore have the same denominator, while the separate 608/1,393 and 597/1,393 numbers are section-level and must not be presented as sketch success. The abstract's “success rate of 44.7%” is accurate only for dense retrieval on the 300-sketch evaluation.
 
-What VL should not redo: PROVE-RT already establishes dependency-aware extraction, retrieval with recursive dependency recovery, staged skeletons, edit-integrity checks, compiler-guided proof repair, and denominator-aware end-to-end evaluation for a low-resource formal library. Inference: VeruLaw should adapt this architecture to Verus specifications and proof blocks rather than repeat direct prompting without library context. The threat to agent-written verified Rust is high for context and specification recovery: a model can generate a compiling proof for the wrong or underconstrained theorem. Inference: Verus acceptance should be paired with a frozen contract, dependency-aware retrieval, mechanical edit restrictions, and independent review of whether the specification expresses the product requirement.
-
 ## techniques for the catalog
 
 - invariant-and-sketch extraction — turn paper prose into formal claims, informal proof plans, and a dependency DAG before code generation
@@ -104,5 +102,3 @@ What VL should not redo: PROVE-RT already establishes dependency-aware extractio
 - deferred-proof skeletons — generate type-correct declarations and contexts first while deferring proof bodies to a separate stage
 - integrity-checked proof repair — replace only the intended proof block, compile, feed exact diagnostics back, and reject axioms or target edits
 - corpus and denominator design — validate extracted graphs and report full-sketch success separately from local section compilation
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

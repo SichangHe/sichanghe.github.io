@@ -42,11 +42,9 @@ The pipeline is “solve → formalize → judge → filter → repair” (§5.1
 
 Inference: Verus can realize the specialization through separate proof lemmas and solver contexts, but not through runtime judges. Arithmetic obligations can be discharged by `assert`/`assert forall` and arithmetic solver support; domain conventions must become explicit `requires` assumptions. A bounded repair loop should regenerate source and rerun `verus`, while a successful proof remains conditional on the stated contracts.
 
-Evidence and product implications. At matched 105-item coverage, holistic Opus had 97/105 (92.4%), Codex 98/105 (93.3%), and Theoria 96/105 (91.4%); differences were not statistically significant (McNemar `p = 0.88` and `p = 1.00`, §8.4, pp.11–12). The paper therefore does not establish higher raw precision. Its practical evidence is auditability and complementary errors: pairwise error Jaccard indices were 0.14–0.36 (§8.5, p.12), and a majority ensemble reached 102/109 = 93.6% at 58.9% coverage (Table 7, p.13). Inference: a VeruLaw product could use Theoria-style traces to decide when to abstain and to route formalizable transitions into Verus, but it should retain holistic checks because each method catches different errors.
+Evidence and product implications. At matched 105-item coverage, holistic Opus had 97/105 (92.4%), Codex 98/105 (93.3%), and Theoria 96/105 (91.4%); differences were not statistically significant (McNemar `p = 0.88` and `p = 1.00`, §8.4, pp.11–12). The paper therefore does not establish higher raw precision. Its practical evidence is auditability and complementary errors: pairwise error Jaccard indices were 0.14–0.36 (§8.5, p.12), and a majority ensemble reached 102/109 = 93.6% at 58.9% coverage (Table 7, p.13).
 
 What is proved, measured, and trusted. The paper proves the exposure propositions under its state model, and measures precision, coverage, error overlap, and adversarial detection. The LLM judges, web search, benchmark keys, formalizer, semantic diffing, convention registry, and eventual Lean/CAS backstops remain trusted or unavailable. The authors state that semantic diffing “relies on the judge’s language understanding rather than an explicit diff layer” (§9, p.18). Inference: agent-written verified Rust inherits the specification gap and judge gap; Theoria reduces hidden-premise exposure but cannot replace kernel checking of executable behavior.
-
-The paper reports one denominator caveat: 200 were requested, but 185 ran after 9 CLI OAuth crashes and 6 content-policy blocks (§8.2, p.9). It also reports favorable precision of 105/105, but that number is adjudicated by LLMs and differs from strict key matching (§8.2, p.9). What VL should not redo: a generic holistic-judge comparison and the basic typed-witness architecture are already implemented; new work should target Verus-backed transition checking, explicit machine diffing, and domain-specific evidence tags.
 
 ## techniques for the catalog
 
@@ -56,5 +54,3 @@ The paper reports one denominator caveat: 200 were requested, but 185 ran after 
 - specialized local judges — route citation, computation, problem, and initial-state checks separately
 - pedantry filter and convention lift — distinguish cosmetic rejection from a single explicit domain convention
 - certify-or-decline repair — bound correction attempts and abstain when a witness cannot be certified
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

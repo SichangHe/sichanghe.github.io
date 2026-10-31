@@ -5,8 +5,6 @@ Tag: `bond2017vale`, [paper](https://www.usenix.org/conference/usenixsecurity17/
 ## scope and result
 Vale is a language and tool for writing high-performance assembly with machine-checked functional, safety, and leakage properties. The paper says: “The Vale tool transforms annotated assembly language into an abstract syntax tree (AST), while also generating proofs about the AST that are verified via an SMT solver.” (§abstract, p.917). A Vale program is translated to a first-class AST plus Dafny proofs; Dafny/Z3 checks those proofs against programmer-written cryptographic specifications and a machine semantics. The AST can then be analyzed before a trusted assembly printer emits MASM or GNU assembler.
 
-Inference: VL could borrow the separation between an executable program and an intermediate representation accompanied by proofs. A possible Rust/Verus adaptation would model low-level operations with contracts and arithmetic lemmas. The paper does not evaluate that adaptation.
-
 ## technique: architecture-neutral instruction semantics and contracts
 
 What it is and when to use it. Define datatypes for registers, operands, instructions, machine state, and an evaluator `evalCode`; then declare each instruction as a procedure with a chosen contract. This is useful when the same verifier must support several ISAs and assemblers. The paper's example defines `state(ok, regs, mem)` and an `evalCode` relation; it explains: “Since any crash happens in a finite number of steps, showing ∀s2 . evalCode(c, s1, s2) ⇒ s2.ok proves that c starting in state s1 cannot crash.” (§2.1, p.919).
@@ -19,7 +17,7 @@ Steps from the paper.
 
 Inference: a possible Verus form would represent machine state explicitly, describe instruction effects with `spec fn` relations, and use `proof fn` lemmas for composition. Valid addresses and register/memory effects would become contract conditions. This proposal would need a checked model of which state components each operation preserves; the paper establishes no Rust/Verus framing model.
 
-Evidence and limits. The paper reports four cryptographic case studies on ARM, x86, x64, and AES-NI x86. Trusted components include the cryptographic specifications, Dafny, assembly semantics, assembly printer, and assembler; Vale itself and its analyzer are outside the trusted computing base (§1, Fig.2, p.918; §4.2, p.926). Inference: a VL deployment must still trust Verus, Z3, Rust compilation/erasure, ISA assumptions, and the specification's adequacy.
+Evidence and limits. The paper reports four cryptographic case studies on ARM, x86, x64, and AES-NI x86. Trusted components include the cryptographic specifications, Dafny, assembly semantics, assembly printer, and assembler; Vale itself and its analyzer are outside the trusted computing base (§1, Fig.2, p.918; §4.2, p.926).
 
 ## technique: contracts before inlining and verified partial evaluation
 
@@ -30,8 +28,6 @@ Steps from the paper.
 2. Mark compile-time specialization values as `inline`; use inline conditionals or recursive procedures to generate different ASTs (Fig.7, p.921).
 3. Verify the generic procedure for all possible inline values before selecting concrete values and printing assembly (§2.3, p.921).
 4. Use operand-renaming constraints to map logical variables to registers per unrolled iteration; the SHA-256 ARM port uses an inline iteration parameter and a statically verified mapping (§4.1, p.925).
-
-Inference: a possible Verus form would encode specialization with Rust `const` parameters or separate functions and use lemmas to relate the specialized implementation to a generic specification. To claim Vale-like verified specialization, VL would also need to justify the code-generation step; this paper supplies no such Rust/Verus proof.
 
 Evidence. Verifying before unrolling matters: 100 unrolled x86 adds take 58 seconds, while ten unrolled AES key-expansion iterations take 2300 seconds versus 105 seconds before unrolling; some AES inversion cases fail unpredictably after unrolling (§5.2, Fig.15, p.929). These are measured verification times, not correctness rates.
 
@@ -56,7 +52,7 @@ The SHA-256 specification and abstract lemmas were reused for ARM and x86 implem
 
 ## product implications
 
-The measured results show verified code can match optimized code: Vale AES-CBC slightly outperformed OpenSSL by up to 9%, while OpenSSL assembly exceeded its C SHA-256 ARM implementation by up to 67% and AES-CBC x86 C by 247–300% (§5.1, pp.927–928). The comparison used ARMv7 SHA-256 without NEON and Poly1305 with OpenSSL’s SIMD disabled, whereas AES-CBC used AES-NI and SIMD. The Vale AES-CBC implementation lacks OpenSSL’s mode computing four ciphertexts in parallel (§5.1, p.928). The comparison used 100-run averages for library benchmarks and 10-run averages for throughput figures (Figs.10–14, pp.927–928). Inference: for VL, the main threat is specification and trusted-model mismatch, plus proof maintenance for low-level unsafe code; the paper does not evaluate Rust, Verus, agent-generated code, or product-scale maintenance. Inference: VL should treat architecture-neutral semantics, verification before specialization, and a reusable verified taint analyzer as prior work when describing its contribution.
+The measured results show verified code can match optimized code: Vale AES-CBC slightly outperformed OpenSSL by up to 9%, while OpenSSL assembly exceeded its C SHA-256 ARM implementation by up to 67% and AES-CBC x86 C by 247–300% (§5.1, pp.927–928). The comparison used ARMv7 SHA-256 without NEON and Poly1305 with OpenSSL’s SIMD disabled, whereas AES-CBC used AES-NI and SIMD. The Vale AES-CBC implementation lacks OpenSSL’s mode computing four ciphertexts in parallel (§5.1, p.928). The comparison used 100-run averages for library benchmarks and 10-run averages for throughput figures (Figs.10–14, pp.927–928).
 
 ## techniques for the catalog
 
@@ -65,4 +61,3 @@ The measured results show verified code can match optimized code: Vale AES-CBC s
 - verified taint analysis — prove a reusable flow-sensitive analyzer sound for trace and public-state non-interference
 - alias-aware memory tainting — use functional-correctness address proofs plus public/secret load-store annotations
 - cross-architecture lemma reuse — share algorithm specifications and abstract lemmas across ISA-specific implementations
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "These invariants are crucial to establish that numbers are eventually reduced all the way to their 130-bit form and that enough carry bits are propagated through larger intermediate values."): checked all quotations, numbers, section/page references, and technique steps after reading the complete paper, including references and appendix; corrected the analyzer quotation, instruction-contract and composition references, public-input/output distinction, memory-annotation checks, completeness claim, trust assumptions, case-study scope, and performance-comparison conditions; marked proposed Rust/Verus mappings as inferences and removed unsupported capability claims; did not check source code, rerun proofs or benchmarks, or independently validate Rust/Verus proposals.

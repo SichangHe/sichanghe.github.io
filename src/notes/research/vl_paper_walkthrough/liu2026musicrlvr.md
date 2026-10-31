@@ -67,14 +67,9 @@ How to do it.
 
 Evidence. Direct reaches 0.595 on Unseen (n=200) versus a best zero-shot 0.195, and 0.300 on Edge (n=500) versus 0.160 (section 5.4, p. 9). On free-form requests, Direct reaches 0.583 for Qwen3-4B and 0.717 for Qwen3-8B, while the zero-shot 4B model reaches 0.067 (section 5.4, p. 9). Verifier reranking eight samples raises Direct Mixed from 0.807 greedy to 0.897 best-of-eight (Table 3, n=300), while zero-shot Qwen3-4B rises 0.160 to 0.393.
 
-## what is trusted and threat to VL
-
-The trusted components are the ABC parser, deterministic `music21` routines, prompt-to-constraint rendering, and training/evaluation code. The paper validates routines on constructed scores and 400 corpus tunes but does not prove the implementation of `music21`. It measures stated-constraint compliance, not perceptual quality. Inference: for agent-written verified Rust, the reusable pattern is gate → per-property proofs → conjunction bonus → verifier-guided search. The principal threat is reward/specification mismatch: a model can optimize a checker that omits intended behavior. Independent specification review and Verus proofs of the actual Rust predicates are required. The paper's own reward ablations show that removing any component harms dense-constraint performance; VL should not collapse all proof feedback into one binary success bit.
-
 ## techniques for the catalog
 
 - hard validation gate: reject malformed artifacts before assigning any property credit
 - graded verifier reward: average per-property scores and add a joint all-satisfied bonus
 - verifier-driven GRPO: normalize deterministic verifier rewards within prompt groups and update the policy
 - generalisation and reranking: test held-out constraints and select among sampled candidates by verifier score
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

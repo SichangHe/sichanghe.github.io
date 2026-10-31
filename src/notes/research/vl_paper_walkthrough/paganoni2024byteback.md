@@ -65,7 +65,7 @@ The paper reports successful verification of 40 programs against their annotatio
 
 The implementation omits exception handling and `invokedynamic`, treats strings as plain objects, and uses mathematical integers and reals. The paper states that the numeric encoding “entails that B YTE BACK may miss overflow and other numerical errors.” (Section 3.3, pp. 11–12). It also lacks advanced framing, ghost code, and flexible specification reuse through inheritance and modularity. Scala usability is limited because compiler-generated members cannot be directly annotated in Scala source (p. 12).
 
-The authors caution: “We picked the features in Tab. 4’s examples specifically to demonstrate that it’s hard for source-level verifiers to keep up with the plethora of language features that are introduced over time—not to solve verification challenges.” (Section 4.1, p. 12). Inference: For VeruLaw, this is evidence for an architectural approach to language evolution, not an evaluated Rust implementation or a measured product advantage. Reusing it would require a separate contract-recovery and translation effort.
+The authors caution: “We picked the features in Tab. 4’s examples specifically to demonstrate that it’s hard for source-level verifiers to keep up with the plethora of language features that are introduced over time—not to solve verification challenges.” (Section 4.1, p. 12).
 
 ## techniques for the catalog
 
@@ -73,5 +73,3 @@ The authors caution: “We picked the features in Tab. 4’s examples specifical
 - aggregable predicates: restrict specification expressions to pure straight-line forms and use explicit logical operators that survive compilation without branching
 - IR heap and type reconstruction: infer expected expression types and encode fields, arrays, calls, control flow, and frames in a Boogie heap model
 - conservative frame inference: mark a method empty-frame only when static analysis finds no heap writes, otherwise use a whole-heap frame
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "After analyzing the Grimp bytecode, B YTE BACK has collected all the information to generate Boogie code; to this end, a visitor pattern implementation creates a Boogie AST, and then dumps it into a Boogie file."): read the full paper text, including references; checked quotations, reported numbers, page and section references, technique steps, limitations, and the arXiv identifier on p. 1; corrected predicate staticness, translation steps, references, and experimental scope; separated aggregation restrictions from exception support and removed unsupported Verus claims; did not reproduce experiments, audit the implementation, or independently validate Verus behavior.

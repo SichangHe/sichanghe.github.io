@@ -5,7 +5,7 @@ Tag: `liu2024minotaur`, [paper](https://arxiv.org/abs/2306.00229)
 ## system and formal guarantee
 Minotaur synthesizes SIMD-aware rewrites for LLVM IR and validates them with Alive2. Its core correctness argument is compositional: decompose a function F into residual R and cut C, synthesize C′ that refines C, then compose F′=R∘C′. The paper states, “Since refinement is compositional, it follows that F′ refines F” (section 2.3, p. 5). The paper says Alive2 “is intended to be a sound refinement checker” for LLVM functions without loops, so Minotaur ensures the cut C is loop-free, and C′ is then loop-free because Minotaur never synthesizes a loop (section 2.3).
 
-The authors report, “Every optimization discovered by Minotaur has been formally verified by Alive2” (section 5.1, p. 14). Inference: this is directly relevant to VL’s principle of generating an implementation and mechanically proving refinement, but LLVM/Alive2 semantics are not Verus semantics. A Verus version would need Rust contracts and proof lemmas for the same decomposition.
+The authors report, “Every optimization discovered by Minotaur has been formally verified by Alive2” (section 5.1, p. 14).
 
 ## technique 1: depth-bounded cut extraction
 What it is: isolate a loop-free, dependency-complete fragment around an instruction while replacing unsupported or out-of-bound dependencies with fresh inputs (Algorithm 1, section 2.4, pp. 5–7).
@@ -47,15 +47,8 @@ Minotaur evaluated depth B from 0–7 over 2,386 C functions containing 123,062 
 
 Rewrites are stored in Redis and reused across compilations (section 4.4, p. 13). With a warm cache Minotaur is “only 3% slower than baseline clang” (section 5.4, p. 16); with a cold cache it “can be hundreds of times slower than clang -O3” (section 1, p. 3).
 
-## evidence, trusted components, and VL threat
-Every discovered optimization was formally verified by Alive2, and applications plus SPEC drivers were run to detect miscompilation (section 5.1). Results depend on the target processor: GMP mean speedup was 7.3% on Intel Cascade Lake and 6.5% on AMD Zen 3 (section 5.4, p. 16); SPEC CPU 2017 mean speedup was 1.5% Intel and 1.2% AMD (section 5.4, p. 17). libYUV Intel had 2,312 speedups, 72 unchanged, and 148 slowdowns, overall 2.2%; AMD had 2,259 speedups, 85 unchanged, and 188 slowdowns, overall 2.9% (section 5.4, p. 16). Minotaur cannot process assembly, and it “looks at optimizations in isolation; it does not attempt to model interactions between optimizations,” which the paper gives as the reason it can make code slower.
-
-The paper names where bugs might remain: “the instruction semantics that we have added to Alive2, in our cut extractor, in our rewrite mechanism, in Alive2, or in Z3” (section 5.1, p. 14). Inference: the original LLVM function is also the specification and is trusted. Inference: the product threat to agent-written verified Rust is analogous—trusted specifications or solver models can validate the wrong behavior, and local optimizations may harm global performance. VL should reuse translation validation and differential testing ideas, while keeping Verus contracts as the acceptance boundary.
-
 ## techniques for the catalog
 - depth-bounded cut extraction — isolate loop-free dependency fragments and abstract unsupported values
 - intrinsic differential validation — compare random concrete execution with verifier refinement
 - symbolic synthesis with refinement — enumerate instruction skeletons (Minotaur takes an untyped, low-level view of values), solve constants, and check universal refinement
 - empirical depth and caching — tune extraction bounds from cut/timeout data and persist verified rewrites
-
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "This choice was driven by empirical data: after extensive experimentation, we determined that, for our purposes, uOps are a better performance predictor than cycles."): read all of the paper text and compared every quotation, number, section, page and algorithm line reference in the study; changed page numbers (section 2.3 is p. 5, 165 intrinsics p. 8, section 5.2 setup p. 14), the Algorithm 1 and 4 line ranges, the loop-free/Alive2 soundness wording, the bug-count wording, the B=4 rationale, the cost-selection rule, and the trusted-components sentence (the paper lists five places bugs might remain, not the original LLVM specification), and removed "typed skeletons" and "denominator"; replaced the Semantic Scholar link with the arXiv link taken from the paper text (arXiv:2306.00229); did not check the Verus-side inferences against Verus, the figures or Table 2, or the cited related work.

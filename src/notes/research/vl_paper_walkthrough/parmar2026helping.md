@@ -8,7 +8,7 @@ This paper tests a two-agent Generator–Critic debate on data-cleaning workflow
 
 The main AutoDCWorkflow experiment uses 50 tasks for Claude, Qwen3, and DeepSeek and 20 exploratory Gemini tasks; MaTElDa uses 100 tables per model; MMTU uses 200 questions for three models (Section 3, PDF pp. 3–4). On Claude's MaTElDa n=100, F1 rises from 0.191 to 0.465 (+0.273, p<0.001, d=1.00), with debate winning 80/100 tables (Table 2, PDF p. 5). On AutoDCWorkflow, Qwen3 factual consistency falls 0.912 to 0.785 (−12.7 points), and DeepSeek falls 0.800 to 0.645 (−15.5 points); these are fractions over the stated 50-task sets (Table 1 and Section 4.1, PDF pp. 4–5).
 
-The authors' formal decision rule is: debate helps when `(pc/(1−pc)) × pr > pg/(1−pg)`, where pg is Generator baseline accuracy, pc Critic verification accuracy, and pr probability of a correct repair after a caught error (Section 5, PDF p. 8). Inference: for VeruLaw, use debate only around independently checkable proof obligations; a Critic that cannot run Verus or inspect concrete counterexamples can damage correct proof code.
+The authors' formal decision rule is: debate helps when `(pc/(1−pc)) × pr > pg/(1−pg)`, where pg is Generator baseline accuracy, pc Critic verification accuracy, and pr probability of a correct repair after a caught error (Section 5, PDF p. 8).
 
 ## technique 1: Generator–Critic debate with structured outputs
 
@@ -52,10 +52,6 @@ Self-consistency is a control for extra sampling. On MaTElDa Claude n=100, SC-5 
 
 The executor implements approximately 20 operations with fuzzy matching and skips unrecognized operations, which can undercount semantic errors (Limitations, PDF p. 15). MMTU per-task-type effects are not significant after correction; the robust MaTElDa finding has n=100 and p<0.001. Inference: a Verus deployment must report proof denominators, model/toolchain, and skipped or unsupported constructs; passing a subset of obligations does not establish whole-program correctness.
 
-## trusted boundary and product threat
-
-The paper trusts deterministic execution, table ground truth, sandbox isolation, JSON parsing, and its estimated probabilities. It does not prove that the Critic is sound outside those operations or that the inequality is causal in every domain. The 19-comparison cross-domain validation has zero false positives, but it is observational synthesis, not a new formal proof (Section 8.1, PDF p. 12). The main threat to an agent-written verified-Rust product is CIC: a persuasive but wrong review can cause valid annotations to be removed. VL should retain independent Verus verification, evidence-cited repairs, and explicit routing based on measured pc and pr. It should not redo ungrounded self-debate or majority-vote sampling, which this paper reports as ineffective under its stated tasks.
-
 ## techniques for the catalog
 
 - Generator–Critic structured debate — propose executable operations, challenge each separately, and revise for bounded rounds
@@ -63,4 +59,3 @@ The paper trusts deterministic execution, table ground truth, sandbox isolation,
 - code-execution grounding — let the Critic run sandboxed checks against actual data before issuing objections
 - rescue–damage routing condition — deploy debate when Critic verification odds times repairability exceed baseline accuracy odds
 - factorial self-verification control — compare separate Critic, same-tool self-check, and text-only conditions to isolate causal interaction
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

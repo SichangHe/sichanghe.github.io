@@ -60,8 +60,6 @@ Prove the client proxy and server handlers separately. The client lock protects 
 
 Evidence. The paper says the full implementation proof is too large for the article and points to the Rocq formalization; the stated proof effort exceeds 5,000 lines (Section 7, PDF p. 20; Section 1, PDF p. 4). It abstracts unreliable UDP behind a verified RPC library (Section 7.2, PDF p. 22).
 
-Inference: For VeruLaw, this layered proof suggests an architecture for a Rust storage agent: protect concrete state with a lock invariant, relate it to ghost histories, and prove proxy and server operations against the same abstract contracts. Crash recovery, replication, and SQL predicate reads remain outside this paper.
-
 ## what is proved, trusted, and already done
 
 The paper reports mechanized client proofs, specification implications, and verification of a single-node in-memory MVCC database. It states: “We remark that we do not cover the full details of the proof, and use simplifications, as the whole proof is too large to be included in the paper.” (Section 7, PDF p. 20.) The article points to its Rocq formalization for those details. No formal equivalence to dependency-graph models is proved; Section 9 describes that connection as future work (PDF p. 27).
@@ -78,5 +76,3 @@ Inference: Using these results for Rust would require new contracts, code, and p
 - specification implication — derive weaker contracts from stronger ones with authoritative and fragment ghost resources
 - two-snapshot MVCC contract — compare start and commit histories and return conflict evidence on failed commits
 - layered MVCC proof — verify client proxy and locked server handlers against a shared history/time model
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The write operation has no remote procedure call as it is handled locally at the client proxy."): checked all paper text, study claims, quotations, numbers, section/page references, and technique steps; corrected the write-skew interpretation, an inaccurate quotation, snapshot and commit guarantees, observation creation, implementation details, and unsupported claims about existing notes and trust; replaced the paper link with its DOI; did not inspect or execute the Rocq/OCaml artifact, audit dependencies or translation, or validate the proposed Verus adaptations.

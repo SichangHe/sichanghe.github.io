@@ -23,14 +23,8 @@ Verus form. Inference: model each proof obligation as a Rust/Verus predicate suc
 
 Evidence and limits. bpfix-bench has 75 tasks: 40 required-proof tasks and 35 minimized from Cilium, xdp-tools, and bpftime. A candidate is accepted only if it loads through the kernel verifier and passes functional and source-semantics tests (Section 5.1, p. 5). With raw logs, Qwen3.6 27B repairs 22/75; with bpfix it repairs 38/75. GLM 5.2 improves 28/75 to 38/75, and Qwen2.5 3B improves 0/75 to 8/75 (one-shot, Figure 6, p. 6). The retry counts are 30/75 to 44/75 for Qwen3.6, 47/75 to 52/75 for GLM, and 0/75 to 10/75 for Qwen2.5. Load failures for Qwen3.6 fall from 19/75 to 10/75; source-semantics failures fall from 22/75 to 16/75 (Table 3, p. 6). These denominators are the 75 benchmark tasks and the models are run at temperature zero.
 
-## what remains trusted and threat to VL
-The kernel verifier, clang lowering, bpfix’s proof-family rules, source mapping, test suites, and the generated Rust diagnostic remain trusted or assumed. The paper does not prove bpfix’s attribution sound; it calls layer attribution “best-effort” (Section 4.2, p. 4). The 44 non-source rejections show that a source repair loop can be wrong when the compiler or environment is responsible. Inference: for agent-written verified Rust, the threat is high at diagnosis boundaries: a plausible repair may preserve the wrong proof or alter semantics. Inference: VL should retain raw verifier/Verus traces, distinguish source from toolchain causes, and gate acceptance on independent verification and tests.
-
-What VL should not redo. The paper already provides a reproducible rejection corpus, a proof-lifecycle reconstruction design, and a repair benchmark. Inference: VL should reuse the pattern of locating lost evidence before asking an agent to patch code, rather than build another terminal-error-only prompt.
-
 ## techniques for the catalog
 - proof-lifecycle localization — reconstruct establishment, loss, and required evidence from per-instruction checker states
 - evidence-aware diagnostics — emit source spans, proof obligations, confidence, and a concrete re-establishment action
 - layer attribution — separate source bugs from compiler-lowering, environment, and verifier causes sharing one terminal message
 - verifier-gated repair benchmarking — accept an LLM patch only after independent load, functional, and source-semantics checks
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

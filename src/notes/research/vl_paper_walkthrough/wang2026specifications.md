@@ -26,7 +26,7 @@ How to do it.
 
 Verus form. Inference: represent each candidate behavior as a pure `spec fn` over a finite input type, prove a lemma that the discriminating query has unequal outputs, and write a `proof fn` establishing that the four trial permutations cover both assignments. Verus can verify the mapping and aggregation arithmetic, but it cannot prove an LLM selected a mapping; the model response and normalization remain external data. Do not write `invariant(...)` as a call or use runtime proof functions.
 
-Evidence and limits. The paper claims that its 550 instances and explicit counterbalancing show systematic preferences. The authors caution that real conflicts can be incomplete, ambiguous, or partially overlapping, that representations cannot be fully separated from description length, information density, and level of detail, and that the framework relies on executable outputs (closing paragraph of the Discussion, PDF p. 7). Inference: a VL product can use the design to test whether generated verified-Rust specifications are followed consistently, but the result is a behavioral statistic rather than a proof of code correctness.
+Evidence and limits. The paper claims that its 550 instances and explicit counterbalancing show systematic preferences. The authors caution that real conflicts can be incomplete, ambiguous, or partially overlapping, that representations cannot be fully separated from description length, information density, and level of detail, and that the framework relies on executable outputs (closing paragraph of the Discussion, PDF p. 7).
 
 ## technique: executable conflict benchmark generation
 
@@ -42,7 +42,7 @@ How to do it.
 
 Verus form. Inference: encode each mapping as a `spec fn`; use `requires` for bounded domains and `ensures` to state the perturbation relation and unequal outputs at `q*`. A `proof fn` can discharge equivalence or disequivalence for finite test domains. Surface realizations are ordinary strings and are outside Verus’s trusted semantics.
 
-Evidence and limits. The benchmark’s executable oracle makes attribution mechanical, but the surface realizations are model-generated; the authors manually spot-checked them for unintended semantic changes beyond the predefined difference (Appendix, p. 9). Inference: the paper does not report how often realizations were wrong. VL should reuse the executable-oracle pattern for generated Rust contracts, while treating natural-language-to-specification rendering as an untrusted step requiring re-verification.
+Evidence and limits. The benchmark’s executable oracle makes attribution mechanical, but the surface realizations are model-generated; the authors manually spot-checked them for unintended semantic changes beyond the predefined difference (Appendix, p. 9).
 
 ## technique: counterbalanced code-generation oracle pipeline
 
@@ -62,13 +62,7 @@ How to do it.
 
 Verus form. Inference: the same structure maps to a Rust harness that compiles candidate functions, runs generated inputs, and compares outputs against verified reference functions. Use Verus `requires`/`ensures` for reference behavior and an external runner for candidate execution; candidate code cannot be trusted merely because it compiles. Hidden tests are empirical evidence, not a Verus proof.
 
-Evidence and limits. The paper’s denominator distinction prevents overfit and failures from being mislabeled as source preference. Inference: VL should preserve this separation when evaluating agent-written verified Rust, because a failed proof, timeout, or parser error is evidence of pipeline failure rather than evidence that the agent preferred one specification.
-
-## what is trusted, what remains, and product threat
-
-The executable candidate mappings, generated expected outputs, deterministic filters, and host attribution code are trusted measurement infrastructure. Inference: the LLM under test, the representation generators, the clinical rule thresholds (extracted by a language model with a quote check), and model-output extraction are not proved correct. Inference: for VL, the major threat is specification conflict: an agent may follow a formal-looking contract while ignoring a contradictory natural-language requirement, test, or policy. The symmetry protocol can expose this behavior, but it cannot make conflicting requirements coherent. Inference: this paper already supplies a reusable counterbalancing and oracle methodology, so VL should not redo a basic representation benchmark without a product-specific conflict source.
-
-Inference: the code and clinical settings use different trial subsets and conditional denominators, so percentages from these settings must not be pooled as if they measured one probability.
+Evidence and limits. The paper’s denominator distinction prevents overfit and failures from being mislabeled as source preference.
 
 ## techniques for the catalog
 
@@ -77,4 +71,3 @@ Inference: the code and clinical settings use different trial subsets and condit
 - representation realization control — generate NL, formal, and naturalized forms under explicit prompt constraints and spot-check semantics
 - code-generation oracle pipeline — create one-slot documentation/test conflicts, verify reference implementations, and attribute target code with hidden suites
 - denominator-aware reporting — separate attributable preference from compatible, overfit, wrong, extraction, and execution outcomes
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Rather than treating all conflicts as uniform numerical perturbations, we construct family-specific alternative mappings that preserve the natural structure of each underlying task."): read the whole paper text (main text pp. 1–8, appendix pp. 9–19) and the whole study; checked every quotation, percentage, count, model name and section/page reference against it; changed one misquoted word ("same input" to "queried input"), page references (limitations are on p. 7, not p. 8; heterogeneous results pp. 6–7), the clinical trial count (7,968 is the full design per model, but runs were uneven subsamples), the Form-versus-NatF wording, the description of the two symmetry levels, the released-artifact list (no hashes for the math benchmark), "equivalent" pairs (not stated), and the matrix perturbation; marked own conclusions as Inference. Did not check: the cited prior work, the supplementary figures' plotted values (Figures 3-5, 7, 9-14 were read only through the text and captions), the Verus-form paragraphs (Inference, not from the paper), and the arXiv link beyond the identifier printed on the paper (arXiv:2607.28384v1).

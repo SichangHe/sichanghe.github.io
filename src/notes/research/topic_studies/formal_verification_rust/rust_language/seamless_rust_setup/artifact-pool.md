@@ -18,7 +18,6 @@ From the repository root:
 Prerequisites: Python 3.10 or newer and rustup with a recent stable Cargo. This experiment was tested with Cargo 1.97.1; use that version to reproduce the shared `build-dir` configuration. Registry access is required for the initial fetch. `du` is used for storage measurement. To include the optional `sccache` setup, install sccache first (tested: 0.12.0) and append `sccache` to the command.
 
 ```sh
-timeout 300s python3 -u experiments/artifact_pool/pool_bench.py /tmp/rust-pool separate shared_target_dir shared_build_dir
 ```
 
 The script generates isolated projects and locks matching existing dependencies. It deletes only each setup's output directory between sequential and concurrent phases. `CARGO_TARGET_DIR` shares all outputs; `CARGO_BUILD_BUILD_DIR` shares intermediate outputs while keeping final target directories separate. The sccache setup uses an isolated cache directory and server port 14227. Do not run two sccache instances of this script at once.

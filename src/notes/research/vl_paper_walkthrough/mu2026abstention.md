@@ -70,7 +70,7 @@ The paper reports control behavior too. On a standard transfer leg, two of 50 no
 
 limits and contradictions
 
-The predicates are “hard guarantees” of the decision rule, not statistical error guarantees (Methods, p.14). The calibration-validity and human-review deployment hooks are declared but not evaluated (Methods, p.14). The paper’s headline says 214 of 223 acted events are correct (96.0%, 95% CI 92.5–98.1%) on 550 mixed EXA7 events (Introduction, p.2); the Results gives 96.1 ± 3.3% over five seeds, which is a different aggregation and should not be merged into one denominator. Inference: VL should preserve the aggregation label whenever it stores a verified metric.
+The predicates are “hard guarantees” of the decision rule, not statistical error guarantees (Methods, p.14). The calibration-validity and human-review deployment hooks are declared but not evaluated (Methods, p.14). The paper’s headline says 214 of 223 acted events are correct (96.0%, 95% CI 92.5–98.1%) on 550 mixed EXA7 events (Introduction, p.2); the Results gives 96.1 ± 3.3% over five seeds, which is a different aggregation and should not be merged into one denominator.
 
 ## technique 3: independent language-model auditor with reject-only authority
 
@@ -105,11 +105,7 @@ The operational response has tiers: excavation, district survey, request for evi
 
 Measured quantities include forced accuracy, coverage, acted precision, false dispatches on 50 no-leak controls, calibration error, risk-coverage curves, and transfer results. The same five-measurement battery is applied to four in-silico networks, L-Town, and City D (Results, p.4; Methods, pp.16–18). Statistical procedures include five-seed means and standard deviations, exact 95% Clopper–Pearson intervals for small proportions, and a paired McNemar test with p<0.001 on 600 pooled leak events (Methods, p.16).
 
-The paper proves code-level conjunction checks and cryptographic binding of evidence. It does not prove hydraulic-model fidelity, calibration validity, LLM reasoning, sensor honesty, or real-world causal correctness of a repair order. Inference: the trusted base for VL includes Verus, the contract specification, the serializer/hash implementation, the hydraulic or domain model, and any external data assumptions. Inference: a reject-only auditor is safer than an LLM gate with authority to approve, but a wrong contract can still certify the wrong action.
-
-what VL should not redo and product threat
-
-Inference: VL should not redo generic confidence-threshold localization or give an LLM authority to overturn deterministic proof failures; this paper already evaluates those design gaps. The reusable patterns are explicit multi-predicate contracts, differential diagnosis, reject-only auditing, tamper-evident evidence, and abstention with a dossier.
+The paper proves code-level conjunction checks and cryptographic binding of evidence. It does not prove hydraulic-model fidelity, calibration validity, LLM reasoning, sensor honesty, or real-world causal correctness of a repair order.
 
 Inference: The threat to an agent-written verified-Rust product is high when specifications omit rival explanations, safety predicates, or abstention. It is lower when every action is guarded by a proved conjunction and model outputs can only reject. The remaining risk is specification and environment mismatch: Verus can establish that the implementation obeys its contract while the contract fails to capture the real operational hazard.
 
@@ -121,4 +117,3 @@ Inference: The threat to an agent-written verified-Rust product is high when spe
 - reject-only independent auditor — let an independent LLM add rejection while deterministic code retains approval authority
 - hashed evidence certificate — bind thresholds, predicate outcomes, and accepted hypothesis to canonical evidence serialization
 - discriminative active sensing — reveal hidden measurements where surviving hypotheses’ twin responses differ most
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

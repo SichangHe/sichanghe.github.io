@@ -17,10 +17,9 @@ Apply it step by step: (1) freeze candidate generator and verifier; (2) draw rep
 ## evidence, trust, and limits
 The scaled replication measured a weak-judge MBPP copula error of 0.041 within the registered ±0.10 band, but falsified the closed-form Gaussian penalty outside its model class; realized value was about 0.32 at measured ρ≈0.50 (§10). The drift alarm failed in the registered seed-0 test (ρs=0.06), so the paper explicitly rejects universality of that signal (§10). Experiments use synthetic six- and ten-token DSLs, small verifiers, and a single CPU; the authors say these are proxies, “not instances of” frontier systems (§11).
 
-The paper cautions: “Settlement does not eliminate trust; it relocates it.” (§11, p.16). PCC's trusted computing base is the executor/measurement apparatus, settlement scheduler, staking rules, sandbox, compiler, and any formal kernel. Inference: VL should adopt pressure testing and gold execution before using an LLM judge, and should report denominator, model, and setting for every soundness number. The paper's settlement pattern is new guidance; generic unit-test execution and proof kernels already exist and should not be rediscovered.
+The paper cautions: “Settlement does not eliminate trust; it relocates it.” (§11, p.16). PCC's trusted computing base is the executor/measurement apparatus, settlement scheduler, staking rules, sandbox, compiler, and any formal kernel.
 
 ## techniques for the catalog
 - soundness-under-pressure — evaluate verifier-selected candidates against an independent gold executor as best-of-N grows
 - claim ledger — emit typed, versioned claims and settle them later against immutable outcomes
 - drift-controlled reward — reduce proxy reward and increase settlement when prediction error exceeds a threshold
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

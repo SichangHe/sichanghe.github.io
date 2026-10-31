@@ -109,12 +109,6 @@ Verus form: Inference: use ghost couplings or relational invariants to compare t
 
 evidence and limits: the paper reports well-posedness at arbitrary Lipschitz constant L and mean-field convergence whenever initial empirical measures converge (Section 3.3, pp. 15–16). Superposition requires the additional `AssW2` and a shortness condition `L · T² < 1` (Section 3.4 and Appendix A, pp. 16, 22–23). These are theorem hypotheses, not measurements of a deployed system.
 
-## what remains trusted and what VL should take
-
-The certified boundary is Lean's kernel plus the explicit axiom and dependency checks. Human statement-faithfulness, the definition of weak solutions, the decision to redirect a proof, and the classification of reusable mathematics remain trusted. Inference: VL should adopt an equivalent two-level gate: Verus verification plus an independent contract and dependency audit. Inference: the paper's most useful product pattern is a living strategy file combined with one-unit build/check/commit discipline and extraction of general Rust proof modules after acceptance.
-
-The formalization deliberately targets smooth forces. Singular Coulomb or gravitational interactions are identified as a mathematical frontier rather than a proof-engineering gap (Section 1.2, p. 4). Existing Dobrushin theory and the paper's own optimal-transport layer cover what VL should not redo as an unexamined duplicate. Inference: a product of agent-written verified Rust is threatened when specifications can collapse, when a green build is treated as semantic evidence, or when trusted placeholders leak into targets; the threat is lower when contracts are atom-audited, verifier configurations are pinned, and reusable lemmas pass standalone checks.
-
 ## techniques for the catalog
 
 - API-lock definition scoping — compile target signatures with gaps and audit every definition before proving
@@ -123,4 +117,3 @@ The formalization deliberately targets smooth forces. Singular Coulomb or gravit
 - reusable-layer extraction — isolate general declarations, standalone-build them, lint them, and audit dependencies
 - dual/primal metric bridge — maintain equivalent distance representations and choose the form the proof supports
 - coupling and regularity steering — use source-compatible estimates and add regularity only where a theorem needs it
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

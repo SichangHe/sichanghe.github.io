@@ -57,18 +57,8 @@ Verus form. Inference: map authority boundaries to separate tools or agents: one
 
 evidence and limits. The harness closes all 10/23 FormalQualBench problems without fine-tuning, custom RL, or theorem-specific scaffolding (Table 1 and Section 4, pp. 4–5). Sonnet closes all four tested problems, while Haiku closes only the two short ones within 12 hours; on one short problem Haiku’s longer nine-statement plan costs $26.24 and 4h34m versus Opus’s $13.53 and 16m (Table 5, p. 6). Thus decomposition helps weaker models but can raise token traffic and wall-clock cost.
 
-## what remains trusted, contradictions, and threat to VL
-
-The trusted base includes Lean’s kernel, Mathlib declarations, the permitted axioms, the `lake` build, the transitive `#print axioms` audit, and the Check Agents’ semantic judgments. The paper’s “axiom-free” claim means no `sorryAx` or user-introduced axiom under the stated baseline; it does not mean that the theorem statement is faithful to a product requirement. The paper compares to published baselines whose runs and budgets come from their reports; the comparison is not a controlled re-run of every system.
-
-The paper reports a “12/12” Putnam closure and also says it is fastest on 8/12; these counts answer different questions and must remain separate. The FormalQualBench total of 10/23 includes one solve outside the four-hour budget, while nine are within it. The repeated-run stability sample has four problems times eight runs, 32 attempts, all clean; it is not a 23-problem reliability estimate.
-
-Inference: the threat to agent-written verified Rust is contract drift during recursive repair. A model may preserve compilability while weakening a precondition, dropping a state case, or hiding a requirement in a ghost predicate. MerLean’s anchored plan, independent faithfulness check, mathematical check, decomposition routing, and downstream invalidation are directly reusable controls. Inference: VL should record contract snapshots, check every repair against the original requirement, and report solved/attempted denominators under fixed time and cost budgets. Inference: the harness does not remove the need for Verus-specific models of ownership, unsafe code, external libraries, or environment behavior; those remain outside this paper’s evidence.
-
 ## techniques for the catalog
 
 - anchored proof-plan decomposition — externalize a topological proof DAG and invalidate downstream work whenever a plan statement changes
 - independent mathematical, decomposition, and faithfulness checks — route compiler-clean, false, oversized, or weakened statements through separate read-only decisions
 - recursive repair with controlled authority — give planning, code-writing, and checking agents disjoint powers and stop only after anchor and axiom audits pass
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

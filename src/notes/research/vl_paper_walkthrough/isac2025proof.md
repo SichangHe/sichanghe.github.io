@@ -6,8 +6,6 @@ Tag: `isac2025proof`, [paper](http://arxiv.org/abs/2511.08198v1)
 
 The paper minimizes UNSAT proof objects produced by a proof-producing DNN verifier. Its object is a proof tree, from the framework of Isac et al. [39], whose leaves carry Farkas proof vectors and whose nodes may carry bound-tightening lemmas, each with its own proof vector. The paper's motivation is that proofs checkable by an external proof checker mitigate verifier bugs, but that such proofs "tend to be extremely large" (abstract, p. 1). The authors state: “In this work, we address this problem by minimizing proofs of unsatisfiability produced by DNN verifiers.” (abstract, p. 1) Their best-performing algorithm reduces proof size by 37%−82% and proof checking time by 30%−88%, with a runtime overhead of 7%−20% (abstract, p. 1; Section 4.2 attributes the 7%–20% to Dep. Min. Glob. and 5%–24% to Dep. Min.).
 
-Inference: the directly reusable idea for VeruLaw is certificate dependency slicing: retain only facts needed by a final proof, then check the smaller certificate independently. The paper operates on linear DNN constraints, not Rust or Verus programs.
-
 ## prerequisites and proof representation
 
 A DNN verification query is encoded as Q = ⟨V, A, l, u, R⟩. V contains variables, A linear equations, and l,u lower and upper bounds; R contains ReLU constraints. A proof vector w certifies that the linear combination wᵀAV has a negative upper bound. A learned lemma tightens one variable bound and stores its own proof vector. A proof of each search-tree leaf is needed to establish UNSAT for the whole query.
@@ -87,14 +85,9 @@ What is proved: Theorem 2 (Section 3.2) proves that Algorithm 2 returns a depend
 
 Inference: threat to a product that writes agent-generated verified Rust is indirect but material. Smaller certificates reduce checker cost and memory, while provenance exposes which facts an agent's proof actually uses. The product still needs a sound, independently checked certificate format; proof minimization does not prove the Rust program itself correct.
 
-## what VL should reuse and avoid
-
-Inference: reuse provenance recording, recursive slicing, contribution-based deletion, cached analysis, and end-of-subtree reclamation for any certificate-producing verification service. Do not redo the paper's DNN-specific ReLU encoding or claim a globally smallest certificate from Algorithm 3. Existing VL work on Verus proof scripts should instead focus on extracting dependencies from Rust specifications and verifying the checker/data-model correspondence.
-
 ## techniques for the catalog
 
 - recursive proof dependency analysis — recursively collect only learned bounds selected by a proof vector's coefficient signs
 - greedy contribution minimization — sort dependencies by contribution and remove those that preserve a negative refutation margin
 - global dependency saturation — order by recursive dependency count and iterate removals to a fixed point
 - certificate engineering — cache analyses, ignore already globally used dependencies, and delete unreferenced lemmas after subtree completion
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Since each lemma is applicable only in the search state S where it was deduced and in all descendant states of S, it becomes irrelevant once the sub-tree rooted at S has been fully explored."): read the whole paper text (pdftotext) and checked every quotation, Table 1, 2 and 4 numbers, algorithm line references, and section and PDF page references (pages are PDF page numbers of the arXiv v1 file, 26 pages); changed page numbers, the description of the proof object, the evidence and what-is-proved claims (the paper proves only Theorem 2), the Algorithm 2 step 5, the Algorithm 3 loop lines, and the MaxLeaky attribution; marked unsupported statements as Inference. Did not check the reference list against the cited works, the Verus-form suggestions (all Inference), the VL-specific claims, Tables 3 and 5 values beyond reading them, or the figure 5 plots.

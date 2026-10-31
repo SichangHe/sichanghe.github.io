@@ -3,8 +3,6 @@
 Tag: `zhang2026neuro`, [paper](https://doi.org/10.48550/arxiv.2603.13414)
 ## paper and scope
 
-Zhang et al. propose an LLM workflow that generates function-level separation-logic specifications for C programs, repairs them using compiler diagnostics, and rejects wrong specifications by proving concrete counterexamples in Coq. The paper explicitly leaves loop-invariant synthesis out of scope: “we focus exclusively on function specification generation, deliberately avoiding the synthesis of complex loop invariants that are central to traditional verification pipelines.” (Abstract, p.1) This boundary matters for VeruLaw: a function contract is only one part of a Verus proof, and the paper does not generate a complete program proof.
-
 The target toolchain is QCP, which accepts C annotations and exports difficult verification conditions to Coq. The authors state: “We target C programs and the QCP verification toolchain, which supports separation-logic specifications and exports complex proof obligations to Coq.” (§1, p.2) Their input is a natural-language problem description plus a C signature; output is a QCP specification and any needed Coq predicates (§3, p.3).
 
 ## technique: memory-aware separation-logic contracts
@@ -108,14 +106,6 @@ To make LeetCode types fit QCP, the authors map `TreeNode` to QCP's tree predica
 
 Verus form (inference)
 
-Inference: VeruLaw could build a benchmark of Rust signatures and natural-language contracts using the same overlap-aware category accounting. It should report candidate validity, proof/refutation rates, and denominators separately for syntax, semantic contract correctness, and complete function proofs; the paper's benchmark alone does not supply those measures.
-
-## trust, what is proved, and product threat
-
-The workflow proves a narrow fact when Coq reconstructs a proof of a concrete negated postcondition: that this candidate specification fails on that concrete input. It does not prove the candidate correct for all inputs, prove loop invariants, validate the natural-language requirement, or verify generated C code end to end. QCP and Coq predicates, generated imports, test-case translation, LLM outputs, and external ATP behavior all sit in the operational pipeline; Coq proof reconstruction checks accepted refutations, but the paper does not provide a complete trusted-base audit.
-
-Inference: For a product that asks an agent to write verified Rust, this method is a high-value front-end guard against obviously wrong contracts. Its threat is high if treated as correctness evidence: finite tests can miss an incorrect `requires` or weak `ensures`, and the paper intentionally omits loop-invariant synthesis. Its safer use is to reject candidates with machine-checked counterexamples before spending effort on full Verus proofs, while requiring Verus to prove the final contract and implementation.
-
 ## techniques for the catalog
 
 - separation-logic contract generation — generate pointer-shape preconditions, output postconditions, and disjoint heap assertions
@@ -124,4 +114,3 @@ Inference: For a product that asks an agent to write verified Rust, this method 
 - counterexample-guided refutation — negate a postcondition and use concrete Coq tests plus hammer to prove one violating case
 - anti-trivialization checks — reject missing input bindings and `admit`, `Parameter`, or `Axiom` declarations in refutation tests
 - overlap-aware benchmark construction — normalize C data types for QCP and report overlapping structure categories with denominators
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

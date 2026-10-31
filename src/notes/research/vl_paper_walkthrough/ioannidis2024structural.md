@@ -8,8 +8,6 @@ The paper introduces Temporal Interaction and Choice Logic (Ticl), a structural 
 
 The motivating problem is a verification gap: conventional temporal logics reason over traces or automata, while Hoare-style logics reason over program constructs. Ticl extends CTL with program postconditions, supplies a denotational ICTree model, and provides 50 high-level structural lemmas that hide more than 20,000 lines of coinductive and inductive proof infrastructure (Sec. 1, p. 2). The paper’s formal development relies solely on the uniqueness-of-identity-proofs axiom (Sec. 1, p. 2).
 
-Inference: For VL, the central transfer is proof organization. Verus already handles safety contracts well, but a Ticl-like layer could structure temporal or repeated-behavior obligations around Rust loops, event logs, invariants, and variants. The paper is in Rocq and does not define Verus syntax, so each Verus form below is an inference.
-
 ## technique 1: model effectful programs with ICTrees
 
 What it is. ICTree is a coinductive denotational model with visible event (Vis), silent (Tau), nondeterministic choice (Br), and return (Ret) nodes (Sec. 3.1, pp. 4–6). It supports sequencing (`bind`), iteration, choice, nontermination, and interaction. The transition relation hides finite sequences of Tau steps; an infinite Tau chain is stuck, so silent divergence remains distinct from termination (Secs. 3.1 and 4.1, pp. 4–8). The authors describe ICTrees as “expressive enough to formalize programming languages with nondeterminism, nontermination, and interaction” (Sec. 3, p. 4).
@@ -51,7 +49,7 @@ Inference: In Verus, a terminating suffix resembles a function `ensures` clause,
 
 Evidence. For the example ⟨x ← t;; k x, w ⊨L AF obs PRINTS⟩, either t prints, or t terminates with postcondition R and every continuation from R eventually prints (Sec. 5.1, p. 14). The authors describe the resulting subproofs as “analogous to the sequence rule for safety properties in Hoare logic” (Sec. 5.1, p. 13).
 
-Failure and assumptions. Ticl’s temporal operators are not complete for all liveness properties; the authors state that some properties require Büchi automata or raw coinductive proofs (Sec. 8.4, p. 25). Inference: a VL temporal layer must provide an escape path for obligations that cannot be represented by its chosen operators.
+Failure and assumptions. Ticl’s temporal operators are not complete for all liveness properties; the authors state that some properties require Büchi automata or raw coinductive proofs (Sec. 8.4, p. 25).
 
 ## technique 3: structural lemmas for composition and iteration
 
@@ -116,12 +114,6 @@ The formal results are soundness of the Ticl rules, equivalence preservation und
 
 The paper states that its Rocq formalization relies solely on the uniqueness-of-identity-proofs axiom (Sec. 1, p. 2). Inference: interpreting a theorem as a guarantee about an implementation also requires trusting that the definitions, event handlers, and specifications describe that implementation and its intended property. Erasing an event limits what the temporal formulas observe.
 
-## threat to VL and reuse
-
-Inference: The product threat from agent-written verified Rust is moderate for safety and high for temporal claims. A Ticl-style structural layer can make liveness proofs compositional, but wrong event instrumentation, missing fairness assumptions, or an over-strong invariant can produce a proof of the wrong observation. Verus still needs to check each concrete contract and ghost lemma.
-
-Inference: VL should not redo generic loop-invariant/variant decomposition, bind/choice structural rules, instrumentation as a separate observation interface, or phase-splitting liveness proofs. It should adapt these ideas to Verus contracts, Rust ghost state, and an explicit trusted-observation policy. The paper’s complete Ticl library already supplies the abstract proof architecture; new work belongs in the Rust/Verus embedding and engineering integration.
-
 ## techniques for the catalog
 
 - ICTree semantic model: represent finite, infinite, effectful, and nondeterministic programs with compositional event trees
@@ -130,5 +122,3 @@ Inference: VL should not redo generic loop-invariant/variant decomposition, bind
 - invariant and ranking proofs: establish loop termination, liveness, and invariance with preserved invariants and decreasing variants
 - proof-facing instrumentation: choose ghost observations through event handlers and lift generic rules to a source language
 - liveness split: divide phase-structured liveness into smaller proofs connected by an intermediate relation
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The invariance rule (IterAG) is significant because it discharges a coinductive (infinite) proof to two finite subproofs."): read the full paper, including references and appendices, and the whole study; checked quotations, numbers, references, rule premises, and example scope; corrected the publication year and DOI link, page references, choice and loop premises, the ranking-function discrepancy, and the three-process consensus scope; marked interpretation of the trusted base as inference; did not run the Rocq artifact or validate the proposed Rust/Verus adaptations.

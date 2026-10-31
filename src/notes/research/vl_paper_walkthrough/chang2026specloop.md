@@ -90,8 +90,6 @@ The paper lists limitations: dependence on the reconstructor and equivalence-che
 
 Inference: Interpreting a successful EQY result requires the checker setup and assumptions. It checks one reconstructed RTL against the original; it does not independently prove that the prose is unique, complete, or faithful to unstated requirements. The reconstructor, parsers, compiler, EQY implementation, and benchmark test harness affect the resulting evidence. A depth bound of 10 alone does not establish an unrestricted equivalence guarantee.
 
-Inference: In VeruLaw, SpecLoop's transferable idea is a contract-reconstruction feedback loop: generate a candidate Rust/Verus specification, synthesize or reconstruct code from it, and use Verus proof failures and concrete counterexamples to refine only affected clauses. Treating an equivalence pass as requirement validation risks accepting an unsuitable security property. Independent requirement tests and final Verus proofs could complement this consistency check.
-
 ## techniques for the catalog
 
 - structured RTL specification — generate fixed fields for ports, behavior, control, clocks, resets, and exceptional cases
@@ -101,4 +99,3 @@ Inference: In VeruLaw, SpecLoop's transferable idea is a contract-reconstruction
 - incremental feedback loop — revise only affected specification fields until equivalence passes or retry budgets end
 - pass/fail versus rich diagnostics — compare binary feedback with counterexamples and mismatch reports
 - bounded equivalence setup — use Yosys EQY SAT checking with an explicit depth bound and report its limits
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To isolate the contribution of our verification-guided loop, we use exactly the same LLM for both roles."): checked every quotation, number, page and section reference, and technique step against all seven pages; corrected references, marker conventions, stopping conditions, feedback isolation, evaluation roles, tied rankings, and equivalence claims; marked recommendations and conclusions as Inference; did not reproduce experiments or independently validate the tools, cited works, or Verus analogies.

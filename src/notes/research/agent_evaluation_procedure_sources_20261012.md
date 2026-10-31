@@ -6,11 +6,6 @@ Evaluators do not need this file. It is for the human and for whoever maintains 
 L means a literature source (database record or review note). P means this project: an audit, an audit brief, or the earlier evaluation plan. "mine" marks a method that is my inference. The tag after a `db:` id is the record's reading depth when the database was built: `most`, `parts`, `abstract_or_first_pages`, or `metadata_only`. Only `most` means the paper was read closely; the others are weaker support.
 
 Paths:
-- `db:<id>`: record id in `/ssd1/sichanghe.github.io/src/notes/research/distributed_verification_db/sources.jsonl`.
-- `r7`, `r2`: `/ssd1/sichanghe.github.io/src/notes/research/distributed_verification_review_b/deep_7_evaluation.md` and `deep_2_liveness.md`, then the heading. A bold label inside a section appears in brackets.
-- `a-agents`, `a-eval`: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md` and `findings2_eval.md`, then the heading.
-- `plan`: `/ssd1/sichangheagent/verus_distributed/eval_and_cases/evaluation_plan.md`, then the heading.
-- `V`, `RV`, `GR`, `AB`, `AB2`, `ABG`: `steer/VERDICTS.md`, `RETRY_VERDICTS.md`, `GAP_RETRY_CHANGES.md`, `AUDIT_BRIEF.md`, `AUDIT_BRIEF_2.md`, `AUDIT_BRIEF_GAP.md` under `/ssd1/sichangheagent/verus_distributed/`. `bench/check.sh` is in the same tree.
 
 The second revision (after the dry run on the election result) changed wording only, not ids: M1/M2 agreement, W1 "depends on", L2 "gives the conclusion", L9 no-tool rule, S1 order, K3/K4 details, copy command. Ids below are current as of 16 Oct.
 

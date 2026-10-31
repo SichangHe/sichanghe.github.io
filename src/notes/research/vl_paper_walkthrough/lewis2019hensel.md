@@ -78,8 +78,6 @@ The paper says Lean implements “a version of the calculus of inductive constru
 
 Inference: Lean’s kernel checks the proof terms, while the classical axioms and the existing `mathlib` foundations are trusted.
 
-Inference: For VL, the directly reusable lesson is proof decomposition: isolate algebraic rewrite lemmas, make a quantitative invariant explicit, keep iterates in the smallest useful type, and separate convergence, limit properties, and uniqueness. The mathematical content is far outside typical Rust systems specifications; the product threat is therefore indirect, through proof-engineering complexity and trusted-library dependence rather than an immediate competing implementation.
-
 ## techniques for the catalog
 
 - p-adic completion: build valuation, norm, completion, and integer subring as reusable formal structures
@@ -87,5 +85,3 @@ Inference: For VL, the directly reusable lesson is proof decomposition: isolate 
 - bounded Newton invariant: use an auxiliary `T<1` and an induction invariant to preserve integrality and shrink errors
 - Cauchy-limit extraction: derive a Cauchy sequence, take its limit, and transfer properties by continuity
 - local uniqueness split: prove neighborhood uniqueness and handle an already-root seed as a separate branch
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Conrad’s description is more concrete than Gouvêa’s [19] and avoids unnecessary detours into the group Z/pZ, although the approaches are schematically identical."): I read the whole paper text (all 10 content pages and the reference list) and the whole study; checked every quotation word for word, the theorem statement, the Newton-sequence steps, the uniqueness step, the line counts (70 vs 10, 400, 4500), and all section and page references against the PDF pages; changed the tag link to the arXiv page (the DOI printed in the paper is a placeholder), fixed page numbers throughout (Section 5 is on pp. 7–9, Sections 6 and 7 on pp. 9–10), corrected T to a real number defined as a norm, corrected the binomial lemma description, the uniqueness step (first identity, not a rewrite of F(z)-F(soln)) and the F(a)=0 explanation, moved claims about Lean-kernel trust to Inference, and added paper details on the completion choice and size; I did not check the Lean code in the mathlib repository, the cited external papers, or the Verus-related Inference statements beyond marking them as inference.
-

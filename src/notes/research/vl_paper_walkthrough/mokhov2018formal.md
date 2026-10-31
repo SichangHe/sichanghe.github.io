@@ -60,10 +60,6 @@ Trusted parts include the Haskell/SBV implementation, the translation to SMT, Z3
 
 Inference: For agent-written verified Rust, the direct product risk is high when generated code depends on an incomplete machine or arithmetic model: a passing proof can certify the wrong state transformer. The reusable low-risk idea is the single semantic source for tests, proofs, and code, provided the model-to-hardware and compiler links receive independent evidence. This risk assessment is an inference.
 
-## what VL should not redo
-
-Inference: the paper already demonstrates the basic single-source pattern, bounded symbolic execution, counterexample-guided contract refinement, equivalence checking, and clock optimization for a small deterministic processor. A new VL experiment should measure a distinct boundary, such as whether an agent can infer environmental bounds and preserve equivalence while changing real Rust implementations. Repeating the same REDFIN energy example would add no new evidence.
-
 ## techniques for the catalog
 
 - explicit state-transformer semantics — model every machine component as a symbolic state and compose instruction transformers
@@ -71,4 +67,3 @@ Inference: the paper already demonstrates the basic single-source pattern, bound
 - counterexample-guided contract refinement — quantify inputs, prove an SMT postcondition, then strengthen assumptions from a counterexample
 - equivalence checking — prove optimized low-level code returns the same result as a typed reference on all constrained inputs
 - timing optimization — add clock costs and use SMT minimization/maximization to obtain best and worst execution witnesses
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "However, to formally verify their functional correctness, we need to inspect every valid combination of input values, which can be done by an SMT solver."): I read the whole paper text and the whole study, and checked every quotation, page and section reference, number (47 instructions, 8 to 64 bits, 16-bit words, 122/134/52 clauses, 3.0/4.8/11.5/0.5 s, 79 vs 9 instructions, 12 and 13 cycles, counterexample values, 10-15 minutes, half an hour), the Z3 4.5.1 laptop setup, the code descriptions and the tag line (authors, year 2018, arXiv 1802.01738v1 link as printed in the paper). I changed: the section reference of the rigorous-formalisation quote (section 6, not 5.1), the simulate quote (now complete), the code-generation claim (stated, not demonstrated), the 100-step termination wording, the 79/9-instruction page range (pp. 11-12), the abs timing note (the paper modifies abs for the example), the proof summary sentence, and added Inference labels to unsupported conclusions. I did not check the Verus mappings (marked Inference, not in the paper), the cited references, or any claim about the unreleased REDFIN toolchain.

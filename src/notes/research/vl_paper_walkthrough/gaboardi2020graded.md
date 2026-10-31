@@ -112,8 +112,6 @@ Inference: to build a model rather than only syntax, the paper (i) interprets va
 
 "The benefit of using a Freyd category as a building block is that they are more flexible than other structures (e.g., monads) for constructing models of computational effects" (§2, p. 5).
 
-Inference: the categorical layer is useful to VL as a design checklist for separating pure Rust state, effectful operations, assertions, and grade metadata. It is not a Verus implementation and it does not verify Rust, Z3 encodings, compiler behavior, or external libraries. The paper's proof is conditional on the chosen category, fibration, primitive contracts, and soundness assumptions of those mathematical structures.
-
 ## what is proved, measured, and trusted
 
 - proved
@@ -133,8 +131,6 @@ Inference: the categorical layer is useful to VL as a design checklist for separ
 
 Inference: the paper calls the framework parameterisable and gives many semantic instances, but it restricts the core language to bounded loops, leaves partiality to future work (§2, p. 4), and notes that the loop rule is hard to use when the count is dynamic (§2, p. 6). This is a scope limitation, not a contradiction. The overview rule and Table 1 give the loop the same grade, the N-fold product `m^N` (the extracted text prints it as `mN`).
 
-Inference: VL should not redo the abstract construction of graded Hoare logic, graded categories, or the published examples. A useful product contribution would instead connect grade contracts to real Verus Rust APIs, check that dependency upgrades preserve the grade assumptions, and measure proof maintenance on actual code. The threat to a product of agent-written verified Rust is medium: the paper supplies a disciplined vocabulary for effect contracts and quantitative obligations, but it does not prevent an agent from choosing an irrelevant postcondition, misstating a primitive grade, or omitting an environmental side channel.
-
 ## techniques for the catalog
 
 - graded primitive contracts — index every effectful command/procedure by a precondition, postcondition, and grade from a preordered monoid, then compose grades sequentially
@@ -143,4 +139,3 @@ Inference: VL should not redo the abstract construction of graded Hoare logic, g
 - control-flow trace grading — instrument branches with labels and compare relational traces using a word monoid
 - probabilistic failure grading — assign distribution-specific failure bounds and add them with the union-bound composition rule
 - categorical refinement model — separate values, effects, predicates, grades, and grade-erasing denotations with Freyd categories and fibrations
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Hence, the derivation of proof tree of this logic forces the target program to have the same control flow under the precondition."): I read the whole paper text (main text pp. 1–25, references, Appendices A–D pp. 31–42) and checked every quotation, rule, grade and monoid, example, theorem and page reference in this study against it; I corrected the page of Theorem 1 (p. 22, not p. 25), the Abstract versus §1 citation, the location of the Union Bound examples (Example 7 is in §5.3, p. 22; Example 12 is in Appendix D.1, p. 38), the pages for the Set² and partiality remarks, the proposition pages, the description of the procedure rule, the loop-rule quote (now complete) and the loop/partiality limits, and I marked the Verus sketch as unchecked; I did not check the Verus code or any claim about Verus (all marked Inference), the cited external works, or the PDF figures and diagrams beyond the extracted text.

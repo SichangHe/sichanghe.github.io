@@ -32,17 +32,9 @@ Verus form (Inference): let the verifier check every generated Rust/Verus functi
 
 The authors propose treating theorem proving as library retrieval: search a large formal library, rank applicable lemmas, then compose a proof. They write: “The same logic applies for retrieving the applicable lemmas and tactics for solving mathematical theorems.” (Section 5, PDF p. 9) They cite Sledgehammer and Jiang et al. (2022), a hybrid that uses Sledgehammer for premise selection before an LLM; of that system the authors write that “it still cannot prove more than 70% of the theorems in the miniF2F testing set” (Section 5, p. 9). The 70% denominator is the miniF2F test set, not the five cases in this paper.
 
-Verus form (Inference): build an indexed catalog of Verus `spec fn`s, `proof fn` lemmas, and contract patterns; retrieve candidates by symbol and type, then ask the agent to compose a proof and run Verus. Keep retrieval and proof checking separate so a plausible lemma name cannot substitute for a checked fact. This is directly relevant to VL, but the paper does not implement Verus retrieval.
-
 ## technique: control extrapolation and abstain
 
 The paper distinguishes interpolation of seen proofs from larger textual and conceptual extrapolation. It says: “The extent of extrapolation may be used as a guide to prevent the nonsensical answers and to tie the answers of the model to its training set.” (Section 6.1, PDF p. 11) Their recommendation is that the model stay within what it has seen and abstain from its own proofs “until and unless it can do that with some verified degree of correctness” (Section 5, p. 9), and that it abstain from extensive extrapolation (Section 6.1, p. 11). This is a proposal, not an evaluated abstention classifier.
-
-Inference: VL can require retrieved premises, bounded repair attempts, and an explicit abstention when no proof checks. The threat to agent-written verified Rust is high if a system reports a generated proof without independent verification, but lower when Verus is the final acceptance test. What remains trusted includes the specification, Verus implementation, solver, external APIs, and any retrieval index.
-
-## what is already done and what VL should avoid repeating
-
-The paper already uses holdout-by-public-proof-availability and temporal comparison, and it discusses premise-selection hybrids (citing Jiang et al.) and extrapolation-based abstention. VL should not claim these as new ideas. Its distinct work would be a measured Verus study with disclosed training/proof exposure, exact denominators, and contract-level outcomes. The paper's own conclusion is cautious: “Scientific evidence that GPT-4 has acquired an understanding of the mathematical concepts appear to be scarce.” (Section 7, PDF p. 12)
 
 ## techniques for the catalog
 
@@ -50,4 +42,3 @@ The paper already uses holdout-by-public-proof-availability and temporal compari
 - proof-step checking — verify every generated lemma application and intermediate claim with the target prover
 - premise retrieval — search and rank applicable formal-library lemmas before generation, then independently check composition
 - extrapolation control — tie answers to verified sources and abstain when proof generation exceeds the model's demonstrated scope
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Search and retrieval from a factual database appears to be a fundamentally different task compared to predicting the most plausible next word in a sentence."): read the whole paper; checked every quotation word for word, section and page references, the case descriptions (Cases 1-5), the June versus October 2023 contrast, the 70% miniF2F figure, and the arXiv link and author match; changed one misquote (the 70% sentence), page ranges (pp. 5-7 and 6-7), the web-search step, the first-prompt claim, the abstention claim, and the "already done" list, and added what the paper does not state (no Lean runs reported); did not check the appendix screenshots (Figures 1-20) beyond their captions, or the cited works.

@@ -126,14 +126,6 @@ The benchmark references and specifications themselves require preparation: Soft
 
 Inference: Verus analogues include the Rust requirement/specification, Verus verifier and solver, proof-code erasure, Rust compiler, external-library contracts, and hardware/OS assumptions. Equivalence to a wrong reference is still wrong product behaviour.
 
-## what VL should not redo
-
-Inference: FormalRTL already demonstrates AST-based decomposition, reference-anchored harness generation, counterexample localization/simplification, bounded repair accounting, and module-level equivalence metrics. VL should reuse these patterns rather than build a one-shot Rust generator that reports only final proof pass rates. The paper’s domain is hardware, and its numbers do not establish Verus performance.
-
-## threat to agent-written verified Rust
-
-Inference: The paper signals a high threat from specification and debugging blind spots. Agents can generate code that satisfies a reference model while the model or harness omits a requirement; they can also repeatedly patch a proof without improving the contract. Its strongest transferable protection is a trusted executable reference, dependency decomposition, concrete checker feedback, and denominator-preserving repair logs. The measured hardware gains do not quantify security risk in VL.
-
 ## techniques for the catalog
 
 - static dependency decomposition: partition a reference by AST dependencies and verify leaves before dependent modules
@@ -141,5 +133,3 @@ Inference: The paper signals a high threat from specification and debugging blin
 - counterexample-guided debugging: localize errors, simplify mismatches, patch code, and rerun formal checking
 - bounded repair metrics: report ISR, adjusted iterations, FSR, and dependency-summed effort with explicit denominators
 - formal-equivalence quality tradeoff: compare verified generated output with manual area and delay rather than conflating correctness and PPA
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The initializing agent employs GPT-5, which is better suited to generate correct, reasonable, and high-quality RTL code."): read the entire supplied 8-page paper text, including references, and the entire study; compared quotations, metrics, experiments, source locations, and technique steps; corrected page references, the paper link/tag, f16_add success rates, baseline inputs and repair limits, and interpretation of product FSR, and added model-escalation details and explicit inference labels for review advice; did not run hw-cbmc, reproduce experiments, inspect implementation, validate cited work, or visually inspect PDF figures.

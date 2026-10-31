@@ -51,8 +51,6 @@ Inference: for Verus, aMRR can diagnose whether a failed proof's needed lemmas w
 
 The Mizar corpus contains 57,917 proved theorems in 1,147 articles, plus 88,783 other formulas; 32,524 theorems (56.2%) had prior ATP proofs and supplied training labels (section 3, page 3). The models are shallow and the authors conclude they cannot capture high-level mathematical properties (section 7, page 8). Inference: the ATP, premise translation, solver limits, training/test split, and theorem statements remain trusted or externally supplied; neural scores are heuristics.
 
-Inference: threat to agent-written verified Rust is moderate and localized. Premise selection can reduce solver context and proof-search latency, especially for large libraries, but it cannot repair missing specifications, invent a correct invariant, or validate unsafe/external behavior. Existing VL work should not redo pairwise ranking and hard-negative mining as if they were new; the open work is a Verus-specific corpus, jointly sufficient fact selection, and sound integration with solver diagnostics.
-
 ## techniques for the catalog
 
 - pairwise premise relevance — score each conjecture/fact pair and rank facts before ATP or verifier search
@@ -60,4 +58,3 @@ Inference: threat to agent-written verified Rust is moderate and localized. Prem
 - hard-negative mining — train on low-scoring near-miss premises to improve small-cutoff retrieval
 - bounded rank-and-check — try increasing top-k premise sets under recorded prover resource limits
 - aMRR evaluation — measure the worst true-dependency rank with an explicit sampled-negative denominator
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Negative mining was crucial for good quality: at the top-16 cutoff, the number of proved theorems on the test set has doubled."): read the whole paper text and checked every quotation, number, section and page reference and technique step against it, and recomputed the Table 1 percentages against 2,742 and 2,724; changed the page numbers for caching and stage 1 (page 4), the section 3 corpus counts (page 3) and the aMRR table (page 8), the definition-embedding quote (now complete), the false claim that the table counts match 2,724 (they fit 2,742), the classifier description, the unsupported denominator remark for 61.3%/66.4%, and marked one unlabelled conclusion as Inference; did not check the cited references, the figure images or the 69.8% and 74.25% union figures (the paper gives no counts), and the tag link was kept as the arXiv page given in the paper header (arXiv:1606.04442).

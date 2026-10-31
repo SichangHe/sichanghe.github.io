@@ -41,5 +41,3 @@ The reported average overheads are 1.24% for identity and 0.28% for Polybench on
 - formal tagged-enclave model — define secret-tagged states and prove sufficient confinement and erasure constraints
 - typestate workflow contracts — encode CCaaS transitions in Rust generic states and combine key invalidation with stack, register, and heap cleanup
 - layered verification and attestation — combine compiler, Prusti, MIRAI, dependency assessment, and measurement comparison before provisioning secrets
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The PoCF Enclave forbids the use of unsafe code in its source code, except for specific places where encrypted input from the untrusted world is received and converted to vectors in safe Rust."): checked the full paper, quotations, technique steps, numbers, section and printed-page references, and publisher link; corrected model versus typestate distinctions, theorem conditions, quotation wording, page references, and trust and verification limits; did not inspect artifact code, reproduce proofs or benchmarks, or validate the proposed Verus adaptations.

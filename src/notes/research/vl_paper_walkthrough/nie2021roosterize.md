@@ -8,8 +8,6 @@ ROOSTERIZE suggests names for the lemmas in Coq files from the lemma statement a
 
 Inference: This is a developer-assistance technique rather than a proof checker. A suggested name can improve searchability and consistency, but Coq still checks the statement and proof. Inference: The transferable object for Verus is a learned naming and retrieval aid for lemmas/specifications, not a soundness argument.
 
-## technique: extract source, syntax, and kernel trees
-
 ### what it is
 
 The tool obtains three views of each lemma: token text, a syntax tree from parsing, and an elaborated kernel tree from proof checking. The paper states: “Syntax trees are Coq’s internal representations of source code elements, including lemmas, during the parsing phase. Kernel trees are Coq’s internal representations of statements and functions during proof checking, and contain rich information relevant for lemma naming.” (Section II-A, p. 2.) DataMiner invokes SerAPI's `sertok`, `sercomp`, and `sername`, and extracts from the Coq files all lemmas with their names, statements, and syntax and kernel trees.
@@ -29,8 +27,6 @@ Inference: Use multiple representations when surface source names hide the seman
 
 Inference: A Verus analogue would parse Rust/Verus source and collect the function signature, `requires`/`ensures` clauses, `spec fn` bodies, and normalized proof obligations after Verus elaboration. The paper's Coq-specific SerAPI calls do not carry over; the replacement extractor must be implemented against Verus's available output. Use the extracted semantic view as model input and the existing Verus lemma name as the generated-name target. The name has no effect on proof soundness, and the proof must still verify with Verus.
 
-## technique: sub-tokenization and tree chopping
-
 ### what it is
 
 Names in mathematical libraries mix abbreviations, underscores, and case conventions. In ROOSTERIZE, all inputs and the output are sequences of sub-tokens, produced by a sub-tokenizer based on the MathComp conventions; the paper's example sub-tokenizes `extprod_mulgA` to extprod, a separator, mul, g, and A (Section II-B, p. 2; the separator symbol is lost in the text extraction, and Section I decomposes the same name into `extprod`, `mul`, `g`, and `A`). Large syntax and kernel trees are reduced before encoding. The paper gives three chopping rules: “(1) replace the fully qualified name sub-trees with only the last component of the name; (2) remove the line number information from sub-trees; (3) extract the singletons, i.e., non-leaf nodes that have only one child.” (Section II-B, p. 2.)
@@ -43,8 +39,6 @@ Names in mathematical libraries mix abbreviations, underscores, and case convent
 4. Extract the singletons, i.e. non-leaf nodes that have only one child, and feed the chopped trees to the encoders (Section II-B, p. 2).
 
 Inference: For Verus, tokenize snake-case and camel-case lemma names, type names, operators, and common specification words. Remove source locations and crate-qualified paths that vary across checkouts, but retain type and trait information. This is an inference because the paper has no Rust or Verus tokenizer. Over-aggressive chopping can erase the ownership or generic information needed to distinguish two obligations.
-
-## technique: multi-input sequence-to-sequence name generation
 
 ### what it is
 
@@ -78,12 +72,6 @@ The qualitative case study uses FCSL PCM, a 690-lemma project. Thirty-six sugges
 
 The paper's limitations section says suggestion quality "is highly dependent on the quality of the pre-trained neural networks", that building a model needs careful curation of Coq training data, and that other datasets are needed for conventions other than MathComp's; the VSCode extension cannot give suggestions in real time while a lemma is edited (Section VI, p. 4). Inference: the approach also assumes stable naming conventions, successful compilation, and a sub-tokenizer that preserves meaningful terms. Inference: it does not show that names are semantically correct or that names improve proof search, and metrics that compare with developer names reward agreement, not necessarily better names.
 
-## Verus transfer, trusted parts, and product threat
-
-Inference: For VL, the strongest direct transfer is a local model that names generated `proof fn`s and lemmas consistently, then feeds those names into future premise retrieval. A second transfer is multi-view encoding: surface Rust plus elaborated Verus contracts may help distinguish obligations that look similar as text. The paper's Coq parser, SerAPI, RNN choice, and MathComp conventions are already done work and should not be presented as new VL contributions.
-
-Inference: The checker, parser, model code, training corpus, and specification remain trusted or operational dependencies. A name suggestion does not enlarge the trusted computing base for proof validity if Verus rechecks the unchanged code. Inference: The threat to an agent-written verified-Rust product is low to medium. Naming can reduce retrieval errors and make generated code maintainable, but it cannot repair a weak specification, prove unsafe behavior, or establish that a generated lemma statement matches user intent. The small exact-match rate (9.6% top-1 on the test denominator) also warns against treating model output as authoritative.
-
 ## techniques for the catalog
 
 - semantic proof-artifact extraction — collect source tokens, parsed trees, and elaborated kernel terms before learning a lemma name
@@ -91,5 +79,3 @@ Inference: The checker, parser, model code, training corpus, and specification r
 - multi-input seq2seq generation — encode statement and internal trees, then decode candidate names with attention and copying
 - top-k naming assistance — return several ranked names and compare them with existing declarations
 - LSP verification-editor integration — surface model suggestions beside source names through command line and editor tooling
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "In the last command, ROOSTERIZE uses SerAPI to parse finmap.v and extracts all lemmas, then uses the lemma names suggestion model to generate top k (default k = 5) likely lemma names for each lemma"): read the whole paper text (4 pages) and the whole study; checked every quotation, the corpus and split numbers, Table I figures, the case-study numbers, step descriptions and section/page references. Changed: the abstract quote now cites Section I; names are suggested for existing lemmas, not only newly written ones; `Stmt+ChopKnlTree` is the best configuration, not a single-input one; sub-tokenization, chopping and model steps now follow the paper wording (singletons are extracted, not collapsed; encoders feed a fully connected layer); the 20% case-study figure now notes the "over 150" inspected suggestions; LSP is cited to Section II-A; added the limitations section; marked own conclusions "Inference:". Not checked: the IJCAR 2020 paper, the PDF figures beyond reading Fig. 2 text, the linked tool or demo video, and the Verus transfer ideas, which are inferences. Link changed to the arXiv id printed in the paper text (arXiv:2103.01346v2).

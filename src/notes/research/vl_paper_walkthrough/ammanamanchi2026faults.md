@@ -23,7 +23,7 @@ How to apply it.
 
 The paper's examples show why the distinction matters. A ProofNet exercise omitted the source’s finite-dimensionality hypothesis (Figure 2, p. 3). A miniF2F problem omitted “determine when equality occurs” (Figure 3, p. 3). An incorrect ProverBench Pell equation swapped variables in its claimed general solution, which no encoding change can repair (Section 3.3, p. 5).
 
-Verus form. Inference: apply the same taxonomy to VL specifications before proving Rust. Treat a missing `requires` condition as a specification defect, an incorrect `ensures` translation as a formalization defect, and an unmodeled dependency or `external_body` assumption as a trust-boundary item. Verus proofs establish their written contracts; they do not establish that contracts capture product intent. Keep source requirements beside the Verus spec and require a review artifact linking each requirement to a predicate.
+Verus form.
 
 ## technique: deterministic static checkers with semantic guard proving
 
@@ -48,13 +48,13 @@ Static checks cannot decide whether a formal statement captures informal intent.
 
 The semantic evaluation used a curated challenge set of 92 problems × six categories = 552 classifications; it was not used to estimate benchmark-level defect prevalence (Section 4.2, p. 6). Sonnet 4.5 with thinking had recall 0.82, precision 0.30, F1 0.42, and 68.1% accuracy at $13.71; GPT-5.2 with thinking had recall 0.91, precision 0.24, F1 0.37, and 54.6% accuracy at $6.86 (Table 6, p. 7). Appendix H, Table 13 (p. 26), instead reports Sonnet recall as 0.87 with the same precision, F1, accuracy, and cost. Separately, the paper evaluates guard-warning filtering on 55 labeled examples, then applies GPT-5.2 filtering to ProverBench’s 325 problems: warnings fall from 427 to 277 (35.1%); the authors report that manual verification preserved all known true positives (Appendix G.2–G.5, pp. 25–26). Table 7 (p. 7) reports formalization-error F1 of 0.18 for Sonnet and 0.15 for GPT-5.2 with reasoning. Inference: these results support using the models for triage with human adjudication.
 
-Verus form. Inference: use an LLM only to prioritize likely requirement/specification mismatches in VL, with the source requirement, Verus contract, and category definition in the prompt. Require a deterministic checker or human to confirm every finding. Never convert the LLM's “valid” answer into a proof obligation discharge or allow it to edit a contract without a separately reviewed diff.
+Verus form.
 
 ## technique: release hardening and score audit
 
 The paper proposes these release controls. Use `proof wanted` instead of `sorry`: the former exposes a theorem signature for type checking without adding an axiom usable by later proofs (Lessons Learned, p. 8). Set `autoImplicit false` so undeclared variables fail at formalization time rather than silently becoming implicit parameters (p. 8). Ban user axioms in dataset files and run basic arithmetic/domain checkers (p. 8). Pin Lean/mathlib versions and document fork lineage (pp. 5, 8). The paper also calls for checking every requirement rather than only the main claim (Section 5, p. 8). Inference: these controls address different faults and should be combined.
 
-To measure impact, the authors selected 20 mechanically proven issues, manually corrected them, and evaluated provers on original and corrected statements across four datasets. Both models solved 0/20 original statements; after correction, DeepSeek-Prover-V2-7B solved 3/20 and Kimina-Prover-8B solved 2/20 (Section 4.3, p. 7). Defects can inflate scores when a weakened formalization is easier, or deflate scores when an incorrect statement is impossible; the opposing effects can coexist and partially cancel, so headline pass rates remain unreliable without item-level quality data (p. 7). Inference: VL evaluations should publish per-item contract audits, rejected specifications, exact tool versions, and denominator changes after correction.
+To measure impact, the authors selected 20 mechanically proven issues, manually corrected them, and evaluated provers on original and corrected statements across four datasets. Both models solved 0/20 original statements; after correction, DeepSeek-Prover-V2-7B solved 3/20 and Kimina-Prover-8B solved 2/20 (Section 4.3, p. 7). Defects can inflate scores when a weakened formalization is easier, or deflate scores when an incorrect statement is impossible; the opposing effects can coexist and partially cancel, so headline pass rates remain unreliable without item-level quality data (p. 7).
 
 ## what is proved, trusted, and left open
 
@@ -66,4 +66,3 @@ The Lean kernel gives certainty about a proof of a given formal statement. It do
 - semantic-guard static checking — detect arithmetic and soundness hazards, then prove required guards with deterministic tactics
 - high-recall semantic audit — use LLM classification only after static screening and send findings to human adjudication
 - release hardening — use `proof wanted`, disable auto-implicit, ban user axioms, pin versions, and audit score denominators
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "DSP and OpenAI versions define a general operation s while Harmonic directly computes the specific case."): checked the full text, quotations, numbers, references, checker steps, and stated limitations; corrected page references, the missing-hypothesis example, tactic order, filtering scope, and unsupported risk ranking; added corrected-score results and noted conflicting counts and metrics; did not run the Lean checkers, inspect released code or datasets, or reproduce experiments.

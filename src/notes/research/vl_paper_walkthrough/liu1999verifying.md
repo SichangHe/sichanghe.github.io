@@ -8,8 +8,6 @@ Liu proposes testing a formal specification before implementation. A specificati
 
 The method derives logical proof obligations from invariants, operations, compositions, and decompositions, then evaluates those obligations on selected input/output bindings. The paper defines the process as “test case generation; (2) evaluation of proof obligations” (section 1.1, p. 897). The paper's convention is that a “successful test” is one that detects a fault and a “failed test” is one that detects none (section 2, p. 903). Inference: testing therefore checks finite samples and does not replace proof; the paper itself says that finding no satisfying test case for an invariant only “may weaken the belief that the invariant is consistent” (section 3.1, p. 904).
 
-Inference: for VeruLaw, this is a low-cost contract-fuzzing layer: test `requires`/`ensures` relations and compositions before investing in full Verus proofs. A passing finite test is evidence about sampled states, not a universal theorem.
-
 ## technique: five logical-expression test strategies
 
 Represent an expression in disjunctive normal form `P = P1 ∨ ... ∨ Pn`, with each disjunct a conjunction of atoms. A test case binds every free variable; quantified domains are replaced by finite samples (section 2, pp. 900–903).
@@ -69,7 +67,7 @@ Verus form. Inference: expose the decomposition as helper functions and prove re
 
 ## evidence, trust, and limits
 
-The paper supplies worked tables and formulas, not an empirical evaluation; for future work it lists concrete test-case generation techniques, a “relatively large scale case study” of a “University Information System”, automatic test case generation, and tool support (section 6, p. 913). Assumptions the method relies on: test-case adequacy, correct expected results from user requirements (p. 905), and, for pre/postconditions, that values satisfy their types' invariants (p. 907). Inference: agent-generated Verus contracts should undergo such tests because a formally provable but invalid contract can pass every proof. Inference: the paper's five strategies and composition/decomposition obligations can be reused as pre-proof checks in VL rather than building a new theorem prover.
+The paper supplies worked tables and formulas, not an empirical evaluation; for future work it lists concrete test-case generation techniques, a “relatively large scale case study” of a “University Information System”, automatic test case generation, and tool support (section 6, p. 913). Assumptions the method relies on: test-case adequacy, correct expected results from user requirements (p. 905), and, for pre/postconditions, that values satisfy their types' invariants (p. 907).
 
 ## techniques for the catalog
 
@@ -79,5 +77,3 @@ The paper supplies worked tables and formulas, not an empirical evaluation; for 
 - condition-process testing — require a witness output for each tested pre-state and separately test validity expectations
 - integration obligations — test that sequential and conditional data-flow outputs satisfy successor preconditions
 - decomposition refinement — test parent/child precondition and postcondition implications with shared inputs
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "A non-confident test indicates a doubt whether the testing target (e.g., condition process) satisfies the required proof obligation."): I read the whole paper text and checked every quotation, formula, strategy definition, section and page reference, the Customer and Search examples with tables 6-9, and the integration and decomposition obligations against it; I changed two page references (p. 896 not 897), the 'target' quotation wording, the invariant consistency obligation (it is existence of a satisfying value, not a type-invariant implication), added the successful/failed test convention, and marked my own advice as Inference. I did not check the cited references or the PDF figure layout, and the link is from the fetch record (the paper text has no DOI).

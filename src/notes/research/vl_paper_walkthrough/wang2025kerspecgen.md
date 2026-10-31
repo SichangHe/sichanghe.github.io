@@ -48,14 +48,6 @@ Verus form: Inference: use module-level Rust definitions and `proof fn` lemmas t
 
 Evidence and limits: codeBLEU varies sharply by module. Refining improves ARM VSpace Function from 19.27 to 25.60 and Threads and TCB from 25.48 to 46.90, but lowers Retyping and Untyped Invocation from 32.95 to 3.47 and System Call from 46.09 to 25.13 (Table 8, p. 21). The authors acknowledge that codeBLEU does not fully represent generated-code quality. Inference: integrating independently generated properties can introduce contradictory assumptions even when each snippet resembles reference text.
 
-## evaluation method, trust, and product threat
-
-The manual study samples five modules from 30, extracts four properties per module per each of four methods, and evaluates 80 samples. Two experts with more than five years of seL4 verification experience score logical correctness, logical consistency, semantic redundancy, and semantic validity from 1 to 5; evaluators are unaware of the generation method. The preliminary cross-evaluation uses 16 samples (20%), but the later Kappa calculation is described as using 80 samples and reports 0.77 (Secs. 4.1.5–4.1.6, pp. 14–19). Table 6’s cells and marginal totals actually sum to 90, while the calculation uses 67/80 for observed agreement. Inference: the reported Kappa cannot be reproduced from the printed table and denominator, so it does not establish reliable agreement as presented. Refining's overall 3.57 is based on these five modules and 80 samples, not all 624 properties. It reduces reported preprocessing from 2.5 to 1.9 hours per module (24%) and Scheduler supplementation from three constraints to one (67%) (Sec. 4.1.6, p. 17).
-
-The paper's trusted inputs are expert seL4 documents, Isabelle/HOL artifacts, open-source code, manually prepared benchmark properties, and human scoring. Inference: the LLMs, retrieval threshold, graph labels, translations to Python, BLEU/ROUGE/codeBLEU metrics, and expert judgments remain outside a formal proof of kernel correctness. The authors say: “It should be noted that the verification code we currently provide is indicative rather than directly executable.” (Sec. 3.2.2, p. 9)
-
-Inference: this work offers a specification-writing pipeline relevant to VeruLaw, but its similarity scores do not establish how well it would generate correct Verus specifications or complete proofs. Its reusable lesson is the pipeline: retrieve traceable properties, compare them with code, deduplicate conservatively, fill gaps, generate code, and require a verifier-backed acceptance step. VL should not claim that BLEU improvements demonstrate formal verification; a new experiment must report compile/proof denominators, counterexamples, wrong-but-provable specifications, and repair effort.
-
 ## techniques for the catalog
 
 - hierarchical requirement graph — map kernel requirements to traceable properties from abstract concepts to code
@@ -68,5 +60,3 @@ Inference: this work offers a specification-writing pipeline relevant to VeruLaw
 - template program synthesis — combine generated property snippets with auxiliary definitions into a reference program
 - similarity-based evaluation — use BLEU, ROUGE, and codeBLEU with explicit denominators and settings
 - expert semantic audit — score correctness, consistency, redundancy, and verification value with blinded reviewers
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "For the four generation methods (RAG, Zero-shot, Few-shot, and Refining), 4 specification properties are extracted from each module, resulting in a total of 80 samples."): read all 1,205 lines of the 25-page paper text, including appendices and references, and the whole study; checked quotations, numbers, sections, pages and technique steps; corrected the false BLEU inconsistency, added the actual capability-score and Kappa inconsistencies, repaired quotations/page references and narrowed Verus claims; did not execute KerSpecGen, inspect its repository, reproduce experiments, validate Python translation equivalence or visually inspect the PDF.

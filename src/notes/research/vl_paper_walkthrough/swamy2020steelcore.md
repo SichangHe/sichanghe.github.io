@@ -7,8 +7,6 @@ Page numbers below are the ICFP article page suffixes (121:N printed in the pape
 ## scope and result
 SteelCore embeds a concurrent separation logic (CSL) in F★'s effectful dependent type theory. It gives indexed action trees, a monotonic-state semantics, heap assertions, dynamically allocated invariants, atomic actions, fractional permissions, monotonic references, locks, and channels. The paper's central claim is: “The result is a full-featured separation logic shallowly embedded in F★, with a fully mechanized soundness proof, and applicable directly to dependently typed, higher order, effectful host language programs” (Section 4, p. 14).
 
-Inference: the closest VL lesson is architectural. Put shared-state ownership and protocol facts in ghost specifications, expose atomic transitions as proof-relevant operations, and keep executable Rust separate from the separation-logic proof layer.
-
 ## technique 1: indexed action trees with partial-correctness semantics
 
 What it is. A `ctree st a pre post` type indexes a potentially divergent concurrent computation by its initial footprint and result footprint. The state class contains memory, separation propositions, equivalence, `emp`, separating conjunction `star`, interpretation, an evolution preorder, and a memory invariant (Section 3, p. 8). The paper defines the intuition directly: “The program expects the fp0 footprint of some initial memory m0:st.mem. When run in m0, it may diverge or produce a result:a and m1:st.mem, providing the (fp1 result) fragment of m1 to the context” (Section 3, p. 8).
@@ -75,9 +73,6 @@ Channels (Section 5.4, pp. 23-26) are indexed by a protocol: the `protocol` type
 
 Verus form. Inference: encode a counter as a Rust struct with a ghost numeric invariant and methods with `requires`/`ensures`; encode a channel protocol as a ghost state machine whose send/receive methods advance a protocol predicate. Rust lifetimes and ownership help with handles, but dynamic lock allocation and higher-order dependent indices would need explicit ghost modeling.
 
-## proof boundary, trusted components, and VL impact
-The paper claims a fully mechanized soundness proof inside F★ (Section 4, p. 14); it builds on F★'s own soundness (Swamy et al. 2016) and the monotonic-state effect's soundness (Ahman et al. 2018), both proved elsewhere (Section 2.2, p. 7). The paper supplies examples but no broad benchmark denominator or runtime comparison, and no Steel program has been extracted and run (Section 2.2, p. 8). Inference: the F★ kernel and effect semantics, and the model of atomicity (individual `Act` nodes run without interference), are what a reader must trust. Inference: VL should avoid rebuilding generic separation logic without checking existing Verus libraries; the reusable pieces are invariant protocols, frame lemmas, monotonic ghost state, and typed channel state machines. Inference: product threat is medium for concurrent agent-written Rust, since generated code can satisfy local functional contracts while violating a global ownership protocol unless the protocol is made a required ghost interface.
-
 ## techniques for the catalog
 - indexed action trees — index concurrent computations by pre/post separation footprints and compose them semantically
 - affine separation logic — define heap predicates closed under disjoint extension and use separating conjunction for frame reasoning
@@ -85,5 +80,3 @@ The paper claims a fully mechanized soundness proof inside F★ (Section 4, p. 1
 - fractional permissions — use a partial commutative monoid to split and recombine shared-cell authority
 - monotonic references — constrain reference state evolution by a preorder and prove every update respects it
 - typed concurrency objects — package locks, counters, lists, and channels with dependent protocol indices
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Recursively opening the same invariant ival p is clearly unsound since, although ival p is duplicable, p itself need not be."): read the whole paper text start to end and checked every quotation, section and page reference, and the steps of all five techniques against it; changed the link to the DOI from the paper, corrected page numbers (the state class and intuition quote are p. 8, the feature-list quote is p. 13, lock-coupling is p. 23), rewrote technique 1 steps to the real constructors (Act, Ret, Bind, Par, Frame, Sub) and the step/run proof, rewrote technique 3 and 4 steps to follow the paper (istore, uses set, with_invariant, pcm_frac, mref write), removed unsupported claims (lock-coupling list verified, authoritative monotonic state, trusted state-law axioms, Verus has no fractional primitive) and marked own conclusions as Inference; did not check the F★ sources or proofs, the cited prior work, or any Verus/vstd claim.

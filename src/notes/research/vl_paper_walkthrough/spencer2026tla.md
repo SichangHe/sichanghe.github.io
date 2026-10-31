@@ -49,10 +49,6 @@ The paper proves only that generated TLA+ text passes the stated SANY/TLC checks
 
 The paper's Table 3 lists ten domains with three problems each, although nearby prose calls the suite “six application domains”; this is an internal description mismatch. Table 1 compares TLA-Prover's 30-problem suite with a FormaLLM baseline averaged over 25 models and 26 specifications (650 runs per cell), so the 3.5× comparison to 8.6% is not a matched model and denominator. The earlier audit also found the public repository's validator differs from the paper's AST mutation description. Inference: these discrepancies make the headline useful as a paper-reported result, but insufficient as a reproducibility claim without pinning code, checkpoint, grader, and benchmark files.
 
-## implications for VeruLaw
-
-Inference: the strongest transferable idea is to make contract generation verifier-driven while explicitly testing for reward hacks and checking contract mutation. Inference: a product using agent-written verified Rust is threatened by the same proxy problem: a Verus proof can certify a weak postcondition. The product should therefore score contract strength against a requirement and run mutation tests, not only accept a verifier-success bit. Inference: TLA-Prover's narrow template bias (simple `TypeOK` state predicates) suggests measuring domain coverage and requiring message-case, ownership, and temporal behaviors in the benchmark. The paper reports 0/3 Diamond in communication, concurrency, puzzles, and transactions, versus 2/3 in mutual exclusion, scheduling, and workflows (Table 3); each denominator is three problems.
-
 ## techniques for the catalog
 
 - four-tier verifier ladder — grade syntax, model checking, and mutation sensitivity as separate Bronze, Silver, Gold, and Diamond gates
@@ -61,4 +57,3 @@ Inference: the strongest transferable idea is to make contract generation verifi
 - repair-based GRPO — train on failed specifications with dense tier-transition rewards and verifier feedback
 - reward-variance monitoring — detect GRPO collapse when all sampled repairs receive the same score
 - best-of-k verifier sampling — use repeated checked candidates to raise usable-specification yield while preserving a greedy benchmark
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

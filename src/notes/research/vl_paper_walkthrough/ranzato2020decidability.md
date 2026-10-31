@@ -8,8 +8,6 @@ Ranzato studies when a safety proof has an inductive invariant inside a chosen a
 
 The abstract states: “We consider here inductive invariants belonging to an abstract domain A as defined in abstract interpretation, namely, ensuring the existence of the best approximation in A of any system property.” (p. 1). The main principle is: an abstract invariant exists exactly when the least fixpoint of the BCA proves the safety property. This converts a search over all candidate invariants into a fixpoint computation. The paper derives decidability and synthesis results for Kildall's constant-propagation domain and Karr's affine-equalities domain, then derives a co-inductive greatest-fixpoint algorithm for disjunctive logical domains.
 
-Inference: VL can use this result to decide whether a chosen invariant vocabulary is expressive enough before asking an agent to fill proof annotations. The paper is not about Verus or Rust; the Verus forms below are proposed encodings, marked as inferences.
-
 ## technique 1: model a program as a transition system and abstract its transformer
 
 Use this when a verified Rust routine can be expressed as a finite control-flow graph with a mathematical state. A program has control nodes `Q`, variables in `V^n`, transfer functions, and edges labelled by transfers (Section 4, pp. 8–9). The state space is `Q × V^n`; `postP` maps a vector of sets, one per control node, to successor sets. Reachable states are the least fixpoint `lfp(λX.Σ0 ∪ postP(X))` (p. 9).
@@ -73,8 +71,6 @@ A domain is fixpoint-complete for a transformer when abstracting concrete reacha
 
 Inference: a usable test, derived from Sections 3.2 and 3.3 rather than stated as a procedure, is to compare `α ◦ t` against `α ◦ t ◦ γ ◦ α` for each transfer; if equal, lift pointwise completeness to fixpoint completeness; otherwise retain the BCA but do not claim equality with concrete reachability (Sections 3.2, 4.1, and 4.2). The paper also characterizes fixpoint completeness directly: `α(lfp(f)) = lfp(α f γ)` iff `α(lfp(f))` can be proved by an abstract inductive invariant in `A` (Lemma 3.7, p. 7), and, equivalently, the concrete and abstract inductive invariant principles coincide (Theorem 3.6, p. 7).
 
-Inference: For VL, this is a contract audit: a generated invariant may be exact for straight-line arithmetic but lose precision at guarded branches. Marking a lemma as an exact abstraction result requires proving the relevant completeness equation; otherwise state only sound over-approximation. Verus's `ensures` proves the chosen relation, not completeness unless that relation is included explicitly.
-
 ## technique 6: co-inductive backward synthesis for disjunctive domains
 
 Use this when the abstract domain `L` is closed under arbitrary unions, equivalently when its upper closure is additive and its lower closure `µ̂L` is available. The paper defines a quasi-order on states, an `Avoid` operator, and an abstract transition relation that adds down-closure transitions (Section 5, pp. 15–16). Under well-quasi-order assumptions (A1 and A2, p. 15), it derives a greatest-fixpoint algorithm that reproduces the algorithm of Padon et al. [32]:
@@ -96,10 +92,6 @@ Inference: In Verus, the backward algorithm can guide generation of weakest usef
 
 The paper proves general order-theoretic lemmas and gives two domain theorems plus symbolic examples. It reports no empirical success percentages, execution times, or corpus sizes. All quantitative bounds are structural: `CONST^n` has height `2n` (p. 9), `AFF` has height `n+1` (p. 13), and the algorithms terminate under ACC, DCC, or wqo assumptions. Trust includes the chosen abstraction, computability of each BCA, the correctness of transfer-function models, and the safety property's representation. The paper explicitly notes that no BCA algorithm for generic affine disequality is known (p. 13). Inference: replacing it by the identity transfer function, as Karr and Miné do, is sound but loses precision.
 
-Inference: The threat to agent-written verified Rust is an expressive-domain mismatch. A proof can be impossible because the selected ghost vocabulary cannot express the needed invariant, rather than because the implementation is wrong. VL should classify failures by domain: constants, affine equalities, heap shape, ownership, or disjunction. It should then either switch to a domain with a computable BCA or report that no invariant in the current domain can prove the property. This avoids wasting agent iterations on annotations that cannot exist in the chosen abstraction.
-
-Inference: Existing Verus infrastructure already checks concrete loop invariants and arithmetic lemmas; VL should reuse it as the validation layer. The paper's new contribution for VL is a pre-check and synthesis taxonomy: define an abstract state space, compute or approximate its transfer, and distinguish the case where no invariant exists in this domain from a proof-search failure.
-
 ## techniques for the catalog
 
 - abstract inductive invariant principle: reduce existence of a domain-restricted invariant to a least fixpoint of the best correct abstract transformer
@@ -109,4 +101,3 @@ Inference: Existing Verus infrastructure already checks concrete loop invariants
 - completeness audit: test pointwise transfer completeness before claiming abstract and concrete fixpoints coincide
 - co-inductive backward synthesis: compute a greatest fixpoint by repeatedly intersecting safety, predecessor, and abstract-avoidance facts
 - domain expressiveness diagnosis: report when no invariant exists in the selected abstract domain under its computability assumptions
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This abstract domain, here denoted by A FF, is relatively simple, precise and is widely used in numerical program analysis"): I read the whole paper text (arXiv:2004.03170v2, 22 pages) and checked the four quotations word for word, the page references, the CONST and AFF definitions and heights, the BCA cases, Corollary 3.5, Algorithms 1-2 and Theorem 5.5, and the examples 4.2, 4.4 and 5.6; I corrected page references for the program reachability definition (p. 9), the AFF height and Karr discussion (p. 13) and Example 4.4 (p. 14), described the AINV loop and its hypotheses as printed, replaced the unsupported claim that the paper "emphasizes" least versus strongest, made the completeness-test steps an Inference, and added Lemma 3.7, Example 5.6 and Algorithm 4; I did not re-derive proofs or the example iterations, and the Verus encodings are unchecked inferences. Link from the paper text (arXiv number); tag kept.

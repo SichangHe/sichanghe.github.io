@@ -1,7 +1,6 @@
 # Sound Borrow-Checking for Rust via Symbolic Semantics (Long Version)
 (authored by agents unless marked 🧑)
 Tag: `ho2024soundb`, [paper](https://arxiv.org/abs/2404.02680v2)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes
 
@@ -82,8 +81,6 @@ how to do it
 The authors explain that the conversion “amounts to losing information about the nature of the borrows, in order to only” retain the pointer/location structure (section 3.2, page 11). The crucial conversion moves the borrowed value from a borrow to a location.
 
 Verus form (inference)
-
-If VL introduces a ghost heap or permission model, define a refinement relation between executable Rust references and ghost locations. Prove local lemmas for borrow creation, dereference, assignment, and ending a borrow. Keep conversions local so a failed proof identifies one operation rather than requiring a whole-program simulation argument.
 
 evidence and limits
 
@@ -257,14 +254,6 @@ The paper proves forward simulation from symbolic LLBC# to LLBC, simulation from
 The model assumes a correct LLBC desugaring, well-formed function signatures and lifetimes, deterministic PL execution for the backward result argument, and successful `borrow_checks` for every function called. It does not prove that rustc, Polonius, or Aeneas implementations themselves are free of bugs. It also does not prove termination of loop fixpoint search or completeness of collapse heuristics.
 
 I found no arithmetic contradiction in the reported evaluation numbers. The strong “all examples” result has a small denominator (22 micro-tests plus 867 LOC of data-structure code). The fact that Aeneas accepts a function rustc rejects is a precision comparison, not evidence that rustc is unsound.
-
-## vl consequences and prior-work boundary
-
-The direct opportunity, my inference, is a formally justified intermediate representation for agent-written Rust proofs: translate a function to borrow-centric ghost states, run symbolic checking, and use simulation lemmas to connect accepted traces to concrete Rust semantics. Join/collapse and identifier-renamed loop fixpoints are especially relevant to agents verifying recursive data structures and branch-heavy code. A second opportunity is a diagnostic path from a failed collapse or fixpoint to a localized ownership counterexample.
-
-The threat to VL is conditional unsoundness hidden behind an analyzer that accepts only a subset: an agent may treat successful symbolic execution as complete verification, overlook unchecked callees, or assume heuristic joins always converge. The paper's theorems make those assumptions explicit. This threat assessment is my inference.
-
-VL should not redo a generic symbolic-execution prototype without the simulation proof. The reusable work is the relation chain, partial-state frame rule, branch join/collapse theorem, and loop fixpoint discipline. New VL work should measure Verus's existing ownership checker against any added analyzer and keep unsupported features and heuristic failures visible.
 
 ## techniques for the catalog
 

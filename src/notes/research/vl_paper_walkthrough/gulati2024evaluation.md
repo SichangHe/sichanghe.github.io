@@ -6,8 +6,6 @@ Tag: `gulati2024evaluation`, [paper](http://arxiv.org/abs/2406.06555v1)
 
 This tiny paper measures how well large language models convert natural-language mathematical theorem statements into Lean4 statements. It contributes 101 formal/informal theorem pairs from mathlib4 across 17 topics and evaluates GPT-3.5, GPT-4, and Gemini Pro. The authors motivate the task directly: “Generating formal statements is tedious, but the impressive advances in LLMs’ capabilities show a promising future for autoformalized, verifiable systems” (Section 1, p. 1)
 
-Inference: for VeruLaw, the paper is evidence about proposal generation, not proof of Rust correctness. The benchmark's correction-effort measure is useful for measuring how much human repair an agent-generated Verus specification needs before the verifier can check it.
-
 ## technique 1: paired formal/informal benchmark construction
 
 What it is. Each dataset item contains a Lean4 theorem statement, its natural-language informalization, and a topic label. The 101 items cover Algebra (9), Analysis (8), Category Theory (6), Combinatorics (6), Computability (4), Field Theory (9), Geometry (8), Group Theory (6), Information Theory (5), Linear Algebra (5), Logic (5), Model Theory (6), Number Theory (5), Probability (6), Representation Theory (3), Set Theory (5), and Topology (5) (Appendix B, Table 1).
@@ -63,8 +61,6 @@ Steps.
 4. Inspect hard examples qualitatively; Appendix C contrasts a simple Hamming-distance item (problem 8, all models score 1) with a category-theory injectivity item (problem 99, GPT-3.5=2, GPT-4=3, Gemini Pro=2; the appendix text calls the Gemini model "Bard").
 5. Treat topic difficulty as a hypothesis, because the dataset does not label theorem difficulty and topic counts differ.
 
-Inference: for VL, stratify by Rust feature and verification pattern—ownership, concurrency, arithmetic, memory safety, and API contracts—rather than reporting one aggregate pass rate.
-
 ## what the evidence means
 
 The dataset denominator is 101 theorem pairs; model means are over those items, but the paper does not give per-topic denominators in the main results beyond Table 1's topic counts. It uses manual evaluation rather than compiling every output as an automated pass/fail. The authors explicitly note that perplexity or string matching is not robust because structurally different outputs can be equivalent (Section 1).
@@ -73,12 +69,9 @@ The paper concludes: “our findings indicate that even the most sophisticated m
 
 What is measured: human-assessed correction effort on 101 Lean4 statements for three named models. What stays trusted: the mathlib ground truth, informalization quality, model prompts, human graders, and the assumption that the rubric scores semantic correctness. No proof of the generated formalizations is reported, and the paper does not evaluate Verus, Rust, compilation, or proof search.
 
-Inference: threat to agent-written verified Rust is high at the specification boundary. A model can produce plausible but semantically wrong contracts, especially for advanced domains; a Verus compile-and-proof check is therefore mandatory. Existing VL work should reuse stratified correction measurement and avoid treating language-model fluency or text similarity as verification evidence.
-
 ## techniques for the catalog
 
 - paired formal/informal corpus — benchmark translation with canonical formal statements, natural-language statements, and topic labels
 - zero-shot code prompting — present each requirement with a fixed instruction and retain the candidate formal code
 - correction-effort grading — score the edits needed to reach a correct formalization on a 0–4 scale
 - topic-stratified evaluation — report per-domain means and distributions to expose where autoformalization fails
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "I am providing you with a mathematical statement in natural language. I want you to formalize it in the Lean4 language."): read the whole paper (3 pages plus appendices A-D) and the whole study; checked every quotation, the 101 count and the Table 1 topic counts (they sum to 101), the 0-4 scale, the averages 2.238 and 2.248, the Information Theory/Logic versus Category Theory/Model Theory finding, the Appendix C scores for problems 8 and 99, and the link (arXiv 2406.06555v1, from the paper text); changed the claim that distributions are plotted by topic (Figure 1 is per-topic means, Appendix D histograms are per model), labeled the ground-truth comparison, one-output-per-item and minimum-edit steps as inference because the paper does not state them, and dropped the closing period inside the first quotation; did not check the HuggingFace benchmark, the cited works (Jiang et al. 2023, Pichai and Hassabis 2023), or the figure values beyond the text.

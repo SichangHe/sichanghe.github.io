@@ -52,14 +52,6 @@ Verus form (Inference): Require a successful verifier run for the original contr
 
 Table 2 removes subgoals, diffusion, and both; Figure 2 plots solved problems against model calls (pp. 6–7). Inference: reuse these two comparisons to distinguish proof-decomposition benefits from demonstration-organization benefits and to measure model-call cost. The reported five-fold improvement concerns calls for a comparable pass rate, not measured end-to-end runtime or total compute.
 
-## trust, limitations, and threat to VL
-
-The authors acknowledge transformation errors: “Firstly, the process of transforming informal proofs into subgoal-based proofs is an iterative procedure involving interaction with ChatGPT, which may introduce noise and inconsistencies.” They also state: “Secondly, while the diffusion models we adopted were effective in organizing the demonstrative in-examples, they are computationally demanding.” Their evaluation scope is explicit: “Lastly, we only evaluated our framework on the miniF2F dataset.” (Section 6, p. 9)
-
-Inference: Isabelle authentication checks the formal statement, so applying this workflow to verified Rust still requires checking that the contract expresses the intended behavior. Manually written seeds affect generation quality; they need not be trusted as a substitute for verification. The paper does not establish that its keyword filter covers every possible way of bypassing proof obligations.
-
-Inference: VL could test finer proof decomposition, verifier feedback, and joint demonstration selection and ordering. Neither the reported pass rates nor an improvement from diffusion is established for agent-written verified Rust. The call-efficiency comparison also omits a complete accounting of refinement, training, and proof-checking costs.
-
 ## techniques for the catalog
 
 - Inference: verifier-aligned subgoal proofs — split proof steps until the model can reconstruct them and the assistant accepts them
@@ -67,5 +59,3 @@ Inference: VL could test finer proof decomposition, verifier feedback, and joint
 - Inference: diffusion demonstration organization — score candidate subsets and orders under a context budget
 - Inference: certified reconstruction and prerequisite check — authenticate sketches and exclude proof admissions
 - Inference: component ablation and call accounting — compare pass rates and model-call budgets separately
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "ChatGPT successfully reconstructs the proof associated with step 1, thus validating it as a viable subgoal."): read the full paper, including references and appendices; checked quotations, numbers, section and page references, and technique steps; corrected refinement and sampling details, cumulative-validation interpretation, prover page references, and unsupported transfer claims; did not rerun experiments, inspect code, or test Verus adaptations.

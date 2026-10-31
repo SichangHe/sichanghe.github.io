@@ -6,8 +6,6 @@ Tag: `ma2025mover`, [paper](https://doi.org/10.1145/3731209)
 
 MoVer is a first-order-logic DSL and interpreter for checking whether an SVG animation contains the spatial, temporal, and motion properties stated in a prompt. An LLM writes both the animation program and a MoVer program; the interpreter reports each predicate as true or false; the report is fed back to the animation generator for another iteration. The paper's abstract says: “Executing the verification program on the animation yields a report of the predicates that failed and the report can be automatically fed back to LLM to iteratively correct the animation.” (Abstract, p. 1)
 
-Inference: the transferable systems pattern is an explicit property language plus an executable checker whose failures become repair input. MoVer does not prove Rust behavior, and its geometric predicates are domain-specific. For VL, the analogous checker is Verus checking Rust code against a specification and returning diagnostics, while the generated artifact is Rust proof code rather than SVG.
-
 ## technique 1: design a property DSL from an explicit vocabulary
 
 What it is. MoVer models objects `o_i`, motions `m_j`, logical operators, object attributes, motion attributes, and relative spatial/temporal predicates. The seven atomic motion attributes are agent, type, direction, magnitude, origin, duration, and postcondition (§3.1, p. 3). Motion types include translation, rotation, and scale. A representative expression is `∃m.type(m,"trn") ∧ dir(m,[0,1]) ∧ mag(m,100) ∧ agt(m,ιo.clr(o,"black") ∧ shp(o,"square"))`, which checks an upward 100-pixel translation by a black square (§3.1, p. 3).
@@ -65,19 +63,9 @@ Evidence. The test set has 5,600 prompt/program pairs: 1,200 single-atomic, 1,40
 
 The evaluation also examines incorrect generated checkers. The LLM generates incorrect MoVer programs for 272/5,600 = 4.9% of test prompts. On those, 70/272 = 25.7% pass immediately, 134/272 = 49.3% pass after correction, 20/272 = 7.4% fail, and 48/272 = 17.6% produce a program that does not execute (p. 9). The authors state: “In other words, running our full pipeline on these prompts would falsely report that it produced correct animations for 204 (75%) of the prompts and that it produced incorrect animations for the remaining 68 (25%) prompts.” (§6, p. 9) Inference: this exposes the risk of accepting an animation using an incorrect generated specification.
 
-## limitations, trusted parts, and VL threat
-
-The authors state: “Prompts that describe complex motion paths (e.g., “Move the triangle on a figure eight path,” “Make the rectangle dance.”) are challenging for the LLM to convert the prompt into the low-level MoVer predicates.” (§7, p. 10) They also discuss self-contradictory prompts and ambiguity. Their report limitation is specific: “Fourth, the MoVer verification report is passive; it explains what went wrong, but does not suggest fixes for the problems.” (§7, p. 10)
-
-Inference: for agent-written Rust proofs, an omitted requirement could likewise yield a successful verification result against a weak specification. The paper's reported 75% false acceptance applies only to the 272 prompts with incorrect MoVer programs; it is not a measured Verus failure rate.
-
-The paper measures predicate satisfaction in the normalized SVG representation and iterative success on a synthetic benchmark. Inference: relying on these results requires trusting the DSL semantics, transform factoring, renderer, and the mapping from intent to predicates. For VL, reuse detailed diagnostic feedback and explicit postconditions, and consider independently reviewing generated specifications. Measure Rust verification success and omitted requirements separately; MoVer does not test Rust or Verus.
-
 ## techniques for the catalog
 
 - vocabulary-first verification DSL: define object, motion, spatial, temporal, and postcondition predicates that correspond to requirements
 - normalized trace execution: convert an artifact into per-step attributes, evaluate predicate matrices, and report failing subexpressions
 - predicate-level repair loop: feed detailed checker failures and the DSL contract back to the generator for bounded iterative correction
 - synthetic checker benchmark: construct ground-truth specifications from structured scenes and report pass@0, repaired pass, and failure denominators
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While the numbers in Table 3 are based on assuming the pipeline has access to ground truth MoVer programs, in practice our pipeline generates MoVer program using an LLM."): checked the full text including appendices, quotations, numbers, technique steps, section/page references, tag, and paper link; corrected quotations, figure and dataset page references, the relative-relation antecedent, stored attributes, synthesis roles, and inference labels, and added the dataset construction limits; did not reproduce experiments, inspect implementation code, or validate the proposed Rust/Verus adaptations independently.

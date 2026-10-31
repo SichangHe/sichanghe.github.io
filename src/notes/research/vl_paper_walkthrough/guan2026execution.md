@@ -28,12 +28,8 @@ On the Gurobi evaluation, EVOM (GRPO) scored 62.95 OptiBench, 84.08 NL4OPT, 88.1
 
 Removing the reasoning block caused a “significant performance collapse across most benchmarks,” while MAMO-E slightly improved (Ablation, p.7). GRPO and DAPO curves were nearly identical under the same setup (Sensitivity, p.8). The method assumes deterministic execution, a correct answer label, and an objective that can stand for correctness. It does not address adversarial sandboxes, specification omission, unsafe foreign functions, or the soundness of a solver itself.
 
-## relevance to VL and threat
-Inference: EVOM gives VL a concrete recipe for using compiler feedback as a learning signal: generate several proof candidates, run Verus, normalize diagnostics and pass/fail outcomes, and update toward proof-carrying code. The direct threat is medium: the paper demonstrates solver-backed feedback and cross-environment adaptation, but optimization objectives are narrower than systems invariants, and reward hacking can produce a proof of the wrong contract. VL should reuse the strict harness, outcome-only baseline, and environment-switch experiment, while adding human-intent checks and measured false acceptance. Existing RLVR and Verus compiler feedback mean VL should not claim novelty for execution as a verifier alone.
-
 ## techniques for the catalog
 - sandboxed execution observation: normalize parser, runtime, solver status, value, and logs into a deterministic tuple
 - outcome-only reward: reward only executable outputs whose verified outcome matches a trusted answer
 - group-relative verifier RL: update a policy from within-group normalized execution rewards
 - environment switching: transfer or adapt by changing the verification backend instead of rebuilding process labels
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -78,12 +78,6 @@ Verus form: Inference: represent a source and optimized Rust function, define an
 
 evidence and limits: The paper's three transformations are Coq-verified examples, not a full compiler. The authors expect finite bounds-check costs to be small: “We believe that the flexibility our memory model allows for optimizations prior to the finite language level will outweigh these rare costs.” (Section 5.1, p. 23). This is an expectation; the paper provides no runtime measurements. Inference: this is a semantic foundation for a verifier, not evidence of production compiler speed.
 
-## trusted boundary, contradictions, and product threat
-
-The proved artifacts are the generic memory operations, infinite/finite behavioral refinements, VIR integration, executable-interpreter soundness, and three transformation relations. Testing adds confidence but does not enlarge the theorem. Inference: applying these results to extracted code or another runtime requires trust in the proof checker and extraction/runtime tools, and evidence that the implementation satisfies the modeled address, byte, and LLVM/VIR semantics. The paper's interpreter theorem establishes refinement of its formal specification, not equivalence to every LLVM implementation. The paper is sequential, and full optimization passes remain unproved.
-
-Inference: VL should reuse the phase separation, explicit error/UB modeling, provenance relations, and executable-reference-interpreter pattern when verifying unsafe Rust or allocator-facing code. VL should not redo the generic observation that pointer/integer casts complicate optimization; it should test whether the Rust crate's actual allocator, FFI, and integer casts satisfy the modeled relation. Inference: agent-written verified Rust can fail around unsafe blocks, pointer provenance, OOM behavior, and underdefined values: an agent can prove a clean abstract contract while the implementation violates the refinement assumptions.
-
 ## techniques for the catalog
 
 - two-phase memory refinement — optimize under unbounded addresses, then lower to bounded memory with explicit OOM refinement
@@ -91,4 +85,3 @@ Inference: VL should reuse the phase separation, explicit error/UB modeling, pro
 - undef and cast concretization — relate symbolic bytes, `undef`, and pointer/integer values to their allowed concretizations
 - executable reference interpreter — implement deterministic operations and prove result membership in the specification or source UB
 - block-level optimization proofs — prove dead-allocation, cast-removal, and allocation-addition refinements before composing passes
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We then ensure that operations on these ﬁnite memory slices agree between the inﬁnite and ﬁnite memory models."): checked the entire paper, study quotations, numbers, section/page references, technique steps, theorem scope, and link; corrected the unrelated DOI to the paper's arXiv identifier, page references, integer/concretization scope, provenance caveats, cast-plus-allocation distinction, and inference labels; did not inspect the Coq artifacts, rerun the paper's experiments, or validate the proposed Verus/VL adaptations.

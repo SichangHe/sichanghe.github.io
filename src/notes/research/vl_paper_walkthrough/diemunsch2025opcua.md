@@ -83,14 +83,6 @@ The race condition affects all versions and requires no key compromise: a reques
 
 Table 2 reports that v1.05.03 has attacks for ConfC, ConfPwd, AgrS, and AgrC, while ConfS is proved in the listed scope. Updated v1.05.04 RC fixes several attacks, but residual risks remain in some configurations for AgrS and AgrC (marked ✗/✓−), so the paper proves weakened properties AgrS− and AgrC− instead; ConfC, ConfS, and ConfPwd are proved for v1.05.04 RC. The paper also states that, without key compromise, OPC UA satisfies all goals except AgrS and AgrC (race condition, 5.1). These outcomes are configuration- and threat-model-specific; they are not universal claims about every OPC UA implementation.
 
-## trusted base, limitations, and VeruLaw relevance
-
-Inference on the trusted base: the results rest on the applied-pi calculus abstraction, ProVerif's symbolic cryptography and soundness, the model's event placement, the configuration generator, and the authors' reading of the specification (the paper says it extracted what it believes suitable). Inference: the model does not cover concrete cryptographic code, transport parsers, timing behavior, or denial of service. Stated by the paper: it assumes a Dolev–Yao attacker and models compromise of agents' long-term keys and, in some configurations, channel keys (Leak: Ltk/Chk).
-
-Inference: for agent-written verified Rust, the most transferable practice is to make state and configuration explicit, state security properties with exact context bindings, enumerate feature combinations, and prove helper invariants before using them. The largest product threat is a specification that proves an attractive property under the wrong configuration or with missing identity bindings. Dynamic or symbolic attack traces should become Verus regression lemmas and tests, but a ProVerif proof cannot substitute for memory safety, integer safety, or implementation-level Verus proofs.
-
-Inference: the paper already completed an OPC UA model, configuration lattice, proof-search methodology, attack minimization, and remediation analysis, so VL should not redo those tasks for OPC UA; it should reuse the binding and conditional-property lessons when specifying its own protocol/state machine.
-
 ## techniques for the catalog
 
 - explicit symbolic state model: represent protocol roles, cryptography, tables, events, and attacker control in applied pi calculus
@@ -99,4 +91,3 @@ Inference: the paper already completed an OPC UA model, configuration lattice, p
 - proof-search tuning: combine context selection, `noselect`, precision annotations, and proved helper lemmas
 - invariant methodology: inspect false assumptions, state invariants, prove them independently, and maintain an acyclic dependency graph
 - sanity and reachability checks: test expected flows, non-vacuous hypotheses, and deliberate violations before accepting proofs
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Despite the addition of proof helpers as described above, the verification did not terminate for authentication properties on most configurations."): checked all quotations, numbers (7 056 configurations, 8.6 kLoC, 2.3 k clauses, 2.4 kLoC, 34 of 39 names, 8 vulnerabilities and 6 on v1.04), section references, the technique steps and the findings against the paper text; changed the link to the publisher page given in the paper, fixed section references (lattice order is 4.2, sanity checks 3.3), corrected the ConfC condition, the Table 2 caveat, the token-binding description and the fixes list, and marked own conclusions "Inference:"; did not check the full-version paper [14] or artifact [15], the PDF figures beyond the text, or the OPC UA specification itself.

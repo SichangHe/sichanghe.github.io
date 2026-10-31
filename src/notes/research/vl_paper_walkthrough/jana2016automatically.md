@@ -4,7 +4,7 @@ Tag: `jana2016automatically`, [paper](https://www.usenix.org/conference/usenixse
 
 ## scope and formal-verification relevance
 
-EPE X is a static-analysis checker for C error propagation. It combines under-constrained symbolic execution with manually supplied error specifications and a program-independent error oracle. The paper does not provide a machine-checked proof of the checker or of analyzed programs; its verification evidence is bug reports, manual triage, and measured precision/recall. Inference: for VeruLaw, the reusable lesson is how to turn an informal error protocol into explicit contracts and path obligations, while the empirical checker remains complementary to a proof.
+EPE X is a static-analysis checker for C error propagation. It combines under-constrained symbolic execution with manually supplied error specifications and a program-independent error oracle. The paper does not provide a machine-checked proof of the checker or of analyzed programs; its verification evidence is bug reports, manual triage, and measured precision/recall.
 
 The abstract says: “In this paper, we design, implement, and evaluate EPE X, a tool that uses error specifications to identify and symbolically explore different error paths and reports bugs when any errors are handled incorrectly along these paths.” It reports evaluation on “867, 000 lines of C Code from four different open-source SSL/TLS libraries” and five applications (Abstract, p. 345). The same abstract reports 102 new bugs, at least 53 security flaws, 28 false positives out of 130 reports, and 20 false negatives out of 960 reported correct error-handling cases.
 
@@ -54,8 +54,6 @@ The paper reports security-flaw counts at different scopes. The abstract says at
 
 The checker’s outputs are supported by symbolic satisfiability checks and manual investigation, not a formal soundness theorem. Inference: trusted inputs include manually authored error specifications, the Clang symbolic executor and solver, logging-function lists, and the assumption that a project’s error protocol is consistent. Inference: a malicious or simply wrong specification can make a real bug invisible or create spurious paths.
 
-Inference: VL should not redo generic unchecked-error-return detection as a new technique. This paper already supplies a scalable workflow, error contracts, path classification, and cross-caller triage. For agent-written verified Rust, the remaining product threat is contract mismatch at FFI boundaries, incorrect conversion between `Result` and legacy integer/pointer conventions, cleanup requirements, and the behavior of logging functions that the checker does not verify. Verus can prove explicit propagation contracts, but environmental behavior and specification quality remain trusted.
-
 ## techniques for the catalog
 
 - error-protocol specifications — encode per-function and global error/success ranges for return values and pointers
@@ -63,4 +61,3 @@ Inference: VL should not redo generic unchecked-error-return detection as a new 
 - sink handling oracle — classify returns and exits as handled, unhandled, or maybe_handled; accept configured logging as handled
 - cross-caller triage — compare multiple call sites to reduce reports caused by imprecise analysis or inconsistent documentation
 - Clang checker implementation — implement path-state callbacks and solver checks inside a scalable static-analysis build
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This leads to silent data corruption that can be leveraged to break the security guarantees of the SRP protocol."): checked the entire paper, quotations, numbers, section/page references, technique steps, tag, and publisher link; corrected the 960-case description, specification references, path filtering and state resets, Step-III output ordering, and a quotation; noted another inconsistent Table 5 row; did not reproduce experiments, inspect EPEx source code, or validate the Verus inferences.

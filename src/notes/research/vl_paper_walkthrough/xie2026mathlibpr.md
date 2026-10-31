@@ -5,8 +5,6 @@ Tag: `xie2026mathlibpr`, [paper](https://www.semanticscholar.org/paper/f914e802f
 ## what the benchmark measures
 MathlibPR evaluates whether a system can judge merge readiness after Lean code already builds. The final dataset contains “15,895 labeled build-passing snapshots from 12,063 PRs: 11,409 merge ready snapshots and 4,486 not merge ready snapshots.” Among merged pull requests it includes 3,687 pairs of an earlier build-passing snapshot and the ultimately accepted version (§3.2, p. 4). A not-merge-ready label means the snapshot was not ready at that point, not that the underlying contribution could never be merged.
 
-Inference: this distinction is directly relevant to VeruLaw. A verified Rust proof is evidence of build and specification compliance, but review quality, API fit, readability, and maintenance conventions remain separate judgments. The benchmark's historical labels are a useful supervised signal, not a formal correctness theorem.
-
 ## technique 1: construct labels from repository history without build-failure shortcuts
 
 What it is and when to use it. Recover snapshots that pass Lean's build checks, then label them by whether they were accepted into Mathlib. Use this to test reviewer judgment rather than syntax or compilation. The paper says: “Since every example already builds, the benchmark rules out trivial strategies based on syntax errors or compilation failure and focuses on reviewer-like judgment.”
@@ -34,16 +32,7 @@ How to apply it. (1) Define verdict values merge ready, not merge ready, and unc
 ## evidence and findings
 On the full benchmark, Stage 3 DeepSeek balanced accuracy is 36.0% and Qwen 24.1%; DeepSeek's Stage 3 NMR Recall is 2.3% and Qwen's is 0.0%. On the balanced agent subset, Codex Stage 3 MR Recall is 92.0%, NMR Recall 12.0%, and valid rate 99.9%; Claude Code's valid rate is 56.4%. The paper concludes: “no system reliably distinguishes merge ready from not merge ready snapshots.” The within-PR analysis has 3,687 total pairs, with usable-pair counts varying by model and stage; DeepSeek Stage 3 pairwise accuracy is 51.1% over 3,101 usable pairs (Table 5, p. 8).
 
-Inference: high MR recall with low NMR recall is a dangerous bias for a system reviewing agent-written verified Rust: it accepts most plausible changes while missing subtle merge blockers. Inference: VL should track both recalls and invalid-output rate, never report one aggregate accuracy alone. The paper does not measure Verus proof soundness, compiler correctness, or product risk; those are outside its evidence.
-
-## trusted boundary and what VL should reuse
-The benchmark trusts historical maintainer decisions as labels, the build-check records used for snapshot recovery, and the correctness of each model or agent invocation and schema validator. Its limitations include selection bias, nontechnical reasons for abandonment, a temporal cutoff, and the 500/500 agent subset. The authors explicitly say the goal is “not to replace Mathlib reviewers” but to provide an advisory signal audited by humans.
-
-Inference: threat to a product of agent-written verified Rust is high for review automation claims and low for the underlying Verus proof claim. Existing VL should not redo a benchmark of build-pass versus merge-ready Lean snapshots; it should adapt the paired, staged protocol to Verus commits and include specification weakening, dependency upgrades, and unsafe-boundary concerns. The decisive experiment would report MR/NMR recalls and pairwise preference on held-out Verus revisions.
-
 ## techniques for the catalog
 - history-derived review labels: recover build-passing snapshots and label acceptance from real pull-request trajectories
 - staged review evaluation: add code context, diagnostics, then stated intent while holding the review contract fixed
 - structured and class-balanced judging: validate JSON reviews and report both class recalls, balanced accuracy, validity, and AUROC
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

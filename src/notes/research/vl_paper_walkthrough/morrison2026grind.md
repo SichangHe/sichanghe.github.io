@@ -4,7 +4,7 @@ Tag: `morrison2026grind`, [paper](https://doi.org/10.1007/978-3-032-32589-1_7)
 
 ## scope
 
-The paper presents `grind`, a native Lean 4 tactic that combines congruence closure, E-matching, and theory solvers while producing kernel-checked proof terms. Its central claim is: “grind works natively in the Calculus of Inductive Constructions, producing kernel-checkable proof terms without any soundness compromises” (Abstract, p. 106). Inference: this is relevant to VL as a model for making automation produce checkable artifacts close to the proof kernel, although Verus currently relies on SMT-oriented proof automation rather than Lean’s dependent-type kernel.
+The paper presents `grind`, a native Lean 4 tactic that combines congruence closure, E-matching, and theory solvers while producing kernel-checked proof terms. Its central claim is: “grind works natively in the Calculus of Inductive Constructions, producing kernel-checkable proof terms without any soundness compromises” (Abstract, p. 106).
 
 ## technique 1: native congruence closure over dependent terms
 
@@ -44,23 +44,15 @@ Inference: Verus/Z3 has arithmetic theories over Rust integer models, but not Le
 
 The built-in solvers use a plugin interface also available to users. A plugin declares an internalizer called when terms enter the E-graph and equality handlers called on equalities and disequalities (Sect. 3, p. 111). Because the interface is defined in Lean, a domain solver can be added without privileged access to grind internals (Sect. 3, p. 111).
 
-Inference: VL could offer a similarly narrow extension boundary for domain-specific proof facts, but Verus proof functions are checked code, not runtime plugins. Any extension must preserve the trusted checker boundary and specify which generated facts are independently checked.
-
 ## technique 7: interactive diagnosis and stable scripts
 
 When automation fails, `grind =>` exposes a DSL for invoking individual solver steps, E-matching, case splits, equivalence-class inspection, and new hypotheses. `grind?` emits a self-contained script listing the exact theorems and steps used; the paper gives a two-step example that instantiates only `trig_identity` and then invokes the ring solver (Sect. 4, p. 111). The generated script does not depend on environment annotations, improving stability across library updates (Sect. 4, p. 111).
-
-Inference: VL should record the exact Verus lemmas, trigger facts, and solver settings used for an agent proof, so a later library change can be diagnosed and replayed. This is an engineering transfer, not a measured Verus result.
 
 ## evidence, limits, and trust
 
 As of February 2026, Mathlib used grind approximately 3,400 times across 2,400 theorems; about 1,200 were initially authored with grind and about 1,200 were refactored after its release. Those refactors averaged a 28% reduction in lines of code, with approximately 50 theorems reduced by at least 10 lines (Sect. 6, p. 112). Inference: the denominator for usage is the stated 2,400 theorems and for the line reduction the approximately 1,200 refactored theorems; the paper does not say whether the 28% is a per-theorem or aggregate average, and it reports no randomized baseline, proof-time data, or distribution. CSLib, the Prime Number Theorem project, and Analysis I each used grind around 500 times (Sect. 6, p. 112).
 
 The implementation is about 40,000 lines of Lean and has no external dependencies (Sect. 1, p. 107). The paper states that every proof term is checked by Lean’s kernel (Sect. 1, p. 107). Inference: the paper’s claims are therefore bounded by Lean’s kernel, elaborator, library declarations, and the correctness of the generated proof terms. Inference: for agent-written verified Rust, the threat is reduced when every automation result is replayable and checked, but specification errors, incorrect Rust/Verus modeling, and untrusted external code remain outside this evidence.
-
-## what VL should not redo
-
-Inference: VL should not redo the generic ideas of congruence closure, pattern-directed theorem instantiation, arithmetic theory combination, or replayable diagnostic scripts. Inference: the open product opportunity is a Verus-native analogue with explicit trigger/instantiation controls, stable proof replay, and a checked record of the facts exposed to Z3.
 
 ## techniques for the catalog
 
@@ -71,4 +63,3 @@ Inference: VL should not redo the generic ideas of congruence closure, pattern-d
 - typeclass-parametrized theories: activate ring, order, and arithmetic solvers from algebraic interfaces rather than hardcoded types
 - solver plugins: extend automation through internalizers and equality/disequality handlers at a narrow API boundary
 - replayable diagnostics: inspect solver state interactively and emit self-contained proof scripts for stable maintenance
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "They share information through the congruence closure core: when one solver reports an equality, all solvers see it."): I read the whole paper text (pp. 106-114) and checked the scope quote, the two E-matching quotes, the congruence-closure quote, all examples, the 28%/3,400/2,400/1,200/50/500/40,000 figures, the section and page references, and the tag and DOI link (DOI printed on p. 106). Changed: corrected page references (the congruence example and normalization are on p. 108, not 107; the fg example on p. 108; dependent pattern matching on p. 109; the ring and lia solvers on p. 110; theory combination on p. 111), moved the congruence-closure quote into technique 1, relabeled the step lists as reconstructed by the study author because the paper gives no numbered procedures (and flagged step 6 of technique 2 as the author's addition), labeled the denominator and trust-boundary sentences as Inference, and added the grind_pattern multi-pattern and kernel-check citations. Not checked: the cited external works, the linked repositories and the linked analysis script, the Lean code examples by running them, and all Verus statements, which are the study's own Inference.

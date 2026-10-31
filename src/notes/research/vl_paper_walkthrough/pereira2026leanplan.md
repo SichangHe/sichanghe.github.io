@@ -28,9 +28,6 @@ The study evaluates 900 IPC 2023 and 270 new-domain test tasks, 90 per domain, a
 
 The proof covers unit-cost STRIPS tasks satisfying certificates, not arbitrary PDDL. Trusted pieces include Lean kernel, compiler/runtime, PDDL parser, and Lean definitions of PDDL semantics; the paper names these explicitly in its limitations (section 7, p. 9). It does not certify unsolvability. Inference: threat to agent-written verified Rust is high for the specification boundary but lower for proof soundness: an agent can propose useful algorithms, yet certificate assumptions can silently exclude product inputs, as Cisterns demonstrates.
 
-## what VL should reuse and avoid
-Inference: reuse the compile-and-recheck controller, explicit input certificates, local invariant decomposition, and performance acceptance criterion. Avoid treating passing training tasks as proof; avoid unchecked external tables and assumptions. LeanPlan already covers reusable proof-guided heuristic synthesis; VL should focus on Rust/Verus integration and richer stateful systems rather than reproduce the planning architecture unchanged.
-
 ## techniques for the catalog
 - certificate-gated synthesis — reject generated verified code unless Boolean input assumptions pass
 - local admissibility proof — prove goal awareness and transition consistency, then derive global optimality
@@ -38,4 +35,3 @@ Inference: reuse the compile-and-recheck controller, explicit input certificates
 - max-combined relaxations — combine overlapping lower bounds with `max` to preserve admissibility
 - checked distance tables — use BFS tables only after verifying the distance properties the proof consumes
 - automated candidate acceptance — rebuild code, proofs, certificates, and performance before accepting an agent artifact
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -128,16 +128,6 @@ The abstract attributes 90% success to at least one prompting setup; Section 7 r
 
 The paper reports 11/109 tasks unsolved by any setting, a 10.09% remainder. Section 7.3 reports: “As expected, for all examples that were used to construct the CoT pool, the LLMs copied the lemmas they were shown, at times along with additional lemmas.” Excluding pool examples and their variants, Section 7 reports 84% solved by at least one configuration. Section 8.3 says manual convenience selection may introduce bias, and Section 8.2 warns that the dataset may not represent industrial designs. Inference: success on unseen examples provides stronger evidence of generalization than copying shown lemmas.
 
-Inference: VeruLaw faces analogous contamination and benchmark overfitting risks if prompt examples come from the same projects used for evaluation. Inference: model-generated invariants can be syntactically valid but semantically irrelevant, and solver timeouts can conceal whether the candidate is wrong or merely expensive. Inference: a product must retain the exact verified source, dependency versions, and contract so that a mined lemma cannot silently outlive its assumptions.
-
-## transfer notes for VL implementation
-
-Inference: reusable contributions for VL are verifier feedback and repair, bounded filtering, formal subset selection, deterministic ordering, and separation of bounded correctness from inductiveness. The paper evaluates this architecture on hardware and compares it with industrial model checkers (Sections 7–7.4). Inference: VL should evaluate its transfer to Verus rather than treat the general ability to propose invariants as an untested claim.
-
-Inference: VL should test whether Verus diagnostics can guide a bounded candidate filter, whether a prefix search misses useful combinations, and whether generated lemmas remain valid after Rust dependency upgrades. Measure accepted invariants, full proofs, timeouts, repair rounds, verifier calls, and human interventions separately.
-
-Product relevance for peled2025large. Inference: the threat is substantial to proof-authoring cost because this pipeline could automate invariant discovery, one of the most manual parts of Verus work. The final runtime artifact remains subject to Verus, but stale specifications, external assumptions, and incomplete state models can still make a formally verified product wrong for its intended environment. The paper provides no evidence about Rust executables, unsafe code, or production deployment.
-
 ## techniques for the catalog
 
 - few-shot invariant prompting — retrieve similar verified examples and sample candidate lemmas from a fixed prompt
@@ -150,4 +140,3 @@ Product relevance for peled2025large. Inference: the threat is substantial to pr
 ## evidence references
 
 PDF page numbers count from the title page. The round-robin example and definitions are Sections 3–4.1, pages 2–3. Prompting and Algorithms 1–2 are Section 5.1, pages 3–4. Subset search, Algorithms 3–4, and Theorem 1 are Section 5.2, pages 4–5. Configuration and dataset details are Section 6, pages 5–6. Aggregate results are Section 7, page 6, and Table 1, page 7. Challenging benchmarks and ablations are Sections 7.4–7.5, pages 6–8; Tables 2–3 and Figures 1–2 are on pages 7–8. Limitations are Section 8, pages 8–9.
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Excluding examples that are part of the CoT pool, or variants thereof, 84% of the examples are solved by at least one of the configurations."): checked the whole paper, quotations, reported numbers, section/page references, and technique steps; corrected page references, bounded-check ordering, algorithm naming, ablation scope, timing claims, dataset description, and proof-trust claims, and labeled transfer conclusions as Inference; did not reproduce experiments, inspect implementation artifacts, or validate Verus adaptations.

@@ -60,7 +60,7 @@ when to use it: use it after a generated tactic does not parse or produces the w
 
 how it is done: (1) execute the generated tactic; (2) collect Leanjixia's error; (3) classify it as syntax or state mismatch; (4) append the error to the DeepSeek-R1 prompt; (5) regenerate tactics; (6) re-execute and compare the state (Section 5.2, p. 22; Algorithm 1, p. 20). In the paper's case study, replacing an unknown `mem_insert` identifier with `Finset.mem_insert` and related lemmas yields a complete proof after error feedback (Section 6.6.3, pp. 32–33).
 
-Verus form: Inference: pass Verus compiler diagnostics, failed assertions and unsatisfied contract locations back to the model, but keep the original specification fixed. A repair loop should reject candidates that add `assume`, `admit`, or an unreviewed external specification; these rejection rules are an inference for VL, not a rule stated by this paper. Inference: compiler diagnostics are evidence about a candidate proof, not a proof by themselves.
+Verus form:
 
 evidence, assumptions and limits: Table 6 isolates the effect on MiniF2F-test: DeepSeek-R1 with 32 calls reaches 37.00%, and adding ETR reaches 49.78% under the same nominal budget (Table 6, p. 27). Inference: the comparison supports a repair effect on this benchmark; its state representation and tactic outputs are Lean-specific.
 
@@ -72,7 +72,7 @@ when to use it: use it after ETR when the generated tactics produce a later chai
 
 how it is done: (1) execute and regenerate tactics with error information; (2) if the target still does not match, set the target to `No Goals`; (3) request a direct completion from the current state; (4) verify the resulting proof in Lean (Section 5.2, p. 22). In the induction example, the first CoS captured only a base case; renewal allows a direct induction proof with `induction'`, simplification and `nlinarith` (Section 6.6.2, pp. 31–32).
 
-Verus form: Inference: the closest Verus analogue is to fall back from a missing intermediate lemma to proving the enclosing function's `ensures` directly, while preserving the fixed contract and checking the complete function. Inference: this fallback can hide a missing explanatory proof step, so VL should retain the failed transition and the direct proof as separate artifacts for review. Verus has no `No Goals` state exposed in the same form.
+Verus form:
 
 evidence, assumptions and limits: Table 6 reports 58.59% for DeepSeek-R1 with 10 CoS plus ETR and ESR under `10 × 15 × 30`, versus 49.78% for ETR alone and 69.16% for the full `20 × 15 × 32` system (Table 6, p. 27). These are MiniF2F-test percentages over the 227-problem split. Inference: direct fallback can prove the theorem while bypassing the proposed intermediate chain, so success does not demonstrate fidelity to every generated state.
 
@@ -94,8 +94,6 @@ The paper requires a concrete final script accepted by Lean; Leanjixia executes 
 
 Inference: proof soundness depends on Lean's checking environment and the actual accepted artifact. Leanjixia controls extraction, execution and reported success. GPT-4o semantic labels, expert judgments, rewrites and fine-tuning data affect alignment and evaluation quality; their correctness is not needed to establish a faithfully replayed Lean proof of the supplied statement. Human corrections are part of the data pipeline. Inference: the method verifies a supplied theorem; acceptance alone does not establish that its statement captures the user's intent; the authors explicitly say that informal proofs can omit intermediate results and side conditions (Section 3.1, p. 7). The paper also says, “A proof is counted as successful only when all placeholders are replaced by concrete Lean code and the resulting script is accepted by Lean with no remaining goals.” (Section 2.3, p. 6)
 
-Inference: for agent-written verified Rust, chain-of-states decomposition is worth testing for proof-search brittleness, especially for long contracts and arithmetic or case-heavy lemmas. The paper supplies no Rust/Verus measurements or basis for a numerical product-threat rating. It does not solve specification choice, missing invariants, unsafe boundaries or a mismatch between the written contract and product intent. Inference: VL should reuse local obligation generation, compiler-feedback repair, multiple candidate decompositions and exact artifact replay. VL should not claim that Lean's tactic success rates transfer to Verus, or that a direct fallback demonstrates every planned intermediate fact.
-
 ## techniques for the catalog
 
 - Lean-friendly proof rewriting — expose omitted cases, types, conditions and Lean-suitable calculations before generation
@@ -106,5 +104,3 @@ Inference: for agent-written verified Rust, chain-of-states decomposition is wor
 - error tactic regeneration — feed syntax and semantic failures back into tactic generation
 - error state renewal — fall back to direct completion when a model skips a target state
 - multi-CoS search — sample and verify multiple alternative state decompositions
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "When such errors occur, the corresponding feedback is incorporated into the prompt for DeepSeek-R1, guiding it to regenerate improved tactics."): read all 44 pages of supplied paper text, including appendices and references, and the whole study; checked quotations, numbers, source locations and technique steps; corrected quotations/pages, filtering and candidate-count discrepancies, budget comparisons, soundness dependencies and unsupported transfer ratings; did not execute Lean or CoSProver, inspect source, reproduce results, test Verus adaptations or visually inspect the PDF.

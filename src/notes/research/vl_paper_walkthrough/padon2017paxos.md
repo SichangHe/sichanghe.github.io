@@ -91,8 +91,6 @@ Figure 8 reports ten runs per experiment using IVy commit `7ce6738` and Z3 4.5.0
 
 The supplied invariants and rewrite equivalences are checked obligations. The automatic update scheme is justified by Lemma 3.2, and Theorem 3.1 establishes the transformation's soundness. The first-order axioms must be valid for the intended interpretation; the protocol-to-model abstraction also requires justification (Sections 3.1–3.3, pp. 6–12). The proof concerns protocol designs rather than executable implementations: “We decided to verify the designs of the protocols and not their implementations since the invariants are more natural and since we wanted to avoid dealing with low level implementation issues.” (Section 1.1.1, p. 2) The methodology is incomplete if suitable invariants, rewrite proofs, or domain axioms cannot be expressed within its requirements (Section 3.2, pp. 10–11).
 
-Inference: the relevant experiment for VL is whether explicitly maintained relations for existential facts and checked guard rewrites improve Verus proofs for protocol implementations. This paper establishes neither a Verus implementation nor a result about VL.
-
 ## techniques for the catalog
 
 - uninterpreted protocol modeling: encode unbounded domains, sets, and maps in many-sorted first-order logic with valid axioms
@@ -102,4 +100,3 @@ Inference: the relevant experiment for VL is whether explicitly maintained relat
 - semi-bounded debugging: bound selected sorts to obtain finite counterexamples while preserving other unbounded domains
 - EPR invariant checking: finish with decidable, finite-model verification conditions and finite counterexamples
 - safe overapproximation: alter difficult protocol rules, then prove the expanded model still preserves safety
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Finally, the role of master in Vertical Paxos is limited to managing configurations and requires few resources."): read the full paper, including appendices; checked quotations, numbers, section and page references, technique steps, and scope; corrected graph edges, derived-relation arguments, the inexact theorem quotation, variant exceptions, Stoppable Paxos references and proof limits, and the description of checked obligations; did not rerun IVy/Z3 experiments, validate Verus adaptations, or independently check cited works.

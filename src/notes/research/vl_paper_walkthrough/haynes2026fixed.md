@@ -79,7 +79,7 @@ How to do it: recognize η/ε source constructs; create PSG hyperedges linking p
 
 Inference: in Verus, model the pairing with ghost/specification state and prove that each operation preserves a predicate expressing the pairing and linear-use condition. Rust ownership can enforce some non-duplication, but the compact-closed equations and MLIR attributes need explicit lemmas. Inference: this technique is therefore a design transfer, not demonstrated Verus code.
 
-Evidence, trusted parts, and threat: the only concrete evidence is the appendix's proposed bitvector query. The paper says an unsat result certifies no overflow under the inferred range (Appendix A.3, p. 14), but gives no solver version, runtime, or count of cases. Inference: the product threat for agent-written verified Rust is medium: the architecture suggests useful pass contracts, tier escalation, and local solver checks, but it leaves the PSG/MLIR semantics, proposed SMT dialect integration, and higher-tier soundness outside the reported evidence. Existing VL work should not redo the generic idea of contracts plus solver discharge; it should test the missing engineering pieces: pass-by-pass contract schemas, dependency invalidation, and measured proof repair under real Rust changes.
+Evidence, trusted parts, and threat: the only concrete evidence is the appendix's proposed bitvector query. The paper says an unsat result certifies no overflow under the inferred range (Appendix A.3, p. 14), but gives no solver version, runtime, or count of cases.
 
 ## contradictions and scope
 
@@ -92,4 +92,3 @@ The paper says the fixed-point scaffold is “a real object in the middle end”
 - tiered solver obligations — place constraints in progressively stronger tiers and discharge typed mode shifts with the existing solver path
 - parametricity preservation — obtain dimension-blind preservation from relational typing and use explicit proofs for value-dependent facts
 - pairing-carrying types — carry negative/fractional duality as type-level PSG codata and MLIR attributes, with edge re-checks when construction is uncertified
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

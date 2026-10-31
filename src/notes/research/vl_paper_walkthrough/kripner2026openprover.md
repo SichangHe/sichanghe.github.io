@@ -75,17 +75,13 @@ Inference: provide workers a `verus` command, a source search tool for existing 
 
 ## technique 4: human steering and reproducible budgets
 
-The terminal UI streams all agents, exposes planner history and Whiteboard state, and allows a user to interrupt workers or the planner. Manual mode asks the user to approve each action set; autonomous mode skips approval (Section 3, p. 5). Inference: this is useful for VL debugging because a human can stop a proof direction before it consumes solver budget, while audit logs preserve why it was stopped.
+The terminal UI streams all agents, exposes planner history and Whiteboard state, and allows a user to interrupt workers or the planner. Manual mode asks the user to approve each action set; autonomous mode skips approval (Section 3, p. 5).
 
-The experiment fixes a 100k-token budget per theorem and compares against a linear conversation with unlimited Lean verifications under the same token budget (Section 4, p. 5). The denominator is 185 ProofNet theorems per model/method, and the setting is autonomous mode. The paper does not report runtime, token use distribution, confidence intervals, or per-theorem paired outcomes. Inference: VL evaluation should publish these missing denominators and distinguish a verification timeout from an invalid proof.
+The experiment fixes a 100k-token budget per theorem and compares against a linear conversation with unlimited Lean verifications under the same token budget (Section 4, p. 5). The denominator is 185 ProofNet theorems per model/method, and the setting is autonomous mode. The paper does not report runtime, token use distribution, confidence intervals, or per-theorem paired outcomes.
 
 ## what is proved and trusted
 
 Lean checks the generated proof terms, so accepted Lean artifacts receive kernel-level assurance under Lean's trusted base. The architecture, memory policy, and natural-language feedback are not formally proved. The experiment measures pass percentages, not semantic correctness beyond Lean acceptance. Trusted elements include theorem statements, Lean/mathlib, model outputs, prompt policy, token budgets, and the authors' baseline implementation.
-
-## threat to VL and what not to redo
-
-Inference: threat to a product generating agent-written verified Rust is moderate. The system offers a concrete orchestration pattern and an empirical baseline, but its results are Lean-specific and the paper does not evaluate Verus, Rust ownership, unsafe code, or specification adequacy. VL should reuse independent worker directions, checker-gated artifact promotion, persistent failure memory, and interactive steering. It should not redo a generic claim that formal checking is useful; the novel engineering question is whether Verus diagnostics and ownership contracts benefit from this architecture under matched budgets.
 
 ## techniques for the catalog
 
@@ -93,5 +89,3 @@ Inference: threat to a product generating agent-written verified Rust is moderat
 - checker-gated repository — persist formal snippets only after Lean or Verus acceptance and return diagnostics otherwise
 - three-point proof checking — verify final proofs, intermediate lemmas, and worker tool calls during search
 - interactive budgeted orchestration — let a human inspect or interrupt agents while preserving autonomous reproducibility under a fixed token budget
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

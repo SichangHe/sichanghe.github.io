@@ -73,15 +73,8 @@ what evidence shows it works and limits
 
 The summary identifies lack of interoperability between formalisms and tools, and “a lack of open sharing of models, code, and realistic case studies”, as limitations. It says work on integration “could lead to” an Integrated Verification Environment and reports no implementation or user study. Inference: field tests and simulation remain necessary complementary evidence, because formal proofs cannot establish unmodelled physical assumptions.
 
-## what VL should take from the survey
-
-The survey's counts are corpus summaries and tool-use trends, not claims that one formalism is universally best. The summary itself states that “no single formalism is capable of adequately checking that all aspects of a robotic system behave as expected” (pp. 3-4) and cites prior work advocating integrated formal methods for robotics [2] (Section 1, p. 1).
-
-Inference: this study trusts the survey's paper selection, each surveyed paper's modelling assumptions, and the unformalised environment and model-to-program translation. For VeruLaw, the immediate threat is overclaiming from verified Rust internals while omitting environment, adaptation, and model-to-code refinement. VL should make assumptions and conversion lemmas first-class artifacts and plan mixed verification for properties that Verus alone cannot express. VL should not redo a generic survey without concrete verified Rust case studies.
-
 ## techniques for the catalog
 
 - challenge decomposition: separate environmental/certification obligations from agent, multi-robot, and adaptive implementation issues
 - formalism-property matching: pair state-transition models with (temporal) logics; model checking is the most used verification approach
 - integrated verification boundary: combine tools and formalise translation from abstract model to program code
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Notably, theorem provers were used a lot less often, we believe that this is due to the level of expert knowledge required to operate them correctly and efficiently."): read all 4 pages; checked every quotation word for word, Table 1 counts, section and page references (page numbers are the arXiv PDF pages 1-4), and the tag and arXiv link (authors and year match the paper). Changed: corrected page references (the "For many engineered systems" quote is on p. 1, the Section 2 challenge decomposition on p. 2, the field-test passage on p. 3); removed technique steps the paper does not state (safety/liveness/timing logics, model checking for reachable states versus theorem proving for infinite models, recording counts, continuous/discrete/probabilistic aspects) or marked them as Inference; restored the paper's hedges ("may be because", "we believe"); replaced the unsupported "denominator" claim with the stated absence of totals plus a marked-Inference column sum. Not checked: the underlying journal survey [5] and its tables, which the paper only cites; the Verus-form paragraphs, which are the study's own inference.

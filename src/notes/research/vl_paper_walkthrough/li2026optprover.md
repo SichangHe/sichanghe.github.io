@@ -112,14 +112,6 @@ Steps from Sections 5.1–5.4 (pp. 7–10).
 
 Evidence. On ProofNet, OptProver improves from 21 to 31 solved problems at Pass@1 and from 42 to 49 at Pass@32; the denominator is the ProofNet test set, not OptBench (Section 5.4, p. 10). On MiniF2F, Pass@32 is unchanged while Pass@1 improves (Section 5.4, p. 10). Expert iteration's largest gain occurs in the first round and later rounds show diminishing returns (Section 5.5, p. 10).
 
-## what remains trusted and what VL should learn
-
-Lean's kernel checks each accepted tactic sequence, but the paper's training data, utility labels, search-budget choice, perplexity implementation, benchmark curation, and model comparison remain experimental infrastructure. The out-of-domain results are evidence for this model and these settings, not a universal guarantee against forgetting.
-
-Inference: The threat to VeruLaw is a prover that emits many locally valid Rust/Verus steps while consuming solver and agent budgets without closing the contract. OptProver's utility class, verified trajectory curation, and separate pass-rate reporting directly address that threat. A second threat is catastrophic forgetting when adaptation to a new crate or API changes tactic priors; a third is misusing perplexity as a proxy for proof value.
-
-Already done. The paper already combines expert iteration, verified state–tactic data, utility-aware pair construction, perplexity-weighted preference learning, domain benchmarks, out-of-domain retention tests, and parameter ablations. VL should not claim these generic methods as new. Inference: A distinct VL contribution would need Rust-specific search states, ownership/concurrency obligations, dependency-upgrade evaluation, or proof-repair evidence beyond this Lean study.
-
 ## techniques for the catalog
 
 - interactive distribution diagnosis: compare corpus perplexity with verifier-backed search utility before adapting a prover
@@ -129,5 +121,3 @@ Already done. The paper already combines expert iteration, verified state–tact
 - perplexity-weighted DPO: clip inverse token perplexity weights before computing preference loss
 - combined PW-UAPO: apply perplexity weighting to utility-aware preference pairs
 - domain and retention benchmark: measure in-domain Pass@k with correct regime denominators and test out-of-domain forgetting
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

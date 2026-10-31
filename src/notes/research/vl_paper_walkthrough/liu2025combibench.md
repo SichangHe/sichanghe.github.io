@@ -8,7 +8,7 @@ CombiBench combines a combinatorics benchmark with Fine-Eval, a protocol for che
 
 The benchmark composition is explicit: “CombiBench consists of 10 easy problems from https://www.hackmath.net/, 42 exercises from Brualdi’s book, 36 IMO problems, and 12 problems from other math competitions” (section 3, p. 4; Table 2). The textbook supplies fourteen chapter topics. The authors write: “we randomly sampled problems from 14 chapters, choosing three problems from each chapter.” They exclude IMO 2004 P3 because its statement contains an image; they retain IMO 2023 P5 because its figure adds no information beyond the text (section 3, p. 5).
 
-The authors identify missing benchmarks, limited combinatorics coverage in Mathlib, and difficulty translating informal problems into formal statements. Their concrete explanation is: “For a specific problem, it is often necessary to add some definitions that are unique to that problem” (section 1, p. 2). Inference: for VL, this suggests a domain-library problem alongside a proof-generation problem. A checker needs a suitable specification before it can check a proposed proof.
+The authors identify missing benchmarks, limited combinatorics coverage in Mathlib, and difficulty translating informal problems into formal statements. Their concrete explanation is: “For a specific problem, it is often necessary to add some definitions that are unique to that problem” (section 1, p. 2).
 
 ## technique 1: construct a domain benchmark with paired informal and formal statements
 
@@ -18,7 +18,7 @@ How the paper constructs it. (1) Use Brualdi’s fourteen chapters to select tex
 
 Evidence and limits. Formalization required expert work: “Our formalization team consists of five doctoral students and one master’s student, each with over a year of experience in learning Lean” (section 3, p. 5). After excluding blank lines, their count found “more than half of the problems have more than 10 lines of code after formalization, more than a quarter have more than 20 lines, and the most challenging problem reached 67” (section 3, p. 6). This count differs from Figure 1’s comparison, which additionally excludes comments, imports, and opens (pp. 5–6). Appendix A.1 gives the longest statement, an island-and-factory game (pp. 12–13).
 
-When to use it; Verus form. Inference: use the paired-corpus approach to evaluate proof generation against explicit specifications. An analogous VL corpus could pair informal requirements with Rust specifications and Verus proof functions, while recording sources and exclusions. The pairing could support a separate translation experiment, but this paper’s reported evaluation supplies formal statements rather than measuring autoformalization. Its Lean definitions and tactics do not establish a Rust implementation method.
+When to use it; Verus form.
 
 ## technique 2: two-stage Fine-Eval for fill-in-the-blank proofs
 
@@ -38,7 +38,7 @@ If those tactics fail, add the equality statement to the first-round input and a
 
 Evidence and limits. Appendix A.2 explains why compilation alone is insufficient: a model hid an incorrect theorem in comments, which “allowed the code to successfully pass Lean server validation checks, leading to it being mistakenly judged as correctly proven” (pp. 13–14). Inference: preservation of the original statement is an essential check because compilation can succeed when the requested theorem has disappeared. The 42-character restriction is an evaluation heuristic; the paper does not prove that it prevents every way of exploiting reference disclosure.
 
-When to use it; Verus form. Inference: this pattern suits tasks requiring both a value and a proof about that value. A VL adaptation could check a Rust value against a reference specification using a Verus proof function, then request an equality proof when simpler checking fails. Input preservation and restrictions on assumptions would need implementation in the harness. The paper does not supply that implementation or demonstrate equivalents of Lean’s tactics in Verus.
+When to use it; Verus form.
 
 ## technique 3: simplified one-stage equivalence checking
 
@@ -58,16 +58,8 @@ Gemini-2.5-pro-preview’s Table 3 entries are “0 2 4” with solution and “
 
 Inference: the benchmark statements, reference answers, Lean environment, imported libraries, and harness checks are dependencies of the scores. Compilation checks a formal claim, which may differ from the intended informal problem if its formalization is wrong. The appendices include proofs using `native_decide` (Appendix A.3, p. 16; A.4, p. 17); the study therefore makes no blanket claim that every accepted proof relies solely on ordinary kernel reduction. I did not audit those trust dependencies or execute the generated proofs.
 
-## contradictions, reuse, and VL threat
-
-The paper contains a count inconsistency about another benchmark: Table 1 lists PutnamBench’s combinatorial count as “29” (p. 2), whereas section 2.3 says “PutnamBench includes 26 combinatorial problems” (p. 4). Neither figure is independently checked here. The naming-convention paragraph also labels `imo_2019_p5` as a 2009 problem (section 3, p. 5); this study does not use that inconsistent year explanation.
-
-Inference: the useful VL contributions are paired specifications, preservation checks against altered tasks, and reference-answer equality checking. The paper evaluates combinatorial mathematics in Lean, so its results do not demonstrate verification of Rust systems code, concurrency, or memory safety. Its contribution to VL is an evaluation pattern and evidence of difficulty in a particular mathematical domain; a product-threat rating would require evidence beyond this paper.
-
 ## techniques for the catalog
 
 - paired formal benchmark: retain informal statements, formal specifications, source selection rules, and exclusions; Inference: adapt this structure to Verus tasks
 - staged answer verification: check the completed original statement, then prove equality to the reference when answers differ
 - strict one-call check: after the initial proof checks, accept an exact match or an equality proved by `rfl`
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Considering the economic cost and reproducibility, we do not evaluate with a larger sample budget and tree-search method."): checked the entire paper, quotations, numbers, technique steps, and section/page references; corrected Kimina’s without-solution scores, references, quotation wording, and character-count rule, separated Verus recommendations as inferences, and removed unsupported threat and kernel-assurance claims; did not rerun experiments, audit code or formalizations, or verify cited external works.

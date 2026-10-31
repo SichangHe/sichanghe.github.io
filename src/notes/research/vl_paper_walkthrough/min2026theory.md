@@ -17,7 +17,7 @@ Steps in the paper. (1) Select the scope and enumerate primitives, definitions, 
 
 Inference: In Verus, the analogous artifact is a Rust module whose executable types and functions are paired with `spec` declarations, `requires`/`ensures` contracts, `invariant` loop clauses, and proof functions. Primitive state and relations should be represented in specification types first; reusable lemmas can be `proof fn`s; executable code should remain separate from proof-only code. Lean’s inductive types and tactics do not carry over directly, so a Verus implementation must express the model with Rust-like datatypes and contracts. The dependency ordering does carry over: contracts and lemmas needed by a higher-level proof must be available before that proof.
 
-Evidence and limits. The paper uses historical durations rather than a new experiment: its table reports the Kepler Conjecture as 11 years, the Four Color Theorem as 5 years, and the Liquid Tensor Experiment as 1.5 years (Table 1, p. 2). It reports 71.4% for the Layer-3 statement method, with the denominator being the benchmark’s Layer-3 statements and with Layers 0–2 human-formalized (section 2.2, p. 3). These numbers show the cost and dependency gap; they do not measure an automated tower builder. Inference: a VL product that generates verified Rust must budget for library and model construction, not only final function proofs; a generated proof can be valid while its modeled requirements omit a needed domain fact.
+Evidence and limits. The paper uses historical durations rather than a new experiment: its table reports the Kepler Conjecture as 11 years, the Four Color Theorem as 5 years, and the Liquid Tensor Experiment as 1.5 years (Table 1, p. 2). It reports 71.4% for the Layer-3 statement method, with the denominator being the benchmark’s Layer-3 statements and with Layers 0–2 human-formalized (section 2.2, p. 3). These numbers show the cost and dependency gap; they do not measure an automated tower builder.
 
 ## technique 2: hierarchical decomposition and abstraction learning
 
@@ -39,13 +39,9 @@ When to use it. Use this when a generated contract or definition can be semantic
 
 Steps in the paper. (1) Obtain a human-written formal ground truth, while auditing it for errors (section 4.1, p. 5). (2) Define an admissible background fragment and disallow global context and proof search (section 4.1, p. 5). (3) Run deterministic computational normalization and compare the candidate with the reference (section 4.1, p. 5). (4) Report precision and recall against expert judgments (sections 4.1 and 5.1, pp. 5, 9). (5) Track false positives caused by independently easy-to-prove but conceptually different statements, such as `n * 1 = n` and `n + 0 = n` (section 4.1, p. 5).
 
-Inference: A Verus analogue should compare generated `requires`/`ensures` and `spec fn` definitions against a reviewed reference using a deliberately restricted proof context. Verus proof success alone cannot decide requirement equivalence: two contracts may both be provable yet encode different behavior. A practical VL loop could use canonicalized specs plus bounded, auditable proof lemmas and then require human review for domain meaning. Verus’s solver-backed proofs are evidence that a contract follows from assumptions, not evidence that the contract is the intended one.
-
 ## other proposals and product relevance
 
 The paper proposes theory-level benchmarks with background theories, sound equivalence checking, and leakage prevention (section 5.1, p. 9). It proposes general-purpose models trained across formal corpora and DSLs, with verifier feedback, dependency retrieval, and evaluation beyond competition mathematics (section 5.2, p. 9). It also proposes a common intermediate representation whose constraints are “Expressiveness (represent diverse DSL semantics), Verifiability (type checking and proof verification within the IR), and Embeddability (deep embeddings of target DSLs for verified transpilation)” (section 5.3, p. 9).
-
-Inference: VL should treat these as design requirements for an agent pipeline: preserve a dependency graph, retrieve existing Verus lemmas, feed verifier diagnostics back into decomposition, and evaluate against reviewed contracts rather than compile success alone. Inference: the threat to a product producing agent-written verified Rust is high for specification drift and missing domain assumptions, while the paper gives no evidence that its proposals solve those risks in Verus or in production systems. The paper’s own evidence is mainly surveys, cited benchmark results, and position statements; it does not prove a complete theory-level system.
 
 ## what is proved, measured, and trusted
 
@@ -57,5 +53,3 @@ The paper proves no new theorem and reports no new end-to-end theory autoformali
 - recursive decomposition and abstraction learning: split propositions to atomic leaves, compose proofs, and extract reusable definitions into a dependency graph
 - restricted equivalence checking: evaluate semantic alignment with deterministic, context-restricted normalization and precision/recall against expert judgments
 - common intermediate representation: use an expressive, verifiable, embeddable IR to connect heterogeneous DSLs and verified transpilation
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

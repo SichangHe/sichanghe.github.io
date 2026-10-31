@@ -81,16 +81,9 @@ Inference: a Verus adaptation could carry `ts_safe` in ghost state, prove it mon
 
 Inference: the bound must account for both active transactions and future allocation. Scanning only active IDs is insufficient, as the reported bug demonstrates.
 
-## measured result, trust boundary, and product threat
-
-Experiments ran on one AWS EC2 c5.9xlarge (36 vCPUs, 72 GB, Linux 5.15.0, Go 1.20.3), repeating each benchmark ten times for 30 seconds and reporting mean, minimum, and maximum (§6.1, p. 881). With 32 worker threads, YCSB throughput was 18.6–52 million transactions/s, reported as 38–96% of unverified Silo; TPC-C was 10.7–33 thousand transactions/s per warehouse, 25–43% of Silo (§1, p. 872). Section 6.2 explains Figure 11’s exact normalized points: 96.6% for read-only YCSB, 38.8% for write-only YCSB, 43% for one-warehouse TPC-C, and 25.7% for 32-warehouse TPC-C (p. 882). The comparison uses MemSilo, Silo’s variant without persistence (§6.2, p. 881). The denominators are Silo throughput under the same workload. The TPC-C implementation replaces customer-last-name lookup with customer-ID lookup and gives History rows randomly generated primary keys (§6.1, p. 881).
-
-The paper identifies its verification path: “We implemented vMVCC in Go, and verified its implementation using the Perennial framework [3] (based on Iris [21–23] and Coq [33]), using Goose [4] to lift vMVCC’s Go code into Perennial” (§5, p. 880). It does not enumerate an exhaustive trusted computing base or describe SMT use. Inference: a Verus transaction library would need explicit specifications for concurrency, reclamation, and hardware assumptions. The reported implementation bugs motivate checking those details; the paper does not validate a Verus port.
-
 ## techniques for the catalog
 
 - prophecy future-action lists: predict symbolic transaction effects at an early linearization point, maintain conflict-free speculation, and resolve read and commit actions
 - logical atomicity: expose a transaction body through a map-swap contract while proving the body sequentially
 - ghost timestamp slots: prove monotonic IDs and callbacks when linearization is between instructions
 - safe-timestamp GC: weaken the abstraction below a monotonic lower bound before deleting old versions
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The prediction about each individual transaction and thread could be correct in its own right, but it is the combination of them that leads to a contradiction."): checked the full paper, quotations, numbers, section and page references, and technique steps; corrected reversed code/proof counts, prophecy handling, safe-timestamp computation, citations, and the publisher link; marked proposed adaptations as Inference and removed unsupported Verus and trust claims; did not inspect the artifact, rerun proofs or benchmarks, or validate Verus adaptations. The quoted sentence is from §4.3, p. 879.

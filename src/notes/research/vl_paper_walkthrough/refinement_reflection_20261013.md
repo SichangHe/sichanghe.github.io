@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `vazou2017refinement`, [paper](https://arxiv.org/abs/1711.03842)
 
-Audit: audited 2026-10-13 against the paper; checked every quotation page, theorem and figure reference, all Table 1 numbers and totals, the ratios in the unsupported-statements section, the PLE steps against Figure 9, the Figure 10 rules, Figure 11 laws, Appendices A, H, I, J; corrected the arXiv-extended-version claim, the unqualified termination of PLE, a fuel example source, a Table 1 evidence sentence, two unmarked inferences and one reworded limit; Verus code not run (no support found to change it, left as the reader's marked inference).
-
 source: Vazou, Tondwalkar, Choudhury, Scott, Newton, Wadler, Jhala, arXiv:1711.03842v1 (9 Nov 2017); published as Proc. ACM Program. Lang. 2, POPL, Article 53 (January 2018). The arXiv file has 59 pages (the article's reference line also says 59 pages): main text pp.1–31, appendices A to J pp.32–59. Page numbers below are the article's (53:N written as p.N).
 
 ## the problem and the three answers
@@ -284,10 +282,6 @@ Engineering limits listed by the authors (Appendix I.2, pp.55–56): lambda argu
 - that fuel-bounded unfolding is incomplete for plain equational goals (the `pos` example) and that guard-directed unfolding to a fixpoint is the principled replacement: established
 - the proofs-as-programs style now standard in Verus (`proof fn`, recursion as induction, calls as lemma uses) is described here in full for a refinement type checker
 - not addressed: imperative code, mutable state, loops and loop invariants, ownership, machine integers, modules; any automation of case splits, induction or lemma choice; any language model
-
-## relevance to a product of agent-written verified Rust
-
-Inference: no threat; this is 2017 foundations for a Haskell tool. Its value to VL is practical in three places. It explains why a Verus proof about a recursive `spec fn` fails for want of one more unfolding and gives a mechanical rule (unfold only where the branch condition is known) for which unfold assertions an agent should emit. It gives a stopping test that separates a goal that needs more unfolding from one that needs a lemma, case split or induction. And its quantifier-free discipline (parameters for universals, returned witnesses for existentials) is a way to keep agent-written proofs away from trigger-dependent behaviour.
 
 ## techniques for the catalog
 

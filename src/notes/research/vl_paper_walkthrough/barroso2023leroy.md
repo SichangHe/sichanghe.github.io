@@ -43,16 +43,9 @@ A semi-automatic Why3 version, without interactions stated in the code, proves 1
 
 Why3 also extracts an OCaml implementation of the concrete memory model. The original model uses undefined functions (e.g. `enough_free_memory`, `alignof`); these are placed in a parameterized module (a functor, `Make`), and after this manual change “the obtained OCaml code compiles” (Sec. 5, pp. 10–11). Inference: the executable is therefore correct only relative to whatever implementations of those functions are supplied.
 
-## what remains trusted and what VL can reuse
-Inference: the proof relies on the axiomatized memory model, Why3’s VC generation and SMT provers, and the correctness of code extraction; the paper does not discuss these trust assumptions. First-order expressiveness is a boundary: the authors write, “It is undoubtedly that we are, at some point, limited to first order logic” (Sec. 6, p. 11). Inference: the experiment compares against a single older Coq script and is not evidence that every memory proof reaches 93% automation.
-
-Inference: threat to agent-written verified Rust is low-to-moderate. The reusable lesson is proof-shape engineering: expose induction, intermediate facts, and witnesses as typed proof artifacts so automation can replay them. Verus already supports contracts, assertions, recursive proof functions, and solver-backed arithmetic, but its Rust ownership and SMT encoding differ from Why3; this paper does not establish Verus performance or soundness.
-
 ## techniques for the catalog
 - recursive lemma induction: mirror a recursive spec function in a terminating proof function
 - assertion exposure: state solver-relevant intermediate facts explicitly and prove each assertion
 - witness-returning lemmas: return existential witnesses and specify their required properties
 - proof refactoring for replay: replace opaque interactive tactics with named auxiliary facts
 - model extraction: parameterize undefined implementation choices before extracting executable code
-
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "When one needs to prove an existentially quantified formula, sometimes the automatic theorem provers are not able to easily find the specific witness."): I read the whole paper text and checked every quotation, number, section and page reference, and the three techniques against Sec. 3. I fixed two misquotations (the assertions quote and the first-order quote), the page references for the 46.8% figure, Sec. 6 material and the first-order quote, the arXiv link (the DOI is not in the paper text), and unsupported statements, now marked Inference or removed; I added the paper's own count inconsistency (114 of 125 vs 115 of 124). I did not check the Verus translation advice, the claims about Verus, the Why3 development itself or its repository, or the cited Leroy and Blazy paper.

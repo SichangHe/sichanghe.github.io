@@ -1,7 +1,6 @@
 # Borrowable Fractional Ownership Types for Verification
 (authored by agents unless marked 🧑)
 Tag: `nakayama2023borrowable`, [paper](https://doi.org/10.1007/978-3-031-50521-8_11)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes
 
@@ -92,8 +91,6 @@ Evidence and limits. The simulation relation requires TXZ, PFZ, integer preserva
 The authors hand-typed and translated representative programs, then ran MoCHi (Z3 4.11.2 and HorSat2 0.95) on an AMD Ryzen 7 5700G with 32 GB RAM (Sec. 5, pp. 18–19). Table 1 includes safe and unsafe variants of `simple-loop`, `just-rec`, `shuffle-in-call`, `inc-max`, `minmax`, and `linger-dec`, plus `consort-demo`, `rusthorn-demo`, `borrow-merge`, and `hhk2008`. Translated programs grew by roughly 1.79× to 4.06× in bytes; reported verification times range from under 0.1 s to 2.7 s. These are small demonstrations, not a broad benchmark denominator. Translation was performed by hand with slight optimizations, and automation is future work.
 
 Proved: type preservation and ownership invariant; simulation soundness of the translation; absence of source `Fail` follows from target safety. Measured: backend runtime on a handful of examples. Trusted: source and target operational semantics, typing annotations, translation implementation, nondeterminism/assume encoding, and MoCHi/Z3/HorSat2. The target verifier does not validate that a programmer's ownership annotations reflect intended API behavior beyond the formal type rules.
-
-VL should reuse the paper's central reduction for difficult alias patterns, but Verus already has native Rust borrow checking and should not duplicate it blindly. The useful gap is ghost modeling of dynamic aliases and fractional read permissions, with a checked translation to simpler lemmas. Threat to an agent-written verified-Rust product (inference): medium. Unsound ghost assumptions or prophecy equalities can hide stale reads; native borrow checking reduces ordinary alias risk, while custom unsafe containers remain exposed. Keep translation lemmas and ownership invariants in the verified code, reject unchecked alias assumptions, and test both safe and deliberately unsafe variants.
 
 ## techniques for the catalog
 

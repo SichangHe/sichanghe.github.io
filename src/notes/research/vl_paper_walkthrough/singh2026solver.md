@@ -33,8 +33,6 @@ Inference: a Verus repair agent could use a verifier score drop over successive 
 ## what is proved, trusted, and limited
 Proposition 1 proves only the information limit of verdict-only scoring. Z3 supplies deterministic labels under the chosen signature and limits; the 27B model, LoRA training, mutation operators, reference specifications, and threshold calibration remain trusted assumptions. The benchmark excludes natural multi-error distributions because negatives are synthetic single-edit mutations (section 9, page 9). The reference target can disagree with human intent: on the contested slice GenV+HN AUROC was 0.907 for Z3 equivalence but 0.679 for panel-majority intent, while the human judge reached 0.778 for panel intent (section 6, page 6). The method also assumes satisfiable gold references; with inconsistent references, equivalence can be vacuous (section 9, page 9).
 
-Inference: this is a high threat to agent-written verified Rust when a pipeline equates a successful solver/Verus verdict with faithful requirements. It is a lower threat to a workflow that retains reviewed contracts and executable reference models. VL should reuse the distinction between verdict validity and reference faithfulness, but should not redo the claim that a binary verdict is insufficient.
-
 ## techniques for the catalog
 - VPU definition: classify same-verdict, non-equivalent encodings relative to a designated reference
 - bidirectional Z3 oracle: label equivalence by two implication-unsatisfiability checks
@@ -42,4 +40,3 @@ Inference: this is a high threat to agent-written verified Rust when a pipeline 
 - generative verification: distill oracle labels into a reference-free Yes/No vocabulary score
 - LoRA answer-only training: mask context loss and optimize only the final verification token
 - gradient/SAE diagnostics: localize verifier evidence with decision-projected gradients and sparse features
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

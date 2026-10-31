@@ -6,8 +6,6 @@ Tag: `song2026data`, [paper](http://arxiv.org/abs/2602.04072v1)
 
 Inference: This position and experiment paper argues that quantum copilots need verified training data and generation-time constraints because valid circuits occupy a tiny part of the design space. It defines a verification-aware model as one exposed to formally verified examples, data verification as proving training examples against domain constraints, and a priori constraints as checks embedded during generation (§2, p.2). The three positions are explicit: “P1 Data verification must be the minimum requirement for quantum copilots”; “P2 Verification should provide a priori constraints, not a posteriori filtering”; and “P3 Verification-aware architecture required for highly constrained scientific domains.” (§2, pp.2–3)
 
-Inference: VeruLaw is another domain where correctness is binary and specifications can be machine-checked. The paper's claims concern quantum circuits, Lean, Z3, and LLM training; transferring them to generated Rust is an inference requiring a separate experiment.
-
 ## technique 1: formally verified corpus construction
 
 Inference: What it is. The authors construct MAJ and UMA quantum-circuit corpora and prove each design before using it as training/evaluation data. “Each design in the dataset is formally verified with Lean to show correctness for any n and with Z3 to show correctness for modular level decomposition of MAJ and UMA operations.” (§3, p.6)
@@ -23,8 +21,6 @@ Inference: Verus form. Inference: for Rust, generate candidate implementations, 
 Inference: What it is. The paper evaluates whether models trained on verified data can choose the best valid circuit. For each bit width n from 2 through 8 it creates 10,000 four-option multiple-choice questions; every candidate circuit satisfies the adder specification, but candidates differ in gate count, depth, and Toffoli usage. The score is `0.5 × Toffoli_n + 0.25 × Depth_n + 0.25 × TotalGates_n` (§3, p.5).
 
 Inference: How to do it. (1) Generate equal-validity candidate circuits. (2) Compute the weighted objective for each. (3) Ask each model to select the minimum-score option. (4) Evaluate 34 publicly available models from 270M to 120B parameters through Ollama with default settings. (5) Run 70,000 questions per model—10,000 for each of seven bit widths. (6) Retry malformed answers up to three times, counting unanswered questions as incorrect (§3, p.5). (7) Compare verification-aware checkpoints with generic checkpoints and the 25% four-choice random baseline.
-
-Inference: Evidence and contradictions. The paper reports verification-aware Gemma3:12b and gpt-oss:120b at 0.60–0.79 accuracy, while generic models are 0.21–0.29 (§3, p.5). The abstract says unverified LLMs reached a “maximum accuracy of 79% in circuit optimization” (Abstract, p.1), which conflicts with the section's claim that generic models hover near 21–29%; likely the 79% refers to a best model or a different condition, but the paper does not reconcile it. Inference: VL reports should preserve this inconsistency rather than silently choose one number.
 
 Inference: Verus form. Inference: construct an analogous benchmark where every candidate Rust function has a Verus proof of a common contract, then ask models to optimize proof-preserving cost (allocations, latency, or proof obligations). Score only after checking both contract validity and objective value. Inference: this tests selection among valid programs, not whether a model can invent a correct proof from scratch.
 
@@ -52,10 +48,6 @@ Inference: The paper proves circuit properties with Lean and Z3 for its corpus a
 
 Inference: threat to agent-written verified Rust is high when agents train on unverified examples and moderate when every corpus item is proved. Verified data can teach useful invariants, but it cannot prevent a wrong Rust specification, unsupported unsafe behavior, or proof assumptions about external libraries. The paper's 14TB QDataSet example also shows cost: it required more than three months of HPC time and covered only one- and two-qubit systems (§1, p.2).
 
-## what VL should not redo
-
-Inference: The paper already demonstrates specification-first corpus filtering, formal verification of generated artifacts, equal-validity optimization benchmarks, calibrated confidence, and generation-time constraint proposals. Inference: VL should reuse these patterns and study Rust-specific costs, proof repair, and contract fidelity rather than reproduce a quantum-adder benchmark.
-
 ## techniques for the catalog
 
 - Inference: verified corpus filtering: prove every generated example against a domain specification before training or evaluation
@@ -63,4 +55,3 @@ Inference: The paper already demonstrates specification-first corpus filtering, 
 - Inference: calibrated confidence: softmax answer-token log probabilities and separate confidence from verifier acceptance
 - Inference: generation-time SMT gate: check each partial artifact before committing it to the design
 - Inference: constraint-rich benchmark: publish executable oracles and explicit denominators for reproducible verification-aware evaluation
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

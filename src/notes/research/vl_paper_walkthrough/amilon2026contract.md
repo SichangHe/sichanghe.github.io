@@ -54,14 +54,6 @@ In preliminary LLM experiments (Section 7.5, Table 8, pp. 19–20), each row is 
 
 Inference: The results motivate separate interface checks for agent-written Rust and attention to functional specifications. They do not establish Rust or Verus performance, detection rates, or assurance. The paper reports reference-module VerNFR CPU times of 12.0–13.2 seconds, while generated SFLD implementations timed out in Wp.
 
-## trusted boundary, assumptions, and what VL should not redo
-
-Inference: Trusted artifacts are requirements, IS/ACSL specifications, headers, critics, and the aggregation script; generated implementation files are untrusted. The toolchain does not prove that natural-language requirements are complete or that IS/ACSL contracts faithfully capture them. It also does not implement all seventeen rules, and Cppcheck deviations may reflect project-specific MISRA interpretations rather than unsafe behavior.
-
-> “Our case studies suggest that functional specification and verification remains a bottleneck in achieving trustworthy safety-critical software written in C, but can be used to pivot towards practical system level verification of a wider range of properties via the module abstraction.” (Conclusion, p. 23)
-
-Inference: VL should reuse the decomposition of interface policy, functional contracts, coding-policy checks, and result aggregation instead of rebuilding a generic call-policy workflow. The concrete C syntax, Frama-C AST behavior, proprietary Scania requirements, and unimplemented call-order analysis are outside VL's direct reuse boundary.
-
 ## techniques for the catalog
 
 - interface contract — specify entry points, permitted external calls, signatures, and call-order constraints in one artifact; VerNFR checks a subset and does not implement external-call-order verification (CFR2)
@@ -69,4 +61,3 @@ Inference: VL should reuse the decomposition of interface policy, functional con
 - critic pipeline — compile first, then run functional proof, coding checks, and interface checks with one aggregated verdict
 - initialized-before-read analysis — use predecessor order and abstract input/output locations to reject reads without explicit initialization
 - untrusted-agent workflow — treat generated implementation as untrusted while specifications and critics remain trusted
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Requirements, specifications, and verification tools are considered trusted, while module implementations are considered untrusted and must be verified."): read the full paper text and checked quotations, numbers, section/page references, rule and task descriptions, workflow, and case-study results; corrected the paper link, IS field count, example identifier, page reference, AST description, Cppcheck scope, and unsupported Rust extrapolations; clarified incomplete call-order checking; did not inspect the released implementation, reproduce experiments, or validate the proposed Verus adaptations.

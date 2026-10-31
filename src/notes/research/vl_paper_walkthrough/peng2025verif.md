@@ -32,13 +32,9 @@ Inference: represent each hard constraint as a Verus predicate or `spec fn` over
 
 The construction pipeline starts with 25,000 sampled instances from Alpaca-GPT4, Orca-Chat, Evol Instruct, and OpenAssistant. Llama3.1-70B-Instruct generates constraints implicitly satisfied by each response; Python synthesizes length constraints because LLMs struggle with counting. The generated constraints are combined with the original instruction. Qwen2.5-72B-Instruct produces Python verification code for hard constraints; soft constraints receive an `LLM` tag for online judgment. Instances with fewer than two constraints are filtered, yielding approximately 22,000 records (Section 3.2, p. 4). Appendix A.1 additionally describes Python-based generation of keyword and selected format constraints (p. 13). Inference: the reusable idea is to construct each instruction together with its reward computation, without requiring a target answer for RL training.
 
-Inference: a VL analogue should derive a machine-checkable contract and proof obligation beside every generated Rust task, then retain the natural-language requirement separately. A Verus contract can certify a parser or state transition, while unresolved semantic requirements remain explicit trusted inputs. The paper's release of data, code, and models supports replication, but the manually checked generator scripts and source-model outputs remain part of the trusted setup.
-
 ## technique: ablate each verifier
 
 The authors train TULU 3 SFT with VerIF and compare three ablations: only LLM for every constraint (`w/o code*`), LLM for soft constraints while omitting code (`w/o code`), and only Python for hard constraints (`w/o LLM`). On IFEval prompt-level strict, Multi-IF Turn 3, and CFBench ISR, full VerIF scores 84.5, 54.0, 72.0; `w/o code*` 81.7, 51.2, 70.0; `w/o code` 76.2, 52.0, 73.0; `w/o LLM` 74.7, 46.0, 59.0 (Table 4, p. 7). These are separate benchmark percentages. The paper states that “removing any verification component degrades model performance compared to V ER IF” (Section 4.5, p. 7). Inference: this describes the overall pattern, not every cell; `w/o code` improves CFBench by one point. The authors observe limited code-only reward growth and faster LLM-only reward growth, “possibly because the LLM verifier is easier to fit or hack” (Section 4.5, p. 7). Inference: reward hacking is a proposed explanation, not a demonstrated attack in these experiments.
-
-Inference: for VL, ablations should remove one proof or checker class at a time and inspect whether the agent learns to satisfy the specification while violating the intended behavior. A Verus proof can prevent a particular class of logical counterexample, but it cannot prevent reward hacking through an incomplete contract. Keep an independent test oracle or review of the specification.
 
 ## technique: distill a smaller online verifier
 
@@ -46,20 +42,14 @@ QwQ-32B verification is expensive: when training TULU 3 SFT, the authors deploy 
 
 In Table 5 (p. 8), QwQ-VerIF scores 84.5/87.1/89.3/91.4/79.4/65.2/54.0/54.7/68.6/72.0. The columns are IFEval prompt strict/loose, IFEval instruction strict/loose, Multi-IF turns 1–3, SysBench ISR, FollowBench SSR, and CFBench ISR. IF-Verifier-7B scores 80.0/84.5/86.0/89.4/80.1/63.7/52.7/49.5/68.8/70.0. The smaller verifier uses one H800 and averages 120 seconds per reward batch (Section 4.6, p. 8). Inference: the comparison shows a resource/performance tradeoff, not equivalence.
 
-Inference: a VL product can distill a checker only after measuring agreement against an independent proof or oracle. A smaller model's agreement with its teacher is not a proof of the Rust contract.
-
 ## results, trust, and limits
 
 With VerIF, R1-Distill-Qwen-7B improves IFEval prompt strict from 59.9 to 75.6 and TULU 3 SFT from 68.4 to 84.5 (Table 2, p. 5). On general benchmarks, R1-VerIF changes GSM8K 87.0 to 90.0 and Omni-MATH 35.0 to 33.6; TULU-VerIF changes AlpacaEval 2.0 length-controlled win rate 7.9 to 22.0 and MT-Bench score 6.3 to 7.0 (Table 3, p. 6; Appendix B, p. 13). Inference: these numbers show gains and regressions, not universal improvement. The authors report gains on multilingual and multi-turn benchmarks despite English single-turn training (Section 4.2, p. 5). Inference: this is evidence of generalization, not a formal guarantee.
 
 Appendix B uses IFEval to select the best checkpoint, with early stopping after more than five checkpoints without improvement (p. 13). Inference: the reported IFEval result also serves model selection, so independent benchmarks matter when assessing transfer. The limitations identify “potential biases” and “vulnerability to adversarial attacks” in LLM judging (p. 9).
 
-Inference: generated Python scripts, QwQ judgments, GRPO implementation, and benchmark evaluators are trusted elements in the experimental pipeline. For verified-Rust agents, an incomplete reward specification remains a risk; Verus contracts address only properties stated and proved. This paper supplies prior examples of hybrid code/LLM rewards, constraint back-translation, verifier ablations, and verifier distillation. A VL study should add a Rust-specific contract and an independently checked oracle if it reuses these techniques.
-
 ## techniques for the catalog
 
 - hard/soft verifier split — route exact predicates to generated code and semantic constraints to a reasoning judge, then combine group-level binary scores (Sections 3.1 and 3.3)
 - verifier-bearing RL data — construct constraints and verification methods alongside each instruction (Section 3.2)
 - verifier ablation and distillation — remove reward components to measure their contribution; train a smaller judge on QwQ-generated verification and measure downstream performance and cost (Sections 4.5–4.6, Appendix C)
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We also adopt Qwen2.5-72B-Instruct as the LLM verifier in V ER IF and find it significantly underperforms QwQ-32B."): read the full paper including references and appendices; checked quotations, numbers, method steps, section/page references, title, tag, and arXiv link; corrected format-constraint classification, smaller-verifier data sources, Table 5 column labels, and unsupported interpretations; marked conclusions as Inference; did not reproduce experiments, inspect released code/data, or independently validate Verus claims.

@@ -72,10 +72,6 @@ The analysis proves symbolic trace properties for the modeled Widevine variants 
 
 Inference: an agent-written verified Rust DRM or policy engine inherits the same model gap. Verus can protect memory safety, parser correctness, key-state transitions and counter invariants, but a product remains threatened by unmodeled API call orders, hidden implementation branches, compromised CDMs, and incorrect assumptions about external servers. The paper's strongest product lesson is to make those assumptions executable checks and rerun the attack-and-proof workflow after each dependency or protocol change.
 
-## what VL should not redo
-
-The paper presents a TAMARIN methodology for stateful protocol analysis, an explicit-time encoding, a reusable goal set, a discovered derive attack and proofs for two patched models alongside analysis of their two unpatched counterparts. Inference: VL should not claim novelty from merely writing another informal DRM checklist. A focused contribution could encode one concrete Rust license-state machine in Verus and cross-check its transition traces against the paper's TAMARIN model, measuring which implementation assumptions cannot be represented faithfully.
-
 ## techniques for the catalog
 
 - reverse-engineering-led formalization: observe opaque messages, memory and API failures before writing the symbolic model
@@ -83,4 +79,3 @@ The paper presents a TAMARIN methodology for stateful protocol analysis, an expl
 - multiset-rewriting protocol model: represent persistent and linear state as facts and expose a Dolev–Yao attacker
 - explicit time and counter invariants: use a monotone clock for expiration and prove increasing renewal counters for freshness
 - attack-guided repair: use a violating trace to patch state binding, then rerun executability checks and all goals
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We model four variants of Widevine: we analyze both the Android version, where the KCB is part of the renewal request, and the desktop version, where it is not."): checked all paper text, quotations, numbers, section and page references, technique steps, assumptions, and reported results; corrected the publisher link, rule counts, patch description, conditional attack status, counter explanation, lemma counts, and page references; did not rerun TAMARIN, reproduce reverse engineering or the attack, or verify the suggested Verus adaptations.

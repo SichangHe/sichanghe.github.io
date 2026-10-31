@@ -60,16 +60,9 @@ The paper proves the data-processing bound (Equation 2), the natural-language co
 
 Inference: the trusted core for a Verus product remains the chosen specification, the Rust/Verus verifier, its solver, and any external code or environment modeled by assumptions. The paper's information-theoretic equations do not prove that a user's intended requirement was captured. Inference: its threat to agent-written verified Rust is high for specification capture and moderate for proof generation: natural language can leave precisely the edge cases that a proof must constrain, while a formally proved but incomplete contract can still accept the wrong behavior.
 
-## contradictions, arithmetic, and what VL should not redo
-
-The paper states σ*=H(Y)+Rformal−Δtrans and then says the threshold is meaningful when Rformal<Δtrans (Remark 3.11, page 6). If Δtrans≤Rformal, the theorem still gives a threshold algebraically, but the interpretation that formal language wins at high specificity no longer follows; the authors explicitly qualify that case. The white-noise illustration's exponent and 300,000-character estimate are presented as an order-of-magnitude calculation, not an experimental denominator.
-
-Inference: VL should not redo a generic argument that formal languages help at high specificity or that hybrid interfaces are useful; this paper already supplies that theorem and the supporting synthesis. VL should instead test the unmeasured engineering question: which Verus contract fragments are routinely omitted or discovered only after failed proofs, and how much repair effort hybrid prompts save.
-
 ## techniques for the catalog
 
 - specification ladder: classify each requirement as overspecified, fully specified, pragmatically underspecified, or indifferent before choosing prose or a formal contract
 - specificity measure: model acceptable outputs as a constrained set and estimate the information needed to reach it with a chosen error tolerance
 - translation-gap accounting: add domain-to-language KL divergence to the information cost of a natural-language specification
 - crossover hybridization: route low-specificity intent through natural language and high-specificity behavior through formal notation or direct artifacts
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -8,8 +8,6 @@ ProofWala is infrastructure for extracting proof data, interacting with multiple
 
 Table 1b reports 442,607 training proof-step/state pairs from 76,997 training theorems across CompCert, MathComp, GeoCoq, and Mathlib4. CategoryTheory is separate: “The CategoryTheory dataset is excluded from initial training and reserved for domain adaptation experiments.” (Section 4.1, PDF p. 9.) The supplied version is published at ITP 2026 and lists DOI 10.4230/LIPIcs.ITP.2026.24 (PDF p. 1). It trains fixed-capacity CodeT5-Base (220M parameters) models on Rocq-only, Lean-only, and mixed data, and evaluates proof search with a 600-second timeout, or 1,200 seconds for GeoCoq (Sections 4.3 and 5.1, PDF pp. 11–12).
 
-Inference: ProofWala supplies reusable ideas for VeruLaw's agent-written Verus Rust, especially trace extraction, candidate isolation, and parallel checker calls. Lean and Rocq tactic states are not Verus states, so every Verus adaptation below is an inference rather than a result of this paper.
-
 ## technique 1: normalize proof assistants as a state-transition system
 
 What it is. ProofWala models an obligation as a goal and its local hypotheses, and a proof state as a finite set of obligations. A tactic transforms one state into another; a completed proof is the distinguished empty-obligation state QED. The paper states, “We model interactive theorem proving as a structured state-transition system operating over proof obligations.” (Section 2, PDF p. 3.) More formally, it defines a transition `T(O, a)` and extends it to a tactic sequence `Tseq`; the objective is `Tseq(Oin, α) = QED` (Section 2, PDF p. 4).
@@ -112,8 +110,6 @@ The paper describes execution in the assistant rather than a formal correctness 
 
 Inference: assistant-checked transitions do not establish correctness of the surrounding extraction, prompt serialization, environment pooling, or distributed execution code. Model scores guide search; assistant execution checks proposed tactics.
 
-Inference: in VeruLaw, the analogous trusted core should be the Verus checker and the exact specification supplied to it. The model, search heuristic, and proof-tree database are aids; they cannot replace rerunning Verus on the final source. Dependency metadata and version-pinned environment records are needed because a proof may depend on external library contracts and solver behavior.
-
 ## threat to a product of agent-written verified Rust
 
 Inference: ProofWala lowers the engineering cost of generating and testing many proof candidates, which could increase the rate at which an agent produces Verus-accepted code. It does not solve specification errors, unsafe external assumptions, or mismatches between a proof obligation and the product requirement. Parallel search also increases the number of generated artifacts and therefore makes candidate provenance and deterministic replay important. The paper's measured transfer gains are modest on several datasets and statistically significant on only two of the reported comparisons; this limits any claim that multilingual or cross-assistant data will automatically improve Verus proof generation.
@@ -129,5 +125,3 @@ Inference: ProofWala lowers the engineering cost of generating and testing many 
 - multilingual data mixing — train fixed-capacity models on Lean and Rocq data under matched optimization budgets
 - transfer evaluation — compare pass@k with explicit theorem counts and paired-bootstrap p-values
 - declaration database exploration — query SQLite dependency graphs and visualize declaration relationships
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The prompt encodes the current proof state (goals and hypotheses) and requests the next tactic."): checked all paper text, study quotations, numerical results, technique steps, and section/page references; corrected the publication year and DOI link, training-data scope, page references, database contents, Isabelle resource claim, and unsupported statements; marked additional conclusions as inferences; did not reproduce experiments or inspect implementation code.

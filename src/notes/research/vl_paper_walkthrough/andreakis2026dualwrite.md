@@ -54,12 +54,6 @@ How to do it. (1) Separate the source history, its retained suffix obtained by d
 
 Verus form. Inference: make retention a parameter in the specification and expose the horizon in the API contract. Use a ghost map from stable coordinates to acceptance state; a cleanup function requires a proof that every removed obligation is already accepted. Verus cannot prove an external sink retained records unless that retention contract is modeled and checked.
 
-## proof boundary and consequences for VL
-
-The paper proves source-only impossibility, sink-delta recovery, arrival and claim fences, permanent-dedup coverage, and retention boundaries in Isabelle/HOL. It does not verify external brokers, connectors, mail providers, deployed relays, network transit, or application semantics. The basic source model has a durable ordered append-only history; Section 8 treats truncation separately. Strict coordinate monotonicity is required for duplicate-free sink-delta batches and for per-instance counting. The results do not prove eventual completion. Arrival fencing and claim fencing are proved on different machines; their interface transfers hazard-freedom under stated transport and justification conditions, not exactness (Section 7, p. 13). The paper’s practical guide classifies sinks as blind/write-only, queryable, or deduplicating/fenced (Section 12, pp. 19–21).
-
-Inference: already done that VL should not redo: indistinguishable-state arguments, frontier-relative delivery definitions, sink-delta recovery, generation fencing, concurrent-claim fencing, and retention-relative exactness are fully formalized here. Inference: VL should reuse these proof patterns for Rust relays and focus on verified adapters, stable IDs, and explicit acceptance boundaries. Inference: a Rust verification effort should expose assumptions about sink acceptance, concurrent workers, requests in flight, and retained evidence as explicit contracts. This paper supplies proof patterns, not a verified Rust adapter or evidence about agent-written code.
-
 ## techniques for the catalog
 
 - indistinguishable-state impossibility: construct equal-observation crash states with different sink acceptance and quantify over all source-only policies
@@ -67,5 +61,3 @@ Inference: already done that VL should not redo: indistinguishable-state argumen
 - arrival fencing: atomically apply recovery and raise a generation threshold to reject in-flight stale requests
 - claim fencing: atomically claim a recovery generation, prepare its batch, and reject fires after a newer claim
 - evidence-lifetime proof: relate deduplication and source-history retention to the horizon for which exactness is claimed
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The machine’s retention step has no guard, so a disciplined run can raise the floor over an obligation that was committed and never delivered, dropping it from the graded history without disturbing the theorem’s verdict."): read all 23 pages, including references; checked quotations, theorem assumptions, technique steps, numbers, section and page references, and paper identity; corrected quotations and page references, sink-delta prerequisites, recovery generation handling, claim discipline, and retention distinctions; replaced the fetch link with the paper’s arXiv identifier. Did not rebuild Isabelle proofs, inspect the formal artifact, verify cited services, or implement the Verus inferences.

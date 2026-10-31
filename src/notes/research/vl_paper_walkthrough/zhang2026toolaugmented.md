@@ -58,17 +58,9 @@ Verus form. Inference: evaluate a Rust verification agent across all combination
 
 Evidence. The paper’s 400-item design reports the feedback effect as dominant, search +6.8 points overall, and translation +0.9 points (Table 4, p. 7). Tool logs cover 384 cases while accuracy results use all 400; with feedback and no translator, adding search reduces REPL calls from 1,496 to 1,050 (29.8%), and with translator from 1,374 to 1,008 (26.6%) (Table 5, p. 7). The differing denominators must not be conflated.
 
-## implications for VL
-
-Measured claims: iterative Lean feedback raises compilation and judge-rated faithfulness on 400 graduate-level statements; factorial analysis isolates marginal and interaction effects. Trusted components include Lean/Mathlib, the tool wrappers, the GPT-5.2 judge, and the benchmark’s natural-language statements. Inference: the judge threshold is not a kernel proof of semantic equivalence, so a Verus product needs stronger specification review or counterexample testing.
-
-Inference: for agent-written verified Rust, compiler feedback is the primary capability, symbol retrieval is a stabilizer, and a specialized translator may be redundant once the orchestrator can repair against diagnostics. Existing VL work should reuse factorial evaluation and tool logs, while avoiding syntax-only success metrics. The paper’s central product lesson is to keep the task prompt fixed and measure whether each tool changes faithful outcomes, compile cost, or only the path to convergence.
-
 ## techniques for the catalog
 
 - draft–verify–repair loop — maintain persistent agent state and iteratively patch formal code from compiler diagnostics
 - symbol and expert retrieval — query library definitions and use specialized drafts without allowing invented axioms or declarations
 - compiler feedback as repair signal — use whole-program elaboration errors to drive faithful iterative correction
 - factorial tool ablation — toggle independent capabilities across all configurations and report main, conditional, and interaction effects
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `chakraborty2023ranking`, [paper](https://arxiv.org/abs/2310.09342)
 
-Audit: audited 2026-10-13 against the paper; rechecked every number of Tables 1 to 5 (and every V@K percentage against its fraction), the quotations, page and section references, the FiB-8 example and the listed inconsistencies; no wrong number or reference found; added Inference labels to seven unmarked statements (decidability limit, sources of training data, gpt-4 count, user-time gloss, sampling-cost claim, equivalence time-out, repeat share), widened-claim fixes for the training sources and for single-loop integer problems; the Verus FiB-8 code was not run and its mixed usize/u64 comparison in requires is unchecked.
-
 source: Chakraborty, Lahiri, Fakhoury, Musuvathi, Lal, Rastogi, Senthilnathan, Sharma, Swamy (Microsoft Research), arXiv:2310.09342v3 (12 Feb 2024), 12 pages with appendices A to E. Code and data: https://github.com/microsoft/NeuralInvariantRanker
 
 earlier notes: `topic_studies/formal_verification_rust/llm_for_verification/invariants_models_autoformalization.md` lists this paper as "opened abstract only"; `distributed_verification_db/leads_to_read.md` lists the title. Everything below is new to the notes.
@@ -182,10 +180,6 @@ limits: the quadratic number of equivalence calls can exceed the checks saved; t
 - a learned re-ranker for LLM invariant candidates on SyGuS integer-loop problems, with code and data released: done
 - the finding that off-the-shelf text embeddings, untrained, rank no better than a random shuffle: done, with a significance test
 - not done: any language with heap, sequences or ghost state; any interleaving of ranking with sampling or with repair from verifier feedback; any comparison with symbolic invariant generators; any measurement on unsolved problems
-
-## how much this threatens a product of agent-written verified Rust
-
-Inference: none directly. The paper does not write code, contracts or full proofs; it reorders candidate invariants for single integer loops given as SMT formulas, using 2023 models. Its use to VL is as three low-cost habits (shuffle or TF-IDF-sort candidates, de-duplicate them, log every verifier verdict as labelled data) and as a caution that a ranker pays only when a verifier call costs much more than an embedding call.
 
 ## techniques for the catalog
 

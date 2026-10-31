@@ -76,8 +76,6 @@ The formal security theorem assumes constant-time sequential code, correct secre
 
 Inference: A sequential constant-time proof for Rust would still need a hardware mechanism satisfying the paper’s contract to establish security against transient microarchitectural leakage. A product should record the hardware/software contract and secret-label assumptions instead of presenting a sequential proof as end-to-end speculation security.
 
-Inference: Existing formal work already supplies the relational noninterference shape and the hardware–software contract. VL should not redo a generic constant-time theorem without a new target; a useful extension would verify that a concrete Rust annotation pass and region configuration satisfy the contract assumed by a ProSpeCT-like hardware model.
-
 ## techniques for the catalog
 
 - hardware–software contract — label secret memory, require sequential constant time, and require intentional declassification
@@ -88,4 +86,3 @@ Inference: Existing formal work already supplies the relational noninterference 
 - patched declassification — replay one run’s public-write trace into the other to model intentional public writes while requiring equal microarchitectural contexts for the ordinary and patched runs
 - rollback for load speculation — roll back even a correct prediction when the resolved value is secret
 - prototype cost evaluation — synthesize the hardware, measure area and timing against a baseline, and measure runtime under precise versus over-approximated secret regions
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This section discusses prediction mechanisms supported by P RO S PE CT, limitations, and compatibility with legacy code."): checked all paper text, quotations, numbers, references, technique steps, and study claims; corrected page references, load-resolution conditions, theorem scope, benchmark mix labels, secret-region description, and declassification limits; added sanitization and unsupported-model boundaries; did not inspect the extended report, implementation, or reproduce experiments.

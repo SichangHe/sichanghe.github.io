@@ -82,8 +82,6 @@ The authors' failure analysis finds global reasoning failures, such as failure t
 
 Frama-C proves the candidate invariants establish, preserve, and imply the target assertion. The study measures unique solved benchmarks, five-run success rates, time, tokens, feedback contribution, and refinement similarity. Trusted components include the C/ACSL benchmark specifications, Frama-C, Z3, both LLMs, and the correctness of the auto-formalization mapping. The paper explicitly notes that the final verifier prevents an incorrect solution from being accepted despite formalizer noise (Section 7.2, p. 24).
 
-Inference: the threat to an agent-written verified-Rust product is high for proof completeness and medium for local proof repair. The feedback mechanism can expose arithmetic reasoning errors, but its own 83.3% translation accuracy, global-reasoning failures, and numerical-only evaluation leave substantial risk for Rust ownership and system invariants. Inference: VL should not redo the claim that local implication feedback helps loop-invariant synthesis; it should test the mechanism on Verus obligations and report denominators, solver settings, and contract assumptions.
-
 ## techniques for the catalog
 
 - failed-VC invariant synthesis: generate candidate invariants, check establishment/preservation/postcondition VCs, and retain failed VCs
@@ -91,4 +89,3 @@ Inference: the threat to an agent-written verified-Rust product is high for proo
 - implication auto-formalization: translate each step into annotated first-order implications and check premises and conclusions with an SMT solver
 - diagnostic refinement: feed exact invalid premises or implications back to the synthesizer and iterate
 - BMC conjunct accumulation: after feedback rounds, collect valid conjuncts with bounded model checking and combine them with the growing invariant set
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

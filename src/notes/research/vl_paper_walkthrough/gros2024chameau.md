@@ -44,19 +44,9 @@ For `transfer(q1,q2)`, the contract requires both queue predicates and returns a
 
 The transfer excerpt contains inconsistent variable names, including an undeclared `v` in the Viper fragment. These fragments also omit proof steps. The account above follows the contract and explanatory prose; it does not establish that the printed fragments compile or verify unchanged.
 
-## evidence, trust, and product threat
-
-The evidence is a worked account of selected OCaml standard-library Queue functions, with annotated OCaml and generated Viper fragments. The paper links the full insertion proof and translation in a repository footnote (Section 3, p.7). It reports no aggregate verification success rate or runtime benchmark. The conclusion proposes other data structures, additional logical models, polymorphism, more control structures, and automatic generation of some fold/unfold operations (Section 4, p.9).
-
-Inference: for VL or verified Rust, the reusable idea is to separate heap ownership from abstract sequence behavior, then connect mutations through segment lemmas. The paper does not evaluate Verus or agent-generated Rust, so a concrete Verus encoding or product-risk rating cannot be established from it. Any adaptation needs its own ownership representation and proof validation.
-
-Inference: assurance depends on faithful OCaml-to-Viper translation and suitable contracts and logical models, in addition to the verifier and solver. The paper presents the translation and case study but does not supply a formal correctness proof of the translator. Missing proof annotations can prevent verification; an inadequate specification can instead leave intended behavior unproved.
-
 ## techniques for the catalog
 
 - permission-bearing representation predicates — combine field permissions and an abstract model; unfold before field access and fold to restore the abstraction
 - algebraic-data-type translation — retain constructors as Viper ADTs and translate pattern matching through constructor tests
 - recursive segment predicates — relate linked cells to sequences and concatenate adjacent segments with an auxiliary lemma
 - compositional queue proofs — establish create, add, and transfer contracts using ownership predicates, explicit proof annotations, and segment lemmas
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Pour permettre l’utilisation de lemmes auxiliaires traduits sous forme de méthodes en Viper, nous avons introduit l’opération apply dans Gospel."): checked the full text, quotations, scope, contracts, technique steps, and PDF page references; corrected page numbers and segment endpoints, distinguished incomplete printed fragments, replaced the link with the paper's arXiv identifier, and removed unsupported Verus details and risk ratings; did not run the implementation, inspect the linked repository, or validate a Verus adaptation.

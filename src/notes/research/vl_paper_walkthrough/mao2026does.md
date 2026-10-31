@@ -9,8 +9,6 @@ The paper states: “While automated proof search can produce a formal proof tha
 
 Coverage requires NL segments to concatenate in source order. Atomicity requires one assertion per segment. Atomic Faithfulness requires each assertion and assumption to faithfully formalize its text. Order requires formal assertions to be a subsequence of the final proof. Citation requires every cited proposition to be available earlier. Soundness requires Lean compilation without sorry (Table 1, PDF p. 3).
 
-Inference: for VeruLaw, these conditions separate two obligations: Verus must prove the Rust contract, while a faithfulness layer must show that generated proof steps correspond to the stated reasoning. A proof that satisfies Verus but silently replaces the intended argument remains a review risk.
-
 ## technique 1: map stage with explicit proof objects
 
 What it is. Pistis first maps the NL proof into an ordered Lean skeleton with sorry bodies. Its output is a tuple containing formal steps, NL segments, assumptions, assertions, and mappings from text to formal claims (section 3.2, PDF pp. 3–4). The euclid_sentence tactic stores each source sentence and its claim type; structural sentences store no claim and map to True (Appendix A.1, PDF p. 10).
@@ -65,14 +63,6 @@ Citation gaps occur when a cited proposition is unavailable or incorrect. A @sup
 
 Verus form. Inference: materialize every agent-introduced assumption as a separate lemma obligation and fail the build when it cannot be proved from current requires and earlier facts. Inference: represent citation dependencies as explicit lemma dependencies and reject forward references. Inference: retain a distinct gap marker for obligations deferred to review; never treat external_body as proof of the function being verified.
 
-## measured outcomes, trusted parts, and product threat
-
-The human study sampled 30 of 48 Book I propositions, with 127 completed assignments, 254 step-fidelity ratings, and 381 pairwise preference judgments (section 4.2, PDF p. 5). Pistis’s mean step-fidelity score was 4.52 versus 3.68 for LeanEuclid. Reviewers preferred Pistis in 63.0% of mathematical-transparency comparisons, 73.2% of textbook-representation comparisons, and 62.2% overall (section 4.2, PDF p. 6). An LLM judge favored Pistis 26–5 on Book I (section 4.2, PDF p. 6). The paper reports 52 identified gaps across the corpus, including two confirmed citation mistakes (abstract and section 4.5, PDF pp. 1 and 8).
-
-Trusted components include the Lean kernel and System E axioms, the segmentation and mapping oracle, source-text correctness, the LLM’s proposed helpers, and the judgment that a failed step is a genuine gap. The authors state: “Pistis relies on a human or LLM oracle to certify faithfulness, and our conditions, while necessary, are not sufficient to capture an author’s full intent.” (conclusion, PDF p. 9).
-
-Inference: the threat to agent-written verified Rust is high for proofs whose review value depends on preserving an argument. A compiler-accepted Verus proof can still bypass intended reasoning or hide an unproved assumption. Existing Pistis work already covers map/fill faithfulness, ordered hierarchical search, and refutation for Lean geometry; VL should avoid reproducing these without a Rust/Verus evaluation. Inference: the useful product adaptation is a contract-to-proof map with immutable step objects, explicit helper sufficiency checks, assumption-gap reports, and counterexample/refutation paths.
-
 ## techniques for the catalog
 
 - Pistis map stage — split natural-language proofs into atomic ordered segments and map each segment to an explicit formal claim with assumptions and citations
@@ -81,4 +71,3 @@ Inference: the threat to agent-written verified Rust is high for proofs whose re
 - assumption-gap detection — materialize assumptions and discharge them with a fixed tactic sequence, marking unclosed obligations
 - citation-gap detection — enforce backward-only proposition dependencies and flag unavailable or incorrect cited results
 - immutable proof structure — lock approved map objects and prevent agents from skipping ahead or rewriting prior steps
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

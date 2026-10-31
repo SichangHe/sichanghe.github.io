@@ -49,12 +49,6 @@ For non-compressing MatFilter, the initial profile could not express a symbolic 
 
 Inference: in Verus, add a reusable spec-level conditional expression and a proof lemma for each branch, then retain the profile change as a versioned library rule. Do not use `external_body` on the function under verification; any external model must be a separately trusted abstraction.
 
-## what is proved, trusted, and relevant to VL
-
-CIVL proves the ported implementation satisfies the certified contract for bounded symbolic inputs and process counts, and compares MatAXPY to a separately authored reference model. It does not prove unbounded MPI executions, unsupported sparse/assembly behavior, the correctness of the dense abstraction, the PETSc documentation, human certification, the CIVL port, CIVL/Z3/CVC4, or the compiler. The paper measures states and transitions under a laptop setup (CIVL 2.0, Z3 4.8.12, CVC4 1.8; Table III footnote), not general scalability.
-
-Inference: threat to agent-written verified Rust is high for specification errors and moderate for harness errors. The three-stage split is directly useful to VL: let an agent draft a small contract, require human or policy review for assumptions, and generate deterministic proof harnesses. Existing work already demonstrates this pattern and a real bug; VL should not redo it without a Rust-specific aliasing, ownership or dependency experiment. MatAYPX also shows that a contract-only oracle can find bugs, but only when the contract’s documented semantics are complete.
-
 ## techniques for the catalog
 
 - restricted contract generation — constrain an LLM to a small ACSL/PETSc profile derived from documentation
@@ -63,4 +57,3 @@ Inference: threat to agent-written verified Rust is high for specification error
 - aliasing-case derivation — generate same-handle and distinct-handle drivers from profile rules
 - contract-only oracle checking — use a certified postcondition when no reference model exists
 - profile evolution — extend parser and compiler when unsupported recurring semantics are identified
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

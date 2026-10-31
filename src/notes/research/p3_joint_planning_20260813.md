@@ -2,33 +2,12 @@
 
 (authored by agents unless marked 🧑)
 
-- focus
-  - what P3 actually demonstrates
-  - overlap and threat to AutoVerus and current Midas Lex / VL
-  - engineering and evaluation lessons worth adopting
-
 ## decision summary
 
-- relevance: high
-  - P3 tests a central VL design question: choose code structure and proof structure together before expensive verifier repair
-- demonstrated capability threat: medium
-  - P3 generates both Lean implementations and proofs from fixed formal specifications
-  - current VL evidence is strongest for focused proof repair and only partial for named-target specification work
-  - P3 therefore demonstrates a broader artifact pair than current VL's strongest evidence, but on a different prover and curated Lean task surface
-- evaluation threat: high
-  - Lean4Commit0 adds 108 library-derived tasks with relational cross-API specifications and an explicit specification-strength gate
-  - this is a substantially cleaner common benchmark design than VL's heterogeneous bounded portfolio
-- product threat: low-to-medium today
-  - P3 does not infer intent, generate specifications from ordinary Rust, compile whole projects, verify production Rust, or provide attestation
-  - those are central VL product boundaries
 - novelty judgment
   - joint planning is a credible workflow contribution, not a new soundness mechanism
   - Lean remains the trusted checker
   - the strongest novelty is the controlled evidence that planning proof structure with program structure beats implementation-only or sequential planning across all reported cells
-- recommended response
-  - make a shared program-and-proof plan an explicit VL artifact before implementation or proof edits
-  - evaluate it as a controlled workflow change, not claim it as current capability
-  - borrow Lean4Commit0's relational-task and mutation-rejection ideas while keeping intent adequacy separate from verifier success
 
 ## what P3 does
 
@@ -213,47 +192,6 @@
   - this is exactly the paper's proposed transfer, but it remains untested
   - source: `P3-transfer-limit`, `AV-boundary`
 
-## relation to current Midas Lex and VL
-
-- frozen current boundary
-  - strongest evidence: exact focused proof targets
-  - useful but partial: named exact specification targets
-  - not established
-    - broad invariant invention
-    - autonomous repository-wide specification discovery
-    - end-to-end project generation from ordinary Rust or English
-  - sources: `VL-current`, `VL-proof`, `VL-spec`, `VL-project`
-- demonstrated overlap
-  - proof scaffolding and local verifier repair: high conceptual overlap
-  - named formal-spec input: high overlap with VL's controlled evaluation surfaces
-  - repository-aware relational requirements: medium overlap with VL's desired project-level reasoning
-  - executable code generation: low current overlap because VL has no established end-to-end generation capability
-- capability threat
-  - medium
-  - P3 demonstrates an upstream decision layer that current VL documentation identifies as weak: broad invariant and proof-structure invention
-  - the evidence is stronger than a design proposal because it includes three benchmarks, four models, and a targeted ablation
-  - the threat is bounded by Lean-only, selected-API, fixed-spec tasks
-- evaluation threat
-  - high
-  - Lean4Commit0 offers a coherent benchmark with
-    - code plus proof holes
-    - library-level bundles
-    - cross-API relations
-    - explicit semantic-strength screening
-  - assessment
-    - the frozen VL capability sources do not provide a common multi-model benchmark comparable to Lean4Commit0
-    - this assessment does not claim that no such unpublished or later evaluation exists
-- novelty or positioning threat
-  - high for any claim that verifier-guided repair alone is the main innovation
-  - low for VL's larger stated goal of intent-to-Verus project generation with auditable evidence
-  - source: `VL-vision`
-- product threat
-  - low-to-medium
-  - P3 does not solve VL's central intent, Rust integration, repository discovery, production binding, or attestation gaps
-- artifact threat
-  - low today
-  - source code is available, but the omission of benchmark and result data prevents a full independent reproduction
-
 ## actionable lessons
 
 - add a durable shared-plan artifact
@@ -293,28 +231,16 @@
 
 ## plausible future convergence
 
-- near term
-  - VL adopts shared plans for controlled exact-target experiments
-  - P3-style planning remains a workflow layer above existing Verus proof repair
 - medium term
   - shared plans span several Rust APIs and relational contracts
   - plan gates incorporate ordinary docs, tests, callers, and negative mutants
-- long term
-  - the two directions converge on intent-to-code-to-proof planning
-  - VL retains differentiation only if it establishes
-    - intended guarantee discovery
-    - real Rust and repository integration
-    - whole-project evidence
-    - independent semantic and production attestation
 
 ## source map
 
 - full primary source map and artifact audit
-  - [collection record](</hdd1/sichanghe/paper_collection/P3- Joint Program-and-Proof Planning for Verified Code Generation, Zenan Li, Ziran Yang, Peiyang Song, Zhaoyu Li, Kaiyu Yang, arXiv, 2026/source-map-and-artifact-audit-20260813.md>)
 - authoritative landing
   - <https://arxiv.org/abs/2608.09277v1>
 - local paper
-  - [PDF](</hdd1/sichanghe/paper_collection/P3- Joint Program-and-Proof Planning for Verified Code Generation, Zenan Li, Ziran Yang, Peiyang Song, Zhaoyu Li, Kaiyu Yang, arXiv, 2026.pdf>)
   - SHA-256: `99361fff982309526562ee7b1043b9c250f3e23979560e8fde10e98d4e182e41`
 - official artifact
   - [Figshare snapshot](https://figshare.com/s/2ab7020cacaffcf0d258)

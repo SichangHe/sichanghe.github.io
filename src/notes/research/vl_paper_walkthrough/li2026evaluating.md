@@ -108,16 +108,6 @@ Verus form (Inference): for a Verus agent the comparable cheap signals are outpu
 - Correct Rate is defined over "68 in total" problems (p.3), with five queries each; the paper does not say whether a problem counts as correct per query or if any of five succeed, only that error bars are the standard deviation over 5 runs (Figure 1 caption, p.3)
 - total queries, by my arithmetic and not stated in the paper: 5 models × 6 levels × 68 problems × 5 runs = 10,200
 
-## already done; what VL should not redo
-
-Inference: renaming identifiers to test Verus proof agents already exists. The ExVerus study in the walkthrough notes records an obfuscated Verus benchmark (ObfsBench) with several obfuscation strategies. What this paper adds to that is narrow: a continuous noise dial instead of on/off, a closed theory with no library, and time as a second metric. VL does not need to build a renamer from scratch to learn whether its agent leans on names; running the agent on an existing obfuscated Verus set answers the same question.
-
-Worth taking: the dial. A few noise levels on VL's own evaluation tasks would show whether success falls with name quality, which matters because agent-written code often has poor or misleading names.
-
-## how much this threatens VL's product
-
-Inference: none as a competitor; the paper ships a 68-problem Lean benchmark and no prover. As a warning it is weak to moderate: it suggests general-purpose models lose accuracy when names carry no meaning, and its two general models are the kind VL's agents run on. The evidence is small (68 problems, 5 runs, one theory, numbers shown only as plots), and the stronger models tested showed no detectable loss.
-
 ## techniques for the catalog
 
 - closed-theory test bed: evaluate a prover on a self-contained axiom set with no library and only primitive proof steps, with the whole theory in the prompt
@@ -125,4 +115,3 @@ Inference: none as a competitor; the paper ships a 68-problem Lean benchmark and
 - draft-and-code JSON grading: require a plan field and a code field, and pass only the code to the proof checker
 - latency ANOVA: record response time per query and test it across noise levels as a second measure of difficulty
 - post-rename revalidation (not in the paper): rerun the checker on reference proofs after renaming, since solver-based proofs can break under renaming
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -1,7 +1,6 @@
 # Can LLMs Enable Verification in Mainstream Programming?
 (authored by agents unless marked 🧑)
 Tag: `shefer2025llms`, [paper](https://arxiv.org/abs/2503.14183v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and framework
 
@@ -19,8 +18,6 @@ Use these modes to diagnose which part of verification automation is failing. Th
 4. Mode 4 differs from Mode 3 only by also requiring a text description of the program; it still asks for implementation and proof
 5. Mode 5 asks for implementation through proof while retaining specification functions
 6. Mode 6 asks for everything from natural language and method signatures, omitting specification functions
-
-For VL, this is a useful staged workflow: begin with proof completion when contracts are human-owned, then measure the separate risk of implementation synthesis and intent formalization. The modes do not prove that a less exposed prompt is more useful in production; they are controlled benchmark conditions.
 
 ## technique 2: verifier-in-the-loop interaction with bounded retries
 
@@ -61,15 +58,11 @@ These denominators matter. A task counts once if at least one of five attempts v
 
 The authors count errors from five Mode 1 runs. Dafny's most common errors are invariant-maintenance failures (175), unproved postconditions (91), and assertion failures (69). Nagini has 468 timeouts, 259 invariant-maintenance errors, and 237 unsatisfied preconditions. Verus has 192 type errors, 46 assertion failures, 28 invariant-maintenance failures, 22 invariant-entry failures, 17 syntax errors, and 14 arithmetic underflow/overflow errors.
 
-This taxonomy suggests separate repair paths. For Verus, prioritize casts, argument types, and annotations before searching for stronger invariants. For timeouts, more model retries may not help because the diagnostic carries little information. A VL agent can map each error class to a small prompt and a bounded edit, then rerun Verus.
-
 ## evidence, trust, and threat
 
 What is proved: accepted candidates verify in the selected verifier and pass the reference-contract validator. What is measured: unique verified tasks over five Claude runs, by mode and language, plus observed error categories. What stays trusted: the benchmark's manually written programs and contracts, translation from HumanEval, the reference specifications, verifier and SMT soundness, optional syntax converters, and the decision that implication captures user intent.
 
 The paper itself notes that validation can reject useful alternatives because it compares with benchmark ground truth, and it restricts language features: Dafny validation uses functions instead of predicates, and Verus validation disallows classes and open/closed constructs. The HumanEval subsets were manually prepared; Nagini was converted from Dafny and then manually repaired. Therefore the results do not establish repository-scale generality, arbitrary Rust support, or trustworthy natural-language requirement recovery.
-
-The threat to VL is medium to high (inference) for benchmark-facing verified-code generation: the paper shows a complete prepare–generate–verify–validate loop and identifies Verus's dominant type-error failure mode. It does not provide autonomous ownership of specifications, unsafe Rust memory reasoning, or long-term proof maintenance. VL should reuse reference-contract validation, mode-based evaluation, and error taxonomies. It should not redo a broad three-language benchmark as its primary novelty; the unresolved product value is preserving human intent while agents change real Rust repositories.
 
 ## techniques for the catalog
 

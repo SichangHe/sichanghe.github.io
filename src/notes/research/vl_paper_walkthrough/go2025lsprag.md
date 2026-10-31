@@ -33,18 +33,9 @@ The prompt uses one-shot chain-of-thought (§5.2.2, p. 6). The TypeScript implem
 
 Ablations compare the same prompt without context or fixing, with context only, and with both modules (§7.4, pp. 9–10). Experiments use methods exceeding 10 lines, five runs, and at most five self-correction iterations (§7.2, p. 8). The paper reports all p-values below 0.05 for line-coverage comparisons (§7.2, p. 8). Using GPT4o, the latency/cost experiment reports 28.27 seconds and 4,497 tokens per focal method; Table 4 prints generation and fixing averages of 2,732 and 1,832 tokens (§7.3, p. 9). Inference: those component averages sum to 4,564, not the printed total of 4,497. The paper claims 39% fewer tokens and 135% higher coverage than CodeQA (§7.3, p. 9).
 
-## evidence, trust, limits, and VL threat
-The abstract reports maximum line-coverage increases over the best baseline of 174.55% for Go, 213.31% for Java, and 31.57% for Python (p. 1). The introduction separately reports valid-rate increases up to 242.86%, 251.91%, and 20.16%, respectively (§1, p. 2). Table 3 lists Commons-CLI/GPT4o coverage as 34.69% for LspRag versus a best baseline of 9.60% (p. 8). Inference: that row implies a relative increase of about 261.35%, exceeding the reported Java maximum; the headline percentages need caution.
-
-The discussion also evaluates fault detection with Pit and MutPy mutation tools and reports higher mutation scores than the baselines on the Java and Python projects (§8, Table 6, p. 10). It identifies dependence on LSP correctness and environment configuration as threats; Python's dynamic typing limits static diagnostic detection (§7.2, p. 9; §8, p. 11). Inference: coverage, syntactic validity, and mutation scores do not establish functional correctness. These results depend on the tested servers, parsers, LLMs, prompts, diagnostic categories, and retry budget.
-
-Inference: for agent-written verified Rust, LSP-guided retrieval could supply context for proof generation and repair, especially for cross-file traits and specifications. An LSP diagnostic loop can stop while Verus obligations remain unproved. VL should require Verus verification as a prerequisite check and measure proof success. A new VL contribution should isolate Verus-specific proof-obligation retrieval and report denominators; this paper does not evaluate Verus.
-
 ## techniques for the catalog
 - branch-token extraction — map AST and semantic tokens to a CFG and retain symbols controlling conditions
 - LSP definition/reference retrieval — fetch exact workspace definitions and enclosing usage symbols for grounded context
 - diagnostic-context repair — classify diagnostics, retrieve symbol/workspace context, and iterate fixes under a retry budget
 - concise structured prompting — combine focal source, retrieved dependencies, and a lightweight scaffold
 - multi-language evaluation and ablation — compare coverage, valid rate, latency, token cost, and component contributions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This process is iterative: after the LLM proposes a fix, LspRag re-triggers the diagnostic mechanism."): checked all paper text, study quotations, numbers, page/section references, and technique steps; corrected the year tag, extraction steps, enclosing-symbol retrieval, error-table citation, implementation/generalization description, cost attribution, and headline-result limits; did not inspect the artifact, reproduce experiments, or validate the proposed Verus applications.

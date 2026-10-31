@@ -1,7 +1,6 @@
 # Enchanting Program Specification Synthesis by Large Language Models Using Static Analysis and Program Verification
 (authored by agents unless marked 🧑)
 Tag: `wen2024enchanting`, [paper](https://doi.org/10.1007/978-3-031-65630-9_16)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## what AutoSpec does
 AutoSpec synthesizes ACSL specifications for C programs by making static analysis and Frama-C verification control an LLM. It generates preconditions, postconditions, loop invariants, and assigns clauses, rather than asking a model to write all specifications in one response. The abstract gives the core mechanism: “candidate specifications are validated in each round to avoid error accumulation during the interaction with LLMs” (abstract, p. 1). A candidate that is illegal or unsatisfiable is discarded; a valid but insufficient candidate remains for the next round. The goal is a full proof of a chosen assertion.
@@ -90,12 +89,6 @@ The main evaluation uses gpt-3.5-turbo-0613 with max tokens 2048 and temperature
 For loop invariants, AutoSpec solves 114/133 SyGuS cases, 38/46 OOPSLA-13 cases (82.60%), and 16/21 SV-COMP cases (Table 4, p. 15). Code2Inv solves 73/133 SyGuS and 9/46 OOPSLA-13; CLN2INV solves 124/133 SyGuS but 0/46 OOPSLA-13. On 100 mutated benchmark programs, 98% of results hold after variable renaming and statement/branch switching; with Llama-2-70b on the 51 Frama-C set, AutoSpec solves 25/51 versus ChatGPT's 31/51 (Threats to Validity, p. 19).
 
 Proved: Frama-C proves ACSL clauses and the selected program properties. Measured: synthesis success, iteration count, verifier/query/simplification time, and ablation differences. Trusted: the target property, the C parser and static-analysis graph, ACSL and Frama-C, model/API behavior, manually extracted X509 targets, and the assumption that all external dependencies needed for a proof are included. The model can propose a false clause, but validation should discard it; an omitted dependency or an inconsistent target leads to failure rather than a repaired specification.
-
-## what VL should reuse and threat to the product
-
-VL should reuse loop-aware call graphs, bottom-up contract generation, candidate validation after every round, a hard iteration bound, and deletion-based simplification. The paper's most transferable control is separating “satisfiable” from “adequate”: a clause may describe some executions yet be insufficient to prove the target. VL should add Rust-specific dependency tracing for traits, macros, and external functions before asking an agent for a proof.
-
-Threat assessment (inference): AutoSpec is a direct threat to any product claim that LLMs can write complete specifications in one pass, because its ablation shows that decomposition gives the largest gain (9 to 26 of 51) and iteration a further 4. It also exposes a product risk: a proof pipeline can fail because context is missing, not because the generated Rust is wrong. The opportunity is a Verus version with explicit trust labels for generated contracts, checked lemmas, external bodies, and simplification results. The 79% C result cannot be transferred numerically to Rust, but the architecture is highly relevant to agent-written verified Rust.
 
 ## techniques for the catalog
 

@@ -68,8 +68,6 @@ How to apply it
 
 Verus form (inference)
 
-Inference: for a generated API or invariant candidate, require two contracts: candidate implies the intended safety property and the intended property implies candidate when exact characterization is claimed. Encode each direction as a separate `ensures` theorem or proof lemma. For mere sufficiency, state only the one-way contract; do not let an LLM silently upgrade it to equivalence. The distinction is useful for VL specifications, where an overly weak postcondition can make verification vacuous.
-
 Evidence and limits
 
 The paper gives examples and a semantic rationale, but no measured candidate-set accuracy. Symbolic checking depends on the available backend and theorem libraries; an accepted candidate can still formalize the wrong informal predicate if the original translation was wrong.
@@ -124,10 +122,6 @@ Proved by construction: Core syntax, elaboration checks for the illustrated tran
 
 Trusted or outside scope: the LLM's relaxed translation, scope and notation choices, theorem libraries, domain solvers, checker implementation, and the backend theorem prover. Inference: a generated Core proof can be formally valid relative to a mis-translated informal statement. The paper's pipeline reduces this risk by making transformations explicit, but it does not solve specification intent.
 
-## threat to VL and prior work
-
-Inference: threat to a product producing agent-written verified Rust is moderate. The intermediate representation and gap architecture could reduce direct Rust-syntax burden and expose missing contracts before proof search. The paper already describes a complete verifiable pipeline for its mathematical domain; VL should not redo generic claims about intermediate languages or checker-gated proof gaps. A useful new test is whether relaxed ownership/invariant plans improve end-to-end Verus acceptance while preserving the exact user requirement.
-
 ## techniques for the catalog
 
 - relaxed-to-core proof language — keep LLM output close to informal math, then elaborate it into a precise proof calculus
@@ -135,5 +129,3 @@ Inference: threat to a product producing agent-written verified Rust is moderate
 - bidirectional problem-solving specification — require candidate answers to satisfy explicit necessary-and-sufficient conditions when exactness is claimed
 - semantic scope elaboration — annotate implicit variable scopes, check free-variable coverage, and insert explicit quantifiers
 - proof-gap generation and discharge — turn Core proof trees into verification conditions and close them with layered tactics, libraries, and solvers
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

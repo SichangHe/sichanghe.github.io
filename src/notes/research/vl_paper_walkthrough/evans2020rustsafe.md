@@ -64,8 +64,6 @@ Inference: trusted components include MIR generation and type inference, the sta
 
 The authors recommend compiler support (for example, identifying implicitly unsafe functions and printing a possible call chain to Unsafe Rust), and three crates.io changes: a tag or badge for crates with Unsafe Rust, a dependency tree with unsafe crates marked, and a list of code reviews for any Unsafe Rust (§6, p. 10). They call requiring “an automatic correctness proof” for every use of unsafe “particularly ambitious” and “unlikely to scale to all Rust code”, while annotating unsafe function calls with pre- and post-conditions is described as “another more feasible short-term approach” (§6, p. 10).
 
-Inference: VL should not redo the paper's basic unsafe-call propagation or its direct-versus-transitive counting. It should reuse the call-graph and worklist ideas to prioritize proof generation, then measure which unsafe contracts agents can actually discharge and which dependencies remain trusted.
-
 ## techniques for the catalog
 
 - unsafe abstraction census: count unsafe blocks, functions, traits, and implementations by crate and ecosystem stratum
@@ -74,4 +72,3 @@ Inference: VL should not redo the paper's basic unsafe-call propagation or its d
 - dependency closure analysis: distinguish locally safe crates from crates whose dependencies contain Unsafe Rust
 - operation taxonomy: measure unsafe function calls, pointer dereferences, globals, and intrinsics with explicit denominators
 - developer confidence survey: collect reasons for unsafe and static, dynamic, testing, and proof practices
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Importantly, 38% of crates include no unsafe in their own implementation, but rely on dependencies which do use unsafe."): read the paper text from first line to last (references skimmed); checked every quotation, Tables 1 to 5, the Table 3 cell layout, the 15,097, 18,478, 473 and survey figures, section and page references, and the call-graph and worklist steps against §4 and Algorithm 1; changed the link to the DOI printed in the paper, corrected the Servo description, several section and page references (§4 to §4.1, pp. 5–6 to p. 5, survey pp. 9–10, §6 starts on p. 10), the reason construction stops at virtual calls, the declared-unsafe initialization justification, the recommendations summary, and marked the worklist complexity remark as inference; did not check the cited external works, the released code, the figures' bar values beyond the text, or the numbers in Figure 5/6 (the paper text was used instead).

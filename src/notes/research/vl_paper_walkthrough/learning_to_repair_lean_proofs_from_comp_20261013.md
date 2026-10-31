@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `wang2026learning`, [paper](https://arxiv.org/abs/2602.02990)
 
-Audit: audited 2026-10-13 against the paper and its figures; all numbers, tables, quotations and technique steps checked; corrected the easiest-class claim, the fine-tuning-does-not-help-line claim, a quotation applied to the wrong model, a page reference, the line-only scope of one labelling step, and three unmarked inferences; Verus statements are marked inference and rest on no Verus source, so they are unchecked.
-
 source: Wang, Chess, Lee, Ge, Mallavarapu, Alper, Ilin (University of Washington), arXiv:2602.02990v2, 13 Mar 2026; 18 pages with appendices A–E. Appendix E stops in the middle of a sentence on p.18 (“By instructing the model to produce accurate code,”), so the expanded description of line and multi-line mutation is missing from the PDF itself.
 
 The paper is about Lean 4, not Verus. Each Verus form below is an inference.
@@ -40,7 +38,6 @@ Each record has five fields: “(i) an erroneous Lean proof that fails to compil
 
 Verus form (inference):
 
-- source corpus: functions that `verus` accepts, for example the verified systems the Verus papers ship, or VL's own accepted output
 - step 3 becomes: run `verus` on the mutant and keep it only if it reports an error; also discard mutants that fail in `rustc` type checking if the aim is proof repair and not syntax repair
 - step 4: Verus has no tactic goal state. What can be stored is the error kind (precondition not satisfied, postcondition not satisfied, loop `invariant` not preserved, assertion failed, resource limit exceeded) and the source spans the verifier prints. The paper's input field “State” has no direct counterpart
 - what does not change: the correct proof as target, the compile-and-keep filter, the split by original function
@@ -187,8 +184,6 @@ Appendix D (pp.16–17) lists seven discarded generators. They matter for anyone
 - random multi-line redaction in the middle (see technique 5)
 - taking a small prover's failed proofs and a bigger prover's fixes: “Goedel-Prover typically rewrote the proof from scratch, substantially altering the proof structure and reasoning.”
 
-Verus form (inference): the last item is the natural way to mine VL's own agent logs (failed attempt, later success). The paper's warning applies: a later success that rewrites the proof is not a repair of the earlier failure, so pairs need a similarity filter before they are used as repair targets.
-
 ## numbers that do not add up
 
 - §5.2 (p.8) says tactic mutations have “top performance reaching 42.5%”. Table 2 on the same page has 41.7% as the highest tactic value, and Table 3 (p.9) has 46.5% to 49.7%. No table contains 42.5%.
@@ -197,20 +192,6 @@ Verus form (inference): the last item is the natural way to mine VL's own agent 
 - §5.3 says of Qwen that joint training costs “an only slight reduction in error correction accuracy” (3.8 points of 31.2); for Kimina-8B the cost is 5.0 points of 36.9 (Table 3).
 - The running head says “VerifAI - ICLR 2025”; the arXiv stamp is March 2026 and the references include work accessed in January 2026.
 - All dataset totals hold: Table 4 rows and columns, Table 1 sums, Figure 3 against Table 4, and 154,870/260,125 = 59.5%. The 25× for Qwen is 27.4/1.1 = 24.9.
-
-## what VL should not redo
-
-Inference:
-
-- the seven discarded error generators of Appendix D
-- measuring whether fine-tuning on mutate-and-compile data raises single-shot repair on the same kind of mutants; this paper shows it does, by 19 to 26 points on the full set for three base models
-- joint training on explanations in the hope of better repair: it costs 2.1 to 5.0 points here
-
-Open after this paper, and VL's to settle if it trains a repair model: whether such training helps on errors from real agent runs, and whether it helps inside an iterative loop. The paper tests neither.
-
-## does a Lean repair model threaten VL
-
-Inference: none directly. The work is Lean mathematics, single-shot, and the best full-test-set number is 36.9% (Kimina-8B trained without explanations, Table 3), on synthetic errors. The indirect threat is the recipe: it is cheap (LoRA on 4B to 8B models, an LLM labeller, a compiler filter), and anyone holding a corpus of verified Verus code can run it to get a small repair model. That lowers the cost of the repair step for every competitor, VL included. It does not touch specification writing or first proof generation.
 
 ## techniques for the catalog
 

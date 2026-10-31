@@ -49,10 +49,6 @@ Inference: the abstract-domain definitions, the theorem prover for entailment (t
 
 The experimental mode is explicit: “During our experiments SpaceInvader was used in a stop-first configuration, where the analyzer halts if it cannot prove that a dereferencing operator is safe or if it cannot prove that a cell is reachable.” (Section 2, p. 387) The authors also report: “Note that, during our experiments, no false errors were found.” (Section 2, p. 387)
 
-Inference: this poses a medium threat to agent-written verified Rust. The join strategy could reduce path explosion when generating Verus loop invariants for linked structures, but the paper's analyzer is C/separation-logic specific and predates Rust. VL should reuse selective abstraction and sharing-preservation checks, while avoiding a new generic shape analyzer unless measurements show Verus proof-state explosion.
-
-Inference: what VL should not redo is a benchmark claim that a partial join alone proves industrial memory safety. The paper says “we do not claim that ⊔† alone is the root cause for the performance found in Table 1, but it is a critical ingredient” (Section 3, p. 389), and attributes performance to the mix of join, locality, and discarding; any Rust evaluation must report each component and its denominator.
-
 ## techniques for the catalog
 
 - separation symbolic heaps — represent pointer structure with points-to, list segments, equalities, and separating conjunction
@@ -60,5 +56,3 @@ Inference: what VL should not redo is a benchmark claim that a partial join alon
 - possibly-empty list abstraction — replace disjunctive empty/nonempty paths with one `ls_PE` predicate when safe
 - composite-structure join — recursively join parameterized node shapes using frame inference and theorem-prover side conditions
 - selective interprocedural joining — apply the join at loop, branch, call, and procedure-exit points with locality and state discarding
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "because some drivers store 0 or 1 to a cell, say, x, depending on whether a linked list y is empty, and subsequently, they use the contents of cell x to decide the emptiness of the list y."): read all 14 pages of the paper text and checked the abstract and Section 2 quotes, the predicate definitions, the two-stage join steps and sharing check (against the PDF image of p. 392 for the `ei ≠ 0` condition), Figure 1 and 3 rule descriptions, the program points where join is applied, and every number in Tables 1 to 3; changed the predicate definition, join steps 1 to 4, the page references for Sections 4.2 and 4.3, the list of three optimizations, the trusted-base paragraph (now marked Inference), and added Table 3 and caveat details; did not check the cited related work or the Verus remarks beyond marking them Inference; link kept from the fetch record (the paper text gives no DOI).

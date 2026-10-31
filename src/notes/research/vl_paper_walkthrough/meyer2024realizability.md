@@ -78,22 +78,9 @@ For a selection comparison, each target predicate needs a more precise source pr
 
 Inference: A Verus adaptation could encode the generated conditions as proof obligations and prove the selected program against its contract. The paper provides no Verus implementation or evidence about the effort needed for that adaptation.
 
-## application, trust, and VL implications
-
-The C++ prototype targets safe memory reclamation using abstract pointer types. It automatically computes loop invariants from predicates available at loop entry, without saturation or widening, and prefers `skip` over SMR calls over annotations (Sections 7–8, pp. 18–19). The abstract domain uses Cartesian abstraction and the type lattice to compact predicates (Section 7, p. 18; Appendix B.5, p. 45).
-
-The pessimistic implementation validates the outline before synthesis. The optimistic implementation synthesizes without that prior validation, relying on the conditions checked by `syn` for output soundness (Section 8, p. 19). The experiments use seven data structures and two hazard-pointer variants on an Apple M2 with 8GB RAM; the prototype handles bitvectors internally without a solver backend (p. 19; Table 1, p. 20). Table 1's DGLM DeQ row reports 249 s for pessimistic `vc`, 6.3 s for pessimistic `syn`, 5.9 s for optimistic `syn`, and less than 0.1 s for optimistic `vc`. Thus the introductory seconds claim should not be read as applying to every measured phase.
-
-The authors identify a limitation: “The options that are difficult for our approach lead to new predicates that fail late.” (Section 8, p. 19). They propose combining the method with an outer search for those difficult options. The evaluation is confined to the memory-reclamation application; it does not establish performance across general SemGuS tasks.
-
-Memory safety remains conditional on separate code annotations: “We omit these checks in our experiments, and therefore our synthesis is only valid relative to the validity of the annotations.” (Section 7, p. 18). These are SMR invariant annotations, distinct from the loop and transformer annotations checked by Section 5's verification conditions. Appendix C concludes that the synthesized Treiber stack passes the type check and is memory safe if the invariant annotations can be discharged (p. 47). The paper supplies mathematical proofs, not a machine-checked Rust implementation.
-
-Inference: VL should reuse the separation between eager candidate abstraction and backward elimination for choosing verified Rust proof plans, while treating abstract memory-reclamation semantics and any `external_body` model as high product threats. The paper supplies the set-of-predicates logic, realization rewrites, and VC interleaving; it does not evaluate proof-plan synthesis for Rust.
-
 ## techniques for the catalog
 
 - eager realizability selections — track many synthesis alternatives as finite predicate selections and compose them with sound Hoare-style rules
 - realization backward elimination — remove failing alternatives from a valid outline and propagate requirements to obtain a candidate without backtracking
 - selection strongest postconditions — compute intermediary assertions and verification conditions for sketches, then discharge them with solver queries
 - proof-outline sharing — reuse a proved non-terminal suboutline at repeated or recursive occurrences
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In the set implementations, the order among the hazard pointers matters, and if we try to synthesize a protection with the wrong order we fail early."): read the full text, including appendices and references; checked quotations, definitions, technique steps, theorem assumptions, page and section references, and reported measurements; corrected the Boolean example, rewrite rules, references, annotation trust, and performance scope, and removed unsupported Verus claims; did not rerun experiments, inspect prototype code, or independently prove the theorems.

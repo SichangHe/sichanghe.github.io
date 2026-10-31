@@ -64,7 +64,7 @@ Numerical discrepancy. Section 5.3 gives Claude’s invalid/unproven steps as 24
 
 Verus form (Inference). Add typed error variants to the proof-generation pipeline and preserve the failed Verus diagnostic with each attempt. Contracts can expose missing preconditions; `assert` failures and unsatisfied `ensures` expose proof-step problems. A verified harness can require that every failed attempt is classified, but classification semantics remain a testing policy rather than a theorem.
 
-Evidence and limits. Section 5.3 describes proportions of model errors; it does not give counts or an explicit denominator. Inference: the categories suggest possible reasons for proof failure, but the reporting discrepancies prevent treating the exact proportions as settled. Inference: this diagnosis is more actionable for VL than a single aggregate score because it maps directly to parser contracts, library coverage, and lemma-generation work.
+Evidence and limits. Section 5.3 describes proportions of model errors; it does not give counts or an explicit denominator.
 
 ## technique 6: test autonomous auxiliary construction separately
 
@@ -74,7 +74,7 @@ What the paper reports. Figure 4 (p. 9) plots the proportion of theorems requiri
 
 Verus form (Inference). Represent a construction as a ghost or executable object with a predicate stating incidence and required properties. Prove construction lemmas with `proof fn`s, then pass the object to the main proof. Use `requires` to ensure the construction is well-defined and `ensures` to state what it contributes. An invented line without a proved property should not be trusted merely because it appears in generated code.
 
-Evidence and limits. The authors interpret the low success rate as a gap between introducing auxiliary objects and using them to advance a proof. Inference: unsuccessful proofs alone do not establish whether their constructions were useful. The paper does not provide a universal construction algorithm or prove that the attempted constructions are mathematically appropriate. Inference: VL should evaluate construction validity and downstream usefulness separately, rather than counting a syntactic auxiliary object as progress.
+Evidence and limits. The authors interpret the low success rate as a gap between introducing auxiliary objects and using them to advance a proof.
 
 ## what is proved, measured, and trusted
 
@@ -88,10 +88,6 @@ Appendix E (p. 19) states: “Firstly, the testing of MLLMs in this paper primar
 
 Figure 10 (p. 22), captioned as formalization, requests a complete formal proof. Inference: these inconsistencies leave the actual task prompts uncertain without checking the released implementation, which this study did not do.
 
-## what VL should reuse and threat to a product
-
-Inference: VL should reuse the two-stage interface (natural language and visual input to a normalized formal statement, then proof), modality-leakage prevention, proof-environment pass@n, explicit hidden-assumption tracking, and error categories tied to repair actions. VL should not redo the benchmark’s basic finding that multimodal formalization is easier than end-to-end proving; it should test agent-written Verus code with independent specifications and exact compiler/verifier logs. Inference: the low end-to-end rates motivate testing proof-generation claims directly. This paper does not evaluate Verus or VL, so it does not establish either product’s capabilities or competitive risk.
-
 ## techniques for the catalog
 
 - multimodal benchmark construction — pair images and text with reviewed Lean 4, Coq, and Isabelle formalizations across difficulty levels
@@ -101,4 +97,3 @@ Inference: VL should reuse the two-stage interface (natural language and visual 
 - pass@n proof checking — accept an item only when one of n generated candidates is verified
 - stage-specific error analysis — classify failures into assumptions, formalization, imports, and proof steps
 - auxiliary-construction evaluation — measure construction attempts and proof success conditional on attempting
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This large performance gap between Task 1 and Task 2 is consistent across all pass@n settings, demonstrating that models have shown a certain ability in converting natural language descriptions and geometric figures into Coq formal statements (Task 2 pass@n is relatively high), but still face significant challenges in the subsequent complex logical reasoning and constructing formal proofs."): read the full paper text from first line to last and inspected PDF Figures 2 and 8–10; checked quotations, table values, task definitions, technique steps, page references, the author/year tag, and the link against the title page and arXiv identifier; corrected page references, distinguished table values from inconsistent prose and figures, recorded prompt-caption conflicts, and marked proposed procedures and Verus/VL conclusions as inferences; did not inspect released code or data, rerun experiments, validate the formalizations, or test Verus sketches.

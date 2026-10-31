@@ -40,12 +40,6 @@ The lookahead ablation separates the automaton from the LM. On VirtualHome actio
 
 The real XArm7 evaluation repeats each of three tasks 20 times. Planning succeeds 20/20 for all three Meta-Ctrl tasks; downstream perception/execution are 17/20 and 16/20, 19/20 and 18/20, and 20/20 and 17/20 respectively (Table 6, p. 9). The planning guarantee is therefore separate from perception and grasp success.
 
-## what is trusted, what fails, and VL threat
-
-The guarantee is relative to Dγ, Dβ, τ, canonical tokenization, HMM implementation, parser, simulator/evaluator, and the robot’s estimated symbolic state. The limitations state that real-robot guarantees concern the believed state, not the true state, and that an incomplete specification may over-constrain; the fixed BEHAVIOR affordance prior rejects 17% of gold plans (Section 5, p. 10). Inference: the threat to agent-written verified Rust is high for specification gaps: a generated program can satisfy every encoded `requires`/`ensures` while omitting a safety condition, just as Meta-Ctrl can guarantee an incomplete DFA. Inference: VL should report both verifier success and specification coverage, and should preserve a machine-readable trace of every state transition.
-
-Meta-Ctrl’s contribution is the exact granularity split and by-construction filtering. Grammar-constrained decoding and classical planning already exist; the paper explicitly compares them (Sections 1 and 4.3, pp. 1, 8). VL should not redo a generic token DFA. The transferable lesson is to compile domain semantics into a small abstract state machine and use a verifier or checker to enforce it before execution.
-
 ## techniques for the catalog
 
 - HMM-DFA lookahead — reweight LM tokens by constrained-completion probability computed with a backward product-state DP
@@ -53,5 +47,3 @@ Meta-Ctrl’s contribution is the exact granularity split and by-construction fi
 - by-construction precondition DFA — track dynamic resources, object state, and goal progress while decoding
 - canonical parser alignment — require a deterministic token-to-action bijection so the joint constraint factors exactly
 - specification-relative guarantee — treat every guarantee as conditional on the completeness and correctness of the encoded automata
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

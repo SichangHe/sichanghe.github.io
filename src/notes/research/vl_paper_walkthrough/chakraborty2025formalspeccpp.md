@@ -38,8 +38,6 @@ The testing result is: “In our initial run, 62 programs passed all tests, whil
 
 Section IV separately reports “all converted programs successfully compiling on the first attempt, achieving a 100% success rate” (PDF p. 4), and Table I lists 105 programs. The paper does not explain how this first-attempt compilation result relates to the initial run's compilation errors. It does not say that the 105/105 result followed refinement or give a final all-tests-passing count.
 
-Inference: in VL, run Verus verification alongside concrete tests. Tests cover their inputs; proofs depend on the stated contracts. Check boundary inputs and Rust-specific behavior when adapting this method.
-
 ## evidence, cost, and trust boundary
 
 The dataset has 105 programs with both preconditions and postconditions (section III.A, PDF p. 3). Section IV reports program conversion cost of $2.07, averaging $0.02 per file, and approximately 27 minutes. Test generation cost an additional $1.31 and took around 15 minutes (PDF p. 4). The reported code sizes are: “Dafny files averaged 17.3 lines of code, while the converted C++ code showed a 91.2% increase in size, with an average of 33.1 lines per file” (section IV, PDF p. 4). Table I reports 105 processed files and 105 first-attempt compilations (100%) (PDF p. 4).
@@ -47,8 +45,6 @@ The dataset has 105 programs with both preconditions and postconditions (section
 Manual checking was partial: one author “manually reviewed and refined a subset of translated programs and test cases” (section III.D, PDF p. 3). The paper does not give that subset's size or a formal proof of source-to-target semantic equivalence.
 
 Inference: the reliability of the resulting corpus depends on source specifications, LLM translations, compiler and assertion behavior, test expected values, and manual review. Neither compilation nor passing tests establishes that every translated contract retains its source meaning.
-
-Inference: FormalSpecCpp offers VeruLaw a method for seeding a contract corpus and checking translations. Its reported evidence does not establish verified Rust correctness. Reusable parts are verified-source selection, explicit type and assertion mapping, translated tests, and manual semantic review. Translating existing verified specifications addresses a different problem from inferring new ones.
 
 ## techniques for the catalog
 
@@ -58,5 +54,3 @@ Inference: FormalSpecCpp offers VeruLaw a method for seeding a contract corpus a
 - test translation — translate source test inputs, expected outputs, and assertions into the target language
 - execution feedback and repair — use failures to identify problems in translations and tests for manual correction
 - manual semantic review — inspect a subset of successful programs for logically incorrect specifications
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Some programs were compiled successfully but contained incorrect specifications or logical inconsistencies that required manual review."): checked the entire paper text, PDF Figure 2, quotations, numbers, section and PDF page references, and technique steps; corrected page references and a quotation, removed an unsupported refinement chronology and rerun step, distinguished the compilation and test results, and marked recommendations as inferences; did not inspect the dataset repository, rerun the experiments, or prove translation equivalence.

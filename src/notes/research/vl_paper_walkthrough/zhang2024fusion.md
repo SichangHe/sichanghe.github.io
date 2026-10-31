@@ -23,7 +23,7 @@ The meeting example declares Boolean availability variables for four days, adds 
 
 Verus form (Inference: the paper uses Python Z3, not Verus): represent the request as a Verus `spec fn` over mathematical values and prove the selected result with `ensures`; use `assert` or a proof function to discharge finite Boolean cases. Keep the LLM outside the trusted proof: it may propose the specification and proof text, while Verus checks the final Rust. Inference: Verus does not provide Z3's Python API, so the exact `Solver` and `model` calls do not carry over.
 
-Evidence and limits: the paper provides the complete scheduling example but no success-rate denominator, runtime, or controlled experiment. The shown omission demonstrates that solver execution alone does not prove that the natural-language statement was translated faithfully. Inference: a VL product should treat the solver as checking the generated formula, not as certifying the translation from user intent.
+Evidence and limits: the paper provides the complete scheduling example but no success-rate denominator, runtime, or controlled experiment. The shown omission demonstrates that solver execution alone does not prove that the natural-language statement was translated faithfully.
 
 Quote: “The strategy helps check the consistency between the natural language description and the SMT code produced by the LLMs.” (Section 3.1.1, p. 5.)
 
@@ -43,7 +43,7 @@ Steps from Sections 3.2.1–3.2.5 (pp. 7–9):
 
 Verus form (Inference): encode each generated fact as a ghost/spec value and prove metamorphic relations with `proof fn`s and `ensures`; use executable Rust only to gather model responses and parse them. A Verus proof can check that a mutation preserves or negates a relation, but NLP parsing and semantic similarity remain trusted external code unless separately specified and verified.
 
-Evidence and limits: this is a proposed framework with no reported benchmark size, model count, accuracy, or denominator. Inference: it assumes the source database is correct and that the graph parser captures the model's reasoning. The paper describes “significant shortcomings in automatically and effectively testing Fact-conflicting hallucinations” for methods using string matching, manual validation or another LLM (Section 3.2, p. 7). Inference: a VL deployment should preserve provenance for every oracle triple.
+Evidence and limits: this is a proposed framework with no reported benchmark size, model count, accuracy, or denominator.
 
 Quote: “Such a testing framework leverages factual knowledge reasoning combined with metamorphic testing principles to ensure a comprehensive and robust FCH evaluation of LLM outputs.” (Section 3.2, p. 7.)
 
@@ -72,7 +72,7 @@ Steps from Section 4.1 (p. 11); the paper does not say a prover is run inside th
 
 Verus form (Inference): ask the LLM for a Verus proof skeleton, then use `assert` and arithmetic lemmas/proof functions for each algebraic step; finish with Verus checking the function's `ensures`. The CAS and LLM are proposal tools, not trusted proof components. Inference: Isabelle syntax and `sledgehammer` lines in the paper cannot be copied into Verus.
 
-Evidence and limits: the paper offers only the induction example and no aggregate success rate. Inference: the example shows why plausible intermediate algebra must be checked by a prover. Inference: VL should preserve each generated intermediate equality as a separately checkable assertion rather than accepting a prose derivation.
+Evidence and limits: the paper offers only the induction example and no aggregate success rate.
 
 Quote: “To address this, we propose the use of autoformalization agents equipped with enhanced capabilities for symbolic reasoning.” (Section 4.1, p. 11.)
 
@@ -84,7 +84,7 @@ Steps (Section 4.2.1, p. 12): collect each lemma's definition and context; ask a
 
 Verus form (Inference): index Verus `spec fn` and proof-function statements and their `requires`/`ensures` text; retrieve candidates for a target `assert` or `ensures`; call selected proof functions in the generated Rust; let Verus check the calls and resulting proof. Inference: embedding retrieval is outside Verus and must be treated as heuristic.
 
-Evidence and limits: the paper reports no new experiment for its LLM proposal. Inference: semantic descriptions can themselves hallucinate, and a relevant lemma may have little lexical overlap with a goal. Inference: VL needs verifier feedback or a mechanically checked candidate list before treating retrieval as successful.
+Evidence and limits: the paper reports no new experiment for its LLM proposal.
 
 Quote: “This approach effectively simulates the expert’s intuition across a vast number of possibilities, fully leveraging semantics information to guide the premise selection process.” (Section 4.2.1, p. 12.)
 
@@ -108,7 +108,7 @@ Steps exactly listed in the paper: “Step 1. Natural Language Understanding”;
 
 Verus form (Inference): translate the theorem into a Rust signature with `requires`/`ensures`, use executable or ghost witnesses as appropriate, and have Verus check each proof step. Coq's `Theorem`, `Proof`, `Qed`, `destruct`, and `ring` syntax does not carry over.
 
-Evidence and limits: only one elementary example is shown; no experiment or denominator is reported. Inference: the explicit user consistency check leaves the natural-language/formalization link trusted. Inference: VL should display that translation for human review and then rely on Verus for the formal result.
+Evidence and limits: only one elementary example is shown; no experiment or denominator is reported.
 
 Quote: “The user needs to check the correctness of the coq code to guarantee consistency between the natural language and coq code.” (Section 4.2.3, p. 14.)
 
@@ -138,13 +138,7 @@ Quote: “If multiple failures occur, our method will backtrack to the last refi
 
 ## proved, measured and trusted
 
-The paper proves no new theorem about an implementation and reports no aggregate evaluation for its roadmap. It gives Z3, Coq and PAT examples, a failed Isabelle formalization, and the refinement relation definition. Inference: the trusted elements include the LLM-to-formal translation, prompts, critic judgments, mutation generation, semantic graph parser, temporal-logic property choice, and (in the proposed refinement tool) the refinement-law and AST machinery. Solver, theorem-prover and model-checker outputs establish results only for the formal artifacts they actually check. Inference: a VL system should make those boundaries explicit and retain raw verifier logs, counterexamples and the natural-language/formal pair.
-
-## what VL should not redo and product threat
-
-Proposed or illustrated in this paper without aggregate evaluation: the solver–LLM debate/test/repair loop; fact-triple metamorphic testing; runtime monitoring as an intermediate assurance layer; outline-plus-CAS autoformalization; semantic premise selection; intention-aware proof agents; a four-stage natural-language-to-prover workflow; planning/completion/feedback model-checking agents; and LLM-guided refinement with backtracking. Inference: VL should test these design patterns with Verus.
-
-Inference: threat to a product that emits agent-written verified Rust is moderate. The paper's patterns can automate specification and proof search around VL, but every example leaves translation, parsing or prompt behavior outside the formal guarantee, and the roadmap reports no end-to-end Rust evaluation. Transferable ideas include requiring verifier acceptance during iteration, explicit counterexample feedback, semantic retrieval, and preserving a human check at the natural-language/formal boundary.
+The paper proves no new theorem about an implementation and reports no aggregate evaluation for its roadmap. It gives Z3, Coq and PAT examples, a failed Isabelle formalization, and the refinement relation definition.
 
 ## techniques for the catalog
 
@@ -156,4 +150,3 @@ Inference: threat to a product that emits agent-written verified Rust is moderat
 - intention-aware proof agents — pair each proof step with an intention, retrieve definitions dynamically, and repair from verifier errors
 - model-checking agent loop — plan from natural language, complete tool code, verify, and refine from counterexample feedback
 - refinement-law backtracking — generate code through proof-preserving laws, discharge provisos, and retry from the last failed refinement
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To address these limitations, we propose a shift toward LLM agents that more closely emulate human experts in their proof strategies."): checked all quotations, numbers, section/page references and technique descriptions against the full text, and inspected Figures 1, 3 and 4 in the PDF; corrected three quotations, the paper link, certification scope, inferred workflow ordering and unsupported catalog steps; did not execute the examples, validate cited studies or test the proposed Verus adaptations.

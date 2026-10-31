@@ -44,11 +44,7 @@ Verus form. Inference: represent shares, masks, and probe influence as ghost seq
 
 The paper composes MiniAddRepNoise and Refresh across l variables and r repetitions using the sequence and for-loop rules. Theorem VII.6 and Corollary VII.7 establish t-SNIU for AddRepNoiseER (PDF p. 10). For SecMult, it tracks product variables, random masks Q/R/S, and a loop invariant; an `Add` operation propagates the input index sets through each random pair. Theorem VII.8 and Corollary VII.9 establish t-SNI (PDF pp. 10–11). The proof partitions random variables into KQ, KS\KQ, KC, and the remainder, then uses uniform-bijection and transfer-ownership rules to simulate probes.
 
-Evidence and limits. These are symbolic proofs for arbitrary probe sets, not exhaustive tests. The conclusion says: “Our current results focus on the information-theoretic setting of probing security.” (Section IX, PDF p. 11). Computational security, an interactive prover implementation, and broader cryptographic applications are future work. Inference: agent-written verified Rust handling cryptographic shares faces high threat from a wrong leakage model; VL should use symbolic probe contracts as a specification layer and keep implementation, compiler, hardware, and side-channel assumptions explicit.
-
-## what is proved, measured, and trusted
-
-The paper proves Lilac semantic rules and four algorithmic noninterference theorems; it reports no benchmark denominator or runtime study. Trusted elements are Lilac's probability-space semantics, disintegration lemmas, random-source assumptions, arithmetic/group axioms, and faithful exposure of all internal variables. Existing masking and simulator-based verification already establish the underlying security notions, so VL should not claim novelty for generic noninterference; the transferable contribution is the conditional-independence interface and compositional proof rules.
+Evidence and limits. These are symbolic proofs for arbitrary probe sets, not exhaustive tests. The conclusion says: “Our current results focus on the information-theoretic setting of probing security.” (Section IX, PDF p. 11). Computational security, an interactive prover implementation, and broader cryptographic applications are future work.
 
 ## techniques for the catalog
 
@@ -57,4 +53,3 @@ The paper proves Lilac semantic rules and four algorithmic noninterference theor
 - sequence and loop composability — propagate noninterference contracts through calls and index-dependent loops
 - symbolic probe invariants — quantify arbitrary probes and track ownership, uniform masks, and affine share equations
 - compositional masked primitives — combine refresh, noise addition, and multiplication proofs with uniform-bijection rules
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

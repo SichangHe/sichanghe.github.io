@@ -8,8 +8,6 @@ RocqSmith evaluates automatic optimization methods for an agent that generates R
 
 The benchmark is 300 IMM theorems, split by the length of the human reference proof. The test set contains 50 theorems from each difficulty group, and 60 separate theorems train the optimizers (Section 3, PDF p. 3). Every test run uses GPT-4.1 and at most 20 tool calls; success means the Rocq environment accepts a proof (Section 3). The DSPy and Koog implementations use slightly different training subsets, with DSPy mildly skewed toward easier theorems, so cross-framework absolute comparisons require caution (Section 3).
 
-Inference: for VeruLaw, the useful lesson is a controlled way to optimize prompts and proof-agent context against a real verifier. Rocq tactics and Verus Rust proofs differ, so the proposed Verus forms are inferences.
-
 ## baseline: minimal proof-agent loop
 
 What it is. The authors remove RocqStar's hand-built planning, reflection, critique, retrieval-based replanning, and auxiliary controls. The baseline repeatedly observes the current proof state, reasons lightly, chooses a tool call, and executes it until termination. They describe the core as “a single-loop agent topology, where a minimal control structure repeatedly observes the current proof state, performs lightweight reasoning, selects a tool call, and executes it until termination.” (Section 2, PDF p. 2.)
@@ -99,15 +97,9 @@ Limits and assumptions. Ten runs and one benchmark do not establish the general 
 
 Rocq's checker decides whether a proposed proof is accepted. The paper measures theorem success percentages by proof-length group, total success, optimizer wall-clock time, and the effect of a fixed 20-call test budget. It does not prove the optimizer's generated prompts, memories, or control code correct. It also does not compare all methods under identical training subsets: DSPy and Koog use slightly different 60-theorem subsets, and DSPy is mildly easier (Section 3).
 
-Inference: in VeruLaw, the corresponding trusted boundary is the Verus verifier plus the specifications, imported contracts, solver, compiler, and environment assumptions. Automatic prompt or workflow optimization can improve the rate of verified candidates but cannot validate that the specification matches product intent.
-
 ## threat to a product of agent-written verified Rust
 
 Inference: the main product threat is false confidence from benchmark gains. Even the best automatic optimizer reaches 43% in the tested DSPy setting, while the hand-written agent reaches 53%; most proposed changes leave a large fraction of theorems unsolved. Context methods can also inject misleading reflections, and ADAS can create brittle control logic. A Verus product should measure verified pass rate on held-out specifications, repair cost, solver time, and failures after dependency changes rather than optimize prompt scores alone.
-
-## what VL should not redo
-
-Inference: VL should not assume that expensive prompt evolution or agent-topology search will replace a small curated set of successful Verus traces. This paper already finds few-shot bootstrapping the most consistent low-cost improvement and shows that more complex optimizers can regress. VL should reuse that baseline pattern, then test any additional optimizer against a fixed verifier-gated benchmark.
 
 ## techniques for the catalog
 
@@ -118,5 +110,3 @@ Inference: VL should not assume that expensive prompt evolution or agent-topolog
 - top-k memory retrieval — inject only the most similar contextual memories instead of the full bank
 - executable topology search — generate and evaluate alternative agent control-flow programs
 - fixed-budget optimizer evaluation — compare success by proof difficulty under a common tool-call limit
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

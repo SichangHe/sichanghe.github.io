@@ -72,13 +72,9 @@ The RCS safety property was manually strengthened to an invariant; verification 
 
 Inference: applying the result requires trusting Dafny and its backend, the configuration assumptions, and the connection between the modeled semantics and the deployed system. Generated contracts are checked against their method implementations; that does not establish equivalence with deployed C code. The authors list establishing “the functional equivalence between the models used for verification and the actual (automatically generated) C implementations deployed in production” as future work (Sec. 7, p. 15). The paper says finding a suitable invariant reduces to an undecidable parameterized-safety problem (Sec. 4.2, p. 10). Quantifier grounding relies on its cardinality and field-correspondence assumptions.
 
-Inference: contract generation plus a global invariant proof over scheduler phases is a possible design to transfer to verified Rust. Verus can express local contracts and inductive invariants, but the paper does not establish that Verus can automatically handle quantified instance sets or generated lambda effects. A VL product should retain configuration bounds, generated-contract provenance, and invariant assumptions as reviewable artifacts.
-
 ## techniques for the catalog
 - compositional SRA contracts: verify init, phase execution, and tick locally, then preserve a global invariant
 - stable guard abstraction: replace a changing global guard with an established and stable per-instance predicate
 - symbolic contract generation: compute transition effects as pre-state expressions and guarded disjunctions
 - quantifier grounding: rewrite bounded set quantifiers into finite formulas and prove specification equivalence
 - scheduler-phase induction: prove initialization, self-loop interleavings, phase edges, final property, and reset separately
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The automated summarization of methods into candidate contracts is effective in reducing the manual effort required for verification, and requires reasonable computational effort."): checked all quotations, numbers, references, and technique steps against the full text, including appendices; corrected the SRA definition, self-loop preservation formula, RPS table attribution, RCS timing interpretation, grounding scope, and verification limits; recorded the paper’s priority discrepancy; did not rerun experiments, inspect toolchain code, or validate the proposed Verus adaptations.

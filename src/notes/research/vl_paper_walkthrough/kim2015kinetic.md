@@ -41,13 +41,9 @@ The user study had 667 assignment attempts and 631 successful completions (95%);
 
 The verified object is the generated FSM's logical transition behavior. Inference: the deployment trust boundary includes the Kinetic parser/compiler, NuSMV, Pyretic runtime, OpenFlow switches, event-driver correctness, and the correspondence between model and deployed network. The introduction describes data-plane snapshot verification as complementary (p. 2). The conclusion states, “Kinetic needs the path guarantees that consistent updates [28] provide to guarantee that the properties it verifies are preserved during state transitions” (section 7, p. 13). Inference: agent-written verified Rust faces moderate risk here: finite transition proofs are tractable, but event delivery, compiler correctness, temporal liveness assumptions, and switch semantics can invalidate a proof-to-deployment link.
 
-## what VL should reuse
-Inference: reuse FSM state separation, LPEC partitioning, compositional policy structure, and CTL-like specifications. Inference: use existing snapshot checkers for static data-plane invariants. A Verus implementation should prove a small reference transition system and compiler refinement, then treat OpenFlow/event integration as explicit trusted boundaries.
-
 ## techniques for the catalog
 - FSM dynamic policy: encode event-driven forwarding behavior as typed variables, transitions, and state policies
 - LPEC partitioning: map packet groups to independent FSM instances to avoid exponential global state
 - FSM composition: combine independent policies sequentially or in parallel and verify the combined model
 - runtime compilation optimizations: expand LPEC FSMs on their first transition, combine disjoint rules directly, and memoize compiled policies
 - CTL model checking: compile FSMs to NuSMV and check temporal assertions with counterexample traces
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "For example, given ten tasks, each with two states, a monolithic program would require 1,024 states, as opposed to just 20."): checked the entire paper and study, quotations, numbers, section and page references, technique steps, and the publisher link on the paper’s cover; corrected FSM construction steps, LPEC recompilation scope, the firewall page reference, composition and temporal-proof inferences, line-count attribution, event-workload wording, and the consistent-update reference; did not inspect source code, reproduce experiments, or validate the proposed Verus adaptations.

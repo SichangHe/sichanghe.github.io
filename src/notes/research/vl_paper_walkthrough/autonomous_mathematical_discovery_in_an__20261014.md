@@ -4,7 +4,7 @@ Tag: `chung2026autonomous`, [paper](https://arxiv.org/abs/2608.23691)
 
 ## scope and result
 
-The Station is an open-world environment in which six agents (two GPT-5.5, two Claude Opus 4.8, and two Gemini 3.1 Pro) choose rooms and actions, run experiments, communicate, and publish papers. The paper evaluates 12 AlphaEvolve construction problems plus Book Ramsey numbers and the Jacobian Conjecture. The selected theoretical findings are subsequently verified in Lean with assistance from GPT-5.5 outside the Station. Inference: evaluating candidates and separately checking theoretical claims makes this method relevant to VeruLaw. The paper states: “All presented discoveries are supported by exact constructions or proofs formally verified in Lean.” (Abstract, p.1; §6, p.15)
+The Station is an open-world environment in which six agents (two GPT-5.5, two Claude Opus 4.8, and two Gemini 3.1 Pro) choose rooms and actions, run experiments, communicate, and publish papers. The paper evaluates 12 AlphaEvolve construction problems plus Book Ramsey numbers and the Jacobian Conjecture. The selected theoretical findings are subsequently verified in Lean with assistance from GPT-5.5 outside the Station.
 
 The standard run gives each problem only a task statement, evaluator, and simple baseline; web access is disabled unless specified; most runs last about 1,000–2,000 ticks (roughly one to two weeks); and standard instances have six research agents. (§3.1, p.5) The Archive Room stores reviewed papers, and later agents can read and cite them. A reviewer scores rigor, novelty, and significance from one to ten; scores of six or more are accepted. (Appendix A.3.2, p.40) Inference: this is a concrete pattern for making agent research cumulative: persist intermediate theorems and failed approaches as searchable artifacts, then use review as a prerequisite check before publication in the archive.
 
@@ -39,7 +39,7 @@ fn evaluate(c: &Construction) -> (ok: bool)
 
 Inference: a Verus version would need explicit predicates and supporting lemmas; the paper's Lean verification does not establish correctness of a Verus implementation. The snippets here are schematic and untested.
 
-Evidence and limits. In the matched kissing-number comparison, three Station seeds reached 604 points within 8,000 minutes of cumulative evaluator time, while none of 12 baseline runs (three seeds for each of four configurations: OpenEvolve with three models and multiagent v2) produced a valid 594-point configuration. (§4.5, pp.11–12; Figure 6, p.12) Inference: this is evidence for this task and budget, not a general superiority claim. The paper also says Station underperformed AlphaEvolve on peak and flat autoconvolution, where irregular objects reward persistent large-scale optimization. (§3.2, p.6) Inference: the trusted boundary includes the evaluator implementation, coding assistant, Lean kernel and libraries, and the correctness of the task predicate; a passing evaluator does not prove that the predicate captures the product requirement. Inference: for VL, an unsound or incomplete evaluator can certify the wrong Rust behavior even when Verus proves the evaluator contract.
+Evidence and limits. In the matched kissing-number comparison, three Station seeds reached 604 points within 8,000 minutes of cumulative evaluator time, while none of 12 baseline runs (three seeds for each of four configurations: OpenEvolve with three models and multiagent v2) produced a valid 594-point configuration. (§4.5, pp.11–12; Figure 6, p.12)
 
 ## technique 2: reviewed persistent proof literature
 
@@ -93,17 +93,11 @@ When to use it. Inference: use these controls when agents repeatedly optimize th
 
 Verus form. Inference: model each phase as an explicit state machine whose transition contract preserves a phase invariant; use `requires` and `ensures` on transition functions and `invariant` clauses on loops. The reflection prompts and branch-selection policy remain executable orchestration code, while Verus can verify that no transition skips required certificate checks.
 
-Evidence and limits. The paper does not provide a separate causal ablation for each mechanism. It reports that 13/28 selected findings emerged after tick 1,000 and that the Book Ramsey conference-graph family appeared at tick 3,727. (§4.2, p.9; Appendix B.2, p.45) Inference: late findings show that long-running exploration can matter, but they do not measure which mechanism caused each discovery. Inference: for VL, a recovery protocol may improve search completeness but increases cost and state-management complexity; it cannot replace proof obligations.
+Evidence and limits. The paper does not provide a separate causal ablation for each mechanism. It reports that 13/28 selected findings emerged after tick 1,000 and that the Book Ramsey conference-graph family appeared at tick 3,727. (§4.2, p.9; Appendix B.2, p.45)
 
 ## what is proved, measured, and trusted
 
 The paper proves or reports exact constructions, theorem proofs, evaluator scores, and Lean verification for selected theoretical findings. It measures novelty counts, collaboration counts, paper/citation counts, acceptance and rejection, baseline compute time, and reproducibility. Inference: the reported checks do not establish that all generated papers are correct, that all 125 papers are useful, that reviewer scores predict theorem validity, or that Lean verification covers the entire Station implementation.
-
-Inference: trusted components include the task statement, evaluator code, coding assistant, model implementations, Station orchestration, reviewer and surveyor prompts, Lean kernel/libraries, and the human novelty review. Inference: a product using agent-written verified Rust inherits analogous trust in its specification, Verus toolchain, solver assumptions, Rust compiler, external libraries, and runtime environment. Inference: the paper's evidence is therefore a threat signal for VL's generation pipeline: agents can discover and explain proof-relevant structure, but unchecked evaluators, reviewer acceptance, and translation from mathematical proof to Rust contracts remain failure points.
-
-## what VL should reuse and what it should not redo
-
-Inference: VL should reuse exact executable evaluators, persistent reviewed artifacts, theorem-level parameter reduction, near-miss analysis, diversity across model families, and explicit recovery from stagnation. Inference: VL should not redo the paper's demonstration that a reviewed archive can accumulate citations, or its 604-point benchmark, unless it needs a direct Rust/Verus comparison. Inference: the missing experiment for VL is an end-to-end benchmark in which agents generate Rust, Verus contracts, proof lemmas, and executable tests, with denominator-separated results for accepted proofs, evaluator failures, repair time, and specification defects.
 
 ## techniques for the catalog
 
@@ -111,4 +105,3 @@ Inference: VL should reuse exact executable evaluators, persistent reviewed arti
 - reviewed persistent proof literature — store agent papers behind a review threshold so later agents can cite reusable theorems and obstructions
 - theory-guided search and certification — turn numerical near-misses into parameterized mathematical families and prove their invariants
 - exploration and stagnation recovery — use scheduled reflection, diverse strategy lanes, and multistart branches to escape local search
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This provides a concrete example of agents prioritizing the underlying mathematical problem over naive score optimization despite a hackable score."): checked all paper text, quotations, numerical claims, section and page references, and technique steps; corrected the paper link, references, Kakeya field notation, first-submission acceptance count, baseline-run count, ablation timing, and scope of Lean verification; removed misleading schematic proof examples and marked recommendations as Inference; did not independently verify mathematical proofs, external literature, released code, or the remaining schematic Verus snippets.

@@ -36,11 +36,7 @@ Inference: These are benchmark success rates, not soundness rates. Soundness res
 
 ## what is proved and what remains trusted
 
-The method checks establishment, preservation, and provability for each accepted candidate, but it does not prove that the LLM's diagnosis is correct; the verifier decides acceptance. The benchmark measures solved tasks and time, not generated-proof maintainability. Trusted components include the parser/LCG builder, WP implementation, SMT verifier, and translation of candidate predicates. Inference: VL should preserve all accepted proof obligations in generated Rust so that the final Verus check, rather than an LLM judgment, remains the trust boundary.
-
-## what VL should reuse
-
-Inference: Reuse dependency-labeled obligations and delayed filtering to avoid repeatedly asking for predicates that cannot satisfy a known predecessor. Existing single-loop invariant generators should not be rerun independently on every inner loop; InvWeaver's contribution is the explicit propagation of context.
+The method checks establishment, preservation, and provability for each accepted candidate, but it does not prove that the LLM's diagnosis is correct; the verifier decides acceptance. The benchmark measures solved tasks and time, not generated-proof maintainability. Trusted components include the parser/LCG builder, WP implementation, SMT verifier, and translation of candidate predicates.
 
 ## techniques for the catalog
 
@@ -48,4 +44,3 @@ Inference: Reuse dependency-labeled obligations and delayed filtering to avoid r
 - obligation-guided inference: prompt each loop with predecessor and successor proof obligations
 - WP failure diagnosis: reconstruct failed targets and classify repair scope and direction
 - dependency-propagating refinement: repair failed and dependent invariants, filter doomed candidates, and iterate validation
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

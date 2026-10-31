@@ -32,14 +32,10 @@ Segment seL4 theory files into chunks using blank lines, build a BM25 retrieval 
 
 GPT-4 ACC#1 changes from 41.7% to 47.5% on P1, 7.7% to 14.4% on P2, 0% to 1.7% on P3, and remains 10.5% on D (Table 4, PDF p.8).
 
-Inference: VL could retrieve similar Verus specifications and proofs, preserving the target's type and invariant context. Selene evaluates BM25 retrieval, not normalized-signature retrieval or Verus-specific retrieval methods.
-
 ## dependency-fact augmentation
 Extract facts applied by the ground-truth proof and locate their definitions, functions, or lemmas in the chunk library. Omit chunks outside the dependency sessions. Provide the first five lines from the origin of each identified fact (Section 5.1, PDF pp.7–8). Appendix D encloses dependency chunks in `<dep>` tags (PDF p.12).
 
 GPT-4 ACC#1 rises from 41.7% to 52.5% on P1, from 7.7% to 14.4% on P2, and from 0% to 1.7% on P3. The authors skip D because fact extraction is complex there. P1 undefined errors fall from 38/81 failures (47%) to 16/66 (24%) (Tables 4–5, PDF p.8). The authors caution that origins cannot always be located precisely and describe the result as “a potential upper limit of the subject LLM’s capability in this context.” (Section 5.1, PDF p.8). The 41.5% baseline in Section 5.2's prose disagrees with Table 4's 41.7%; the figures here follow the table.
-
-Inference: VL could retrieve prerequisite helper declarations from verified project code. Selene's dependency experiment supplies facts selected using the known proof, so its results do not measure an automatic dependency selector.
 
 ## fixing augmentation and ablation
 If the first proof fails, provide the error message and ask the model to try again in a second dialogue round. Skip the second round after an initial success. Error messages can include the error type and proof state at failure (Section 5.1, PDF p.8). This is complete-proof repair; interactive proof-state access during construction remains future work (Section 7, PDF p.9).
@@ -48,18 +44,9 @@ For fixing demonstrations, invoke the model on each of the five demonstration le
 
 GPT-4's fixing results are 53.2% P1, 9.6% P2, 0% P3, and 18.4% D. Asking it to try again without the error message gives 49.6% P1, 7.7% P2, 0% P3, and 10.5% D. Combining similar and fixing gives 61.9% P1, 20.2% P2, 1.7% P3, and 7.9% D (Tables 4 and 6, PDF p.8). Although the ablation paragraph is labeled “Similar + dependency”, its text and Table 6 describe similar plus fixing.
 
-Inference: VL could pass Verus diagnostics into a repair loop and reverify each revision. These results do not show that combining augmentations always helps: D accuracy falls below the unaugmented baseline.
-
-## limits and VL relevance
-Selene evaluates Isabelle proofs for seL4. It excludes contexts/locales and proofs over 20 lines, and its tested models have very low P3 accuracy. Section 7 identifies accurate dependency extraction, specification generation, and interactive proof-state integration as further work (PDF p.9). In particular, the paper concentrates on the proof stage rather than generating specifications.
-
-Inference: Selene provides a useful design for VL's evaluation and retrieval/repair experiments, but its percentages do not establish Verus success rates or specification correctness. A corresponding Verus experiment would need to validate its own target extraction and prerequisite handling.
-
 ## techniques for the catalog
 - lemma isolation — separate a target session from prerequisite sessions whose verification results persist
 - project-level proof benchmark — sample real-system lemmas by proof style and check generated proofs with Isabelle
 - similar-lemma retrieval — use BM25 chunks while withholding the target's ground-truth proof
 - dependency-fact augmentation — provide source excerpts for facts selected from a known proof
 - diagnostic fixing — feed prover errors into a second complete-proof generation round
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We use the first five lines from the origin of each identified fact as the augmentation."): checked the entire paper, quotations, counts, metrics, technique steps, and PDF page references; corrected page references, dependency construction, augmentation details, the evaluation-count interpretation, and unsupported Verus claims; replaced the DOI link with the paper's arXiv identifier; did not reproduce experiments or inspect implementation artifacts.

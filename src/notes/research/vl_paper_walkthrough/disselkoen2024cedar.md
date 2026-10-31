@@ -10,8 +10,6 @@ Cedar is an authorization language and Rust engine. The paper's process, verific
 
 The authors report four bugs found while proving Cedar's policy validator and 21 additional bugs found by DRT and PBT. Inference: the division addresses two risks separately, a model can be wrong and production Rust can diverge from a correct model. The deployed Cedar engine is part of the application's trusted computing base, so authorization decisions are security-critical (section 1, PDF p. 1).
 
-Inference: For VL, VGD is a practical fallback when proving all production Rust directly is expensive. It gives Verus a model-and-implementation cross-check, but a model proof does not prove that the model captures the intended product semantics.
-
 ## technique 1: build a readable executable model and prove properties
 
 Write Lean models for evaluator, authorizer, and validator; the symbolic compiler was still being developed. Models should be human readable and as feature-complete as possible so proofs apply to the full language and the model can serve as a DRT oracle (section 3, PDF p. 3). Cedar's authorizer model is a short Lean function (not recursive; the paper describes the evaluator, validator and symbolic compiler as recursive functions): collect satisfied forbid and permit policies; allow exactly when forbids are empty and permits are nonempty; otherwise deny (section 3.1, PDF p. 3).
@@ -52,10 +50,6 @@ Inference: the model itself remains trusted for semantics, Lean's kernel and lib
 
 Inference: The threat to a product of agent-written verified Rust is moderate to high at integration boundaries. Verus can prove a function against its contract while an independently written model or parser disagrees with intended behavior. VGD makes that disagreement observable and produces minimized regression inputs, but it adds model maintenance and generator design costs. The Cedar data support this particular system and test budget; they do not establish universal bug-finding rates.
 
-## what VL should not redo
-
-Inference: Cedar's Lean model plus DRT/PBT process is a usable blueprint, but VL should not claim that random testing proves model equivalence, that six hours is an optimal fuzzing duration, or that the 4+21 bugs are a general expected yield. The reusable parts are the separation between model proof and implementation checking, independent input generation, property-specific generators, and retained corpus tests.
-
 ## techniques for the catalog
 
 - executable reference model: write a readable formal model and prove authorization, safety, slicing, and termination properties about it
@@ -65,4 +59,3 @@ Inference: Cedar's Lean model plus DRT/PBT process is a usable blueprint, but VL
 - property-based testing: test unmodeled parsers and unproved production properties with generated structured inputs or random bytes
 - corpus regression retention: save minimized fuzz inputs and run them in continuous integration
 - coverage-quality auditing: inspect input distributions and add generators when literals or syntactically valid trees hide important paths
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The type-directed generator produces more complicated inputs, like set operations, than the non type-directed version, leading to deeper coverage of core logic and faster bug discovery."): read the whole paper text and viewed Table 2 in the PDF; checked both quotations, all numbers (Table 1 totals, Table 2 bug counts, 35.5%, 9.7%, 4096 CPU units, 8GB, 6 hours, 3 minutes, 6 and 10 microseconds, 4 and 21 bugs), section and page references, and the technique steps; changed one quotation ("obtain" for "have"), the authorizer being called recursive, the Table 2 bug count for the two ABAC generators (one merged cell), the Figure 2 diagnostics claim, the 35.5% context (added 9.7%), the "malformed conditions" wording for the ill-typed-condition generator, the six-hour rationale wording, a page reference (forbid-trumps-permit theorem is on PDF p. 4), and marked unsupported conclusions as Inference; did not check the Verus-related inferences beyond marking them, the extended-version appendix [13], or the other references.

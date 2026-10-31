@@ -77,8 +77,6 @@ Inference: use verifier pass/fail as a hard metric, but retain proof-obligation 
 
 ## what is proved, trusted, and left open
 
-The benchmark measures agreement with manually authored reference predicates on finite tests, not mathematical equivalence. The authors warn that manually prepared conditions or test cases may be wrong, and that ten samples cannot remove nondeterminism (threats to validity, section 8, pp. 17–18). The work already establishes a useful guardrail VL should not redo: combine manually designed negative tests with generated mutation tests before accepting an agent contract.
-
 Inference: threat to agent-written verified Rust is high for specification generation. A Verus proof establishes the written predicate, while this study shows language descriptions routinely yield near-correct but incomplete predicates; negative tests and independent reference contracts are therefore required. The paper does not evaluate Rust, Verus, solver proofs, or environmental assumptions, so transfer is an inference rather than a measured result.
 
 ## techniques for the catalog
@@ -86,5 +84,3 @@ Inference: threat to agent-written verified Rust is high for specification gener
 - two-stage contract prompting: extract an English condition, then emit a fixed-signature Boolean function from prose and examples
 - mutation-guided negative tests: mutate the reference implementation so wrong outputs become postcondition counterexamples
 - graded contract metrics: report full-test acceptance, test fraction, execution errors, and FP/FN rates by task difficulty
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

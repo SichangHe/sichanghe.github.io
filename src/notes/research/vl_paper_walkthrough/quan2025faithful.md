@@ -51,12 +51,9 @@ The authors warn that incorrect quantifiers can still permit a formal proof (Sec
 
 Inference: a successful proof establishes entailment for the generated formalization; it does not establish the natural-language-to-logic correspondence. Failure to prove `False` likewise does not certify consistency. The experiments support NLI explanation refinement with Isabelle/HOL, not a measured result about Rust or ownership verification.
 
-Inference: relevance to VeruLaw is a design analogy: translate intent into a specification, run Verus, and use failed obligations to propose missing lemmas or invariants. A transfer would need to preserve the intended specification during repair and pass Verus verification. The paper supplies no measurement of this transfer or competitive threat.
-
 ## techniques for the catalog
 
 - syntax-guided autoformalisation: parse predicate-argument structure before producing theorem-prover formulas
 - quantifier and consistency critiques: test scopes, syntax, and a `False` theorem before trusting entailment
 - logical-relation proof sketches: derive propositional implications and turn them into ATP-checked intermediate steps
 - detailed feedback repair: use failed proof steps and proof-strategy comments to refine explanations; prune axioms unused in a successful proof
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Future work may explore more advanced semantic checks, stronger model calibration, and selective human intervention to further enhance faithfulness and correctness."): checked all paper text, study quotations, numbers, page and section references, technique steps, and the arXiv identifier; corrected a quotation, proposition polarity, references, proof-feedback description, and unsupported trust claims, and marked Verus adaptations as inferences; did not run the implementation, reproduce experiments, or validate the proposed Verus adaptations.

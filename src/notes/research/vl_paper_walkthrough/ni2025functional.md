@@ -36,8 +36,6 @@ The Rocq development reports about 2.5k lines, including language definitions, p
 
 The result depends on the language definitions and the network and fault assumptions; endpoint projection is covered by the adequacy proof. The paper discusses extraction to executable code but does not establish parser or concrete runtime correctness, liveness, performance, or cryptographic security. The authors state: “Since we only consider safety properties, it is sufficient to consider the finite unwindings of the loop.” (§3.1, PDF p. 9). Sync's ordered communication restricts it to communication-closed programs (§2, PDF p. 3).
 
-Inference: threat to agent-written verified Rust is high for protocol architecture and medium for direct code reuse. The once-and-for-all adequacy theorem could reduce repeated proof effort, but building a faithful Async runtime model and proving endpoint refinement is substantial. VL should reuse the paper's staged semantics and fault assumptions; it should not redo informal Hoare arguments without a correspondence theorem.
-
 ## techniques for the catalog
 
 - restricted choreographic language: describe each role's pure computation and ordered communication in Sync
@@ -45,4 +43,3 @@ Inference: threat to agent-written verified Rust is high for protocol architectu
 - twin-language adequacy: compile Sync to interleaved Async and prove every Async output is in Sync's denotation
 - channel alignment and erasure: reorder traces by communication rounds, extract folds, and remove finished channels
 - unified fault network: model crashes and Byzantine sends as nondeterministic network behaviors under explicit assumptions
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Reliable means that a message sent from a correct sender to a correct receiver will eventually arrive, which is necessary for the system to make progress."): checked all paper text, study quotations, numbers, section/page references, and technique steps; replaced the placeholder DOI with the paper's arXiv identifier, corrected loop restrictions, SimpleVote prerequisites, local versus global trace ordering, crash modeling, and proof scope, and labeled adaptation advice as inference; did not check the Rocq artifact, executable runtime, external references, or proposed Verus adaptations.

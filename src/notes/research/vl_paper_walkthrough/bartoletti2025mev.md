@@ -44,8 +44,6 @@ The evidence is machine-checked Lean proofs of the definitions and theorems; the
 - AMM simplifications relative to Uniswap: no swap fees, and no deposit or withdraw transactions; extending to arbitrary mixes of deposits and swaps would “cause a substantial explosion in the number of cases” (p. 12).
 - Related Lean AMM work: [33] is “specifically targeted on AMMs, and only deals with arbitrage”, and [32] studies swap fees but does not address MEV (p. 12).
 
-Inference: the trusted assumptions are the transition semantics, adversary wealthiness, token prices, and completeness of `Move`; the paper states the last two as modeling choices. Threat to agent-written verified Rust is high when the model omits actions or rounds differently from deployment; the invariant-plus-guess structure makes omissions auditable but cannot detect an incomplete model automatically. VL could reuse the general characterization rather than redo informal optimality arguments.
-
 ## techniques for the catalog
 
 - explicit adversarial state model: represent wallets, transactions, mempool, all moves, and token-preserving transitions
@@ -53,4 +51,3 @@ Inference: the trusted assumptions are the transition semantics, adversary wealt
 - guess-function theorem: prove an invariant, witness trace, and one-step gain inequality to derive a global optimum
 - threshold strategy analysis: split mempool cases and interleave trigger transactions with honest pending transactions
 - AMM sandwich certification: move to a tight state, execute the honest swap, then rebalance and prove optimality
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The MEV.characterization theorem ensures that if there exists a sound and coherent guess function, then that function actually provides the MEV."): read all 15 pages including the appendix; checked every quotation, number, section and page reference, and the steps of each technique; changed the link (the old DOI 10.1145/3570639 is reference [24], a different paper; replaced by the arXiv page from the paper text), corrected page references (the paper has 15 pages, the old text cited pp. 16-18), the invariant and Airdrop proof description, the trace-gain definition, the Airdrop-variant citation, and marked the general-mempool CoinPusher claim as a remark; did not check the Lean repository or the Appendix A algebra line by line.

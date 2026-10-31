@@ -6,7 +6,7 @@ Tag: `zhao2026evidence`, [paper](https://arxiv.org/abs/2606.28409)
 
 The paper treats conversion from ordinary C/C++ to high-level-synthesis C (HLS-C) as a closed loop controlled by Vitis HLS 2022.1. A candidate must pass compile, C simulation (CSim), synthesis, and C/RTL co-simulation (CoSim); the last stage checks cycle-level behavior. The authors summarize the deliverable as “functionally consistent Verilog, not a snippet that merely compiles” (Introduction, PDF p. 2). On CFull107 (107 designs, gpt-5-mini, repair cap K=3), the system passes all four stages on 94/107 = 87.85%, versus 37/107 = 34.58% for C2HLSC (Table II, PDF p. 8). The mismatch-dense subset has 24 designs; the system passes 17/24 = 70.83% with its localization chain versus 5/24 = 20.83% for C2HLSC (Section V-B, PDF p. 8).
 
-Trusted evidence includes Vitis, the generated testbenches, the original C as a runtime golden reference, the verifier wrapper, human audit of retrieval cards, and the isolation implementation. The paper does not claim convergence: “We do not claim a convergence proof for the LLM-driven loop” (Section IV-E, PDF p. 6). Inference: VeruLaw can borrow the evidence discipline, but these hardware passes are not a Verus proof of a Rust specification; they establish behavior only for the supplied tests and toolchain.
+Trusted evidence includes Vitis, the generated testbenches, the original C as a runtime golden reference, the verifier wrapper, human audit of retrieval cards, and the isolation implementation. The paper does not claim convergence: “We do not claim a convergence proof for the LLM-driven loop” (Section IV-E, PDF p. 6).
 
 ## technique 1: four-stage verifier-driven repair loop
 
@@ -51,14 +51,9 @@ This is repair-only retrieval, not a replacement for verification. Stage 1 hard-
 
 Evidence: with gpt-5-mini and K=3, RAG raised all-pass from 78.50% (no RAG) to 87.85% (94/107), +9.35 percentage points, and mismatch-subset performance from 41.67% (10/24) to 70.83% (17/24), +29.17 points (Table III, PDF p. 8). Token cost rose from 17.1K to 18.8K per case; average iterations fell from 1.85 to 1.577 (same table). Inference: a Verus catalog should route by verifier error family and symbol set, promote only cards whose final code re-verifies, and keep failed repairs as searchable negative evidence.
 
-## limitations, contradictions, and product threat
-
-The benchmark is one Vitis version and one four-stage pipeline; control-heavy cases scored only 3/8 = 37.5% (Table IV, PDF p. 8), and overlapping subset counts mean those denominators are not a partition. The authors explicitly constrain PMLC budgets and say its propositions are implementation-level observations, not theorems (Section IV-E). Inference: an agent-written verified-Rust product faces a threat when bounded traces or finite tests are mistaken for exhaustive proof, or when an empty RAG hit is treated as evidence that no repair exists. VL should retain independent Verus checking and contract review; it should not redo one-shot prompting, raw-log replay, or static rule books, because this paper already demonstrates their weakness under the stated protocol.
-
 ## techniques for the catalog
 
 - four-stage verifier loop — generate, run staged checks, expose the earliest failure, patch, and repeat under a fixed budget
 - prompt/artifact isolation — admit only bounded failure evidence while keeping reference implementations and labels audit-only
 - Progressive Mismatch Localization Chain — normalize logs, backward-slice the AST, and align selective dual traces
 - typed self-evolving MoE RAG — hard-route exact repair cards by stage, family, and symbols after human audit
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

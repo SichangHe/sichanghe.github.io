@@ -61,14 +61,6 @@ Steps: (1) express a hint in the extended TPTP syntax, such as `fof(hintname1, h
 
 Verus form. Inference: translate a hint into a required lemma call, invariant shape, or intermediate predicate, then let Verus check the resulting proof. Hints should constrain search and readability; they cannot weaken the final `ensures` condition. The paper’s arbitrary-order hint language has no direct Verus equivalent.
 
-## what is trusted and threat to VeruLaw
-
-The paper says (§2.2, p. 24): “Larus can generate readable, human understandable proofs in natural language and also machine-verifiable proofs for the interactive provers Coq, Isabelle, and Mizar.” Inference: independently checking an exported proof can remove reliance on the search solver, constraint encoding, and decoder for proof validity, but the formalized axioms and proof checker still matter. Vampire filters inconsistent abduct candidates; it does not by itself establish that an added assumption matches an intended specification.
-
-The authors identify two practical limitations (§6, p. 29): “First, in current stage, it can deal only with coherent logic, hence the theories cannot involve function symbols, which excludes geometry proof that use (non-trivial) arithmetic.” Also: “Second, the framework cannot deal with conjectures whose proofs are long (say, longer than 50 proof steps).” Inference: the latter is a reported practical limitation, not a stated hard 50-step implementation limit.
-
-Inference: VeruLaw could borrow bounded proof search, candidate precondition generation, and hint constraints, then have Verus check each resulting proof. An added precondition can make a proof succeed while excluding cases the intended API must accept. Reviewing candidate assumptions against that API and checking for vacuity would therefore matter. The paper evaluates synthetic geometry, so it does not establish effectiveness for Verus programs.
-
 ## techniques for the catalog
 
 - coherent-logic proof target — use function-free atomic premises and readable forward proof rules
@@ -76,4 +68,3 @@ Inference: VeruLaw could borrow bounded proof search, candidate precondition gen
 - abductive assumption completion — insert constrained atomic assumptions and filter inconsistent or trivial candidates
 - deductive goal completion — leave predicate or arguments open and decode a concrete goal from a satisfying proof model
 - hint-constrained proof repair — add partial proof-step constraints while leaving the rest to automated search
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The third hint specifies that in the 5th proof step the axiom ax2 is applied."): checked the full paper including references and appendix, study quotations, numbers, section and page references, and technique steps; corrected the unrelated arXiv link to the paper DOI, page references, abduction filtering order, goal-completion quotation, and trust discussion; marked Verus and VeruLaw conclusions as inferences; did not rerun Larus, inspect its implementation, or validate the proposed Verus adaptations.

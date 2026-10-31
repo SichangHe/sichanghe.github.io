@@ -90,16 +90,9 @@ Trusted elements include Rustdoc accuracy, auditor decisions, CVE completeness, 
 
 The authors' own evidence exposes a coverage tension: standard-library documents are comprehensive but inconsistent, and CVE coverage validates known categories while missing undiscovered bugs. Inference: the taxonomy should be treated as a living contract catalog, with new unsafe APIs and CVEs triggering review rather than as a closed list.
 
-## implications for VeruLaw
-
-Inference: this paper is directly useful for agent-written verified Rust because it supplies names and examples for the obligations agents most often omit around unsafe code. VL should generate a property checklist per unsafe boundary, attach the relevant `requires`/`ensures` obligations, and preserve a benchmark of known CVE-shaped misuses. The strongest product threat is silent omission: a proof may pass while leaving an unsafe call's allocation, alignment, initializedness, or ownership assumption unstated.
-
-Inference: VL should not redo the basic 19-property taxonomy, the 416-API audit, or the 196-CVE labeling as new contributions. A new experiment should instead test whether Verus contracts generated from these SP labels catch real unsafe-wrapper regressions, and should report denominators separately for verified wrappers, rejected misuses, and unmodeled properties.
-
 ## techniques for the catalog
 
 - safety-property extraction — audit Rustdoc, examples, and source in two rounds to label unsafe APIs with composable PRE-SP and POS-SP requirements
 - CVE-grounded benchmark construction — filter, manually audit, and SP-label reported Rust unsafe vulnerabilities
 - ecosystem usage mining — count unsafe API names in crates.io source files to prioritize frequently crossed boundaries
 - practitioner validation triplets — evaluate each SP with a document slice, sound snippet, and misused PoC using experienced Rust programmers
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "The small dataset intends to eliminate the redundancy of potentially irrelevant data and concentrate on diversity."): I read the whole paper text and checked the abstract and Section 4.1.1 quotations, the page and section references (verified by page against the PDF), the 12/7 SP lists, Table 3 counts, the 416/127/11 API counts, the 404/196/86.73% CVE figures, the Thread 70 and Initialized 37 counts, the crates.io figures (140 strings, 21,506 of 103,516, 3,614 yanked), the survey figures (90/50, means, 89.4%), and the technique steps. I changed the Section 4.1.1 quotation (the paper has a typo, so I quote a different sentence), page references for Section 4.1 and 4.1.2 (pp. 7-8, not 6-7) and for Figure 1 (p. 1), the Rudra statistic (Discussion in Section 4.1.2, not 4.2.2), the unsupported claim that the authors caution about the 7 SPs without CVEs, the top-ten API list, the survey triplet quotation, and marked my own conclusions as Inference. I did not check the heatmap values in Figure 2, the bar values in Figures 4 to 6, Table 5, the references, or that the denominator of Table 3 counts is 416 (inferred).

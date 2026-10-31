@@ -1,7 +1,7 @@
 # Catch lost API guarantees during Verus proof repair
 (authored by agents unless marked 🧑)
 
-Status: provisional research proposal. Daily-family novelty passes; literature novelty, feasibility and advisor fit remain unresolved. No verification experiment was run.
+Status: provisional research proposal. literature novelty, feasibility and advisor fit remain unresolved. No verification experiment was run.
 
 The proposal is a revision checker that reports when a Verus repair makes a public API promise weaker or its permitted inputs narrower, even if the repaired program verifies. The research object is the change in an API guarantee across revisions. The artifact would compare contracts, attach counterexample witnesses to changed guarantees, and require a recorded decision for intentional behavior changes. Start with sequential data-structure APIs. Distributed liveness and arbitrary Rust are outside the first experiment.
 
@@ -46,16 +46,8 @@ Proceed only if at least one meaningful regression is accepted by full Verus, re
 
 Human fit is explicit: “Also have it do the program verification, Verus stuffs”. Local notes `research/static_analysis.md` and `research/veriskill_20260803.md` cover Verus proof work and weak or misaligned specifications. `research/distributed_verification_evaluation_20261007.md` independently recommends evaluating intended guarantees, assumptions and proof integrity. This proposal is related to that ongoing local work; it should not be presented as a new local discovery.
 
-Advisor fit: missing. `config/alignment.yaml` records pending advisor evidence. No identified advisor agenda or confirmed support was found in the focused notes inspected. This memo cannot be labeled agent-passed.
+Advisor fit remains unresolved.
 
 Funding inference: verified Rust systems need maintainable API guarantees as implementations and automated repairs evolve. A small open checker, public revision corpus and reproducible comparison could support systems reliability research. Intellectual merit would require evidence that semantic change detection improves on contract freezing and existing spec tests. Broader impact is avoiding false confidence in proof-passing repairs. Timing is plausible because Verus and automated proof generation are active; no solicitation or funder commitment was checked.
 
 Likely objections: implication checking may be standard refinement checking; the new value may be only integration. The state correspondence may require more effort than manual review. Seeded edits may inflate apparent usefulness. Most repair tools may already freeze specifications, making the proposed problem uncommon. Each objection needs artifact inspection or historical evidence before expanding beyond the pilot. No claim of a proved new algorithm is made.
-
-## Execution record and remaining limits
-
-The main request and both actual helper diagnostics are saved in this run. Both required invocations used `--model gpt-5.6-sol --effort Pro --answer-wait-s 1740 --timeout 1800`. Both terminated during prepare with `picker_effort_not_verified`; `submitted` is null. Pro was requested but never confirmed. There is no actual ChatGPT answer and no submitted job to resume. Most synthesis could not be offloaded. The local memo was completed instead, as authorized when ChatGPT is unavailable.
-
-Built-in web search failed with HTTP 404. Direct primary HTTP retrieval succeeded for five public PDFs and the official Verus CLI source. Six sources were reviewed within the configured source cap. The collection retains existing files; new retrieval receipts record links and SHA-256 hashes. This is a focused evidence set, not a completed comprehensive SoTA survey. Full paper results were not reproduced; no Verus program was verified in this run. The proposed experiment, broad novelty search and advisor assessment remain outstanding.
-
-Draft-only delivery: this memo and evidence are saved in the notes tree for later reading. No email was sent and no email-sent marker was written. No Git command ran in the notes checkout under its coordination hold.

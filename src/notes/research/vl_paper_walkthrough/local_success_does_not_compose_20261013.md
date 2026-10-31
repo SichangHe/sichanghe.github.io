@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `xu2025local`, [paper](https://arxiv.org/abs/2509.23061v1)
 
-Audit: audited 2026-10-13 against the paper; checked every number, page and section reference, the technique steps, quotations, Table 1 and Table 2 arithmetic and the Verus forms; changed: the 95.67% and 3.69% averages and the Pass@4 to Pass@8 gains now flagged as not matching Table 1, verification denominator corrected to the paper's definition over syntactically valid outputs, pages for the validation pipeline and Observations 2 and 3, array-bound invariant example reworded, a Verus benchmark claim the paper does not make removed, Inference marks added to the study's own statements, a stray catalog word fixed.
-
 ## what the paper establishes
 
 The paper introduces DAFNYCOMP, a benchmark for generating specifications for programs made of several interacting Dafny functions. Its central claim is measured on 300 automatically synthesized, mechanically verified programs. The benchmark contains chains of 2–5 functions, with mean 3.2 functions and 8.4 cross-function data dependencies (§3.4, p.6). The benchmark asks a model to reconstruct removed `requires`, `ensures`, `reads`, `modifies`, and `decreases` clauses while leaving the implementation in place (§3.3, p.6). The paper reports 13 models from five families.
@@ -73,14 +71,6 @@ The authors manually validate 10% of an automated analysis of 900 failures from 
 * reasoning instability: an invariant does not preserve state across iterations, or a recursive method lacks a termination argument. The paper's example is `invariant res == stringToIntHelper(s[..i])` (§5.3, p.9).
 
 Verus form: Inference: classify a failed Rust proof first by checking whether a callee `ensures` entails the caller's `requires`; next check that every `assert` and loop `invariant` matches actual indexing and mutation; finally check base case, preservation, and termination obligations. Inference: this is a repair triage rule derived from the paper's categories, not a procedure evaluated by the authors.
-
-## what is proved, what stays trusted, and product threat
-
-Inference: the benchmark proves only that retained Dafny implementations satisfy the supplied generated contracts under Dafny 4.10.0. It does not prove that contracts express intended behavior, that finite source tests cover all Python behavior, or that a model's high syntax rate means reliable verification. The paper explicitly limits the benchmark to functional correctness—preconditions, postconditions, and invariants—and excludes liveness, resource bounds, and security policies (§6, p.10). It also restricts compositions to chains because arbitrary call graphs had less than 8% synthesis success in construction trials (§3.1, p.4).
-
-Inference: the threat to a product that asks agents to write verified Rust is high at component boundaries. A locally verified function can export a weak `ensures`, allowing callers to fail or forcing callers to assume facts that were never proved. The paper's 3.69% Pass@8 verification rate is a warning about generated compositional specifications, not a direct failure rate for Verus or for production code. Inference: VL should require contract review and caller–callee checks, preserve implementation/specification coupling during generation, and test impossible outputs or behaviors in addition to running the verifier. Inference: benchmark results should be reported with parseability, verification, and task denominators separated.
-
-The paper's own future work leaves arbitrary call graphs, richer specification types, and scarce verified multi-function training data unresolved (§6, p.10). The paper names single-function Dafny benchmarks (DAFNYBENCH, MBPP-DFY; §2, p.3) and presents DAFNYCOMP as the first benchmark of compositional specification generation (§1, p.2); it names no Verus benchmark.
 
 ## techniques for the catalog
 

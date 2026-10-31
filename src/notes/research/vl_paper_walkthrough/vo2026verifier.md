@@ -58,8 +58,6 @@ The paper’s headline claims are internally qualified. RLVR improves P3 by 21.5
 
 Trusted components are the authoritative answer set, QLoRA implementation, router, natural-language-to-FOL conversion, Z3, physics relation library, unit normalization, reward implementation, and the EXACT labels. The paper itself warns that contextual prior-work numbers are not directly comparable across models and benchmarks.
 
-Inference: threat to a verified-Rust product is moderate to high at the verifier boundary. The architecture is useful: keep a neural proposal separate from a deterministic checker, measure answer correctness, evidence consistency, and explanation depth separately, and let high-confidence symbolic checks make selective corrections. But a proof of the checker does not prove the natural-language translation, task routing, or completeness of the relation library. For VL, use Verus to verify state transitions, parser normalization, unit algebra, and candidate-ranking invariants; retain solver soundness and specification adequacy as explicit trust assumptions.
-
 Inference: the product should not optimize P3 alone. This paper’s own held-out numbers show that deeper explanations can coincide with lower answer and format correctness. A Verus gate should require the generated implementation to compile and satisfy its contract, while explanation quality remains a separate diagnostic.
 
 ## techniques for the catalog
@@ -73,4 +71,3 @@ Inference: the product should not optimize P3 alone. This paper’s own held-out
 - P1/P2/P3 group-relative RLVR — combine exact, dense, consistency, depth, and format rewards and normalize advantages within response groups
 - gold-free self-consistency — cluster one greedy plus sampled answers by equivalence and apply selective symbolic correction
 - separate correctness diagnostics — report answer, evidence/unit consistency, reasoning depth, format, and strict validity independently
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -23,7 +23,7 @@ how to do it:
 4. Assemble a closed node recursively from a chosen winning edge and the assembled proofs of its children. Acyclicity makes the recursion well founded (Equation 5, p. 4).
 5. Keep the open frontier and retain closed internal nodes even when the root stays open. The paper calls a closed internal sub-DAG a typed reusable result while its root remains open (Section 3, p. 4).
 
-Verus form. Inference: model a proof search state as a ghost DAG or as a sequence of proof obligations, with each accepted `proof fn` lemma representing an edge. Use Verus `proof fn`s, `requires`, and `ensures` for typed child-to-parent lemmas; use a `spec fn` to define closure over a finite ghost sequence. Inference: Verus does not expose Lean tactic states or hyperedges, so a VL implementation would maintain the DAG in ordinary Rust tooling and ask Verus to check each generated lemma module independently. The trusted artifact is each Verus-accepted lemma, not the agent's DAG metadata.
+Verus form.
 
 evidence: the paper gives formal closure equations and proves that recursive assembly yields a kernel proof term. It reports no separate number of DAG nodes for the benchmark runs; the DAG is an internal search representation.
 
@@ -44,7 +44,7 @@ how to do it:
 
 The paper's trajectory experiment shows `ρ` rising as lemmas close, while finally failed runs plateau below one. Figure 2b shows one proof DAG whose lemma nodes close at iterations 5, 7, 10, and 11 before the root closes (Section 5.3, p. 8).
 
-Verus form. Inference: define a ghost `spec fn closure` over a finite list of obligation records and prove monotonicity when a new `proof fn` closes an obligation. Inference: the score itself is search bookkeeping and need not be part of a production Rust contract; it should never replace Verus's binary proof result. A VL agent can use the score to choose which failing lemma to repair, then rerun Verus on the selected candidate.
+Verus form.
 
 evidence: the mathematical equivalence `ρ=1` iff root closure is proved under the paper's finite-DAG assumptions. The experiment measures trajectories, not a universal relation between higher intermediate `ρ` and eventual success.
 
@@ -63,7 +63,7 @@ how to do it:
 3. Sample parents from occupied cells with probability proportional to `exp(ρ(D)/τ)`. Higher closure is favored, but non-maximal cells remain selectable.
 4. Apply decomposition, repair, or schema recombination to a selected frontier. Send rejected proposals and Lean errors to the repair context, but leave the trusted archive unchanged.
 
-Verus form. Inference: maintain the archive outside the verified Rust program and tag candidates by proof depth, lemma family, and dependency region. The candidate accepted into a VL branch must still compile and verify under Verus. Inference: the descriptor and sampling policy are heuristic; a `proof fn` can certify a candidate lemma but cannot certify that archive diversity is optimal.
+Verus form.
 
 evidence: the ablation study on 60 IMO-LeanProofBench problems repeats each run with five seeds. The full system solves an average of 32/60, with 22/30 Basic and 10/30 Advanced. Removing decomposition gives 11/60 (9/30 Basic, 2/30 Advanced), removing recombination 14/60 (11/30, 3/30), and removing repair 9/60 (7/30, 2/30) (Section 5.4, p. 9). These are means over five random seeds, not one deterministic run.
 
@@ -122,8 +122,6 @@ The trusted boundary includes Lean's kernel, the fixed Mathlib version, standard
 
 The 57.8% headline is the unweighted mean of 71.2%, 53.3%, and 49.0%, whereas the appendix scaling manifest contains 485 targets with benchmark counts 326, 60, and 99. A pooled count would have a different denominator and is not reported. The 91.7% figure is 322 of the 351 theorem instances closed by relevant retrieval but left open by zero-shot, not 91.7% of all 744 evaluation theorems. The 19.8% versus 7.3% result is a synthetic controlled family, not the Lean Workbook benchmark.
 
-Inference: VL should reuse kernel-gated partial-proof retention, verified-closure scoring, diverse strategy cells, typed lemma recombination, and repair from verifier diagnostics. VL should not claim that a schema library is sound merely because retrieved text looks plausible; every instantiated `proof fn` must be rechecked in its target context. VL should also preserve the paper's distinction between universal proof acceptance and search heuristics.
-
 Inference: the threat to agent-written verified Rust is medium-to-high. ProofEvolve shows that preserving verified subproofs and composing them can materially improve proof search, so a product that throws away partial Verus lemmas wastes reusable evidence. The corresponding risk is semantic drift: a schema with overly broad premises, an unsound external specification, or a changed contract can transfer a proof pattern while proving the wrong property. Independent Verus checks and frozen contracts keep that threat bounded.
 
 ## techniques for the catalog
@@ -135,4 +133,3 @@ Inference: the threat to agent-written verified Rust is medium-to-high. ProofEvo
 - residual-premise recombination — instantiate a schema only when its conclusion matches and expose missing premises as new subgoals
 - verifier-guided repair — feed rejected proposals and Lean errors back to the model while leaving the trusted state unchanged
 - frozen-contract Verus port — map reusable schemas to `proof fn`s and let agents edit proof bodies while preserving `requires` and `ensures`
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

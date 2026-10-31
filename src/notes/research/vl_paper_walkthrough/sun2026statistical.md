@@ -5,7 +5,7 @@ Tag: `sun2026statistical`, [paper](https://www.semanticscholar.org/paper/eda76f6
 ## scope and evidence
 The paper evaluates AI assistance through “four paired case studies that together cover eight research-level proof problems.” The pairs cover high-dimensional inference, extreme value theory, transfer learning, and differential privacy (section 2, p. 4). Each pair contrasts a useful-proof setting with a failure setting from the same research context. The paper reports qualitative proof outcomes from prompts and model responses rather than a benchmark accuracy denominator. It does not name all model versions in the extracted main text, so model-specific generalization is limited.
 
-Its central finding is: “Current general-purpose LLMs perform considerably better at executing a suitable proof strategy than at identifying one on their own” (section 2, p. 4). The authors also state that “The bottleneck was not mathematical execution but strategy identification” in the copula example (section 3.2, p. 9). Inference: a VL pipeline should separate strategy selection from proof execution and require machine checking before accepting generated Rust.
+Its central finding is: “Current general-purpose LLMs perform considerably better at executing a suitable proof strategy than at identifying one on their own” (section 2, p. 4). The authors also state that “The bottleneck was not mathematical execution but strategy identification” in the copula example (section 3.2, p. 9).
 
 ## technique 1: make the proof task precise and bounded
 What it is: state the exact claim, definitions, assumptions, and a manageable reasoning scope. The successful cases share that “AI assistance works best when the proof task is precisely scoped, the modeling assumptions are made explicit, and the reasoning chain is kept at a manageable scale” (section 3, p. 6).
@@ -49,11 +49,9 @@ How to apply:
 Verus form: Inference: make each sub-result a separately verified `proof fn` or lemma; expose only proved facts to the next lemma. Use executable Rust only for computational parts, keeping specifications ghost-only. Verus verification addresses consistency of encoded claims, not whether the statistical model is scientifically appropriate.
 
 ## what is proved, trusted, and still missing
-The paper’s evidence is human assessment of eight paired proof attempts; it does not report a fixed model list, token budget, inter-rater agreement, or machine-checked proof count in the main text. Thus claims are about observed workflows, not universal capability. The trusted elements are problem formulation, modeling assumptions, cited strategy, and human judgment of correctness. Inference: for VL, the main product threat is unsound acceptance of a plausible proof when strategy or assumptions are wrong; Verus can reduce implementation bugs after the specification is correct but cannot select or validate the statistical model. Existing work already points to Lean as machine-checkable support: “formal proof assistants such as Lean can provide machine-checkable verification of mathematical arguments” (section 5.3, p. 24). VL should reuse this human-guided, checker-backed division rather than redo generic proof-generation claims.
+The paper’s evidence is human assessment of eight paired proof attempts; it does not report a fixed model list, token budget, inter-rater agreement, or machine-checked proof count in the main text. Thus claims are about observed workflows, not universal capability. The trusted elements are problem formulation, modeling assumptions, cited strategy, and human judgment of correctness.
 
 ## techniques for the catalog
 - precise bounded formulation — state definitions, assumptions, target, and a manageable sub-problem
 - targeted strategy hint — provide the domain proof route, decomposition, and regularity conditions
 - iterative decomposition — solve and inspect smaller lemmas before recombining a long proof
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

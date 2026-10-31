@@ -40,12 +40,6 @@ Use this after a property violation. Feed the VCD trace, specification, RTL, and
 
 Inference: in Verus, a counterexample or failed proof obligation can be routed to separate trace, specification, implementation, and consistency analyses. The evidence should be preserved as a regression test and the patch reverified; a plausible diagnosis is not proof.
 
-## measured evidence, limitations, and VL threat
-
-Table I uses six designs (ECC, Automotive IP, Memory Scheduler, AXI4Lite, CIC Decimator, Float Multiplier), three models (GPT-4.1, GPT-5, Llama3.3), and Pass@1/2/3. At Pass@1, GPT-5 `% Proven` ranges from 40.91% for Memory Scheduler to 72.66% for AXI4Lite and 51.02% for Float Multiplier; `% Coverage` ranges from 54.73%, 44.06%, and 65.37% respectively (Table I). Each percentage's denominator is that row's generated assertion set, whose count is shown immediately above it; counts change by pass and model. Table II compares Pass@1 with and without HIL: for GPT-4.1 on Float Multiplier, 79.55% proven and 27.46% coverage without HIL become 100% and 67.57% with HIL, with 88 assertions in both rows. Table III shows autonomous GPT-5 iterations can regress: Automotive IP coverage falls from 80.56% at iteration 1 to 72.69% at iteration 5, and ECC is N/A after iteration 3 because the run generated 1,258 assertions and later crashed on token requirements.
-
-The authors caution that, “specification quality strongly impacts results,” and report that vague Memory Scheduler specifications cause divergence. What is demonstrated is workflow performance on these designs and models; what remains trusted is requirement interpretation, generated assertion semantics, RTL/tool configuration, and HIL. Inference: threat to a Verus product is high for agent-generated contracts and proof repair, moderate for diagnosis and retrieval, and low for the kernel's proof checking once a correct contract is fixed. VL should reuse this decomposition and its separate syntax, semantic, coverage, and human-feedback measurements; it should not redo a generic multi-agent hardware benchmark. The unresolved product risk is silently weakening a Rust specification during automated repair.
-
 ## techniques for the catalog
 
 - role-separated agent orchestration — split generation, syntax repair, placement, execution, coverage, and review into coordinated agents
@@ -53,5 +47,3 @@ The authors caution that, “specification quality strongly impacts results,” 
 - hybrid and graph retrieval — ground generation in cited lexical/vector passages and connected verification-artifact subgraphs
 - counterexample root-cause analysis — combine traces, specs, RTL, and specialized diagnoses before patching and rechecking
 - human-in-the-loop learning cache — store approved corrections with prompts, errors, and resolutions for later refinement
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

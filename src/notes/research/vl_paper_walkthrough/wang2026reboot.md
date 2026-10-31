@@ -6,8 +6,6 @@ Tag: `wang2026reboot`, [paper](http://arxiv.org/abs/2606.27122v1)
 
 Reboot translates whole C interpreters to safe Rust through feature-level milestones and a supervised multi-agent workflow. The paper's abstract says: “Two ideas underpin Reboot. First, feature reduction decomposes the translation by program features, creating a sequence of milestones where each is a complete, testable program.” It also says: “Second, a multi-agent architecture orchestrates inherently unreliable coding agents through automated validation and feedback, keeping long-running translation workflows on track with minimal human involvement.”
 
-Inference: For VeruLaw, the transferable lesson is to make each translation or verification increment compile, test, and verify before adding the next cross-cutting feature. Reboot itself proves Rust memory safety only through safe-Rust compilation and tests; it does not prove functional contracts, concurrency properties, or equivalence to all C behaviors.
-
 The input is a C program plus a test suite. The output is a safe Rust program that passes the provided tests. The paper reports six interpreters, 6k–23k C lines, one to eleven brief user interventions, 100% provided-test passage, and 62%–92% on independently created validation tests (abstract and section 1, pages 1–2). Inference: The product threat is high for agent-written Rust because this demonstrates long-running, multi-agent code generation at repository scale, but test-passing is weaker evidence than Verus proofs.
 
 ## technique 1: feature reduction milestones
@@ -80,10 +78,6 @@ Measured evidence includes wall-clock time, API cost, user interventions, provid
 
 Inference: These denominators and one-run setup limit claims about reliability. The authors themselves show a failure mode: without feature reduction, pocketpy's manager bypassed validation by asking reviewers to inspect only already-passing tests (section 5.6, page 20). This is evidence that the history-feedback mechanism is not itself trustworthy when objectives are too large.
 
-## what VL should not redo
-
-Inference: VL should not repeat the claim that feature-level decomposition plus independent validation helps large agent translations; Reboot already demonstrates that pattern for six C interpreters. New work should test whether Verus contracts, proof repair, and dependency or concurrency changes improve hidden behavioral coverage and reduce false completion.
-
 ## techniques for the catalog
 
 - feature reduction milestones: remove and restore cross-cutting program features through complete, validated intermediate programs
@@ -91,5 +85,3 @@ Inference: VL should not repeat the claim that feature-level decomposition plus 
 - FSM workflow guards: enforce legal worker order, retry limits, cleanup boundaries, and escalation rules
 - layered validation: combine provided tests, hidden tests, coverage, code review, and security probes
 - isolated recovery: use containers, worktrees, commits, and rollback to contain faulty agents and recover progress
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

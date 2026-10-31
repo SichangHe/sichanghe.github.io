@@ -22,7 +22,7 @@ How to do it:
 
 The implementation uses sequential orchestration for this verification process (Sec. III-B, p. 9). Figure 10 shows configuration examples including `max_consecutive_auto_reply = 5`, `human_input_mode = "NEVER"`, and a script executor (p. 7). Section III-A describes logging, critic feedback, and threshold monitoring that triggers human intervention (p. 8).
 
-Verus form. Inference: a VL analogue could use a specification lead to enumerate function contracts and invariants, proof agents to write Verus proof blocks, a critic to inspect contracts for vacuity, and a verifier agent to run `verus`. Inference: the vPlan should map each requirement to a `requires`/`ensures` clause and named lemma. Inference: sequential orchestration could handle dependencies such as a type invariant needed by a refinement lemma.
+Verus form.
 
 Evidence and limits. Inference: this architecture does not establish that the natural-language vPlan is complete; human intervention supplies a decision when agents cannot finalize an SVA. The paper states: “The generated properties are then proven in a formal tool, and the CEXs are analyzed if any and fixed by the LLM agents” (Sec. III-A, p. 8). The authors report “syntactically incorrect or semantically irrelevant assertions” and “vacuous passes in formal properties” among the model failure modes (Sec. IV, p. 11).
 
@@ -52,15 +52,7 @@ For the basic 4-state FSM, GPT-4o Pass@1 has 6 properties, 100% proven, and 82.2
 
 The conclusion reports “an overall efficacy of around 40 %” (p. 12), without a calculation connecting it to the three KPIs. Inference: that omission prevents checking the aggregate's derivation from the reported tables; it is not evidence of an arithmetic error.
 
-Verus form. Inference: define success as a crate passing Verus with unchanged specifications, coverage as the fraction of planned obligations discharged, and assertion pass rate as the fraction of generated lemmas accepted. Inference: define Pass@k explicitly and publish per-project and per-attempt denominators. Inference: a coverage agent could propose missing invariants, with human or specification-checker approval of new contracts. These are proposed VL measurements and controls, not measurements established by the RTL benchmark.
-
-## trust, failures, and threat to VL
-
-Inference: applying the workflow requires trust in the supplied specification, the meaning of the generated properties, the formal tool, orchestration, and coverage interpretation. Generated vPlans and SVA require checking against the intended behavior; formal proofs alone address their encoded properties.
-
-The authors report: “Saarthi performs the best with the GPT-4o model and the worst with the Llama3-70B model” (Sec. IV, p. 10). They describe GPT-4-Turbo's assertion-proving results as more variable and Llama3-70B as needing more attempts. The failure discussion includes context truncation, prompt deviations, temperature sensitivity, implicit clocks/resets, misinterpreted RTL, syntax errors, irrelevant assertions, vacuous passes, redundant conditions, and signals absent from the specification (pp. 10–12).
-
-Inference: Saarthi's lead–worker–critic–tool workflow suggests a structure for agent-written Verus proofs, including bounded repair and feedback about missing requirements. This paper does not evaluate Verus, Rust ownership, unsafe code, concurrency, or cross-crate invariants. Inference: transferring the workflow to VL would require contract-preservation checks and explicit reporting of what remains trusted; the reported efficacy does not establish a VL success rate.
+Verus form.
 
 ## techniques for the catalog
 
@@ -69,5 +61,3 @@ Inference: Saarthi's lead–worker–critic–tool workflow suggests a structure
 - human-in-the-loop threshold — request human help after unresolved iterations; Algorithm 1 defines terminate, skip, and intercept choices (Sec. III-A, p. 9)
 - coverage feedback — after proving properties, analyze formal coverage and send missing-property feedback to the lead (Sec. III-A, p. 8)
 - Inference: denominator-aware KPI reporting — define attempt semantics and publish the denominators needed to interpret success, coverage, and assertion pass rates
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The iteration control system uses threshold-based monitoring to prevent infinite loops, automatically triggering human intervention when resolution cannot be achieved autonomously."): checked the complete paper text, study quotations, numbers, references, workflow, HIL algorithm, and benchmark claims; corrected page references and quotations, removed unsupported repair details and the arithmetic-error claim, distinguished algorithm behavior from accompanying prose, and marked proposed VL adaptations and conclusions as inferences; did not reproduce experiments, inspect implementation code, or independently validate the formal proofs or coverage calculations.

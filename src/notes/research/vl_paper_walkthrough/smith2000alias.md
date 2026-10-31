@@ -45,8 +45,6 @@ The theorem trusts the operational semantics, typing rules, and the companion-re
 
 Inference: in this language a dereference or free of a location already mapped to junk has no reduction rule (Figure 2, p. 372), so the guarantee covers use-after-free here; it does not by itself prove functional correctness.
 
-Inference: VL should reuse the paper's explicit distinction between exclusive and shared permissions, its non-idempotent combination of linear resources, and its alias-wide refinement after a dynamic test. It should not redo the basic alias-type calculus. The threat to agent-written verified Rust is substantial when raw pointers are hidden behind an incorrect ghost location map: Verus can prove the map's stated invariant while the executable pointer arithmetic refers elsewhere. A small verified allocation wrapper that creates and consumes unique location tokens is a practical containment boundary.
-
 ## techniques for the catalog
 - singleton location types: represent each allocation identity as `ptr(ℓ)` so aliases are syntactically detectable
 - linear alias constraints: use non-duplicable store descriptions to permit safe type change and deallocation
@@ -54,4 +52,3 @@ Inference: VL should reuse the paper's explicit distinction between exclusive an
 - non-linear constraints: duplicate shared read permissions while forbidding free and type-changing updates
 - alias-wide dynamic refinement: propagate a null or variant test to every handle sharing one singleton location
 - store-update lemma and soundness: prove store typing survives updates and well-typed execution never reaches a stuck state
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This function deallocates its two arguments, x and y, before calling its continuation with the contents of y."): read the whole paper text (pp. 366-381) and compared every quotation, page and section reference, the seven-instruction example, the assignment and call typing rules, the foo example, Theorem 1, the non-linear and option-type sections; replaced the earlier claim of a preservation and a progress theorem with the paper's Lemma 1 and Theorem 1, said the soundness proof is only in the companion report, made the TAL and Popcorn evidence match the Section 1 wording, added the paper's stated limits (small fragment, unimplemented bounded quantification, recursive types as future work), removed the unsupported garbage-collection claim and marked the use-after-free coverage as Inference; link from the fetch record (the paper text gives a DOI-free LNCS citation and only a TAL software URL); did not check the Verus-related Inference paragraphs for Verus correctness, the companion report, or the figure images.

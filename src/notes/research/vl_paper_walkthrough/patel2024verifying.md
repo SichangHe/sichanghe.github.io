@@ -53,14 +53,8 @@ The multicopy comparison reports 2,779 original lines versus 1,310 structure-spe
 
 Coverage has explicit limits. Backlink algorithms are “not immediately covered by our template algorithm” (Section 7, p. 25). Memory reclamation is outside the model: “In this paper, we assume a programming language with a garbage collected semantics.” (Section 7, p. 25.) The authors propose using orthogonal reclamation-verification techniques. Progress is also unproved: “Our proofs guarantee safety but not liveness.” (Section 8, p. 25.) Inference: Calling these algorithms lock-free does not mean this development mechanizes their progress guarantees. The reported proofs concern HeapLang implementations and their Iris specifications; they do not establish correctness of compiled Rust implementations or arbitrary production skiplists.
 
-## what VL should reuse
-
-Inference: VL should reuse the generic operation template, representation-specific atomic helper contracts, traversal's past-state contract, and explicit marking and pointer transition invariants. A Verus port should first establish a sound history-based interface for unmodifying linearization points. The paper's multicopy comparison motivates measuring reusable proof infrastructure separately from structure-specific proofs.
-
 ## techniques for the catalog
 
 - parameterized lock-free templates — verify core operations against separate node and traversal contracts
 - edgeset traversal invariants — connect past keyset membership and node contents to global membership
 - hindsight linearization — combine snapshot histories and transition invariants with a reusable prophecy and helping proof
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The templates, traversals and the node implementations are written in Iris’s default programming language HeapLang."): checked the complete paper including appendices, quotations, numbers, section and page references, algorithm steps, proof obligations, and stated limits; corrected references, edgeset and hindsight descriptions, traversal details, and evaluation scope, and added explicit garbage-collection and progress limits; did not inspect the artifact, rerun Coq proofs, or validate the proposed Verus translation.

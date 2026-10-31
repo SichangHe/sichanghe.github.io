@@ -60,18 +60,9 @@ How to do it. Define `Oracle(fuzzingInputs, SUT)`, pass each input to the SUT, a
 
 Verus form. Inference: Use successful Verus verification as one oracle, compile failures as another, and runtime differential tests for behaviors outside the specification. Inference: A failed proof is evidence about the candidate or specification, not automatically a soundness bug.
 
-## what is proved, trusted, and relevant to VL
-
-Inference: The paper proves no theorem about LLM-generated programs. It measures coverage, feature hit rate, validity, and bug reports with fixed model checkpoints (gpt-4-0613 and StarCoder, §4.1, p. 6), five repeated 24-hour campaigns for RQ1, and four repetitions for the ablation (§4.3, p. 7). Inference: Trusted components include GPT4 distillation, StarCoder generation, the SUTs, their compilers/runtimes, the oracle implementations, and line-coverage instrumentation. The paper's internal threat is its own implementation; its external threats are the choice of evaluation targets, data shift for the fixed StarCoder checkpoint, and distillation-LLM hallucination (§6, p. 11).
-
-Inference: For VeruLaw, the transferable pattern is an inexpensive generator plus a small trusted checker: use documentation-driven generation to explore verifier APIs and adversarial specifications, then let Verus's checked proof and independent runtime oracle decide acceptance. LLM hallucination, invalid-input rates, GPU cost, and semantic-equivalence claims are product threats; they require deterministic replay, pinned model versions, and proof checking before generated artifacts enter a trusted build.
-
-Inference: Existing compiler and solver fuzzers already provide high-volume generation, differential testing, mutation, and coverage feedback; VL should reuse their oracle and corpus ideas rather than rebuild language-specific generators. The paper's novelty is broad LLM-driven generation and prompt evolution, not a new proof calculus.
-
 ## techniques for the catalog
 
 - black-box autoprompting — distill arbitrary documentation into candidate prompts and select the one whose generated snippets have the highest validity score
 - example-and-strategy fuzzing loop — repeatedly append a valid prior input plus generate-new, mutate-existing, or semantic-equiv instructions under a time budget
 - targeted documentation fuzzing — focus generation on a feature by supplying that feature's documentation and measuring hit rate
 - user-defined oracle — execute generated inputs and classify crashes, assertion failures, differential mismatches, or other SUT-specific unexpected behavior
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "In spite of the lower validity rate and number of fuzzing inputs, Fuzz4All generates much more diverse programs compared to traditional fuzzing tools, as evidenced by the high coverage obtained"): read the paper text from first to last line and checked every quotation, number, section and page reference, and technique step against it; changed wrong page references (§3.1, §3.1.1 scoring, §3.1.2, §3.2.1, §5.2, §5.3.1, §5.3.2), the abstract quote's location, example selection (from the previous batch's valid inputs), the experiment oracles (crashes; Qiskit's two MorphQ oracles), the repetition counts (five for RQ1, four for the ablation), the source of the 8.0%/4.7% repetition figures (text, not Table 4), and relabeled paper facts versus Inference; did not check the PDF figures beyond the text extraction, the cited references, or the artifact.

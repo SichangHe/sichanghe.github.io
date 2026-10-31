@@ -7,8 +7,6 @@ The paper presents a robot planning and commissioning pipeline in which LLMs int
 
 The framework is explicitly adapted from software harnesses: “The framework adapts the Planner-Generator-Evaluator (PGE) harness pattern from software engineering into a Specifier-Designer-Inspector (SDI) architecture for industrial robotics, combined with LangGraph-based dynamic routing for failure recovery.” (abstract, p. 1)
 
-Inference: The direct VL lesson is a strict proposal/verification split. An agent can propose Rust code, specifications, or repairs; Verus must decide acceptance, and orchestration must preserve failed obligations and escalate when verification cannot complete.
-
 ## technique 1: SDI role separation and typed skills
 
 What it is. The system has a neural Specifier for expanding natural language, a neural Designer for layouts, a symbolic Inspector for constraint verification and sequencing, and a reactive Operator for robot execution. Agents expose typed skills with a name, description, JSON schema, execution function, status, result data, and error set (Section III-B, pp. 4–5).
@@ -31,7 +29,7 @@ How it is done. Define the constraint set `K` (gravity order, workspace reachabi
 
 Verus form. Inference: Encode each Rust safety property as a separate spec predicate and define a composite predicate as their conjunction. Return a structured violation set naming failed postconditions or invariants. Use `requires` and `ensures` on verified functions; use `invariant` as a loop invariant declaration, not a call. A failed proof must propagate as an error result.
 
-Evidence and limits. The paper says a layout that passes its final safety check is “guaranteed to satisfy every constraint in K” (Section III-C, p. 6), and `K` has six constraints. Inference: The same guarantee is only as complete as VL’s specification set; omitted security properties remain unproved.
+Evidence and limits. The paper says a layout that passes its final safety check is “guaranteed to satisfy every constraint in K” (Section III-C, p. 6), and `K` has six constraints.
 
 ## technique 3: adaptive generate–verify–repair with bounded retries
 
@@ -69,7 +67,7 @@ How it is done. Build `Gd=(V,Ed)` with an edge for each support relation; find s
 
 Verus form. Inference: Represent dependencies as a finite graph and prove that each chosen node has no outgoing dependency and satisfies grip predicates. Use loop invariants to show removed nodes form a valid suffix and that the remaining graph preserves dependencies. Prove termination with a decreasing node-count measure.
 
-Evidence and limits. Inference: The sequence is guaranteed only for the modeled support and gripping relations. For VL, the analogous proof obligation is a dependency order over modules, resources, or capability initialization; hidden runtime dependencies need explicit modeling.
+Evidence and limits.
 
 ## technique 6: trajectory commissioning and deviation monitoring
 
@@ -81,13 +79,7 @@ How it is done. Generate atomic manipulation actions; map them to joint trajecto
 
 Verus form. Inference: Specify a correspondence between planned and observed states and prove bounds on data structures and arithmetic. Runtime measurements remain assumptions; if a bound is exceeded, return an explicit failure and do not claim the plan’s postcondition.
 
-Evidence and limits. For 12 commands run through the full planning and control pipeline, the paper reports valid inverse kinematics and collision-free trajectories for all 12 designs, “no significant deviation” between planned and executed trajectories, and 12/12 in the Pass column of Table VII (Section IV-E and Table VII, p. 9). It reports no values of δ or ε. It also states that “the current system assumes known supply-area positions, and visual perception for object localization was not integrated” (Section V, p. 10). Inference: VL should similarly list sensing and environment assumptions rather than treating them as verified code properties.
-
-## what is proved, trusted, and threat to VL
-
-The paper checks its encoded geometric, sequencing, and trajectory constraints with deterministic code; it gives no formal proof. It does not check the LLM’s language interpretation, perception, or general robot safety. Inference: Trusted components include the constraint implementation, MoveIt planner, Unity3D model, encoder synchronization, human review, and LLM tool routing. On 70 natural-language commands, Hybrid reports 100% success across five groups (13, 15, 12, 18, and 12 commands; Table IV, p. 9), but this is a small task set and assumes known supply-area positions (Section V, p. 10).
-
-Inference: Product threat is high if VL allows agent-written Rust to bypass the Inspector equivalent or treats a human approval as a proof. Threat is lower when the agent is restricted to proposal and repair, Verus is the acceptance boundary, every failure is recorded, and unmodeled assumptions are reported.
+Evidence and limits. For 12 commands run through the full planning and control pipeline, the paper reports valid inverse kinematics and collision-free trajectories for all 12 designs, “no significant deviation” between planned and executed trajectories, and 12/12 in the Pass column of Table VII (Section IV-E and Table VII, p. 9). It reports no values of δ or ε. It also states that “the current system assumes known supply-area positions, and visual perception for object localization was not integrated” (Section V, p. 10).
 
 ## techniques for the catalog
 
@@ -97,4 +89,3 @@ Inference: Product threat is high if VL allows agent-written Rust to bypass the 
 - digital-twin review: render verified artifacts, accept human edits, and re-verify before execution
 - symbolic dependency sequencing: build a graph, choose feasible sinks, and reverse the removal order
 - trajectory monitoring: compare planned and observed trajectories with a threshold and trigger pause or replanning
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Rather than conditioning the LLM on the full constraint set K, we provide only the violated constraints as feedback."): read the whole paper text and checked every quotation, number, table and algorithm reference, page number and technique step against it. Changed: completed the abstract PGE quotation; corrected page references (Algorithm 2 is on p. 5, Section III-D on p. 6, Table IV on p. 9, Sections II and III-F equations on p. 3 and 7); corrected the adaptive-versus-fixed loop comparison from 70 to 58 commands (Groups A-D) and added generation times; replaced the unsupported claims that the human interface improves recovery, that repeated calls overfit, and that all 12 physical commands passed monitoring with what Section IV-E and Table VII state; replaced the claim that the paper proves constraints with the fact that it checks them with deterministic code; marked own conclusions as Inference. Not checked: the cited references, the PDF figures and layout beyond the extracted text, and any reproduction of results.

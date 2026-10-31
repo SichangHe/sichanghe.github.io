@@ -54,5 +54,3 @@ Inference: Verification must state assumptions about grid sizes, offsets, alloca
 - structural-size verification target — establish the 2∑|Li| bound rather than assume allocated capacity proves it
 - optional efficiency verification target — establish one initial binary search and bounded later comparisons
 - Inference: boundary and metadata specifications — define behavior for duplicate values, empty inputs, floating-point anomalies, and invalid indices
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The lookup procedure performs exactly one binary search and at most one comparison per subsequent grid."): checked the complete paper text, quotations, numbers, section and page references, construction, lookup, reference routine, driver, and proposed properties; corrected the DOI link, construction quote's page, quotation attribution, sparse metadata description, lookup behavior, per-key test reporting, boundary coverage, and inference labels; did not execute or formally verify the C implementation or validate the proposed bounds.

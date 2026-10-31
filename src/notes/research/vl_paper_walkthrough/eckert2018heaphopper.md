@@ -6,8 +6,6 @@ Tag: `eckert2018heaphopper`, [paper](https://www.usenix.org/conference/usenixsec
 
 HeapHopper analyzes compiled heap allocators for exploitable metadata corruption. It combines bounded transaction models, symbolic execution with angr, security-property detectors, and concrete proof-of-concept generation. The abstract describes it as “an automated approach, based on model checking and symbolic execution, to analyze the exploitability of heap implementations in the presence of memory corruption.” (§abstract, p.99). It examines five revisions of dlmalloc, musl, and ptmalloc, finds known and new attack paths, and evaluates patches.
 
-Inference: this is bounded counterexample search rather than a proof that an allocator is safe. For VL, the technique can search unsafe Rust or FFI allocator models for reachable bad states and generate concrete tests; Verus can then prove a stated allocator invariant for all executions within its modeled semantics.
-
 ## technique: bounded heap interaction model
 
 What it is and when to use it. The input is a shared-object heap library and a configuration containing attacker transactions, a maximum transaction bound, and invalid security properties. The output is C source for each discovered exploit. The paper says: “HEAPHOPPER works by automatically finding sequences of transactions that make the model of the analyzed heap implementation reach states where specific security properties are violated.” (§3, p.103).
@@ -57,8 +55,6 @@ The allocator comparison found newer dlmalloc 2.8.6 stronger than 2.7.2, while p
 
 The paper identifies limitations from manually selected transaction types, finite bounds that miss attacks outside the model, and symbolic-execution/emulation imprecision (§8.1–§8.2, p.111). From testing a subset of PoCs, it estimates a 5–10% false-positive rate among PoCs that do not run properly (§8.3, p.111), while Section 7 reports only verified PoCs. Inference: the trusted base includes the binary analysis engine's emulation correctness, allocator model choices, symbolic memory approximations, and the concrete compiler/runtime.
 
-Inference: for agent-written verified Rust, HeapHopper is most useful as a pre-proof adversarial search for unsafe blocks, custom allocators, and FFI boundaries. Verus can replace some bounded checks with universal invariants, but only after the concrete heap and pointer semantics are specified. Existing work already covers bounded model checking, symbolic execution, exploit-sequence generation, and patch regression; VL should not present those mechanisms as novel. A potentially distinct VL contribution would be linking generated counterexamples to repaired Verus contracts and measuring proof repair effort.
-
 ## techniques for the catalog
 
 - bounded heap transaction modeling — enumerate attacker operations up to a configured depth and test bad states
@@ -66,4 +62,3 @@ Inference: for agent-written verified Rust, HeapHopper is most useful as a pre-p
 - exploit PoC generation — solve symbolic constraints and validate a concrete C execution
 - patch regression checking — run identical bounded models against old and new allocator checks
 - model-relative security comparison — compare allocator revisions using explicit primitive, depth, and memory denominators
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Our experiment was run using a cloud with 300 nodes, each of them having 1 core and 32GB of memory."): checked all quotations, numbers, section/page references, technique steps, and the publisher link printed on the cover; corrected the symbolic-pointer procedure, page references, experiment bounds, known-attack description, and PoC quotation; added sequence pruning and PoC pointer/offset handling, and marked conclusions as inferences; did not independently reproduce experiments or verify the proposed Verus applications.

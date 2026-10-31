@@ -93,8 +93,6 @@ Inference: A Verus review workflow should treat an intuition-only acceptance as 
 
 The paper establishes empirical claims about 86 retained controlled-experiment participants and 10 think-aloud participants, under the stated Python, HumanEval, recruitment, exclusion, and statistical setup. It does not prove that any generated assertion is correct, that a comment is semantically equivalent, or that a Verus proof is sound. The verifier or mutation oracle, the Python implementations, the HumanEval docstrings, participant answers, and statistical model assumptions remain trusted inputs for the respective measurements.
 
-Inference: For VeruLaw, the main threat is review overconfidence: the measured 49.0% accuracy on incorrect assertions and confidence around four out of five imply that human approval is a weak standalone gate for agent-written specifications. A product should require machine-checked Verus obligations and retain reviewer evidence, while treating comments as navigation rather than proof. The threat estimate is an inference from this paper's human-study results, not a measured Verus failure rate.
-
 The paper's limitations include the United States student and software-company sample, GPT-3.5-turbo-generated artifacts, and single-function Python questions; it explicitly says results may not generalize to multi-function code or multiple assertions (Section 9, PDF p. 10). It also reports no evidence that experience, Python expertise, assertion-writing experience, or LLM usage predicted accuracy (Section 6.3.1, PDF p. 7), so adding experience as a presumed safeguard is unsupported by this experiment.
 
 ## techniques for the catalog
@@ -107,5 +105,3 @@ The paper's limitations include the United States student and software-company s
 - logic walk-through — trace data and control flow through the assertion against expected behavior
 - positive and negative examples — test concrete satisfying and violating input/output pairs to expose errors
 - intuition risk signal — require machine-checkable evidence when acceptance rests on an unsupported impression
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

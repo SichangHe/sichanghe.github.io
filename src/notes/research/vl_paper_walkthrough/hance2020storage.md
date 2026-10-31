@@ -33,5 +33,3 @@ The application-facing specification is 283 lines (§2.1, p. 100); Table 1 repor
 - decisive automation — resolve checks exceeding 20 seconds by controlling definition visibility and profiling solver instantiations
 - linear variables plus dynamic frames — check non-aliasing statically and use heap proofs for flexible aliasing
 - modular storage refinement — separate tree and journal proofs through cache templates, composition, and transposition
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The results show that switching to linear reasoning saves tedium, reducing proof overhead by 31–37%."): checked the whole paper, quotations, numbers, printed page and section references, technique steps, tag, and publisher link; corrected the crash contract, truncated quotes, page references, automation procedure, and unsupported advice, and marked Verus suggestions as inference; did not run the artifact, inspect its implementation, or independently validate its proofs and measurements.

@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `rinard2026testing`, [paper](https://arxiv.org/abs/2605.01660)
 
-Audit: audited 2026-10-13 against the paper; checked every number, table sum and ratio, section and page reference, quotation, and the steps of all ten techniques; changed 10 items: an unprompted claim for the propositional checker, a checker theorem placed on one side, a day 33 refinement date, the layout being proved rather than computed, a claim that the human widened scope, benchmark translation date, unmarked inferences, a cargo test remark, Radix and Rocq precedents overstated, and an own summary credited to the author; Verus forms were not compiled and were checked only against the notes and Verus papers.
-
 source: Martin C. Rinard, arXiv:2605.01660v3 (31 Jul 2026), PAgE '26 workshop, 13 pages, no appendix; code at https://github.com/rinard/Axon
 
 earlier record in the notes: `distributed_verification_db/topic_agents.md`, entry "Axon (2026)", marked there as "parts read". Two of its lines do not match this paper. It says one optimization has about 1,000 lines of code and over 4,500 lines of proof; in the paper that is the certificate checker, not an optimization (Section 5.2, p.8, quoted under technique 2). It says the bugs were in the unverified parser, printer and machine model; the paper's listed bugs are in the code generator, the register allocator, the optimizations, their certificates and the checker (Sections 4.1 to 4.3, pp.5-6). Everything below is beyond that record.
@@ -118,7 +116,7 @@ how it is done (Section 5.3, p.8)
 3. refinement: each target outcome is a source outcome; fix what is observable (declared variables and arrays, not temporaries or registers); the compiler computes a layout relating their addresses
 4. totality: well formed input implies output is produced
 
-Verus form (Inference): an exec function `compile(p) -> (r: Option<Asm>)` with `ensures r.is_some() ==> refines(r.unwrap()@, p@)` and `ensures well_formed(p@) ==> r.is_some()`. The second clause is the totality theorem. Divergence quantified over all N is a `forall` over step counts in a `spec fn`. Inference: for VL, the general rule is that any contract that only constrains the value when one is returned needs a companion clause saying when it must return one.
+Verus form (Inference): an exec function `compile(p) -> (r: Option<Asm>)` with `ensures r.is_some() ==> refines(r.unwrap()@, p@)` and `ensures well_formed(p@) ==> r.is_some()`. The second clause is the totality theorem. Divergence quantified over all N is a `forall` over step counts in a `spec fn`.
 
 where it fails: the refinement direction is target to source only. Inference: a nondeterministic source semantics could allow behaviors the target never shows; the paper does not discuss this.
 
@@ -207,16 +205,6 @@ debugging aid from the same vein (Section 5.2, p.8): to localize certificate gen
 - the same section's claim of speedups over a factor of ten for four benchmarks matches Table 3: k07, k08, k09, k18.
 - 34 days: Table 2 (p.9) has passes finalized on day 34 and the project starts on day 0, so the span is 34 or 35 calendar days depending on counting.
 - the abstract says proofs guarantee the correctness of the generated code; the theorems cover AST to ASM data structures, with parser, printer and both semantics outside (Section 4.4, p.6).
-
-## already done, so VL should not redo
-
-- Inference: showing that one coding agent can produce a proved compiler-sized artifact (38k lines of Lean) with one supervisor in about a month is done here. The related work (Section 6, p.11) has weaker precedents: Radix, a compiler built with ten agents in Lean over a weekend (the paper does not say it is verified), and a Rocq proof of one ANF transformation (not a compiler), where the author directed the proof technique and fixed two tactic invocations.
-- Inference: the design rule of technique 1 (prove the stable simple path, certificate-check the volatile complex parts) is established practice with a worked agent example; VL can adopt it for any untrusted search component (solver, planner, optimizer) without new research.
-- Not done here: any measurement of how often the agent bailed out, any mechanical guard against it, any acceptance rate of certificates, any audit of the specification.
-
-## how much this threatens a VL-style product
-
-Inference: low as a competitor, high as precedent. It is Lean, a toy language, one supervised sequential agent, and an experience report without controlled measurement. But it is direct published evidence that the human-effort claim (no reading of verified code) can be made today, and its trusted-list accounting and bail-out list are the points a reviewer would hold a Verus product to. The paper itself says the specification and unverified parts were only scanned, not rigorously audited (Section 4.4, p.6).
 
 ## techniques for the catalog
 

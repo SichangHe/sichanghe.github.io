@@ -46,12 +46,6 @@ Table 2 evaluates 12 schedulers on the training problems under a 60-second limit
 
 The paper reports these specific benchmark results, not a universal theorem-proving gain. It has no Verus experiments, and it makes no soundness claim about the learned heuristics.
 
-## evidence, limits, and VL implications
-
-The measured result depends on the Mizar translation (MPTP), the 1,000/400 train-test split of the CASC 2012 Mizar@Turing problems, the 60-second evaluation, and the E 1.9 and Vampire 4.0 versions (Sections 5 and 5.4, pp. 5–8). The paper does not discuss correctness or soundness of the heuristics. The authors name as future work weight functions with lower time complexity, perhaps approximate ones; “smarter” schedulers; enhancements of the BliStr/Tune main loop (various parameter settings, selection of training problems, parameter improvement methods other than ParamILS); and an easier-to-use software package (Section 6, p. 8).
-
-Inference: the threat to VeruLaw is indirect but useful. Agent-generated proof strategies can overfit a goal corpus, waste solver time, or hide regressions behind a training metric. A safe integration should keep strategy search separate from Verus's proof checker, use held-out goals and deterministic budgets, record every selected lemma or solver fact, and reject any strategy whose generated proof does not verify. VL should not redo the basic idea of hierarchical strategy invention; a contribution would need Verus-specific measurements of proof stability, maintenance, and solver-context size.
-
 ## techniques for the catalog
 
 - conjecture-oriented clause weights: rank proof-search clauses by symbols, subterms, term frequency, prefixes, edit distance, or tree structure
@@ -59,4 +53,3 @@ Inference: the threat to VeruLaw is indirect but useful. Agent-generated proof s
 - hierarchical invention: alternate global protocol-structure search with fine tuning of component arguments
 - CEF collection maintenance: keep a bounded, usage-ranked and weight-function-balanced library of candidate clause evaluators
 - protocol scheduling: choose a greedy or SOTAC-ranked subset and run each protocol for an equal time slice
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Then we use a global database (shared by different BliStrTune runs) in which we store all CEFs together with the usage counter which states how often each CEF was used in a protocol invented by BliStrTune."): I read the whole 10-page text and checked every quotation, number, section and page reference, and technique step in the study against it; I changed one inexact quotation (abstract), one quotation missing a word (the BliStr "pragmatic solution" sentence), the ParamILS 10^6 and CEF-collection details, the SOTAC definition, several page references (the 10-page arXiv pagination), the misattributed reason for BliStr's reduced space, and removed an unsupported correctness claim and a meaningless "denominator" phrase; I replaced the link with the arXiv link from the paper text and noted the 667/677 and 6-runs/8-rows inconsistencies; I did not check the cited prior work (Jakubův and Urban 2016, Urban 2015), the 10^7/10^120 superscripts beyond the text extraction, or the Table 1 and Table 4 numbers cell by cell.

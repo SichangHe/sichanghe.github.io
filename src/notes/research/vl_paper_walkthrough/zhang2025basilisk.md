@@ -75,14 +75,6 @@ The developer proves two obligations: `Init(S) ⇒ I(S) ∧ ϕh(S)` and `I(S) �
 
 Inference: in Verus, these obligations map to a ghost state-machine invariant and transition-preservation proof, followed by a `proof fn` connecting the invariant to executable safety contracts. The concrete Rust implementation still requires a refinement proof from runtime state and network operations to the abstract model.
 
-## what is proved, trusted, and threatening to VL
-
-Basilisk proves safety of Dafny protocol state machines and proves inductiveness of its generated clauses. Inference: it does not verify complete executable distributed implementations. The paper says: “while the protocol description is verified, a developer must trust that the description accurately models their actual system, or employ prior techniques [10,36] to provably connect it to their implementation.” (Section 6.4, p. 13)
-
-The paper lists as trusted the safety specification, the protocol description's fidelity to the real system, and Dafny with all its underlying dependencies and hardware (Section 6.4, p. 13). Inference: the asynchronous network model and Basilisk's generated history-preserving protocol are also part of what is trusted; a Verus implementation additionally trusts the Rust compiler, Verus translation and solver, proof erasure, and concrete libraries.
-
-Inference: the threat to VeruLaw is substantial for distributed safety proofs that currently spend effort inventing cross-host invariants. Basilisk's static sharding and provenance chaining could become a Verus invariant generator. The threat is narrower for executable-code refinement, liveness, Byzantine behavior, and implicit multi-step relations, all of which require additional proof machinery. VL should avoid repeating a generic provenance taxonomy without demonstrating Verus integration, concrete-code refinement, or maintenance results.
-
 ## techniques for the catalog
 
 - provenance invariants: connect each message or local witness to the history transition that produced it
@@ -91,4 +83,3 @@ Inference: the threat to VeruLaw is substantial for distributed safety proofs th
 - network provenance: enumerate message variants and sending steps to create causal sender witnesses
 - monotonicity lifting: carry add-only and write-once facts from prior history snapshots to current state
 - safety obligations: prove initialization and transition preservation of generated invariants together with the safety property
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "In each transition of the system, a non-deterministically chosen host performs a non-deterministically chosen local step."): checked every quotation, number, section and page reference (printed proceedings page numbers), and technique step against the paper text; changed the link to the publisher page printed in the paper, fixed a truncated quotation ("net" to "network"), the Multi-Paxos proof size (522 is the safety lemma, 565 the total), section references for the shard quote (Section 1) and the 6-of-64 hint count (Section 6.2), several page ranges, the chaining step (added coordinator non-equivocation), the trusted-component list (split paper-stated items from inference), and the Kondo speed comparison (the paper gives hypotheses, not a caution); marked agent conclusions "Inference:"; did not check the Verus and VeruLaw inferences or the artifact repository.

@@ -58,9 +58,6 @@ On one Intel Xeon E5-2450 at 2.10 GHz with one Flink task slot, the global verif
 
 Inference: these measurements establish useful runtime coverage and scaling for the tested NF traces and hardware. They do not establish exhaustive correctness, arbitrary-NF scalability, or correctness under broken clocks, lost events, unsampled keys, or policies that cannot be sharded. The paper itself says its scalability depends on whether the violations of interest use sharding and suppression effectively (Section 11, p. 714).
 
-## what VL should retain and threat assessment
-The paper's contribution is a practical event-language, symbolic-automaton, local-suppression, and sharded-runtime pipeline for network-function invariants (Sections 4–7, pp. 703–711). Inference: VL should not claim that pipeline as new. Inference: VL can reuse its separation between event extraction, policy specification, and checking, while replacing observed-trace evidence with Verus proofs of executable Rust transitions. Inference: the threat to agent-written verified Rust is moderate for monitoring-only deployment: runtime checks catch seen violations but leave unseen paths, and a wrong event export or policy can hide a bug. Inference: a proof-oriented VL implementation must additionally prove the event/model correspondence and state the external assumptions about time, transport, and devices.
-
 ## techniques for the catalog
 - event and IV language — define packed events, filters, grouping, mappings, location variables, regular-expression traces, and timing predicates
 - symbolic automata checking — compile IV predicates to SFA/DSFA machines and report accepting states
@@ -68,4 +65,3 @@ The paper's contribution is a practical event-language, symbolic-automaton, loca
 - localized uncertainty — construct per-location machines with epsilon transitions for events at other locations
 - sharded runtime verification — partition keyed streams across Kafka/Flink workers and reorder timestamped events
 - partial-synchrony recovery — use bounded latency, eventual state reset, and post-hoc alerts for desynchronization
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Aragog tracks all possible instantiations of variables (location or otherwise) at runtime using a multi-level tree data structure (shown at the top of Figure 12)."): checked all paper text, quotations, numbers, section and printed-page references, and technique steps; corrected a truncated quotation, page and section references, the Figure 4 explanation, transformation ordering, fault-handling details, and evidence wording; replaced the paper link with the publisher page printed in the paper; marked recommendations as inferences; did not run the artifact, reproduce experiments, or verify the proposed Verus adaptations.

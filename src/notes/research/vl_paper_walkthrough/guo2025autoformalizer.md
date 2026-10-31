@@ -37,23 +37,8 @@ How to apply it. (1) Synthesize tool-use trajectories under the ordering rules. 
 
 Verus form. Inference: collect Verus repair trajectories and apply the same training stages. For contract generation, reward fewer revisions only with evidence that the final contract preserves the requirement. This additional semantic condition is a proposed adaptation, not a tested result of this paper.
 
-## evidence, trust, and VL risk
-Table 3 (p.7) reports ATF-32B syntax/consistency percentages, in FormalMath-Lite, ProverBench, and CombiBench order:
-
-- Pass@1: 97.94/94.51, 94.29/89.78, and 86.69/65.38
-- Pass@16: 100.00/99.52, 100.00/98.70, and 100.00/96.00
-- human evaluation: 98/95, 94/85, and 90/49
-
-The evaluation samples 16 outputs per query at temperature 0.6 and reports unbiased Pass@k estimates. ATF uses “max revision attempts < 4”; only syntax-valid statements proceed to consistency evaluation (§4.1, p.6). Processed benchmark sizes are 418, 230, and 100 queries (Table 7, p.13). Human evaluation samples 100 instances per benchmark, judged by three experts with majority judgment (§4.1, p.6). However, reviewers receive consistency-tool results and “are allowed to refer to the explanation presented in the tool invocation results or ask Claude 4 for additional help” (Appendix C, p.13). Inference: human judgments are not blind to tool feedback. The reported Pearson correlation between tool and human results is 0.746 (§4.2, p.8).
-
-Table 4 (p.8) reports CombiBench consistency Pass@1 of 42.44% after cold start, 63.88% after expert iteration, and 65.38% after DPO. The final syntax-only and no-tools configurations reach 41.68% and 23.69%. The authors describe the syntax-only comparison as “improving ProverBench consistency from 75.68% to 89.78%” when adding consistency feedback (§4.3, p.8). Figure 5 and §5.2 (p.9) report average tool calls of 8.35 on CombiBench and 3.19 on FormalMath-Lite, and consistency-check success decreasing “from 69.5% on the first attempt to 8.8% on the 8th attempt.” Inference: this decline across attempts does not by itself measure the causal benefit of another revision. Separately, §5.1 reports improvement with additional revision attempts and parallel sampling (pp.8–9).
-
-Inference: the relevant trust assumptions concern the Lean compiler, tool implementation, judge accuracy, and the correspondence between informal and formal statements. For VL, these results support testing ordered tool feedback and staged repair training, while measuring semantic drift separately from verifier acceptance. They do not establish the correctness of generated Verus contracts or implementations.
-
 ## techniques for the catalog
 - batched compiler feedback: pre-check and group formal statements before compiling, then map diagnostics to each candidate
 - ensemble semantic judge: require both LLM judges to accept informal/formal meaning
 - staged tool-use training: cold-start, expert iteration, and DPO teach invocation, repair, and fewer repeated errors
 - ordered revision loop: syntax first, consistency second, stop only after both checks pass
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We further compute the Pearson correlation coefficient (Sedgwick, 2012) between the results obtained from the consistency check tool and those from human evaluation, yielding a coefficient of 0.746."): checked the whole paper, quotations, numbers, page and section references, tool steps, training, and evaluation details; corrected references and judge acceptance, added batching details and the conflicting similarity criteria, and marked adaptations and conclusions as inferences; did not reproduce experiments, inspect code or datasets, or independently validate formalizations.

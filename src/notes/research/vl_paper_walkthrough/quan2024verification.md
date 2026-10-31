@@ -47,14 +47,10 @@ The evaluation uses 300 samples total from e-SNLI, QASC, and WorldTree, across L
 
 The ablation uses GPT-4 for autoformalisation while retaining each original model for explanation refinement and proof strategy generation (Section 4.4, pp. 6–7). For example, the authors report: “Llama2-70b with GPT-4 as the formalisation component refined explanations from 7% to 65% in the e-SNLI dataset.” (p. 7). Human evaluation of GPT-3.5 and GPT-4 finds all refined e-SNLI and WorldTree explanations factually correct; QASC factual-error rates are 2.27% and 1.82%, respectively (Section 4.5, pp. 7–8). Figure 8 reports GPT-4 non-triviality of 100%, 98.18%, and 100% on e-SNLI, QASC, and WorldTree, respectively (p. 8). Inference: these human judgments do not establish formal guarantees about factual truth or translation fidelity.
 
-Inference: Isabelle checks entailment under the generated axioms. Applying that result to the original sentences additionally depends on translation fidelity and the suitability of those axioms. For VL, the reusable idea is diagnostic-driven proof repair; a flawed translation can still yield a proof of the wrong specification. The paper evaluates natural-language inference, rather than Rust verification.
-
-The authors describe extracting “the exact erroneous steps from the theorem prover to effectively refine logical errors in the explanatory sentences” (Section 5.1, p. 9). Inference: VL could reuse failed-step feedback, fact pruning, and regeneration, with final acceptance dependent on Verus checking the regenerated artifact.
+The authors describe extracting “the exact erroneous steps from the theorem prover to effectively refine logical errors in the explanatory sentences” (Section 5.1, p. 9).
 
 ## techniques for the catalog
 - event-semantics autoformalisation: preserve sentence roles with explicit event variables before theorem proving
 - syntax-error refinement: feed Isabelle diagnostics back to an LLM for bounded correction of generated theories
 - proof-strategy checking: generate `show X using Y by Z` steps and require theorem-prover success
 - failed-step refinement: remove irrelevant facts and regenerate explanations from the exact failed obligation
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In some cases, the theorem prover may get stuck on a proof step, and we have set a termination time if the solving time exceeds 65 seconds."): checked all paper text, quotations, numbers, section and PDF-page references, method steps, tag, and arXiv link; corrected references, Isabelle syntax, bounded syntax-repair behavior, syntax-reduction attribution, and swapped WorldTree refinement rates, and marked recommendations as inferences; did not rerun experiments, inspect implementation code, or test the proposed Verus adaptations.

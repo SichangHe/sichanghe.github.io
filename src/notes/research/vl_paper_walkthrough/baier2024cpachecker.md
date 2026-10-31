@@ -8,8 +8,6 @@ This tutorial is a practical guide to CPAchecker 3.0. It presents configurable p
 
 As a verifier, CPAchecker takes a program, specification, and configuration and returns a verdict, report, and verification witness; its other main uses are witness validation and test generation (Sect. 1.1, p. 2; Sect. 3, p. 6). A CPA defines an abstract state domain and precision, and precisions can be adjusted by counterexample-guided abstraction refinement (CEGAR) (Sect. 1.2, pp. 2–3). The tutorial recommends trying several analyses: “none of them always outperforms all of the others” (Sect. 4.1, p. 13).
 
-Inference: VeruLaw can reuse this separation between executable code, specification, analysis precision, and independently checkable evidence. Verus itself is contract-and-proof oriented, so CPAchecker configurations are patterns for choosing abstractions and proof certificates rather than drop-in Verus commands.
-
 ## technique 1: choose analysis by specification and proof goal
 
 How it is done. First classify the property: reachability, memory safety, termination, overflow, or data race. Use the table’s specialized configurations: `--smg` for memory safety, `--lassoRankerAnalysis` or `--terminationToSafety` for termination, `--predicateAnalysis--overflow` for overflow, and `--dataRaceAnalysis` for races (Sect. 4, Table 2, p. 13). For ordinary reachability, start with the default meta-configuration, which uses k-induction for reachability specifications, then compare value analysis, symbolic execution, BMC, predicate abstraction, and interpolation configurations (Sect. 4.1, p. 14).
@@ -106,14 +104,6 @@ How it is done. Run `--testCaseGeneration-predicateAnalysis` and choose XML, pla
 
 Verus form. Inference: use generated tests to exercise executable Rust and to find mismatches between specifications and implementations. Tests supplement, rather than replace, Verus proof; report coverage denominators and generated inputs.
 
-## what is proved, trusted, and relevant to VL
-
-BMC’s UNSAT result proves safety only up to the chosen bound unless all loops are fully unrolled (Sect. 4.6, p. 18). Predicate abstraction depends on learning suitable predicates (Sect. 4.5, p. 17). SMG’s list abstraction has scope limits (Sect. 4.8, p. 19). Lasso-based termination analysis constructs ranking functions; termination-as-safety instead requires full loop unrolling for a termination proof (Sect. 4.9, pp. 20–22).
-
-Inference: applying these results requires trusting the implementation of the selected analysis and its solvers, and choosing a specification and platform that match the intended program behavior. Independent witness validation still relies on the validator and the meaning of its inputs.
-
-Inference: the threat to agent-written verified Rust is operational rather than a direct replacement: the tutorial supplies a mature menu for finding counterexamples, proving invariants, checking memory and termination, and validating evidence. VL should reuse witness-style artifacts, denominator-explicit verdicts (TRUE/FALSE/UNKNOWN), and the separation between bug-finding and unbounded proofs. It should not claim that a bounded test, a generated witness, or an SMT result alone establishes Verus contract correctness.
-
 ## techniques for the catalog
 
 - configurable program analysis — choose an abstract domain and precision, then refine precision with CEGAR as counterexamples require
@@ -125,4 +115,3 @@ Inference: the threat to agent-written verified Rust is operational rather than 
 - overflow reachability — encode signed/unsigned overflow as error locations and check with a standard analysis
 - witness validation — export correctness/violation evidence and replay it with a restricted, property-specific analysis
 - coverage test generation — generate vectors or harnesses for branch, statement, function-call, or error-call goals
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "It gives an overview of the main analysis techniques that CPAchecker offers, together with their strengths and weaknesses, and provides guidance on how to use CPAchecker in several analysis situations."): checked the complete paper text, study quotations, numbers, section and page references, commands, and technique descriptions; corrected the abstract quotation, page references, analysis limits, symbolic-execution examples, memory-cleanup alternatives, and witness-validation details, and marked trust conclusions as inference; did not execute CPAchecker examples or independently validate the Verus applications.

@@ -7,8 +7,6 @@ The paper presents Where4, a portfolio solver integrated with Why3. It predicts 
 
 The abstract states: “We present Where4: a portfolio-based approach to discharge Why3 proof obligations.” (abstract, PDF p. 20). The four contributions are the Where4 implementation, Why3 workflow integration, a metric set for Why3 goal formulae, and statistics for eight solvers over 1,048 goals (section 1, PDF p. 21). The initial corpus has 128 files, 289 theories, and 1,048 goals (section 1, PDF p. 20); a 10-second timeout is used for Table 1 (Table 1 caption, PDF p. 21).
 
-Inference: for VeruLaw, the directly reusable idea is a solver portfolio around Verus proof obligations. Verus commonly relies on one automated backend, so a predictor could route obligations or choose proof settings. The paper’s measurements concern Why3 and eight historical SMT installations; they do not establish performance for Verus or modern Z3.
-
 ## technique 1: extract static goal features
 
 Where4 traverses each Why3 goal and lemma abstract syntax tree (AST), counting syntactic features. Figure 2 shows the metrics: size, operator counts (ops), conditional constructs (conds), leaves (variables, true/false, wildcards, zero-arity symbols, integer and float literals), quantifier counts, depth, and average arity (section 2.1.1, PDF p. 23). The paper calls the features integer-valued metrics computed by analysing a proof obligation; no solver run is needed to compute them. The training set uses 96 files and 768 goals (75% of the 128-file corpus, with 4-fold cross-validation); 25% of the programs are held back for evaluation (section 2.1, PDF p. 23). The test set has 32 files, 77 theories, and 263 goals (section 5, PDF p. 27).
@@ -76,8 +74,6 @@ The dataset is imbalanced: no goal returned Invalid for any of the eight solvers
 
 Inference: trusted parts include the AST feature extractor, training labels and cost model, model calibration, solver installations, timeout measurement, and the assumption that timing rankings transfer across machines. Inference: the paper’s core claim is operational rather than a correctness theorem. The conclusion states: “Users without any knowledge of SMT solvers can prove a greater number of goals in a shorter amount of time by delegating to Where4 than by choosing solvers at random.” (section 7, PDF p. 34). The same paragraph adds: “Although some of Where4’s results are disappointing”.
 
-Inference: the threat to agent-written verified Rust is indirect but practical. Solver selection can make proofs appear reliable on one machine while timing, triggers, or backend version changes cause failures elsewhere. Existing Where4 work already covers static metrics, learned ranking, pre-solving, and timeout thresholds; VL should not redo those techniques without a Verus-specific corpus and leakage-resistant evaluation. The useful adaptation is a measured proof-orchestration layer that records backend versions, model confidence, retries, and unresolved obligations.
-
 ## techniques for the catalog
 
 - AST feature extraction — count static logical and syntactic features of each proof obligation before solver invocation
@@ -86,4 +82,3 @@ Inference: the threat to agent-written verified Rust is indirect but practical. 
 - pre-solving — try a strong default backend briefly to discharge easy obligations before feature extraction and ranking
 - timeout cost threshold — suppress predicted-expensive retries to balance proof coverage against cumulative latency
 - reproducible evaluation split — separate files, not individual goals, into training and held-out test data
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The random forest is fitted on the entire training set and encoded as a JSON file for legibility and modularity."): I read the whole paper text and checked every quotation, number, section and page reference, the cost function, Table 1-3 and Figure 6 figures, and the algorithm steps against it. I changed the link to the DOI from the paper text, fixed page references (contributions p. 21, Boogie sentence p. 33, conclusion p. 34, section 3.2 pp. 26-27), removed the unsupported claim that Table 2 covers the 768-goal population, replaced a paraphrase of the abstract with its words, added Figure 6 times and the Table 2 caveats, and marked my own conclusions as Inference. I did not check the cited works, the Verus-related inferences against any Verus source, or the figures' plotted values beyond the printed labels.

@@ -98,8 +98,6 @@ Lean verification, proof-context validation, immutable runtime configuration, an
 
 The abstract’s 45.1% is a held-out solve rate on 244 miniF2F-test problems, whereas 32.0% is the best fixed-benchmark baseline on that same held-out split; the active benchmark has 76 tasks and is not the denominator for those figures. The difficulty coefficient rises from 1.00 to 3.17 by generation 15 (Table 2, p.16), but that coefficient is not a solve rate. Inference: reports that compare raw active-benchmark percentages across generations would be misleading.
 
-Inference: VL should not redo fixed-benchmark-only workflow evolution or claim that self-modification alone produces deep proof graphs; this paper already shows the repair-centered outcome and the shallow-context limitation. The threat to agent-written verified Rust is high for workflow automation but lower for semantic soundness: a Verus-grounded runtime could evolve prompts, search, and repair, yet specification review, dependency assumptions, and held-out Rust tasks remain outside the paper’s evidence.
-
 ## techniques for the catalog
 
 - trusted mutable-workspace split — evolve workflows in a copied workspace while a fixed runtime alone verifies proofs and scores
@@ -107,5 +105,3 @@ Inference: VL should not redo fixed-benchmark-only workflow evolution or claim t
 - mastery-throttled curriculum — replace mastered tasks laterally or with harder tasks only after level-specific mastery
 - anchor recalibration — preserve cross-generation selection scores with champion re-evaluation and a difficulty coefficient
 - verifier-feedback evolution — evolve bounded repair, lemma-name checking, and optional self-contained subgoal workflows under Lean checks
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

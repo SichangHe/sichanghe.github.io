@@ -8,8 +8,6 @@ The paper verifies a 1 Gb/s Ethernet driver for LionsOS, written in Pancake and 
 
 The paper's motivation is an end-to-end semantic gap: “This guarantees that the semantics of drivers and other systems code written in Pancake, will be preserved at the binary level.” (section 1, pp. 1–2). It also states the practical cost: “The verification of our Ethernet driver took around three person-months.” (section 1, p. 2). The compiler and source verification are separate obligations: “incorrect source + verified compiler = incorrect machine code” (section 2.5, p. 6). Section 6.1 qualifies the end-to-end claim: the transpiler remains unverified, the compiler theorem covers only the main entry point, and no unified theorem connects the driver verification to the binary.
 
-Inference: this is relevant to VeruLaw because it shows a systems verification architecture that treats device and neighboring components as contracts, but it does not verify Rust or Verus. A direct Verus port would need executable Rust models and proof APIs for the same hardware and OS boundaries.
-
 ## technique 1: choose a verification-oriented systems language and driver shape
 
 What it is. Pancake is a small unmanaged imperative language between C and assembly. It has machine words, code pointers, and structs, static allocation, no malloc/free, no static type system, and a simple formal semantics. The driver is single-threaded and single-purpose. The authors cite this shape as a way to remove concurrency bugs and simplify proofs; Pancake deliberately has no concurrency primitives.
@@ -102,14 +100,6 @@ Verus form. Inference: use ownership and borrowing to separate RX and TX state, 
 
 The verification workflow is: annotate Pancake, transpile to Viper, supply device and OS Viper models, and run Viper, which returns proved, falsified, or timeout (section 4.1, p. 8). Table 1 also gives 351 lines for the original C driver. Compilation takes seconds; full driver verification takes around 20 minutes on a typical laptop. When verified separately, the device model takes 10 minutes and driver functions around 1 minute each (section 5, p. 10). The experiment runs on an AVnet MaaXBoard with an NXP i.MX8MQ, four Cortex-A53 cores, fixed 1 GHz clock, 2 GiB RAM, and a 1 Gb/s NIC. An external load generator measures throughput and latency while a LionsOS client echoes received packets. The authors report that received throughput equals requested load for both drivers. Pancake uses about 10% more driver CPU; the whole-system CPU difference becomes unnoticeable, and latency differences fall within result variance (section 5, pp. 10–11). Inference: this comparison of one driver and board does not establish universal performance parity.
 
-## trust, limitations, and product threat
-
-The verified compiler removes compiler passes from the main TCB, but the authors list remaining trust: HOL4's soundness, the CPU's implementation of the official Arm ISA specification, an unverified linker, the Viper transpiler, Viper and its SMT backends, device initialization and behavior, neighboring OS components, and the kernel/support libraries (section 6.1, p. 11). The transpiler is not yet verified, so source-level annotations are not formally linked to the Viper claims. Driver verification includes behavior after re-entry, but the compiler theorem covers only the main entry point. No unified theorem yet connects the verified driver properties to the binary.
-
-The work proves modeled functional properties, device-interface compliance, queue protocol compliance, transfer integrity, and RX/TX region isolation under stated assumptions. It does not prove hardware correctness, initialization, all seL4 system-call functional properties, concurrent access safety, or correctness of external libraries.
-
-Inference: the threat to a product that asks an agent to write Verus-verified Rust is high for hardware-facing code if the product trusts a model without linking it to the real register map and unsafe implementation. The transferable lesson is to make every boundary explicit: register ranges, nondeterministic read contracts, neighboring-component assumptions, data-preservation invariants, and region permissions. Verus can prove Rust contracts, but the product still needs audited models and a recorded trusted-computing base. The Pancake paper already covers an important end-to-end driver architecture; VL should not redo its basic contract decomposition without testing it on Rust/Verus-specific boundaries.
-
 ## techniques for the catalog
 
 - verification-oriented driver design: use a small, single-threaded systems language and explicit Hoare annotations
@@ -119,5 +109,3 @@ Inference: the threat to a product that asks an agent to write Verus-verified Ru
 - data-integrity invariants: assert address and length preservation across queue and hardware descriptor paths
 - region isolation: use permissions to restrict RX and TX state to their responsible code paths
 - verified compilation: carry source observable behavior to binary through the CakeML-derived verified compiler
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "These integers represent machine words and are converted to bitvectors when bit-level operations are required."): read the entire paper and study; checked quotations, numbers, page and section references, technique steps, and trust assumptions; corrected the OS wake-up protocol, compiler re-entry limits, memory-permission explanation, device-invariant assumptions, performance wording, references, and arXiv link; did not inspect the implementation or reproduce proofs or measurements. Verus adaptations remain labeled inferences.

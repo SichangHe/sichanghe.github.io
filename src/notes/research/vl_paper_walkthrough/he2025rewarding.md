@@ -21,7 +21,7 @@ Apply the diagnostic as follows.
 3. After RL, recompute each candidate's probability and, for every rank, average the Boolean event that its probability increased, restricted to candidates with verifier reward 1 (Section 3.5, p. 5).
 4. Plot uplift rate against rank. Figure 4 shows that the probability of high-probability correct samples increases more often than that of rare correct samples (p. 5).
 
-Verus form. Inference: the analogous VL signal is diversity of verified Rust proofs or contract-valid implementations. A deterministic verifier can label each candidate, while a policy logger records initial and post-update probabilities. This is a training diagnostic, not a Verus proof; Verus can certify each candidate's contract but does not certify the RL update or statistical interpretation.
+Verus form.
 
 ## technique: unlikeliness reward
 
@@ -39,7 +39,7 @@ Step-by-step use.
 4. Skip samples whose original GRPO advantage is zero, so the perturbation cannot make an all-correct or all-incorrect group drive an update by itself (Section 4.1, p. 5).
 5. Normalize the resulting rewards into GRPO advantages and apply the normal clipped-ratio objective and KL penalty (Sections 2.2 and 4.1, pp. 3, 5).
 
-The experiment uses `βKL=0.10`, `βrank=0.25`, and either one or two PPO epochs. `GRPO-Unlikeliness-2` means two epochs; `GRPO-Unlikeliness-1` means one (Table 1, p. 6). Inference: for VL, use the same reward only when a deterministic Verus build and verifier accept the candidate. Rank should be computed among candidates for the same task and model state; a language-model likelihood alone cannot establish proof correctness.
+The experiment uses `βKL=0.10`, `βrank=0.25`, and either one or two PPO epochs. `GRPO-Unlikeliness-2` means two epochs; `GRPO-Unlikeliness-1` means one (Table 1, p. 6).
 
 ## technique: extra PPO epochs as a complementary intervention
 
@@ -59,7 +59,7 @@ The final model is trained on an 11K theorem subset excluding `Dval`. On MiniF2F
 
 Lean's verifier supplies binary correctness rewards (Section 2, p. 2); the rank-bias measurements and intervention results are empirical (Sections 3.5 and 5, pp. 5–8). Inference: trusting these results requires trusting Lean, the Python Lean-REPL wrapper, model likelihoods, reward logging, optimizer implementation, sampling independence, and dataset formalization. Inference: for agent-written verified Rust, the direct risk is distribution collapse toward easy proof styles and loss of rare valid proofs; the proposed reward could improve search breadth, but the evidence does not show transfer from Lean to Verus or from theorem proving to systems code.
 
-The paper's toy environment isolates the issue with a two-layer MLP, 128 actions, a threshold reward, 200 GRPO steps, and evaluation at harder thresholds (Appendix A, pp. 10–11). Inference: this supports the diagnosis but is not a theorem about neural optimizers. High KL alone prevented deterioration but did not substantially improve over the base model (Appendix D, p. 12). The authors leave inference-aware RL and direct optimization for particular sampling algorithms open (Limitations, p. 9). Inference: VL should measure pass@N, candidate diversity, verification cost, and specification fidelity together; optimizing one number can hide a degraded proof distribution.
+The paper's toy environment isolates the issue with a two-layer MLP, 128 actions, a threshold reward, 200 GRPO steps, and evaluation at harder thresholds (Appendix A, pp. 10–11).
 
 ## techniques for the catalog
 
@@ -67,5 +67,3 @@ The paper's toy environment isolates the issue with a two-layer MLP, 128 actions
 - unlikeliness reward — down-weight high-probability correct samples so rare correct proofs receive more relative advantage
 - multi-epoch GRPO — use additional clipped updates to expose still-unclipped rare solutions, while measuring instability and cost
 - verifier-based pass@N evaluation — compute theorem-level success over independent verified samples and report denominators and chunking
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "When taking multiple gradient steps, the initial steps may push high-rank solutions beyond the clipping threshold, so that subsequent steps are forced to focus on low-rank samples that are still unclipped."): checked all paper text, study quotations, numbers, section and page references, and technique steps; corrected diagnostic sampling, training-count interpretation, references, uncertainty, rank-index ambiguity, dataset-count inconsistency, and the paper link; did not reproduce experiments, inspect released code, or validate transfer to Verus.

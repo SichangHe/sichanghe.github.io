@@ -62,5 +62,3 @@ Inference: for agent-written verified Rust, the reusable idea is to expose seman
 - staged semantic decomposition — extract the outer scope, recursively split operators, and normalize atoms
 - deterministic backend synthesis — validate the tree and translate it with fixed post-order rules
 - visual human feedback — render and edit the intermediate tree to repair semantic interpretations before final synthesis
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To ensure high-quality annotations, each requirement was independently translated into an LTL formula by two annotators."): checked the entire paper text, study quotations, numbers, section and PDF page references, technique steps, tag, and arXiv identifier; corrected page references, AP-field requirements, recursive steps, the proof claim, evaluation distinctions, and availability references, and marked recommendations as inferences; did not inspect the demonstration repository, reproduce experiments, or independently validate the expert reference formulas.

@@ -8,8 +8,6 @@ ModelForge translates natural-language security-protocol specifications into pro
 
 The translator's workflow is: submit protocol prose; concatenate it with an instruction prompt; generate a CPSA definition with a fine-tuned LLM; return it to the user (§3.11, p. 9). Expert review precedes subsequent analysis: generated candidates “will need to be reviewed and revised by a domain expert” (§1, p. 3). CPSA additionally requires a skeleton: “The CPSA formal methods tool necessitates a protocol definition (model) and a partial description of an execution (protocol skeleton) as inputs” (§1, p. 3).
 
-Inference: For VL, this is a pattern for generating a candidate formal representation before Verus code. Expert review would check that generated contracts and transition invariants match the protocol prose. The paper does not demonstrate a translation to Verus or Rust ownership reasoning.
-
 ## technique 1: synthetic corpus and domain fine-tuning
 
 The reported data-generation steps are: use GPT-4 to generate ten seed CPSA templates; generate corresponding natural-language protocol specifications; use GPT-4 to introduce variance into the resulting pairs. The authors write: “After forming these pairs, GPT-4 was leveraged once again to introduce variance into the existing set of Q&A pairs, thereby increasing the number of pairs available for the fine-tuning process” (§3.4, p. 7). The paper does not specify that this variance only changes wording or preserves a fixed target definition.
@@ -36,17 +34,9 @@ Table 3 reports “Normalized average ratings provided by experts for each query
 
 Inference: This feedback illustrates why syntax ratings alone do not establish semantic fidelity. A Verus evaluation should separately measure compilation, proof success, and coverage of intended requirements, with explicit denominators. The small expert survey provides limited evidence for deployment claims.
 
-## trust, limits, and product threat
-
-The authors write: “ModelForge’s initial outputs generally adhered to the CPSA syntax format, however, they often required corrections.” They therefore recommend that “a domain expert should carefully review the AI-generated CPSA protocol definitions to ensure they are correct, complete, and secure” (§5, p. 12). ModelForge “performs better when variable names are provided as part of the user query,” which complicates translating RFCs (§5, p. 12). Proposed future work includes inferring variable names, extracting relevant content from RFCs, and larger evaluations (§5, pp. 12–13). The conclusion proposes additional models for “more complex features within CPSA, such as Diffie-Hellman algebra, goals, and listeners” (§6, p. 13).
-
-Inference: An analyzer's results concern the supplied model; they do not establish that the model faithfully captures the original prose. The analogous risk for verified Rust is a provable contract that omits a required role, key assumption, or security goal. A useful VL extension would connect prose-to-Verus translation with independently checked requirement coverage and executable tests.
-
 ## techniques for the catalog
 
 - synthetic formal-language corpus — generate seed CPSA definitions and matching prose with GPT-4, introduce variance, and fine-tune GPT-3.5-turbo on the resulting pairs (§§3.4, 4.4)
 - structured protocol translation — concatenate the query and instruction prompt, generate CPSA s-expressions, and return them to the user (§3.11)
 - expert evaluation — rate syntax, readability, and query coverage, and collect written strengths and weaknesses (§§4.1–4.3)
 - human semantic review — have a domain expert review and correct generated definitions before analysis (§§1, 5)
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The context is obtained by concatenating two components: 1) the user query and 2) the instructions prompt."): checked all quotations, numbers, section/page references, technique steps, and catalog entries against the full paper; corrected references and the generated-code description, replaced unsupported procedure steps with reported steps or explicit inferences, recorded the evaluation-count and Llama-label inconsistencies, and used the paper's arXiv identifier for the link; did not run ModelForge, CPSA, or the training/evaluation pipeline, inspect external artifacts, or verify the proposed Verus adaptations.

@@ -10,7 +10,7 @@ The Lean run uses 48 iterations, 3.6 million generated conjectures, 241 million 
 
 On held-out benchmarks, the final STP model obtains 65.0% miniF2F-test pass@3200, 23.9% ProofNet-test pass@3200, and 8/644 PutnamBench problems at 3,200 samples (Abstract, p. 1; Table 1 and Section 4.2, pp. 8–9). Pass@k means the percentage of statements for which at least one of k independent proofs verifies; the denominators are the benchmark sizes, with PutnamBench explicitly 644. The Isabelle study disables expensive tactics and uses different timeouts (Section 4.1, p. 7). Inference: its results are not directly interchangeable with Lean.
 
-The formal verifier selects correct generated proofs (Section 3.2, pp. 5–6). Inference: verification establishes the formal statement, while the intended meaning of the specification and translation quality still need review. For VL, STP is a training strategy; Verus must verify every generated Rust proof.
+The formal verifier selects correct generated proofs (Section 3.2, pp. 5–6).
 
 ## technique 1: initialize prover and conjecturer with supervised proof data
 
@@ -79,7 +79,7 @@ how to apply it:
 4. solve for distribution P over selected conjectures minimizing Wasserstein distance to Q (Section 3.2, p. 6)
 5. train the conjecturer with the resulting weights; the practical algorithm limits large weights and permits nonuniform matching weights for source statements (Section 3.2, p. 6; Appendix A.5, pp. 20–21)
 
-Verus form: Inference: compute embeddings of Rust contracts or proof-obligation descriptors and reweight selected examples toward the topic distribution of outstanding VL tasks. This controls training coverage; it does not prove semantic similarity or correctness.
+Verus form:
 
 evidence and limits: the paper reports better scaling and dense conjecture signals in the Isabelle ablation, but does not provide a standalone ablation removing Wasserstein reweighting. Inference: topic preservation depends on representation quality. Appendix A.5 specifies sequence-averaged last-layer embeddings and increases miniF2F-valid and ProofNet-valid matching weights from 1 to 128 after the first 24 Lean iterations (pp. 19–20).
 
@@ -119,12 +119,6 @@ Verus form: Inference: deploy a separately retrained model only after compiling 
 
 evidence and limits: Table 1 reports miniF2F-test pass@3200 of 65.0% ± 0.5% and ProofNet-test pass@3200 of 23.9% ± 0.6% (p. 8). PutnamBench is 8/644 at 3,200 samples (Section 4.2, p. 9; Table 3, p. 23). The paper does not isolate final retraining alone. Its retraining ablation compares inclusion versus omission of generated conjectures: miniF2F-test pass@128 is 61.2% ± 0.6% versus 58.3% ± 0.7%, and ProofNet-test is 19.5% ± 0.7% versus 17.4% ± 0.4% (Table 2, p. 22).
 
-## what remains trusted and what VL should take
-
-The paper's LeanWorkbook audit found 13/20 sampled unproved statements unprovable (Section 4.2, p. 7). Inference: failure to prove a dataset statement cannot always be attributed to the model. VL should review specifications and translations separately from proof acceptance, maintain a distinction between generated training tasks and product obligations, and reject any Rust proof not accepted by Verus under a pinned environment.
-
-The paper compares STP empirically with expert iteration and parallel sampling (Figures 2 and 4, pp. 3, 9), and discusses prior formal conjecturing and self-play methods (Section 2, p. 4). Inference: VL can test these training ideas using verified Rust examples, while reviewing whether generated contracts express the intended requirements. A verified proof of a weak contract does not establish a stronger intended property.
-
 ## techniques for the catalog
 
 - dual-role self-play — train a conjecturer and prover from each other's verifier-filtered outputs
@@ -133,5 +127,3 @@ The paper compares STP empirically with expert iteration and parallel sampling (
 - diversity reweighting — match selected-goal embeddings to the distribution of outstanding tasks
 - hard-proof replay — train on difficult verified proofs with inverse-count, length, and time weights
 - final retraining with verified proofs — refresh from a base model and count only verifier-accepted proofs
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In this case, the conjecture is harder than the original statement but is proved with similar techniques — expanding the powers of a binomial and then using the fact that x ≥ 0."): checked the entire paper, quotations, numbers, page and section references, and technique steps; corrected the paper link, incomplete quotation, references, filtering order, sample-budget description, matching cost, and uncertainty figures; marked recommendations as inferences; did not reproduce experiments, inspect released code or datasets, or test the Verus adaptations.

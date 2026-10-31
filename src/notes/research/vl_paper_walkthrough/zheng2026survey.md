@@ -54,11 +54,8 @@ Inference: Verus model adaptation could teach recurring proof idioms, but genera
 ## evidence, trust, and limits
 The survey organizes evidence by method, benchmark, and evaluation criterion, including syntax, proof, simulation, mutation, coverage, and fault detection (Tables II–III, pp.5–6). Mutation testing is stronger than syntax/proof alone because it tests injected-fault detection, but the paper says mutation score “does not by itself establish that an assertion faithfully represents the specification” (Section III.B.3, p.7). It also identifies tradeoffs: richer reasoning and multi-agent pipelines add latency, tool calls, cost, and intermediate error opportunities (Section III.B.5, p.7).
 
-Inference: VL should measure contract fidelity, proof obligations, counterexample quality, mutation-like bug detection, and review effort, with denominators and benchmark settings. It should not treat verifier acceptance as complete semantic correctness. What remains trusted includes specifications, signal mappings, external tools, training-data quality, and human interpretation. What VL should avoid redoing is a generic survey of LLM hardware verification; its gap is end-to-end verified Rust with explicit assumptions and executable evidence. Inference: the threat to agent-written verified Rust is high if proof search can silently weaken postconditions; it is reduced by exposing contracts, diffs, diagnostics, and independent review.
-
 ## techniques for the catalog
 - structured specification grounding — convert heterogeneous requirements into explicit intermediate representations before generating properties
 - retrieval and feedback refinement — retrieve design context and iteratively repair with compiler, simulation, formal, counterexample, and coverage feedback
 - agentic verification decomposition — separate analysis, generation, checking, debugging, and escalation with independently validated artifacts
 - training plus deterministic checking — adapt models to domain idioms while retaining formal tools as the correctness evidence
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

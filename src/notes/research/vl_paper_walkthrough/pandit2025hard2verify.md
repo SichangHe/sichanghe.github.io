@@ -86,8 +86,6 @@ evidence and limits. The cases show a verifier accepting a claim proved only at 
 
 Inference: Hard2Verify measures agreement with expert labels, not formal theorem validity. Trusted elements include the curated official solutions, MathPix extraction, model prompts and decoding, human annotator judgments, PRM thresholds, and metric implementation. The benchmark’s own central finding is that weak verifiers label nearly every step correct: their TNR falls toward zero while TPR rises (Figure 4, PDF p. 8). Inference: final-answer accuracy alone cannot establish the validity of intermediate reasoning.
 
-Inference: a risk for VeruLaw is accepting plausible but invalid intermediate proof edits when using an LLM critic as a prerequisite check. Verus’s checker can eliminate many such errors, but model-generated specifications, `external_body` assumptions, dependency contracts, and unchecked environment claims remain outside its kernel. VL should not redo Hard2Verify’s human math benchmark; it should adapt its three-task schema to verified Rust patches and publish machine-checkable labels plus human labels for specification adequacy.
-
 ## techniques for the catalog
 
 Inference: the following labels summarize the techniques above.
@@ -100,4 +98,3 @@ Inference: the following labels summarize the techniques above.
 - sequential compute scaling: spend more reasoning on each judgment and compare with parallel votes
 - self-verification audit: compare a generator’s human-judged solve rate with its own verification rate
 - disagreement audit: convert expert/model false positives into targeted verifier cases
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We split Hard2Verify into three subsets corresponding to each of the three generator models and have the generators verify their own responses."): checked all quotations, numbers, section/page references, technique steps, and the arXiv identifier against the full text; corrected Figure 6 attribution and values, metric denominators, page references, prompt conversion, and sampling details; marked recommendations and conclusions as Inference; did not reproduce experiments, independently validate mathematical proofs, or inspect external code/data.

@@ -5,8 +5,6 @@ Tag: `ma2026shannonprover`, [paper](https://doi.org/10.48550/arxiv.2607.02847)
 
 ShannonProver is an agentic system for writing EasyCrypt proofs of cryptographic lemmas. A human cryptographer supplies the protocol specification, security definitions, assumptions, and main theorem. The system automates decomposition into intermediate games and lemmas, then proves those lemmas with checker-in-the-loop agents. EasyCrypt accepts or rejects every tactic, so the LLM supplies search while the proof assistant supplies the final validity check. The paper summarizes the boundary: “The agent may hallucinate or make mistakes along the way, but this cannot compromise soundness: EasyCrypt rejects every invalid proof attempt, so once the agent produces a script that passes the check, the theorem is certified.” (section 1, p. 1).
 
-The workflow follows three phases. Phase I is human specification. Phase II decomposes the main theorem into games and intermediate lemmas. Phase III writes tactic-level scripts. ShannonProver automates Phases II and III, with a decomposer and a lemma prover. The phases can interleave: failed lemma proofs return feedback that causes the decomposer to split or restructure a lemma. This matters for VL because proof engineering is not just one-shot generation; decomposition and local proof obligations constrain each other.
-
 Inference: for agent-written verified Rust, the direct analogue is a reviewed specification and theorem, an agent that proposes lemmas and proof structure, and Verus as the acceptance boundary. Inference: the paper’s guarantee is conditional on the human-supplied EasyCrypt model and theorem; it does not prove that the protocol specification captures real requirements or that external implementations match the model.
 
 ## technique: hierarchical decomposition with feedback
@@ -123,12 +121,6 @@ The ChaCha20-Poly1305 case contains 27 procedural, 8 invariant-synthesis, and ga
 
 The paper evaluates proof quality by expert judgments of concision, maintainability/readability, and semantic proof idiom. Figure 10 shows room for improvement on invariant and game-hop proofs. Inference: a checker pass establishes theorem validity in the modeled system, but does not ensure concise, maintainable, or human-understandable proof structure.
 
-## trusted boundary and product threat
-
-EasyCrypt, its parser and checker, the compiler’s correctness, and the cryptographer’s specification and imported lemmas are trusted. Inference: the LLM and orchestration heuristics are untrusted search components because every final script is checked. Inference: for agent-written Verus, the corresponding trusted boundary includes Verus, the SMT solver, Rust/Verus compilation and erasure, external library contracts, and the reviewed specification. Inference: the paper suggests high threat reduction for proof-writing labor, but it does not remove specification errors, missing environmental assumptions, or semantic mismatch between a model and deployed code.
-
-What VL should not redo is a monolithic checker-in-the-loop agent that receives only the latest goal and error. The paper’s ablations show that state-aware context and branch management address distinct failure modes. Inference: VL should reuse these mechanisms around Verus diagnostics rather than treating LLM proof generation as a single completion request.
-
 ## techniques for the catalog
 
 - hierarchical lemma decomposition — split a main theorem into intermediate games and lemmas, then revise the decomposition from proof feedback
@@ -137,4 +129,3 @@ What VL should not redo is a monolithic checker-in-the-loop agent that receives 
 - binding analysis — fill mechanically determined arguments while leaving semantic premises as explicit goals
 - multi-agent tree search — backtrack, spawn parallel branches, prune stalled paths, and retain negative memory
 - checker-gated proof assembly — accept only tactic paths and final scripts that the proof assistant verifies
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

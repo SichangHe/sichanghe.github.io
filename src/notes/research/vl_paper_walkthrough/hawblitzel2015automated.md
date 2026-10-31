@@ -28,8 +28,6 @@ how to apply it
 4. Supply location invariants and procedure pre/postconditions that make the fragment simulation valid under interference (Section 2, pp. 452–453).
 5. Repeat the replacement for lower layers; chain the simulation theorem to establish safety of the lowest program from safety of the highest (Section 3.1, p. 458).
 
-Verus form (Inference): model each abstract operation as a ghost state-machine transition and give the concrete Rust function a `requires`/`ensures` contract relating pre-state, post-state, and abstract result. Internal helper calls can be verified separately, with a `proof fn` showing that exactly one transition changes the abstract state while other steps preserve it. A loop `invariant` captures a location predicate. Verus has no civl layer numbers or automatic path partitioning; VL would need to maintain explicit abstraction functions and check that contract changes preserve refinement.
-
 evidence and limits
 
 The soundness conditions require the high-level program to be safe under preemptive semantics, each lower procedure to contain exactly one implementing atomic block per path, sequential correctness and non-interference of location invariants, linear typing, pairwise commutativity, yield sufficiency, and infinite execution to hit yields (Section 3.1, p. 458). The paper focuses on sequential consistency and leaves weak memory models for future work (footnote, Section 1, p. 450). Inference: refinement therefore depends on the chosen atomic model and scheduler semantics.
@@ -47,8 +45,6 @@ how to apply it
 3. Build the procedure control-flow automaton with mover types as edge labels (Figure 3, p. 454).
 4. Check that this automaton is simulated by the yield-sufficiency automaton using a labeled-graph simulation algorithm (Section 2, p. 454; Section 5, p. 459).
 5. If commutativity is too expensive, mark actions `atomic` and insert a yield before every invocation; this trades mover checks for more location invariants and non-interference checks (Section 2, p. 454).
-
-Verus form (Inference): represent a transaction as a ghost protocol transition and prove commutativity lemmas for operations that may be reordered. Encode yield predicates as loop or function `invariant`s and require an abstract scheduler model in the contract. Verus does not supply mover-type inference or a yield automaton, so VL would need a separate static analysis that generates `proof fn` obligations for pairwise commutativity and checks the control-flow pattern.
 
 evidence and limits
 
@@ -107,15 +103,11 @@ how to apply it
 3. Transfer ownership across refinement layers when an abstract lock or datatype becomes a client-owned variable (p. 459).
 4. Hide implementation variables such as locks from the atomic specification while retaining them in lower-layer proofs (Section 2, p. 455).
 
-Verus form (Inference): put each protocol state and its invariant in a Rust module, expose only abstract `spec fn`s and transition contracts, and keep representation fields private. A refinement lemma relates the private concrete state to a public ghost state. Verus modules do not automatically reduce solver obligations by ownership partition, so VL would need dependency metadata or separate verification units.
-
 ## evidence, trusted elements, and product impact
 
 The implementation has 32 benchmarks of 17 to 539 LOC; the full set verifies in 20 s on a 4-core Windows PC (2.8GHz, 8GB) (Section 6, p. 460). The concurrent mark-sweep garbage collector uses six refinement layers (Section 6.1, p. 460) and consists of about 2100 lines of Boogie code; verification takes 60 s on the same PC, 54 s of it for sequential correctness and non-interference (Section 6.1, p. 461). These denominators are the reported benchmark suite and one GC artifact, not a general Rust performance result. Inference: the paper has no trusted-base discussion; plausibly trusted are the Boogie and theorem prover implementations, civl's type checker and verification-condition generation, the top-layer specification (condition 1 of Section 3.1 requires the high-level program to be safe), and the sequential-consistency model. Mover types and location invariants are verified by civl, not trusted. The formalization of the full language and detailed rules is in a separate technical report, not this paper (Section 3, p. 455).
 
 The adapted simulation algorithm (from Henzinger et al.) is described thus: “The complexity of the algorithm is O(n∗m), where n and m are the number of control-flow graph nodes and edges.” (Section 5, p. 459) The benchmark claim is also bounded to the artifact: “The civl verifier is fast; the entire benchmark set verifies in 20 s on a standard 4-core Windows PC (2.8GHz, 8GB) with no benchmark requiring more than a few seconds.” (Section 6, p. 460)
-
-Inference: civl is a strong precedent for VL's concurrent refinement layer. It threatens a product that asks agents to verify concrete concurrent code without an explicit abstract state machine, interference invariants, or ownership model. It does not replace Verus: civl's language is idealized Boogie, and its results do not establish Rust ownership, unsafe-code behavior, weak-memory correctness, or external-library contracts. A useful VL architecture would preserve civl's layered contracts and linear ghost permissions while using Verus `requires`, `ensures`, `invariant`, `decreases`, and `proof fn` lemmas for the concrete Rust refinement.
 
 ## techniques for the catalog
 
@@ -124,4 +116,3 @@ Inference: civl is a strong precedent for VL's concurrent refinement layer. It t
 - interference location invariants — attach predicates to yields and propagate procedure contracts across atomic specifications
 - linear permission typing — use non-duplicable thread IDs and permission tokens to establish disjointness for interference checks
 - modular ownership and hiding — assign globals to modules and hide representation variables so quadratic checks are local
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The civl type checker guarantees that the values contained in available linear variables, across all threads at their respective control locations, are distinct from each other."): I read the whole paper text (pp. 449-465) and the whole study; checked every quotation word for word, the numbers (32 benchmarks, 17 to 539 LOC, 20 s, 2100 lines, 60 s, 54 s, six layers, O(n*m)), and the section and page references. Changed: the link (now the DOI printed on the paper's first page); the first-claim quotation (the paper says "This paper presents the first ...", not "is the first"); the atomic-action description in technique 1; page references for the linear-type disjointness invariant (p. 457), the incompleteness footnote (p. 454) and the GC linearity passage (p. 461); 8GB instead of 8 GiB; removed the unsupported claim that mover annotations and location invariants are trusted; marked unsupported sentences as Inference. Did not check: the cited technical report MSR-TR-2015-8, the external benchmarks, the Verus-form suggestions beyond marking them as inference, or the priority claim against other work.

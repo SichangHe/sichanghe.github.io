@@ -89,13 +89,9 @@ The extracted datasets contain 62,816 HOL and 210,898 AFP datapoints; some AFP t
 
 The authors explicitly limit the usefulness claim: “Evaluating whether the conjectures are actually useful for other, yet unknown, downstream tasks was not the goal of the evaluation, nor the question we aimed to answer in this paper.” (Limitations, p. 9) Proof attempts use only Sledgehammer; specialized or interactive proofs and human-usefulness studies remain future work. Pretraining leakage is mitigated by dataset dates, not ruled out, especially for development versions of the 2026 formalizations (Section 5, p. 8, footnote 8).
 
-Inference: for VL, the transferable idea is neural proposal followed by typed symbolic instantiation and independent proof checking. A generated candidate remains untrusted until proved; the LLM and enumerator need not be trusted to establish its truth. Isabelle discovery rates do not establish Verus proof completion, contract correctness, or usefulness to Rust developers. A Verus adaptation would need to measure those outcomes directly. This paper does not establish how strongly Lemmanaid competes with a system for agent-written verified Rust.
-
 ## techniques for the catalog
 
 - template normalization — replace theory-specific symbols with shared typed holes while preserving the designated logical vocabulary
 - CSP hole filling — instantiate holes from supplied functions using type and arity constraints with forward checking
 - structured neural proposal — train a model to predict templates from symbols, types, and definitions
 - conjecture evaluation — compare internal terms with gold lemmas and classify other candidates using proofs and counterexamples
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Evaluating whether the conjectures are actually useful for other, yet unknown, downstream tasks was not the goal of the evaluation, nor the question we aimed to answer in this paper."): checked the entire paper, quotations, technique steps, numbers, section and page references, and paper link; corrected ensemble attribution, evaluation-versus-generation claims, input scope, and citations, and marked Verus transfers as inferences; did not reproduce experiments, inspect implementation code, or test a Verus adaptation.

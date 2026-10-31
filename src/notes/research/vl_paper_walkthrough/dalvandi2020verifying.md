@@ -60,12 +60,6 @@ The paper gives deductive evidence, not percentages or runtime benchmarks. Its e
 
 Inference: For agent-written verified Rust, the main threat is an unsound or incomplete atomic-library contract: local proofs can pass while a client loses a release-acquire guarantee. The reusable design is to require every concurrent API to ship an abstract observation contract and a concrete-to-abstract simulation proof. This is an inference.
 
-## what VL should not redo
-
-This paper establishes a lock-only baseline: modular component semantics, observation assertions, Owicki-Gries stability, and forward simulation for sequence and ticket locks. The conclusion lists as future work: “it would be interesting to further investigate implementations of other concurrent data types and transactional memory within this operational framework.” (section 7, p. 18)
-
-Inference: VL should not claim general weak-memory verification from a lock contract. New work could test richer Rust data structures and pointer ownership, which the paper does not treat, and clients that synchronize outside the library, which fall outside Theorem 8.1’s restriction to clients that only synchronise through the object.
-
 ## techniques for the catalog
 
 - modular timestamp semantics — separate client and library states while propagating release-acquire views across components
@@ -74,4 +68,3 @@ Inference: VL should not claim general weak-memory verification from a lock cont
 - Owicki-Gries stability — combine local Hoare reasoning with interference-freedom checks
 - contextual trace refinement — compare stutter-free concrete client traces with abstract traces by observation inclusion
 - forward simulation — classify concrete steps as stuttering or matching abstract operations
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "A lock release, simply introduces a new operation with a maximal timestamp, provided that the thread executing the release currently holds the lock."): I read the paper text from first line to last and checked every quotation, page and section reference, the read, write and update rule descriptions (Figure 5), the lock rules (Figure 6), the assertion definitions (Section 5.1), the Figure 7 invariant and proof steps, Definitions 5-8, Theorem 8.1, Propositions 9-10, and the claims about evidence and scope. Changed: removed the unsupported claim that this paper introduces RC11 RAR and the reference to a later paper's Treiber-stack case study; corrected the tview description, the condition for joining modification views on reads, the covered and hidden assertion descriptions, the release ownership condition, and the proof-step wording; corrected page numbers for four quotes; moved the closing periods of two truncated quotes outside the quotation marks; marked the limitation list, Isabelle-kernel trust, and VL advice as Inference. Not checked: the Isabelle theories (ancillary material not available), the cited prior works, and the Verus inference paragraphs beyond labelling them as inferences.

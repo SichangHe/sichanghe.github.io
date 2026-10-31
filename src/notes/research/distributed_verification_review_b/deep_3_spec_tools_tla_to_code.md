@@ -13,8 +13,6 @@ Industry has useful evidence for cheaper connections. CCF, etcd, MongoDB Realm S
 
 **Inference for this project's goal:** an agent should deliver separate artifacts for the requested property, environment assumptions, design model, implementation relation, and proof or test evidence. Otherwise an agent can make a checker pass by weakening the property or changing the model to match a bug. Specula explicitly treats reward hacking as a problem [P19], while MongoDB gives a concrete example: convergence alone can be satisfied by deleting all user data [P04, §5.2].
 
-## Papers and industrial reports
-
 ### P01. How Amazon Web Services Uses Formal Methods
 
 Chris Newcombe, Tim Rath, Fan Zhang, Bogdan Munteanu, Marc Brooker, Michael Deardeuff. *Communications of the ACM*, 2015. [Accessible author manuscript](https://lamport.azurewebsites.net/tla/formal-methods-amazon.pdf), titled *Use of Formal Methods at Amazon Web Services*, dated 29 September 2014. Distinguish this manuscript from the final publication.
@@ -175,8 +173,6 @@ Finn Hackett, **Joshua Rowe**, Markus Alexander Kuppe. *ICSE-SEIP*, 2023. [DOI](
 
 The official repository describes the five externally visible consistency levels and says “We refrain from modeling the Cosmos DB internals” (README, scope paragraph). It also says the “Cosmos DB engineering team heavily relies on TLA+”. These models help reason about client-visible guarantees and allowed inconsistency. Do not infer that all internal code, or all five levels' implementations, have refinement proofs from this repository or from the paper's title.
 
-## Tools and implementation connections beyond the paper entries
-
 ### TLA+, PlusCal, TLC, TLAPS
 
 Leslie Lamport developed TLA+ and PlusCal; the TLA+ community maintains the tools. [Official site](https://lamport.azurewebsites.net/tla/tla.html), [PlusCal introduction](https://lamport.azurewebsites.net/tla/tutorial/intro.html), [TLC implementation](https://github.com/tlaplus/tlaplus), [TLAPS](https://github.com/tlaplus/tlapm). These are separate components: mathematical specification language, algorithm notation translated to TLA+, explicit-state model checker, and proof system. Bounds and configuration determine the TLC state space; a checked finite instance should not be reported as a proof for arbitrary node counts.
@@ -322,5 +318,3 @@ Searches included exact titles, authors' publications and reference lists, TLA+ 
 The built-in web-search endpoint returned HTTP 404; the alternate available search endpoint also failed. The user-authorized HTTP fallback was therefore used. Google/DuckDuckGo returned challenges; Bing RSS frequently returned irrelevant matches; GitHub search/API and scholarly APIs sometimes rate-limited or failed. These failures limit completeness. Raw responses, metadata, downloaded-source text, and scripts are retained in `research_spec_tools/`. Irrelevant search hits were not counted as evidence of absence.
 
 **Gaps:** I did not identify a primary TLA-related **Kayfabe** project/paper from the supplied name. Generic “Kayfabe” results were unrelated; this remains unresolved, not disproved. I found no verified general `.tla` → Verus/Rust compiler in the searched sources. A direct LLM TLA+ → Rust example *was* found (R01), but no accompanying Verus proof. Full papers remain missing for P02, P09, P15–P17, and P24; tool documentation/metadata support the explicitly limited entries. Oracle's video, the Erlang thesis, and several small Lean/generation prototypes need fuller follow-up. Source repositories and industrial reports do not consistently disclose proof size or human effort. Other verified-code frameworks, such as Verdi, DiSeL, Grove, Perennial, and Igloo, belong primarily to the companion refinement/implementation slice; this report does not claim to cover their complete proof architectures.
-
-**New PDFs saved in this run:** P03, P04, P05, P06, P07, P08, P10, P23. Each was checked to start with `%PDF`. No existing paper was deliberately duplicated. The eight directories are recorded in [pdf-manifest.json](/ssd1/sichangheagent/verus_distributed/lit_b/research_spec_tools/pdf-manifest.json), including full local paths. Existing PDFs for AWS, IronFleet, Anvil, Remix, Veil, Verus, Specula, SysMoBench, AlphaVerus, and VeruSAGE were reused.

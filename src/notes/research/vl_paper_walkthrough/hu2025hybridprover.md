@@ -126,14 +126,6 @@ Verus form
 
 Inference: sample multiple Verus contracts and proof candidates, filter syntax, run Verus concurrently, and retain only passing candidates. Inference: moderate sampling can improve coverage, but it increases compute cost and does not change the proof obligation. Inference: keep denominators and model settings with every success rate because pass rates are benchmark-specific.
 
-## evidence, limitations, and VL impact
-
-HybridProver’s 73.8% is on 244 miniF2F test problems, not all Isabelle/HOL theorems. The paper reports up to 90% success for sketches evaluated without detailed tactics (section 4.2, p. 6). Inference: this measures retained structure rather than completed proofs and suggests that local proof completion is a remaining obstacle. Training and evaluation differ: the training data include mathematics, software, and systems proofs, while miniF2F is purely mathematical. The paper states: “One limitation of HybridProver lies in its relatively simple proof search strategy during the proof sketch refinement stage.” (Limitations, p. 9) It also reports increasing inefficiency as subgoals grow. It also relies heavily on Isabelle as a verification oracle, causing latency and scalability costs.
-
-The reported ablations do not isolate supervised fine-tuning from GRPO: the authors attribute improvements to the post-training pipeline as a whole (section 4.2, p. 7). Including premises in training reduces undefined-fact errors by around 50%, without improving miniF2F performance; the paper says most miniF2F theorems do not require external premises. Three few-shot examples separately provide no performance gain for either the trained model or the base model (section 4.3, p. 7). The authors state: “In addition, our empirical conclusions are limited to miniF2F and do not establish generalization across broader Isabelle/HOL domains.” (Limitations, p. 9).
-
-Inference: for agent-written verified Rust, the strongest reusable idea is the proof-sketch boundary between global design and local repair. A Verus agent can retain a valid abstraction or contract skeleton while regenerating only failed proof functions. Inference: retaining proof structure may reduce regeneration, while wrong contracts and repeated verification remain concerns for a Verus adaptation. Inference: VL should not repeat a monolithic one-shot proof generator when a verifier can expose partial structure and guide local repair.
-
 ## techniques for the catalog
 
 - whole-proof synthesis — sample complete theorem proofs to capture global induction and case structure
@@ -142,4 +134,3 @@ Inference: for agent-written verified Rust, the strongest reusable idea is the p
 - proof-style dataset separation — train high-level and low-level models on cleaned Isar and apply proof corpora
 - verification-guided reinforcement learning — use theorem-prover outcomes as rewards and penalize placeholders
 - sampled component composition — combine diverse candidates, sketch refinement, and backtracking under final checker acceptance
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In addition, our empirical conclusions are limited to miniF2F and do not establish generalization across broader Isabelle/HOL domains."): checked the full text, quotations, reported numbers, technique steps, section and PDF page references, tag and paper link; corrected page references, the refinement quotation, the attribution of the undefined-fact error reduction, training-step order and reward details, and marked recommendations as inferences; did not reproduce experiments, inspect released code or datasets, or validate the proposed Verus adaptations.

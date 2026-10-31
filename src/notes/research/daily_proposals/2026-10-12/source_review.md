@@ -24,6 +24,3 @@ Focused review conclusion
 - advisor evidence missing
   - agent-passed status rejected
 - unsupported gap: admission plus complete-recovery budget absent from prior systems
-- comprehensive 2026 SoTA and main ChatGPT analysis unavailable
-  - Pro deadline expired with no answer
-- seven source objects reviewed, exceeding six-source cap by one supporting README

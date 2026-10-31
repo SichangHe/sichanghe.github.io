@@ -8,8 +8,6 @@ The paper checks whether a natural-language specification describes an existing 
 
 The motivating COBOL discount example asks about the exact 1,000 threshold and the premium increment. A wrong threshold is a contradiction; an omitted premium rule is a gap (Sect. 1, p. 2). The method is intended for requirements recovered during modernization, where the same wrong rule could otherwise be copied into new code and its tests (Introduction, p. 2).
 
-Inference: for VL, the analogous object is a Verus specification attached to Rust code. Questions should be generated from executable control flow, data flow, calls, and contracts, then answered from `requires`, `ensures`, invariants, and ghost models. This can test specification-code alignment before accepting agent-written verified Rust, but the paper does not analyze Rust, Verus, or machine-checked contracts.
-
 ## technique: generate and score fidelity probes
 
 Use this when a specification cannot itself be executed but needs a repeatable alignment test. Formally, the generator returns Q(A) = {(qᵢ, yᵢ, κᵢ)}, where qᵢ is a question, yᵢ a code-derived answer, and κᵢ a behavior category. Each probe stores a source location or extracted fact. The answerer receives only B and returns an answer, a supporting passage, and a support flag; it does not see A or yᵢ (Sect. 3, p. 3).
@@ -55,16 +53,6 @@ Each revision can repair failed probes and break previously agreeing probes. Let
 
 Table 2 checks accounting on the core trajectory. For example, B0→B1 has 439 held, 24 regressions, 204 improvements, and 118 stuck probes, yielding 0.590→0.819; B6→B7 has 713 held, 21 regressions, 19 improvements, and 32 stuck, yielding 0.935→0.932 (Table 2, p. 6). Across all 15 programs, the final revision has 21 improvements and 21 regressions and leaves fidelity unchanged (Sect. 5.1, p. 6).
 
-Inference: for VL, report both solved proof obligations and newly failing obligations after each generated contract edit. A repair that weakens a postcondition can improve probe agreement while reducing assurance, so contract strength and verifier success must be tracked separately.
-
-## limitations, trust, and product threat
-
-Additional systems show transfer but use distinct populations: System B has 32 PL/1 programs and 1,668 probes, with one revision from 0.576 to 0.856; PetClinic has 25 Java files and 203 fixed questions, improving 0.744 to 0.990; Redis documentation has six C modules and 600 probes, with 13 contradictions and 242 gaps (Table 6, p. 8). Private systems cannot be independently reproduced. Human reviewers found five incorrect claims among 30 applied edits, and blind equivalence confirmed 48/50 pairs called equivalent (Table 7, p. 9). The authors caution: "High fidelity does not certify behavioural equivalence." (Sect. 6, p. 9.)
-
-The trusted boundary includes the reference implementation, static analyses, probe generator, answerer, comparator, reviser, and the human's chosen modernization scope. Probes can miss cross-file behavior, shared errors can survive resampling, and the authors did not independently assess complete revised documents (Sect. 6, p. 9). Evaluation consumed 434.8 million input tokens and 39.6 summed program-hours (Sect. 6, p. 9).
-
-Inference: the threat to agent-written verified Rust is moderate to high for specification quality, not for proof soundness. A product that reports only successful Verus proofs can still accept an underspecified contract. The paper already provides a concrete alignment workflow, held-out scoring, graph-grounded probes, and repair-regression accounting; VL should not redo these as generic natural-language contributions. Inference: a Rust contribution should test whether probes detect weak `ensures`, vacuous `requires`, omitted mutation effects, and trusted external bodies, and should require Verus to prove the final contract separately.
-
 ## techniques for the catalog
 
 - fidelity probes: ask behavior questions with code-derived answers and compare them against specification-only answers
@@ -73,4 +61,3 @@ Inference: the threat to agent-written verified Rust is moderate to high for spe
 - observable-behavior filtering: retain questions about outputs, stored data, and external interactions in modernization scope
 - fresh curriculum with frozen test: revise from newly sampled failures while scoring every version on an unseen fixed set
 - repair–regression accounting: model gains and losses with repair and regression rates and report their denominators
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

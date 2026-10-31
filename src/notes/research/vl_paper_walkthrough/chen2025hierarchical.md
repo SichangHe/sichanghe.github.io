@@ -40,13 +40,9 @@ Figure 3 averages attention patterns over all LeanDojo Benchmark 4 test samples 
 
 The Limitations section identifies Lean-specific semantics, a fixed hierarchy, and lack of evaluation on advanced models such as DeepSeek-Prover and InternLM-Math (p.9): "Our approach has three main limitations: (1) the hierarchy definition is specific to Lean’s semantics and may require adaptation for other proof languages, (2) the fixed hierarchy structure may limit dynamic reasoning patterns, and (3) data constraints prevented evaluation on advanced models like DeepSeek-Prover (Xin et al., 2024) and InternLM-Math (Ying et al., 2024b)."
 
-Inference: the evidence supports testing this hierarchy as a proposal-generation aid for VL, but does not establish a benefit for Verus or Rust verification. A hierarchy can encode an incorrect specification; shorter proofs need not mean better specifications. Reuse would require a Verus parser and evaluation against Verus-checked proofs.
-
 ## techniques for the catalog
 - five-level proof hierarchy — classify context, case, type, instance, and goal tokens with a partial order
 - hierarchical attention penalty — penalize higher-to-lower information flow using a binary mask in the loss
 - layer-wise flow loss — weight the penalty by αl = 1 − l/L and combine it with cross-entropy
 - proof-search evaluation — evaluate regularized models with best-first or single-pass tactic sampling
 - structural parser — infer levels from theorem syntax and preserve levels across multiline statements
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For proof conciseness evaluation, we focus on higher computation budget scenarios (K ≥ 8) where sufficient successful proofs are available for reliable complexity comparison."): checked all study quotations, numerical claims, section/page references, technique steps, and the paper link against the full text including references and appendix; corrected the dataset DOI link to the paper's arXiv identifier, the Ravg definition and comparison subset, the weighted loss, search-notation ambiguity, an inaccurate abstract quotation, and unsupported conclusions; did not check source code, reproduce experiments, or validate a Verus implementation.

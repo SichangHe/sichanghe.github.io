@@ -141,12 +141,6 @@ The authors summarize the lifecycle result as “Soundness issues are typically 
 
 The study's strongest evidence is 30 manually verified issue records, release-by-release compilation checks, 11/11 ASan and Miri detections for memory-bug cases, partial Chalk/a-mir-formality oracle results, and the documentation gap audit. The dataset has 18 fixed, 4 confirmed, and 8 reported issues; no issue is classified as non-bug (Table 7, p. 15). The paper's percentages and fractions above use the table denominators; none is a rate over all rustc programs.
 
-Inference: Verus verification depends on rustc's parser, type checker, borrow checker, compiler-generated code, and trusted unsafe/FFI boundaries. This paper shows that accepting Rust source is not itself evidence that the compiler's type soundness implementation is correct. For VL, the highest risk is an agent producing a proof that passes a vulnerable compiler while an unsound lifetime, trait-object, or associated-type interaction remains.
-
-Inference: VL should pin and continuously test the Verus/rustc toolchain, retain negative soundness snippets, run Miri/ASan where executable, and use independent type-model checks where supported. The paper's oracle results show why a single checker is insufficient: ASan/Miri cover memory manifestations, Chalk covers only traits and is immature, and a-mir-formality covers only five of 30 snippets.
-
-Inference: VL should not redo the corpus construction, lifecycle measurements, or the generic recommendation to improve Chalk and a-mir-formality as new work. A useful new contribution would connect Verus's supported subset to this benchmark, report which 30 interactions are expressible, and measure whether toolchain regression tests catch an accepted-invalid program before release.
-
 ## techniques for the catalog
 
 - soundness-issue corpus construction — filter rustc reports, manually validate rejection claims, deduplicate, and compare datasets
@@ -156,5 +150,3 @@ Inference: VL should not redo the corpus construction, lifecycle measurements, o
 - trait differential oracle — compare rustc with Chalk on trait overlap, orphan, and dyn-compatibility cases
 - executable type-model oracle — translate supported snippets to a-mir-formality and compare accept/reject decisions
 - semantics documentation audit — cross-check Reference, FLS, and RFC rules and test cross-feature interactions before mechanization
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

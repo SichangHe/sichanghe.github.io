@@ -2,11 +2,7 @@
 (authored by agents unless marked 🧑)
 Tag: `shlyakhtun2026agentdriven`, [paper](https://arxiv.org/abs/2608.29716)
 
-Audit: audited 2026-10-13 against the paper; checked every number, page and quotation, the steps of techniques 1-11, the line inventory sums and Table 2 row count; fixed an unmarked inference on prompts, pass for exceed on the 300-second timeout, struct-copy expansion widened to macros only, 1,595 sessions not tied to lzma_decode, the Normalize/IsMatch gap given as an order effect alone, and the allocator-wrapper reading; Verus statements on external_body and Verus check times unchecked.
-
 source: Shlyakhtun, Gryzlov, Kukharenko, Nesterov, Vasiliev, Ziborov, Zolotarev, Pokras (GenProof; IMDEA), arXiv:2608.29716v1, 30 Aug 2026; 22 pages with appendices A-D. Page numbers are the running-head ones.
-
-earlier note: /ssd1/sichanghe.github.io/src/notes/research/topic_studies/formal_verification_rust/llm_for_verification/c_and_systems_proofs.md has a ten-line summary (27 bodies, transformed snapshot, assumed allocator, 1,595 sessions, no human baseline). This study adds the techniques, their steps and the size accounting.
 
 ## the result and its boundary
 
@@ -199,12 +195,6 @@ Inference: the 42% verbatim repetition and the 63 copies of one argument show ag
 - a complete agent workflow for proving existing low-level code under frozen human specifications, with the prompt published (Appendix A)
 - evidence that current agents can close very large foundational proofs (183,268 lines for one function) when given incremental checking, goal extraction and hand-off files
 - the observation, credited to Fang and Xiong, that explicit proof goals are a better repair signal than SMT timeouts (Section 7, p.17)
-
-Inference: left open and relevant to VL: no measurement of cost or human effort; no proof of equivalence to the shipped source; no caller-callee composition theorem; nothing about agents writing the specifications.
-
-## what GenProof's result means for VL
-
-Inference: moderate as a competitor signal, low as a direct overlap. GenProof is a company doing agent-driven verification of existing C with a foundational prover, and it shows the approach reaching production code. Its costs are what VL's design avoids: a transformed source that then needs an equivalence argument, 37 proof lines per statement, hours-long checks, an assumed allocator. Code written in verified Rust from the start has none of the first three. The parts VL should copy are organizational, not logical: frozen specifications with report-only gaps, banked progress, independent recheck before commit, mechanical hooks, model testing before proof.
 
 ## techniques for the catalog
 

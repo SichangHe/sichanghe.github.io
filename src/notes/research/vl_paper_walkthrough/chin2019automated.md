@@ -60,12 +60,8 @@ How to apply it.
 
 Verus form (Inference). Model `WAIT` as a ghost finite set of directed pairs and prove an invariant that it is acyclic. Add an edge in a proof transition and call a `proof fn` cycle detector or maintain a topological rank. Verus does not automatically analyze scheduler blocking; the graph abstraction must be connected to the latch API's await contract.
 
-## what remains trusted and product threat
-The paper proves its normalization, splitting and inconsistency lemmas from the predicate interpretations on paper (App. D, pp. 18–19), but says soundness of the whole framework “is still being developed” (Sec. 7, p. 14). Its verified library (App. C, pp. 18, 20–21) is a simplified spin-wait implementation (`while (i.val>0) skip;`), not a lock-based one. It reports no denominator for verified programs, no false-positive rate, and no performance numbers. Inference: agent-written verified Rust is threatened most by omitted resource tokens, incorrect concrete-to-ghost latch coupling, and unmodeled blocking; the paper supplies reusable patterns but not an end-to-end Rust concurrency proof. VL should reuse the token, normalization, and wait-for ideas rather than redo a generic CDL encoding.
-
 ## techniques for the catalog
 - paired latch resource predicates — split input/output ownership around countdown and await, with a separate abstract count
 - thread-local counter abstraction — reason on per-thread lower bounds and normalize them into a precise shared count
 - inconsistency-lemma race checking — flag remaining input resources or invalid zero-count operations as race errors
 - wait-for graph deadlock checking — add latch ordering edges and reject cycles as deadlocks
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Furthermore, instances of WAIT relations are only permitted in pre/post specifications (and not in predicate definitions)."): read the whole paper text (pp. 1-21 including appendices) and checked every quotation, predicate specification, lemma, figure and page reference in this study; changed the unsupported conclusion claim about verified applications (it is in Sec. 1), removed an unsupported assumptions sentence, corrected the WAIT-2 condition and WAIT steps, corrected the multicast and Fig. 2 description, corrected several page references, and labelled my own conclusions as Inference; did not check the Verus mappings (all Inference), the external references, or the HIPCAP tool itself or its online technical report.

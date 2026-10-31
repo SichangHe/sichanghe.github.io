@@ -69,7 +69,7 @@ The Landing Gear System encoding has 7.8 KLOC and 465 proof obligations; {log} d
 
 “The constraint solver is proved to be safe w.r.t. the type system.” (abstract, p. 1)
 
-The paper states that the solver is safe with respect to the type system but gives the proof only in an on-line document. Inference: the result does not cover the Prolog implementation of the typechecker or solver, the decision procedures' correctness, or the translation of the case-study models into {log}. Inference: VL should combine Rust type structure with semantic proof obligations and preserve an explicit invariant boundary. Existing {log} work already covers optional prescriptive typing, finite-set solving, polymorphism, and case-study automation; VL should not rebuild a generic set solver.
+The paper states that the solver is safe with respect to the type system but gives the proof only in an on-line document.
 
 ## techniques for the catalog
 
@@ -79,4 +79,3 @@ The paper states that the solver is safe with respect to the type system but giv
 - four-phase typechecker — separate declarations, DNF structure, atomic constraints, and argument unification
 - finite-type solver feedback — convert finite type declarations into membership constraints visible to the solver
 - parametric polymorphism — declare relation operations with type variables that unify at each query
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Rule (7) computes the size of any extensional set by counting the elements that belong to it while taking care of avoiding duplicates."): read the whole paper text and checked every quotation, number, section and page reference, the technique steps, and the case-study figures; changed the claims that the paper proves the 60 rules (the proof is in an on-line document), the Pierce quote page (p. 3, not p. 4), the example 1 page (p. 4), the Theorem 1 statement, the type grammar, the four-phase description, the solver-limit sentence and an unsupported Verus remark; did not check the on-line technical report, the cited prior work or any Verus claims.

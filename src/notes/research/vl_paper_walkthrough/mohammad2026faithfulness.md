@@ -7,8 +7,6 @@ The paper addresses a specific failure of autoformalization: a formal statement 
 
 The authors state: “A formal statement can be syntactically well-formed, provable, and wrong: it can mean something other than what the mathematician wrote.” (section 1, PDF p. 1). They define ε-faithfulness as the probability, over an interpretation distribution, that the candidate is provably equivalent to an accepted formalization: “A candidate F ∈ F is ε-faithful to N under DN if Pr[T ⊢ F ↔ I] ≥ 1 − ε.” (section 3, PDF p. 3). The four drift classes are quantifier inversion (∆∀), hypothesis omission (∆H), conclusion generalisation (∆C), and type coercion (∆T); the paper reports that they account for 94% of human-labeled drift in a pilot sample of 400 outputs (section 3, PDF p. 3).
 
-Inference: for VeruLaw, this is a specification-faithfulness check around Verus rather than a proof of the Rust implementation. A Verus proof can establish its written postcondition while the postcondition silently omits a requirement, reverses a quantifier, or uses a coercion that changes the intended domain. BPF supplies a way to search for such semantic drift before accepting generated specs.
-
 ## technique 1: bidirectional provability fingerprinting (BPF)
 
 What it is. For a probe set P, BPF records a forward fingerprint Φ⁺F(P) = {P: T ⊢ F → P} and a backward fingerprint Φ⁻F(P) = {P: T ⊢ P → F}; the full fingerprint is their pair (section 3, PDF p. 3). The paper says: “The forward fingerprint captures the downstream commitments of F, everything that follows from it, while the backward fingerprint captures its upstream conditions—everything that would suffice to prove it.” (section 3, PDF p. 3). Forward-only checking misses a strict strengthening; backward-only checking misses a strict weakening (section 4.2, PDF p. 4).
@@ -28,8 +26,6 @@ Verus form. Inference: represent the natural-language requirement as a set of ex
 
 Evidence and limits. On the controlled DRIFT BENCH split, BPF + CPG reaches F1 0.91, detection 0.896 at 3% false-positive rate, and cost 26× relative to typechecking; BPF + CPG + APBA keeps F1 0.91 and detection 0.894 while reducing cost to 8× (Table 2, PDF p. 7). Removing bidirectional matching lowers F1 to 0.80, versus 0.91 for the full system (Table 4, PDF p. 8). These denominators are the controlled benchmark split and the 3% FPR operating point specified in Table 2. The paper’s theorem requires the entailment oracle to be complete on chosen probes; with timeout uncertainty η(30s) ≈ 0.07, the detection bound degrades to 1 − δ − kη(τ) (sections 8.1 and 8.3, PDF pp. 5–6). It cannot detect convention drift when the convention is invisible to provability (section 8.3, PDF p. 6).
 
-Inference: in VeruLaw, BPF should be a review or acceptance gate for generated contracts, while the Verus verifier remains the proof checker. The gate must expose witness probes and unresolved solver outcomes so that a passing proof is not mistaken for evidence that the English requirement was captured.
-
 ## technique 2: counterfactual probe generation (CPG)
 
 What it is. CPG turns probe generation into contrastive synthesis. For each drift class D, construct a mechanically perturbed drifted twin ND, then ask an LLM for probes that distinguish N from ND. The paper gives the distribution: “QD(P) ∝ Pr[P entailed by N] · Pr[P not entailed by ND], estimated through an LLM scoring step.” (section 5.1, PDF p. 4).
@@ -48,7 +44,7 @@ The Equivalence Spectrum E(F,N) is a weighted continuous score over probe cells 
 
 APBA routes the next probe to the drift class with maximum expected information gain, IG(D) = H(pD) − Er∼πD H(pD|r) (section 7.1, PDF p. 5). Theorem 7.1 states a budget reduction bound with heterogeneity ratio γ; the paper estimates γ ≈ 3.2 on DRIFT BENCH (section 7, PDF p. 5). In the scaling experiment, uniform allocation needs k ≈ 28 probes to reach detection 0.87, while APBA reaches it at k ≈ 9, a 3.1× reduction (Figure 9, PDF p. 7). Table 2 reports the broader cost reduction as 26× to 8× at the same controlled split and operating point (PDF p. 7); these are different comparisons and should not be conflated.
 
-Verus form. Inference: attach the spectrum to a candidate Verus contract by weighting mismatches among probe lemmas, and allocate proof attempts toward drift classes with the highest estimated information gain. Inference: the score is a triage metric, not a Verus specification; thresholds require calibration on VeruLaw’s own corpus.
+Verus form.
 
 ## technique 4: faithfulness-guided decoding (FGD)
 
@@ -64,12 +60,6 @@ Inference: trusted components include the interpretation distribution linking En
 
 The table arithmetic is internally consistent for Table 1: faithfulness totals 932 + 284 + 348 + 267 + 156 + 145 = 2,132, while the text says 2,183 pairs; the displayed row totals sum to 2,183 only when the six row faithfulness values are summed with the other columns. Inference: the apparent 51-pair difference comes from reading the column total as a separate count; the six row totals sum to 2,183, so no contradiction is established by the column display alone. The paper reports Isabelle/HOL F1 = 0.88 versus Lean 4 F1 = 0.91 in preliminary experiments, but gives no denominator or split size (section 12, PDF p. 8).
 
-## what VL should reuse and product threat
-
-Inference: VL should reuse the four drift taxonomy, mechanically generated negative twins, bidirectional probe witnesses, an explicit REVIEW band, and adaptive budgeting. These address specification drift that ordinary Verus success cannot expose. Existing work already supplies the central BPF algorithm, theorems, benchmark, and measured reductions; reimplementing the same detector without a Verus-specific evaluation would duplicate it.
-
-Inference: the threat to a product of agent-written verified Rust is material when agents generate contracts from prose: BPF can miss convention drift, timeout-induced false positives, and drift outside the probe distribution. The strongest practical response is to require witness probes and human review for REVIEW/REJECT candidates, and to calibrate probes on the product’s own APIs and invariants.
-
 ## techniques for the catalog
 
 - BPF — compare forward and backward entailment fingerprints of a candidate with probes predicted from the natural-language statement
@@ -81,4 +71,3 @@ Inference: the threat to a product of agent-written verified Rust is material wh
 - APBA — allocate entailment queries by expected information gain across drift classes
 
 - FGD — rerank sampled formalizations by the spectrum and re-prompt with witness probes to repair drift
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

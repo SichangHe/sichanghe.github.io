@@ -46,5 +46,3 @@ Inference: the evaluation depends on compiler diagnostics, the original C tests 
 - test-based validation: run translated binaries on the original C test cases and separate runtime, loop, and test failures
 - bounded model checking: use ESBMC to explore finite states and emit counterexample states for safety flaws
 - vulnerability transfer audit: compare C findings with Rust analysis tools and manual checks of arithmetic overflow and null-pointer dereferences
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each of these errors, we examine both their successful and failed repair cases to identify recurring patterns that lead to the error."): read the entire paper and study; checked quotations, numbers, page and section references, technique steps, and limitations; corrected the publication year and link, page references, repair-loop description, CA gains, and vulnerability-analysis scope, and marked conclusions as inferences; did not reproduce experiments, inspect implementation artifacts, or independently validate cited tools' results.

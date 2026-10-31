@@ -24,12 +24,8 @@ The evidence is satisfiability of the transformed clauses by Eldarica. Only the 
 
 Inference: Trusted components are the Scala-to-CHC encoding (done by hand in the paper as far as the text shows), the soundness of the transformation, and the solver. The totality of the functions is used as a premise in the transformation, so the method assumes it. The method assumes pure functional pattern matching and contracts expressible in Bool and LIA through catamorphisms. The paper does not claim termination or resource-bound proofs.
 
-Inference: For VeruLaw, the technique is a medium threat and opportunity. It suggests automatic preprocessing for recursive list proofs, but a product emitting verified Rust still needs ownership-aware specifications and a trusted Verus kernel. Existing work means VL should not redo generic fold/unfold theory; it could adapt staged lemma discovery to Verus sequences.
-
 ## techniques for the catalog
 
 - contract-to-chc: translate recursive functions and postconditions into CHCs plus false-headed violation goals
 - fold/unfold elimination: remove inductive list terms by unfolding, simplifying constraints, and folding recursive predicates
 - staged catamorphism lemmas: reuse previously proved contracts while eliminating data structures from later goals
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Note that we cannot use the property corresponding to goal G7 because B1 and B2 are unbound variables, while G7 requires them to be bound to true."): I read the whole paper text and checked every quotation, clause number, goal name, section and page reference, and the technique steps; I changed the abstract misattribution of the lemma quotation (it is from Section 1, p.96), replaced a wrong claim that the paper splits list cases into Nil/singleton/Cons, corrected the role of predicate a, added the Stainless result and the one-direction soundness statement, marked unsupported trust and termination remarks as Inference, and switched the link to the DOI printed in the paper; I did not check the Appendix clauses 11–28 for correctness, the references, or the PDF layout beyond the text.

@@ -8,8 +8,6 @@ This paper studies retrospective verification of Stellar's production C++ order-
 
 The target algorithm has 1,344 lines of C/C++ and 758 lines of comments. The authors build a 260-line PVS model with 84 comment lines, prove properties P1–P3, and find a counterexample to P4. They also publish C++, PVS, and Seahorn artifacts in a public repository (Abstract and §1, pp. 1–2). The four properties are: rounding favors the offer left in the book; single-offer rounding changes the effective price by at most 1%; path payments may exceed that bound while other exchanges reject violations; and no unexpected exception is thrown (§2, p. 4).
 
-Inference: the useful lesson for VL is a workflow for recovering a formal contract from mature code, validating the contract with a proof assistant, and reconnecting it to executable code with counterexamples. This is not a Verus study. A Verus adaptation would express the recovered arithmetic properties as `spec fn` definitions and `requires`/`ensures` contracts, use `proof fn` lemmas for P1–P3, and compile a separate executable harness for boundary cases. The adaptation must preserve the distinction between a proven model and a proof that production Rust refines that model.
-
 ## technique 1: LLM-assisted abstraction with checker feedback
 
 What it is. The authors give the full C++ function to ChatGPT 5 Pro and Claude Opus 4 and ask for a PVS theory. They repeatedly send PVS failures back to the model and paste revised models into a local PVS client. The paper reports hallucinated syntax such as `x DIV y`, misplaced `IMPORTING` declarations, made-up libraries, and an incorrect treatment of exceptions as unused booleans (§3.1, pp. 5–6).
@@ -29,7 +27,7 @@ The authors give a prompt template that directs the model to “use total functi
 
 Inference: for Verus, ask an agent to propose Rust contracts and ghost state while explicitly requiring verifier-valid syntax. Then compile immediately and treat every diagnostic as a repair signal. `spec fn` definitions should describe mathematical arithmetic; executable functions should carry `requires` and `ensures`; `proof fn` should establish lemmas and be erased before execution. Verus supports only a subset of Rust, so unsafe C++ behavior, exceptions, and external calls need explicit model boundaries.
 
-Evidence and limits. The authors say the LLM preserved function boundaries and aligned generated lemmas with comments after corrections (§3.1, p. 5), but they also say exceptions were initially modeled incorrectly. The initial abstraction is therefore an understanding aid, not a trusted semantic translation. The paper does not report the number of LLM iterations, prompt tokens, or human correction time. Inference: a VL evaluation should measure these costs and audit whether a generated contract weakens the intended property.
+Evidence and limits. The authors say the LLM preserved function boundaries and aligned generated lemmas with comments after corrections (§3.1, p. 5), but they also say exceptions were initially modeled incorrectly. The initial abstraction is therefore an understanding aid, not a trusted semantic translation. The paper does not report the number of LLM iterations, prompt tokens, or human correction time.
 
 ## technique 2: property-directed PVS proof with modular theories
 
@@ -89,17 +87,7 @@ How to do it.
 4. Re-run Seahorn unit proofs to check concrete behavior (§3.3, p. 8; §4, p. 10).
 5. If interfaces change, regenerate the abstraction and harnesses; if they do not, retain existing unit proofs (§4, p. 10).
 
-The authors caution that their code did not change during the exercise, so maintenance under real evolution remains untested (§4, p. 10). Inference: VL should measure proof survival across dependency and API changes rather than assume that a passing old artifact guarantees the new implementation.
-
-## evidence, trusted base, and threat to VL
-
-The paper proves P1–P3 of the PVS model and finds a P4 counterexample in the C++ implementation. The model's formalization is guided by comments and code; the final correspondence between model and implementation is checked with bounded model checking on selected harnesses, not a full compiler-correctness theorem. PVS, Yices2, SeaBMC/Seahorn, the C++ compiler and LLVM translation, the LLM-generated model, and the human's property choices remain trusted to varying degrees. The theorem statements themselves are not evidence that Stellar's informal requirements are complete.
-
-Inference: the threat to agent-written verified Rust is high when specifications are recovered from comments. An agent can produce a well-typed but semantically weak contract, exactly as the paper's LLM initially mishandled exceptions. The safe product pattern is to require explicit contracts, checker feedback, executable counterexamples, and human review of assumptions that describe reachability or economic policy. The paper supports this workflow for arithmetic-heavy legacy code; it does not establish automatic end-to-end correctness of arbitrary Rust.
-
-## what VL should not redo
-
-This paper already demonstrates LLM-assisted abstraction, checker-guided repair, modular arithmetic proofs, unit-proof harnesses, bounded counterexample generation, and proof-artifact regression for a mature financial algorithm. New VL work should test how these techniques map to Verus's Rust subset and how contracts survive code evolution, rather than claiming the workflow itself as new.
+The authors caution that their code did not change during the exercise, so maintenance under real evolution remains untested (§4, p. 10).
 
 ## techniques for the catalog
 
@@ -109,5 +97,3 @@ This paper already demonstrates LLM-assisted abstraction, checker-guided repair,
 - counterexample feedback — turn an unprovable model obligation into a concrete executable trace for debugging
 - proof-artifact regression — preserve models, lemmas, and harnesses as rerunnable interfaces for future code changes
 - assumption boundary review — distinguish a local function's proved behavior from upstream reachability assumptions
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -72,10 +72,6 @@ Evidence and limits. The system’s four mismatches are 4/300; family rates are 
 
 Reported: routing counts, exact normalized reference matches, descriptive Wilson intervals, stage-record counts, ontology size, and mismatch diagnoses. Structural validation passed all 300 outputs. Not measured: real latency, token usage, cost, independent generalization, or a controlled LLM comparison. The ontology and rules were developed from the same collection used for evaluation. The paper states: “Normalized exact matching does not verify every intermediate chemical step.” (Section 13, p. 12) Inference: the Python implementation, RDF serialization, reference answers, and manual validation remain trusted inputs; no formal proof of chemical correctness is reported. Inference: a Verus implementation could reduce bugs in routing, arithmetic, and trace consistency, but it would still trust the modeled chemistry, parser assumptions, ontology facts, external libraries, and the Verus toolchain unless those boundaries were separately verified.
 
-## what VL should reuse and threat to a product
-
-Inference: VL should reuse the translator-to-normalized-frame boundary, explicit rule applicability, separate fallback accounting, six-stage traces, and mismatch-driven rule repair. The prototype evaluates the symbolic core; the LLM interface and rule repairs remain proposals. VL could test whether this separation works for agent-written Rust and Verus contracts, with independent tasks and measured repair effort. Inference: the product threat is moderate at the architecture level—the paper proposes constraining an LLM to translation while keeping domain execution deterministic—but low as evidence of a competing verified-Rust product, because no Verus proof, independent test set, deployed translator, or product-scale system is reported.
-
 ## techniques for the catalog
 
 - task-centric ontology derivation — derive classes, relations, applicability conditions, and output checks from a bounded task collection
@@ -87,4 +83,3 @@ Inference: VL should reuse the translator-to-normalized-frame boundary, explicit
 - normalized-frame translation (proposed) — have an LLM emit a constrained task frame while deterministic code performs domain reasoning
 
 - mismatch-driven rule repair (repairs proposed) — classify each disagreement by semantic scope, applicability, heuristic, or arithmetic failure and repair the reusable rule
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The second denotes a task-specific expert-coded solution used when the general rule base does not cover the problem family."): checked the full paper, quotations, counts, percentages, section and page references, technique steps, and evaluated versus proposed scope; corrected page references and the arXiv link, labeled synthesized advice as inference, and removed claims that the translator or proposed repairs were demonstrated; did not inspect source code, task data, cited works, or independently verify chemistry or Verus contracts.

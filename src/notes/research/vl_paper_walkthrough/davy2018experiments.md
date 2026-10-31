@@ -96,10 +96,6 @@ The proved artifact is the generated real-arithmetic C implementation’s ACSL c
 
 Inference: for agent-written verified Rust, the main threat is specification drift during generation: a generator can emit a contract that is internally consistent but does not describe the intended controller. The paper’s instance specialization and proof-tree strategy are directly reusable; its axiomatized numerical layer must be replaced by proved Verus lemmas or explicitly bounded assumptions.
 
-## prior work VL should not redo
-
-Inference: the paper already demonstrates automatic instance-specific contract generation, element-level matrix abstraction, and SMT-friendly lemma trees for numerical code. VL should reuse these patterns rather than invent another generic proof script. It should separately address floating-point error and validate the mathematical axioms, which this paper leaves open.
-
 ## techniques for the catalog
 
 - instance-specialized autocoding: generate fixed-dimension code, contracts, and proof lemmas from one optimization instance
@@ -107,5 +103,3 @@ Inference: the paper already demonstrates automatic instance-specific contract g
 - intermediate-lemma proof tree: split a difficult numerical postcondition into solver-sized definitional and algebraic lemmas
 - convergence invariants: maintain feasibility, approximate centering, and a geometric progress bound in a statically bounded loop
 - static storage and framing: use distinct generated arrays and modifies clauses to simplify memory reasoning
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "A more efficient approach is to associate small pieces of code with local contracts; these intermediate annotations acting as cut-rules in the proof processes."): read the entire supplied 17-page paper text (printed pp.290–306), including references, and the entire study; compared quotations, formulas, experiment counts, page references, and technique steps; corrected page locations, loop-generation wording, the element-access expression, and timeout interpretation, recorded the apparent goal-count inconsistency, added convergence-invariant and static-storage techniques, and labeled Verus advice as inference; did not run the generator, Frama-C, Alt-Ergo, or Verus, independently prove the mathematical axioms, validate cited work, or visually inspect PDF figures.

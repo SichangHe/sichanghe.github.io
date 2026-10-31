@@ -73,9 +73,7 @@ Inference: for Verus, analogous diversity units are lemma selections, invariant 
 
 The reward function extracts the last Lean4 code block and assigns 1 if Lean verifies it as correct, 0 otherwise (§4, p.6). Inference: this checks the extracted proof against its formal statement; applying this to software would also require checking that the statement captures the intended requirement. Appendix A says LLMs assisted with code, debugging, mathematical statements, proofreading, and the illustration, while the authors take responsibility (Appendix A, p.16). The paper does not establish that α-DPG improves Verus.
 
-The paper's theoretical result is conditional: the filtered distribution preserves diversity already in `πbase`, and α-DPG approximates it within a restricted autoregressive family. It does not show that training discovers novel proofs. The authors explicitly say, “The true source of diversity loss, therefore, lies not in the target distribution itself, but in the divergence used to approximate it with gradient descent within a restricted parametric family.” (§6, p.10). Inference: VL should retain a diverse candidate pool and use verifier-backed selection, then test whether accepted Rust proofs cover distinct repair strategies.
-
-Inference: what VL should not redo: the paper already derives the RLVR/reverse-KL correspondence, the verifier-filtered target, α-divergence interpolation, pass@k evaluation, and tactic/premise entropy analysis. A useful new study would port these measurements to Verus, report exact proof and repair denominators, and test whether candidate diversity survives Rust ownership and solver constraints.
+The paper's theoretical result is conditional: the filtered distribution preserves diversity already in `πbase`, and α-DPG approximates it within a restricted autoregressive family. It does not show that training discovers novel proofs. The authors explicitly say, “The true source of diversity loss, therefore, lies not in the target distribution itself, but in the divergence used to approximate it with gradient descent within a restricted parametric family.” (§6, p.10).
 
 ## techniques for the catalog
 
@@ -85,5 +83,3 @@ Inference: what VL should not redo: the paper already derives the RLVR/reverse-K
 - online partition estimate — estimate verifier acceptance with sampled importance weights and a lower-bounded `Z`
 - pass@k frontier — report single-sample precision and multi-sample coverage together
 - proof-trace diversity — measure Shannon and Simpson diversity over tactics and premises
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The choice of divergence impacts the resulting models in at least two different ways: On one hand, loss landscapes associated with different divergences can produce different training dynamics."): checked every study quotation, number, section/page reference, and technique step against the full text including appendices; corrected the version year and paper link, numeric-table claims, dataset wording, page references, training/evaluation distinction, and pseudo-reward formula; marked recommendations as Inference; did not reproduce experiments, inspect training code, or independently verify cited works.

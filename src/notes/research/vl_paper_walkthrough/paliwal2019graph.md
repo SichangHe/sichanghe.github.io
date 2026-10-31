@@ -8,8 +8,6 @@ This paper trains graph neural networks (GNNs) to guide higher-order theorem pro
 
 The training set contains 10,200 top-level theorems and around 375,000 proof steps; the held-out validation split contains 3,225 theorems. The theorem database has 19,262 theorems and definitions, and a goal's eligible premises are all preceding theorems and definitions (Section 5, p.5; also Section 4.2, p.4). The best model closes 49.95% of validation proofs with a 12-hop GNN using subexpression sharing (Table 1, p.5; Section 5.2, p.6). Inference: the percentage is over the 3,225 validation theorems (1,611 of 3,225 is 49.95%); the paper labels the column "% Proofs Closed (Validation Set)" and does not state the denominator explicitly.
 
-Inference: For VL, this is evidence for learned proof-state and lemma-selection heuristics. It does not prove generated Verus code or proof scripts: every successful theorem is still closed by HOL Light tactics, and the model's prediction is only a search guide.
-
 ## technique: graph representations of formulas
 
 When to use it: use graph rather than sequence or one-way tree encodings when a logical subexpression's meaning depends on occurrences elsewhere in the formula.
@@ -56,7 +54,7 @@ How to apply it:
 
 Training examples use each human proof step's goal, tactic, and tactic-parameter list. Each batch samples 16 positive goal/premise pairs; each goal is paired with 15 negatives sampled uniformly from theorems used at least once as positive examples, and all 256 embedded premises are reused as negatives for the other goals, giving a batch of 4,096 (Section 5.3, pp.6–7). The total loss weights tactic cross-entropy 1.0, pairwise-scorer cross-entropy 0.2, and AUCROC loss 4.0 (Section 5.3, p.7).
 
-During training, the proxy tactic metric counts a tactic correct only when it exactly matches the single human tactic, even though alternatives may work; running the prover on the validation set is too slow to use during training, so it is applied only to the best checkpoint and is the primary metric (Section 5.1, pp.5–6). Inference: this warning matters for VL training data, where many different lemma sequences may prove the same obligation.
+During training, the proxy tactic metric counts a tactic correct only when it exactly matches the single human tactic, even though alternatives may work; running the prover on the validation set is too slow to use during training, so it is applied only to the best checkpoint and is the primary metric (Section 5.1, pp.5–6).
 
 ## evidence, limitations, and trust
 
@@ -65,8 +63,6 @@ The best 12-hop shared-subexpression model closes 49.95% of validation proofs, c
 Variable blinding sharply reduces performance: at 12 hops, shared subexpression with blinding closes 37.36%, versus 49.95% without (Table 2, p.6). The paper says random edges improve the 2-hop network "but not for networks with four or more hops", and that the benefits "ultimately are harmful for networks with more hops" (Section 5.2, p.6). The authors identify a major omission: "In the experiments presented in this paper, we predict tactics and their arguments by looking only at the conclusion of the current sub-goal and ignoring any local assumptions that could be crucial to the proof." (Section 6, p.7)
 
 Inference: the trusted components include the HOL Light kernel and tactics, the HOList proof-search implementation, graph construction, trained parameters, and the human-proof data. The paper trains on human proofs ("We focus on imitation learning, i.e. learning from human proofs", Section 1, p.1) and does not claim that the GNN discovers new mathematical facts independently.
-
-What VL should not redo: the paper already demonstrates AST versus sharing ablations, directional message passing, joint tactic/premise ranking, negative sampling, and end-to-end closure metrics. Inference: a VL project should adapt these ideas to Verus proof states and measure kernel-checked proof success, rather than report only classifier accuracy.
 
 Threat to agent-written verified Rust: Inference: low to medium for soundness, high for productivity. The GNN can suggest useful lemmas or proof contexts but cannot weaken Verus's checker; however, distribution shift, missing local assumptions, and human-proof imitation may reduce usefulness on novel Rust APIs.
 
@@ -77,4 +73,3 @@ Threat to agent-written verified Rust: Inference: low to medium for soundness, h
 - tactic and premise ranking — jointly predict a proof tactic and rank its eligible lemma arguments during search
 - proof-search integration — evaluate learned predictions by running the prover and counting closed validation theorems
 - representation ablation — compare AST, leaf sharing, variable blinding, random edges, and directional graphs to identify useful context
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Variable blinding, which initializes every token representing a variable name to the same (trained) embedding, allows us to evaluate the importance of human-assigned variable names."): read the whole paper text (and viewed PDF pages 4 and 5 for layout) and checked every quotation, number, table value, section and page reference, and each technique step against it; changed page references (Table 1 is on p.5, Table 2 on p.6, dataset sizes are in Section 5 on p.5), the edge-label and aggregation description, the batch-sampling description, the random-edge wording, and the description of directional variants; removed an unsupported claim about denominators and marked the 3,225-theorem denominator as an inference; I did not check the cited related work or the appendix histograms in detail, and did not verify the arXiv link beyond the identifier printed in the paper (arXiv:1905.10006v2).

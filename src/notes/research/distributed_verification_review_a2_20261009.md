@@ -10,19 +10,6 @@ purpose
 - reading was selective; each source record states the sections read
 - no result was reproduced
 - source records with full quotes
-  - [liveness proofs](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md)
-  - [verified systems and benchmark sets](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md)
-  - [model to running code](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md)
-  - [agent systems](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md)
-  - [evaluation](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md)
-  - [how people work](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md)
-  - [closer reads of citing papers: agents on key-value stores, Byzantine liveness](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md)
-  - [sources found by Google keyword search: TLA+ benchmarks, Anvil's dissertation, more](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md)
-  - [Google Scholar “cited by” for seven seed papers](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gscholar.md)
-  - [from loose words to a statement](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md)
-  - [unread leads: small liveness proofs, TLA+ with Verus, more agents](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md)
-  - [leftover searches: shared-memory progress, practice](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gaps.md)
-  - [365 new cases, one per line](/ssd1/sichangheagent/verus_distributed/lit_a/cases2_all.jsonl)
 
 main findings
 - I found no published system that does the whole thing; the search was not exhaustive
@@ -184,7 +171,6 @@ liveness
   - turn the liveness question into a safety question
   - chain leads-to steps under fairness
     - Veil, TLAPS
-- shared-memory progress, from [the leftover-search record](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gaps.md)
   - wait-freedom is now machine-checked in Rocq with Iris
     - wait-freedom: every call finishes in a finite number of steps however many other calls run at once
     - Namakonov, Birkedal, Timany, ECOOP 2026, abstract
@@ -196,7 +182,6 @@ liveness
     - Logres, Wanner et al., SRDS 2020, Isabelle/HOL
     - about 300 lines of model and 1,000 lines of proof
     - assumes all nodes move in lock step
-- small worked liveness proofs to copy from, from [the unread-leads record](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md)
   - TLA+ proof system examples
     - `SimpleEventually.tla`, 73 lines
       - header: “How to prove a liveness property from safety and fairness.”
@@ -244,7 +229,6 @@ model to running code
 - I found no 2024–2026 paper where an agent redoes IronFleet-style refinement from protocol model to code
 
 from loose words to a statement
-- [record](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md)
 - no paper found does this step for distributed systems
   - a person says in a sentence what must hold
   - an agent returns a strong TLA+ or Verus statement with its fairness assumptions
@@ -310,7 +294,6 @@ how people work
 case list
 - 365 new entries
 - 121 of them come from the tables of six liveness and consensus papers
-  - [record](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_tables.md)
   - 31 consensus algorithms with the liveness each claims, its assumptions, and Chand and Liu's verdict
     - “only 18 (58%) of them mention liveness (Table 3) and only 11 (35%) of them give some kind of liveness proof”
     - machine-checked liveness for three: IronRSL, LastVoting-PSync, Paxos-EPR
@@ -368,7 +351,6 @@ recommended evaluation
 
 limits
 - search was web search, citation lists from Semantic Scholar, and reference following
-  - [citation-list record](/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md)
   - Google Scholar “cited by” ran for seven papers, then hit a CAPTCHA
 - several numbers come from single-author 2026 preprints
 - ChatGPT consultation for this pass has not run

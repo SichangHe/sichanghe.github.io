@@ -44,7 +44,7 @@ Verus form (Inference): use explicit state datatypes and transition predicates f
 
 ## what is proved, measured, and trusted
 
-Measured: participant counts, percentages, ordinal adequacy ratings, and qualitative themes. No cryptographic theorem, Verus proof, or independent observation of tool runs is supplied. Trusted inputs are self-reported experience, the survey instrument, the single coder’s classifications, and the participants’ own model/tool interpretations. The paper’s central measured need was model validation: 10 ProVerif respondents requested a validation mechanism, 8 interactive debugging, and 6 graphical model/trace exploration (section 5.5.7, page 11). Inference: for VL, the result is a usability threat rather than a soundness result—agent-written verified Rust still needs model-to-code validation, actionable diagnostics, and review of solver assumptions. VL should not redo a generic survey of cryptographic-verifier frustrations; it should implement and test the concrete debugging and validation affordances identified here.
+Measured: participant counts, percentages, ordinal adequacy ratings, and qualitative themes. No cryptographic theorem, Verus proof, or independent observation of tool runs is supplied. Trusted inputs are self-reported experience, the survey instrument, the single coder’s classifications, and the participants’ own model/tool interpretations. The paper’s central measured need was model validation: 10 ProVerif respondents requested a validation mechanism, 8 interactive debugging, and 6 graphical model/trace exploration (section 5.5.7, page 11).
 
 ## techniques for the catalog
 
@@ -53,5 +53,3 @@ Measured: participant counts, percentages, ordinal adequacy ratings, and qualita
 - trace-guided refinement — classify counterexamples, repair model or attacker assumptions, and rerun
 - dependency-guided reasoning — navigate rule dependencies and unresolved constraints with helper lemmas
 - explicit-state modeling — encode state, algebra, and equivalence assumptions explicitly and measure their proof cost
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

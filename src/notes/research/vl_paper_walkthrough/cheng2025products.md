@@ -53,12 +53,6 @@ The evaluation contains 103 benchmarks: 62 arithmetic and 41 array benchmarks (S
 
 For higher arity on the division monotonicity family, Direct scales to k=12, Aut to k=7, and VPG to k=6; the largest Direct instance has 10⁵ CHC predicates and encoding takes 33% of total time (Section 8.3, p. 23). Inference: these measurements do not establish general scalability guarantees. The paper explicitly limits HyRec to sequential recursive programs and presents concurrency mainly as a theoretical sequentialization result (Section 8.3, p. 22).
 
-## what is proved, trusted, and useful for VL
-
-Theorem 2.6 (p. 8) establishes equivalence of pre/postcondition validity for a reduction under a sound commutativity relation; Theorems 3.18 and 4.4 establish the visibly pushdown representation used for recursive products. HyRec sends the resulting safety problem to a CHC solver (Section 8.1, p. 21). Inference: the trusted inputs and implementation include the relational specification, disjointness/commutativity assumptions, VPA/VPG construction, CHC encoding, solver, and the component program semantics. Inference: a valid proof about the constructed product would not establish the intended property of the original executions if the construction assumed false commutativity or the specification expressed the wrong property.
-
-Inference: VL should reuse explicit relational products for comparing two agent-generated Rust executions, especially determinism, refinement, noninterference, or resource monotonicity. It should begin with canonical schedules and document when steps commute. The paper does not evaluate Rust. It gives a theoretical result for shared-memory concurrency when all components are tail-independent, or all are head-independent (Theorem 5.3, p. 15). Definition 5.1 (p. 15) gives these structural conditions using actions that commute with other components. HyRec’s evaluation covers sequential recursive programs: “We do not view HyRec as a tool for verification or bug finding of recursive concurrent programs.” (Section 8.3, p. 22).
-
 ## techniques for the catalog
 
 - recursive product programs: reduce k-run hypersafety to one safety proof while preserving single-stack recursion
@@ -66,4 +60,3 @@ Inference: VL should reuse explicit relational products for comparing two agent-
 - lex reductions: select minimal representatives under a proved commutativity relation using contextual orders and sleep-set construction
 - canonical schedules: compose lockstep, rate-based, and nested-concatenation building blocks chosen from the relational property
 - grammar-to-chc encoding: encode product automata or grammars as inductive Horn constraints with context-sensitive return tracking
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For an arbitrary VP contextual order, the contextual information propagates through the linear and hierarchical edges of the nested words, so the reduction does not necessarily admit a direct VPG construction in the style demonstrated in this section."): checked the full paper including appendices, quotations, numerical results, references, technique steps, and the arXiv identifier; corrected the predicate count to 10⁵ using PDF superscript placement, self-composition and nesting claims, precondition scope, page references, result attribution, and concurrency scope; did not rerun HyRec, independently validate the proofs, or test the proposed Verus adaptations.

@@ -102,11 +102,7 @@ Failure modes and assumptions
 
 Proved: determinism, substitution, subject reduction, progress, ordered resource-list preservation, permutation preservation with exchange, typing preservation of the CBPV translation, and the corresponding resource-safety theorem. The proofs are syntactic and categorical; no code artifact, runtime benchmark, or measured success rate appears, so there is no empirical denominator to report. The presheaf model in Section 5 is a semantic model of the ordered calculus, not an implementation evaluation.
 
-Scope: the guarantees concern the paper’s formal typing rules and reduction semantics, whose properties it proves. It does not prove the correctness of a Rust compiler, Verus, Z3, an allocator, hardware, foreign functions, or a user's specification. Inference: the paper can inform VeruLaw cleanup contracts and exception unwinding. Applying its guarantees to Rust would require connecting the model to borrowing, library behavior, and unsafe operations.
-
-## relationship to existing VL work
-
-The paper explicitly cites Creusot and Aeneas as Rust verification approaches and says those works “do not model exceptions with destructor calls, and they do not develop a specific understanding of destructors in relationship with linearity.” (Section 6.2, p. 24) Inference: VL should not redo a generic statement that ownership matters; a useful extension would instead test explicit destructor contracts and failure-path proofs against real Rust APIs. Inference: compare exact-order and permutation requirements when reviewing VL cleanup specifications.
+Scope: the guarantees concern the paper’s formal typing rules and reduction semantics, whose properties it proves. It does not prove the correctness of a Rust compiler, Verus, Z3, an allocator, hardware, foreign functions, or a user's specification.
 
 ## techniques for the catalog
 
@@ -114,5 +110,3 @@ The paper explicitly cites Creusot and Aeneas as Rust verification approaches an
 - permutation resource safety — permit exchange and prove final resources equal the initial inventory modulo a permutation
 - destructor-equipped exception translation — translate exception paths through type-indexed destructors and context unwinding, then inherit target resource theorems
 - effectful move semantics — model ownership moves as observable exchanges whose cleanup order can differ under failure
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The resource CBPV is a very idealised model of C++/Rust-style resource management situated at the intersection of linear logic and the theory of effects."): read all 45 pages, including references and appendices; checked quotations, theorem assumptions, proof steps, section/page references, bibliographic year and link; corrected mathematical quotations, purely-positive result restrictions, multiset tracking, type interpretations, translation details, page references, year and link, and removed an unsupported threat rating; did not independently re-prove the metatheory, check cited works, or validate the proposed Verus encodings.

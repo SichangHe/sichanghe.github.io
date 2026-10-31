@@ -72,14 +72,6 @@ The formal development proves forward-simulation rules and derives front-end sou
 
 Inference: for Verus, a trustworthy translation pipeline should separate the trusted certificate checker from the code generator, and should state which Rust features, libraries, and solver translations remain outside the certificate. Inference: a certificate could detect a translation that drops a required check if that omission prevents proving the semantic correspondence. It would not establish that the user’s specification expresses their intent.
 
-## contradictions and what VL should not redo
-
-Section 5 says, “The resulting Isabelle proofs have on average over 2000 lines and are checked in less than a minute.” (Page 20.) Table 1 gives a mean checking time of 39.0 seconds, but Table 2 includes individual files up to 242.4 seconds. Inference: the “less than a minute” statement should be read as an average, not a per-file bound. The later statement, “No ﬁle in any of the 72 ﬁles takes longer than 4 minutes to check.” (Section 5, page 21). Inference: that bound is slightly inconsistent with the reported 242.4 seconds; preserve the precise table value.
-
-The supported subset excludes loops, predicates, magic wands, iterated separating conjunctions, heap-dependent functions, and domains (Section 2.1, page 5). Benchmark preparation included removing assertions containing old-expressions, desugaring allocation, rewriting method-call arguments as variables, removing generated boilerplate, and selectively desugaring unsupported features (Section 5, page 20). Inference: the evaluation covers the prepared subset programs, not unmodified support for all source-tool features.
-
-Inference: VL should not redo a generic claim that front-end translations need soundness proofs. This paper already provides a per-run Isabelle method, decomposition rules, and measured coverage. A useful new experiment would apply the certificate pattern to the Verus-to-SMT translation or to agent-generated proof scaffolding, then measure which translation bugs are caught and the certificate-check cost under dependency and compiler upgrades.
-
 ## techniques for the catalog
 
 - forward-simulation certificates: prove that every source failure has a corresponding failing target execution
@@ -87,4 +79,3 @@ Inference: VL should not redo a generic claim that front-end translations need s
 - parameterized simulations: reuse one generic judgment across alternative translation encodings
 - contextual hypotheses: carry non-local well-formedness facts in state relations and specialized rules
 - per-run proof production: generate an independently checked Isabelle certificate from each concrete translation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "A core component of our proof automation is an Isabelle tactic that uses these hints to automatically prove forward simulations."): checked all paper text, including references and appendices, against the study’s quotations, numbers, section and page references, technique steps, and scope; changed the link to the paper’s arXiv identifier, corrected non-local reasoning, translation-specific automation, implementation adjustments, and timing claims, and narrowed unsupported Verus recommendations; did not inspect the artifact, rerun experiments, or independently verify Isabelle proofs or Verus claims.

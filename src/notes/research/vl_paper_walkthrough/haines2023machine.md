@@ -38,14 +38,9 @@ For the reported benchmark, 6,400 votes each occupy two ElGamal ciphertexts, giv
 
 Coq extraction “has not been formally verified by anyone.” (section 1.3, printed p. 6476) The paper machine-checks the interactive protocols, leaving secure Fiat-Shamir use unverified. Section 5.1 proposes checking that the encoding supplied to the hash uniquely determines the statement and commitment; machine-checking this property for Swiss Post remains future work. Inference: a Rust checker verified with Verus would likewise need its input handling and challenge generation covered before claiming verification of the complete deployed checking process.
 
-## what is proved, trusted, and relevant to VL
-
-Machine-checked: completeness, special soundness with failure events, and honest-verifier zero-knowledge for the formalized interactive TW/BG protocols. Tested: compatibility and runtime on Swiss Post test vectors. Limitations: extraction is unverified, Fiat-Shamir correctness remains future work, and the methods do not preclude side channels (section 1.3). Inference: the executable assurance also depends on the proof assistant, arithmetic implementation, parser, and the manual modulus replacement. Trusting the producer’s code is unnecessary if a correct verifier checks its transcripts under the required assumptions. For VL, the transferable techniques are explicit relations, structural decomposition, and executable checking; the TW result illustrates a mismatch between an informal security claim and the protocol’s actual properties.
-
 ## techniques for the catalog
 
 - typed sigma-protocol definitions — encode rounds, relations, completeness, soundness, and zero-knowledge as reusable Coq modules
 - relation-level error discovery — machine-check the claimed relation and revise it when completeness fails
 - compositional shuffle proofs — prove BG subarguments separately and compose their security properties
 - extracted verifier testing — extract executable code and validate deployed transcripts, including invalid-vector rejection
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We only discovered this weakness after we had encoded our 5-round protocol definition and were trying (unsuccessfully) to machine-check the completeness of the 5-round protocol."): checked every quotation, number, section and printed-page reference, protocol step, and stated limitation after reading the full paper; corrected the TW relation, BG subarguments, test-vector scope, quotations, trust assumptions, and publisher link; did not inspect the Coq/OCaml source, rerun the authors’ proofs or benchmarks, or independently validate the Verus inferences.

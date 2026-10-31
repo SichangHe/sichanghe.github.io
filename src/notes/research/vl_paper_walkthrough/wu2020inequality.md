@@ -20,7 +20,7 @@ How to apply it.
 4. If the conclusions include the goal, make the unproven assumptions the new goal; the proof is done when the goal is empty or trivial (Section 3.2, PDF p. 3).
 5. Keep the core checker small. INT reports a trusted core of fewer than 200 lines (Section 3.2, PDF p. 3).
 
-The authors benchmark 10,000 proof steps averaging 40 characters: HOL Light takes 7.96 ms per step and INT 1.28 ms, a 6.2× speedup (Section 3.2, PDF p. 3). The denominator is 10,000 steps in each assistant, not complete theorems. Inference: for VeruLaw, the analogous separation is a fast candidate-action environment plus Verus as the independent final checker. A Verus implementation would represent proof state as ghost data and require each transition to preserve a theorem contract; the paper's checker is not a Verus proof.
+The authors benchmark 10,000 proof steps averaging 40 characters: HOL Light takes 7.96 ms per step and INT 1.28 ms, a 6.2× speedup (Section 3.2, PDF p. 3). The denominator is 10,000 steps in each assistant, not complete theorems.
 
 ## technique 2: controllable theorem generation by morphing a core statement
 
@@ -51,7 +51,7 @@ How to apply it.
 4. Use Adam, learning rate `10^-4`, one P100 or T4 GPU, and two random seeds; the paper selects the seed with higher validation success for test evaluation (Section 4.1, PDF p. 5).
 5. Measure success in the theorem proving environment (Section 4.1, PDF p. 5). Inference: count complete proofs, not token-level accuracy.
 
-The structural baselines matter: the Figure 3 caption says bag of words “cannot prove more than 5% of problems,” while Transformer and GNN perform the best among the four (Figure 3, PDF p. 5; Section 4.2, PDF p. 6). Inference: for VL, compare a text model against a graph/state model so architecture claims are not confused with interface constraints. A Verus-backed system must count only proofs that the verifier accepts.
+The structural baselines matter: the Figure 3 caption says bag of words “cannot prove more than 5% of problems,” while Transformer and GNN perform the best among the four (Figure 3, PDF p. 5; Section 4.2, PDF p. 6).
 
 ## technique 4: six-dimensional generalization testing
 
@@ -67,8 +67,6 @@ Axiom combinations. Train on 25, 100, 200, or 300 combinations and test on 300 u
 
 Number of axioms. Train with L=7 and one K, and test at K shifted by one. Transformer success drops 5.6% on average and GNN 5.1% (Section 4.3, PDF p. 7). Proof length. With K=3 and L in {3,5,7}, all agents decline as L grows. Agents trained on K3L3 lose 18.8% when L increases by one; K3L7 agents lose 5.7% (Section 4.3, PDF p. 7). The paper writes these as “% fewer” without saying whether they are percentage points or relative changes. Appendix G.2 (Table 7, PDF p. 24) repeats the proof-length experiment with 5 random seeds and reports mean ± std (for example Transformer trained on K3L3 and tested on K3L5: 31.5 ± 1.6).
 
-Verus form (inference). Build a VL benchmark with controlled changes in API shape, invariant complexity, lemma order, number of required lemmas, and proof length. Keep the Verus specification and checker fixed, and report success over a clearly stated number of tasks and model seeds. This prevents a model that memorizes common lemma sequences from being mistaken for a general proof agent.
-
 ## technique 5: MCTS at test time
 
 What it is. INT adds Monte Carlo Tree Search to a GNN behavior-cloning policy. The full action space can reach 1.3 million actions, so MCTS branches only over 18 axioms; the policy proposes arguments. A value MLP is trained on 1,000 rollout episodes, and each tree uses 200 simulations (Section 4.4, PDF p. 8). The method follows AlphaZero-style upper-confidence bounds, with c_puct = 1, the behavior-cloning policy as the prior, and the action sampled from the visit-count distribution with temperature τ = 1 (Appendix F, PDF p. 23).
@@ -83,13 +81,9 @@ How to apply it.
 
 Table 2 reports averages over 1,000 test theorems. For agents trained on K3L7, search raises success from 69% to 90%; for agents trained on K3L3, K3L5, and K3L7, the averages over the three evaluation sets rise 56→67%, 78→89%, and 69→90% (Table 2, PDF p. 8). For K3L7 evaluation, the K3L3 agent rises 25→40%, a relative increase of 60% (Section 4.4, PDF p. 8). Unsolved problems count as length 15, the episode step limit; therefore average proof lengths include this penalty (Table 2, PDF p. 8).
 
-Inference: MCTS maps directly to a VL strategy that searches over lemma choices while an LLM proposes arguments, but every transition must be checked by Verus. Search improves completion but increases verifier calls and does not repair a wrong specification.
-
 ## what is proved, measured, and trusted
 
 INT's trusted core has fewer than 200 lines, and the authors report a 6.2× simulation speedup against HOL Light for 10,000 isolated steps (Section 3.2, PDF p. 3). The generator supplies proofs by construction, but the neural agents are evaluated only on synthetic algebra (ordered-field axioms in the main text, plus GNN results on field axioms in Appendix G). The paper itself cautions that “proving theorems in INT is not an end in itself” and recommends using INT with real mathematical datasets (Conclusion, PDF p. 9). Inference: the trusted boundary includes the generator's production rules, axiomization, proof assistant core, model implementation, random seeds, and the policy for choosing the higher-validation seed. No result establishes soundness for Rust, Verus, concurrency, memory safety, or industrial specifications.
-
-Inference: the product threat is medium for evaluation quality rather than direct implementation. A VL agent can score highly on IID theorem families while failing unseen invariant shapes, lemma combinations, or longer proofs. INT's controlled dimensions should be used as regression tests before claiming general formal-verification competence. VL should not redo INT's synthetic ordered-field generator or its Transformer/GNN baseline; it should adapt the six-axis methodology to verified Rust and report verifier-accepted proofs with denominators, model, and setting.
 
 ## techniques for the catalog
 
@@ -99,4 +93,3 @@ Inference: the product threat is medium for evaluation quality rather than direc
 - six-axis OOD evaluation — vary initial condition, axiom order, combination, count, length, and IID distribution separately
 - axiom-space MCTS — search a small axiom branch space while a policy proposes concrete arguments
 - verifier-backed success accounting — count complete proofs and state denominators, step limits, and unsolved penalties
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We believe our benchmark can also be of interest to the learning community, facilitating research in studying generalization beyond the IID assumption."): I read the whole paper text, main body and appendices, and checked the study against it: quotations, the numbers in Tables 1 and 2, Figures 2–4, Sections 3.2, 3.3, 4.1–4.4, the conclusion and Appendices B–H, and the page references. I changed the broken DOI link to the arXiv link from the paper text, corrected the proof-assistant step description, the "short, trivial proofs" wording, the Algorithm 1 step, the Figure 3 page, the Table 2 reading (columns are training distributions, not evaluation), the axiom-combination range note, the unsupported "percentage-point" claim, the test-set description for axiom orders, and the "only ordered-field" claim; I added the transformation/extension rules, MCTS constants and step limit, the 5-seed Appendix G.2 result, and marked my own conclusions "Inference:". I did not check the cited references, the GitHub code, the figures beyond their captions and text, or the numbers of Appendix E, G.1 and G.3–G.7 figures.

@@ -30,13 +30,8 @@ Verus form (Inference). Generate Rust values that differ from a valid route by o
 ## what is proved, trusted, and limited
 The verifier proves only the tested instances and perturbation families; it does not exhaustively prove semantic equivalence. The solver, reference templates, heuristic labels, and perturbation correctness remain trusted. The authors caution that one-constraint-violating solutions may miss failures arising only from interactions among multiple constraints. Their empirical validation is VRP-specific; transfer requires expert templates, family-specific operators, and solution encodings. Benchmark-wide constraint-level evaluation of final outputs is left for future work.
 
-What VL should not redo: objective-only filtering and single-constraint witness checks are already implemented and measured here; new VL work should target Verus-specific contracts and interaction failures.
-
-Inference: for VeruLaw, this is a high threat and a useful design pattern. Agent-written verified Rust can still satisfy a test suite while omitting a non-binding safety clause; generated witness mutations and dual acceptance/rejection checks would expose that class of error before training or deployment. The method does not replace Verus proofs: it is an oracle-guided test and reward layer, with solver and witness generation trusted.
-
 ## techniques for the catalog
 - dual objective-plus-constraint verifier — combine objective comparison with feasible and one-constraint-violating witness injection
 - one-constraint perturbation testing — mutate route structure or resource parameters so each witness isolates one constraint family
 - verifier-driven SFT filtering — retain generated code only when build, objective, and injection checks pass
 - verifier reward for RL — use build, objective, and injection indicators as weighted GRPO rewards
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

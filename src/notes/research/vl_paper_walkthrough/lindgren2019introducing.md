@@ -6,8 +6,6 @@ Tag: `lindgren2019introducing`, [paper](https://doi.org/10.4204/eptcs.295.5)
 
 This paper reports a nine-week, half-time introductory compiler course that teaches semantic modelling and certified compilation to students with little formal-methods experience. The implementation uses OCaml, Why3, SMT solvers, and extraction to OCaml; students build and verify a compiler for a small imperative language called “imp”. The authors state, "Targeting students with little or no experience in formal methods, the proof process is highly automated using the Why3 framework" (abstract, p. 65).
 
-Inference: the course is a process template for teaching or bootstrapping VL contributors. It does not evaluate Rust or Verus; mappings below are inferences.
-
 ## technique 1: choose a small semantics-first language and an extractable verifier
 
 what it is and when to use it
@@ -97,12 +95,7 @@ evidence and limits
 
 The course gives students boilerplate code as a baseline, and assignments are open-ended with a minimal passing requirement and optional requirements towards higher grades (section 2.3, p. 68). The authors say that with the move to Why3 1.0 non-termination of "imp" evaluation and VM execution is "now treated by the native diverges contract in WhyML", allowing partial-correctness proofs without fueling parameters (section 4.3, p. 76). Inference: this illustrates that termination engineering is tool-version dependent.
 
-## trust, reuse, and threat to VL
-
-The paper states that Why3 extraction gives a path for certified programming "given the assumption that the Why3 platform and SMT solver(s) are correctly implemented" (section 2.2, p. 67). The paper's other tools (OCaml, binutils assembler and linker, the SyncSim simulator) are used in the course (section 2.2, p. 67), and it does not claim to verify them. The proofs it describes are against the SOS semantics of "imp", whose integers are unbounded (footnote 8, p. 70); in 2016 students used signed MIPS operations that raise exceptions on arithmetic overflow, which the authors say ensures partial correctness (section 4.3, p. 76). Inference: for VL, the strongest reusable pattern is to start with a small verified kernel, add one semantic boundary at a time, and record every extraction, solver, library, and hardware assumption. The threat to agent-written verified Rust lies in specification scale: introducing advanced Rust features too early can push the proof workload beyond the available automation, just as object orientation and type classes were out of reach in this course.
-
 ## techniques for the catalog
-
 
 - semantics-first scoping — choose a small core language whose syntax, execution, and compilation fit the proof budget
 
@@ -113,4 +106,3 @@ The paper states that Why3 extraction gives a path for certified programming "gi
 - per-phase semantic preservation — prove a phase (here the VM, optionally register allocation, and AST transformations) preserves the specified semantics; Inference: composing such phase proofs is the natural next step, not shown in the paper
 
 - extraction-aware teaching — use extractable verified data and executable code while stating the extraction and solver assumptions
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The compiler should be able to generate assembly output, and at a minimal pass assembling, linking and testing."): I read the whole paper and checked every quotation, number (20 students, 9 weeks, ratings 4.9/5.2/4.9, grade outcomes), section/page reference and technique step against it; I changed the claims that overstated what students prove (only the VM, optionally register allocation, and AST transformations are student proofs; MIPS code generation is only tested), the trust assumptions (the paper names only Why3 and the SMT solvers), the respondent count wording, the fragmented-lectures attribution, the loop-invariant step and the dependence on the in-house WP generator (now marked Inference), and the catalog entry on composition; I did not check the cited external works (Double WP, CompCert, register-allocator gallery) or the Verus mappings beyond confirming they are labelled Inference.

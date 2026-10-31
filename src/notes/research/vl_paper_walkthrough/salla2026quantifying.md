@@ -82,5 +82,3 @@ The headline 0.56→0.94 compares DeepSeek-R1 No-CoT with Check+Repair in Table 
 - unsat-core localization — identify a small inconsistent subset or approximate it by deletion minimization
 - counterexample-guided minimal repair — flip, soften, or retract commitments and select the least disruptive satisfiable repair
 - logic-filtered self-consistency — sample answers, remove globally inconsistent candidates, then vote
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

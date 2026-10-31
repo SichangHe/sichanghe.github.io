@@ -68,8 +68,6 @@ Inference: in verified Rust, the directly transferable pattern is counterexample
 
 The paper gives a completeness argument: if no T-alert is found by the induction procedure, the OI hyperproperty holds for the modeled SoC and configuration (Appendix B, pp. 2795–2796). The paper explicitly leaves firmware-level verification targets outside its scope (section 3.2, p. 2783). The design flow makes software, trusted-IP, and environment conditions separate requirements (section 4, pp. 2788–2789; Appendix C, p. 2796). Source-IP blackboxing covers arbitrary interface behavior; other IPs are whiteboxed if interference reaches their interfaces (section 3.3.3, p. 2785). Inference: applying the proof to deployed hardware also requires confidence in the RTL implementation process and the commercial IPC tool. The paper does not evaluate Rust or Verus.
 
-Inference: VL should not redo UPEC-OI's OpenTitan hardware case study. It should reuse the separation between (1) a small formal state-machine contract, (2) explicit untrusted component assumptions, and (3) counterexample-driven refinement. The paper's eight found weaknesses show that access checks at one routing point do not establish end-to-end integrity: timing, ready/valid backpressure, FIFO state, and stale response state all matter.
-
 ## techniques for the catalog
 
 - 2-safety interval property — compare two identical SoC traces with one low-security difference and require equal secure state and outputs
@@ -78,4 +76,3 @@ Inference: VL should not redo UPEC-OI's OpenTitan hardware case study. It should
 - temporal isolation — allow source differences only at the initial cycle while symbolic state represents already-sent message chains
 - P-alert induction — iteratively record affected microarchitectural variables, then prove a two-cycle step property for unbounded T-alert absence
 - counterexample-guided design flow — turn counterexamples into RTL fixes or explicit firmware/environment constraints and rerun until all sources pass
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Once an affected microarchitectural state variable is removed from PC, it will no longer be a candidate variable in the future iterations of the property check."): checked the complete paper, quotations, numbers, references, property assumptions, decomposition, induction, design flow, and evaluation; corrected alert definitions, page and figure references, blackbox signal directions, induction steps, guarantee scope, and the proposed orphan-response fix; used the publisher link printed in the paper; did not reproduce experiments or validate the Verus inferences.

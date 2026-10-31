@@ -192,7 +192,6 @@ ChatGPT's opinion
 
 - pending: first Extra High consultation failed during preparation with a timeout
   - the parent agent has a shared consultation running
-  - prompt and eventual answer: `/tmp/practical_fv/distributed_specs/`
   - no opinion is attributed before an answer is received
 
 what was opened and searched

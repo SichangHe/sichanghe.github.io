@@ -27,8 +27,6 @@ The translator consumes a typed OCaml AST produced by the OCaml type checker and
 
 > “Our translator of OCaml into OLang is intended to be as simple as possible. This matters, as it is unverified and must be trusted.” (Sec. 2, p. 3)
 
-Inference: Steps: run the OCaml type checker; pass its typed AST to the translator; prove properties about the generated OLang program. Record the translator as trusted infrastructure, or verify it separately. Inference: For VL, a Rust-to-Verus extraction or annotation elaborator is an analogous trusted boundary; claims about verified Rust should state whether translation is in the trusted base.
-
 ## technique: Horus stateless Hoare logic
 Horus targets pure code: no divergence, mutable state, or control effects, but exceptions and non-determinism are allowed (Sec. 1). Its micro judgment `pure m φ ψ` states that `m` is a pure and terminating computation that returns a value satisfying `φ` or raises an exception satisfying `ψ` (Sec. 7.2); the OLang judgment `expr η e φ ψ` is `pure#` applied to `eval_expr η e` (Sec. 7.3). Its micro rules (Fig. 7) cover `ret`, `throw`, `bind`, `please_eval`, consequence, `try2`, `par`, `handle`, and intersection; pattern matching is handled by `pat`, `branches`, and `cpat` judgments whose rules tactics apply automatically (Sec. 7.3).
 
@@ -63,7 +61,7 @@ The Rocq definitions and soundness proofs are machine-checked (Sec. 1). Verified
 
 > “However, the ratio of lines of verification over lines of code still seems quite high.” (Sec. 10, p. 27)
 
-Unsupported: concurrency, weak memory, functors, objects and classes, labeled and optional arguments (Sec. 10); the translator does not yet support shallow handlers (Sec. 3.9). Allowing parallel evaluation over-approximates OCaml: `let r = ref 0 in (incr r, incr r); !r` may return 1 or 2 (Sec. 2). The translator is unverified and trusted. Inference: the OCaml type checker is also relied on for disambiguation. Inference: VL should reuse the hybrid semantics idea, explicit trust boundary, and separate pure/effectful proof layers; redoing a full language semantics is unnecessary. Inference: a VL deployment remains exposed where its semantics, effect model, or translation boundary diverges from the code that Verus checks.
+Unsupported: concurrency, weak memory, functors, objects and classes, labeled and optional arguments (Sec. 10); the translator does not yet support shallow handlers (Sec. 3.9). Allowing parallel evaluation over-approximates OCaml: `let r = ref 0 in (incr r, incr r); !r` may return 1 or 2 (Sec. 2). The translator is unverified and trusted.
 
 ## techniques for the catalog
 
@@ -72,5 +70,3 @@ Unsupported: concurrency, weak memory, functors, objects and classes, labeled an
 - Horus stateless Hoare logic — verify terminating pure code with recursive specifications and well-founded relations
 - Osiris effect separation logic — verify stateful, divergent, exception and effect-handler code with resource splitting and effect protocols
 - logic interoperability — discharge pure subexpressions in Horus inside larger Osiris proofs
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Requiring the user to prove termination has a cost (more work for the user) and a benefit (a stronger guarantee about the code)."): what I checked: every quotation word for word, section and page references, numbers (29 files, about 900 lines, fewer than 1700 tests), combinator list, Horus/Osiris rule descriptions, soundness statements, limits, tag and DOI; what I changed: replaced a quote misattributed to the abstract, fixed section/page of three quotes (Sec. 1 p. 2, Sec. 2 p. 3, Sec. 2 p. 4, Sec. 8.3 p. 23) and the wording of two, completed the combinator list, removed an unsupported proof step (correspondence between interpreter and semantics), removed "frame" from Horus rules, removed claims that Osiris verifies concurrent code, reworded the deterministic-variant claim as a proposal, added unsupported features and verified examples, marked inferences; what I did not check: the Rocq artifact, the PDF layout beyond the text extraction, and the Verus mappings (inferences).

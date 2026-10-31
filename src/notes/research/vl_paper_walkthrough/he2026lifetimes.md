@@ -5,7 +5,7 @@ Tag: `he2026lifetimes`, [paper](https://arxiv.org/abs/2509.04253)
 ## scope and result
 The paper proposes a reachability type system for higher-order mutable programs. Its central design is one reference type with three allocation modes: ordinary first-class allocation, lexically scoped allocation, and coallocation into a shadow arena. The formal calculi A<:q and {A}<:q are mechanized in Rocq and the paper states type safety and memory safety. The paper reports metatheory and examples, not Rust implementation results or performance measurements.
 
-A direct statement of the problem is: “Statically enforcing safe resource management is challenging due to tensions between flexible lifetime disciplines and expressive sharing patterns.” (abstract, p. 1). The conclusion states, “Both calculi were formalized and proven type sound and memory safe in Rocq.” (Section 9, p. 28). Inference: for VeruLaw, the useful lesson is a specification pattern for alias and lifetime reasoning; translating this calculus to Verus requires explicit Rust data structures and contracts, not a new Verus primitive.
+A direct statement of the problem is: “Statically enforcing safe resource management is challenging due to tensions between flexible lifetime disciplines and expressive sharing patterns.” (abstract, p. 1). The conclusion states, “Both calculi were formalized and proven type sound and memory safe in Rocq.” (Section 9, p. 28).
 
 ## technique: choose an allocation mode while retaining one reference type
 What it is: `new Ref(t)` creates a first-class, non-lexical resource; `new Ref(t) scoped` creates a resource and arena tied to the current lexical block; `new Ref(t1) at t2` coallocates a resource into the arena reached through `t2`. All have `Ref[T]`, so client abstractions do not encode the storage mode.
@@ -47,13 +47,9 @@ Verus form (Inference): model a lexical guard with an owned token and a ghost li
 
 Evidence: Theorems 5.10 and 5.11 establish progress and preservation (pp. 23–24); Lemma 5.5 concerns well-stepped values (p. 22). Section 6 demonstrates fixed-point combinators, callback registration, and cycles. Section 7 states, “Specifically, deallocation is guaranteed only for scoped arenas and at scope exit, not for arbitrary arenas or in the middle of a scope.” (p. 26). The callback sketch therefore does not establish an explicit deallocation operation for non-lexical arenas. Typing algorithms and a complete object encoding remain future work (Section 7, p. 26).
 
-## what VL should reuse and threat assessment
-The paper builds on prior reachability types and adds arena grouping and scoped deallocation reasoning (Sections 1.3 and 8). Inference: VL should reuse these ideas with attribution. Inference: a product of agent-written verified Rust is threatened mainly at the design level: generated code can imitate `scoped`/arena APIs but still omit the contracts proving non-escape, cycle closure, or allocator correspondence. The paper does not measure agent code, Rust, or Verus, so any product-risk number would be unsupported.
-
 ## techniques for the catalog
 - three-mode arena allocation: use ordinary, scoped, and `at` coallocation with one reference type to vary lifetime and reclamation granularity
 - reachability qualifiers: track aliases, separation, conditionals, and closure captures with conservative resource sets
 - coarse arena reachability: group coallocated resources to support cyclic and higher-order store topologies
 - scoped non-escape: exclude the scoped variable from result types and qualifiers, prevent later access, and reclaim the arena at lexical exit
 - observation-filter deallocation proof: hide killed locations dynamically and preserve typing across scope exit
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Rather than relying on explicit use-and-kill effects, the calculus reasons about safe deallocation through complementary forms of observation filters and dynamic tracking of locations to be reclaimed."): checked all paper text, quotations, references, allocation and deallocation steps, examples, and stated limits; corrected quotations, page and lemma references, the cycle-cell naming discrepancy, and claims about escaping references; did not replay the Rocq proofs, inspect the artifact, or validate the proposed Rust/Verus encodings.

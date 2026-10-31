@@ -49,15 +49,7 @@ Limits: the paper applies axiomatization "when we are not concerned about comple
 What it is: A Mathematica notebook starts a Lean server process via `StartProcess`, sends expressions or tactics, and uses Lean’s library as a database of declarations and proof-producing procedures (sec.5, pp.17–21).
 When to use it: Use it when CAS users need theorem statements, declaration metadata, or proof objects while staying in a Mathematica workflow.
 How to do it: start a `ProcessObject`; send syntax with `SendToLeanServer`; use `RunLeanTactic` for a named tactic; `GetLeanInfo` shows a declaration’s category, type and documentation, and `GetLeanProof` shows `#explode` output as an expandable object; returned proof terms are translated into Mathematica heads. The paper mirrors Lean’s propositional proof calculus so a checked Lean proof can be displayed as a Mathematica natural-deduction object (sec.5.1–5.2, pp.17–19).
-Verus form: Inference: a VL assistant could expose Verus specifications and proof diagnostics through a server, but any returned proof must still be checked by Verus before acceptance.
-Evidence: “The proof assistant library serves as a database of mathematical knowledge that the CAS can display and explore” (abstract, p.1).
-Limits: the paper says Mathematica has "no internal notion of proof or correctness" outside a few domains (sec.5, p.17), and "an arbitrary mathlib declaration is unlikely to fully translate" (sec.5.2, p.18).
-
-## what stays trusted and implications for VL
-Inference: in verified mode what must be trusted is Lean (its kernel and the checking tactic), while Mathematica, transport, and translation are untrusted search components. Inference: unverified mode additionally trusts CAS results and any dynamically introduced axioms. Inference: VL can use this architecture to ask external engines for candidate invariants, arithmetic certificates, or proof repairs and then check them in Verus. Inference: product threat is low when every artifact is rechecked, but high when generated `assume` facts or external-body claims are accepted. The paper’s single “every linarith test case” claim has no denominator in the text, so it is evidence of an example suite, not a general success rate.
-
-## what existing VL should not redo
-The bridge already establishes the reusable pattern: separate communication, semantic translation, search, and proof checking; make translation rules extensible; support certificate checkers and explicit trust modes. VL should focus on Verus-compatible certificates and Rust/spec ASTs rather than another generic CAS bridge.
+Verus form:
 
 ## techniques for the catalog
 - bidirectional syntax reflection — serialize proof-assistant and CAS ASTs with extensible translation rules
@@ -66,4 +58,3 @@ The bridge already establishes the reusable pattern: separate communication, sem
 - arithmetic oracle — import Farkas coefficients and check them with a trusted arithmetic tactic
 - unverified exploration modes — use counterexample search, notebook display, or axioms with explicit trust cost
 - reverse proof querying — let an external tool inspect declarations and consume proof terms from the assistant
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Rather, for each common computation, we will have a tactic script that attempts to prove the appropriate relation between input and output."): read the whole text (arXiv:2101.07758v1) and checked every quotation, section and page reference, technique step and the reported numbers (20 lines of Lean, every linarith test case); changed the link from a DOI that does not appear in the paper text to the arXiv page, corrected page ranges (sec.4.3 is pp.14–16, sec.5 is pp.17–21, the factoring equality is on p.12), removed unsupported claims (elaboration metadata, variable capture, triangularity proof, overhead dominating) or marked them Inference; did not check the cited external works, the supplementary code, or the figures beyond their captions.

@@ -52,14 +52,6 @@ ProcessBench checks identification of the first incorrect step rather than subse
 
 Verus form. Inference: use premise links to construct proof obligations with explicit assumptions, then verify those obligations and their dependencies. Treat natural-language error labels as diagnostics. PARC's empirical classification results do not establish the correctness of a generated Rust specification or proof.
 
-## datasets, trust and VL implications
-
-PERL uses GSM8K, MATH, Orca-Math and MetaMathQA. Section 4 describes source datasets of 8,500, 12,500 and 200K problems for the first three respectively (p. 5). It describes sampling 1,000 examples from the test splits of GSM8K/MATH and training splits of Orca-Math/MetaMathQA, generating chains with Llama-3.1-8B-Instruct, selecting 50 positive and 50 negative chains, and creating further negatives with GPT-4o. The authors explain: “When introducing errors, we ensured that the subsequent steps were appropriately modified to reflect the impact of the initial error.” (§4, p. 6) Appendix A.2 reports 607 retained chains: 203 positive, 214 negative and 190 synthetic negative (p. 14).
-
-For annotations, the authors use o1-Preview for both premises and errors. They report two authors inspecting 10% of generated data. Among 71 inspected samples, they report: “only 4 out of 71 had a discrepancy and 5 out of 71 had issues in error annotations.” The first count concerns premises, the second errors (§4, p. 6). These are the paper's reported sampling figures; it does not reconcile 71 inspected samples with the final 607-chain total. The authors also report: “The average performance of all models on synthetically generated negatives is consistently higher compared to the performance on true negatives” (§5.2, p. 8). Inference: synthetic perturbations and model-generated reference labels limit what these results establish about naturally occurring errors.
-
-The paper mentions formal proof assistants as an alternative, but says this “requires a challenging auto-formalization of natural language text” (§1, p. 2). Inference: in VL, PARC could organize proof obligations and explain error propagation, while Verus checking remains necessary. Premise extraction cannot by itself establish that a specification captures the intended behavior or that every required assumption has been justified.
-
 ## techniques for the catalog
 
 - minimal premise extraction: identify necessary and sufficient premises and represent their dependencies as a DAG
@@ -67,5 +59,3 @@ The paper mentions formal proof assistants as an alternative, but says this “r
 - dyadic mapping: evaluate earlier-step/current-step pairs separately, then collect the predicted premises
 - native and accumulation taxonomy: separate local mathematical or logical faults from errors inherited through incorrect premises
 - premise-conditioned verification: check calculations in isolation and logic under premises, then traverse dependencies to label accumulation errors
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For incorrect solutions, the task is to identify the first incorrect step in the chain; all subsequent steps are automatically deemed irrelevant by design of the benchmark."): checked every study quotation, number, section/page reference and technique against the full paper, including references and appendices; corrected recall claims, page references, premise-label provenance, averaging descriptions, unsupported procedure steps and claims of uniform improvement; marked Verus adaptations and other conclusions as Inference; did not reproduce experiments, inspect code or independently validate annotations or Verus proposals.

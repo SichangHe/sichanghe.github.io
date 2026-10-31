@@ -77,12 +77,6 @@ The framework proves model-checking claims within the generated Les state machin
 
 The implementation is 2,564 lines of Python and 157 lines of Maude (Section 3, p. 4). On 29 models, the LSM runner averages 462 ms and at most 75,860 KB over ten executions (Section 4, p. 7). In an ablation over iRobot, Aqara, and August, LL-Verifier models executed without errors and had full coverage, while direct Maude models covered only 27/44 rules and 27/30 attributes (Section 4, p. 7). These denominators are the three-protocol ablation's reported rule and attribute totals.
 
-## what VL should not redo and product threat
-
-Prior Maude, Spin, Alloy, ProVerif, and TLA+ work already supports model checking, but earlier application models often require domain experts and hand-selected semantics (Section 6, p. 8). Inference: VL should not claim that an LLM-generated protocol model is equivalent to a Verus proof; it should reuse the paper's separation of trusted transitions, attacker events, and explicit security goals.
-
-Inference: threat to agent-written verified Rust is high for specification-level logic mistakes, especially when an agent silently assumes benign actors or a weaker attacker. LL-Verifier can generate attack traces before implementation proof, but its models and LTL goals remain assumptions. The strongest Verus integration is to turn each confirmed trace into a regression test and each security goal into an inductive invariant over concrete Rust state.
-
 ## techniques for the catalog
 
 - guardrailed logic modeling — constrain LLM-generated semantic models with typed Les symbols, EBNF, and reflection agents
@@ -92,5 +86,3 @@ Inference: threat to agent-written verified Rust is high for specification-level
 - LTL attack goals — specify bad state/event traces with Eventually, Next, and Weak Until
 - compiler-backed checking — compile Les to Maude rewrite theory and exhaustively search the logical state machine
 - counterexample exploitation — replay model-checker attack traces on real devices and classify confirmed flaws
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

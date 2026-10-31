@@ -78,10 +78,6 @@ Verus form: Inference: a possible adaptation would specify which action a strate
 
 Evidence and limits: Section 3 states that PRISM can generate an adversary “that produces” the computed minimum or maximum (p. 589). No optimality benchmark is given. Inference: an adversary is only as meaningful as the model's nondeterministic choices and reward specification.
 
-## what is proved, trusted, and relevant to VL
-
-The paper describes implemented model classes, algorithms and components; it presents no Rust or Verus implementation or proof. Inference: possible uses for agent-written verified Rust include explicit state modelling, abstraction/refinement, strategy extraction to explain results, and statistical checking as a testing complement. Their effect on implementation correctness is not evaluated here. Section 3 describes the benchmark suite as probabilistic models and corresponding properties, grouped by type (p. 590). Inference: these could supply evaluation problems for a future checker, but do not establish the correctness of a Rust implementation.
-
 ## techniques for the catalog
 
 - PTA modelling — encode clocks, guards, invariants, probabilistic updates and nondeterministic time in a guarded-command model
@@ -91,4 +87,3 @@ The paper describes implemented model classes, algorithms and components; it pre
 - symbolic and explicit engines — use fully or partially symbolic engines, or the reusable explicit sparse-matrix library
 - statistical model checking — estimate quantitative properties with confidence/Chernoff--Hoeffding bounds and test thresholds with Wald SPRT
 - optimal adversaries — extract nondeterminism-resolving strategies that attain computed probability or reward extrema
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This method also has the widest applicability, supporting both probabilistic reachability properties and expected cumulative rewards for (linearly) priced probabilistic timed automata [11]."): checked every quotation, number, section/page reference and technique description against all seven pages; corrected retry counting, the airbag property, engine descriptions and page references, removed unsupported algorithm steps and Verus capability claims, labelled proposed adaptations as Inference, and identified the retained link as from the fetch record; did not check cited papers, run PRISM, test Verus adaptations or resolve the DOI externally.

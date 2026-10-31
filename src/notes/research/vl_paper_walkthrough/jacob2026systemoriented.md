@@ -26,8 +26,6 @@ The authors verify three algorithms in increasing complexity. (1) Allow grants o
 
 Inference: this staging is a practical method inferred from the paper, not a claim that the paper names it as a method: prove query safety in the monotonic base cases, then add revocation safety before attempting both grant and revoke delegation. Each stage reduces the number of interacting quantifiers and exposes the next missing invariant. The paper's result is a proof of the simplified third algorithm under the chronicle assumptions, not a proof of arbitrary delegation or membership.
 
-Inference: a VL implementation should keep each stage as a separate verified module and carry only stable contracts forward. This avoids asking an SMT solver to discover all non-monotonic cases at once.
-
 ## technique 4: purity and totality for convergence
 Queries such as `caps`, `authorizes`, and `values` are pure functions of group state. Verus purity lets the authors prove that all replicas with the same chronicle derive the same query result, giving strong convergence once the underlying chronicle eventually converges. Totality is separately required: specification functions terminate, loops and recursive executable calls terminate, and panic paths are excluded with `no_unwind` assumptions.
 
@@ -38,7 +36,7 @@ Inference: in Verus, use `spec fn` for mathematical queries and executable funct
 ## what is proved, trusted, and unfinished
 The verified security claims hold for any valid chronicle, including events containing Byzantine equivocation and backdating, under eventual consistency of the underlying hash chronicle. Trusted facts include digital-signature authenticity, collision-resistant hashes, append-only Byzantine storage, eventual delivery/consistency, Rust standard-library specifications, and modified `vstd` assumptions. The authors specifically added an assumption that cloning preserves `HashSet` elements and assumed allocation/random-number system calls do not panic (Discussion, p. 8). No throughput or deployment-scale number is reported; this is a proof-of-concept study.
 
-The paper excludes mutual concurrent authorization revocations among equally privileged entities, delegation of grant/revoke capabilities, self-revocation, public joining, sparse replication, and protocol upgrade. Its conclusion says scaling “remains a challenge.” Inference: the threat to VL is specification incompleteness: an agent can prove a sound, total algorithm while omitting a needed capability or choosing a chronicle assumption the product cannot satisfy. The useful reusable work is the explicit separation of chronicle validity, authorization predicates, query safety, revocation safety, and purity/totality. Existing VL should not redo these staged invariants; it should adapt them when a local-first product actually needs Byzantine authorization.
+The paper excludes mutual concurrent authorization revocations among equally privileged entities, delegation of grant/revoke capabilities, self-revocation, public joining, sparse replication, and protocol upgrade. Its conclusion says scaling “remains a challenge.”
 
 ## techniques for the catalog
 - hash-linked chronicle model — represent events, causal timestamps, joins, and validity explicitly before verifying authorization
@@ -46,5 +44,3 @@ The paper excludes mutual concurrent authorization revocations among equally pri
 - authorization/query/revocation invariants — separate immutable authorization, query-change, and backdating safety obligations
 - staged algorithm verification — add grants, then revocations, in monotonic-to-non-monotonic steps
 - pure total queries — prove deterministic convergence and termination while keeping chronicle consistency assumptions explicit
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

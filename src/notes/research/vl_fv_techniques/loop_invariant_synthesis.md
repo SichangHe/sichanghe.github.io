@@ -64,8 +64,6 @@ Each step cites the study that supports it.
    - no `assume`, no weakened `ensures`, no changed code
    - DafnyPro's diff-checker does this; see below
 
-## variants by paper
-
 ### AutoVerus (Verus)
 [study](../vl_paper_walkthrough/autoverus_20261012.md)
 

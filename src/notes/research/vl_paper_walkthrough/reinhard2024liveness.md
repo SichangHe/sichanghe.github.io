@@ -75,15 +75,13 @@ Inference: a Verus port would need an analogous theorem connecting its proof rul
 
 Appendices C and D formalize CT extraction. Appendix C defines a VC as an assertion whose validity implies program safety and proves that a CT extracted from a VC transfers to the program when the VC is precise in the parameter (Theorem C.8.3, p. 175). Its iterative workflow is: compute a VC, maintain the current domain, factor out subformulas independent of the parameter, extract a smaller threshold, and repeat until no improvement (Workflow C.8.10, pp. 178–179). For `vc(s) = ∀i ∈ Z. a ≤ i < s+b → 0 ≤ i+Z < s`, Appendix C’s reusable array lemma states that `{q}` is a CT whenever `q > a−b` (Lemma C.8.11, p. 179). This uses an exclusive upper loop bound, unlike Chapter 4’s inclusive bound.
 
-Appendix D generalizes CTs from memory safety to arbitrary correctness predicates, including liveness and functional correctness. It defines correctness properties with universal or existential quantifiers and gives VC precision as a sufficient condition for transferring CTs (Defs. D.2.1–D.2.7 and Theorem D.2.11, pp. 182–184). Inference: this generalization is directly relevant to VL because a threshold could, in principle, reduce bounded checks for termination or functional postconditions, but only after proving precision for the chosen Verus specification.
+Appendix D generalizes CTs from memory safety to arbitrary correctness predicates, including liveness and functional correctness. It defines correctness properties with universal or existential quantifiers and gives VC precision as a sufficient condition for transferring CTs (Defs. D.2.1–D.2.7 and Theorem D.2.11, pp. 182–184).
 
 ## what is proved, trusted, and measured
 
 For ghost signals, the soundness argument reduces liveness to safety of obligations, levels, and resource ownership under fair scheduling. Every augmented execution corresponds to a real execution after erasure (Sec. 3.2.1, p. 21). The termination proof uses the converse construction for verified programs: every fair infinite real execution would yield a corresponding augmented execution, which the logic rules out (Sec. 3.2.1, p. 23). The VeriFast encoding adds a thread-phase rule to prevent self-fueling loops and places other logic aspects in a trusted header as axioms (Sec. 3.5, p. 40). Inference: that trusted header and VeriFast's checker are part of the trusted base; the reported timings do not measure this trust.
 
 For CTs, the proof is about memory safety of the analyzed array-traversal class and about VC precision. It does not show that arbitrary BMC bounds are safe, nor that every program's VC is precise. The planned FreeRTOS TCP/IP evaluation and speedup experiment are future work, not results (Sec. 5.2, pp. 62–63). No completed industrial CT evaluation or measured CT speedup is reported.
-
-Inference: these results suggest two candidates for VL: an explicit ghost-signal model for Rust concurrency, and proved size reductions for array traversals. Their applicability depends on connecting the target execution semantics to the liveness proof and justifying each transfer from a VC-derived threshold to a program proof. The dissertation’s VeriFast implementation and array results do not establish those connections for Verus.
 
 ## techniques for the catalog
 
@@ -93,5 +91,3 @@ Inference: these results suggest two candidates for VL: an explicit ghost-signal
 - completeness thresholds: extract representative input subdomains from VCs so bounded memory proofs imply unbounded ones
 - VC slicing: ignore separated VC conjuncts that do not mention the parameter whose threshold is being computed
 - CT combinators: combine thresholds for conjunctive VCs by union; the chapter sketches guarded constraint sets for conditionals
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Ghost variables are ghost resources that behave like regular program variables, but since they only exist on the veriﬁcation level, they cannot aﬀect the runtime behaviour."): checked the entire paper, including appendices and bibliography, against the study’s quotations, numbers, references, technique steps, and conclusions; corrected proof-rule references, fairness and termination wording, mutex steps, CT-transfer conditions, appendix descriptions, and unsupported timing and Verus claims; did not independently prove the paper’s theorems, run VeriFast examples, or validate a Verus port. The arXiv link uses the identifier on the paper’s cover.

@@ -6,8 +6,6 @@ Tag: `pagel2020strong`, [paper](http://arxiv.org/abs/2001.06235v2)
 
 Pagel and Zuleger change the semantics of separating conjunction so that heap composition can share locations only when those locations are named by stack variables. They call the resulting logic strong-separation logic (SSL). The paper targets formulas with points-to atoms, singly linked list segments, separating conjunction, magic wand, and Boolean connectives. Its central claim is a complexity result: satisfiability and entailment for this SSL fragment are decidable and PSpace-complete, although the corresponding standard-semantics problem with list segments is undecidable. The abstract states that SSL is “decidable even in the presence of both the magic wand and the list-segment predicate—a combination of features that leads to undecidability for the standard semantics.” (Abstract, p. 1)
 
-The paper also gives symbolic-execution rules for a small pointer language and a normal-form construction for abduction. It does not report an implementation benchmark. The conclusion explicitly calls the results first steps and lists practical evaluation as future work (§6, p. 27). Therefore there are no runtime denominators, success percentages, or measured proof-engineering savings to transfer to VL.
-
 ## technique: strong-separation semantics
 
 Use this technique when a separation-logic verifier needs magic wand, negation, or list segments but arbitrary heap splitting makes reasoning undecidable or produces irrelevant dangling pointers. A state is a stack–heap pair `(s,h)`: the stack maps program variables to locations and the heap is a finite partial pointer function (§1, pp. 1–3). Under ordinary separation logic, `ϕ * ψ` holds when `h` can be split into disjoint allocated domains, even if a pointer in one part targets a location allocated in the other. The authors identify this as the source of arbitrary dangling pointers.
@@ -78,19 +76,9 @@ The paper explains the components of the translation: aliasing encodes variable 
 
 Inference: In Verus, abduction could generate a missing `requires` fact, ghost ownership predicate, or lemma precondition from a failed proof obligation. A finite normal form is plausible for bounded data structures, but Verus specifications commonly quantify over unbounded sequences and arithmetic, so this exact construction would not be complete. Any generated precondition must be reviewed against the intended API contract; a weaker precondition can make a proof easier while changing the program's required behavior.
 
-## trusted boundary, limits, and VL relevance
-
-The paper's formal evidence consists of semantic definitions, refinement and soundness lemmas, PSpace upper and lower bounds, and worked symbolic traces. It does not report an implementation, corpus, timing study, or defect rate. Inference: the trusted assumptions would include the SSL semantics, the small language's operational semantics, and the correctness of the AMS algorithms; the paper reports no implementation of the entailment checker, so a tool built on it would add its own trusted code. The logic omits quantifiers in the presented symbolic-execution calculus; the authors identify quantified extensions, richer data structures, arithmetic, full Hoare logic, and practical evaluation as future work (§4, p. 19; §6, p. 27).
-
-Inference: The strongest reusable lesson for VL is to constrain an ownership abstraction until its decision questions become tractable, then prove that the abstraction preserves the predicates the verifier asks about. The strongest non-transferable claim is PSpace completeness: it concerns a deliberately bounded logic, not general Rust or Verus.
-
-Inference: This is a medium threat to agent-written verified Rust. An SSL-inspired ownership abstraction could help VL generate frame lemmas, heap summaries, and missing preconditions, reducing repetitive proof search. It cannot by itself verify unsafe Rust, arbitrary library behavior, or the adequacy of a Rust specification. VL should treat generated abductions as suggestions and require Verus to check every resulting contract, while retaining the paper's explicit accounting of garbage, aliases, and fresh variables.
-
 ## techniques for the catalog
 
 - strong-separation semantics — restrict heap composition to stack-named shared locations to retain magic-wand and list reasoning
 - abstract-memory-state decision procedure — decompose heaps into chunks and decide SSL satisfiability and entailment in PSpace
 - forward symbolic execution — combine local pointer rules with frame and materialization rules, then discharge entailment
 - normal-form abduction — translate finite abstract memory states into formulas for weakest and spatially minimal missing heap facts
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The materialization rule ensures that the frame rule can be applied whenever the pre-condition of a local proof rule can be met."): read the whole paper text including the appendix proofs (to p. 39); checked every quotation word for word, every page and section reference against the page numbers in the paper text, the technique steps against Sections 1-5, Figs. 6-12 and Lemmas 1-27; corrected the conclusion page (p. 27, not 28), the Lemma 27 and Fig. 12 pages, the AMS component descriptions (E, rho, gamma), the refinement and entailment references, the abduction step on the positive fragment, and the trusted-assumption sentence (now marked Inference); did not check the appendix proofs for correctness, the cited external works, or any Verus claim (all marked Inference and not supported by the paper). Link from the paper text (arXiv:2001.06235v2).

@@ -36,8 +36,6 @@ Evidence and limits. The review reports only the ratio and architecture, and I f
 
 The review groups approaches into monolithic, microkernel, embedded, unikernel, and exokernel architectures (Table 2, PDF p.3). The formal technique is architectural: place less code in the trusted kernel and move services or drivers outside the proof boundary. Atmosphere uses a microkernel; Theseus uses compiler-enforced isolation in a single address space and privilege level; RustyHermit, a rewrite of the C unikernel HermitCore by Lankes et al., “consists of only 3.27% unsafe Rust” (§3.1, PDF p.4).
 
-Inference: For VL, a smaller verified Rust core can reduce the number of invariants and external assumptions, but it does not eliminate interface proofs. Verus contracts should specify the boundary between verified code and unverified or foreign components, including memory layout, return values, and failure behavior. Inference: A low unsafe-code percentage is a useful surface-area measure, not a formal correctness result.
-
 ## technique 4: preserve safety while integrating C
 
 The review identifies C interoperability as a core challenge. Table 4 lists that “Kernel interfaces, while designed for extensibility, are not designed for type safety” and that “The Rust compiler can not track ownership when switching between modules written in C and Rust.” (Table 4, PDF p.5) The paper also reports a 0.7% overhead for a non-encapsulated Rust replacement of Linux’s out-of-memory component and 3% for an encapsulated replacement, but these are performance measurements from the cited study (§3.2, PDF p.4).
@@ -50,12 +48,9 @@ Verus form. Inference: Mark foreign calls and hardware accesses as explicit trus
 
 This review proves no new theorem. Its formal evidence is reported by the cited Atmosphere work; its other numbers summarize cited performance and code-composition studies. Trusted assumptions include each source paper’s methodology, the review’s inclusion criteria, and the comparability of proof-to-code ratios across systems. The authors themselves list threats: study quality varies, selection may favor successful integrations, contexts are heterogeneous, and Rust and Linux change rapidly (§4, PDF p.6).
 
-Inference: The direct VL lesson is to define a small verified boundary, use Rust ownership for local resource safety, add solver-backed contracts for global invariants, and state all C or hardware assumptions explicitly. VL should not redo the architectural survey or claim that safe Rust alone supplies formal functional verification. The threat to agent-written verified Rust is boundary incompleteness: code can satisfy Verus contracts while an unverified driver, foreign call, or hardware alias violates the system property. This paper does not evaluate Verus or agent-written code.
-
 ## techniques for the catalog
 
 - cell-based compiler isolation: design resource-owning cells and let Rust’s ownership and borrow checks enforce local isolation at compile time
 - hybrid type-and-SMT verification: combine linear resource typing with SMT proofs for invariants beyond the type system
 - proof-boundary reduction: choose microkernel or unikernel boundaries to reduce code that must be formally verified while specifying interfaces
 - explicit C/Rust contracts: narrow foreign boundaries and state ownership, ABI, and memory assumptions for unsafe interoperability
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "For example, the RedLeaf experiential operating system, which was written in Rust, relied on a complex interface definition language (IDL) to enforce isolated heaps."): I read the whole paper text and checked every quotation, the 22/6/28 paper counts, search dates, the 7.5:1, 19:1, 20:1, 0.7%, 3% and 3.27% figures, and the section, table and page references (I corrected the Table 4 page to p.5, the §3.4 page to pp.5–6 and §4 to p.6). I changed the state-spill wording, labeled the step-by-step application recipes as Inference because the paper gives no procedures, and removed the unsupported claim that Atmosphere used a different SMT integration from Verus. I did not check the cited source papers, and the link is the arXiv link already in the file, which matches the arXiv stamp on the paper.

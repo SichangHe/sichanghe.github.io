@@ -51,7 +51,7 @@ Inference: a Verus implementation can parallelize candidate proofs and cache sol
 The review reports AlphaProof's silver-medal-level result and Seed-Prover's 99.6% MiniF2F score, but emphasizes selection bias and specification errors in research-level reports (Section 4.3, p. 13). For agent-written verified Rust, the threat is high for specification fidelity and long proof maintenance: generation can be productive, yet a formally checked weakened contract still gives the wrong product behavior.
 
 ## proved, measured, and trusted
-The paper measures benchmark pass rates, corpus sizes, and counts of AI contributions to Erdős problems. Table 6 counts are approximate and drawn from a community-maintained tracker; they are not independently verified theorem counts. Trust remains in the ITP kernel, solver integration, formal libraries, autoformalization fidelity, external tools, and human interpretation. The review explicitly says SMT outputs may have certificates while CAS outputs typically lack comparable guarantees (Section 5.4, p. 19). Inference: VL should treat generated specifications, dependency contracts, and tool certificates as separate trust boundaries.
+The paper measures benchmark pass rates, corpus sizes, and counts of AI contributions to Erdős problems. Table 6 counts are approximate and drawn from a community-maintained tracker; they are not independently verified theorem counts. Trust remains in the ITP kernel, solver integration, formal libraries, autoformalization fidelity, external tools, and human interpretation. The review explicitly says SMT outputs may have certificates while CAS outputs typically lack comparable guarantees (Section 5.4, p. 19).
 
 ## techniques for the catalog
 - autoformalization with verifier filtering — translate informal mathematics to explicit ITP statements, then filter with compilation and proof checks
@@ -60,4 +60,3 @@ The paper measures benchmark pass rates, corpus sizes, and counts of AI contribu
 - theorem retrieval with proof memory — retrieve typed lemmas and retain verified subproofs for later goals
 - search-in-the-loop proving — use MCTS, best-first, graph, or critic-guided search to collect validated trajectories
 - multi-agent proof orchestration — specialize formalization, planning, proving, criticism, and verification around a shared subgoal cache
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

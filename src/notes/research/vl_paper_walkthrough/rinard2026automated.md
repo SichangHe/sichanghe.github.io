@@ -33,13 +33,7 @@ Use this for unverified text interfaces. Generate typed AST programs, print to t
 
 Inference: For Verus, specify a round-trip relation in a `spec fn` and use Rust property tests to exercise it; prove only the pure AST relation, while treating parser libraries and assembler behavior as trusted test targets.
 
-## evidence, limits, and product threat
-The experiments used Claude Code Opus 4.8, Lean 4.28.0, an M4 Pro (12 cores, 24 GB), and agent-generated scripts; dollar costs were computed from published token rates, not invoices (Section V-A, p.7). The paper reports every detected defect/rejection repaired and no evidence of systematic reward hacking, but notes scripts and measurements were themselves agent-generated. It explicitly states that results concern compilers and may not generalize to less studied systems (Section VI, p.11).
-
-Inference: For VL, ACDC is a high-value operational pattern: combine proof artifacts with randomized semantic differential tests, preserve seeds, and require repair validation on fresh inputs. It does not remove trust in Verus, the specification, model fidelity, or test-oracle completeness. VL should not redo generic Csmith/EMI ideas; the reusable contribution is their certificate-aware targeting and proof-update loop.
-
 ## techniques for the catalog
 - certificate-aware differential execution — compare executable machine semantics with printed-and-executed code and retain reproducible seeds
 - credible-compilation rejection repair — classify certificate failures, localize transform/generator/checker causes, and re-prove checker changes
 - typed AST round trips — print and parse generated ASTs, compare equality, and repair parser/printer mismatches
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

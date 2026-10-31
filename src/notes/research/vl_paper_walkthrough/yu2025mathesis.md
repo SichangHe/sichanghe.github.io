@@ -9,8 +9,6 @@ Mathesis is an end-to-end Lean 4 pipeline that translates a natural-language (NL
 The paper later says that autoformalizer enhancements improve Gaokao-Formal by “nearly double performance with an 11.2% improvement (7.2% to 18.4%).” (Sec. 5.4, p. 10).
 Inference: Table 5 reports 18.0% for Mathesis-Prover with Mathesis-HPO and 7.2% for the compared Herald configuration, so the displayed table and the prose do not agree; both configurations use a 32-attempt search budget. The table implies a 10.8 percentage-point improvement, whereas the prose gives 11.2 points and an unexplained 18.4% endpoint.
 
-Inference: For VeruLaw (VL), the relevant design is a staged NL-to-Rust-to-Verus pipeline in which compilation, semantic checks, and proof search are separate prerequisite checks. Lean results do not establish Verus performance because the languages, libraries, and proof obligations differ.
-
 ## technique: compile and semantically score candidate formalizations
 
 What it is: generate several Lean statements for one NL problem, reject statements that fail Lean syntax/type checking, and rank the remaining statements with a semantic checker. Figure 3 and Section 3 describe this as autoformalization, validation, and proving. The paper says: “The formal statement that passes the Lean compiler and receives the highest semantic assessment score is then passed to an automated theorem prover and generates a complete, machine-verifiable proof in Lean.” (Sec. 3, p. 4).
@@ -47,8 +45,6 @@ How to do it:
 
 The appendix gives concrete settings: `G=14`, KL coefficient `β=0.04`, one policy update per group (`μ=1`), LoRA rank 16 with `α=32`, AdamW learning rate `1×10^-6`, and parallel reward computation with Python `asyncio` (App. A.1, p. 16).
 
-Inference: A VL implementation could use Verus success as the verification reward and a requirement-to-contract judge as the semantic reward. The reward should include contract soundness checks and reject vacuous specifications; the paper's binary semantic reward alone does not establish either property.
-
 Evidence: Table 4 reports Gaokao-Formal LC+LSC@6 of 67% for Mathesis-Autoformalizer, 71% for Mathesis-Autoformalizer-HPO, and 49% for Kimina-7B (p. 9). Section 5.3 calls the 71% result “Mathesis-Autoformalizer”, omitting the HPO suffix. Inference: The 22 percentage-point improvement belongs to the HPO model in Table 4 and does not isolate the effect of GRPO.
 
 Limits: `Rsem` is a binary LLM judgment, and `Rver` checks a statement containing `sorry`, so neither reward proves a complete theorem. The training-data size is approximate (“approximately 32k problems”), and no contamination audit for those sources is reported in the paper.
@@ -64,8 +60,6 @@ How to do it:
 3. Send passing candidates to a prover to generate proofs `zi`.
 4. Label successful candidates as preferred tuples `{x, yw, zw}` and failed attempts as rejected tuples `{x, yl, zl}`.
 5. Fine-tune with one DPO epoch, learning rate `1×10^-5`, KL coefficient `β=0.1`, warmup ratio 0.05, full-parameter optimization, and DeepSpeed ZeRO-3 offload (Sec. 3.1.2, p. 5).
-
-Inference: For VL, downstream success can mean that Verus proves the generated Rust contract and that generated tests or a trusted specification checker accept the behavior. This aligns synthesis with a proof that is actually useful, while preserving a separate semantic prerequisite check.
 
 Evidence: HPO raises Gaokao-Formal LC+LSC@6 from 67% for Mathesis-Autoformalizer to 71% for Mathesis-Autoformalizer-HPO, and MiniF2F-Test LC+LSC@6 from 95% to 96% (Table 4, p. 9). In Table 5, Mathesis-Prover with HPO reaches 18.0% on Gaokao-Formal and 64.3% on MiniF2F-Test at search budget 32 (p. 10).
 
@@ -85,8 +79,6 @@ How to do it:
 
 Evidence: On a Gaokao subset with human labels, LeanScorer at `α=0.6` has precision 94%, recall 89%, and F1 0.92; LLM-as-a-Judge has 73%, 100%, and 0.85; re-informalization has 93%, 50%, and 0.65 (Table 3, p. 8). The denominator is the paper's human-annotated Gaokao subset; its size is not stated in the table or surrounding text.
 
-Inference: VL could decompose a requirement into safety, functional, and resource obligations, score each generated Verus contract, and veto any missing safety obligation. This is a review aid, not a proof: Verus must still establish the accepted obligations.
-
 Limits: LLM classifications and the fuzzy measure are evaluation heuristics. Section 5.4 reports false positives. Inference: Equation 3 leaves the case of a proper subset containing only A ratings unspecified, and its B-count branches can overlap with its C branch. Reproducing the exact scorer requires resolving these details. A low score can also reflect harmless differences in expression.
 
 ## technique: expert-iteration prover with verified data
@@ -105,14 +97,6 @@ Limits: The reported accuracy is benchmark-specific and does not show that every
 
 Lean checks accepted formal proofs. Lean compilation checks candidate statement syntax and types. LeanScorer measures agreement with human semantic labels, and Table 3 reports precision, recall, and F1. Table 4 measures LC and LC+LSC success rates at sample budgets 1 and 6. Table 5 measures downstream proof accuracy at search budget 32. The Gaokao benchmark contains 488 problems across functions (167), sequences and series (150), inequality (28), trigonometry (22), analytic geometry (71), probability/combinatorics (4), and comprehensive questions (46) (Table 1, p. 7).
 
-Inference: VL must keep separate trust boundaries for Verus's verifier, the generated specification, semantic scoring, external libraries, and the Rust compiler/runtime. A proof only establishes the stated Verus contract under the verifier's assumptions.
-
-## implications for VeruLaw and threat assessment
-
-Inference: The largest product threat is semantic error before proof search: an agent can produce a well-typed, provable contract that omits a requirement, just as the paper's Figure 2 shows. A second threat is prover weakness on complex requirements: Gaokao-Formal falls to 18.0% end-to-end success even after HPO. A third is evaluation gaming through vacuous `True` goals or placeholder tactics; the paper found both and removed them from metrics.
-
-Inference: VL should reuse the staged architecture, explicit semantic subtask decomposition, downstream-proof preference data, and verifier-feedback training. It should add Verus-specific contract mutation tests, checks against vacuous `ensures`, and raw denominators for every metric. VL should not redo a generic Lean benchmark; the paper already supplies that pattern and its failure modes.
-
 ## techniques for the catalog
 
 - staged formalization and proving — sample formal statements, compile them, semantically rank them, then prove the selected statement
@@ -121,5 +105,3 @@ Inference: VL should reuse the staged architecture, explicit semantic subtask de
 - structured semantic scoring — decompose requirements, classify each subtask, and aggregate with a veto-capable Sugeno integral
 - verified expert iteration — retrain a prover on proof attempts accepted by the proof assistant
 - benchmark and metric separation — report syntax, semantic agreement, and end-to-end proof success with their distinct sample/search budgets
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We generated formal statements for MiniF2F-test and Gaokao-Formal using different autoformalizers: Human-provided, Herald, Kimina, and our Mathesis-Autoformalizer."): checked all paper text, quotations, numbers, references, and technique steps; corrected the GRPO/HPO result attribution, training-data page reference, score formula description, and evaluation caveats; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

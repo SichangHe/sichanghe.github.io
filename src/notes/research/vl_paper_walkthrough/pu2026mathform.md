@@ -6,9 +6,7 @@ Tag: `pu2026mathform`, [paper](http://arxiv.org/abs/2608.14221v1)
 
 MathForm is a pipeline for translating natural-language mathematics into Lean 4 statements. It retrieves Mathlib definitions before generation, compiles candidates, asks a semantic-consistency judge to find meaning errors, and iteratively revises failed candidates. The paper constructs FormalVerse, “a Lean 4 dataset containing approximately 367K verified examples across diverse mathematical domains and sources.” (Abstract, p. 1)
 
-The training recipe uses supervised fine-tuning followed by reinforcement learning. On six benchmarks, the reported macro-average Pass@8 is 88.06% for Syntax Check and 72.37% for Consistency Check for MathForm-8B (Table 1, p. 7). Syntax acceptance only means at least one of eight candidates compiles; consistency acceptance additionally requires the judge to mark a compiling candidate semantically faithful. Inference: for VeruLaw, the key lesson is to separate compiler validity from specification validity. A Rust/Verus artifact can compile and verify while stating the wrong property.
-
-## technique: retrieve library knowledge before generation
+The training recipe uses supervised fine-tuning followed by reinforcement learning. On six benchmarks, the reported macro-average Pass@8 is 88.06% for Syntax Check and 72.37% for Consistency Check for MathForm-8B (Table 1, p. 7). Syntax acceptance only means at least one of eight candidates compiles; consistency acceptance additionally requires the judge to mark a compiling candidate semantically faithful.
 
 ### what it is and when to use it
 
@@ -22,13 +20,9 @@ The retrieval planner analyzes mathematical objects, relations, and type constra
 4. retrieve the top two Mathlib results for each query through LeanExplore (Section 3.1.2, p. 4)
 5. prompt the generator with the statement and retrieved context, requiring only a Lean theorem statement (Section 3.1.2, p. 4; Appendix D.1, p. 21)
 
-Inference: a VL generator should retrieve current `vstd` and Verus API declarations before emitting proof code. The planner should ask for exact types and contracts, not broad topic summaries. This is an inference because the paper targets Lean and Mathlib.
-
 ### evidence and limits
 
 Retrieval-only generation is weaker than the complete pipeline in the ablation. For gpt-oss-120b on FATE, retrieval-only gets 32.23% SC and 29.00% CC on the equally weighted average of FATE-M, FATE-H, and FATE-X, while the complete pipeline gets 49.67% SC and 48.00% CC (Table 2, p. 8). Retrieval supplies facts but does not repair a bad candidate by itself.
-
-## technique: compiler and semantic feedback drive iterative refinement
 
 ### what it is and when to use it
 
@@ -56,11 +50,9 @@ The failed-attempt history is unsuitable as a target because it interleaves retr
 
 Apply it by: retaining only a candidate that passed compilation and semantic consistency (Section 3.1.3, p. 5); supplying the pair to the trajectory prompt (Appendix D.3, pp. 23–24); requiring concept identification, logical structure, types, imports, and syntax translation while forbidding proof strategy (Appendix D.3, p. 23); and storing the resulting trajectory with the code (Section 3.1.4, p. 6).
 
-Inference: VL can reconstruct short, structured traces that explain why each `requires`, `ensures`, invariant, and lemma is present, then train agents on those traces. The trace must be checked against the actual Verus code because retrospective explanations can invent rationale.
-
 ## technique: decontaminate training data by n-gram overlap
 
-MathForm removes any training example sharing at least one 13-gram with an evaluation example. The resulting FormalVerse dataset contains approximately 367K verified NL-to-Lean pairs (Section 3.1.5, p. 6). This makes benchmark scores less vulnerable to direct textual leakage. Inference: a VL corpus should compare normalized code and specification fragments against held-out projects, although a 13-gram threshold is a heuristic and may miss semantic duplicates.
+MathForm removes any training example sharing at least one 13-gram with an evaluation example. The resulting FormalVerse dataset contains approximately 367K verified NL-to-Lean pairs (Section 3.1.5, p. 6). This makes benchmark scores less vulnerable to direct textual leakage.
 
 ## technique: train with an executable binary reward
 
@@ -78,12 +70,6 @@ MathForm-8B’s 88.06% SC and 72.37% CC are equally weighted macro-averages acro
 
 Table 3 compares models trained on 100K examples sampled from each dataset under identical settings. FormalVerse gives 60.32% average CC, versus 46.53% for FineLeanCorpus and 41.49% for NuminaMath-LEAN; the differences are 13.79 and 18.83 percentage points, respectively (Table 3, p. 9). SC is similar for FormalVerse and FineLeanCorpus, 77.17% versus 78.25%, so the reported advantage is semantic consistency rather than compilation.
 
-## trusted scope and threat to VL
-
-The compilation backend, retrieval index, prompts, model behavior, and LLM semantic judge are trusted operational components. Human evaluation of 200 examples provides evidence about judge reliability, not a proof of all labels. The paper itself says the goal is faithful formalization, but a Lean statement can compile while strengthening a condition or dropping an assumption (Section 1, p. 2). Inference: this is a direct threat to agent-written verified Rust. A Verus proof can pass against a contract that omits an error case, weakens a postcondition, or chooses the wrong state abstraction.
-
-Inference: VL should reuse the closed loop of library retrieval, compilation diagnostics, semantic review, bounded revision, and trajectory reconstruction. It should not redo MathForm’s Lean-specific retrieval or DAPO implementation. The missing Rust-specific work is a catalog of Verus constructs and a semantic checker that compares natural-language requirements with Rust contracts, invariants, and external-body assumptions.
-
 ## techniques for the catalog
 
 - library retrieval planning: query the current formal library for definitions and types before generation
@@ -92,5 +78,3 @@ Inference: VL should reuse the closed loop of library retrieval, compilation dia
 - trajectory reconstruction: synthesize a clean formalization explanation from each verified statement and its source
 - n-gram decontamination: remove training examples sharing a 13-gram with held-out evaluation examples
 - joint binary reward: reward a candidate only when compilation and semantic checks both pass
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

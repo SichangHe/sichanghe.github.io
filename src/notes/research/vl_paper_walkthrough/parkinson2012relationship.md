@@ -73,10 +73,6 @@ The paper proves semantic equivalence: TPL matches partial-heap SL (Theorem 3.20
 
 Inference: threat to agent-written verified Rust is medium. The work addresses a central product risk—proofs that manipulate aliases and permissions—but only at the logic/encoding level. It does not validate Verus's Rust semantics, ownership implementation, unsafe code, library specifications, or whether a generated contract captures the intended system property. Its strongest reusable idea is a checkable abstraction boundary: every heap read needs a permission fact, and every resource-transforming proof should preserve a frame.
 
-## what VL should not redo
-
-VL should not claim as a new idea that separation logic can be represented by permission masks, that minimal extensions give a uniform implication/magic-wand semantics, or that a restricted SL fragment can map to Chalice while preserving WPs; these are theorems established here. New work should measure or mechanize the Rust/Verus encoding, including ownership, mutable borrows, concurrency state machines, and external-library contracts.
-
 ## techniques for the catalog
 
 - total-heap permission semantics — represent a total heap plus a per-field permission mask and interpret reads through permissions
@@ -85,5 +81,3 @@ VL should not claim as a new idea that separation logic can be represented by pe
 - separation-logic to IDF encoding — map a restricted separation-logic syntax to Chalice assertions with semantic preservation
 - weakest-precondition correspondence — prove encoded and source command WPs equivalent by structural semantic lemmas
 - frame and permission accounting — use fractional permissions for read sharing and full permission for writes
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Chalice does not allow arbitrary formulas to be used as argument to inhale and exhale: it restricts the formulas to be self-framing."): read the whole paper text (pp. 1–54, including the appendix proofs) and checked every quotation, definition/lemma/theorem number, page number and technique step against it; changed all page references from the old values to the printed LMCS pages, corrected the havoc description and the minimal-extension steps, removed an overclaim that Lemma 4.5 covers full formulas, moved the "purely first-order prover" quote from the abstract to the introduction, replaced the arXiv link with the DOI printed in the paper, and labelled own conclusions as Inference; did not check the Verus/Rust mappings (they are inferences, not paper claims), the proofs' correctness, or the bibliography.

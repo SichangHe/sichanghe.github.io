@@ -1,18 +1,9 @@
 # Verus linear ghost types: ownership as a proof mechanism
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## Paper and reading boundary
 
-Andrea Lattuada, Travis Hance, Chanhee Cho, Matthias Brun, Isitha Subasinghe, Yi Zhou, Jon Howell, Bryan Parno, and Chris Hawblitzel, *Verus: Verifying Rust Programs using Linear Ghost Types*, OOPSLA 2023, article 85, 30 pages. [DOI](https://doi.org/10.1145/3586037), [primary PDF](https://www.andrew.cmu.edu/user/bparno/papers/verus-ghost.pdf), [SSD1 PDF](/ssd1/sichangheagent/vlpw/verus_linear.pdf), [text](/ssd1/sichangheagent/vlpw/verus_linear.txt). Page numbers below match PDF pages and the suffix in 85:n.
-
 The [existing overview](../topic_studies/formal_verification_rust/rust_verifiers/verus.md) explains Verus at a high level. This study adds the mode rules, permission operations, proof-termination argument, examples, and historical limitations. It reads the supplied paper, not the separate extended formalization or artifact. Example timings are author reports.
-
-## Central lesson for VL
-
-A logical description of a resource is different from permission to use it. Verus lets specifications freely copy descriptions while Rust ownership prevents proof code from duplicating permissions. The authors say (§2.1, p. 6): “Proof variables sit midway between exec variables and spec variables: like spec variables, they are ghost and are not compiled to machine code, but like exec variables, they are checked for linearity.” Agent inference: agents must generate both the mathematical state model and the ownership structure; one cannot substitute for the other.
-
-Here “linear” means a value cannot be freely copied unless its type permits copying. Rust lets a value be dropped, but the paper's model calculus is stricter: its type system "prohibits discarding linear resources" (§10, p. 19). Ghost code exists for verification and is removed before execution.
 
 ## What it does
 
@@ -33,8 +24,6 @@ Spec code can call spec functions; proof can also call proof functions; exec can
 §2.1, p. 6, explains the encoding choice: “Verus trusts the results of Rust’s borrow checker, and does not attempt to recheck these results in the SMT solver” Owned boxes and immutable references can consequently be treated as values, avoiding pervasive heap and aliasing formulas. §2.2, pp. 7–8, illustrates modular function calls: prove the precondition, then use the callee's postcondition. An unsatisfiable counterexample query establishes the generated verification condition.
 
 Agent recommendation: distinguish compiler/type errors, mode errors, and logical proof failures. The funds-transfer example (§8, pp. 16–17) catches aliasing in Rust before invoking Z3, then diagnoses an insufficient-balance precondition separately. They need different repairs.
-
-## Techniques and proof patterns
 
 ### Mathematical views, invariants, and induction
 
@@ -95,16 +84,6 @@ Trusted primitives encode the conditions under which unsafe operations are safe.
 §1, p. 3, describes the pointer model as only handling pointers into the global heap, without a complete aliasing/provenance model. §11, pp. 26–27, contrasts this with the fuller issues of stack pointers, fields, cell interiors, and Rust provenance. Mutable references are supported only as function arguments in the paper-time tool (§9, p. 17). Crate separation and more advanced traits/type systems have limits. §11, p. 26, says the RustBelt relaxed-atomic work is outside the tool's supported scope.
 
 Neither the small calculus nor the examples establish correctness of user intent, standard-library axioms, all unsafe Rust, the implemented translation, Z3, or rustc. These remain separate boundaries, rather than one undifferentiated claim that Rust has been proved safe.
-
-## What was already done; what VL can learn
-
-The paper places its work alongside separation logic, GhostCell, Linear Dafny, ATS, and L3. §11, p. 27, explains the specific convenience: “The combination of SMT solving and Rust’s automated borrow checking” makes earlier permission ideas practical in a mainstream language. Linear permissions themselves are not new.
-
-Agent recommendations: represent authority using existing ghost types; derive mathematical views independently of permission ownership; retain initialization states; choose focused induction and unfolding; diagnose type versus proof failures separately; reuse localized state-machine examples for concurrency. VL must still turn ordinary requirements into adequate contracts and discover which resource protocol the code needs. The demonstrations do not perform that task autonomously.
-
-## Product threat
-
-Agent inference: foundational dependency rather than an autonomous competitor. A product that only adds annotations around Verus cannot claim novelty for ownership-based ghost proofs, permissioned pointer APIs, invariant opening, or generated protocol tokens. A product that reliably infers guarantees and writes complete verified projects addresses a different unresolved step. The paper demonstrates manually structured verification and API design, with no agent success rate or repository-scale spec discovery evaluation.
 
 ## First reading
 

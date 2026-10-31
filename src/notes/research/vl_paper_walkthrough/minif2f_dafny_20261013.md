@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `baksys2025minif2fdafny`, [paper](https://arxiv.org/abs/2512.10187)
 
-Audit: audited 2026-10-13 against the paper; checked all numbers (488, 174, 128/160, 80%, 95/106/79, Table 2, N, E, temperature, token limit), Section 2.2 and 3.5 descriptions, Figure 6 and Appendix B; corrected one altered quotation (strengthening, not weakening, preconditions), widened wording of failure causes and ghost-code forms, pass@4 scope, and marked two unmarked inferences; Verus remarks are unchecked.
-
 ## benchmark and verification model
 MINI F2F-DAFNY translates Lean's miniF2F into Dafny. Section 3.1 defines “488 mathematical problems (244 test, 244 validation)”. Each is a Dafny lemma with `requires` and `ensures` and an empty body. Dafny uses Floyd-Hoare specifications, translates through Boogie, computes weakest preconditions, and sends verification conditions to Z3. The abstract states the division of labor: “LLMs provide high-level guidance while SMT automation handles low-level details.”
 
@@ -18,8 +16,6 @@ Inference: the Verus analogue is a `proof fn` with `requires` and `ensures`, int
 
 ## technique 2: validate generated proofs without allowing statement weakening
 Use this when measuring an LLM verifier benchmark. Section 3.5's validator first invokes Dafny and parses JSON diagnostics. It then extracts each lemma signature, preconditions, and postconditions. It rejects warnings or errors in the problem file, rejects changes or removal of `requires`, rejects weakened or removed `ensures`, rejects `:axiom` attributes and `assume` statements, and permits additional postconditions because a stronger lemma implies the original. The paper says: “This prevents solutions from strengthening preconditions, weakening postconditions, or introducing unsound axioms” Failed validation returns structured feedback naming modified clauses or unsound constructs, enabling another model attempt.
-
-Inference: VL should compare the submitted Verus function signature and specification with the task's original contract before accepting a proof. A verifier pass is evidence only for the checked contract; contract-diffing prevents an agent from deleting the property it was asked to prove.
 
 ## technique 3: iterative error-feedback proof generation
 For each test problem, Section 4.2 gives up to `N = 4` independent trajectories, with `E = 3` error-correction iterations after the initial response, temperature 0.5, an 8192-token response limit, and no fine-tuning. On a failed attempt, Dafny error traces are appended to the conversation and to an error-correction prompt. The model edits ghost code and resubmits it to the verifier. This is a bounded generate, check, repair loop rather than unconstrained conversation.

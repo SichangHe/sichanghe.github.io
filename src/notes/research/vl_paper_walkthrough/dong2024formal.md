@@ -56,14 +56,7 @@ The paper calls the method “an instantiation of hindsight experience replay”
 failure modes
 Improvement mostly comes from theorems whose ground-truth proof depth is at most two; more complex theorems have low pass rates with little improvement (§4.3, p. 10; Fig. 4, p. 11). On miniF2F, pass@64 is lower than SFT without proposals: valid 41.4% versus 46.3%, test 39.3% versus 40.6% (Table 3, p. 13). “We also observe that when tested on miniF2F theorems, our model failed to propose meaningful lemmas.” (§6, p. 13) The authors offer a tentative explanation: “This may be because proving to miniF2F-level mathematics questions typically does not require hierarchical decomposition.” (§6, p. 13) Inference: for Verus, compare decomposition with direct proof generation rather than assuming decomposition always helps.
 
-## what is proved, trusted, and relevant to VL
-The paper's global-correctness construction yields a complete proof acceptable to the formal verifier (§2, p. 4). Inference: the benchmark measures proof generation for supplied statements and premises. It does not establish specification discovery or transfer to Rust. For VL, its clearest relevance is learning intermediate proof facts from checker feedback.
-
-Inference: a distinct VL experiment could use fixed Verus specifications, train/test projects separated by dependencies, and verification of all generated child proofs without weakening the original contracts. Whether this reduces proof-generation cost remains to be measured in Verus.
-
 ## techniques for the catalog
 - conditional proof trees: propose child lemmas, verify conditional proofs locally, and assemble globally correct trees child-first
 - verifier-shaped RL: assign rewards from global correctness and train on conditional proofs with local-correctness and value-based weights, augmentation, and replay
 - depth and proposal controls: prevent proposals at maximum depth, discard trivial proposals, and remove unused lemmas
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The results suggest that the baseline methods are more robust to heavier distribution shifts, while our method has a larger improvement when the test distribution is closer to the training distribution."): read the full paper, including references and appendices; checked quotations, numbers, section and page references, and technique steps; corrected the replay-buffer denominator, generation and reward details, dataset coverage, references, and tentative explanations; replaced the damaged mathematical quotation, used the paper's arXiv identifier for the link, and marked Verus/VL conclusions as inferences; did not reproduce experiments, inspect implementation code, or validate the proposed Verus transfer.

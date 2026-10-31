@@ -56,14 +56,6 @@ They analyze repaired unprovable items separately: v2s test has 13 such problems
 
 Inference: Verus evaluations should pin compiler, Verus, dependency, hardware, and sampling settings, and publish denominators for repaired and difficulty-stratified subsets.
 
-## what remains trusted and product threat
-
-The authors report human checks of every informal statement and proof and error-free Lean compilation of every formal statement and proof: “Every formal statement and formal proof compiles with no error in Lean4. All the informal statements and proofs are checked by human.” (Appendix A, p. 15) Their stated scope is Lean: “This work only covers Lean language, even though miniF2F is available for other languages, too.” (§7, p. 10)
-
-Inference: The revisions rely on competition sources, human semantic judgment, Mathlib, Lean, and the experimental implementations. Compilation and reported manual checks do not independently establish error-free transcription from every original competition source.
-
-Inference: The threat to agent-written verified Rust is high at the specification boundary. Benchmark contamination or simplified contracts can make an agent appear reliable while proving weaker properties. The paper's remedy—source auditing, explicit variants, stage-separated metrics, and human semantic checks—should precede training or product claims.
-
 ## techniques for the catalog
 
 Inference: The following are reusable audit techniques drawn from the paper.
@@ -74,4 +66,3 @@ Inference: The following are reusable audit techniques drawn from the paper.
 - difficulty-controlled benchmark variants — publish simplified and competition-faithful versions with explicit solution handling
 - human semantic evaluation — compare LLM judgments against expert review of every retained translation sample
 - controlled prover benchmarking — pin versions, hardware, sampling, and denominator-stratified subsets
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The dataset follows the same split as the original version, i.e. 244 test instances and 244 validation instances."): checked quotations, numbers, section and page references, benchmark variants, and evaluation steps after reading the full paper including appendices; corrected the Table 4 prover attribution, component accuracy, strongest-pipeline claim, and page reference, distinguished the selection descriptions in Sections 3 and 4, and marked recommendations as inferences; did not rerun model or Lean experiments, inspect the released dataset, or independently check original competition sources.

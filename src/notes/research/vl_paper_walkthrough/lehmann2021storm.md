@@ -5,8 +5,6 @@ Tag: `lehmann2021storm`, [paper](https://www.usenix.org/conference/osdi21/presen
 ## scope and security claim
 STORM is an MVC web framework that centralizes data-dependent access and information-flow policies in a refined database model, then enforces them at compile time. The abstract (p. 441) describes “logical assertions that describe the data produced and consumed by the underlying operation and the users allowed access to that data.” The introduction (§1, p. 442) claims “well-typed programs cannot leak or corrupt sensitive data.” Section 6 (pp. 451–452) establishes the formal guarantee for λSTORM, a simplified reference implementation, using a verified Labeled IO (LIO) interface and existing LIO non-interference results. The paper does not present a proof of the full production implementation. The paper link above is the publisher page printed on the cover.
 
-Inference: the central transferable idea for VL is to put security-relevant facts in types and make every API operation propagate them. A Verus contract can play the role of a refinement, but the contract must describe the real Rust operation and its state effects.
-
 ## technique 1: refined data models and field policies
 
 what it is and when to use it
@@ -86,16 +84,6 @@ Verus form (inference)
 
 Inference: the corresponding Verus strategy is to verify a small abstract security library first, then prove the concrete Rust API refines it. State the non-interference or authorization theorem as a `proof fn` over the abstract state and connect each executable operation with `ensures`. This is a product of two proofs: API implementation correctness and client contract preservation.
 
-## evidence, numbers, trust, and product threat
-
-Section 7.1 (p. 452) reports policy ports from nine case studies across four systems, with one Jacqueline policy unsupported. Table 1 lists ten benchmark rows, including gradebook; the text does not explain the difference. Table 2 (p. 454) lists five applications. Its printed Total row reports 2,851 server lines, 140 model lines, 166 policy lines, 5,844 client lines, 125 annotation lines (72 non-trivial), and 290 seconds of verification. Inference: several totals disagree with the displayed application rows, which sum to 2,791 server, 136 model, 166 policy, 5,642 client, and 140 annotation lines (78 non-trivial), with 290 seconds of verification. Section 7.2 (p. 453) reports one annotation line per 19 code lines, or one non-trivial annotation line per 29 code lines, across its three case studies. Timings used Arch Linux, 16GB RAM, and a quad-core Intel Core i7-8550U at 1.80GHz (§7.2, p. 453).
-
-Section 7.3 (p. 454) reports “policies account for under 4% of the server code, and under 1% if we include the client.” Inference: Table 2 supports those thresholds for DISCO, but not VOLTRON: its 37 policy lines are about 4.9% of 756 server lines and 2.1% of 756 server plus 1,012 client lines. Even including model and policy lines in the denominator gives about 4.5% and 2.0%. The study therefore retains the counts rather than treating the quoted thresholds as established for both applications.
-
-Section 7.3 (pp. 453–454) describes VOLTRON's collaborative classroom editing and DISCO's video social interaction. STORM exposed an implicit DISCO leak: allowing an invisible user to change a room topic could reveal that user's location. Section 8 (p. 454) identifies two limitations: controllers must use the restricted RIO effects, and extending the refined ORM to more database operations takes work. Exception integration and broader SQL support remain future work.
-
-Inference: the transferable benefit for agent-written verified Rust is centralized policy enforcement through typed APIs. Trust still rests on the policy's intent, the checker, the adopted LIO theorem, and correspondence between the modeled operations and deployed libraries. The paper does not establish correctness of Rust drivers, unsafe Rust, or Verus contracts, and provides no basis for a numerical or categorical product-risk rating. Proposed Verus encodings above require their own implementation and proofs.
-
 ## techniques for the catalog
 
 - refined model policies — attach row-and-user predicates to ORM fields so authorization is centralized and statically checked
@@ -103,4 +91,3 @@ Inference: the transferable benefit for agent-written verified Rust is centraliz
 - effect-set sequencing — track authorizees and observers in an effect type and require observer inclusion during `bind`
 - witness predicates — encode cross-table existential access with uninterpreted relations plus row invariants that supply evidence
 - refinement-to-reference reduction — prove a typed API refines a verified IFC library, then inherit its non-interference theorem
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The direct way to specify such a policy is with existentially quantified refinement predicates, or alternatively to add a relational join to the set of logical operations."): checked the whole paper including references and artifact appendix, the whole study, quotations, counts, section/page references, and technique steps; corrected query policy combination, action-local witness semantics, proof scope, line totals, and unsupported trust/risk claims; recorded inconsistencies in the paper's benchmark count and policy percentages; replaced the link with the publisher page from the cover; did not run the artifact, reproduce proofs or measurements, inspect implementation repositories, or validate the proposed Verus encodings.

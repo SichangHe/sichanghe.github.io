@@ -8,8 +8,6 @@ Wang and Huang recast automated program repair as specification inference. The a
 
 The key validation mechanism is the Requirement Quality Assurance (RQA) Loop, also called the Ground Truth Oracle Loop. The paper defines negative verification on buggy code and positive verification on developer-fixed code. Of the buggy version it says, “The test must fail.” Of the fixed version it says, “The test must pass.” (§3.3, p. 6) The paper states, “Only specifications that satisfy both conditions are propagated to the next phase.” (§3.3, p. 6)
 
-Inference: For VeruLaw, this is a specification-first workflow: infer a candidate contract from a failing test or issue, check that it rejects the buggy implementation and accepts a trusted reference or human-approved implementation, then ask a coding agent to write Rust/Verus code under that contract. The fixed implementation is an experimental oracle, not available for a new product defect.
-
 ## technique 1: reverse-engineer an executable BDD contract
 
 When to use it. Use this when a failure report and buggy code exist but the requirement is ambiguous. The paper argues that natural-language descriptions are descriptive rather than prescriptive (§2.1, p. 3).
@@ -60,4 +58,3 @@ Inference: For a product generating verified Rust, the primary threat is intent 
 - scoped specification-guided repair — constrain the repair agent to a target file or module under a validated contract
 - strict denominator accounting — separate baseline successes, rescues, and composite totals
 - protocol-boundary analysis — identify implicit wire or binary contracts that ordinary BDD scenarios cannot express
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The Enlightened Fixer was subsequently applied to the 160 bugs that Blind failed, rescuing 119."): read the whole paper text and checked every quotation, number, section and page reference, technique step and the Table 1 row sums (bugs 680, Blind 520, rescues 119, total 639) against it; changed the printed page of §3.3 from 5 to 6 and of Listing 1 from 4 to 5, fixed the lowercase quotation “the test must pass”, tightened the Berserker/Surgical description to the preliminary Gemini/Qwen study, corrected the fail-fast sentence to say the Engineer lacked it, and added the paper's own localization caveat for Table 2, the Table 2 subset figures, and the superset-input argument; did not check the cited external papers, the GitHub repository, or the Verus-side Inference paragraphs beyond marking them as inference, and the figures were read from the text, not the images.

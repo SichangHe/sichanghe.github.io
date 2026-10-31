@@ -82,12 +82,6 @@ Inference: In Verus, an object capability can be modeled as an owned value with 
 
 Theorem 1 proves correctness and an asymptotic matrix-read bound for abstract Algorithm 1 (Section 3.1, p. 4). The paper illustrates Rust visibility rejecting one direct token-construction attempt and gives a proof-of-concept implementation with listings and macros. It measures no security incidents, runtime overhead, compile-time overhead, false positives, or attack success rates; evaluation is explicitly future work. Inference: Enforcement depends on Rust's memory safety and privacy guarantees, the standard library's modified APIs, generated code, and the unsafe token conversion. Cargo permission resolution is additionally necessary, but the paper's own feature-unification example shows a remaining bypass even without arbitrary unsafe token fabrication. The paper therefore does not establish complete enforcement for all safe Rust dependency graphs.
 
-Inference: For a VeruLaw product generating verified Rust, PermRust is a relevant defense against accidental or hidden library I/O and a warning about authority encoded only in APIs. Potential product threats include unsafe or foreign code that bypasses token types and build-system feature resolution that grants unintended authority. Verus contracts can make authority preconditions explicit, but they do not automatically verify Cargo, macro expansion, OS effects, or C/FFI behavior.
-
-## what VL should reuse and what it should not redo
-
-Inference: The reusable ideas are an explicit access matrix, caller-to-callee privilege monotonicity, unforgeable capability values, and package-level authority declarations. Rebuilding a generic token permission concept would duplicate this paper's design. Remaining work for VL is to connect generated Verus contracts to actual dependency graphs, unsafe boundaries, and external-resource models, and to test whether proof obligations track authority after feature resolution.
-
 ## techniques for the catalog
 
 - access-matrix permission checking — model functions and I/O calls as subjects and objects, then check direct rights and caller privilege inclusion over an abstract function tree
@@ -95,5 +89,3 @@ Inference: The reusable ideas are an explicit access matrix, caller-to-callee pr
 - Cargo permission features — generate application entry points that create local tokens only when package permissions are enabled
 - procedural permission macros — clone and rewrite functions to add token parameters, wrappers, documentation, and conditional compilation
 - object capabilities — pass unforgeable resource objects for path- or instance-specific authority when category-wide tokens are too coarse
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The other arguments and the return value of the underlying File object’s read function are unmodified."): read the complete paper and study; checked quotations, numerical bounds, section and page references, technique steps, tag, and arXiv identifier; corrected listing and section pages, the lib_func transformation, the LibA/LibB feature-unification scenario, and unsupported object-capability steps; distinguished paper claims from inferences; did not inspect the implementation repository, execute PermRust, or validate Verus integrations.

@@ -37,8 +37,6 @@ SV-COMP scores correct answers and penalizes both wrong proofs and false alarms.
 
 The experiment controls each verifier to 15 GB memory and 15 minutes cumulative CPU on four processing units; validators receive two processing units, 7 GB, and 1.5 minutes for violation witnesses or 15 minutes for correctness witnesses (§3, pp. 157–158). BenchExec measures resources and BenchCloud distributes and cleans runs. Inference: fixed limits make resource budgets explicit and help comparisons be reproducible.
 
-Inference: report proof success, false alarms, and unsound certificates with explicit denominators and resource budgets. A VL benchmark should apply a large penalty to a proof that validates a false contract, and should separate timeout from failure. The score should not reward weakening the contract.
-
 ## results and boundaries
 One complete verifier execution made 942,284 verification runs and consumed 2,312 CPU-days; witness validation made 21.8 million runs and consumed 2,573 CPU-days (§5, p. 169). The conclusion reports 34,700 total C and Java verification tasks including the demo category and says, “However, even the best verification and validation tools still produce some incorrect results.” (Conclusion, p. 175). Witness format 2.0 adoption improved, but support remains property- and category-specific; many validation outcomes are determined by voting, so wrong confirmations and refutations need interpretation.
 
@@ -46,10 +44,7 @@ Tables 10–12 report 673 valid JavaOverall tasks, while the abstract reports 67
 
 Inference: what is measured is tool behavior on the published task set under fixed hardware, limits, scoring, and witness protocols. The competition does not prove that a tool is sound on arbitrary programs, that a validated witness captures a product requirement, or that C/Java results transfer to Rust/Verus. The expected result, benchmark definitions, witness parser, validators, and hardware remain trusted infrastructure.
 
-Inference: SV-COMP is directly useful to VeruLaw as a benchmark design rather than as a proof technique. VL should preserve the separation between generation and independent validation, publish reproducible task archives, include crafted counterexamples, and score unsound proofs far more harshly than timeouts. The remaining threat to agent-written verified Rust is an incorrectly stated contract or trusted adapter: a high score can coexist with a product property that was never encoded.
-
 ## techniques for the catalog
 - indexed verification benchmark: organize tasks by language, property, feature, and category with explicit expected results
 - witness validation: run suitable validators to confirm or refute correctness or violation witnesses after verifier execution
 - reproducible scoring and budgets: fix hardware limits, penalize wrong proofs heavily, and normalize category scores by valid task counts
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The column ‘Unconf. Tasks’ indicates the number of tasks for which the verifier returned a correct answer, but the corresponding witness was not confirmed by any validator."): checked all study quotations, numbers, section/page references, workflow and scoring descriptions against the full paper; corrected nonexistent subsection references, quotation punctuation, witness-lint handling, voting scope, normalization, resource limits, and inference labels; noted the paper’s differing Java task counts; did not reproduce experiments, inspect linked artifacts, or verify the proposed Rust/Verus adaptations.

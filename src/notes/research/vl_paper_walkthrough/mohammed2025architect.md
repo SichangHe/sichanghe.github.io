@@ -6,8 +6,6 @@ Tag: `mohammed2025architect`, [paper](https://arxiv.org/abs/2512.00016v1)
 
 This case study uses an LLM agent to design processors from a structured blueprint, generate SystemVerilog and cocotb tests, and iterate with an engineer. It reports simulation and synthesis validation. “We propose agentic automated processor design and verification with engineers in the loop.” (Abstract, p.1) The two reported demonstrations are a simple LEGv8-like processor and a 32-bit RISC-V-like processor; the introduction also mentions a pipelined LEGv8 design among challenges, with some designs not reported (I, p.1). The abstract reports that both demonstrated processors were synthesized, and only the LEGv8-like processor was programmed onto the DE-10 Lite FPGA (Abstract, p.1).
 
-Inference: for VeruLaw, the transferable idea is a staged agent pipeline with machine-readable architecture, dependency ordering, bounded repair, and human approval. The evidence does not establish formal functional correctness, because cocotb tests and Verilator linting can miss behaviors outside their cases.
-
 ## technique 1: blueprint as a machine-readable specification
 
 What it is. The foundation is a JSON document containing global parameters, an optional SystemVerilog ISA package, and a hierarchy of components, interfaces, and dependencies. “This document serves as the formal, machine-readable specification, defining:” followed by global project parameters, an optional ISA package, and component interfaces/dependencies. (III-A, pp.2–3)
@@ -54,10 +52,6 @@ The paper reports two processor demonstrations, synthesis of both, FPGA programm
 
 Inference: the workflow may transfer to agent-written verified Rust, but the reported experiments do not establish its effectiveness there. The semantic-cohesion failure shows that local generation can pass while cross-module meaning is wrong; Verus contracts and refinement proofs could address this only when the architecture and specification are themselves correct.
 
-## what VL should not redo
-
-Inference: The paper already demonstrates blueprint-driven decomposition, dependency-order generation, bounded repair with approval, golden-model comparison, and a practical failure taxonomy. Inference: VL should not spend effort reproducing cocotb-only claims as formal verification; it should test whether the same stages produce durable Verus contracts, whether repairs preserve old proofs, and which human reviews catch specification errors.
-
 ## techniques for the catalog
 
 - Inference: blueprint specification: define shared parameters, ISA, interfaces, and dependencies in one machine-readable architecture
@@ -65,4 +59,3 @@ Inference: The paper already demonstrates blueprint-driven decomposition, depend
 - Inference: golden-model checking: compare cycle-level DUT state with an executable architectural model
 - Inference: failure taxonomy: convert recurring integration failures into shared schemas, prompts, and regression checks
 - Inference: architect-in-the-loop: retain human approval for specification, repairs, synthesis, and physical validation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The human architect also provides strategic debugging insight, approves or rejects AI-generated fixes, and may directly modify RTL when necessary, with the agent handling re-verification."): checked the full text including appendices, quotations, numbers, section and page references, and technique steps; corrected page references, processor outcomes, unsupported measurement wording, and inference labels; did not reproduce the experiments or inspect the linked repository.

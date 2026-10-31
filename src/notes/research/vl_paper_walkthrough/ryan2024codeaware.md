@@ -8,8 +8,6 @@ The paper introduces SymPrompt, a three-stage prompting method for generating re
 
 The purpose is to make the model solve one path at a time rather than infer all missing paths while writing a whole suite. The authors explain: “In our approach, we delegate steps 1 and 2 to traditional static analysis, allowing the LLM to focus solely on step 3.” Here, steps 1 and 2 identify the previously covered branch and select another branch; step 3 creates its test (Section 1, p. 3). The prototype uses TreeSitter for Python (Section 1, p. 3). The benchmark contains 897 methods from 26 open-source projects: “We select focal methods from these projects where Pynguin [24] (an SBST tool for Python) was unable to achieve full coverage on the focal method during 10 runs, indicating the focal method poses a challenge for existing automated test generation tools.” (Section 4, p. 11)
 
-Inference: for VL, the same decomposition can assign one proof obligation or branch invariant to each prompt, while preserving shared type and dependency context. The paper’s method is a test-generation method, so its Verus mapping is an inference rather than a result reported by the authors.
-
 ## technique 1: approximate path-constraint collection
 
 What it is. SymPrompt parses the focal method’s AST and performs a preorder traversal. At each branch or loop it records the condition, inverting it for paths that do not take the branch. At a return it records the accumulated conditions and the return expression. “We perform a preorder traversal of the focal method abstract syntax tree (AST) and collect constraints for each branch and loop condition while maintaining a set of all constraints that appear on each possible execution path.” (Section 3.2.1, p. 7)
@@ -32,8 +30,6 @@ Why it is needed. All branch combinations grow exponentially. SymPrompt retains 
 
 How it is done. Split each path into branch constraints, keep a set of constraints already represented, and add a path only when it introduces a new constraint. Minimization is applied after collecting new constraints from each `if` or `while` statement (Section 3.2.2, p. 9). The paper’s three-branch example has eight combinations but the algorithm keeps at most four paths, “one initial path, +1 for each branch” (Section 3.2.2, p. 9; Figure 5, p. 8). The authors state: “For testing purposes, basis paths are convenient because a set of tests that execute a set of basis paths in a method will achieve full branch coverage on that method.” (Section 3.2.2, pp. 8–9) Inference: this claim depends on executing the selected paths; static selection alone does not establish feasibility or semantic equivalence.
 
-Inference: a VL implementation can maintain a set of uncovered proof obligations and select a candidate path or invariant that adds a new obligation. It must not discard paths merely because they share branch conditions if they differ in arithmetic facts, aliasing, quantified triggers, or trusted assumptions. Inference: basis-path selection is a prompt-budget heuristic, not a completeness guarantee for functional verification.
-
 ## technique 3: selective type and dependency context
 
 What it is. The generation context includes imports and globals, relevant type and function definitions available in the focal file, the focal class signature and constructor when applicable, called methods of that class, and the focal method itself. The path prompt includes the focal method signature. Figure 6 names five components: imports/globals, type context, focal-class type context, focal-class method context, and focal method (Section 3.3, p. 9).
@@ -52,8 +48,6 @@ The authors report: “Overwriting the model-generated imports with the classes 
 
 For each retained path, SymPrompt asks the model for a test case and appends generated tests to later prompts. “After constructing a set of path constraint prompts, we use these to iteratively prompt the model to generate tests for each path, and include the generated tests in the prompt for the next generation.” (Section 3.4, p. 10) The generated code is parsed; on parse errors, lines are removed from the end until it parses (Section 3.4, p. 11). Evaluation executes tests in the constructed context; generation itself does not use runtime coverage feedback. The methodology states: “This entire process is done statically without executing the focal method.” (Section 3.1, p. 7)
 
-Inference: in VL, a corresponding loop can append the latest proof attempt and diagnostics to the next target-specific prompt. Verus compilation and verification should filter candidates; truncating source text until it parses does not establish Rust or specification correctness. Inference: preserve the specification and reject a candidate that passes only after deleting obligations or changing trusted annotations.
-
 ## evidence and denominators
 
 On the full benchmark, CodeGen2 (16B parameters) over ten generations per focal method gives baseline Pass@1 0.12, FM Call@1 0.34, Correct@1 0.03, line coverage 0.38, and branch coverage 0.40; SymPrompt gives 0.41, 0.49, 0.15, 0.48, and 0.44 respectively (Table 1, p. 13). The authors define Correct@1 as “The average number of tests that both pass and correctly call the focal method for each generated testsuite.” They explain that these metrics “may contain partially passing rates on each generation, since a single generated testsuite may contain both passing and failing tests.” Coverage is averaged over focal methods and generated suites (Section 4, p. 11). The authors describe this as nearly 4× pass-rate and 5× correct-generation improvement (Section 4.1, p. 12).
@@ -64,9 +58,7 @@ The filtered comparison is an evaluation variant: “we also run a version of Sy
 
 ## what is proved, trusted, and threatened
 
-The paper measures test execution, method calls, and line/branch coverage (Section 4, p. 11). It assumes the implementation is correct: “As a result, our generated tests may not uncover any implementation bugs.” (Section 5, p. 17) Inference: these results do not establish semantic correctness or Verus proof correctness. Inference: VL must replace coverage metrics with verifier pass rate, specification coverage, and regression checks over trusted assumptions. Inference: faults in the parser, static path extractor, Python execution environment, model output, or assertions can affect generation or its measured results. Inference: a Verus deployment should record compiler and verifier versions, admitted or external-body items, and all preconditions treated as environment assumptions.
-
-Inference: SymPrompt threatens VL mainly as a workflow precedent: staged prompts and precise context can make an agent reach difficult branches or proof states, but they also make it easy to optimize a shallow metric. VL should not redo the paper’s path decomposition idea; it should adapt the idea to proof obligations and add specification-diff and trust-boundary checks. Inference: the 6/10 path-following result supports checking whether a generated artifact satisfies its requested target; a generated Rust proof needs Verus acceptance and review of what was proved.
+The paper measures test execution, method calls, and line/branch coverage (Section 4, p. 11). It assumes the implementation is correct: “As a result, our generated tests may not uncover any implementation bugs.” (Section 5, p. 17)
 
 ## techniques for the catalog
 
@@ -76,4 +68,3 @@ Inference: SymPrompt threatens VL mainly as a workflow precedent: staged prompts
 - iterative path prompting — generate one path-targeted test at a time and append earlier tests as context
 - output parsing — delete trailing generated lines until the Python code parses
 - filtered evaluation — discard suites with no tests that execute and call the focal method when computing the separate filtered comparison
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "After constructing a set of path constraint prompts, we use these to iteratively prompt the model to generate tests for each path, and include the generated tests in the prompt for the next generation."): checked every quotation, number, section/page reference, technique step, and inference against all 21 pages; corrected references and an inexact quotation, distinguished GPT-4-generated paths and filtered evaluation, and marked unsupported interpretations as inferences; did not reproduce experiments, inspect prototype code, or check supplemental materials.

@@ -48,12 +48,6 @@ Apply the architecture decision procedure: ask whether memory can grow; if no, u
 
 Inference: for a Verus implementation, make memory interfaces Rust types: a bounded enum/array, a stack wrapper exposing only push/pop, or an explicitly untrusted external-store trait. Prove that verified code cannot call operations outside the intended interface. This is a useful containment boundary for agent-written Rust, but the policy's stochastic choices and external scheduler remain assumptions.
 
-## limits and product threat
-
-The theory assumes finite alphabets after tokenization or discretization, abstractions that preserve control-relevant distinctions, and computable environment behavior (sections 2, 4.1 and 10.4, pp. 1–2, 3–4 and 8). It explicitly excludes the computational power of external oracles. Nondeterminism interpretation (worst case, best case, or strategy-restricted) changes quantitative guarantees, and abstraction can create spurious high-probability paths. No empirical agent evaluation validates the classifications.
-
-Inference: this paper gives VL a direct design rule: choose the weakest memory interface that can express a task, then generate a finite or pushdown proof target. An agent with unbounded persistent read/write storage and no structural iteration bound fits the TC definition; rereading files alone does not establish those conditions. A Verus proof over a bounded wrapper needs assumptions that exclude additional persistent channels. The product threat is therefore uncontrolled persistent context and scheduler behavior, not merely an incorrect local function. VL should make memory, tool arguments, and iteration bounds explicit before claiming model-checkable verification.
-
 ## techniques for the catalog
 
 - trace abstraction — project concrete agent runs to finite observable perception/action traces and verify an exact finite abstraction
@@ -61,4 +55,3 @@ Inference: this paper gives VL a direct design rule: choose the weakest memory i
 - pushdown controller model — enforce LIFO memory, construct a PDA, and use probabilistic pushdown analysis
 - bounded TC fallback — impose execution or storage bounds and check the resulting finite abstraction when unrestricted memory is unavoidable
 - architecture right-sizing — select the weakest memory class consistent with required interaction traces
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Right-sizing depends on (i) whether persistent information can grow with execution, and (ii) how that information can be accessed across steps."): read the entire paper, including references; checked quotations, definitions, theorem statements, technique steps, section/page references, tag and arXiv link; corrected two quotations, page references, the TC conditions and the scope of composition and Verus claims; did not independently validate the mathematical proofs or test the proposed Verus implementations.

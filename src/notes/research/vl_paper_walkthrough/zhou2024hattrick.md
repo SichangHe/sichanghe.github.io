@@ -47,13 +47,9 @@ Table 1's caption states: “We have rewritten functional implementations of the
 
 Inference: An end-to-end guarantee for Marple additionally depends on supplied specifications and lemmas, Z3, alphabet transformation, and the OCaml implementation. The paper does not claim that the Coq artifact verifies the entire Marple implementation. Its evaluation does not establish results for Rust systems.
 
-Inference: For VL, this suggests investigating whether agent-written contracts for opaque services omit required constraints on histories of calls. SFA trace specifications, HAT pre/post effect typing, minterm-based inclusion, and bidirectional ghost abduction are existing ideas here. A VL study could test whether Verus ghost histories and ordinary contracts express the same invariants, and measure the cost and trust assumptions of that translation.
-
 ## techniques for the catalog
 - SFA trace invariant: specify legal histories of opaque-library calls using predicates over arguments and returns
 - Hoare Automata Type: attach pre/post trace automata to refinement types to specify invariant preservation
 - compositional effect typing: sequence API HATs and use intersection branches for context-dependent results
 - minterm alphabet transformation: partition symbolic event alphabets into satisfiable classes and reduce SFA inclusion to FA inclusion
 - bidirectional ghost abduction: infer ghost qualifiers needed for deterministic inclusion checks
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Marple performs quite reasonably on all of our benchmarks, taking between 1.42 to 176.89 seconds for each ADT."): checked quotations, numbers, section/page references, and technique descriptions against all 43 pages, including appendices; replaced the placeholder DOI with the paper's arXiv identifier, corrected the automaton-size/time mix-up, qualified soundness and initialization claims, and removed unsupported implementation claims; did not run Marple, inspect the linked artifact, independently validate proofs, or test proposed Verus translations.

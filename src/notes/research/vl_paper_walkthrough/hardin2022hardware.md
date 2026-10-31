@@ -8,8 +8,6 @@ Hardin presents Restricted Algorithmic Rust (RAR), a Rust subset transpiled to R
 
 RAR remains proper Rust and compiles with the standard Rust compiler, but is semantically equivalent to RAC and adopts RAC's restrictions (§4.1, p. 208). The prototype covers array-backed data structures, cryptography (including XChacha20, Poly1305, Blake2b, and X25519), and JSON lexing/parsing (§1, pp. 202–203). The paper's detailed case is a fixed-size array set with two linked lists stored in one `anext` array.
 
-Inference: RAR is a translation-based assurance architecture, not a Verus proof of general Rust. For VL, its strongest lesson is to define a small, analyzable subset and make source-to-model correspondence explicit. The transpiler and RAC/ACL2 semantics become trusted boundaries unless separately verified.
-
 ## technique 1: restrict Rust to a hardware-verifiable subset
 
 RAR inherits RAC's semantic restrictions (“we adopt the same semantic restrictions as described in Russinoff’s book”) and adds a macro providing a C-like `for` loop, to enable translation to RAC and ease the transition from C/C++ (§4.1, p. 208). The paper does not list the restrictions; it defers to Russinoff's book. Table 1 (p. 206) contrasts the formal-verification “comfort zone” (total, terminating functions; infinite-precision integers; linear arithmetic) with real-world development (loops, structs, arrays, modular integers, IEEE 754 floating point, non-linear arithmetic); the RAC translator bridges the two (§3, p. 207). §2.4 (p. 205) says the languages the authors favor “restrict pointer operations”.
@@ -60,8 +58,6 @@ The paper details one verified example. For Arrayset, `aset_add` is proved autom
 
 The paper's future work is to increase the number of Rust features supported in RAR and to improve the ACL2 libraries to discharge more proofs automatically (§7, p. 214); Inference: this implies the current subset and proof automation are limited. The model-checking and symbolic-execution numbers are bounds for this Arrayset case: 3 and 8, respectively, not general capacities for those tools. The authors say the ACL2 effort “required a fair amount of human labor”, but that “additional proof efforts involving similar data structures should proceed more quickly” (§7, p. 214).
 
-Inference: the threat to agent-written verified Rust is medium to high if VL needs hardware/software equivalence or unbounded low-level arithmetic. RAR already demonstrates the subset-and-transpile approach and the Arrayset invariant pattern; VL should not claim either as new. A possible contribution is a verified or proof-carrying Verus-to-hardware translation with explicit correspondence obligations and measured repair cost.
-
 ## techniques for the catalog
 
 - restricted Rust subset: adopt RAC-like syntax and semantics so code is suitable for hardware synthesis and theorem proving
@@ -70,4 +66,3 @@ Inference: the threat to agent-written verified Rust is medium to high if VL nee
 - shared-array invariant: a `good-statep` predicate combining wellformedness, distinct heads, no duplicates, and free plus used length equal to the array size, over one backing array
 - theorem-prover contracts: state `good-statep` preconditions and functional postconditions as ACL2 theorems
 - bounded scalability comparison: compare model checking, symbolic execution, and ACL2 with explicit array-size limits
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The ingenious bit about this particular array-backed set implementation is the use of a single anext array to hold both the free list and the used list."): read the whole paper text; checked every quotation, section and page reference (pages re-derived from the page headers), the pipeline and Arrayset description, theorem and definitions, and the model-checking (3) and symbolic-execution (8) bounds; changed the link to the paper's DOI, corrected Table 1 and §2.3 descriptions, page cites for §5.3 and §6, removed claims that proofs exist for crypto/JSON, that ACL2 handles size 256, and that preservation theorems and list disjointness are in the paper, and marked reconstructed steps as Inference; did not check the Verus-related inference statements beyond consistency with the paper, the Russinoff book, or the cited external works.

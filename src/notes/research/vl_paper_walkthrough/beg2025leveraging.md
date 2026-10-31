@@ -92,5 +92,3 @@ Inference: for agent-written verified Rust, the transferable lesson is to review
 - domain grounding and interoperability: provide requirements and ontologies; the JSON-LD schema remains planned
 - human review and traceability: check meaning and completeness, refine prompts, and manually link requirements, specifications, and code
 - symbolic execution context: use symbolic paths and I/O examples to guide ACSL generation, then collect Frama-C proof outcomes
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The use of PathCrawler provided concrete path-based input/output examples that guided the LLM toward generating more context-relevant and semantically aligned annotations."): checked all study quotations, numerical claims, PDF page and section references, technique descriptions, and implementation-versus-proposal status; corrected page references, qualified unknown-verdict causes, separated proposed and inferred steps from reported work, and noted table/prose inconsistencies; did not check external references, repository artefacts, or reproduce experiments.

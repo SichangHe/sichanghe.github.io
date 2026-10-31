@@ -19,7 +19,7 @@ How to do it.
 
 Verus form. Inference: create a Rust model module for the algorithm and a narrow trait or verified wrapper for the Grid operations. Give wrapper functions explicit `requires` and `ensures`; represent abstract grid state with ghost data or a `spec fn` projection. Prove the algorithm against that model, then separately establish that the production implementation satisfies the wrapper contract. Verus cannot infer equivalence between an abstract model and Flash-X without a refinement proof or trusted external contract.
 
-Failure and assumptions. The authors state that “Nothing automatically checks and verifies the observable behaviors of the simplified grid model, since the model and Flash-X are separate codebases.” (Section V, p. 8). The C model also differs from the Fortran target, so properties must be reconstructed after porting (Section V, p. 8). Inference: this is the main transfer threat for VL. A passing proof of a model can miss a mismatch in a real API, FFI boundary, or ownership behavior.
+Failure and assumptions. The authors state that “Nothing automatically checks and verifies the observable behaviors of the simplified grid model, since the model and Flash-X are separate codebases.” (Section V, p. 8). The C model also differs from the Fortran target, so properties must be reconstructed after porting (Section V, p. 8).
 
 ## technique 2: symbolic physical properties over a continuum
 
@@ -51,15 +51,13 @@ Verus form. Inference: keep a stable Rust/Verus contract and extend the implemen
 
 CIVL found a receive-buffer defect that random tests missed. A rank with no real particles could receive multiple virtual particles, but the buffer size used only local real-particle counts and clamped to one slot. The fix computes a global particle count with `MPI_Allreduce` and sizes the pool as `global * (1 + V)` (Listing 2, p. 7).
 
-The evidence is concrete: the test suite initialized about 100 random particles, making every rank own at least one real particle, whereas the symbolic driver reached an empty-rank state with multiple incoming virtual particles (Section IV, p. 7). CIVL reported the out-of-bounds write deterministically before runtime. Inference: for VL, retain counterexample traces as regression inputs and turn each repaired defect into a Verus lemma or harness assertion, while proving the general buffer bound from the stated preconditions.
+The evidence is concrete: the test suite initialized about 100 random particles, making every rank own at least one real particle, whereas the symbolic driver reached an empty-rank state with multiple incoming virtual particles (Section IV, p. 7). CIVL reported the out-of-bounds write deterministically before runtime.
 
 ## evidence, cost, and trusted base
 
 CIVL proves conservation and interior deposition location for the checked positions, plus memory safety, MPI deadlock freedom, and data-race freedom over the tested rank distributions (Section IV, p. 7). The denominators are configurations, not random test cases. For two-level AMR, Table I reports 1D×1 through 1D×3 in 10.34–17.85 seconds and 2D×1 through 2D×2 in 1,063.35–1,713.58 seconds; for three-level AMR, Table II reports 1D×1 through 1D×3 in 11.53–23.28 seconds and 2D×1 through 2D×2 in 1,909.89–2,978.64 seconds. States and prover calls rise sharply with dimensionality; 2D runs are checkpoints rather than per-edit checks (Section V, pp. 7–8).
 
 The guarantees depend on the simplified Grid model, fixed AMR topology, CIVL's symbolic-real abstraction, MPI model, SMT solvers, and the translation from C to the production Fortran code. The paper explicitly leaves symbolic topology and three-dimensional verification for future work (Section V, p. 8). Inference: the product threat is moderate to high for systems whose real behavior depends on dynamic topology, floating-point rounding, or unmodeled FFI. The design-loop pattern is valuable, but it must be paired with a refinement check between the verified Rust model and deployed code.
-
-Flash-X's model-checking-in-the-loop workflow already covers property-first development, abstraction layers, symbolic inputs, staged checking, and counterexample repair. VL should not redo these as generic ideas. A useful new result would quantify how Verus refinement proofs and executable replay close the C-model-to-production gap.
 
 ## techniques for the catalog
 
@@ -68,4 +66,3 @@ Flash-X's model-checking-in-the-loop workflow already covers property-first deve
 - property-first staged development — write contracts before code and re-check them after each bottom-up implementation stage
 - counterexample-driven repair — use model-checker traces to expose reachable defects that sampled tests miss
 - cost-tiered checking — run cheap low-dimensional checks after edits and expensive configurations as staged checkpoints
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -68,16 +68,6 @@ For a fixed key infrastructure, define system parameters (which roles have stati
 
 The same STM analysis discovers three distinct PFS flavors: compromise of static keys must occur before the session; compromise of the PSK must occur before the session; or both must occur before the session (§5.3.1, p. 1872). The authors also model a public dummy PSK as an immediately revealed PSK and find different agreement and anonymity from the corresponding non-PSK pattern. They state: “Before the first psk or DH token, PSK and non-PSK patterns have a different policy with respect to payload encryption.” (§5.3.2, p. 1872). Early encryption can improve agreement against a passive adversary. In KXpsk2 with a dummy PSK, it breaks initiator anonymity because an attacker can test candidate public keys by reconstructing the associated data and verifying the AEAD (§5.3.2, p. 1872). Separately, revealing the transcript-hash session identifier defeats anonymity even against a passive adversary; applications requiring anonymity must keep it secret (§5.4, p. 1873).
 
-## what is proved, trusted, and relevant to VL
-
-The proved artifacts are symbolic secrecy, agreement, and selected anonymity properties of modeled Noise handshakes (§4.2, p. 1868). Inference: the analysis relies on the symbolic algebra, Tamarin implementation, generated model fidelity, and assumptions about honest actor key generation; these results do not prove a Rust implementation, cryptographic algorithm security, compiler correctness, or application-level requirements. The paper itself notes that Noise Explorer’s generated implementations “are not proven correct or secure.” (§2.3.1, p. 1862.)
-
-Inference: for agent-written verified Rust, the useful transferable idea is STM-driven threat enumeration: make assumptions explicit, prove each property under a named capability set, and preserve a machine-readable hierarchy of guarantees. The threat to VL is high when agents silently choose a threat model or confuse sender and recipient secrecy; it is lower for the Tamarin-specific search engine, which would need a Rust/Verus abstraction and a separate correspondence argument.
-
-## contradictions and work VL should not redo
-
-The paper finds that the Noise levels’ numeric ordering is not monotonic: “a user may upgrade from one handshake to another with a higher Destination Level and, yet, lose security.” (§5.2, p. 1871). It also reports 74 distinct STM classes versus the specification’s nine levels (§5.2, p. 1870); these counts classify different abstractions rather than the same table. Noise Explorer already generated and checked formal models for its claims, and fACCE analyzed eight of 59 handshakes manually (§2.3, pp. 1862–1863). Inference: VL should not repeat those model-comparison or whole-family enumeration tasks without a new Rust/Verus correspondence question.
-
 ## techniques for the catalog
 
 - claim/threat separation — express secrecy, agreement, and anonymity separately from compositional adversary capabilities
@@ -85,4 +75,3 @@ The paper finds that the Noise levels’ numeric ordering is not monotonic: “a
 - sound proof reduction — use quotienting, static trivial-attack elimination, DAG subsumption, and a sound oracle to reduce Tamarin runs
 - protocol hierarchy — compare handshakes by implication over every claim and threat model under fixed system parameters
 - PSK/anonymity analysis — model public dummy keys, timed reveals, and session identifiers to expose non-obvious privacy and PFS failures
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "For example, if the adversary completely compromises the peer’s state, then secrecy and agreement properties no longer hold."): checked all quotations, numbers, section/page references, technique steps, title, author/year tag, and paper link; corrected a quotation, claim and proof-graph page references, anonymity restrictions, threat-model semantics, scheduling claims, and unsupported transfer assertions; used the publisher page printed on the paper; did not rerun Vacarme, inspect its source or the technical report, or verify the proposed Verus adaptations.

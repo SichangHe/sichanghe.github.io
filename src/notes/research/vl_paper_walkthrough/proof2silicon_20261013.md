@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `jha2025proof2silicon`, [paper](https://arxiv.org/abs/2509.06239)
 
-Audit: audited 2026-10-13 against the paper; rechecked Tables I to III, every fraction and percentage, the loop, reward and PPO details, page and section references and the numbers-that-do-not-add-up list, which all held; changed one overstated claim (no functional test, when tests were written but not reported), one added premise (closed model), one pointer to the earlier paper the text does not make, one reference range (Section IV-E spans pp.5-6) and one detail (32-bit, where the paper gives np.int32 and np.float32 as examples); the Verus statements are marked Inference and agree with the Verus papers.
-
 source: Jha, Wan, Chen (University of Illinois Urbana-Champaign), arXiv:2509.06239v2 (20 Oct 2025), presented at SRC TECHCON 2025, 9 pages, no appendix, no code link in the text
 
 ## two things in one paper
@@ -99,11 +97,6 @@ why the guarantee does not survive the chain (Inference, from the paper's own st
 - step 2 is an unverified source-to-source rewrite
 - step 5's tests are written, but no pass rate is reported, and Section IV-E states there is no functional co-simulation; so the only reported check on the hardware is that synthesis completed
 
-Verus form (Inference)
-- most of this chain has no counterpart, since Verus verifies the Rust that is compiled and no intermediate language is involved
-- the integer problem is handled at the source in Verus: exec code uses Rust's fixed-width integer types and the verifier raises an overflow obligation on their arithmetic, so the proof is about the machine integers that run. A contract proved over mathematical integers in a `spec fn` still has to be connected to the fixed-width exec code by the function's `ensures`
-- the general rule for VL: a proof covers the artifact the verifier read. Every later rewrite needs either its own proof, or a checker in the style of translation validation, or at least differential tests whose results are reported
-
 evidence (Table II, p.7; the percentage printed in the table is synthesized over verified, which the fractions confirm)
 - ChatGPT-4o: without feedback 23 verified, 17 compiled to HLS, 12 synthesized (12/23 = 52.2%, printed 52.1%); with feedback 50, 29, 25 (50%)
 - ChatGPT-o1-mini: 23, 17, 12 (printed 52.1%); with feedback 52, 35, 29 (55.8%)
@@ -123,16 +116,6 @@ where it fails: the authors' own summary is “It is important to note that the 
 - “Enabling the full verifier feedback loop further improves synthesis rates—ChatGPT-o1mini rises to 55.8%, while synthesis latencies remain stable (32.8–34.2 s) and memory usage exhibits minimal variance (678–683 MB).” (Section V-B, pp.7-8). In Table II the synthesized share falls with feedback for the other four models (52.1% to 50%, 62.5% to 54.8%, 66.67% to 54.5%, 72.4% to 69.1%)
 - “These issues account for the observed discrepancy between Compiled to HLS and HLS Synthesized, with approximately 30% of otherwise verified programs excluded during this stage.” (Section V-B, p.7). Between those two columns the loss is 1 to 6 programs per row, which is 8% to 33% of the verified count (33% being 1 of 3 for Qwen2.5-7B without feedback); the loss from verified to synthesized over both stages is 28% to 50%
 - the text names the model ChatGPT-o1 (Section V, p.6); the tables name ChatGPT-o1-mini
-
-## already done, so VL should not redo
-
-- Inference: a learned prompt-editing policy is an expensive way to get a 4 to 22 point gain on single Dafny methods; the paper gives no evidence it beats a longer plain repair loop, and the Spec-Harness study in this collection reports that a different prompt optimizer driven by verifier acceptance plateaued. VL has no reason to build this before that comparison exists
-- Inference: Dafny as a verified front end to another target has now been tried for Python (the work the paper cites as [15]) and for FPGA hardware here; in both the back half is unverified
-- not done: any Rust or Verus experiment; any check of contract strength; any functional validation of the generated hardware
-
-## weight as a competitor to VL
-
-Inference: low. The verified part is single-method Dafny at 11% to 55% success; the hardware claim rests on synthesis completing. It competes with VL only in the phrase it uses for itself, and its own tables contradict the abstract's end-to-end figure.
 
 ## techniques for the catalog
 

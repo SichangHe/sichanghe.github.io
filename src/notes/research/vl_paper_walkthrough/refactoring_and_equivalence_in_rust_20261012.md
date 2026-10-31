@@ -1,6 +1,5 @@
 # Refactoring and Equivalence in Rust: Expanding the REM Toolchain with a Novel Approach to Automated Equivalence Proofs
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
 
@@ -53,10 +52,6 @@ Evidence and limits: all 10 EX cases pass; 9/10 RW cases pass, with fresh LLBC c
 ## what is proved, measured, and trusted
 
 Rust compilation proves type and borrow safety, not behavioral equivalence. Coq proves the generated equality in the translated semantics, conditional on CHARON/AENEAS translation correctness and the modeled primitives. Trusted components include RA’s extraction, the repairer, translation tools, generated proof scripts, compiler/toolchain versions, and the selected benchmark filtering. The paper itself notes that it sometimes calls the checker a verifier although “the work it performs isn’t verification in the strictest sense of the word.” The evaluation’s 20 verification cases, fixed timeout, and selected supported subset limit generalization.
-
-## implications for VeruLaw
-
-Inference: this is a direct precedent for a Verus refactoring service: semantic editor extraction, compiler-guided contract repair, then a relational proof for high-risk transformations. VL should not treat compiling refactored Rust as enough evidence, and should record denominators by language feature. The product threat is a competing tool that couples fast refactoring with semantic rollback; the opportunity is a Verus-native equivalence relation that includes heap and ghost state. Reimplementing RA’s semantic extraction is unnecessary; the missing work is contract-aware repair and a sound relation for Verus functions.
 
 ## techniques for the catalog
 

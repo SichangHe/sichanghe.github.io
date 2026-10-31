@@ -34,7 +34,7 @@ How the paper constructs the prompt:
 3. Declare cells, functions, predicates, and signatures with their intended meanings (sec.4, p.8).
 4. Feed the specification-generation prompt to the LLM to obtain a TSL specification (sec.4, p.6; fig.3, p.7).
 
-The paper explains why vocabulary consistency matters: “It is important to establish a clear metaphor in this “high level summary”, because the LLM needs to be able to tie keywords together in subsequent natural language.” (sec.4, p.7). Inference: for VL, a prompt should similarly separate Rust data representation from contract-level predicates, list exact types and signatures, and state each safety/functional obligation in plain language before asking for Verus code.
+The paper explains why vocabulary consistency matters: “It is important to establish a clear metaphor in this “high level summary”, because the LLM needs to be able to tie keywords together in subsequent natural language.” (sec.4, p.7).
 
 ## technique: benchmark validity, semantic correctness, and conditional correctness separately
 
@@ -54,16 +54,6 @@ The paper's ablation removes function and predicate terms and, separately, all n
 
 Inference: a Verus study should keep the Rust task and verifier fixed while ablating abstract Views, type invariants, signatures, examples, and natural-language contracts one at a time. Inference: this would reveal whether improvements come from useful semantic decomposition or merely from giving the model more tokens.
 
-## evidence, limitations, and VL threat
-
-The paper's benchmarks are intentionally simple visual reactive systems, and the extracted text gives no aggregate counts for each figure. The authors explicitly report that separation “tended to outperform” but “not always” and that misunderstanding an abstraction can erase the benefit (sec.5.1, pp.10–11). TSL also leaves data functions universally quantified and focuses synthesis on temporal control (sec.3.2, p.6). Inference: the benchmark does not establish performance on arithmetic-heavy systems, memory safety, concurrency, or Rust ownership.
-
-Inference: the threat to VL is high when agents must translate prose requirements into contracts: explicit abstract predicates and signatures can reduce accidental entanglement with representation details, but a wrong abstraction can make a clean proof certify the wrong behavior. Inference: the residual trust boundary includes the user-supplied natural-language requirements, abstraction definitions, and semantic link between each executable Rust function and its Verus `spec fn`; Verus verifies only the stated contract.
-
-## what VL should not redo
-
-The paper already contributes a reusable prompt decomposition, a data/control abstraction pattern, and a three-part benchmark that separates validity from semantic correctness. Inference: a VL benchmark should cite and extend this design rather than present giving the model interfaces and examples as a new principle. Inference: a Verus benchmark can add verifier-passing Rust and independently reviewed contracts; this paper evaluates TSL specification generation.
-
 ## techniques for the catalog
 
 - data/control separation — hide representation operations behind declared function and predicate symbols
@@ -72,4 +62,3 @@ The paper already contributes a reusable prompt decomposition, a data/control ab
 - validity/correctness metrics — measure parseability, semantic correctness, and correctness conditioned on validity
 - abstraction ablation — remove interfaces or descriptions to isolate which prompt information helps
 - interface semantic audit — Inference: check that generated use of each symbol matches its declared meaning
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This separation enables developers to first focus on when their system should execute certain behaviors, and leave the question of how those behaviors should be implemented for a later step in the development process."): checked the full paper text, study claims, quotations, references, technique steps, and Figures 7–9 in the PDF; corrected the Vending page reference, removed unsupported output-format instructions and prompt concatenation, clarified the conditional metric wording, removed unsupported typing claims, and labeled recommendations as inferences; did not reproduce experiments, inspect benchmark code, or transcribe exact chart values.

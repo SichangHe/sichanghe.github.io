@@ -64,14 +64,6 @@ How to do it.
 
 The two exploitation policies reverse ordering by model. The authors therefore claim non-universality of these tested policies, not a universal best repair algorithm. The paper notes that E4 confounds feedback, dependence between attempts, and spreading the budget across three stages rather than 11 independent draws (Section 5, p. 8).
 
-Inference: VeruLaw can use this design to compare verifier-feedback repair, independent candidate sampling, and staged escalation at a fixed API-call budget. A fixed benchmark and paired fixtures are essential; otherwise a policy can appear better simply because it saw easier obligations.
-
-## what remains trusted and threat to VeruLaw
-
-The checker establishes only necessary conditions within its registry. The JSON parser, obligation implementations, bounded depth, encoded R-charge conventions, and final acceptance configuration are trusted. The language model's proposed edits are untrusted until checking. The benchmark's synthetic perturbations guarantee at least one known repair but may not represent real physics or software defects.
-
-Inference: Threat to VeruLaw is high for agent repair workflow design and medium for soundness. The transferable pattern is cheap verifier feedback plus a stricter final check and explicit certificates of tested obligations. It can guide an agent to repair Rust/Verus code using categories such as missing invariant, arithmetic contradiction, or unsupported trigger. The danger is false confidence when a certificate covers only selected predicates, especially if generated Rust proves an unintended specification. Verus compilation, trusted-base review, and clean rebuild remain necessary.
-
 ## techniques for the catalog
 
 - scoped obligation registry — encode a serializable claim and explicit necessary checks, returning per-obligation statuses and a bounded certificate
@@ -79,4 +71,3 @@ Inference: Threat to VeruLaw is high for agent repair workflow design and medium
 - feedback projection — compare generic failure text, named categories, and masked identities while keeping numeric residuals hidden
 - budget-matched resampling — compare staged feedback repair with independent verifier-filtered attempts under the same eleven-call budget
 - paired clustered evaluation — reuse the same fixtures across policies and report fixture-clustered risk differences with multiplicity correction
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

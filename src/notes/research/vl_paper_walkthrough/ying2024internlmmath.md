@@ -42,18 +42,6 @@ The paper defines quantities in Lean 3, evaluates them with `#eval`, and uses th
 
 Inference: a Verus adaptation could pair executable arithmetic with proved postconditions, taking account of integer bounds, casts, and division semantics. An observed runtime result alone would not establish the postcondition for every allowed input.
 
-## evidence, limits, and VL implications
-
-Table 14 (p. 15) reports MATH/GSM8K accuracy of 34.60/78.09 for the full 7B mixture, 33.78/76.35 for MetaMath alone, 32.12/76.12 for MetaMath plus Formal, and 29.84/75.13 for MetaMath plus RM; test-set counts are not listed. Table 13 (p. 15) reports GSM8K Lean accuracy of 58.0% with full GSM8K-LEAN data and 35.1% with one-quarter; adding MetaMath gives 66.0% and 58.8%, respectively. Inference: the formal-only addition does not improve COT accuracy in this ablation, while informal reasoning data helps Lean execution accuracy.
-
-The authors randomly sample 25 MATH cases with correct 20B-model answers, five per difficulty level, and manually inspect their reasoning (Section 7.4, pp. 14–15). Process-correct counts are 5/5, 4/5, 4/5, 4/5, and 3/5 for levels 1–5 (Table 15, p. 15). Their counterexample lists odd numbers as even and invalid gcd/lcm pairs, yet matches the final answer. They warn: “Simply judging model abilities only by outcome accuracy may be unilateral.” (Section 7.4, p. 15.) Inference: the small audit demonstrates false positives, not their prevalence across the whole benchmark. For VL, passing example tests likewise does not establish that a contract captures all intended behavior.
-
-The base 7B model solves 74/244 MiniF2F-test problems (30.3%); the 20B score is 29.5%. Table 4 specifies 3-shot prompting, Lean 4, and a 1 × 32 search budget (Section 6.1, pp. 8–9). Appendix E also reports Math-Plus models: MiniF2F-test scores are 38.9%, 43.4%, 42.6%, and 37.3% for 1.8B, 7B, 20B, and Mixtral8x22B, respectively (Table 20, p. 27). These are distinct from the original models' results.
-
-The limitations include absent self-critique SFT data, limited PRM performance, Lean 3 SFT data, and unchecked possible MiniF2F contamination: “AlgebraicStack may or may not contain MiniF2F solutions.” (Limitations, p. 16.) Inference: formal checking depends on the formal statement and Lean environment; calculation matching, learned reward labels, and answer accuracy provide different evidence and should not be treated as equivalent proof checks.
-
-Inference: VL could reuse multi-task training, candidate ranking, and tool feedback while requiring independent Verus checks and specification review. The paper provides no Verus experiment or quantitative estimate of proof-search cost or soundness risk.
-
 ## techniques for the catalog
 
 - multi-task formal SFT — train one model on informal/formal translation, Lean proof states, solver outputs, and verifier labels
@@ -63,4 +51,3 @@ Inference: VL could reuse multi-task training, candidate ranking, and tool feedb
 - calculation-path supervision — rewrite arithmetic into dependency-ordered intermediate steps to reduce hallucinated equations
 - executable formal interface — encode a word problem as Lean definitions and evaluate it, while tracking type-semantic limits
 - process-audit sampling — manually inspect correct answers for invalid intermediate reasoning and report process fractions
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We do not contain any SFT data to let the model apply self-critique since such data can be hard to generate and verify by any means."): checked the entire paper, study quotations, numbers, technique descriptions, and section/page references; corrected Lean version scope, calculation and table references, LRM results, unsupported transfer claims, and omitted Math-Plus context; did not reproduce experiments, inspect released code or datasets, or validate the proposed Verus adaptations.

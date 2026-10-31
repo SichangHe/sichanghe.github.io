@@ -92,7 +92,7 @@ The full system's executability rate is 93.7% (Table V, p. 7). Average cost is a
 
 ## what remains trusted and threat to agent-written verified Rust
 
-Fact: Z3 decides satisfiability of the generated model, but the encoded state, obligations, extraction, and mutation benchmark remain assumptions. Fact: the authors say “The LLM is not treated as a correctness oracle” (Sec. III-D, p. 5). Inference: for Verus, this architecture threatens products mainly through omitted state effects, weak specifications, incorrect foreign-function models, and proof repairs that silently change the requirement. It is useful as a model-construction and regression aid, not as evidence that arbitrary Rust implements Ethereum semantics. VL should not redo a generic LLM-plus-SMT pipeline; the open Verus-specific work is linking generated contracts to owned Rust code and checking external dependencies, compiler/erasure behavior, and real zkEVM semantics.
+Fact: Z3 decides satisfiability of the generated model, but the encoded state, obligations, extraction, and mutation benchmark remain assumptions. Fact: the authors say “The LLM is not treated as a correctness oracle” (Sec. III-D, p. 5).
 
 ## techniques for the catalog
 
@@ -100,5 +100,3 @@ Fact: Z3 decides satisfiability of the generated model, but the encoded state, o
 - retrieval-grounded synthesis: retrieve independently validated semantic models to anchor types, schemas, and solver APIs
 - typed SMT encoding: represent pre/post EVM state, guards, assignments, frame conditions, and safety obligations with fixed-width bit-vectors and arrays
 - verification-guided repair: classify compiler and solver feedback, apply bounded localized repairs, and recheck executable semantic constraints
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

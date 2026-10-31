@@ -56,12 +56,6 @@ The paper states that Spec-Agent “does not employ full C++ verification using 
 
 Inference: fuzzing does not cover all inputs, generated harnesses can omit behaviors, and the study's two repositories are a narrow sample. Separation-logic runtime checks observe the instrumented heap rather than establish a theorem about every possible heap.
 
-Inference: The threat to a product that asks agents to write verified Rust is high at the specification boundary. The pipeline's strongest transferable idea is to make contract generation produce explicit counterexamples and to test generated specifications before spending proof effort. It cannot certify a Verus contract, and its “no false positives” claim is bounded by fuzzing plus expert review. VL should not redo the paper's claim that fuzzing is full verification, nor claim 85% as a general specification-synthesis rate.
-
-## what VL should not redo
-
-The paper's related work (section 5, PDF pp. 8–9) discusses Daikon, SLING, AutoSpec, SpecGen, ClassInvGen, LLM-SE, NL2Postcond, and Fun2Spec as prior specification or invariant synthesis. Its contribution is the unified large-C++ pipeline with adaptive language selection, separation logic, fuzz pseudo-oracles, and counterexample repair. Inference: VL can reuse this architecture for Verus contract triage and repair, while separately proving the resulting contracts and checking for vacuous or overly weak specifications.
-
 ## techniques for the catalog
 
 - feature-directed logic selection: mine loops, conditionals, induction variables, and heap access, then choose propositional, first-order, separation, or combined specification language
@@ -70,4 +64,3 @@ The paper's related work (section 5, PDF pp. 8–9) discusses Daikon, SLING, Aut
 - runtime separation-logic checking: interpret points-to and separating-conjunction atoms over observed heap state and reject violations
 - counterexample-guided refinement: feed each violating input and assertion back into the next generation attempt until valid or the retry budget ends
 - expressivity-lattice acceptance: require a candidate to use at least the logic level selected from static and dynamic features
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "For Spec-Agent, the reported tokens sum across every LLM call made by the system, fuzz harness generation, specification generation, and specification refinement."): read the whole paper text (main text and appendices A-D) and the whole study; checked every quotation word for word, the 651/508 function counts, Table 1 figures for Qwen3-Coder-Next, Table 3 figures, the 170 s/400 s timings, the retry-curve description, the lattice, the technique steps, section and page references, the tag and the arXiv link. Changed: page reference for specification generation (p. 5), timing page (p. 8) and model, the retry-curve wording (now quoted), the strongest-specification claim (now quoted with the paper's hedge), the Table 3 denominator, the limitations paragraph (paper statements quoted, own conclusions marked Inference), the related-work list, and the 85% reading marked Inference. Did not check: the figures' pixel content (Figures 1, 4-9), the cost Tables 4-5 beyond reading, the 100 case-study contracts for correctness, or any external source.

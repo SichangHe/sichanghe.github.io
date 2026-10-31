@@ -46,7 +46,7 @@ How to apply it:
 4. Record parse/compile success, timeout, verifier verdict, and attack traces.
 5. Compare the verdict with the canonical label and preserve the complete run metadata.
 
-The authors warn, “LLMs are better for bootstrapping models, while verifiers must validate and refine the results.” (sec.2.2, p.4). Inference: this is directly applicable to VL's agent-written Rust: the Verus verifier and compiler should be in the acceptance loop, and an agent's prose claim should never count as evidence.
+The authors warn, “LLMs are better for bootstrapping models, while verifiers must validate and refine the results.” (sec.2.2, p.4).
 
 ## technique: score analyzability and correctness with denominators
 
@@ -62,25 +62,11 @@ Few-shot prompting supplies tool-specific exemplars. On a 10% subset, 3-shot gen
 
 LoRA fine-tuning Qwen2.5-Coder-3B uses a 90%/10% train/evaluation split for three epochs (sec.6.3, p.17). Completion analyzable outputs increase from 5 to 23, with TP 0→8 and TN 0→15; correction analyzable outputs increase 9→11; generation changes 4→5; transformation remains at zero analyzable outputs (sec.6.3, p.17).
 
-Pass@K queries up to K times, accepts an instance if any candidate is analyzable, and computes correctness on that analyzable set (sec.6.3, pp.17–18). Increasing K from 1 to 3 consistently raises analyzability, especially for generation and transformation, while ACCA/F1A on analyzable outputs stays mostly stable (sec.6.3, p.18). Inference: a VL agent can use bounded candidate sampling, but every candidate must independently pass Verus; selecting the first compiling candidate can select a semantically weak contract.
+Pass@K queries up to K times, accepts an instance if any candidate is analyzable, and computes correctness on that analyzable set (sec.6.3, pp.17–18). Increasing K from 1 to 3 consistently raises analyzability, especially for generation and transformation, while ACCA/F1A on analyzable outputs stays mostly stable (sec.6.3, p.18).
 
 ## technique: property-level audit in addition to scheme-level labels
 
 The benchmark's main label marks a scheme UNSAFE if any checked goal is violated and SAFE otherwise. For SPDL and SPTHY, the authors additionally score each `(scheme, goal)` pair as TP, FP, FN, or TN and require all goals to be covered for full correctness (sec.6.4, p.18). Fine-grained scores fall most for generation because of low analyzability and missing or mis-modeled goals; completion and correction fall by about 10% on average, while interpretation is nearly unchanged (sec.6.4, pp.18–19).
-
-Inference: VL should retain a property-level ledger for each verified Rust function, including omitted obligations, vacuous specifications, and assumptions about external code. Inference: scheme-level SAFE/UNSAFE aggregation is too coarse to detect a generated contract that silently drops a safety or functional requirement.
-
-## evidence, limits, and product threat
-
-Across nine models, interpretation and completion were generally easier, while generation, transformation, and semantic correction were weak (sec.5.2, p.10). Claude-3.5-Sonnet-Coder reached 14% analyzability and 61.54% F1A in transformation, but transformation outputs were typically below 10% analyzable (sec.5.6, p.13). The authors' case studies show empty code, compile errors, timeouts, false negatives from omitted adversary actions or claims, and false positives from spurious outputs (secs.5.8, pp.14–15). They conclude that “Generated models often contain syntactic or semantic errors in one pass.” (sec.5.8, p.15).
-
-The benchmark's own limitations include possible pretraining overlap with standard protocols (sec.6.5, p.20), tool disagreement caused by different abstractions and threat models (sec.6.5, p.19), and incomplete property-level automation for five of seven tools (sec.6.4, p.19). Runtime also varies sharply: Scyther/Tamarin usually finish below about 20 seconds, while AVISPA reaches about 180 seconds and Maude-NPA/EasyCrypt exceed about 400 seconds (sec.5.9, p.15).
-
-Inference: the threat to agent-written verified Rust is high where agents can emit compiling but incomplete contracts, especially when a verifier proves the wrong property or assumptions are omitted. Inference: CrypFormBench's central lesson for VL is to measure semantic coverage and analyzability separately, route compiler/verifier diagnostics back into repair, and keep humans or independent specifications in the loop for property intent. Inference: Verus-specific evaluation should add vacuity checks, trusted-boundary accounting, and adversarial mutants because CrypFormBench's SAFE/UNSAFE labels alone do not expose all specification errors.
-
-## what VL should not redo
-
-The paper already establishes a benchmark architecture for heterogeneous formal languages: curated corpus, canonical logic descriptions, five task types, multi-version execution, tool verdicts, weighted metrics, few-shot and Pass@K interventions, and property-level audits. Inference: a new VL benchmark should justify any departure from these components with an identified Verus-specific need rather than repeat a generic LLM formal-code study. The paper's 700-instance scale and 677-scheme diversity are a usable baseline for reporting coverage even though Rust/Verus properties differ from cryptographic goals.
 
 ## techniques for the catalog
 
@@ -92,4 +78,3 @@ The paper already establishes a benchmark architecture for heterogeneous formal 
 - few-shot prompting — provide target-language scaffolding examples to improve executability
 - Pass@K repair — sample bounded candidates and accept only independently verified outputs
 - property-level audit — score each security or specification goal, not only a scheme-level verdict
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

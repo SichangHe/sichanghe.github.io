@@ -56,5 +56,3 @@ Section 6.1 proposes verified code generation or specifications and proofs direc
 - integer truncation lemmas — prove monotonicity and bounded loss for multiplication/division once, then instantiate them for asset and discount calculations
 - round-trip safety — bound conversion and discount reversal with explicit inequalities that compose into refund safety
 - lifecycle state-machine proof — require valid statuses for transitions and prove the stated temporal and exclusion properties
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "It aggregates all system parameters, business rules, and component configurations into a single, immutable data structure."): checked all paper text, study quotations, formulas, assumptions, proof steps, section/page references, tag, and arXiv identifier; corrected conversion terminology, added round-trip preconditions, narrowed lifecycle claims, corrected refund references, and removed unsupported detailed Verus instructions; did not rerun Dafny proofs, inspect production Rust, or independently validate cited works.

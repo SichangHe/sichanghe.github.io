@@ -44,12 +44,6 @@ The prototype translates bicoms to a subset of WhyML and uses Why3 to generate v
 
 Inference: proposed Verus form. A proposed paired Rust proof would need assertions and invariants as well as a sound treatment of filtered choices. Refinement and generalized noninterference are possible applications. The paper provides no evidence about how much of alignment synthesis or witness construction Verus could automate.
 
-## evidence, assumptions, and product threat
-
-The paper develops sound proof rules (Theorem 3.3), proves filter adequacy (Lemma 5.3 and Theorem 5.4), and mechanizes the development in Rocq; the prototype is a Why3 translation, not a Verus implementation. The authors trust the prototype to verify bicom correctness for programs acting on integer variables (section 6, p. 22). Inference: practical confidence also depends on projection equivalence checks, freshness generation, translation, and the Why3/SMT verification chain. The paper reports manual projection checks for its examples and warnings for unsupported or unsound features, including right-side procedure calls. The examples are proof-of-principle rather than a broad benchmark with aggregate success denominators; the paper does not claim a percentage of all ∀∃ programs.
-
-The method assumes a well-formed bicom, suitable frame variables, declared loop variants for right-only progress, and an alignment whose projections equal the target commands. Unfiltered havoc is not inherently unsound. Unrestricted filter assumptions can discard all witnesses, so `chk` adds an existence assertion before each original `havf` (section 2, p. 4; Figure 12, p. 20). Inference: agent-written verified Rust faces a threat from incorrect alignment or fabricated existential witnesses. The transformation checks filter existence and right-only progress; it does not establish that a chosen bicom represents the intended source programs. Inference: VL could explore the filter/`chk` pattern for nondeterministic relational specifications, provided it separately proves projection equivalence and a sound encoding of choice.
-
 ## techniques for the catalog
 
 - filtering bicoms: encode existentially chosen right executions as havoc plus a relational filter
@@ -57,4 +51,3 @@ The method assumes a well-formed bicom, suitable frame variables, declared loop 
 - unary loop checking `uchk`: instrument variants with fresh snapshots and decrease assertions
 - bicom framing: bound dependence on original variables and isolate fresh snapshots
 - ∀∃ to ∀∀ workflow: choose an aligned product, transform it, and discharge the ordinary product proof
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Observe that the check added to a right-side loop body by uchk has the effect that a ∀∀ verification will prove must-termination, whereas may-termination would be sufficient for ∀∃."): read the complete paper including appendix and references; checked study quotations, numbers, section and page references, transformation steps, theorem conditions, and prototype claims; corrected framing, the loop snapshot condition, the scope of uchk and linear-time claims, and the claim about unfiltered havoc; qualified proposed Verus encodings as inference; did not run the prototype, inspect the Rocq development, or validate a Verus implementation.

@@ -84,16 +84,9 @@ The formal results are soundness theorems for four families of rules and Lemma 5
 
 Inference: a Verus adaptation would trust the abstract atomic-memory model, the proof that Rust atomic operations refine it, the solver, and the specification of the target program. A successful proof could still be irrelevant if the chosen view assertions do not express the product requirement.
 
-## implications for VeruLaw
-
-Inference: this paper's strongest lesson for VL is to expose proof assumptions as first-class dependencies. A generated concurrent Rust proof should record which memory-order axioms, interference lemmas, and environment assumptions each invariant uses, then reject reuse when a dependency changes. The syntactic lifting pattern also suggests reusable Verus proof lemmas for common atomic operations instead of repeating low-level solver steps.
-
-Inference: VL should not redo generic claims that weak-memory proofs can be made model-independent through shared axioms or that Hoare-style rules reduce proof effort; this paper already proves those points for WRC. A distinct contribution would need a machine-checked Verus memory model, measured proof maintenance across real Rust revisions, and exact comparisons of proof obligations. Inference: the threat to agent-written verified Rust is high for concurrent code if generated contracts omit memory-order assumptions; a proof valid in SC may fail under TSO or C11, while a proof under an over-strong abstract model may be unsound for the deployed target.
-
 ## techniques for the catalog
 
 - view-based generic memory reasoning: abstract per-thread observations and prove programs under named memory-model axioms
 - lifted construct rules: replace repeated weakest-precondition calculations with sound fence, read, write, and general Hoare rules
 - axiom-audited WRC proof: annotate a litmus-test proof outline and record the exact axioms required by each triple
 - portability checking: transfer a proof only when the target memory model satisfies the collected axiom set
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Next we look at rules specific to a certain program command and start with fence actions."): read the whole paper text (pp. 1-23 including appendix) and the whole study; checked all quotations word for word, the technique steps against Sections 2-5 and Figures 1-8 and Tables 1-2, the axiom lists of Lemma 5, the 31-triple count (5 local rows in Table 1 plus 26 rows in Table 2), and the arXiv link (id 2309.01433 appears in the paper text, kept). Changed: corrected page and section references (they were off by one or more pages, e.g. Fig. 5 is on p. 10, Table 2 on p. 14, Conclusion on p. 16), added that the Introduction cites PSO while the Conclusion cites [12] only for SC, TSO and C11 RAR, replaced the claim that earlier approaches hid axioms with the paper's wording that reasoning engines "might not record" them, noted that only one triple is worked out in full, marked my own conclusions "Inference:", and removed "measured" and "branches". Not checked: the correctness of the appendix soundness proofs, the cited prior work [3] and [12], and all Verus and VeruLaw suggestions, which are inferences and not claims of the paper.

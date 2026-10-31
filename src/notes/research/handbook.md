@@ -114,5 +114,3 @@ local evidence
 - collection record: separate from the fixed 22-paper agent-frontier packet
   - official arXiv v1 PDF: 300,359 bytes; SHA-256 `0746d2462167cb327a2289d19ba2acd51b0abac8219cc1d42988c13621e1c63f`
   - Marker extraction: 16 pages, 67,085-byte Markdown, and 22,482-byte metadata; sampled as readable
-- [local OCR](</hdd1/sichanghe/paper_collection/HANDBOOK.md- A Benchmark for Long-Context Agentic Instruction Following, Liudas Panavas, Sebastian Minus, Bradley Monton, et al., arXiv, 2026/HANDBOOK.md- A Benchmark for Long-Context Agentic Instruction Following, Liudas Panavas, Sebastian Minus, Bradley Monton, et al., arXiv, 2026.md>)
-- [local PDF](</hdd1/sichanghe/paper_collection/HANDBOOK.md- A Benchmark for Long-Context Agentic Instruction Following, Liudas Panavas, Sebastian Minus, Bradley Monton, et al., arXiv, 2026.pdf>)

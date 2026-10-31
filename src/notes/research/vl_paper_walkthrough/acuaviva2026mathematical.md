@@ -53,14 +53,8 @@ Steps (Section 10.5, p. 122): before work, query memory; after work, record stat
 
 Verus form: Inference: packetization should include source hashes, the exact Rust/Verus files, `verus` output, assumptions, trusted axioms, and a replay command. Run memory should distinguish verified proofs from model claims and stale failures.
 
-## what is proved, trusted, and relevant to VL
-Inference: the paper’s five promoted results are mathematical claims verified by authors, while the automated aggregate is bookkeeping plus selected human review. The authors caution: “All reported attempts should be treated as candidates for mathematical inspection rather than as independently certified results.” (Section 10.8, p. 125) Novelty searches are not exhaustive, and the paper says absence from inspected references “should not be taken as evidence that the result is new.” (Section 10.8, p. 125)
-
-Inference: VL could reuse the separation of deterministic candidate setup, model exploration, and persistent evidence packets, with Verus added to check formal proof obligations. Preserve separate statuses for model claims, verifier results, and review of whether the specification expresses the intended problem. The paper supports no numerical estimate of Verus soundness or operational risk. Its warning concerns the classification of mathematical attempts: “They should not be interpreted as guarantees that the argument is correct, that it addresses the source question exactly as intended, or that the result is novel.” (Section 10.8, p. 125)
-
 ## techniques for the catalog
 - exploratory proof search: repeatedly generate proof candidates for expert-selected problems, then verify and rewrite them
 - source-signal harvesting: scan TeX for question markers and rank targets before agent work
 - outcome taxonomy: classify full, counterexample, partial, conditional, literature, gap, and attempt outcomes
 - persistent packets: store source, claim, proof idea, references, code, and review status in shared run memory
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The next elementary estimate says that, after a sufficiently fine random split, the child traces concentrate around their expected values."): checked the complete paper text, study quotations, numbers, section and page references, and workflow steps; corrected quotation boundaries and page references, clarified model provenance, Problem 5 repairs and outcome counts, and removed unsupported risk ratings; did not independently prove the mathematical results, check cited external literature, or test the proposed Verus adaptations.

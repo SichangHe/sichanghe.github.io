@@ -40,8 +40,6 @@ The study’s evidence is 18 expert interviews plus public reports and participa
 
 The paper recommends planning sufficient test and training time, full technical visibility and independent testing, and contextual design for cultural, infrastructure, and adversarial conditions. Section 10 (p. 2059) states: “Ten participants discussed how the short amount of time between the 2018 and 2019 elections precluded thorough testing of the technology itself.”
 
-Inference: agent-written verified Rust faces the same system-level threat when a proof assumes reliable clocks, networks, operators, biometric matchers, or external vendors. Formal contracts can make data-flow and audit invariants explicit, but they do not establish that deployment conditions satisfy those assumptions. VL should reuse this paper’s lifecycle trace, adversary inventory, independent evidence channels, and failure fallback analysis; it should not treat a passing Verus proof as evidence that usability, governance, or local context is adequate.
-
 ## techniques for the catalog
 - interview-based requirements elicitation — collect diverse operator evidence and iteratively code themes into requirements
 - socio-technical threat modeling — enumerate adversaries, infrastructure dependencies, and physical harms before specifying security
@@ -49,4 +47,3 @@ Inference: agent-written verified Rust faces the same system-level threat when a
 - layered audit — preserve paper, image, and digital records and compare independent entries
 - biometric deduplication with audit — match multiple identifiers, record overlap, and recount after removals
 - context-aware deployment review — test cultural, infrastructure, training, governance, and timing assumptions before rollout
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Although the BVV ecosystem did likely deter, prevent, and detect fraud attempts, it also malfunctioned in ways that may have allowed vote manipulation, though we cannot know the extent."): checked the entire paper, quotations, counts, section/page references, workflow steps, and limitations; corrected a conflated quotation and its reference, the deduplication reference and removal rule, interview stopping and consent details, and the publisher link; distinguished proposed verification uses from reported methods; did not independently validate interviews, cited external reports, devices, source code, or biometric matching accuracy.

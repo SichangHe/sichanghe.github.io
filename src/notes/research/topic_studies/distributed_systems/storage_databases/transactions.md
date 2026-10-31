@@ -16,7 +16,6 @@ what this file is
 - reading date: 7 Oct 2026 UTC
 - ChatGPT Extra High, original worker: no opinion was obtained
   - the shared browser was not signed in to ChatGPT; the coordinator told me to stop trying
-  - the prompt I would send is at /tmp/claude-30033/-ssd1-sichanghe-github-io/85361e00-9330-4e62-a177-9736b46ce5e5/scratchpad/txn_chatgpt_prompt_v2.md
   - run it later with pb-chatgpt-prompt-file and paste the answer under a 🤖-free heading of its own
 
 takeaway, my opinion

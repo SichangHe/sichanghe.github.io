@@ -48,14 +48,9 @@ The authors report correlated-error risk because all validation was being done b
 
 Inference: the direct product threat for agent-written verified Rust is semantic drift at the contract boundary and unreviewed reusable lemmas. Verus’s verifier can discharge a wrong specification just as Lean can discharge a wrong theorem statement. The review surface and explicit assumption accounting are therefore more valuable than a larger proof transcript. The workflow should not be treated as fully autonomous for high-stakes claims while the paper itself reports sparse human validation.
 
-## what VL should reuse and what it should not redo
-
-The paper already supplies a concrete pattern for source inventory, dependency tracking, proof-route deviation logs, persistent provenance, and independent statement review. VL should reuse these artifacts and adapt their status vocabulary. It should not redo a generic “paper-to-proof” dashboard without addressing the paper’s stated correlated-error and shared-library semantic risks. The paper’s own open question is whether LLM-as-judge is sufficient for high-stakes validation (Section 5, p. 9).
-
 ## techniques for the catalog
 
 - paper-facing formalization: preserve source statements and theorem order while sharing reusable library mathematics
 - translation audit: compare a context-free Lean-to-text rendering with the source and log human verdicts
 - dependency DAG: track every named result and its formalization status
 - validation report: record proof-route deviations, extra assumptions, provenance, and unresolved boundaries
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

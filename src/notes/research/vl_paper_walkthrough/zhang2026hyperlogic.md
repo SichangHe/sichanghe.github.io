@@ -19,7 +19,7 @@ Use this when a benchmark or specification must become harder without fixing its
 
 Library-Base adds branches, distractor premises, aliases, and sub-questions while staying within frontier-model capacity. Library-Hard retains four Base operators and adds minimality cores, global coupling constraints, cyclic truth reference, and coupled state dimensions, each with four implementations (Section 2.2, p. 4). The library is a plug-in: changing difficulty changes the strategy library, not the workflow.
 
-Verus form (Inference: the paper builds benchmarks, not Rust proofs): a VL authoring loop can propose a Rust requirement and a dependency table linking each clause to functions and proof obligations. A reviewer can reject a candidate whose `requires`/`ensures` omit a source claim or whose questions do not test a chosen invariant. Hardening strategies map to proof stressors such as aliasing, coupled state, and minimal counterexample cores. The loop does not prove a contract; Verus must check the final implementation.
+Verus form (
 
 Evidence: Base contains 195 items and 922 sub-questions, averaging 4.7 sub-questions and about 3,300 Chinese characters per background; Hard contains 100 single-question items averaging about 8,700 characters (Section 3.1, p. 6). These are construction counts, not correctness rates. Human experts may reject or revise items, so the released set is conditioned on review capacity and the selected strategy library.
 
@@ -47,8 +47,6 @@ HyperLogic evaluates Seed/Base by direct model calls and Hard in three condition
 
 On Base, GPT-5.6 Sol reaches 77.6% item accuracy and Claude Opus 5 74.2%; the weakest model, Doubao Seed 2.1 Pro, reaches 44.6% (Table 1, p. 1). On Hard, the best direct score is 15.6% (Claude), the best sandbox-only score 55.7%, and the best library-available score 57.0% (Table 1, p. 1). Library availability changes Hard accuracy by −6.0 to +10.6 points across seven models; five improve and two decline (Section 4.2, p. 8). These denominators are 100 Hard items and three rollouts per model-condition; item-level standard deviations are shown in Table 1.
 
-Verus form (Inference): use the same separation for VL evaluation: direct code generation, sandboxed proof repair, and sandbox plus a project-specific specification library. Score verified functions only when the actual body passes Verus, and report trusted dependencies separately. A library that lowers accuracy can indicate interface or modeling errors, not that formal methods are ineffective.
-
 ## technique: classify failure modes by exhaustive possibility tracking
 
 The authors classify each incorrect Base answer into nine categories with DeepSeek V4.1 Flash, including under-enumeration, over-enumeration, and semantic modeling (Section 4.1, p. 7). Under- and over-enumeration together account for 50–64% of each model’s errors; all models except GPT-5.6 Sol miss valid cases 2.4–3.6 times as often as they add invalid ones. Semantic modeling accounts for 12–26%. Enumeration and counting questions are split at six listed cases or a count of 12 to compare small and large possibility spaces.
@@ -61,21 +59,13 @@ The library makes a question’s scope explicit: assumptions can be added, named
 
 Inference: a Verus contract generator should encode counterfactual assumptions as separate ghost states and state nonempty-scope conditions explicitly in `requires`; otherwise a universal `ensures` can become vacuous. Use named constraints so a proof can isolate one assumption, and preserve whether a count is over complete worlds or projected rows.
 
-Solver routing is capability based: exhaustive search is the semantic oracle for small spaces; SAT handles decision and distinct-projection enumeration; Z3 handles witnesses and non-deduplicated rows; Ganak and BDDs handle complete-world counts with fallbacks (Appendix B.2, p. 19). Ganak’s probabilistic component caching makes its exact-count guarantee probabilistic, and incomplete results are rejected as gold answers. Inference: a VL system should label solver-backed counts as assumptions unless a deterministic proof establishes the same cardinality.
+Solver routing is capability based: exhaustive search is the semantic oracle for small spaces; SAT handles decision and distinct-projection enumeration; Z3 handles witnesses and non-deduplicated rows; Ganak and BDDs handle complete-world counts with fallbacks (Appendix B.2, p. 19). Ganak’s probabilistic component caching makes its exact-count guarantee probabilistic, and incomplete results are rejected as gold answers.
 
 ## technique: use concrete witnesses for fidelity audits
 
 Coverage alone checks that every source span is cited; it does not prove that the cited formula is correct. HyperLogic therefore generates an admitted world in `M\N` to witness under-translation, and removes each named constraint `c` to search `Mod(T\{c})\M` for a world that the prose permits, exposing an invented restriction (Appendix C.1, pp. 19–20). The paper reports that among initially agreeing audited questions, 27.0% required correction to both encodings; among initially disagreeing questions, 81.1% required correction to one encoding, and 95.8% reached matching substantive answers after repair or equivalent-notation confirmation (Table 4, p. 18).
 
 Inference: this is directly useful for Verus: generate a concrete state that satisfies the source model but violates a candidate `ensures`, or a state admitted after removing one `requires`, and send the witness to contract repair. The witness procedure tests semantic fidelity rather than relying on two agreeing proofs.
-
-## trusted scope, contradictions, and product threat
-
-HyperLogic’s solver-derived answer is trusted only after two reviewed encodings agree and experts judge fidelity. Solvers, finite-domain semantics, parser/library implementations, agent traces, and human audits remain trusted. The authors note that independent encodings can share a misreading, which is why agreement alone is insufficient (Section 2.4, p. 5). The benchmark measures answer accuracy and tool-use behavior; it does not prove that an English requirement has one uniquely correct formalization.
-
-Inference: threat to agent-written verified Rust is high at model extraction and scope. A Verus proof can establish a wrong finite-domain abstraction, just as two HyperLogic encodings can agree on a shared misreading. VL can reuse forward authoring, independent formalization, solver-backed witness generation, coverage checks, unsupported-restriction checks, and explicit tool-condition evaluation. It should not redo generic “sandbox helps” claims; this paper already measures them. Inference: a valuable VL experiment is to require two independent Verus contracts, compare their model sets, and send any disagreement plus concrete witness states to a human before proof acceptance.
-
-The paper’s hardening and answer-generation pipeline is new work that VL need not reproduce as a benchmark unless it needs adversarial contract tests. The reusable lesson is separation of authoring, formalization, solving, and adjudication, with every number tied to its item, sub-question, model, condition, and rollout denominator.
 
 ## techniques for the catalog
 
@@ -85,4 +75,3 @@ The paper’s hardening and answer-generation pipeline is new work that VL need 
 - coverage and restriction audit — test missing source claims and unjustified constraints with concrete worlds
 - tool-condition evaluation — compare direct answers, sandbox agents, and sandbox agents with a modeling library
 - possibility-space error taxonomy — separate under-enumeration, over-enumeration, and semantic modeling failures
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

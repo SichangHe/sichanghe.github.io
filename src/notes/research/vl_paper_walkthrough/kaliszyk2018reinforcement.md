@@ -5,8 +5,6 @@ Tag: `kaliszyk2018reinforcement`, [paper](https://arxiv.org/abs/1805.07563)
 ## scope and result
 This paper builds rlCoP, a connection-tableau prover guided by Monte Carlo Tree Search (MCTS) and reinforcement learning (RL) from earlier proof attempts. It removes iterative deepening (and with it completeness) and, in the authors' words, uses “practically no domain heuristics” (abstract, p. 1); policy and value guidance are learned. The abstract reports: “The trained system solves within the same number of inferences over 40% more problems than a baseline prover” (abstract, p. 1). The formal object is first-order logic translated to clause normal form; the experiments use Mizar-derived problems, not Rust or Verus.
 
-## technique 1: connection-tableau game and bare prover
-
 ### paper procedure
 Translate axioms and the negated conjecture to clauses. Start from a start clause as the goal and repeatedly apply extension or reduction. Extension unifies the goal with a complementary literal of a new clause, possibly adding branches; reduction unifies with a complementary literal already on the active path. A proof closes when every branch has complementary literals (section 2, pp. 2–3). The paper's bare prover (section 2.1) removes iterative deepening and randomly chooses extension/reduction steps, making it incomplete. A stated failure mode is an infinite branch that repeatedly extends `P(0)` to `P(s(0))`, `P(s(s(0)))`, and so on (section 2.1, p. 3).
 
@@ -31,8 +29,6 @@ Inference: for Verus, collect which candidate lemma or assertion action leads to
 
 For each bigstep state, assign value 1 if the run eventually proves the theorem and 0 otherwise. Positive states are discounted by `0.99^{d_proof}`, where `d_proof` is the number of inferences to the closed tableau (section 3.3, p. 4). Train a predictor by regression on logits and use its estimated value during search. The authors use XGBoost gradient boosting with tuned parameters (section 3.5, p. 5).
 
-Inference: define a Verus state value from whether a subsequent candidate verifies and optionally discount by proof steps or solver time. This is an engineering heuristic; it does not weaken or replace the contract. A timed-out proof is unknown, so a VL dataset should distinguish timeout from a verified failure.
-
 ## technique 5: structural sparse features and iterative feedback
 
 Features include normalized term walks up to length three, hashed symbols reduced modulo a large prime, and abstract tableau statistics: number and size/depth of goals, active-path length, variable instantiations, and common symbols (section 3.4, pp. 4–5). The authors choose XGBoost after comparing fast linear learners; final settings include 400 iterations, depth 9, learning rate 0.3, early stopping after 200 rounds, and lambda 1.5 (section 3.5, p. 5).
@@ -49,10 +45,6 @@ For the held-out Miz40 evaluation, the dataset is split into 29,272 training and
 
 These are solved-problem counts under fixed inference budgets, not proof correctness rates independent of the underlying tableau calculus. The calculus supplies the formal evidence; MCTS, features, XGBoost, and learned priors are untrusted guidance. The bare prover is incomplete by design, so failure to solve is not a counterexample.
 
-## implications for VL
-
-Inference: the transferable pattern is iterative proof-search self-improvement: use a formally checked Verus result as terminal reward, learn action priors and state values from proof traces, and use MCTS to spend solver calls. The paper already establishes policy-only, value-only, joint guidance, UCT exploration, distance discounting, and held-out evaluation; VL should not present these as new formal-verification primitives. The product threat is search bias and incompleteness: a policy can repeatedly miss a valid proof or exploit a proxy feature, while only Verus establishes the contract.
-
 ## techniques for the catalog
 
 - bare connection search: build tableau proofs with extension and reduction actions from clauses
@@ -60,5 +52,3 @@ Inference: the transferable pattern is iterative proof-search self-improvement: 
 - policy learning: regress action-frequency targets and turn predicted scores into softmax priors
 - value learning: predict proof-state success with distance-discounted rewards
 - iterative RL feedback: retrain policy and value models from accumulated proof-search attempts
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Replacing the final policy with the best one from the policy-only runs decreases the performance in 20th iteration from 1235 to 1182."): read the whole paper text and checked every quotation, number, table value, section and page reference, and the technique steps (UCT formula, 0.95 and 0.99 factors, c=2, temperature 2.5, features, XGBoost settings, M2k and Miz40 counts and percentages); changed the link to the arXiv abstract (1805.07563, from the paper text), corrected the M2k comparison (rlCoP ran at 200,000 inferences, only mlCoP at 4×10^6), fixed page references (bigstep text p. 3, sections 4.2–4.5 pp. 6–7), replaced the claim that it removes most hand-designed heuristics by the paper wording, and added the inference-speed caveat (Table 2) and the 10-iteration note on footnote 9; did not check the cited works, the Mizar example theorems, or Figure 2 in detail, and did not run any code.

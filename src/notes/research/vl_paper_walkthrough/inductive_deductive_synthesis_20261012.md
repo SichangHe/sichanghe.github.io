@@ -1,8 +1,5 @@
 # Inductive Deductive Synthesis: code and proof grow together
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
-
-Source: [2605.23109v1](https://arxiv.org/abs/2605.23109v1); [saved full PDF](/ssd1/sichangheagent/vlpw/inductive_deductive.pdf). This study uses the full primary text, including appendices. Page numbers are printed PDF pages. Results are author reports unless labeled otherwise.
 
 IDS demonstrates agent synthesis of distributed-store implementations and refinement proofs from supplied formal specifications. It is strong direct prior work for code/proof co-design and performance-guided search. The important remaining boundary is specification adequacy and the connection from proved model to deployed runtime.
 
@@ -35,21 +32,6 @@ Appendix C, pp. 16–17 also selects one candidate from 100 independent Codex im
 The “roughly 200× faster” claim compares one synthesis run with historical 9–12 months of expert effort (§5.2), not a controlled contemporary human trial. Table 2 ablates joint design, proposer, reloader, audit and rich verifier feedback. Removing structured goals/hypotheses/backtraces leaves every spec at at most 1/3 and drops VERINA to 58%. Removing joint design drops VERINA from 176/189 to 160/189; proposer to 150, reloader to 167, feedback to 110. Audit ablation leaves VERINA at 176; the distributed-store evidence is the single unaudited put guard returning false reported in §5.4, p. 9. Figure 5 reports full performance feedback yields mean 1.42× throughput over first-accepted candidates.
 
 Appendix E, pp. 21–22 and Table 7 report proof/annotation successes: 88/100 hardest DafnyBench tasks, 100/100 miniCodeProps sorting tasks, 149/150 full Verus-Bench and 97/100 hardest CoqStoq tasks. Table 7 says “IDS reduces to its DSA component since the ISA has no design space to search” on those proof-only tasks. Code/proof synthesis reaches 176/189 VERINA, 65/77 on AlgoVeri’s Dafny track and 62/62 CloverBench. Both vanilla agent baselines also reach 62/62 CloverBench, so that result does not show an IDS advantage. These are smaller tasks than the distributed-store evaluation, and their acceptance rules vary by checker. Public benchmarks and supplied formal contracts limit what these results show about repository intent recovery.
-
-## Limits and lessons for VL
-
-§6, pp. 9–10 excludes dynamic membership, reconfiguration, fault recovery, logging and observability from the evaluated operational envelope. Appendix H, p. 29: generality to compilers, kernels and cryptography “is conjectured, not measured”. OCaml extraction, runtime communication, serialization and deployment must preserve the formal transition semantics; the presented trace theorem alone is not a proof of that entire path. Trace inclusion also does not independently establish eventual completion, throughput bounds, or freedom from all operational failures.
-
-Recommendations: let proofs guide implementation representations; record design failures and restart strategically; expose rich verifier diagnostics; independently freeze specifications; separate missing proof holes from accepted results; test operational usefulness in addition to theorem validity; retain performance constraints and measured costs. Existing [code/agent notes](../topic_studies/formal_verification_rust/llm_for_verification/code_and_agents.md) already establish co-synthesis prior work; this study adds audit patterns, representation choices and modeled/runtime boundaries.
-
-Product inference: this is substantial overlap with autonomous construction of verified systems. It weakens novelty claims for joint code/proof agents, helper generation, backtracking, and optimizing checked implementations. Formal intent recovery remains open: §6 calls writing specifications “the largest open problem” and proposes human-guided adversarial synthesis and extraction from existing systems. Those directions overlap VL’s core ambition directly, so Rust/Verus adaptation alone is a narrow distinction.
-
-First reading: Appendix F.1–F.3 and §6. Ask whether rejecting every write could still satisfy the fixed safety specification, and where operational progress is required.
-
-## Study status
-
-The full primary-text synthesis was checked against PDF text and independently reviewed. Local source links resolve. An earlier ChatGPT submission returned `account_ui_retry_required` with `job_status: terminal` [recorded failure](/ssd1/sichangheagent/vlpw/inductive_deductive_poll3.json); a complete answer was later recovered and cross-checked below. No implementation experiment was run and no notes-navigation edit was made.
-
 
 ## ChatGPT cross-check (2026-10-12)
 

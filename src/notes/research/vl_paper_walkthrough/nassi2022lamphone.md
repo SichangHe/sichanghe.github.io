@@ -53,13 +53,9 @@ The tests find different SNRs across lamp and bulb types; lighter LED bulbs outp
 
 The authors recommend “installing curtains to eliminate the line of sight or replacing desk lamps with other lighting solutions to eliminate the vulnerability.” (Section 8.4, p. 4413) They also discuss inner rooms without windows and increased separation from eavesdroppers. They rate blocking leakage as highly effective against Lamphone, a safety perimeter as moderately effective, and detection of active attacks as ineffective against this passive method (Section 8 and Table 5, pp. 4412–4413).
 
-Inference: verified digital processing could prevent implementation errors in OAT, but would not remove the physical side channel. The sensor, ADC, acoustic environment, optical coupling, and relation between scores and human understanding would remain outside that proof unless explicitly modeled. Any recommendation for VL to reuse this pipeline would depend on a specific application; the paper does not evaluate VL or Verus.
-
 ## techniques for the catalog
 - optical side-channel measurement — sample light-intensity changes from a sound-vibrating bulb with an electro-optical sensor
 - frequency characterization — compare baseline and stimulated spectra across bulbs, distances, and acoustic frequencies
 - optical-acoustical transformation — filter bulb harmonics, normalize samples, subtract noise, and equalize the stream
 - single-channel quality evaluation — score recovered speech with LLR, WSS, NIST-SNR, and intelligibility
 - physical countermeasures — block line of sight, remove vibrating objects, or increase distance from the target lamp
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The influence of each step of the OAT on the recovered signal when the transformation is used to recover an arbitrary sentence is illustrated in Fig. 10."): checked all paper text including references and appendix, study quotations, numbers, section/page references, and technique steps; corrected the publisher link, citations, OAT omissions, long-distance conditions, and intelligibility arithmetic, and marked verification conclusions as inferences; did not reproduce experiments, inspect linked recordings, or verify the proposed Verus models.

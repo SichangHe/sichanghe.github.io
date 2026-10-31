@@ -23,7 +23,7 @@ The paper says: “The output of this parser ensemble is a flattened token strea
 
 Verus form. Inference: use the same representation for Rust APIs and specifications: retain source spans, type or protocol category, preconditions, postconditions, and timing or state-machine facts. A Verus `spec fn` can define a pure semantic predicate, while `requires` and `ensures` attach the extracted contract to a function. Generation must preserve ownership and mutation semantics that an SVA signal model does not express. Every generated contract still needs a Verus check and human review of whether the extracted intent is complete.
 
-Failure and assumptions. Listing 2 (p. 4) instructs: “Use only the information present in the paragraph.” and “Do not invent missing fields; leave them blank or as empty lists.” The authors describe assertion generation “without RTL information” (Section II, p. 2); RTL is nevertheless used for model checking and mutation testing (Section IV-A, p. 6). Inference: extraction may invent fields or lose diagram detail despite these instructions. For VL, extraction can miss aliasing, panic, and unsafe or FFI behavior unless represented explicitly.
+Failure and assumptions. Listing 2 (p. 4) instructs: “Use only the information present in the paragraph.” and “Do not invent missing fields; leave them blank or as empty lists.” The authors describe assertion generation “without RTL information” (Section II, p. 2); RTL is nevertheless used for model checking and mutation testing (Section IV-A, p. 6).
 
 The authors also state: “This integrated format provides a complete and structured view of each design, making it available for the subsequent assertion generation phase.” (Section III-C.4, p. 5).
 
@@ -57,10 +57,6 @@ Verus form. Inference: generate Rust/Verus mutants that alter return values, bra
 
 The ablation disables RAG, chain-of-thought prompting, or mutation-guided refinement. Removing CoT causes the largest drop in correctness assertion count; removing RAG has comparatively minimal impact; removing iterative refinement lowers mutation detection (Section IV-C, pp. 6–7). Inference: these findings support structured reasoning and mutation feedback in this evaluation; the ablation does not separately test multimodal extraction.
 
-## trusted base, contradictions, and product threat
-
-Inference: the formal evidence is bounded by the three DUTs, their specifications, generated mutation operators, SymbiYosys, Mantra, and manual semantic review. The paper does not prove that all specification intent is captured, that mutation operators represent all bugs, or that an SVA passing model checking is complete. The largest threat to agent-written verified Rust is a contract that is syntactically and mechanically valid but omits a required behavior; mutation feedback can expose some omissions, but surviving mutations and sparse mutation models leave residual risk. VL should not redo generic claims that LLM prompting can emit assertions; a useful new result would measure this workflow on Rust/Verus contracts and ownership-sensitive mutations.
-
 ## techniques for the catalog
 
 - multimodal semantic extraction — classify document blocks and merge text, tables, diagrams, and formulas into signal-level records
@@ -68,4 +64,3 @@ Inference: the formal evidence is bounded by the three DUTs, their specification
 - retrieval-augmented prompting — add curated domain passages while generating formal properties
 - mutation-guided refinement — inject faults, model-check, feed undetected mutations back, and regenerate
 - assertion evaluation — report syntax correctness, functional correctness, average mutation score, MDR, and FPR
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For every signal or register, its relevant content is grouped together by aggregating information from multiple modalities, including structural descriptions from text and tables, behavioral logic from diagrams, and timing constraints from formulas."): checked all paper text, quotations, reported numbers, section and page references, technique steps, author/year tag, and arXiv identifier; corrected page references, clarified RTL use, distinguished reported averages from recomputed means, and marked conclusions as inferences; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

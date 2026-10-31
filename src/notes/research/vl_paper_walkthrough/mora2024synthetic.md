@@ -97,8 +97,6 @@ The paper contains reporting inconsistencies. The introduction reports “84.8%�
 
 Inference: the results depend on the UCLID5 compiler checks, Z3/MAX-SMT, the child-to-target compiler, the selected child-language abstraction, and one author's semantic assessments using manual reasoning and handwritten specifications. Eudoxus's 33 textbook tasks are same-domain examples, not a broad sample of formal models. The limitations are explicit: only one VLPL, only two LLMs, and one semantic evaluator (§6.2, p. 10). Inference: passing compiler checks establishes a useful prerequisite check but not a verified transition-system property; for agent-written verified Rust, the corresponding trusted boundary must end at Verus acceptance of fixed contracts, while contract adequacy, generated model semantics, and external assumptions require separate review.
 
-What VL should not redo: the paper provides an empirical parent/child-language selection procedure, AST pruning with soft constraints, MAX-SMT model repair, hole-filling prompts, and syntax-versus-semantics denominators for a formal language. Inference: a VeruLaw project should test whether a Verus-specific child API reduces syntax and annotation failures, rather than repeat a generic “ask the LLM for Rust” baseline. Inference: SPEAC can preserve a consistent AST while retaining a wrong state model, so applying this approach to verified Rust still requires Verus checking and review of whether the specification matches the requirement.
-
 ## techniques for the catalog
 
 - synthetic programming elicitation — study model outputs to choose a familiar parent language and a compilable child subset for a sparse target language
@@ -106,5 +104,3 @@ What VL should not redo: the paper provides an empirical parent/child-language s
 - largest consistent subtree — parse an error-tolerant AST, prune unsupported constructs, and use MAX-SMT soft clauses to choose holes; depth weighting sacrifices minimal edit count
 - model-based static repair — substitute satisfying solver-model values into holes before invoking another model
 - syntax/semantic split — measure compiler parsing separately from manually assessed semantic correctness with explicit denominators
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The third step finds the minimal number of AST nodes that need to be replaced with holes such that all static checks of the language C pass, using the approach of Pavlinovic et al. [32]."): checked all quotations, numbers, section and page references, technique steps, and scope against the full text; corrected the paper link, percentage attribution and inconsistencies, page references, prompt description, static-repair details, and inference labels; did not check external artifacts or reproduce experiments.

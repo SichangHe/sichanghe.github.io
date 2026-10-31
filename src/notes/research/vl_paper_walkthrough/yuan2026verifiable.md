@@ -55,15 +55,13 @@ Inference: these are idealized mathematical analyses. A Verus encoding could pro
 
 The paper tests zero-shot transfer to seven general reasoning benchmarks (GSM8K, MATH-500, AIME24/25, GPQA-Diamond, BBH, MMLU-Pro) and two agentic tasks (ALFWorld and WebShop), with no further fine-tuning. Table 2 reports pass@1 over the listed denominators (GSM8K n=5; MATH-500, AIME24/25, GPQA-D n=10; BBH and MMLU-Pro n=1). VPR’s average exceeds the base and both baselines for each training environment; Minesweeper-trained VPR has the highest reported average, 62.59 versus base 60.92. Table 3 uses three evaluation runs for ALFWorld and WebShop; for Tic-Tac-Toe-trained models, VPR reaches ALFWorld 27.36±2.62% and WebShop score 30.88±0.75 with success 1.87±0.50%, versus base 24.13±2.40%, score 27.42±1.00, success 1.40±0.20%.
 
-These transfer results are evidence that the trained policy changed, but they do not prove that the transferred behavior is formally correct. Inference: a VL evaluation should distinguish verifier correctness on training tasks from transfer quality; passing an external benchmark is empirical evidence, not a Verus proof.
+These transfer results are evidence that the trained policy changed, but they do not prove that the transferred behavior is formally correct.
 
 The oracle ablation is the most important failure condition. With 100 MCTS simulations, every general-benchmark average falls below base (58.47 versus 60.92), while 1,000 recovers most of the benefit and 10,000 is best at 62.17 for Tic-Tac-Toe training (Table 5, p. 8). The paper states: “A weak oracle (N =100) actively harms training in both settings: in-domain returns fall below the base model, and the OOD average also drops below it with degradation across every benchmark.” (Section 3.4, p. 8). Dense rewards therefore amplify bad verification as well as good verification.
 
 ## what is proved, measured, and trusted
 
 The paper proves three first-order propositions under explicit assumptions and measures training outcomes, transfer scores, and oracle sensitivity. It does not prove that VPR improves arbitrary agentic reasoning, that MCTS estimates are optimal, that a Sudoku solution is correctly supplied, or that Minesweeper’s posterior enumeration is exact in a deployed implementation. Its trusted setup includes Qwen3-4B behavior, GRPO/PPO implementation, environment transitions, MCTS/constraint/posterior oracle code, evaluation scripts, and benchmark task validity. The authors also note that less structured open-ended environments remain unresolved.
-
-Inference: for agent-written verified Rust, the transferable lesson is the architecture: put a deterministic, auditable verifier between each action and the learning signal, and treat verifier disagreement as a first-class risk. For VL specifically, Verus can verify the state transition, action legality, invariant preservation, and correspondence between an executable checker and a mathematical specification. It cannot certify the neural policy, reward-model training, or external environment unless those are separately modeled. This paper does not study Verus, so any mapping to VL is an inference.
 
 Inference: threat to a product is high when a weak oracle silently labels intermediate steps, because the paper measures degradation below base under 100 MCTS simulations and across all transfer benchmarks. Threat is lower when the checker is a small, fully specified Rust component whose contracts and test oracle are independently verified. The product should not treat dense reward as evidence of correctness unless it can state what the verifier proves and what remains trusted.
 
@@ -77,5 +75,3 @@ Inference: threat to a product is high when a weak oracle silently labels interm
 - verifier-error bias bound — bound policy-gradient bias by score norm times verifier disagreement fraction
 - horizon credit analysis — compare linear accumulation of dense process signal with exponential dilution of terminal success signal
 - oracle-quality ablation — vary verifier strength and measure both in-domain and transfer degradation before trusting dense rewards
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

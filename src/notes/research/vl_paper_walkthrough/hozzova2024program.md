@@ -61,11 +61,7 @@ Theorem 1 and Corollaries 2–3 establish soundness of the branch construction u
 
 Inference: these results do not promise termination or successful synthesis for every valid specification. A deployment would also need to trust its specification, computability declarations, implementation of the calculus, theory interpretations, and any translation from synthesized terms into executable code. The paper evaluates recursion-free term synthesis, not a Rust code generator.
 
-Inference: VeruLaw could investigate witness extraction for small pure arithmetic helpers, starting with the paper’s maximum and polynomial examples. A candidate design would translate synthesized terms into Rust and verify their contracts. This would require implementation and evaluation beyond the paper.
-
 ## techniques for the catalog
 - answer-literal witness extraction: add `ans(y)` during saturation and turn computable answer terms into program expressions
 - conditional branch composition: record guarded witnesses and assemble nested if-then-else code once guards cover all cases
 - computable unification: constrain substitutions so proof reasoning may use opaque symbols without emitting them in executable programs
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The inference rules from Figure 3 of the extended Sup calculus with answer literals are sound."): read the entire paper, including references and Appendices A–C, and the entire study; checked quotations, numbers, page and section references, technique steps, tag, and arXiv link; corrected branch assumptions and coverage, page references, and witness notation, expanded computable unification and AVATAR details, and marked proposed applications and trust analysis as inferences; did not rerun the experiments, inspect Vampire’s source, or validate the proposed Verus adaptations.

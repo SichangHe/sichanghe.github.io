@@ -66,12 +66,6 @@ On R-Judge, the evaluation set contains 571 multi-turn records: 301 unsafe and 2
 
 These numbers measure this Python implementation, these benchmarks, and the stated models/settings. They do not measure Verus proof rates, semantic harms outside tool calls, or robustness when the event channel lies. The paper reports that 82% of missed AgentDojo attacks issue no malicious tool call and 18% issue legitimate-looking arguments, so a tool-call shield cannot catch all prompt-injection outcomes (Section 6.2, PDF p. 8).
 
-## what is trusted, what fails, and VL threat
-
-The contract library is human-inspected; the natural-language-to-formula LLM is not itself verified; predicate grounding trusts event reports, pattern matchers, counters, and tool-return parsing; and free-form semantic harms remain outside the monitor (Limitations, PDF p. 10). The DFA construction and deterministic monitor provide reproducible verdicts only for the observed predicates and trace.
-
-Inference: For VeruLaw, this is a high-value runtime complement to verified Rust: it can enforce temporal order, counts, and permissions around agent tool calls while Verus proves local code invariants. It cannot establish that an agent's prose goal is correctly formalized, that a tool result is truthful, or that a blocked policy is semantically complete. VL should reuse the finite-trace contract monitor and explicit offline replay; it should not treat monitor success as a substitute for Verus proof.
-
 ## techniques for the catalog
 
 - event-state trace model — represent each call and return as an event over trace, context map, and counters
@@ -80,5 +74,3 @@ Inference: For VeruLaw, this is a high-value runtime complement to verified Rust
 - ALTLf-to-DFA compilation — compile finite-trace temporal formulas to reusable deterministic checkers
 - dual-mode supervision — gate calls online and replay identical checkers offline for reproducible verdicts
 - contract-library analysis — test consistency, compatibility, and unsatisfiable cores before deployment
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

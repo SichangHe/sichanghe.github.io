@@ -51,14 +51,9 @@ The authors manually inspected only 50 pairs (10 per strategy), focus on Lean 4,
 
 For pointwise scoring, submit theorem T and each proof independently to reward model R; count correct if `R(T,Pcorrect) > R(T,Pincorrect)`. For pairwise scoring, ask directly which proof is better. Evaluate both original and swapped order and count a pair correct only when both predictions select the correct proof: `Correctcons = Correct(i) ∧ Correctswapped(i)`. This exposes models that exploit “first answer” bias. Inference: a Verus reward model should score both an absolute proof-quality signal and a swap-consistent pair preference, with exact Verus verification retained as the final binary oracle.
 
-## what is proved, trusted, and already done
-
-The benchmark proves only that its automatic filters and Lean checker label the constructed pairs; it does not prove reward-model calibration or downstream RL gains. Trusted components are Lean’s parser/type checker, theorem statements, generated data, prompts, and manual sampling. The paper explicitly leaves transfer to Coq and Isabelle and downstream RLVR improvement open. VL should not repeat generic claims that formal proof generation implies proof criticism; this study demonstrates the asymmetry. Inference: for agent-written verified Rust, a learned critic is useful for dense feedback but cannot replace Verus. A critic can rank failed attempts, while Verus remains the authority for acceptance; position-bias and verbosity tests should be mandatory.
-
 ## techniques for the catalog
 
 - controlled error injection: create syntactically valid, semantically failing proof variants and filter them with the proof assistant
 - five failure strategies: test minimal mutations, misleading explanations, foreign-language code, forced tactic mistakes, and verbose camouflage
 - position-consistent reward scoring: require the same correct preference under both proof orderings
 - verifier plus manual QA: combine deterministic Lean labels with a sampled human inspection for realism
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

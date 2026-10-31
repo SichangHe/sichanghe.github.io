@@ -178,5 +178,3 @@ Inference: verified Rust control code remains exposed to this attack if it trust
 - layered physical validation — connect firmware analysis, simulation, instrumentation, and repeated flight experiments
 - acoustic threat-range estimation — combine measured amplitude thresholds with SPL-distance equations
 - defense comparison — evaluate isolation and reason about differential sensing and resonance tuning with explicit hardware limits
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The standard deviations changed by factors up to dozens, with the greatest change being by a factor of 31.04 (for the Y-axis of L3GD20)."): checked the full text, quotations, numbers, sections, printed pages, and technique steps; corrected the vibration argument, simplified PID description, flight-test wording, distance-analysis steps, SPL interpretation, and unsupported recommendations; did not reproduce experiments, inspect source code, validate Verus proposals, or independently check cited work and speaker ratings. The publisher link appears on the paper’s cover.

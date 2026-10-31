@@ -19,7 +19,7 @@ How to apply it (Section 2.1):
 4. backpropagate the structured signal and augmented value through the search tree;
 5. bias later candidate generation away from repeated syntax/type failures and toward partial-progress states.
 
-Verus form (Inference: the paper is Lean-specific): run Verus on each generated Rust patch, preserve its diagnostic text and distinguish parse/type errors, failed `assert`s, and an unproved `ensures`. Use Verus specifications and proof code, including `requires`, `ensures`, `assert`, proof functions and loop `invariant`s; keep the signal classifier and value model in external orchestration. Inference: Verus diagnostics do not have the paper's exact four labels, so a VL implementation must define its mapping and test it.
+Verus form (
 
 Evidence: on 244 miniF2F theorems, the failure taxonomy has 78 syntax failures (32%), 41 type-correct but wrong states (17%), 24 σC near-misses (10%), 99 completed proofs (41%), and 2 other cases (1%) (Figure 4b, p. 6). The percentages use the 244-theorem denominator and round (78/244=32.0%, 41/244=16.8%, 24/244=9.8%, 99/244=40.6%). The authors argue that structured signals are most useful for unknown constants, wrong arity and partial goals; they help least when a state is syntactically valid but semantically unhelpful (Section 4, p. 6).
 
@@ -85,12 +85,6 @@ Proved inside the paper: the set-inclusion monotonicity proposition for a fixed 
 
 Inference: Claude outputs, strategy labels, retrieval rankings and Critic values guide search; they are not independent proof certificates. Final acceptance depends on Lean and the formal statement. Benchmark curation, diagnostic classification and the mapping from natural-language problems to Lean statements remain assumptions for interpreting the results. Lean acceptance does not establish that a formal theorem captures a user's intended theorem. The authors warn: “This work advances automated formal reasoning; the main risk is over-trusting unchecked generated proofs.” (Appendix A, p. 8.)
 
-## what VL should not redo and product threat
-
-Inference: prior work here already supplies a verifier-feedback state representation; two-phase monotonic routing; role-separated strategy/retrieval/critic/tactic agents; keyword premise retrieval; batch checking; failure taxonomy; and measurements showing where dependent proof continuations help. VL should adapt these to Verus and measure Rust-specific diagnostics rather than repeat the Lean motivation.
-
-Inference: threat to a product that emits agent-written verified Rust is moderate. VERITAS supplies a search-control pattern with author-reported Lean verification of accepted artifacts and reports 40.6% on 244 miniF2F theorems, not end-to-end Rust correctness or natural-language fidelity. The principal engineering risks are incorrect translation, noisy diagnostic classification, and retrieval hallucinations. Verus can close the proof-checking gap for accepted Rust, while the orchestration and intent mapping remain outside the proof.
-
 ## techniques for the catalog
 
 - structured verifier signals — preserve syntax, type, progress and completion diagnostics as search state
@@ -99,4 +93,3 @@ Inference: threat to a product that emits agent-written verified Rust is moderat
 - keyword premise retrieval — rank lemmas by weighted goal/signature tokens and feed the top five to generation
 - batched proof validation — check six isolated candidates in one verifier invocation and map diagnostics by source range
 - failure-directed evaluation — split easy/hard benchmarks and use deepest verifier signals to target improvements
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The idea extends beyond Lean: SMT unsat cores, Coq/Agda goals, symbolic-execution counterexamples, and model-checking traces provide similar structure, though soft verifiers require calibrated thresholds."): read the entire paper, including references and appendices, and checked the full study's quotations, numbers, technique steps, page/section references, tag and paper identifier; corrected quotations and citations, retrieval and batching descriptions, failure-category coverage and trust claims, marked adaptations and conclusions as inferences, and noted unresolved numerical inconsistencies; did not rerun experiments, inspect the released implementation/reference proofs, or test the proposed Verus adaptations.

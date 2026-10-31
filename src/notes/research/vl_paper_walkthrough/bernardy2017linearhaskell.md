@@ -52,14 +52,6 @@ The paper says an `ST`-style `Needs` pointer allows interleaved writes of a `Lea
 
 Inference: in Verus, encode the remaining-field state as a Rust enum or typestate parameter and prove each write removes exactly one obligation. The byte layout, parser, and `unsafe` operations need verified contracts or trusted external bodies; the paper's metatheory (Section 3.4 and Appendix A) covers the core calculus with array primitives, not the `Packed`/`Needs` API or the byte layout.
 
-## evidence, boundaries, and product threat
-
-The paper reports that the base GHC libraries and the nofib benchmark suites (195K lines of Haskell) compile with all non-GADT constructors linear and list functions such as `++` and `concat` given linear types (Section 5, p. 16). The implementation changed 1,152 GHC lines, including 444 net new lines, and left the runtime untouched (Section 4, p. 15). In serialized-tree benchmarks on a Xeon E5-2699 (2.30 GHz, 64 GB), the paper reports “speedups of over 20× on large trees” for processing data directly in serialised form versus unpack-repack, attributing the linear version's edge over the ST version to non-allocating unboxed returns from `caseTree` (Section 5.1.3, pp. 19–20; Fig. 7 values not checked); each data point used many trials and linear regression, with baseline summing times from 25 ns to 1.9 s and mapping times from 215 ns to 2.93 s (Section 5.1.3, pp. 19–20). The socket wrapper was tested by a small echo server; the paper reports no larger test denominator (Section 5.2, p. 21).
-
-Inference: the formal theorems are about the core calculus and its operational semantics (Section 3.4, Appendix A), not the GHC prototype, OS behavior, foreign functions, or unsafe code; the paper itself says its “implementation of multiplicity polymorphism is incomplete” (Section 4, p. 15) and that “a systematic treatment of type inference for linearity in our system remains open” (Section 1, p. 2). The paper also notes that for an infinite result like `f xs = repeat 1 ++ xs` the linearity claim “holds vacuously” (Section 3.5, p. 15). The paper notes that linearity is not strictness: `f :: a ⊸ (a,Bool); f x=(x,True)` is linear but can return a pair without evaluating `x` (Section 2.8, p. 9).
-
-Inference: the threat to agent-written verified Rust is high for resource APIs and typestate patterns, low for directly importing the Haskell calculus. Rust already supplies ownership, but Verus can add functional invariants, protocol reachability, and proofs that mutable updates preserve abstract state. VL should reuse these API patterns rather than redo a general linear type system.
-
 ## techniques for the catalog
 
 - linear arrows and multiplicity contexts — scale and add usage contexts so one arrow tracks exact resource consumption
@@ -67,5 +59,3 @@ Inference: the threat to agent-written verified Rust is high for resource APIs a
 - linear I/O and typestate — encode file/socket protocols as consuming transitions and phantom states
 - indexed serialized buffers — make each read/write consume a type-level field obligation before finishing
 - multiplicity-polymorphic libraries — write one `map`, `foldl`, or composition operator usable by linear and unrestricted clients
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This works because we do not need to call a function with res as argument (and thus unknown calling conventions) only return it."): I read the arXiv v2 text (main paper and Appendix A skimmed) and checked every quotation, type signature, theorem and section reference, and the numbers 1,152, 444, 195K, Xeon E5-2699, 25 ns to 1.9 s, 215 ns to 2.93 s and over 20x; I corrected page references (pages use the ACM article page, 5:N shown as N), the socket-wrapper description, the Definition 2.1 quote, and the backwards-compatibility and theorem-assumption wording, and marked unsupported Verus statements as Inference. I did not check the Verus claims or local Verus notes, the Fig. 7 plot values, the appendix proofs in detail, or the tag year (the paper is arXiv 2017 and POPL 2018; tag kept); the DOI is from the paper text.

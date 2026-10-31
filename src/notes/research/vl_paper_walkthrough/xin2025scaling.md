@@ -69,7 +69,7 @@ Evidence and limits. Section 2.4.3 (p. 8) says: “Furthermore, this sequential 
 
 ## trust, measurements, and product implications
 
-Section 2.1 (p. 3) assigns tactic execution and transition feedback to the Lean compiler. Appendix C.1 (pp. 27–29) uses compiler feedback to repair autoformalized statements and explicitly permits `sorry` to skip their proofs during statement generation. Inference: compilation does not establish semantic equivalence to the original mathematics; generating candidate statements and plans should be distinguished from validating final proofs. The paper does not audit the full trust boundary or validate a Verus implementation. Inference: VL could reuse planner–prover decomposition and a verifier-backed cache, with periodic data curation when training plateaus. Whether these improve VL requires evaluation; they do not establish specification correctness or address Rust-specific ownership and concurrency obligations.
+Section 2.1 (p. 3) assigns tactic execution and transition feedback to the Lean compiler. Appendix C.1 (pp. 27–29) uses compiler feedback to repair autoformalized statements and explicitly permits `sorry` to skip their proofs during statement generation.
 
 ## techniques for the catalog
 
@@ -79,4 +79,3 @@ Section 2.1 (p. 3) assigns tactic execution and transition feedback to the Lean 
 - periodic soft-reset retraining — re-solve, aggressively curate, and retrain from a base checkpoint after plateaus
 - planner-prover replanning — decompose a theorem into verified subgoals and revise the plan after stuck subgoals
 - focused parallelism with cache — run parallel agents on one subgoal and commit the first valid proof in a shared status cache
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "It directly invokes the corresponding theorem from Mathlib, Real.geom_mean_le_arith_mean, demonstrating an ability to leverage high-level library theorems for a more insightful and efficient proof."): checked all paper text, study quotations, numbers, section/page references, technique steps, tag, and arXiv identifier; corrected the ProofNet planner attribution, environment definition, truncated quotation, retraining and replanning details, and unsupported trust claims; marked Verus adaptations and other conclusions as Inference; did not reproduce experiments, inspect code or external sources, or compile the example proofs.

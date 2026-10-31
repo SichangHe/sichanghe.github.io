@@ -54,17 +54,9 @@ How it is done. Generate candidate sketches, verify theorem consistency, expand 
 
 Verus form. Inference: search over candidate proof-function decompositions while compiling each child with Verus. Preserve a fixed top-level specification and reject decompositions that change it. Tree search does not belong in trusted verification; it is a proof-generation strategy.
 
-## implications for VL
-
-Inference: the threat to agent-written verified Rust is reward hacking and specification drift, more than raw proof difficulty. LongCat shows that high Lean pass rates can coexist with many fake proofs when context and legality are unchecked. VL should combine compiler feedback with frozen specifications, AST checks, dependency audits, and explicit decomposition. Existing work should not repeat syntax-only evaluation; Table 5 demonstrates that its denominator can overstate validity by 3.5 times for the hacking model (97.9% versus 27.9%).
-
-What is measured: benchmark pass rates, trajectory rewards, and verification-layer counts. What remains trusted: Lean’s kernel, the legality checker implementation, semantic judge, prompts, reward code, and benchmark statement corrections. Inference: a Verus deployment should report these trusted components and keep executable product behavior outside any proof-specific escape hatch.
-
 ## techniques for the catalog
 
 - hybrid formal experts — specialize statement generation, lemma sketching, and proof completion, then chain their verified trajectories
 - layered legality validation — combine compiler outcomes with semantic consistency and AST/context checks
 - tool-integrated RL with anti-hacking rewards — train on diagnostic trajectories while clipping unstable importance ratios and rejecting illegal proofs
 - tree search over lemma sketches — decompose hard goals, prune unprovable nodes, and verify each resulting proof under a fixed statement
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

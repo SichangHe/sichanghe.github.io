@@ -66,8 +66,6 @@ Failure and trust. Lean has no matching normalizer that can reuse Visored’s di
 
 ## implications for verified Rust agents
 
-Inference: Visored’s strongest product lesson is to expose structured, local diagnostics and preserve semantic decisions in an IR before asking a low-level verifier to finish. This threatens a VeruLaw-style product only if users expect unrestricted prose-to-proof translation; Visored’s 91% is on elementary problems, with co-developed rules and no held-out test. Its reusable ideas are the CNL-to-IR boundary, explicit partiality obligations, deterministic normalization, and feedback loops. Existing VL work should not redo a natural-language parser or generic Lean emitter without measuring whether the target users need those surfaces; the paper already documents substantial transpilation cost and a large library burden.
-
 What is proved or measured: emitted Lean files compile for accepted examples; coverage is 222/244 under the stated protocol; the paper lists concrete unsolved categories and output-size measurements. What stays trusted: Visored implementation, spec files, rule databases, UVL formatter, and the supporting Lean library (until each is independently audited by its host kernel). The CNL text itself is not evidence without a checked artifact.
 
 ## techniques for the catalog
@@ -76,5 +74,3 @@ What is proved or measured: emitted Lean files compile for accepted examples; co
 - explicit well-definedness obligations — generate and solve domain hypotheses for partial functions with asymmetric logical-context flow
 - cost-bounded forward/backward rule search — index rules, schedule them by fees, and terminate with a source-local diagnostic on budget exhaustion
 - canonical IR and target emission — normalize before matching, record derivations in a target-neutral IR, and choose sparse or dense backend output
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

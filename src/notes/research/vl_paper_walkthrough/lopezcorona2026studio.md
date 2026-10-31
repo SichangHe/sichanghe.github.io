@@ -6,8 +6,6 @@ Tag: `lopezcorona2026studio`, [paper](https://doi.org/10.48550/arxiv.2608.22194)
 
 López-Corona defines “studio mathematics” as a governed production regime in which people, generative systems, formal verification, repositories, software, and institutions jointly produce a result. The paper is a conceptual and design paper, not an evaluation of a verifier or a Rust implementation. Its formal-verification lesson is that a machine-checked derivation is one layer in a larger evidence and responsibility system. The supplement makes the non-empirical status explicit: “The understanding audit, AI-use scale, contribution-authority trace, and proposed benchmark are prospective.” (Supplement S1, p. 27.)
 
-The paper’s central object is a CIMA proof-production ecobiont: a coupled system of human agents, computational or generative agents, material and symbolic artifacts, and a task environment. The paper separates a tool from a production unit: “A proof assistant is a tool. A large language model is a tool. A repository is a tool and an archive.” (Section 4, p. 8.) A studio is the organized coupling, with a claim-specific governance test. This distinction is useful for VL because Verus can discharge proof obligations while the surrounding Rust specification, dependencies, generated suggestions, and release decision remain human-system responsibilities.
-
 ## technique: claim-relative governance rule
 
 what it is
@@ -46,8 +44,6 @@ The paper replaces a binary “used AI” declaration with levels L0–L5 descri
 
 when to use it
 
-Use the scale for every VL project or output in which an agent contributes to requirements, proof search, specifications, proof code, tests, or exposition. Use L4 when generated formal material materially enters a proof but a named human audits it. Use L5 when the end-to-end result is generated and human reconstruction is limited.
-
 how to do it
 
 1. Identify the highest intervention level that occurred.
@@ -65,8 +61,6 @@ Inference: Add an AI-use manifest to the repository or release bundle keyed to c
 what shows it works and what does not
 
 The scale is a reporting design. Its levels and minimum disclosures are specified, but no inter-rater study or causal benchmark is reported. The supplement calls it prospective and unvalidated (S1, p. 27). The scale therefore enables reproducible disclosure but does not prove understanding or correctness.
-
-Inference: VL should use the level to route review effort: L3 requires proof-search trace inspection, L4 requires reconstruction and dependency review, and L5 requires a release gate that can reject the artifact. This is an operational recommendation derived from the paper’s levels, not a reported result.
 
 ## technique: layered proof record
 
@@ -93,8 +87,6 @@ Inference: The formal layer is a Verus function contract plus proof code erased 
 what shows it works and what does not
 
 The paper offers the layered model and examples from formal mathematics; it reports no completion or defect-rate denominator. It explicitly says a formalized proof can certify that a derivation exists without explaining why the theorem is true (Section 6, p. 13). Therefore the model is a design aid, not evidence that a particular workflow improves correctness.
-
-Inference: The product threat is medium: omitting these layers increases maintenance and specification risk even when current Verus checks pass, but the paper supplies no evidence that every VL project needs equal documentation depth.
 
 ## technique: prospective understanding audit
 
@@ -125,8 +117,6 @@ what shows it works and what does not
 
 The protocol is prospective and unvalidated. The paper says, “The protocol cannot guarantee understanding, but it makes ceremonial oversight harder to confuse with epistemic agency.” (Section 6.1, p. 14.) No participant count, denominator, reliability estimate, or pass threshold is supplied.
 
-Inference: The threat to VL is high for governance claims but low for theorem soundness: a passing audit does not prove code, while its absence makes “human reviewed” a weak product claim.
-
 ## technique: conditional antifragility through error conversion
 
 what it is
@@ -134,8 +124,6 @@ what it is
 The paper models a proof-production system S, perturbations P, and utility U. P includes counterexamples, failed formalizations, hallucinated steps, broken dependencies, adversarial review, benchmark failures, automation shocks, rapid generation, deskilling pressure, and lock-in. The system is “antifragile only when perturbations in P systematically improve U.” (Section 8, p. 16.) Four operational conditions follow: retain failures as inspectable traces, select informative failures, convert a detected gap into a corrected proof or related artifact, and expose the conversion enough for public trust (Section 8, pp. 16–17).
 
 when to use it
-
-Use this loop for ongoing VL maintenance, especially when solver failures, counterexamples, dependency breaks, or generated proof mistakes occur.
 
 how to do it
 
@@ -152,8 +140,6 @@ Inference: Keep failed Verus invocations, counterexample traces, solver versions
 what shows it works and what does not
 
 This is a normative design principle. The paper reports no before/after utility denominator and no experiment showing that failures systematically improve U. It cautions that a failed formalization is useful only if it reveals a gap, strengthens a definition or library, or documents a limitation (Section 8, p. 16).
-
-Inference: This threatens VL mainly through maintenance opacity: retaining and converting failures can improve evidence, but the paper does not establish the cost or an optimal retention policy.
 
 ## technique: evidence contract and claim ledger
 
@@ -182,17 +168,9 @@ what shows it works and what does not
 
 The ledger is a traceability mechanism. The paper reports no independent validation of the ontology or ledger and says its FCA and robustness outputs are representations, not proof that the ontology is true (Supplement S1, p. 27). Its evidence is therefore methodological rather than numerical.
 
-Inference: This is a medium product threat: without claim separation, VL users may mistake solver success for end-to-end product correctness; the ledger adds review work but exposes that distinction.
-
 ## what is proved, measured, and trusted
 
 The paper proves no theorem about LLMs, proof assistants, or Rust. It defines an ontology, governance conditions, disclosure levels, audit dimensions, and a ledger schema. It reports no participant benchmark, inter-rater reliability, causal comparison, or utility denominator for the proposed protocols. The paper’s own limitations are explicit: “They have not been validated psychometrically or causally.” (Supplement S1, p. 27.)
-
-Inference: In a Verus deployment, the trusted base still includes the Verus verifier and solver behavior, proof-code erasure, Rust compiler, external-library specifications, hardware, and operating environment, as described in the Verus reference used by VL. The paper’s governance layer adds trust obligations around provenance, reconstruction, challenge, authority, and responsibility; it does not remove those technical assumptions.
-
-## what VL should not redo
-
-The paper already provides a five-condition claim-relative governance rule, L0–L5 intervention scale, seven-dimension understanding audit, five-layer proof record, error-conversion conditions, and evidence-ledger fields. VL should reuse these concepts rather than inventing another binary AI-use label or another unscored “human in the loop” assertion. The proposed instruments remain unvalidated, so VL should not present them as established measures.
 
 ## threat to agent-written verified Rust
 
@@ -206,4 +184,3 @@ Inference: The paper presents a substantial governance threat and a conditional 
 - prospective understanding audit: test strategy, dependencies, reconstruction, diagnosis, transfer, significance, and authorization after assistance
 - conditional antifragility: retain, select, convert, and expose failures so perturbations improve defined utility
 - evidence contract and claim ledger: give each claim an ID, type, evidence basis, validation route, status, and uncertainty
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

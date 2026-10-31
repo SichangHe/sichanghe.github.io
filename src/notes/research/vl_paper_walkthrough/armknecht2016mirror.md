@@ -63,12 +63,6 @@ Mirror's honest provider throughput was about 6 verification operations per seco
 
 The argument relies on RSA-related hardness and PRF assumptions, erasure coding, random challenges, a reconstruction-cost model, and bounded provider parallelism (Sections 3.2–4.2, pp. 1056–1061). The paper states, “We assume that an erasure coding is applied to the file to ensure the recovery of file contents from any fraction δ of the file.” (Section 4.1, p. 1059.) The protocol does not provide confidentiality itself: the paper assumes the user encrypts before Store (Section 2.4, p. 1054). It also assumes files and replicas cannot be further compressed (Section 2.4, p. 1055). Characteristic padding disambiguates roots probabilistically: footnote 4 allows more than one matching root and chooses padding to make the expected number of incorrectly reconstructed sectors less than 1 (pp. 1057, 1060). Inference: this is not an unconditional unique-decoding theorem.
 
-Inference: protocol states, algebraic equations, and extraction interfaces could inform a verified Rust storage service; this paper does not measure the competitive threat to VL. The cryptographic security and economic assumptions remain outside such a proof. For VL, the actionable pattern is to specify every role and transition, prove algebraic consistency and resource-accounting conditions, and document cryptographic primitives as trusted assumptions.
-
-## what VL should not redo
-
-Inference: VL should not present the paper’s PoR² interface, three security goals, provider-side replica construction, RSA/LFSR puzzle, extraction reasoning, or cost-based parameter-selection equation as new protocol ideas. A new implementation effort should verify concrete message serialization, modular arithmetic, replica-index handling, challenge sampling, and failure behavior, then validate the assumptions that the paper leaves abstract.
-
 ## techniques for the catalog
 
 - compositional PoR² model — specify Store, Replicate, CheckReplica, Verify, extractability, storage allocation, and correct replication as separate interfaces and properties
@@ -76,5 +70,3 @@ Inference: VL should not present the paper’s PoR² interface, three security g
 - compact batch verification — challenge blocks and a subset of replicas, cancel reconstructible blinding factors, and check one multiplicative equation
 - verifier projection and matrix precomputation — eliminate one group component and combine LFSR state sums, including remainder sectors
 - extraction and rational binding — recover sectors from enough responses and choose LFSR coefficients so on-demand reconstruction costs more than storage
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Recall that both the user and the provider determine the blinding factors by computing LFSR sequences."): read the full paper, including references and appendices, and the whole study; checked quotations, numbers, page and section references, protocol steps, security assumptions, and performance claims; corrected Store metadata, general Replicate roles, public LFSR inputs and shared polynomials, challenge-response details, references, and economic qualifications; marked proposed verification work as inference; did not reproduce experiments, independently prove cryptographic or matrix arguments, or verify a Rust implementation.

@@ -30,8 +30,6 @@ Prove a standard Hoare judgment:
 `⊢ ⌈c⌉ : Ψ ∧ vε=0 ∧ vδ=0 ⇒ out1=out2 ∧ vε≤ε ∧ vδ≤δ`.
 Theorem 5 says this implies `(ε,δ)` differential privacy (Section 3.G, p. 7); Lemma 2 gives the distribution-lifting form, via ε-distance (Section 3.F). The paper's proof is in Appendix B (Lemma 9, by induction on the program). The paper states: “Our main result (Theorem 5 in §III) states that once we perform this transformation, we can use plain Hoare logic to complete the verification.” (Section 1, p. 2).
 
-Verus form (Inference): define abstract `spec fn` mechanism contracts and prove budget lemmas with `requires`/`ensures`; use a ghost `v_epsilon` and `v_delta` in loop invariants. An `external_body` helper would enlarge trust, so any production VL integration needs a separately validated probabilistic abstraction.
-
 ## technique 4: ordinary loop invariants capture privacy history
 For each synchronized loop, prove an invariant relating both states, outputs, accumulators, and remaining privacy budget. In the smart-sum example, the invariant includes adjacency, equal outputs/accumulators, `|c1−c2|≤1`, and the conjuncts `(l1≠l2 ⇒ vε=0)`, `(c1≠c2 ⇒ l1=l2 ∧ vε≤ε)` and `(l1=l2 → vε≤2ε)` (Section 5.A, p. 9). The paper's informal argument is that smartsum is 2ε-private. It verifies the invariant by three cases: the differing entry is not processed yet and not in the next iteration, it is processed in the next iteration, or it was already processed (no more budget consumed).
 
@@ -49,12 +47,8 @@ The paper presents four examples: smart sum, MWEM, PTR, and vertex cover (Sectio
 
 What is proved: the self-product soundness theorem (Theorem 5) under termination, synchronized guards, and valid mechanism specifications. Inference: the trusted parts are the probabilistic semantics, the Laplace/Exponential mechanism theorems, the abstract-procedure contracts, the Hoare calculus, and the source-to-product transformation. Inference: the introduction says synchronized products perform executions in lockstep, “dramatically simplifying the verification task for certain properties” (Section 1, p. 1), while the vertex-cover limitation shows simplification does not imply completeness.
 
-Threat to VeruLaw (Inference): this is a reusable 2-safety reduction for agent-written verified Rust when privacy or relational behavior is a product requirement. It could be implemented as a Rust library pattern with paired state and ghost budget invariants. The direct threat is low unless VL promises differential privacy: distribution semantics and mechanism contracts would be substantial trusted infrastructure. VL should not redo generic self-composition; a useful new result would be an audited Verus encoding with measured proof effort and explicit trust boundaries.
-
 ## techniques for the catalog
 - synchronized self-product — duplicate two executions, synchronize control flow, and assert branch agreement
 - abstract mechanism replacement — replace random calls with equal-output budget-charging contracts
 - budgeted relational invariants — track adjacency, equal state, and privacy cost through ordinary loops
 - PTR proof pattern — combine sensitivity, Laplace accuracy, and branch synchronization for approximate privacy
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Hence, we do not concern ourselves with the details here, and treat the update step as a black box."): read all 20 pages of the text (main body and appendices A to C) and the whole study; checked quotations, page and section references (page numbers of the arXiv v1 PDF), Figures 4, 5, 8 to 12, the smartsum invariant and Theorem 5; changed the description of the product (synchronized product, not self-composition), the Definition 1 and figure page references, two quotations (capitalization and a stray comma), the PTR specification and branch argument, the vertex-cover and evidence paragraphs (the other three examples were machine-checked in EasyCrypt), and marked trust claims as Inference; did not check the appendix proofs in detail, the cited external works, or the Verus translation ideas (all Inference); link kept from the fetch record (arXiv ID matches the paper text).

@@ -6,7 +6,7 @@ Tag: `nguyen2025reasoning`, [paper](https://arxiv.org/abs/2510.02230)
 
 Nguyen, La, Nguyen, Chawla, Nguyen, and Doan study reinforcement learning with verifiable rewards (RLVR) for language-model reasoning. Their central claim is that ordinary on-policy RLVR can improve one-sample accuracy while shrinking the set of problems for which repeated sampling finds a correct answer. The paper names the mechanism negative interference and explains it with a winner-take-all effect. The abstract states: "Reinforcement Learning with Verifiable Rewards (RLVR) has emerged as a key method for improving Large Language Models’ reasoning capabilities, yet recent evidence suggests it may paradoxically shrink the reasoning boundary rather than expand it." (Abstract, PDF p. 1)
 
-The paper's useful techniques are (1) a per-step influence diagnostic, (2) interference and influence-strength metrics, (3) probing with base-model traces, (4) a perplexity and accuracy partition to expose on-policy bias, (5) a toy-softmax analysis contrasting REINFORCE with maximum likelihood, and (6) SELF, which filters out greedy-solvable problems and uses Forward KL. These are empirical and mathematical tools for controlling a verifier-reward training loop, rather than a proof of Rust code. Inference: for VeruLaw, they matter when a proof checker supplies a binary reward and training may collapse onto easy proof shapes.
+The paper's useful techniques are (1) a per-step influence diagnostic, (2) interference and influence-strength metrics, (3) probing with base-model traces, (4) a perplexity and accuracy partition to expose on-policy bias, (5) a toy-softmax analysis contrasting REINFORCE with maximum likelihood, and (6) SELF, which filters out greedy-solvable problems and uses Forward KL. These are empirical and mathematical tools for controlling a verifier-reward training loop, rather than a proof of Rust code.
 
 ## technique: formalize cross-example influence
 
@@ -132,15 +132,7 @@ SELF has lower average training reward but higher entropy, improved Δ+, smaller
 
 ## what is proved, measured, and trusted
 
-The paper derives the first-order influence proposition under a small-step policy-gradient assumption and presents a toy-softmax update-ratio derivation. It measures Pass@k, perplexity, rewards, entropy, response length, trust-region violations, Δ+, ||Δ||, and Pearson correlations on specified models, datasets, temperatures, sampling budgets, and training steps. Appendix A.1 specifies a shaped training reward, unlike the binary reward used in the theoretical setup: +1 for a correct boxed answer, −0.5 for an incorrect boxed answer, and −1 otherwise (Appendix A.1, PDF p. 14). The paper does not prove the correctness of that reward parser, the neural-network implementation, the optimizer, the dataset labels, or the causal claim that interference alone drives every regression. Inference: for VL, the checker can be stronger than a boxed-answer parser, but the same trust boundary remains around training code and model weights.
-
-## implications for VeruLaw
-
-Inference: do not judge a proof-generating RL run only by Pass@1 or the fraction of prompts with one accepted proof. Track Pass@k over independently sampled proof traces, retain a base-model probe set, and compute per-update changes in verifier-accepted trace likelihood. A falling high-k score with rising low-k score matches the coverage-shrinkage pattern reported in §4.2.
-
-Inference: SELF suggests a data policy for VL. Let the greedy proof attempt be a cheap first pass. Send easy goals to a replay or maintenance pool and train the proof-generating policy on goals whose greedy attempt fails, while a Forward-KL-like constraint preserves old proof traces. This is an engineering hypothesis, not a result established by Nguyen et al.
-
-Inference: the paper's strongest product threat is mode collapse in proof shape. If the model learns one easy invariant pattern, it can raise one-shot acceptance while losing alternate invariants needed for unfamiliar Rust ownership or concurrency states. A probe corpus of previously accepted Verus proofs can expose that loss before deployment.
+The paper derives the first-order influence proposition under a small-step policy-gradient assumption and presents a toy-softmax update-ratio derivation. It measures Pass@k, perplexity, rewards, entropy, response length, trust-region violations, Δ+, ||Δ||, and Pearson correlations on specified models, datasets, temperatures, sampling budgets, and training steps. Appendix A.1 specifies a shaped training reward, unlike the binary reward used in the theoretical setup: +1 for a correct boxed answer, −0.5 for an incorrect boxed answer, and −1 otherwise (Appendix A.1, PDF p. 14). The paper does not prove the correctness of that reward parser, the neural-network implementation, the optimizer, the dataset labels, or the causal claim that interference alone drives every regression.
 
 ## techniques for the catalog
 
@@ -149,4 +141,3 @@ Inference: the paper's strongest product threat is mode collapse in proof shape.
 - on-policy diagnosis: partition problems by accuracy change and compare base-policy perplexity with Pass@k coverage
 - softmax analysis: use a finite bandit to show why REINFORCE favors already-likely actions and to test mitigation ideas
 - SELF curation: filter out greedy-solvable examples and add Forward-KL regularization to preserve diverse behavior
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Furthermore, we find that RLVR tends to concentrate learning on highly solvable problems, leading to reduced diversity and amplification of self-bias toward both previously solvable and unseen problems."): checked the entire paper, quotations, numerical results, references, and technique steps; corrected the paper link, quotations, interference sign, page references, perplexity averaging, sampling budgets, toy-gradient interpretation, SELF indicator inconsistency, and policy-training wording; did not reproduce experiments, inspect code, or independently verify the mathematical proofs or Verus proposals.

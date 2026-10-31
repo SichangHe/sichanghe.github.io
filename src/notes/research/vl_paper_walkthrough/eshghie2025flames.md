@@ -6,8 +6,6 @@ Tag: `eshghie2025flames`, [paper](https://arxiv.org/abs/2510.21401)
 
 FLAMES is a pipeline that turns Solidity source into executable `require` guards. Its central claim is that domain-adapted fill-in-the-middle fine-tuning can produce deployable preconditions and postconditions without vulnerability labels or natural-language specifications. The paper evaluates compilation, semantic relation to human-written invariants, exploit replay, and one real incident. The abstract and Figure 1 report 4,835/5,000 (96.7%) compilable hardened contracts, 2,226/5,000 (44.5%) exact or semantically equivalent invariants, and 22/108 (20.4%) exploits reverted while functionality tests passed (PDF p. 1; success criterion in Section IV-D, PDF p. 6). Inference: these benchmark results do not establish that 96.7% of arbitrary contracts are safe.
 
-Inference: interpreting the results depends on the Solidity compiler, SINDI's SMT/rewrite equivalence checks, functional tests, exploit proof-of-concepts, the Ethereum fork and preserved storage for the incident replay, the base model and fine-tuning code, and the correctness of the supplied ground-truth invariants. The paper explicitly warns that “A high compilation rate is a necessary condition for deployable hardening but not a guarantee of semantic correctness or security” (Section IV-B, PDF p. 5). Inference: for VeruLaw, this separates syntactic generation from a Verus proof: a compiling Rust guard is useful only after a Verus contract states the property and the verifier proves it.
-
 ## technique 1: AST-guided context abstraction
 
 What it is. FLAMES parses a contract into an abstract syntax tree, identifies a target function and insertion point, and removes code to reduce context length. Section II-B specifies six steps: retain the target function body, definitions of functions that call it, modifiers applied to those functions, signatures of other functions, and state declarations; remove event definitions (PDF p. 3). Its final step is “it removes event definition”.
@@ -60,10 +58,6 @@ Verus form. Inference: replace exploit replay with a Verus proof harness. Expres
 
 FLAMES reproduces the June 2024 APEMAGA attack on an Ethereum fork at the block before the attack, preserves storage, replaces the token runtime, and runs the published exploit script (Section IV-E, PDF p. 6). Section V-D reports the generated predicate as `account == _msgSender()`, semantically equivalent to the ground-truth authorization guard `msg.sender==account`; compilation succeeded and the exploit reverted (Figure 10 and Section V-D, PDF p. 10). The experiment used manual review of the attack and published patch to identify the function and missing-invariant location (Section IV-E, PDF p. 6). Inference: the analogous Verus experiment would model the vulnerable state transition, prove that a caller identity precondition prevents unauthorized burn, and separately validate the model against the deployed implementation.
 
-## what VL should retain and what it should not redo
-
-Inference: the reusable ideas are AST-based context reduction, FIM training on real contracts, explicit semantic-equivalence categories, and a three-part compile/test/exploit prerequisite check. VL could adapt that check to Verus verification plus executable regression tests. Both FLAMES variants had zero successful mitigations for unchecked low-level calls, front-running, and the Other class (Table IV, PDF p. 9); the baseline did mitigate four unchecked-low-level-call cases per placement. Inference: a product risk is false confidence from compilable or functionality-preserving guards that are orthogonal to the exploit; the reentrancy example in Figure 9 demonstrates this failure (Section V-C, PDF p. 9).
-
 ## techniques for the catalog
 
 - AST-guided context abstraction — retain target code, callers, modifiers, state, and signatures while removing events before synthesis
@@ -73,4 +67,3 @@ Inference: the reusable ideas are AST-based context reduction, FIM training on r
 - Compile/test/exploit validation — accept a synthesized guard only after compilation, regression tests, and exploit replay all succeed
 
 - Incident replay hardening — fork pre-incident state, inject a guard, and run the published attack transaction to validate mitigation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "If the hardened contract compiles, passes all functional tests, and successfully stops the exploit, the hardening task is considered successful."): checked the entire paper, quotations, numbers, section and PDF page references, technique steps, tag, and link; corrected the unrelated DOI, page references, authorization predicate, semantic-category description, baseline mitigation scope, and unsupported interpretations; did not reproduce experiments, inspect released code or data, or independently validate Verus adaptations.

@@ -82,8 +82,6 @@ Inference: a Verus backend could generate one proof lemma per tuple and let Z3 d
 
 Stated by the paper: it specifies the tuple-generation algorithms, says they are implemented in iState, and gives a predicate semantics corresponding to statechart structure. It contains no soundness theorem relating generated conditions to an operational semantics, and no benchmark measurements. The translation from statecharts to event code is taken from refs. [15,16]. The paper disallows circular broadcasting (§4, p. 7) and enforces a single way to initialize a state by disallowing some statechart variants (§5, p. 9).
 
-Inference: the trusted components are the statechart-to-AST translation, Simplify, the logical encoding and the designer's invariants. For Verus, the largest threat is specification error: a false or incomplete state invariant can make every generated proof succeed while missing the real requirement. Inference: VL should not redo generic guarded-command verification-condition generation or statechart invariant accumulation as a new technique. It should reuse the decomposition if a product workflow has hierarchical event models. Inference: threat to agent-written verified Rust is medium for reactive controllers and low for ordinary data-structure proofs.
-
 ## techniques for the catalog
 
 - hierarchical state invariants — attach predicates to states and accumulate them through XOR, AND, and ancestor structure
@@ -91,5 +89,3 @@ Inference: the trusted components are the statechart-to-AST translation, Simplif
 - parallel/sequential products — compose tuple sets by Cartesian products while preserving nondeterminism
 - broadcast elimination — topologically expand event calls into broadcast-free verification tuples
 - predicate statechart semantics — recursively generate tuples for initialization, ordinary, and spontaneous transitions
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Hence, we can construct a global verification tuple map for all events using the following function"): read all 573 lines of the paper text start to end and compared every quotation, formula, definition, page and section reference, and technique step; changed the XOR child invariant (an xor over children, not a disjunction), the example action (three state variables, not four), several page references (§2 and the s2tuples definitions), the unsupported "full algorithm", the unsupported liveness and scaling statements (now marked as belief or Inference), and added the paper's typo in the if-then-else product example; did not check the PDF layout of the formulas beyond the text, the cited references, or the earlier FM 2006 abstract, and the link is the arXiv ID printed in the paper.

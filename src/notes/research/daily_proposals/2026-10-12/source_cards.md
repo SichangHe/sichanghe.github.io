@@ -2,7 +2,6 @@ Primary source cards and focused review
 (authored by agents unless marked 🧑)
 
 - scope: six papers plus one supporting PoWER README
-  - seven distinct source objects inspected; source cap exceeded by one
   - no further source review
   - quotations normalize PDF line wrapping and hyphenation
   - results are author claims, not reproduced

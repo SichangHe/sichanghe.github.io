@@ -34,13 +34,9 @@ The default experiments use 512 expansions, three children per expansion, vLLM, 
 
 On MATH500, Table 5 reports pass@1 23.0%, majority@12 34.8%, and RF-MCTS 40.0%; RF-MCTS produces approximately 12 terminated paths per problem. The formal proof experiments use DeepSeekProverV2-7B for Lean, Qwen2.5-Coder-14B-Instruct for Isabelle, and Qwen3.5-9B for Rocq (Section 4.1, pp. 5–6). Inference: cross-language percentages therefore do not isolate search alone. Limitations include vLLM-only inference, no interleaved external tool calls, a domain focus on mathematics, static rather than live visualization, and no full factorial benchmark.
 
-Inference: TreeThink offers reusable proof-search infrastructure for VL, but the paper establishes no Verus-specific results. A Verus adaptation would still need Verus to check generated proofs. Inference: VL should reuse modular search and strict verifier interaction, then measure Verus-specific proof success, compile cost, cache validity, and diagnostic usefulness.
-
 ## techniques for the catalog
 
 - modular proof-tree search — separate selection, policy expansion, evaluation, and verification so each can be replaced
 - asynchronous MCTS and beam search — batch candidate generation and checking to reduce wall-clock search time
 - pluggable evaluators — select likelihood, reward, novelty, judge, tournament, or REPL signals for node ordering
 - verifier adapter and cache — standardize REPL calls and cache checked proof text
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We aim to demonstrate how concurrency affects the average solution time, rather than an improvement in accuracy."): checked all quotations, numbers, section/page references, technique descriptions, and catalog entries; corrected length-normalization units, judge-score scope, asynchronous success counts, accuracy qualification, and evaluator/catalog wording; did not inspect source code or reproduce experiments.

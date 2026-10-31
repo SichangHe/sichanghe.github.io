@@ -56,15 +56,8 @@ Verus form. Inference: use a Verus abstract request/state model and prove set in
 
 evidence and limits. AUTO CEDAR’s formal property checks passed 100% for its 221 CedarBench artifacts; direct GPT-5.5 passed 4,397/4,991 individual checks (88.1%) and fully passed 176/221 scenarios (Table V, p. 7). Real-world request matches were 182/182 for AUTO CEDAR (76+68+38), while repaired GPT-5.5 matched 130/144 for IBM and CyberChair (72/76 + 58/68, Table VI, p. 8). Inference: symbolic completeness is bounded by Cedar’s supported fragment and the correctness of the compiler/SMT encoding; request tests add behavioral evidence but do not replace the target proof.
 
-## what remains trusted and threat to VL
-
-Trusted or assumed components include the Cedar semantics, `cedar symcc`, cvc5, schema and boundary construction, reviewer intent judgments, source coverage, and the claim that the benchmark targets represent requirements. The paper’s human study had 98 probe answers: AUTO CEDAR was preferred in 82/98 (83.7%), direct LLM in 8/98, and tie/neither in 8/98 (Section V-D, p. 8); this is preference evidence, not correctness proof. The paper also says live human-in-the-loop workflow was not evaluated and review was sparse (Section VI, p. 9).
-
-Inference: the threat to agent-written verified Rust is specification authority. A Verus proof can be complete while proving a boundary that omitted a required behavior, permits an unsafe state, or hides an assumption in a ghost predicate. AUTO CEDAR’s reviewed atoms, fixed target, typed verifier feedback, immutable plan, and evidence trace provide a concrete VL design: review requirements into source-linked contracts, reject incompatible targets before code generation, run Verus on each candidate, and preserve witnesses and repair history. Inference: VL should measure seeded omissions, over-permissive contracts, and hidden ghost-state strengthening with caught/missed denominators; this paper’s 221/221 benchmark cannot establish production coverage.
-
 ## techniques for the catalog
 
 - reviewed intent atoms and fixed semantic boundary — decompose prose into source-linked, reviewer-approved schema and behavior atoms, then freeze floors, ceilings, and liveness before synthesis
 - verifier-guided CEGIS with typed repair signals — classify verifier failures by target admission, semantic direction, local diagnostics, or history and send target-preserving repair packets
 - symbolic set checking and request witnesses — use SMT policy-denotation inclusion and concrete set-difference requests, with request tests as supplementary evidence
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

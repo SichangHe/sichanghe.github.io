@@ -88,12 +88,6 @@ MuVal solved 76 VALID and 72 INVALID of 159 µCLP instances, and Mu2CHC 74 VALID
 
 Fixed template families (Interval, Octagon, Octahedron, Polyhedron) did "significantly worse" than stratified templates; Polyhedron and Interval did even worse than Octahedron and Octagon (§7, pp.19–20). The paper believes Polyhedron templates overfit and Interval templates lack expressiveness (p.20).
 
-## what is proved, trusted, and relevant to VL
-
-The paper states Theorem 5.2 (reduction soundness and completeness) and Theorem 6.1 (relative completeness) as mathematical claims; the main text gives only brief justifications for the supporting lemmas. Empirical results are the benchmark counts in §7. Inference: a successful result depends on the µCLP encoding, template grammar, SMT/SAT solvers, implementation, arithmetic theory and timeout. The framework does not prove the correctness of a Rust implementation or the adequacy of a specification.
-
-Inference: threat to agent-written verified Rust is medium to high for invariant and termination automation. The modular encoding, ranking templates and counterexample loop are directly useful for generating Verus `spec fn` invariants and `decreases` proofs. However, arbitrary fixpoints and temporal properties require a new Rust model layer. Existing PCSat already covers CEGIS invariant/ranking synthesis; VL should not claim those algorithms as novel without a Rust/Verus-specific integration and measurements.
-
 ## techniques for the catalog
 
 - modular µCLP fixpoint encoding — express termination, non-termination and temporal properties with nested least/greatest predicates
@@ -102,4 +96,3 @@ Inference: threat to agent-written verified Rust is medium to high for invariant
 - ranking-function templates — use piecewise affine and lexicographic well-founded relations for termination
 - unsat-core template growth — increase only template parameters implicated by unsatisfiable cores
 - primal-dual solving — solve a query and its De Morgan dual concurrently
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Templates can effectively restrict the solution space to explore and be made to satisfy the well-foundedness constraints at the same time."): read the paper text from line 1 to the end, including the appendix, and checked every quotation, number, section and page reference and the technique steps in the study; I rewrote the reduction steps to match elim∃/elimµ/elimν, fixed the capitalization of one quotation, corrected page references (equations (1)–(4) are on p.5, the CEGIS divergence sentence on p.15, the implementation sentence on p.18), replaced the stratified CEGIS step references, removed a vague sentence about evaluation counts and an unsupported claim about the paper's attribution of results, and marked own conclusions as Inference; I did not check the cited prior work, the Verus mappings (own inferences), the Figure 1 plots beyond the stated counts, or run the tools.

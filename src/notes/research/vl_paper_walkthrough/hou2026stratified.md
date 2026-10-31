@@ -30,14 +30,8 @@ Results and denominators: on FOLIO, Qwen2.5-7B few-shot Pass@10 is 21.875%; vani
 
 Verus form: Inference: fine-tune a smaller model on accepted Verus specifications and the natural-language requirement, optionally retaining checker diagnostics. Use LoRA or another adapter, but make verification mandatory at deployment. Pass@K should mean at least one of K candidates passes Verus, with denominator and split stated.
 
-## evidence, assumptions, and VL threat
-The paper measures formula equivalence, partial structural similarity, latency, and entropy-selection behavior; it does not prove that the extracted policy context itself is complete or that Z3 models every intended real-world policy. Z3 equivalence, Egglog anti-unification, declarations, generated synthetic pairs, and LoRA training are trusted. Latency is measured on a P4d EC2 instance: Claude Sonnet 3.7 P50/P90/P99 16.680/28.042/29.425 s versus fine-tuned Qwen2.5-7B 4.040/5.074/5.651 s (Table 2, p.6).
-
-Inference: SCD is useful for VL because it turns teacher disagreement into an abstention signal and supplies semantically equivalent proof/spec variants for training. It should not be used to label an unverified Rust proof correct. Inference: threat to agent-written verified Rust is pseudo-label contamination—if a frontier model repeatedly emits the same flawed specification, low entropy can amplify the mistake. Require an executable Verus check, retain abstentions, and separate solver equivalence from code safety. The paper’s own conclusion is limited to translation quality and deployment efficiency, not end-to-end software correctness.
-
 ## techniques for the catalog
 - synthetic formalization pipeline: extract declarations and rules, generate natural-language pairs, and produce formal completions
 - semantic equivalence clustering: use solver checks to group logically identical candidates before labeling
 - entropy-stratified selection: vote, judge, or abstain according to disagreement among equivalence classes
 - checker-gated distillation: fine-tune a small model on selected labels while retaining formal verification as the deployment gate
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

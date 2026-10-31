@@ -60,14 +60,6 @@ Evidence: The reviews mark both tasks correct and say the definitions were “sy
 
 Verus form (Inference): Represent recursive data with Rust enums or structs and state recursive invariants in `spec fn`s. Prove constructor and destructor properties with `proof fn`s and `ensures`. Ensure recursive specifications terminate under Verus's rules. Axiotome's sum/product notation maps conceptually to enums/structs, but the generated Rust must satisfy ownership and termination checks.
 
-## evidence, trust, and product threat
-
-Inference: The strongest evidence is nine prompted tasks in one session, with eight labeled correct and one mostly correct (Table 1, p. 13). The paper itself says “GPT-4 did make some errors. This implies that the system should still be used with supervision.” (Section 4, Result Summary, p. 14) The paper has two sections numbered 4, “Result Summary” and “Conclusions”. It also says GPT-4 “commands a genuine understanding of the task and its context” (Section 4, Conclusions, p. 14), a judgment drawn from the qualitative reviews rather than from a controlled test. Inference: treat that as the author's opinion. No denominator supports a claim about general theorem-proving reliability, and no formal checker execution or repeated trials are reported.
-
-Inference: Trusted elements include the human-written Axiotome specification, the author's task and correctness judgments, and the assumption that the model had not seen Axiotome examples. The model's explanations are not proof evidence. The paper warns that a limited context window constrains how many definitions and theorems can be retained (Section 4, Conclusions, p. 14).
-
-Inference: Threat to a product that generates agent-written verified Rust is medium for syntax transfer and proof repair, high if model text is accepted without compiling, and lower when every patch is checked by Verus. VL should reuse the prompt-plus-checker loop and deliberate error-audit task; it should not claim that this anecdotal Axiotome study establishes Verus correctness or broad reliability.
-
 ## techniques for the catalog
 
 - Inference: compact language specification — provide grammar, semantics, and worked examples before requesting formal code
@@ -76,4 +68,3 @@ Inference: Threat to a product that generates agent-written verified Rust is med
 - Inference: proof auditing and repair — present a faulty derivation, require diagnosis, correction, and independent checking
 - Inference: conversational theorem sequencing — retain verified definitions while requesting analogous later theorems
 - Inference: inductive type synthesis — generate sum/product and recursive type definitions from a short specification
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "GPT-4 chose to sequence the cases in the order FF, FT, TF, FF (rather than FF, TF, FT, TT)."): read the whole paper text and checked every quotation, section and page reference, and each technique description against it; changed the page of the Section 3.1 and 3.4 quotes (p. 5 and p. 8), replaced a misquote (“made some errors”) and its wrong section (it is in Section 4, Result Summary, p. 14), corrected the description of the omitted disjunction axiom in De Morgan's proof, replaced the lost equivalence symbol, and added the paper's own wording on the training-data guarantee and on “genuine understanding”; the link is from the fetch record (the paper text gives no arXiv ID for itself). Not checked: the PDF layout of the two-column pages beyond the text extraction, the equivalence symbol glyph, and all Verus-form statements, which are the study's own inferences and not in the paper.

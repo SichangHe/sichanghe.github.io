@@ -60,17 +60,9 @@ Verus form (Inference): for a bounded loop, encode `Sum` and `Product` as recurs
 
 evidence and limits: the paper calls the construction effective and says it “yields rather complex syntactic preexpectations” (Section 10.1, p. 24). Inference: it may be impractically large; the paper gives no size bound or measurement. The concise example is a hand-sketched equivalence, not an implementation or performance measurement.
 
-## trusted boundary, contradictions, and VL implications
-
-The paper proves expressiveness of `Exp` for wp of pGCL programs; it relies on the wp calculus agreeing with expected values via Kozen duality (Theorem 2.1, p. 6) rather than proving that again, and it needs an oracle for the final inequality (Section 12.1, p. 25). It does not provide the oracle's inequalities, probabilistic model fidelity for a concrete system, or termination of arbitrary programs (it only notes that termination probabilities are expressible, and that deciding bounds on them is hard, Section 12.2, p. 25). Inference: a VL product would need a precise probability model and explicit assumptions about random sources; a successful Verus proof of a deterministic encoding would not establish that a deployed RNG has that distribution.
-
-What VL should not redo (Inference): the core idea of backward expectation transformers and syntax-preserving loop encodings is mature. The useful gap is engineering a restricted, auditable probabilistic model for verified Rust, with explicit denominators and a separate proof of model-to-implementation correspondence. Inference: threat to agent-written verified Rust is moderate: agents may prove an expectation about the wrong state model, especially when loop termination and conditioning are hidden in a specification.
-
 ## techniques for the catalog
 
 - weakest-preexpectation calculus — transform a probabilistic program backwards to an expected postvalue and discharge one final inequality
 - expressive expectation syntax — use guards, addition, arithmetic scaling, and bounded sup/inf while preserving a normal form
 - constructive Sum/Product — encode finite path sums and products with sequence predicates and substitution
 - loop path encoding — represent weakest preexpectations of loops as a supremum over encoded state sequences
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Given an oracle for discharging inequalities between syntactic expectations, every correct inequality of the above form can be derived."): read the whole paper text (main text and appendices A-D); checked every quotation, theorem, section and page reference against the printed page numbers, and the technique steps against Sections 2, 4, 6-10, 12 and 13; changed the page references for Sections 4, 6, 7.2-7.4, 9.2, 10.1 and 10.2, removed "bounded" from supremum/infimum (the paper ranges over all rationals), corrected step 4 and 5 of technique 3 (Path[f] is defined in the proof of Theorem 10.2, and the sum is over state-sequence Gödel numbers, not a supremum), replaced "soundness ... proved" with what the paper proves, and marked inferences; did not check the long appendix proofs line by line for correctness, the Verus-form paragraphs (inference, not from the paper), or the cited external works.

@@ -51,12 +51,9 @@ Inference: A Verus implementation could render module, lemma, verifier-run, and 
 ## what is proved, trusted, and left open
 The paper proves no new mathematical theorem. It presents an open-source protocol and reports a Lean textbook formalization, without a denominator for completed versus attempted tasks. Lean's kernel and comparator are trusted for the stated checks; GitHub, wrapper scripts, policy files, orchestrator review, and human axiom decisions remain trusted operational components. For Isabelle and Rocq, source-text immutability leaves semantic smuggling possible. The paper reports no security threat model, cost for the Choir run, or comparison against a centralized baseline.
 
-Inference: For VL, the direct product threat is workflow integrity: an agent can submit a compiling but semantically weakened contract if statement comparison or review is inadequate. Choir's immutable-task and deterministic-gate pattern is therefore reusable, but Verus-specific trust audits and contract-diff checks must be designed separately. VL should not redo the generic ideas of GitHub issue task distribution, expiring claims, pull-request gating, salvage branches, or event visualization; it should adapt and measure them for Rust/Verus.
-
 ## techniques for the catalog
 - shallow roadmap with worker decomposition: publish only a theorem skeleton, then let workers return child lemmas and update the dependency graph
 - deterministic verification gate: rebuild source, audit axioms/placeholders, and enforce statement immutability before review and merge
 - lease and salvage workflow: use expiring claims and preserve partial failed proofs for follow-up tasks
 - proof golfing: optimize a proved declaration while keeping its statement fixed
 - auditable history visualization: reconstruct proof-tree growth from repository events
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

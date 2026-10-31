@@ -36,9 +36,6 @@ PATE splits old and patched binaries into conflict-free acyclic regions, infers 
 
 Inference: what is proved is conditional. SAW proves the lifted machine code meets supplied memory and functional specifications under Crucible's memory model; PATE proves relational behavior under inferred frame conditions. The trusted elements include hand-written or generated ISA semantics, parser/disassembler correctness, solver soundness, ABI assumptions, external specifications, and any environment overrides. The paper names a limitation: Macaw-Refinement's reliance on SMT solving “can increase discovery time in a way that is unacceptable for many applications.” Its conclusion notes: “Our current focus is on improving Macaw’s code discovery capabilities.” (Section 5, p. 26.)
 
-Inference: for VeruLaw, Macaw's typed IR, ISA-semantic generation, and mixed-language symbolic checking are prior art to reuse conceptually, not features to reimplement in a Rust proof agent. The product threat is concentrated in semantic gaps: a generated verified Rust program can still be wrong if its unsafe/foreign boundary or specification is wrong. The practical lesson is to keep executable semantics, parser contracts, and proof obligations in one typed intermediate model, then differentially test generated semantics before asking Verus to prove client code.
-
-
 ## techniques for the catalog
 
 - intrinsically typed machine IR — index addresses, value shapes, architectures, and function identifiers so malformed combinations fail at compile time
@@ -46,4 +43,3 @@ Inference: for VeruLaw, Macaw's typed IR, ISA-semantic generation, and mixed-lan
 - semantics generation spectrum — choose hand-written, fuzz-and-hardware synthesized, or executable-specification translation based on ISA size and specification quality
 - symbolic lifting to Hoare proofs — lift machine code to an SMT-backed CFG and check pre/postconditions over a memory model
 - relational binary verification — compare original and patched acyclic regions against frame conditions inferred from the original
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This is a theme that would continue to reappear as we moved in the direction of increased automation."): read the whole paper text (arXiv v3, pages 1:1 to 1:26 plus references); checked every quotation, page and section reference, the technique steps, the SAW increment example, case-study descriptions and compile-time numbers; changed the paper link (the DOI given was the unrelated Anand et al. EuroSys 2013 reference; now the arXiv page from the paper text), the x86 semantics page range, the compile-time citations, an unsupported runtime-performance claim, and marked unlabeled conclusions as Inference; did not check the cited external works, the figures beyond their captions, or the Haskell code listings character by character.

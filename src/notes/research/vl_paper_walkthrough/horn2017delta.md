@@ -39,9 +39,6 @@ For link-failure queries, Table 4 separately reports graph computation and compu
 
 The implemented model handles IP-prefix matches; concrete non-wildcard header fields can be encoded as separate graph nodes (section 4.1, p. 742). Packet modification and broader multi-range support are future work (section 6, p. 746). Inference: a verified Rust implementation would need explicit assumptions about priorities, topology, packet interpretation, and input traces, and proofs for its tree and bitset operations. This paper alone does not establish the difficulty of those proofs.
 
-## what VL should reuse
-Inference: reuse dynamically refined atom partitions, owner-indexed updates, persistent edge semantics, and delta-graphs. A verified Rust implementation should define simple reference forwarding semantics and prove that optimized atom labels preserve them after each update. The paper motivates a shared labelled graph rather than repeated per-equivalence-class graph construction (section 2.1, pp. 736–738).
-
 ## techniques for the catalog
 - atom partitioning: represent all prefix Boolean combinations as disjoint boundary intervals
 - owner-indexed updates: maintain priority-ordered rule trees per atom and source
@@ -49,4 +46,3 @@ Inference: reuse dynamically refined atom partitions, owner-indexed updates, per
 - delta-graph checking: represent forwarding graphs for atoms whose owner changes
 - set-based transitive closure: adapt Floyd–Warshall with atom-set union and intersection
 - dynamic abstraction refinement: refine precision when a new rule boundary requires it
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "To achieve reproducibility, we organize our data sets as text files in which each line denotes an operation: an insertion or removal of a rule."): checked the full paper, study quotations, numbers, printed page and section references, algorithms, complexity, evaluation scope, and catalog; corrected quotations and attribution, page references, update/query steps, timing and comparison limits, publisher link, and unsupported verification claims; did not reproduce experiments, inspect source code, or verify the proposed Verus proofs.

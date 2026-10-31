@@ -6,8 +6,6 @@ Tag: `long2026cam`, [paper](http://arxiv.org/abs/2605.17255v1)
 
 CAM-Bench is a Lean 4 benchmark for computational and applied mathematics. The paper releases 1,000 proof targets derived from 778 textbook exercises in optimization, numerical linear algebra, and numerical analysis. Its construction contribution is a traceable pipeline that recovers textbook context, turns each exercise into a self-contained informal target, decomposes that target into semantic blocks, and produces Lean declarations with compiler and semantic checks. Its evaluation contribution is a file-level test of proof generation and interactive repair. The paper states: “We introduce CAM-Bench, a Lean 4 theorem-proving benchmark of 1,000 Lean proof targets in computational and applied mathematics” (Abstract, p. 1). It also states that the benchmark problems “often depend on locally introduced definitions, notation, algorithms, and elementary results” (Abstract, p. 1).
 
-The paper’s techniques are useful to VL because they make context recovery, specification fidelity, incremental verification, and execution-guided repair explicit. Inference: a Verus benchmark built from real Rust exercises should preserve the same chain from source requirement to verified target instead of testing isolated theorem statements only.
-
 ## technique 1: recursive dependency expansion and source-grounded enrichment
 
 what it is
@@ -135,11 +133,9 @@ On 200 uniformly sampled instances with an 8-hour budget and local validation, M
 
 ## what is proved, trusted, and still open
 
-Lean’s kernel checks the accepted declarations and completed proofs. The construction additionally trusts source extraction, retrieval, LLM naturalization, semantic reviewers, and the correctness of the benchmark’s recovered statements. The paper says formal assistants “provide a rigorous way to evaluate whether model generated mathematics is not only plausible, but mechanically verifiable” (Section 1, p. 2), but its own 92.5% semantic-review statistic is a diagnostic filter rather than a kernel theorem about source equivalence. Inference: VL must keep the requirement-to-contract link as a separate trust boundary; Verus can prove a Rust contract while the contract is still the wrong requirement.
+Lean’s kernel checks the accepted declarations and completed proofs. The construction additionally trusts source extraction, retrieval, LLM naturalization, semantic reviewers, and the correctness of the benchmark’s recovered statements. The paper says formal assistants “provide a rigorous way to evaluate whether model generated mathematics is not only plausible, but mechanically verifiable” (Section 1, p. 2), but its own 92.5% semantic-review statistic is a diagnostic filter rather than a kernel theorem about source equivalence.
 
 The headline percentages use different denominators and settings. The 19.67% DeepSeek value is pass@32 file-level Lean accuracy over N = 778 instances; 44.00% is GPT-5.4 in an interactive, higher-token setting; 71.5% and 62.5% are external-agent rates on a uniform sample of 200 instances. The source funnel percentages are candidate-review pools, not proof success. The paper reports the 778-to-1,000 relation consistently: one exercise can yield multiple targets. No arithmetic contradiction is apparent in these stated fractions, but cross-setting comparisons would be misleading.
-
-Inference: the product threat is substantial for agent-written verified Rust. A model may produce a plausible informal argument yet fail on API grounding, type discipline, missing infrastructure, or long proof trajectories. CAM-Bench’s pass@1 informal accuracy of 70.0–83.8% versus below-20% pass@32 Lean accuracy for the strongest non-agentic baselines (Section 5.1, p. 8) predicts a similar gap when VL agents move from prose to Verus. The mitigations are context recovery, frozen incremental construction, semantic review against requirements, compiler-guided repair, and strict whole-project validation. VL should not redo the paper’s benchmark-construction ideas unchanged; it should adapt them to Rust APIs, ownership, contracts, loop invariants, and dependency assumptions.
 
 ## techniques for the catalog
 
@@ -148,4 +144,3 @@ Inference: the product threat is substantial for agent-written verified Rust. A 
 - frozen-context compilation repair — translate one block at a time against an immutable verified prefix and use compiler diagnostics for bounded local fixes
 - semantic review with rejection control — re-review compilable artifacts, preserve repair history, and reject changes that alter assumptions, quantifiers, domains, or conclusions
 - strict execution-based evaluation — count success only after complete project verification with original statements preserved and proof shortcuts rejected
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

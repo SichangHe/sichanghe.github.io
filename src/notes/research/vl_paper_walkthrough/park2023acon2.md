@@ -65,12 +65,6 @@ Evidence. Table 2 reports averages over 500 transactions: a swap uses `112,904.2
 
 Failure and assumptions. The reported gas study covers the authors' Solidity implementation and uses a historical gas-price setting (Section 5.3, pp. 3324–3325). Inference: product deployments must remeasure under current chain limits, token precision, and adversarial transaction ordering.
 
-## what remains trusted and threat to VeruLaw
-
-Theorem 1 gives a mathematical miscoverage bound conditional on base-learner bounds and Assumptions 1–3 (p. 3320). Section 5 evaluates two price datasets and a Solidity implementation (pp. 3322–3325). Inference: this leaves a gap between the statistical model and executable code; using these results in a verified system would still require justified source-distribution and manipulation assumptions, faithful numerical implementation, and a blockchain execution model. The median used for evaluation is a proxy for an unobserved consensus label, so empirical pseudo-miscoverage does not directly measure coverage of that true label.
-
-Inference: ACon² is a low direct threat to VeruLaw's core Rust verification product. Its useful lesson is a reusable proof pattern for set-valued consensus under adversarial inputs: specify assumptions, prove deterministic aggregation, and separate statistical guarantees from code correctness. VeruLaw could verify a Rust implementation of the consensus and its state machine, but would still need externally justified probabilistic contracts. VL should not redo the ACon² theorem or empirical price study; novelty would require verified Rust implementation, stronger numerical/chain guarantees, or a new formal treatment of oracle assumptions.
-
 ## techniques for the catalog
 
 - threshold consensus sets: retain labels appearing in at least K−β base prediction sets
@@ -78,4 +72,3 @@ Inference: ACon² is a low direct threat to VeruLaw's core Rust verification pro
 - Kalman score construction: use sequential Gaussian state estimates as a computationally light conformity score
 - error-budget composition: set αk=α/K so Theorem 1 bounds total miscoverage by the sum of base bounds
 - Solidity cost validation: measure on-chain gas for base updates and consensus aggregation over repeated transactions
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "However, this assumption does not affect the correctness of base prediction sets as the correctness holds for any score function, which is a property of conformal prediction and also our choice of an adaptive conformal predictor in Lemma 2."): read the entire supplied paper, including references and Appendix A; checked quotations, numerical results, equations, assumptions, technique steps, and printed page references against it; corrected score normalization, bin endpoints, threshold comparison, error-bound wording, assumptions, citations, and the gas-study quotation; marked interpretation as Inference and used the publisher link printed on the cover; did not check code, reproduce experiments, verify proofs independently, or read the separate arXiv version containing detailed algorithms and proofs.

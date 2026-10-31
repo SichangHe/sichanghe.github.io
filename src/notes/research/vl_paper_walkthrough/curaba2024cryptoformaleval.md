@@ -67,12 +67,6 @@ Tamarin's stated soundness and completeness are relative to the Dolev–Yao mode
 
 The paper also contains a concrete inconsistency in its own appendix labeling: immediately after Table 2 it says “From Table 2 and Table 2 we can notice that” (Appendix B, p. 11), although only one Table 2 appears in the extracted text. This is a writing error, not a verification result.
 
-## what VL should reuse and threat to agent-written verified Rust
-
-Inference: VL should reuse the staged separation between formalization, prover interaction, and trace validation. It should also reuse process isolation, bounded execution, diagnostic filtering, and a frozen record of every verifier invocation. These map naturally to a Rust orchestration layer plus Verus contracts over parsers and validators.
-
-Inference: VL should not treat CryptoFormaLLM's prompt strategies as a substitute for specifications. The paper's failures show that an agent can understand an attack conceptually while emitting invalid Tamarin syntax, misplacing observables, or silently changing the protocol. For an agent writing verified Rust, the analogous threat is a proof search that repairs a symptom by weakening a contract or changing executable behavior. Keep contracts and trusted specifications outside the agent's editable body, and require the verifier to check the resulting code.
-
 ## techniques for the catalog
 
 - staged symbolic-audit pipeline — provide a protocol and property, formalize it, search for a counterexample, then validate the trace independently
@@ -82,4 +76,3 @@ Inference: VL should not treat CryptoFormaLLM's prompt strategies as a substitut
 - agent phase separation — separate protocol translation and repair from attack search and trace validation, with verifier feedback between phases
 
 - sandbox trace checking — check executability, protocol coherence, and contradiction of the stated security property before reporting an attack
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

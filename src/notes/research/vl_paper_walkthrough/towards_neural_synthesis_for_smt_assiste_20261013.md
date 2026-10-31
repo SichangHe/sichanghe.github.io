@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `chakraborty2024neural`, [paper](https://arxiv.org/abs/2405.01787)
 
-Audit: audited 2026-10-13 against the paper; checked every number in Tables I to VIII and Fig. 3, the percentage and ratio arithmetic, page and section references, quotations, the steps of techniques 1 to 9 against Sections III to VI and Appendix B, and the Verus forms; corrected one widened claim (the authors conjecture, not conclude, that same-project examples help most), one imprecise number (the ideal-premise gain is 4.7 intra and 2.8 cross, not about 5), one overbroad sentence about reaching a half, and marked four unmarked inferences; Verus forms are sound and already marked as inference.
-
 source: Chakraborty, Ebner, Bhat, Fakhoury, Fatima, Lahiri, Swamy (Microsoft Research); arXiv:2405.01787v3 (4 Sep 2024), 14 pages with Appendix A and B. Page numbers below are PDF pages.
 
 ## measured and trusted
@@ -170,17 +168,6 @@ Verus form. Inference: the same three bins fall out of the toolchain's stages: t
 - Table VII lists 2 projects for the v2 cross-project set, which holds 16,442 definitions in 1,179 files, while Appendix A says v2 adds four new projects. The paper does not say which projects make up that set.
 - Table VIII has no GPT-4 row values (printed as xx.xx); the authors say the run was not completed.
 - The abstract says the performance of fine-tuned small models compares favorably with large models. Table IV, on 100 problems, shows GPT-4 with a 16,000 token prompt at 50 against fine-tuned StarCoder at 45.
-
-## already done, which VL should not redo
-
-- A per-definition recheck harness with the two false-positive traps identified.
-- The measurement that file context is the most valuable prompt part and learned premise selection the least, for a fine-tuned 2.7B model.
-- The measurement that a labelled prompt beats bare concatenation by about 20 points intra-project for that model.
-- Inference: not done here, and open for Verus: repair from verifier errors, generation of the specifications themselves, decomposition into lemmas, and any measurement with models newer than GPT-4.
-
-## threat to VL
-
-Inference: moderate, and indirect. The paper is F* only, has no repair loop, and stops at filling one definition under a given specification, which is the easiest part of what VL sells. The threat is the asset and the owner: Microsoft Research holds a 54,404-definition checked corpus drawn from production code, footnote 1 on p.3 notes that many F* examples resemble program proofs in Dafny or Verus, and the authors say they hope the dataset will grow to other proof-oriented languages. A team with that corpus and a fine-tuning pipeline can retarget to Verus once enough verified Rust exists. The numbers also show the ceiling of this approach in 2024: about a third of proof-class problems, sampled ten times, with ground-truth specifications.
 
 ## techniques for the catalog
 

@@ -62,10 +62,6 @@ The paper proves or measures classification behavior, not correctness of legal i
 
 Trusted elements include Z3's solver result for its input, the manually written label definitions, and the corrected code accepted after the repair loop. Inference: the LLM-generated formalization, assumption list, code-fixing process, and human adjudication remain trusted inputs or judgments; no theorem proves that they preserve the original contract meaning. The paper also reports that some outputs still required manual correction after three iterations (Section 5.5, p. 9).
 
-Threat to VL. Inference: high threat to agent-written verified Rust at the specification boundary and medium threat to the Verus checker itself. A successful Verus proof can be faithful to a generated but wrong `requires`/`ensures` contract, just as Z3 can be correct for an unfaithful FOL translation. Scope laundering is a direct operational risk if VL reports proof success without recording verifier output. The paper does not test Verus or Rust, so it does not measure failure rates for VL.
-
-What VL should not redo. Inference: VL should not treat benchmark accuracy or a model explanation as a substitute for executing Verus. It should reuse the paper's separation of translation, explicit assumptions, solver replay, and directional error accounting. Any new VL evaluation should publish denominators, model and prompt settings, invalid-output handling, and the exact generated specification so that a passing proof can be audited.
-
 ## techniques for the catalog
 
 - strict satisfiability labels — define entailment and contradiction with P ∧ ¬H and P ∧ H unsatisfiability, and reserve Neutral for unsupported or irrelevant cases
@@ -74,4 +70,3 @@ What VL should not redo. Inference: VL should not treat benchmark accuracy or a 
 - solver-versus-model replay — compare a model's classification with an executed Z3 result on the same formal input
 - failure-mode auditing — detect scope laundering, implicit constraint blindness, and code-generation errors with directional comparisons
 - bounded repair loop — retry invalid solver code for three iterations, then record it as Invalid rather than silently treating it as a result
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

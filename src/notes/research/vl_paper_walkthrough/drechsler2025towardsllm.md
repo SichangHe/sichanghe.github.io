@@ -5,7 +5,7 @@ Tag: `drechsler2025towardsllm`, [paper](https://arxiv.org/abs/2505.23311)
 ## scope and result
 This invited paper explores ChatGPT 4o as a source of human-readable proof proposals for Polynomial Formal Verification (PFV). PFV pairs selected circuit implementations with proof engines and theoretical resource bounds (§1, p. 1). The abstract describes the proposed role of LLMs: "Here, we study how modern approaches from Artificial Intelligence (AI) based on Large Language Models (LLMs) can be used to generate proofs that later on can be validated based on reasoning engines." (Abstract, p. 1). The paper presents example conversations, not an implemented LLM-to-PFV integration or a measured verification experiment.
 
-The author warns: "But due to the hallucinations in the AI tool, finally the correctness has to be proven." (§1, p. 1). Inference: for VL, an LLM-generated Verus proof sketch is a proposal whose claims require verification.
+The author warns: "But due to the hallucinations in the AI tool, finally the correctness has to be proven." (§1, p. 1).
 
 ## technique 1: induction proof templates for BDD properties
 
@@ -98,16 +98,10 @@ how to do it
 The conclusion says: "While the suggestions for proofs — at least for induction — are promising, a formal approach has to be applied." (§3, p. 3). It describes feedback as a possibility: "Using techniques like chain of thought reasoning and feedback from the formal tool can further aid the LLMs in proof generation." (§3, p. 3).
 
 Verus form
-Inference: a corresponding VL experiment could generate proof outlines, encode their claims as Verus specifications and lemmas, and run Verus. Retrieved lemmas and tool feedback could inform later attempts. Neither this translation nor a feedback loop is implemented or evaluated in the paper.
 
 evidence and limits
 - The paper concludes: "For PFV a linking of formal tools with the LLM is a promising direction for future work." (§3, p. 3).
 - Inference: an implementation would need to justify the correspondence between a circuit, its BDD model, and the property checked by the formal engine. The paper provides no implemented trust analysis for that connection.
-
-## what is proved, trusted, and relevant to VL
-The paper illustrates proof suggestions and cites established PFV/BDD results; it does not report machine-checked proofs of the generated answers. It identifies ChatGPT 4o as the model (§1, p. 1). Its introductory timing example concerns earlier PFV work on adders, not an LLM experiment. Its future directions remain proposals (§3, p. 3).
-
-Inference: VL can use the examples as motivation to check generated proof claims, including their quantifiers and complexity assumptions. LLM prose should remain untrusted; Verus acceptance also depends on the specification and any assumptions. A further experiment could measure accepted, rejected, and repaired Verus proposals over a fixed corpus. This paper provides no such measurements.
 
 ## techniques for the catalog
 - induction proof prompting — demonstrated generic base, hypothesis, and recursive-step suggestions
@@ -115,5 +109,3 @@ Inference: VL can use the examples as motivation to check generated proof claims
 - follow-up questioning — demonstrated challenge to a multiplication claim that elicits another erroneous answer
 - explanation plus formal validation — proposed connection to proof engines, without an implemented integration
 - retrieval and formal-tool feedback — future directions, not demonstrated techniques
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While the suggestions for proofs — at least for induction — are promising, a formal approach has to be applied."): checked all four pages, quotations, numbers, section and page references, technique steps, model identity, and link; changed the link to the paper's arXiv identifier, distinguished reproduced model claims from verified results and future work from demonstrated behavior, removed unsupported error rates and trust claims, and marked VL conclusions as Inference; did not independently prove the BDD bounds, reproduce the conversations, or inspect the cited works.

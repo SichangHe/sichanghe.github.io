@@ -58,12 +58,6 @@ FINDP runs an even-index search A and an odd-index search B in parallel and sets
 
 Verus form: Inference: split the proof into two state-machine transitions, prove noninterference for disjoint fields, and establish a monotonically decreasing result-variable invariant for each worker. The final minimum result is a lemma over the two component summaries.
 
-## trusted boundary, contradictions, and VL implications
-
-Inference: the trusted base includes Isabelle/HOL, the algebra definitions, the trace model, assignment semantics, and the chosen rely/guarantee conditions. The paper states Theorems 6 and 7 (the finite language model is a trioid and a rely-guarantee algebra, Section 6, p. 9) and applies its formalisation to two simple examples (Conclusion, p. 13); the finite model leaves out non-termination and synchronisation, so Inference: it does not cover all scheduler behavior. Inference: VL can reuse the compositional shape but must state the scheduler and memory model explicitly. A Verus proof of component invariants still depends on the correctness of the state-machine abstraction and any unsafe synchronization wrapper.
-
-What VL should not redo (Inference): derive generic rely-guarantee composition from scratch. The useful product work is a Verus library that packages these obligations around Rust ownership and state machines. Inference: threat to agent-written verified Rust is high for shared-state code, because agents can satisfy local contracts while choosing a rely condition that excludes a real interference pattern; the paper's explicit environment assumptions show where review must focus.
-
 ## techniques for the catalog
 
 - rely-guarantee algebra — derive sequential, parallel, choice, and iteration rules from four interference axioms
@@ -71,4 +65,3 @@ What VL should not redo (Inference): derive generic rely-guarantee composition f
 - shuffle trace semantics — model parallel execution as interleaving languages with consistency and closure operations
 - assignment rely conditions — express unchanged and preservation assumptions for shared-memory assignments
 - compositional parallel proof — verify each worker against the other's guarantee and combine results
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Restricting our attention to finite languages means we do not need to concern ourselves with termination side-conditions, nor do we need to worry about additional restrictions on parallel composition, e.g. fairness."): read all 15 pages of the paper text and the whole study; checked every quotation, theorem number, figure, equation and page reference, the technique steps, and the tag and link (arXiv 1312.1225v1, matches the paper header); changed the Introduction page (p. 1, not p. 2), replaced an unsupported "scope" quotation and an unsupported "measured experimentally" claim, corrected pages for the if/while encoding (p. 11) and the two-assignment example (p. 12), corrected the FINDP guarantee (result variables fA/fB, not a candidate index) and that the proof is only sketched, corrected the fairness/termination limits, and marked my own conclusions "Inference:"; did not check the Isabelle code online, the cited references, or the Verus mappings beyond marking them as inference.

@@ -1,5 +1,4 @@
 # Surveying the Rust Verification Landscape
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 Tag: `blanc2024surveying`, [paper](https://arxiv.org/abs/2410.01981)
 
 ## bibliographic identity and scope
@@ -24,23 +23,9 @@ Every approach leaves a trust boundary. A bounded proof is only as strong as the
 
 Step 1: classify the desired guarantee as generic safety, functional correctness, or a domain-specific property. Step 2: identify the dependency level: standard library, reusable crate, or client. Step 3: select code whose proof will either protect many dependents or force useful new techniques. This avoids spending effort on a narrow client proof while a foundational unsafe component remains an assumption. The paper's rationale is that “verifying the standard library maximizes the direct output,” while difficult library problems can also maximize indirect technique output.
 
-For VL, this is a portfolio rule: prioritize shared runtime, memory, and verification infrastructure before isolated examples; record which downstream claims rely on unverified libraries.
-
 ## technique: bounded exploration as an engineering front end
 
 Step 1: translate the Rust program to the model checker and state explicit contracts for externally modeled functions. Step 2: choose a bound that covers the intended finite scenario and inspect counterexamples. Step 3: add loop invariants only where bounded exploration cannot cover the required behavior. Step 4: separately report what remains unbounded. Bounded checking avoids writing invariants for every loop and explores all executions within the bound, but linked lists and other unbounded structures expose its limit. The paper says bounded checking “does not require loop invariants to verify loops” in the bounded case; this is a conditional benefit, not a proof of unbounded correctness.
-
-## technique: turn natural-language intrinsic contracts into community-reviewed assumptions
-
-For compiler intrinsics such as `transmute`, extract the safety conditions from Rust documentation, translate them into machine-readable contracts, and seek community agreement on the translation. Then verify callers against those contracts while clearly labeling implementation correctness as an assumption when the intrinsic body is compiler-provided. The proposed transmute target is high value because it is widely used and can create invalid values. This technique gives VL a concrete assumption-audit workflow: every external primitive gets a contract, provenance, reviewer, and explicit guarantee status.
-
-## limitations and failure modes
-
-The paper is a proposal, so its tool comparison and prioritization are reasoned recommendations rather than measured results. Kani's bounds can miss behaviors beyond the explored depth; contracts for intrinsics may be unsound if translated incorrectly (study's inference); and Kani's current undefined-behavior coverage does not include every race, aliasing, or lifetime violation. Deductive systems shift cost to invariants, specifications, and separation-logic reasoning. The authors explicitly identify the power-versus-annotation tradeoff as a human factor. A VL workflow should therefore preserve bounds, modeled behaviors, assumptions, and unsupported Rust features beside every result.
-
-## relevance to VL
-
-The most reusable lesson is to treat verification as a system boundary design problem. Select guarantees and dependency targets first, choose a verifier whose trust and automation match those targets, and expose every unverified intrinsic or bounded region. For VL's agent workflow, require a property taxonomy, a dependency map, an assumption ledger, and a residual-behavior report before calling a proof complete. The following staged workflow is the study's inference, not the paper's proposal (the paper only speculates that Gillian-Rust and RefinedRust are more powerful but harder to use than Kani): use bounded exploration to find concrete failures cheaply, then apply deductive or foundational methods where unbounded invariants and library-level guarantees matter.
 
 ## techniques for the catalog
 

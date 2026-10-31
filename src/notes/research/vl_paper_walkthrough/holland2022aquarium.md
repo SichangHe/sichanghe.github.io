@@ -48,10 +48,6 @@ Verus form. Inference: implement lowering as a pure compiler from an AST to a Ru
 
 Evidence and limits. The report emphasizes the separation: “The Cassiopea and Alewife syntax should be considered disjoint.” (Sect. 2, p. 2). Inference: translation is therefore the only intended boundary between the two languages. It can fail on unresolved or incompatible constructs, and the report does not provide synthesis or empirical success rates.
 
-## what is trusted and what VL should reuse
-
-Specified (not proved in this report): Cassiopea expression/statement semantics, indexed typing judgments, machine/specification/program well-formedness, and syntax-directed Alewife lowering; no soundness proof or mechanized check appears in it. Trusted: the semantic definitions, parser and implementation, lowering-module contents, assembler/linker behavior, and runtime checks for dynamic pointers. No benchmark, evaluation or theorem-prover soundness experiment is reported. Inference: for VL, the valuable pattern is a small, typed intermediate language plus a verified lowering boundary and explicit frame contracts. Agent-written verified Rust remains exposed where generated code depends on unverified lowering modules or runtime pointer assumptions; requiring a refinement proof for every lowering module is the direct mitigation. VL should reuse these contract and frame ideas rather than reproduce an entire ISA DSL unless synthesis is a product requirement.
-
 ## techniques for the catalog
 
 - register-transfer semantics — model instruction execution over explicit registers, finite memories, labels, and branch outcomes
@@ -59,4 +55,3 @@ Specified (not proved in this report): Cassiopea expression/statement semantics,
 - frame contracts — state modified locations and pre/postconditions for machine blocks
 - abstract-to-concrete lowering — translate Alewife specifications through machine-specific modules into typed Cassiopea
 - explicit failure semantics — make invalid pointers and runtime checks part of the semantics so evaluation does not get stuck
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Since identifiers are not allowed to overlap in well-typed programs, and register identities are not strings at all, and EXTBRANCH is reserved, this usage creates no conflicts."): read the whole text (23 pages) and checked all quotations, page and section references (pdf pages equal printed pages), the technique steps and the link (arXiv 1908.00093v5 is on the paper's first page); changed the conclusion and block-let quotations and their pages, the failure/crash and branching description, the lowering environment description (Alewife reuses the Cassiopea environments), the unimplemented-check claim, and the wording that called the semantics proved; marked remaining own conclusions as Inference; did not check the Verus-form suggestions against Verus, nor any other project publication.

@@ -80,11 +80,9 @@ evidence: Figure 9 reports symbolic/logic package use of 62.5% for FLV-RL versus
 
 ## evidence, assumptions, and trust boundary
 
-The reported gains are empirical benchmark scores under Qwen2.5 7B/14B, OpenCompass evaluation, greedy decoding except AIME24 avg@16, and the listed training data and baselines (Section 5.1, p. 6). Inference: the method depends on the formal tools, sandbox, interpreter, semantic-equivalence model, answer judge, dataset filters, reward parser, and underlying code execution. Inference: for VeruLaw, Verus's checker and the reviewed specification should be the final acceptance boundary; LLM-generated formalizations and rewards are search components, not evidence by themselves.
+The reported gains are empirical benchmark scores under Qwen2.5 7B/14B, OpenCompass evaluation, greedy decoding except AIME24 avg@16, and the listed training data and baselines (Section 5.1, p. 6).
 
-The paper's claims have scope limits. The limitations acknowledge “formalization challenges when translating natural language into verifiable formal representations.” (Limitations, p. 13) Inference: agent-written verified Rust has a similar translation risk when a natural-language requirement is converted into a contract; the highest threat is a formally verified function whose contract omits the intended behavior. VL should preserve a human-reviewed contract, retain failed candidates and verifier traces, and report proof success separately from answer accuracy.
-
-Inference: VL should not redo the generic idea of interleaving an LLM with formal checks, hierarchical execution-validated SFT, composite GRPO rewards, or flexible tool selection as if those ideas were new. A useful new experiment is to measure whether Verus-specific proof diagnostics and contract freezing improve repair quality while maintaining the paper's separation between executable calculation and formal validation.
+The paper's claims have scope limits. The limitations acknowledge “formalization challenges when translating natural language into verifiable formal representations.” (Limitations, p. 13)
 
 ## techniques for the catalog
 
@@ -92,5 +90,3 @@ Inference: VL should not redo the generic idea of interleaving an LLM with forma
 - execution-validated SFT synthesis — generate, execute, compare, semantically check, and rewrite formal proof/data modules before fine-tuning
 - hierarchical FLV-GRPO reward — reject fatal and malformed outputs before combining structural, answer, and tool-use rewards
 - flexible verifier role assignment — use direct calculation for arithmetic and formal tools for logical validation rather than enforcing every checkpoint
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We carefully calibrate the reward function hyperparameters to balance the learning of hybrid reasoning patterns with answer correctness, while preventing pathological behaviors during training."): checked the entire paper, quotations, numerical results, references, technique steps, tag and arXiv identifier; corrected the full title, relative gains, 7B ablation label, page and appendix references, flexible verification description, reward details and inconsistent arithmetic; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

@@ -6,7 +6,7 @@ Tag: `westhofen2020automotive`, [paper](http://arxiv.org/abs/2003.11689v1)
 
 Westhofen, Berger, and Katoen benchmark open-source C model checkers on two confidential, auto-generated automotive controllers: Driveline State Request (DSR) and E-Clutch Control (ECC). The code comes from Simulink models and combines decision logic, floating-point and pointer arithmetic, bit operations, rate limiters, and state-flow behavior. The paper asks how much of a realistic industrial requirement set general-purpose tools can cover, then tests a small, hand-crafted extension of CBMC with k-induction.
 
-The abstract reports that open-source coverage “is at most only 20% of all requirements” while CBMC+k reaches 63% and the commercial BTC EmbeddedValidator reaches 80% (p. 1). Inference: these percentages are benchmark-specific coverage observations, not universal limits on model checking or Verus. The study is valuable to VL because it exposes the gap between solver performance on competition benchmarks and generated embedded code.
+The abstract reports that open-source coverage “is at most only 20% of all requirements” while CBMC+k reaches 63% and the commercial BTC EmbeddedValidator reaches 80% (p. 1).
 
 ## technique 1: build a requirement-grounded benchmark
 
@@ -64,7 +64,7 @@ What it is. The paper analyzes why coverage is low and records concrete verifier
 
 How to use it. Inference: before interpreting a failed proof, classify the cause: unsupported language feature, state-space exhaustion, timeout, verifier defect, spurious counterexample, bounded-only result, or disagreement about floating-point semantics. Re-run with witness validation and, when possible, a minimal reproducer. Report a tool's supported subset and version alongside every result.
 
-Verus form. Inference: add a failure taxonomy to VL's CI. A Verus `external_body` dependency, unsupported floating-point operation, or unmodeled pointer should be recorded as trusted context, not as a proved property. Version-pin the verifier and rerun proofs after upgrades; preserve failing proof obligations as regression tests.
+Verus form.
 
 Evidence and limits. The authors admit in the Epilogue that “the fact that our benchmarks are not publicly available is a weak point” (Epilogue, p. 15). Inference: tool-specific coverage therefore cannot be independently checked or generalized. The study's comparison with BTC also uses different hardware (Windows 7, 4 GB RAM, Intel i7-6700HQ) and a two-hour timeout, making performance incomparable; BTC is used only as a reference (Section 4, p. 11).
 
@@ -72,14 +72,9 @@ Evidence and limits. The authors admit in the Epilogue that “the fact that our
 
 The paper proves no theorem about a model checker. It measures coverage, time, memory, witness validation, and conflicts under specified settings. Inference: its strongest methodological result is that small domain-specific preprocessing—CBMC+k—substantially improves coverage on this code shape. Trusted elements include each verifier, SAT/SMT solver, C front-end, floating-point model, hand-written requirement formalization, and the BTC “ground truth” assumption. Inference: the threat to an agent-written verified-Rust product is high when requirements are informal, numeric semantics differ from hardware, or unsupported features are abstracted away; the benchmark shows why proof counts alone are insufficient.
 
-## what VL should not redo
-
-VL should not redo the generic SV-COMP tool inventory or claim the 20%, 63%, and 80% figures as universal. A useful new benchmark would publish a Rust/Verus requirement mapping, include raw artifacts, and separate unbounded proofs from bounded checks and counterexample validation.
-
 ## techniques for the catalog
 
 - requirement-grounded benchmarking: map industrial functional requirements to explicit invariant and bounded-response properties with fixed denominators
 - tailored k-induction: transform a one-loop bounded model-checking task into base and nondeterministic induction programs
 - witness validation: independently check True/False witnesses and classify Unknown, timeout, bug, and resource outcomes
 - verifier-boundary diagnosis: compare tools while recording unsupported features, floating-point models, versions, and contradictory results
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This reference can subsequently be used as a foundation to interpret the applicability of the open-source verifiers to the industrial case studies."): read the whole paper text and checked every quotation, number (Tables 1 and 3, Table 4 counts, Figures 3 and 7 counts, percentages, hardware, limits, tool versions), section reference and technique step against it; page numbers are PDF page numbers of the arXiv v1 file (the paper text has no printed page numbers); link is the arXiv page named in the paper text (arXiv:2003.11689v1). Changed: corrected page references (most were off by one or two), the witness Invalid versus Unknown rule, the floating-point conflict explanation (two DSR conflicts only, stated as a possible cause), the Epilogue quotation context, added the raw CBMC+k Venn counts (73 and 40), and marked my own prescriptions as Inference. Did not check: the cited works, the appendix tool command lines beyond the CBMC wrapper, Figures 2, 4, 5 and 6 bar and curve values (not readable from the text), the Verus mapping claims (opinion of the study), or the GitHub artifacts.

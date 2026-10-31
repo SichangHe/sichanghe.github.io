@@ -1,7 +1,6 @@
 # PropertyGPT: LLM-driven Formal Verification of Smart Contracts through Retrieval-Augmented Property Generation
 (authored by agents unless marked 🧑)
 Tag: `liu2025propertygpt`, [paper](https://doi.org/10.14722/ndss.2025.241357)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes
 
@@ -128,12 +127,6 @@ Evidence and limits. Their BMC depth is capped at three, with up to five loop it
 The paper does not state a soundness proof for its prover (no such proof was found in the text); it reports generation and detection measurements. It does not prove that LLM-generated properties are complete, that retrieved properties express an auditor's intent, or that a detected counterexample is exploitable without manual review. Trusted components include the PSL compiler, Solidity version converter, parser, symbolic executor, Z3 4.11.2, embedding and summary models for ranking, and the environmental assumptions about external calls and hash functions. Human review remains in the evaluation: two experienced authors independently judged equivalence to Certora ground truth, with a third resolving disagreements.
 
 For vulnerability detection, PropertyGPT found 9/13 CVEs, 17/24 curated attack incidents, and generated 22 findings on four bounty projects; 12 were confirmed and fixed for $8,256 (Sec. VIII-B, VIII-E, pp. 9–12). The CVE denominator is 13 selected cases, not all 577 CVEs; the attack set was curated after removing duplicates, missing exploits, and unsuitable cases. The authors note seven missed attack incidents because the system lacks runtime context, including deflationary-token behavior (Sec. VIII-B, p. 10). These numbers show practical recall on selected datasets, not general security coverage.
-
-## what VL should reuse and product threat
-
-VL should reuse the separation of retrieval, generation, compilation, ranking, and proof checking. It should not copy Solidity assumptions, bounded-depth claims, or top-K filtering without a complete audit mode. The most direct implementation is a Verus candidate service with a small grammar, code/spec retrieval, compiler diagnostics, non-vacuity checks, and a verifier-driven repair loop. Every candidate must be compiled and verified; generated `assume` statements must be rejected or quarantined.
-
-Threat to an agent-written verified-Rust product (inference): medium to high for specification omission, medium for proof unsoundness if Verus remains the checker. Retrieval can import an inappropriate property, ranking can hide the only useful candidate, and a syntactically valid but vacuous `ensures` can create false confidence. The paper's own static check for missing target execution is a warning that compilation is not enough. Product safeguards are a complete candidate log, explicit non-vacuity tests, conservative external-call models, and human review for security claims.
 
 ## techniques for the catalog
 

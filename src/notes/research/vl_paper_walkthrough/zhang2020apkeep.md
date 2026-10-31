@@ -59,14 +59,6 @@ The implementation uses about 5K lines of Java, config parsers for three vendors
 
 The paper explicitly excludes traffic statistics, flow mirroring, rate limiting, and congestion avoidance from the PPM model (§4, p. 249): “As all previous data plane verifiers, PPM cannot model these features.” Consistency across device updates remains future work: “Detailed design is left as one of our future work.” (§7, p. 252.) Inference: applying the verification result to a real network requires correct input-rule interpretation, BDD operations, model updates, and DFG traversal. The results concern the abstract packet-processing model; they do not prove switch firmware or a Rust implementation correct.
 
-## relevance to VL
-
-Inference: APKeep’s strongest lesson for verified Rust is an incremental proof architecture: isolate modules, represent behavior as predicates, and update only affected proof state. A Verus library could expose element-specific contracts and prove that split/transfer/merge preserve a partition invariant. Locally verified update code can still use an incomplete device model or policy, so model coverage and assumptions need explicit contracts.
-
-## comparisons and work VL should not redo
-
-The abstract’s sub-millisecond claim and Figure 5’s percentile use different summaries: the first is a target/result headline, while the paper states, “for all datasets, the verification time is less than 250µs for 90% of updates.” (§5.2, p. 250). NAT rule updates are a separate workload (§5.5, p. 251). What-if link-failure queries are evaluated separately in §5.4 and Table 4 (p. 251). Inference: these measurements should not be combined into one statistic. VeriFlow, Delta-net, NetPlumber, and AP Verifier already establish earlier incremental data-plane approaches and are the baselines APKeep compares against (§5.1, p. 250). Inference: VL should reuse those designs when testing a verified Rust implementation rather than claim the algorithms as new.
-
 ## techniques for the catalog
 
 - modular PPM model — decompose device functions into elements, logical action ports, and predicate-to-port maps
@@ -74,4 +66,3 @@ The abstract’s sub-millisecond claim and Figure 5’s percentile use different
 - DFG verification — traverse predicate-labeled forwarding graphs to detect loops, blackholes, and regular-expression path violations
 - rewrite predicates — model NAT with existential elimination and constrained header assignment, maintaining representable predicates
 - scalable maintenance — delay merges, separate predicate families, and use hash indexing to reduce update work
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Since the predicate-based EC representation has no restriction on the match fields, we can encode these match conditions by adding more fields."): checked the entire paper, quotations, numerical claims, section/page references, and technique steps; corrected Algorithm 2 and policy page references, distinguished NAT updates from what-if queries, clarified hit updates, delayed merging, implementation scope, and evaluation limits, and replaced the link with the publisher page printed in the paper; did not reproduce experiments or verify code, BDD internals, vendor parsers, or the proposed Verus adaptations.

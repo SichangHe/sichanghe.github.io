@@ -41,7 +41,7 @@ Evidence. Five applications totaling 36,900 LOC were run for one hour (KLEE-AI a
 
 ## what is proved, measured, and trusted
 
-The paper proves partition correctness, witness preservation, soundness of returned counterexamples, bounded completeness under ideal solvers, and expected schedule-exploration cost under a ranking prior. It measures coverage, confirmed races/deadlocks/atomicity bugs, runtime shares, and ablations. Trusted or assumed components include the transition-system model, instrumentation, LTL encoding, Z3, LibFuzzer, the LLM fine-tuning corpus, and curated benchmarks. Inference: the strongest product lesson for VL is to let learned ranking guide proof/test search while preserving an independently checkable witness and a sound verifier. A stochastic failure must remain “unknown,” never “safe.” What VL should not redo is an LLM-only scheduler that can prune paths or treating branch coverage as formal proof.
+The paper proves partition correctness, witness preservation, soundness of returned counterexamples, bounded completeness under ideal solvers, and expected schedule-exploration cost under a ranking prior. It measures coverage, confirmed races/deadlocks/atomicity bugs, runtime shares, and ablations. Trusted or assumed components include the transition-system model, instrumentation, LTL encoding, Z3, LibFuzzer, the LLM fine-tuning corpus, and curated benchmarks.
 
 ## techniques for the catalog
 
@@ -49,4 +49,3 @@ The paper proves partition correctness, witness preservation, soundness of retur
 - decidable/nonlinear constraint partition — send linear fragments to SMT and nonlinear fragments to concrete branch-distance mutation
 - witness-preserving hybrid search — retain replayable schedule/input witnesses and re-enqueue unresolved branches instead of declaring them safe
 - LLM schedule prior — rank enabled transitions with semantic and structural risk while expanding all transitions for soundness
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

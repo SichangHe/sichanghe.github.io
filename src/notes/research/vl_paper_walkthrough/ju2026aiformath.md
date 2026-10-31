@@ -19,7 +19,7 @@ Steps stated or implied by the survey:
 
 Verus form. Inference: write executable Rust with `requires`/`ensures`, mathematical definitions as `spec fn`, and intermediate facts as `proof fn`s; run Verus and keep only code that verifies. Inference: a failed Verus check supplies an obligation diagnostic, while a passing check proves only the stated contract under trusted assumptions. Inference: Verus's `invariant` clauses and `assert` statements play the role that tactic-state feedback plays in Lean for loops and local facts.
 
-Evidence and limits. The survey reports Lean's mathlib4 had over 250,000 theorems and 120,000 definitions as of December 2025 (§3.3.1, p. 10), but gives no independent error rate for the prover-oracle approach. Inference: trusted elements include the prover, libraries, translation, and adequacy of the formal statement. Inference: for VL, this is high-value infrastructure but not a substitute for reviewing specifications.
+Evidence and limits. The survey reports Lean's mathlib4 had over 250,000 theorems and 120,000 definitions as of December 2025 (§3.3.1, p. 10), but gives no independent error rate for the prover-oracle approach.
 
 ## technique: autoformalize with dependency-aware synthetic data
 
@@ -35,7 +35,7 @@ Steps from the survey:
 
 Verus form. Inference: build a Rust/Verus corpus from verified `spec fn` definitions, function contracts, and `proof fn` signatures. Order prompts by the dependency graph, retrieve existing specifications, and require generated code to pass Verus. Inference: a dependency graph should include contracts and ghost definitions; generated natural-language descriptions are hints and cannot replace the machine-checked contract.
 
-Evidence and limits. The only benchmark the survey names for Herald is the miniF2F validation set; it gives the accuracy as “over 96%” but does not state the validation-set size in this passage. Statement accuracy is not proof accuracy: the survey says that once a statement is correctly autoformalized, evaluating a formal proof "becomes straightforward", which "makes statement autoformalization the primary difficulty from an evaluation perspective" (§3.3.2, p. 12). Inference: VL should measure contract equivalence and verified proof completion separately.
+Evidence and limits. The only benchmark the survey names for Herald is the miniF2F validation set; it gives the accuracy as “over 96%” but does not state the validation-set size in this passage. Statement accuracy is not proof accuracy: the survey says that once a statement is correctly autoformalized, evaluating a formal proof "becomes straightforward", which "makes statement autoformalization the primary difficulty from an evaluation perspective" (§3.3.2, p. 12).
 
 ## technique: evaluate statement semantics with equivalence and decomposition
 
@@ -67,7 +67,7 @@ Steps from the survey:
 
 Verus form. Inference: treat each failing Verus obligation as a state and candidate `assert`, lemma call, `reveal`, or added loop `invariant` as an action. Rerun Verus after each candidate and retain a proof only when the function verifies. Inference: if the verifier is invoked only as a command-line check, the search driver must invoke it repeatedly; a missing invariant is not evidence that the specification is false.
 
-Evidence and limits. The survey says proof-step methods have reusable states and strong exploration but suffer from slow inference, training instability, and reliance on efficient interactive tools (§3.3.3, pp. 12–13). It gives no common success denominator across the many systems. Inference: VL should report verifier runs, solved obligations, and repair time rather than only final pass rates.
+Evidence and limits. The survey says proof-step methods have reusable states and strong exploration but suffer from slow inference, training instability, and reliance on efficient interactive tools (§3.3.3, pp. 12–13). It gives no common success denominator across the many systems.
 
 ## technique: whole-proof generation with verified-pair filtering
 
@@ -93,13 +93,11 @@ Steps from the survey:
 
 Verus form. Inference: make each subgoal a `proof fn` with explicit `requires` and `ensures`; use a final function contract as the dependency-graph sink. Inference: retrieve existing Verus lemmas by their specifications, run Verus on each candidate, and preserve only verified lemmas. Inference: a failed proof remains an open obligation, not a trusted placeholder.
 
-Evidence and limits. Seed-Prover-1.5 is reported at 80% on FATE-H and 33% on FATE-X, but the survey does not state the benchmark denominators in this passage (§3.3.3, p. 14). It says miniF2F is effectively saturated for some agentic systems and describes IMO-level or Putnam results for particular systems, but these are system-specific claims, not general success rates. Inference: VL should not redo generic retrieval/decomposition architecture without Rust-specific measurements of specification errors and proof maintenance.
+Evidence and limits. Seed-Prover-1.5 is reported at 80% on FATE-H and 33% on FATE-X, but the survey does not state the benchmark denominators in this passage (§3.3.3, p. 14). It says miniF2F is effectively saturated for some agentic systems and describes IMO-level or Putnam results for particular systems, but these are system-specific claims, not general success rates.
 
 ## what is proved, measured, and trusted
 
 The survey reports a field-wide synthesis rather than one new verifier. It establishes that formal checkers provide precise proof feedback, that statement semantics remain harder than proof checking, and that retrieval, search, filtering, and agentic decomposition are recurring techniques. Reported numbers include mathlib4's theorem/definition counts, Herald's “over 96%” miniF2F statement accuracy, AlphaProof's 300B-token pretraining, 300k state-tactic pairs, and 80 million autoformalized statements, and Seed-Prover-1.5's 80%/33% benchmark results (§§3.3.1–3.3.3, pp. 10–14; AlphaProof and Seed-Prover-1.5 figures on pp. 13–14). These denominators and settings belong to the cited systems; the survey does not independently reproduce them. Inference: trusted components include theorem provers, libraries, parsers, retrieval systems, model-generated formal statements, and human intent judgments.
-
-Inference: the threat to VL is substantial but divided. Proof-state search, verified-pair filtering, dependency-aware retrieval, and iterative agent workflows transfer directly as engineering patterns. Semantic statement correctness, external-library assumptions, and model-generated specifications remain the dominant risks. Inference: VL should reuse these patterns while measuring contract fidelity separately from Verus pass rate.
 
 ## techniques for the catalog
 
@@ -109,4 +107,3 @@ Inference: the threat to VL is substantial but divided. Proof-state search, veri
 - proof-state search — retrieve premises and explore tactic successors until no goals remain
 - verified-pair filtering — train only on generated statements and proofs accepted by the formal checker
 - agentic iterative proving — coordinate retrieval, decomposition, formal sketches, verification, and lemma reuse
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Traditional approaches to formula retrieval are largely based on tree representations that encode the structural organization of mathematical expressions."): I read the whole paper text (arXiv v5, 2 May 2026, main text pp. 1-20, references, and Appendix A-B on the PKU exam examples) and the whole study; checked every quotation word for word, the mathlib4 counts, Herald's 96%, AlphaProof's 300B/300k/80M, Seed-Prover-1.5's 80%/33%, the technique steps for each of the six techniques, and the printed page numbers; changed the printed page numbers that were off by one (Evaluation and Verification is p. 12, Figure 3 and Holophrasm are p. 13, whole-proof and agentic systems are p. 14), removed an unsupported dependency-graph-of-subgoals step and the unsupported statement-refinement and only-after-rechecking claims from the agentic technique, replaced "numerical verifiers" with the paper's wording, and marked my own conclusions (trusted components, Verus-specific claims) as Inference; did not check the cited external papers (Herald, Mathesis, Aria, Seed-Prover-1.5, AlphaProof) against their own sources, and did not check the arXiv link beyond the identifier printed on the paper text (arXiv:2601.13209).

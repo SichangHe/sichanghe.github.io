@@ -6,11 +6,7 @@ Tag: `schroer2026caesar`, [paper](https://openalex.org/W7161655031)
 
 Caesar is a Rust deductive verifier for probabilistic programs. The abstract states: “At its core lies HeyVL, a quantitative intermediate verification language based on the real-valued logic HeyLo.” It adds: “Caesar translates HeyVL programs into verification conditions, which are then checked using the Z3 SMT solver.”
 
-Inference: The architecture is useful to VL as a pattern for separating a source language, an intermediate verification language, a verification-condition generator, and interchangeable checking backends. Caesar’s subject is expected values and probabilities rather than Rust memory safety, so the transfer to Verus is architectural, not a claim that Verus can directly consume HeyVL.
-
 The pipeline in Figure 2 is: HeyVL program plus specification and proof rules; slicing and HeyLo verification-condition generation; optional quantifier elimination; SMT-LIB translation to Z3; and, for a subset, translation to JANI and Storm model checking. Outputs are verified, a counterexample, or unknown.
-
-## technique 1: expected-value contracts
 
 ### what it is and when to use it
 
@@ -36,13 +32,9 @@ Inference: In Verus, represent a probability distribution or expected-value abst
 
 HeyVL deliberately excludes loops and recursion from its core. Instead, proof rules are encoded with quantitative `assert` and `assume` statements. Section 3.1 says this “enables users to encode a wide range of proof rules” and lets front ends benefit from improved back ends.
 
-Inference: The technique is to make verification rules ordinary IR constructs rather than hard-code every rule into the parser or solver. To add a rule, define its quantitative approximation in HeyVL, then let the existing VCG translate it. This is useful when VL needs to support several proof patterns over the same Rust-facing language.
-
 The semantics are backward-moving: Caesar computes a verification pre-expectation by syntactic transformation into HeyLo. The resulting HeyLo formula is valid exactly when the program satisfies its quantitative specification. An operational semantics in terms of stochastic games provides a ground truth and is equivalent to this weakest-pre-expectation style semantics (§3.1).
 
 Inference: A Verus counterpart would be a small proof-oriented IR whose nodes elaborate to Rust/Verus contracts and proof obligations. The IR could express common invariant schemas and generate `requires`, `ensures`, and `assert` facts, while Verus remains the final checker. Any claim that the IR rule is sound requires a separate semantic theorem.
-
-## technique 3: verification-condition generation and solver engineering
 
 ### lazy unfolding
 
@@ -66,13 +58,9 @@ Inference: The corresponding Verus engineering choice is whether to expose a rec
 
 Caesar translates executable HeyVL with loops to finite-state Markov Decision Processes (MDPs), emits JANI, and uses Storm to compute expected values (§4.2). This backend ignores proof-rule annotations and encodes operational semantics directly. Infinite-state programs require partial exploration to obtain lower or upper bounds.
 
-Inference: Use this as an independent numerical cross-check for bounded instances of a deductive proof. Agreement between Z3’s contract proof and Storm’s model-checking result is evidence about the instance, not a replacement for a soundness proof. In VL, a similar dual backend could compare Verus contracts against an executable reference model on finite test domains.
-
 ## technique 5: semantic slicing and diagnostics
 
 Caesar tracks source provenance through the pipeline. Its slice solvers operate on the generated HeyLo condition, repeatedly query Z3 for slices that still verify or admit a counterexample, and can minimize slices using a minimum-unsatisfiable-subset algorithm (§4.1 and §5.4). Diagnostics can report a non-inductive invariant, a weak precondition, or a loop that could be replaced by an if statement.
-
-Inference: For VL, provenance should map a failed Verus assertion back to the contract, invariant, or generated proof rule that caused it. A minimized slice can focus an agent’s repair search on a small set of assumptions. The paper’s probabilistic slicing algorithm is not a Verus feature and would need new implementation.
 
 ## evidence, scope, and limitations
 
@@ -83,8 +71,6 @@ The case studies include Rabin mutual exclusion, bounded retransmission, random-
 The paper explicitly limits completeness: “No verifier can be complete for all probabilistic programs.” It notes that almost-sure termination is more undecidable than the classical halting problem. It does obtain decidability for linear programs and linear expectations with selected proof rules (§4.1).
 
 Inference: What is proved is conditional validity of generated HeyLo verification conditions under the chosen approximation rules and solver result. What remains trusted includes the HeyVL-to-HeyLo translation, proof-rule semantics, Z3, Storm, user specifications, model abstractions, and any external probabilistic distribution implementation. A `unknown` solver result is not a proof or a refutation.
-
-Inference: The threat to VL is architectural misuse rather than direct algorithmic incompatibility. An agent may select an unsound proof-rule combination, write a weak invariant, or treat a numerical model-checking result as a proof of unbounded Rust. Caesar’s semantic guardrails, provenance, and explicit `unknown` outcome are useful controls. Verus must preserve the same distinction between a discharged formula and a justified specification.
 
 ## techniques for the catalog
 
@@ -97,4 +83,3 @@ Inference: The threat to VL is architectural misuse rather than direct algorithm
 - model-checking backend — compile a HeyVL subset to JANI MDPs and calculate expected values with Storm
 - semantic slicing — query minimal source statement sets that preserve a proof or counterexample and map them to diagnostics
 - semantic guardrails — reject combinations of procedure kinds and approximation rules that could be unsound
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

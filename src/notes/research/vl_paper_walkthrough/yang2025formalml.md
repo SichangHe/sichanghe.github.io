@@ -10,8 +10,6 @@ Each stored problem includes source file and line coordinates, the Lean theorem 
 
 The motivation is practical assistance. The paper quotes an earlier Equational Theories Project finding: “LLMs did not provide useful suggestions beyond what the human participants could already propose” in most difficult cases (section 1, PDF page 1). FormalML therefore measures whether models can complete local proof steps under realistic context, retrieval, and cost constraints.
 
-Inference: in VeruLaw, this is a direct analogue of asking an agent to fill a missing `proof fn` body while a human or another agent has fixed the Rust API and contract. The benchmark's separation between statement design and subgoal completion suggests evaluating VL on local proof obligations rather than only on complete generated modules.
-
 ## technique 1: extract subgoals from procedural proofs with `to_theorem`
 
 What it is. FormalML's central contribution is a Lean tactic called `to_theorem` that turns a procedural proof segment into a separate declarative theorem. Procedural tactics transform the proof state; unlike declarative `have` steps, they do not leave an explicit theorem for a benchmark. The tactic captures the state before and after a line or segment, inserts the earlier state as hypotheses and the later state as the goal, and uses the original tactics as the extracted theorem's proof (section 3.1, PDF pages 3–4).
@@ -30,7 +28,7 @@ What it is. For each extracted subgoal, FormalML stores enough context for indep
 
 How to apply it. (1) Select top-level theorems from a library. (2) Preserve lower-level lemmas as retrieval candidates. (3) Run subgoal extraction over each proof line or segment. (4) Save the exact statement and the original tactic sequence. (5) Save imports, namespaces, source coordinates, and retrieved premises. (6) Use the saved context to evaluate the theorem independently. The paper says this “ensures a complete proof context for each theorem” (section 3.2, PDF page 5).
 
-Verus form. Inference: store each VL obligation with the exact Rust module revision, dependency versions, `requires`/`ensures`, relevant `proof fn` declarations, imported modules, and the diagnostic that created the obligation. A Verus subgoal must be replayable in the same crate context because solver facts and visibility affect results. This provenance also prevents training on a proof that succeeds only because an unrelated broad lemma or changed dependency is present.
+Verus form.
 
 Evidence and assumptions. The benchmark construction draws on Optlib algorithms such as gradient descent, proximal gradient descent, Nesterov acceleration, block coordinate descent, and ADMM, plus FoML inequalities including McDiarmid, Hoeffding, Bennett, and Bernstein (section 3.2, PDF page 5). These are domain choices, not claims that the extraction method generalizes automatically to systems code.
 
@@ -42,7 +40,7 @@ How to apply it. (1) Fix the benchmark split and exact proof context. (2) For a 
 
 Results. The best Pass@32 is STP at 63.21% over all problems; its Pass@1 is 26.96% (Table 3, PDF page 7). Best-first methods remain below 30% at their tested budgets (section 4.1, PDF page 8). A separate higher-difficulty evaluation uses larger budgets: STP reaches Pass@128 of 55.5% at level 3 and 33.36% at level 5 (section 4.3, PDF page 9). The paper concludes that “current whole-proof generation models have preliminarily acquired the capability to solve FormalML problems when increasing sample budgets” but that Pass@1 remains too low for practical assistance (section 4.1, PDF page 8).
 
-Verus form. Inference: measure a VL agent with Pass@K by generating K candidate proof bodies for the same fixed Rust contract and replaying each with Verus. Keep the executable function and specification constant across attempts. Report denominators as obligations, attempts, and verified obligations; a high Pass@K can hide expensive retries. Tree search would require a Verus-aware state transition interface, while whole-proof generation can emit a complete `proof fn` body.
+Verus form.
 
 ## technique 4: premise retrieval under complex context
 
@@ -78,10 +76,6 @@ Inference: proof acceptance relies on Lean and the assumptions in the formalized
 
 Inference: subgoal completion can reduce proof burden after a contract is fixed, and the context/provenance record is directly useful. The main risks are contract errors, retrieval of a lemma whose assumptions do not hold, and high retry cost. FormalML's results argue for low-budget local proof evaluation rather than assuming long reasoning or whole-module generation will work.
 
-## what VL should reuse and avoid redoing
-
-Inference: VL should reuse state-boundary extraction, complete-context records, bounded premise retrieval, Pass@K reporting, and expert iteration over Verus-verified proof bodies. These are already concrete techniques. VL should not redo a Lean-only benchmark or claim FormalML percentages as evidence about Rust systems. A useful new experiment is a Verus corpus of real maintenance subgoals with exact contracts, dependencies, diagnostics, and repair cost; compare local completion with full-agent generation under the same verifier budget.
-
 ## techniques for the catalog
 
 - state-boundary subgoal extraction: turn pre-state and post-state around a procedural proof segment into an independently checked theorem
@@ -90,4 +84,3 @@ Inference: VL should reuse state-boundary extraction, complete-context records, 
 - premise retrieval evaluation: vary mixed local and global candidate sets and report proof success by retrieval size
 - efficiency-weighted proving: divide verified success by response length to expose costly overthinking
 - verified expert iteration: train on candidates that the proof kernel accepted and evaluate on FormalML subgoals
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This metric balances performance and output efficiency by normalizing the proof success rate against the response length."): read the entire paper, including references and appendices, and checked the study's quotations, numbers, page and section references, extraction steps, evaluation procedures, and conclusions; corrected page references, clarified supplied-candidate retrieval and sorry-containing outputs, removed an unsupported Verus API claim and risk rating, and marked conclusions as inferences; did not reproduce experiments, inspect released code or data, or validate the proposed Verus adaptations.

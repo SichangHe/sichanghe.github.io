@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `zhai2026verification`, [paper](https://arxiv.org/abs/2609.39022v3)
 
-Audit: audited 2026-10-13 against the paper; checked numbers against Tables 1 to 3, quotations, pages, technique steps and Verus forms; corrected page references, an invented first step and failure categories in technique 2, the audit inputs in technique 3, a three-claims framing the paper does not state, the missing model and attempt count of the historical comparison, and unmarked inference.
-
 ## central method and evidence
 
 Zhai et al. separate formalization (choosing the semantics and predicates), verification (establishing the implication under the declared assumptions), and validation (assessing whether those definitions capture the intended behavior) (§2.1, p.2). Their target is partial functional correctness, written as an implication from initial predicate, terminating execution, and final predicate (§2.1, p.2). The paper warns: “When an agent produces its own specification, proof success is useful only in combination with evidence about that specification.” (§2.1, p.2). The practical contribution is a versioned kit of executable semantics, proof procedures, applicability conditions, examples, and audits, with failure diagnoses converted into reusable procedures.
@@ -69,12 +67,6 @@ The frozen comparison gives each swapped-semantics program one attempt with comp
 The larger historical comparison (GPT-5.6 Luna, four attempts per configuration) has 372 attempts per arm. Bare accepts 270/372 = 72.6%; kit accepts 312/372 = 83.9%. Solved within four attempts is 84/93 = 90.3% bare and 91/93 = 97.8% kit (Table 3, p.6). Under swapped semantics, acceptance rises from 73/124 to 92/124; the paper notes that coverage checks reject claims that exclude required inputs even when those restricted claims prove (§5.3, p.7). It also says load and instruction compliance could explain part of the gain (§5.3, p.7).
 
 Verus form: Inference: test guidance on renamed and behavior-swapped Rust APIs or libraries, while keeping input-domain checks independent of the verifier. Report all attempts and solved-within-budget denominators; do not infer causal improvement from uncontrolled historical comparisons.
-
-## what stays trusted and threat to VL
-
-Inference: the trusted elements include K rewrite rules, source-to-semantics translation, solver integration, Lean kernel and permitted axioms, the supplied mathematical vocabulary, and human review of selected repairs. The paper explicitly says that “The mathematical vocabulary supplied by the benchmark is trusted for this experiment.” (§5.1, p.5). HumanEval and KleverBench use different scopes, budgets, models, and evolving artifacts; the authors caution that frozen kit comparisons have wide intervals and mixed outcomes.
-
-Inference: the threat to a product that asks agents to write verified Rust is high when agents can choose specifications or abstraction bridges. A proof can pass while the contract omits required behavior, the input domain is narrowed, or a helper rule fabricates results. VL should retain executable semantics where feasible, require coverage and adequacy audits, version repair guidance with applicability and evidence, and report proof and audit results separately.
 
 ## techniques for the catalog
 

@@ -85,8 +85,6 @@ On the 100-example LeanComb test set, Table 3 reports Pass@1 for four models aft
 
 Inference: Lean acceptance checks that a proof establishes its formal statement. It does not establish that the statement faithfully translates the source identity or that deduplication and source selection provide an adequate benchmark; the model and search supply candidate proofs. The paper does not measure Verus, Rust, memory safety, or deployment behavior. Inference: an agent-written verified-Rust product can reuse the loop of state extraction, candidate search, verifier filtering, and iterative data generation, but it must not reuse Lean syntax or assume combinatorics transfer without a Verus benchmark.
 
-Inference: VL should not redo a generic claim that more generated data can improve tactic models; this paper already measures that claim for Lean and gives a concrete generator. A product-specific study should instead test Verus obligations, Rust APIs, dependency changes, and specification quality. Inference: search and dataset techniques might improve proof throughput, but this paper provides no Verus measurements to establish that transfer.
-
 ## techniques for the catalog
 
 - domain formalization benchmark — translate source identities into executable Lean statements and proofs with a held-out test split
@@ -94,4 +92,3 @@ Inference: VL should not redo a generic claim that more generated data can impro
 - RL tactic tree search — combine LLM candidate tactics with policy/critic PUCT expansion and back-propagation
 - checker-centered validation — deduplicate, repair typed/incomplete candidates, discard logical errors, and retain only verifier-accepted proofs
 - iterative proof-data refinement — fine-tune on accepted generated theorems and repeat generation to enlarge the training corpus
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The baseline models are initially pre-trained on Mathlib4 and subsequently fine-tuned on the LeanComb training set."): checked every quotation, reported number, section/page reference, and technique step against the full text including appendices; corrected candidate-theorem proof construction, page references, the validation quotation, and inference labels, and recorded evaluation search and the Table 2 percentage discrepancy; did not reproduce experiments, inspect code or datasets, or test the proposed Verus adaptations.

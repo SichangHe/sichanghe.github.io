@@ -12,7 +12,7 @@
     - number: APR proof/disproof decidability when reachable closure finite and side conditions decidable
     - limits: ARS reductions may be nondeterministic; partial validity alone ignores infinite paths and is insufficient for liveness. Total-validity criterion assumes a partially valid APR proof and its finite proof graph; decidability additionally needs finite reachable closure and decidable emptiness/intersection/runnability. Current cyclic buds must match companions exactly, the full cut rule is omitted, and process fairness/generalized companions are future work. Safety reduction uses error sets and normal-form conditions.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2602.04641.txt`
+    -
     - record id: `apr-safety-liveness-framework-2026`
 - Certifying rlive (2026)
     - title: Certifying rlive: A New Proof Strategy for Liveness Model Checking
@@ -31,7 +31,7 @@
     - number: no LOC, person-time or benchmark timing reported
     - limits: It verifies code under the language's own operational semantics, not a production Rust or OCaml executable. Humans supply the model, invariants, contracts and refinement proofs. The URL of the mechanization artifact is not given.
     - how much was read: most of it read
-    - [source](https://hal.science/hal-05647709v1/document); [notes: A Higher-Order Separation Logic for Verifying Liveness-Preserving Refi](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
+    - [source](https://hal.science/hal-05647709v1/document); [notes: A Higher-Order Separation Logic for Verifying Liveness-Preserving Refi](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `fairneris-2026`
 - Federated Formal Verification (2026)
     - title: Federated Formal Verification: Cross-Backend Citation, Cross-Axis Convergence, and AI-Orchestrated Proof Dispatch for Production Systems
@@ -42,7 +42,7 @@
     - number: Coq 8/8 passes, median 34.4 s; Apalache 0/3; TLC 0/5; PRISM 1/13
     - limits: A human wrote the claim that the backends are equivalent. There is no artifact URL. The paper gives no prompts, no cost, and no breakdown of human effort. The Java assertions check test states only, not refinement. The speedup compares different protocols. Apalache refuted a property that Coq cited, at bound six.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2606.02019); [notes: Federated Formal Verification: Cross-Backend Citation, Cross-Axis Conv](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2606.02019.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2606.02019); [notes: Federated Formal Verification: Cross-Backend Citation, Cross-Axis Conv](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md)
     - record id: `federated-formal-verification-2026`
 - Feedback & Synthesis in LLM-Assisted Termination Proofs (2026)
     - what: LLMs propose decreasing measures (quantities that shrink at each step, proving termination) for ACL2s functions. ACL2s checks them and returns errors and counterexamples. It splits failures into loops (termination cores) and combines the subproofs.
@@ -52,7 +52,7 @@
     - number: gpt-oss with feedback solved 70% of course and 93% of competition problems vs built-in ACL2s 65% and 63%
     - limits: It covers termination of functional code, not progress of distributed systems. The 39% compares the integrated search with the best LLM alone. The corpus is small.
     - how much was read: most of it read
-    - [source](https://drops.dagstuhl.de/storage/00lipics/lipics-vol382-itp2026/LIPIcs.ITP.2026.22/LIPIcs.ITP.2026.22.pdf); [notes: Feedback & Synthesis in LLM-Assisted Termination Proofs](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal254/Feedback_Synthesis_in_LLM_Assisted_Termination_Proofs_.txt`
+    - [source](https://drops.dagstuhl.de/storage/00lipics/lipics-vol382-itp2026/LIPIcs.ITP.2026.22/LIPIcs.ITP.2026.22.pdf); [notes: Feedback & Synthesis in LLM-Assisted Termination Proofs](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `feedback-synthesis-in-llm-2026`
 - Formal Verification of Multi-Controller Systems in Cloud Management (2026)
     - what: A NuXMV model of two Kubernetes-style controllers, two resources and two users. It checks convergence (eventually the requested state holds forever) and completion. Overlapping resources cause endless overwriting. Dependencies can block forever.
@@ -71,14 +71,14 @@
     - number: Theorem 6.9 liveness by typing
     - limits: Results concern a simple synchronous message-passing calculus with guarded recursion, finite nonempty branch sets, and a global type that is well formed, projectable, and balanced. Liveness assumes full fairness; stronger justness/instruction fairness would require different types/projection. Association permits local subtyping and can match a global label with a different local label. The reactive semantics is chosen for mechanization convenience and may be too strong for calculi where silent actions matter. No runtime benchmark is presented; evidence is the Rocq proof artifact (~14K lines).
     - how much was read: most of it read
-    - [source](https://doi.org/10.4230/LIPIcs.ITP.2026.4); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2605.23633.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/lipics_text/Formally_Verified_Liveness_with_Multiparty_Session_Types_in_Rocq_.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://doi.org/10.4230/LIPIcs.ITP.2026.4)
     - record id: `keskin-yoshida-rocq-mpst-liveness-2026`
 - Lawyer (2026)
     - title: Lawyer: Modular Obligations-Based Liveness Reasoning in Higher-Order Impredicative Concurrent Separation Logic
     - what: Lawyer proves fair termination (every fairly scheduled run finishes) in Rocq/Iris. It uses a logical transition system of obligations. A well-founded hierarchy orders the dependencies to rule out cycles. The authors verify a ticket-lock module and its client separately, against a fair-lock interface that obliges the holder to release.
     - limits: Finite sets of levels limit lock-coupling structures that grow without bound. Progress for independent modules, and liveness of programs that never terminate, are future work. The notes found no effort count.
     - how much was read: most of it read
-    - [source](https://iris-project.org/pdfs/2026-oopsla-lawyer.pdf); [notes: Iris: Trillium, Lilo, Lawyer](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`
+    - [source](https://iris-project.org/pdfs/2026-oopsla-lawyer.pdf); [notes: Iris: Trillium, Lilo, Lawyer](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `lawyer-2026`
 - LIFT loop-bound termination verification (2026)
     - title: LLM-Guided Loop Bound Generation for Program Termination Verification
@@ -89,7 +89,7 @@
     - number: 19 unsolved
     - limits: A valid over-approximate loop bound implies termination, but bounded violation analysis can miss violations after depth m and then treats the witness as potentially spurious. The framework is presented for one loop and says it generalizes to multiple loops. It relies on LLM inference, ICE-DT invariant quality, Boogie/SMT arithmetic, fixed iteration/time budgets, and syntactic restrictions excluding division/nonlinear operators. Nineteen of 171 benchmarks remain unsolved: ten lacked precise bounds and nine exceeded validator capability.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/icml_text/LLM_Guided_Loop_Bound_Generation_for_Program_Termination_Verification.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/LLM_Guided_Loop_Bound_Generation_for_Program_Termination_Verification.txt`
+    -
     - record id: `lift-loop-bound-termination-verification-2026`
 - Liveness certificates (2026)
     - title: Liveness Proofs for Hardware Model Checking
@@ -100,7 +100,7 @@
     - number: older Sindoni pipeline: 16 optimized and 13 unoptimized rLive instances not certified; overhead 309%/469% over certified instances only
     - limits: It covers finite-state hardware models. The soundness proof is mathematical, not mechanized. The aigunfair converter and the SAT checker are trusted.
     - how much was read: most of it read
-    - [source](https://link.springer.com/content/pdf/10.1007/978-3-032-32537-2_1.pdf); [notes: Liveness Proofs for Hardware Model Checking](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Liveness_Proofs_for_Hardware_Model_Checking_.txt`
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-032-32537-2_1.pdf); [notes: Liveness Proofs for Hardware Model Checking](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `liveness-certificates-2026`
 - Mysticeti proofs (2026)
     - title: Mechanized Safety and Liveness Proofs for the Mysticeti Consensus Protocol under the LiDO-DAG Framework
@@ -109,7 +109,7 @@
     - number: 6271 lines, developed by two persons in two months
     - limits: Not a machine-checked proof that the whole Rust codebase matches the model. The Sui finding was true when the paper was written. It is not a claim about the current deployment. Weak liveness guarantees only that honest leader vertices and certificates get created, not that blocks commit.
     - how much was read: most of it read
-    - [source](https://flint.cs.yale.edu/publications/sp26.pdf); [notes: Mechanized Safety and Liveness Proofs for the Mysticeti Consensus Prot](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: LiDO, LiDO-DAG, and a 2026 liveness bug](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://flint.cs.yale.edu/publications/sp26.pdf); [notes: Mechanized Safety and Liveness Proofs for the Mysticeti Consensus Prot](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: LiDO, LiDO-DAG, and a 2026 liveness bug](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `mysticeti-proofs-2026`
 - Paxos-SB in DistAlgo (2026)
     - title: Specifying Paxos for System Builders: Pseudocode Made Executable
@@ -119,7 +119,7 @@
     - number: 3 servers, 2 clients, 100,000 requests each in under 170 s; latency under 1.7 ms; about 10x C runtime
     - limits: These are runtime checks, not proofs. Humans supplied initial values and helpers, and no LLM workflow is reported. The recovery procedure is not implemented separately.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2609.12239); [notes: Specifying Paxos for System Builders: Pseudocode Made Executable](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`
+    - [source](https://arxiv.org/abs/2609.12239); [notes: Specifying Paxos for System Builders: Pseudocode Made Executable](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `paxos-sb-in-distalgo-2026`
 - Pischke-Yoshida top-down bottom-up (2026)
     - title: Top-down = Bottom-up: Sound and Complete Characterisations of Liveness by Multiparty Global Protocols
@@ -130,7 +130,7 @@
     - number: O(n^2 b |Δ|^n) graph synthesis bound
     - limits: Assumes synchronous session semantics, finite guarded recursive local types, finite labels, safe-and-live input contexts, fair scheduling, precise synchronous subtyping, and balanced global types. Process-level liveness is undecidable, so bottom-up checks context properties that soundly imply it; synchronous context checking is PSPACE-complete and asynchronous liveness is undecidable. Synthesis can incur exponential syntactic expansion because recursive syntax cannot share branch subterms; benchmarks show stack overflow/timeouts on largest coinductive-full cases. Tool results cover representative examples rather than production deployments.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2607.21489.txt`
+    -
     - record id: `pischke-yoshida-top-down-bottom-up-2026`
 - Pono 2.0 (2026)
     - title: Pono 2.0: A Versatile SMT-Based Model Checker for Safety and Liveness (Long Tool Paper)
@@ -141,7 +141,7 @@
     - number: 863 HWMCC QF-ABV: 677 solved; 502 SV-COMP QF-ABV: 132 solved
     - limits: Transition systems may be finite or infinite over SMT theories; properties are LTL safety or liveness. Completeness varies by engine: bounded BMC and k-liveness checks can be inconclusive, finite-index CEGP is explicitly incomplete, and correctness witnesses are not exported (invariants can be internally checked). Results depend on solver support and fixed resource limits.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal259/Pono_2_0_A_Versatile_SMT_Based_Model_Checker_for_Safety_and_Liveness_Long_Tool_Paper_.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/§§1–7, Tables 1–6, Figures 1–6`
+    -
     - record id: `pono-2-0-2026`
 - REAL Ramsey elimination (2026)
     - title: Fast Ramsey Quantifier Elimination in LIRA (with applications to liveness checking)
@@ -152,7 +152,7 @@
     - number: futurbus FAST 125.95s and REAL 28.570s
     - limits: Ramsey elimination applies to existential linear arithmetic; liveness claims depend on FASTer computing a sound reachability relation and on the encoded fairness/model assumptions. The Lamport bakery starvation check fails without fairness assumptions. Mixed LIRA has substantial overhead because integer and real variables are separated; large benchmark solving times reach hundreds of seconds. The paper does not provide completeness beyond the supported arithmetic fragment or direct comparison on identical prototype benchmarks.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2511.05323.txt`
+    -
     - record id: `real-ramsey-elimination-2026`
 - Robot supervisor synthesis audit (2026)
     - title: Realizability Is Not Enough: Encoding, Liveness, and Auditing of Synthesized Robot Supervisors
@@ -163,7 +163,7 @@
     - number: Crazyflie System-Goal: one-hot 19.730 s and 76.7 reduced states; enumerated 9.275 s and 106 reduced states
     - limits: Results are for the GR(1) fragment, slugs/CUDD backend, sequential one-active-capability protocol, finite explicit strategies, and specified goal labels. Well-separation diagnoses game-level assumption falsification but is not a deployment certificate; the auditor is not a general fairness/liveness verifier and leaves SCCs with optional exits unflagged. Reduction preserves capability-level traces, not all auxiliary propositions. Physical correctness and indefinitely failing capabilities remain outside guarantees.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2609.30460.txt`
+    -
     - record id: `robot-supervisor-synthesis-audit-2026`
 - SoK consensus (2026)
     - title: Systematization of Knowledge: Formal Verification of Consensus Protocols
@@ -174,7 +174,7 @@
     - number: Only ≈30% of surveyed works address liveness (§5)
     - limits: It gives no search date range and no count of how many papers were considered, so the reported fraction is not an unbiased census. Table 1 entries need checking against the cited papers.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2608.21935); [notes: Systematization of Knowledge: Formal Verification of Consensus Protoco](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2608.21935.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2608.21935); [notes: Systematization of Knowledge: Formal Verification of Consensus Protoco](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `sok-consensus-2026`
 - Structural Liveness of Conservative Petri Nets (2026)
     - what: Proves EXPSPACE-completeness of structural liveness for conservative and structurally bounded Petri nets, with doubly-exponential bounds on minimal live markings. The paper models Petri nets as action vectors and develops a proof chain: reversible virtual reachability is represented by bounded linear systems; conservative, structurally bounded and live-bottom-SCC properties are related; dead markings are represented by disjunctions of bounded restricted markings; quasi-dead markings and extractor cases reduce non-liveness to linear-system constraints. Small-solution theorems then yield a 2-exp bound on a live marking, enabling an exponential-space nondeterministic algorithm. A strengthened EXPSPACE lower bound completes hardness for conservative nets and transfers it to structurally bounded nets. The proof extends integer-solution bounds with divisibility constraints.
@@ -183,7 +183,7 @@
     - number: The upper-bound algorithm guesses a binary-encoded live marking and checks liveness in polynomial space in that encoding.
     - limits: Results concern standard finite-dimensional Petri nets with nonnegative markings and conservative/structurally bounded subclasses; general structural liveness complexity remains open. Bounds are doubly exponential and not practical algorithms. Several technical ingredients are cited from prior work (Rackoff/Leroux), and the proof uses virtual reachability, reversibility and large-component extractors. No implementation or experimental evaluation is reported.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2503.11590.txt`
+    -
     - record id: `structural-liveness-of-conservative-2026`
 - SysMoBench (2026)
     - title: SysMoBench: Evaluating AI on Formally Modeling Complex Real-World Systems
@@ -194,7 +194,7 @@
     - number: each agent run five times, best output evaluated, at most three repairs
     - limits: Covers only the finite executions and configurations supplied. A model can match buggy code and still fail the desired guarantee. The evaluator uses an LLM for some mappings.
     - how much was read: most of it read
-    - [source](https://github.com/specula-org/SysMoBench); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; [notes: SysMoBench](../distributed_verification_review_b/deep_7_evaluation.md)
+    - [source](https://github.com/specula-org/SysMoBench); [notes: SysMoBench](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `sysmobench-2026`
 - Timers (2026)
     - title: Verifying First-Order Temporal Properties of Infinite-State Systems via Timers and Rankings
@@ -205,7 +205,7 @@
     - number: runtime is Z3 validation on Apple M1 Pro, Z3 4.13.3
     - limits: The guarantees cover first-order transition-system models, not deployed code. Rankings and invariants are not discovered automatically. Sizes count proof tokens, not human effort.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-032-22749-2_18); [notes: Verifying First-Order Temporal Properties of Infinite-State Systems vi](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_tables.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://doi.org/10.1007/978-3-032-22749-2_18); [notes: Verifying First-Order Temporal Properties of Infinite-State Systems vi](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `timers-2026`
 - TLA-Verus (2026)
     - title: TLA-Verus: Generating and Solving Temporal Proof Obligations with LLM Agents
@@ -216,7 +216,7 @@
     - number: evaluation: 40 paired tasks, ten per category, 32 models from 24 repositories
     - limits: Showing that the implementation refines the model is future work, so a model proof is not a proof about Rust behavior. An LLM reviews whether the translation is faithful, and this is not proved. The dataset and pipeline are unreleased. The runs were not repeated. A Raft-style model was safe only because it could not make progress.
     - how much was read: most of it read
-    - [source](https://openreview.net/forum?id=ncFIZuIUyK); [notes: closest related work](../distributed_verification_review_b/review_b_tla_verus_20261007.md); [notes: reported results and populations](../distributed_verification_review_b/review_b_tla_verus_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
+    - [source](https://openreview.net/forum?id=ncFIZuIUyK); [notes: closest related work](../distributed_verification_review_b/review_b_tla_verus_20261007.md); [notes: reported results and populations](../distributed_verification_review_b/review_b_tla_verus_20261007.md)
     - record id: `tla-verus-2026`
 - Transition Invariants Revisited: Termination Witnesses and Their Validation (2026)
     - what: Extends the standard machine-readable proof format that program verifiers hand to each other so it can carry termination proofs. The proof is a transition invariant: a relation between any earlier and later state of a run that must decrease in a well-founded way. Three checkers re-validate such proofs independently of the tool that made them.
@@ -255,7 +255,7 @@
     - number: 8 states
     - limits: README-level documentation; no independent proof audit was run.
     - how much was read: most of it read
-    - [source](https://github.com/anvil-verifier/verus-tla); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: R02. Verus temporal libraries, 2025–2026 repository leads](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
+    - [source](https://github.com/anvil-verifier/verus-tla); [notes: R02. Verus temporal libraries, 2025–2026 repository leads](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `verus-tla-repository-2026`
 - Welder (2026)
     - title: Welder: Compositional Liveness Verification of Cluster Control Planes
@@ -266,7 +266,7 @@
     - number: seven bugs found during verification; zero in 629 functional, 1,302 controller-crash, 677 Pod-crash tests
     - limits: Features left out of the success condition are not checked. The proofs assume that faults eventually stop. Controllers that depend on each other in a circle need separate reasoning. Four controllers lack full feature parity with the upstream versions. The evidence on AI is qualitative only.
     - how much was read: most of it read
-    - [source](https://github.com/anvil-verifier/anvil/tree/sosp26); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: Welder: Compositional Liveness Verification of Cluster Control Planes](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: P07. Welder: Compositional Liveness Verification of Cluster Control Pl](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://github.com/anvil-verifier/anvil/tree/sosp26); [notes: Welder: Compositional Liveness Verification of Cluster Control Planes](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: P07. Welder: Compositional Liveness Verification of Cluster Control Pl](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `welder-2026`
 - Wirehead Rocq proofs (2026)
     - title: Toward Formal Verification of a Lock-Free Distributed Double Buffer Cache
@@ -295,7 +295,7 @@
     - number: toy stabilization bound n^2
     - limits: The user supplies how the ranking is composed, the other proof-rule formulas, and sometimes hints for existential witnesses. Domains are finite but unbounded. It does not cover unrestricted infinite domains in full. The review notes found no person-month figures.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2412.13996); [notes: LVR and implicit ranking functions](../distributed_verification_review_b/deep_2_liveness.md); [notes: Ivy, ranking, Coq, and Iris case index](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2412.13996.txt`
+    - [source](https://arxiv.org/abs/2412.13996); [notes: LVR and implicit ranking functions](../distributed_verification_review_b/deep_2_liveness.md); [notes: Ivy, ranking, Coq, and Iris case index](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `implicit-rankings-2025`
 - LAW (2025)
     - title: The LAW theorem: Local Reads and Linearizable Asynchronous Replication
@@ -316,14 +316,14 @@
     - number: Narwhal: spec 2,307, proof 9,697
     - limits: It covers protocol models only. It does not show that a Rust implementation refines them. It excludes asynchronous probabilistic variants. It needs an extra fairness assumption: each synchronous builder succeeds within a fixed number of time segments. Line counts mix reused and safety proofs with liveness proofs.
     - how much was read: most of it read
-    - [source](https://flint.cs.yale.edu/publications/lido-dag.pdf); [notes: LiDO-DAG: A Framework for Verifying Safety and Liveness of DAG-Based C](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: LiDO, LiDO-DAG, and a 2026 liveness bug](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://flint.cs.yale.edu/publications/lido-dag.pdf); [notes: LiDO-DAG: A Framework for Verifying Safety and Liveness of DAG-Based C](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: LiDO, LiDO-DAG, and a 2026 liveness bug](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `lido-dag-2025`
 - Lilo (2025)
     - title: Lilo: A Higher-Order, Relational Concurrent Separation Logic for Liveness
     - what: Lilo is a Coq logic for the liveness of shared-memory programs. It uses obligations (promises to finish) and progress credits. The authors give proofs for a spinlock, a ticket lock, Treiber and elimination stacks, and infinite message passing.
     - limits: Stratified propositions limit contracts that refer to themselves. Logically atomic triples for the elimination stack are future work. It is not a result about networks or crashes.
     - how much was read: most of it read
-    - [source](https://zenodo.org/records/14927742); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: Iris: Trillium, Lilo, Lawyer](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://zenodo.org/records/14927742); [notes: Iris: Trillium, Lilo, Lawyer](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `lilo-2025`
 - MongoDB conformance blog (2025)
     - title: Conformance Checking at MongoDB: Testing That Our Code Matches Our TLA+ Specs
@@ -333,7 +333,7 @@
     - number: 4913 tests reached 100% branch coverage
     - limits: Trace checking and generated tests are incomplete samples; the post says completeness is usually impossible.
     - how much was read: most of it read
-    - [source](https://www.mongodb.com/company/blog/engineering/conformance-checking-at-mongodb-testing-our-code-matches-our-tla-specs); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`
+    - [source](https://www.mongodb.com/company/blog/engineering/conformance-checking-at-mongodb-testing-our-code-matches-our-tla-specs)
     - record id: `mongodb-conformance-blog-2025`
 - Neural model checking with invariants (2025)
     - title: Let a Neural Network Be Your Invariant
@@ -353,13 +353,13 @@
     - number: no LOC, runtime or person-time reported
     - limits: RustHalt is a prototype. Its re-mechanization of RustHornBelt is incomplete. It is not production Rust.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3729250); [notes: Related work absent from the first pass: Nola](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gaps.md`
+    - [source](https://doi.org/10.1145/3729250); [notes: Related work absent from the first pass: Nola](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `nola-2025`
 - On Temporal Verification of Stateful P4 Programs (2025)
     - what: Defines P4LTL temporal properties over completed packet processings while retaining register state between packets. Models arbitrary input packets and changing table actions, optionally constrained by symbolic control-plane assumptions. Constructs a Büchi transaction product in which the specification automaton advances only at packet return, reducing violations to fair feasible traces. A proof sketch establishes the abstract correspondence; p4tv implements P4-to-Boogie translation, ghost instrumentation and an Ultimate Automizer extension. Evaluation checks19 temporal tasks on nine programs plus assertion checks/scaling, identifying two naturally occurring property failures and three injected defects. Records exact packet-boundary/old/free-variable semantics, register initialization and control-plane scope, product transitions/acceptance and proof-sketch qualifications, refinement algorithm and implementation trust, all Table2/3 cells, actual versus injected bug distinction, p4v approximation and assertion instrumentation, rapid scaling growth, and source specification/prose inconsistencies including vacuous liveness formula. Separates local P4xos checks from whole Paxos consensus verification.
     - limits: §3: Environment is a serial infinite loop of complete packet processings, persistent registers outside loop, nondeterministic packet fields each iteration and metadata initialized per P4-16. Table applications are nondeterministic action choices. This abstracts a single programmed switch; no proof of interleaved pipeline concurrency, simultaneous register read/modify/write races, multiple switches, queue dynamics or actual hardware refinement is supplied. Packet time is not wall-clock time. §§2/3/7/8: Register initialization is part of each verification configuration. P4NIS failing task9 leaves count unconstrained; successful invariant/assertion examples assume valid/zero initialization or add recovery logic. Persistent arbitrary initial values differ from independently re-randomizing registers every packet. Results under initialization assumptions do not show a real deployment meets those assumptions. §§3.2/4: CPI constrains table keys/actions/parameters, allows symbolic sets of entries and changes between packets. Empty CPI permits every modeled rule. Property checked is assumption implies desired property; it can hold if assumption is impossible. Authors do not report systematic assumption satisfiability/vacuity checks or prove a real controller always enforces CPI. Table2 needs CPI for tasks6,7,8,16 only. §4.1: Predicates are evaluated at packet boundaries: terms normally after processing; old(t) at ingress start after parsing; valid(h) records validity after parsing, hit/apply record occurrence during processing. old(key) and old(para) expressly arbitrary. fwd(t) is egress_spec==t syntactic sugar, so packet-output/architecture correspondence matters. Free variables describe nondeterministic values intended to cover all names; scope/stability must be preserved when translating specifications. §§4/6/7.2: Boundary-only temporal properties can miss transient within-packet violations. Assertion checks use a shadow variable initialized true per packet and capture the assertion at its program point, then check its boundary value. This is an explicit instrumentation workaround; the native P4LTL language still cannot directly observe arbitrary internal events. Correct instrumentation and all relevant visits are part of the trust boundary. §5.1: Product keeps program/specification location pairs, updates specification only on TR(s), uses assume true on other statements, and accepting locations require spec acceptance plus TE/TR boundary. Fair means Büchi acceptance (infinitely recurring accepting states), not automatic network-delivery, scheduler or adversary fairness. Liveness assumptions about infinitely many particular packets are written explicitly in the property. Infinite repeated packet processing is the base execution model. §5.1/Appendix A: Theorem5.1/A.1 is an abstract correspondence with an informal proof sketch, not a mechanized proof of P4 semantics, Boogie translation, instrumenter or executable checker. Projection deletes only true steps imposed by non-return transitions; a return transition labelled true must remain. Appendix switches the named if/only-if directions, and reverse construction retains TE(s)∨TR(s) while operational product advances spec on TR(s) only. A rigorous proof should distinguish statement/boundary indexing and establish infinitely many returns; no concrete tool-unsoundness counterexample claimed. §5.2/6: Algorithm1 reuses counterexample-guided refinement from cited fairness-modulo-theory work: select accepting trace, test feasibility, return genuine trace or remove a generalized set of infeasible traces, finish when none remain. No universal termination/runtime bound or translation correctness theorem provided. Trust includes P4/Boogie modeling, ghost instrumentation, LTL conversion, automata/refinement/feasibility engine and underlying reasoning tools. Code/proofs not run in this reading. §6: Prototype fully supports V1Model but limited TNA/PSA. Authors claim model transferable with more detailed P4 processing; future architecture support is not demonstrated full support. State explosion remains. About10000C++/JavaLOC and selected small benchmark programs do not establish production-scale coverage. §8 pp.228–229: Printed P4NIS liveness consequence is conjunction over ports i of GF(phi_sp -> fwd(i)), under GF(phi_sp). This is weaker than GF(phi_sp AND fwd(i)): infinitely many non-specific packets satisfy every implication regardless of forwarding. Alternating specific/non-specific packets with no fwd(i) satisfies the displayed formula while violating the natural-language goal. This is a semantic observation about the printed specification, not a run of artifact specifications. §4’s earlier liveness example has a different stronger shape. §8: NDN weak-until formula is activated only after a data packet was forwarded; it then forbids repeated data forwarding until a matching forwarded interest. It does not by itself forbid the first unsolicited data forward before that trigger, nor require eventual forwarding because W permits no future interest. Task6’s separate property covers interest-before-data. Universal free hash variable is not a proof of hash collision freedom or data-name authentication. §5.1 Figure5/§7.2 Table3: Figure5 prose says status becomes0 when hdr.cnt<0, while listing/automaton tests>0; record follows code when describing example. Table3 says acceptor stored round strictly less than current round, while adjoining prose uses≤ under zero initialization. Strict< would fail on equal zeros; cannot silently interchange these properties. Printed description/code discrepancies do not establish implementation bugs. §7: Dataset has nine manually selected programs and manually authored properties; artificial bugs inserted in CPI/task8 and code/tasks15,18. Natural failures tasks9,13 are author-reported findings without external maintainer confirmation/production exploit in paper. 14 verified tasks and five counterexamples are outcomes for specified models, not whole programs certified correct. §7.2: Temporal comparison with four prior tools is a support limitation discussion; measured assertion comparison runs bf4 and an approximate p4v implementation from bf4 work because original p4v unavailable. Vera limited user assertions and Aquila unavailable. Spurious counterexamples are relative to chosen persistent-register configuration, not evidence prior tools unsound for their broader nondeterministic model. p4tv is much slower but more precise for these stateful examples. §7.3: Program and specification scaling varied separately on P4NIS ports and acceptor index clauses. Curves grow rapidly; Figure8 about8600s near64ports and Figure9 about24000s near32clauses, approximate visual readings only. Easy false properties return inabout90s for CNT8/16, so falsification speed does not imply comparable proof scaling. No cross-product scalability, latency budget or large production network study. §7: Hardware i5-12400 2.50GHz/32GB; no repeat counts, confidence intervals, error bars or user specification effort measurements given. Main temporal tasks10–1260s; assertion acceptor-safe1701s, so21min maximum applies only Table2. P4xos acceptor/learner predicates are local state/order/vote checks, not an end-to-end Paxos agreement/liveness proof under crash/message-loss/reconfiguration. No Verus/Rust/TLA+ implementation theorem or LLM-agent evaluation. §7.1/Table2 task8: Printed task8 checks property6, data is forwarded only after a corresponding interest. Reported trace receives interest then drops data. A dropped data packet alone cannot violate this only-if safety condition. Preserve author-reported counterexample outcome, but it does not demonstrate violation of the printed property without more trace/specification detail. This inconsistency does not establish tool unsoundness.
     - how much was read: most of it read
-    - [source](https://www.usenix.org/conference/nsdi25/presentation/zhang-delong); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal527/p4tv.reading.txt`
+    - [source](https://www.usenix.org/conference/nsdi25/presentation/zhang-delong)
     - record id: `on-temporal-verification-of-2025`
 - Reusable TLA+ Communication Primitives for Modeling and Verifying Distributed Systems (2025)
     - what: A PlusCal Echo protocol built over reusable channel abstractions (perfect, fair-loss, stubborn). TLC checks eventual delivery, FIN termination and that no message is invented.
@@ -378,7 +378,7 @@
     - number: average speedup 6.47x on instances solved by both
     - limits: It handles Boolean and linear arithmetic constraints. It is model checking. It does not prove that software implements the model. It does not terminate on systems whose only counterexamples are not lasso-shaped (a prefix followed by a repeating loop).
     - how much was read: most of it read
-    - [source](https://link.springer.com/content/pdf/10.1007/978-3-031-98668-0_11.pdf); [notes: Infinite-State Liveness Checking with rlive](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-031-98668-0_11.pdf); [notes: Infinite-State Liveness Checking with rlive](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `rlive-2025`
 - Veil (2025)
     - title: Veil: A Framework for Automated and Interactive Verification of Transition Systems.
@@ -389,7 +389,7 @@
     - number: Veil verifies 16/16; 14/16 under 15 s and 12/16 under 10 s
     - limits: It evaluates checking supplied invariants, not finding them. It is not an LLM agent. All its guarantees are safety. The notes record no agent success rate.
     - how much was read: most of it read
-    - [source](https://verse-lab.org/papers/veil-cav25.pdf); [notes: Veil: proofs in Lean with automatic first-order checks](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Veil: a promising proof interface, with no agent rate established here](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://verse-lab.org/papers/veil-cav25.pdf); [notes: Veil: proofs in Lean with automatic first-order checks](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Veil: a promising proof interface, with no agent rate established here](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `veil-2025`
 - VeruSAGE (2025)
     - title: VeruSAGE: A Study of Agent-Based Verification for Rust Systems
@@ -400,7 +400,7 @@
     - number: 849 tasks from eight systems (nine projects): Anvil temporal library 104, Anvil vreplicaset controller 63, IronKV 118, mimalloc 89, Node Replication 29, NRKernel 204, Atmosphere 157, persistent storage 63, Vest 22
     - limits: Failures center on discovering inductive invariants (facts that hold initially and stay true after every step). The Anvil library lemmas are not the same as proving that a new controller eventually reconciles.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2512.18436); [notes: VeruSAGE: high overall rates hide controller-invariant difficulty](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: VeruSAGE / VeruSAGE-Bench](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2512.18436); [notes: VeruSAGE: high overall rates hide controller-invariant difficulty](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: VeruSAGE / VeruSAGE-Bench](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `verusage-2025`
 - VLTL-Bench (2025)
     - title: Verifiable Natural Language to Linear Temporal Logic Translation: A Benchmark Dataset and Evaluation Suite
@@ -411,7 +411,7 @@
     - number: 36 expert-crafted lifted NL-LTL pairs plus 7 new ones
     - limits: Its equivalence check only flags a difference. It does not say whether one formula is weaker or stronger. Two traces cannot establish equivalence or liveness. It has no proof, no code, and no audit of how far to trust agents. The text says three datasets but the table lists four.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2507.00877); [notes: Temporal requirement translation: VLTL-Bench and GraFT](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`; [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
+    - [source](https://arxiv.org/abs/2507.00877); [notes: Temporal requirement translation: VLTL-Bench and GraFT](../distributed_verification_review_b/deep_7_evaluation.md); [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
     - record id: `vltl-bench-2025`
 - Anvil (2024)
     - title: Anvil: Verifying Liveness of Cluster Management Controllers
@@ -422,7 +422,7 @@
     - number: about 2.5 person-months; first proof about two person-months, later ones about two person-weeks
     - limits: Trusts the temporal-logic embedding, the environment model, the specs of external APIs, Verus and the OS. Assumes faults eventually stop. The guarantee says nothing useful if the desired state changes forever. One bug came from an incomplete trusted spec of the ZooKeeper API.
     - how much was read: most of it read
-    - [source](https://github.com/anvil-verifier/anvil/tree/osdi24); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: Anvil: Verifying Liveness of Cluster Management Controllers](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: P06. Anvil: Verifying Liveness of Cluster Management Controllers](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://github.com/anvil-verifier/anvil/tree/osdi24); [notes: Anvil: Verifying Liveness of Cluster Management Controllers](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: P06. Anvil: Verifying Liveness of Cluster Management Controllers](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `anvil-2024`
 - Behavioral Programming liveness (2024)
     - title: Keeping Behavioral Programs Alive: Specifying and Executing Liveness Requirements
@@ -433,7 +433,7 @@
     - number: GPU evaluation uses NVIDIA GeForce RTX 4090
     - limits: The GBA mechanism assumes finite-state executable models; MDP experiments focus on one liveness b-thread and use learned policies that may become infeasible as state complexity grows. Verification assumes must-finish states eventually exit, and RL results are proof-of-concept rather than universal policy guarantees.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2404.01858.txt`
+    -
     - record id: `behavioral-programming-liveness-2024`
 - Bythos (2024)
     - title: Compositional Verification of Composite Byzantine Protocols
@@ -461,7 +461,7 @@
     - number: TLC scanned 5,515,710 distinct states with no violation in the first model
     - limits: It is a vendor post and not peer reviewed. The models do not validate the implementation.
     - how much was read: most of it read
-    - [source](https://www.datadoghq.com/blog/engineering/formal-modeling-and-simulation/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - [source](https://www.datadoghq.com/blog/engineering/formal-modeling-and-simulation/)
     - record id: `datadog-courier-2024`
 - ForEx hyperliveness verification (2024)
     - title: Automated Software Verification of Hyperliveness.
@@ -472,7 +472,7 @@
     - number: HyPro comparison checks 4 GNI instances over bitwidths 1–6 with 3-minute timeout
     - limits: FEHT validity quantifies finite terminating executions; the algorithm is for verification, not refutation of invalid FEHTs (which requires existential-universal reasoning). Completeness is relative to complete unary over/under-approximate proof systems and, for loops, depends on adequate invariant guesses. The tool explores a restricted counting-based loop alignment, so state-dependent alignments are outside its scope. Experiments use small benchmark programs, an M1 Pro with 32 GB, and user-provided invariant hints for marked cases.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-031-57249-4_10); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2403.03323.txt`; notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-031-57249-4_10)
     - record id: `forex-hyperliveness-verification-2024`
 - Ghost signals and completeness thresholds (2024)
     - title: Semi-Automated Modular Formal Verification of Critical Software: Liveness and Completeness Thresholds
@@ -483,7 +483,7 @@
     - number: bounded FIFO producer-consumer: 160 annotation lines for 37 lines of C (435%), verifies in 0.08 s
     - limits: Liveness requires fair scheduling and proof obligations that every signal is eventually discharged; levels must be well-founded and correctly encode dependencies. Ghost signals are not runtime state, so invariants linking them to concrete conditions are mandatory. Completeness thresholds target heap programs traversing arrays without allocation/freeing and can yield sound bounded guarantees only when verification conditions are precise; broader data structures remain future work. The dissertation reports no broad benchmark runtime study.
     - how much was read: most of it read
-    - [source](https://doi.org/10.48550/arxiv.2403.00934); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2403.00934.txt`; [notes: Semi-Automated Modular Formal Verification of Critical Software (2024)](claude_readings.md)
+    - [source](https://doi.org/10.48550/arxiv.2403.00934); [notes: Semi-Automated Modular Formal Verification of Critical Software (2024)](claude_readings.md)
     - record id: `ghost-signals-and-completeness-thresholds-2024`
 - LiDO (2024)
     - title: LiDO: Linearizable Byzantine Distributed Objects with Refinement-Based Liveness Proofs
@@ -505,7 +505,7 @@
     - number: all eight protocols succeed: ticket lock, hybrid reliable broadcast, alternating bit, TLB shootdown, Paxos, Multi-Paxos, Stoppable Paxos, sliding window
     - limits: By default, scheduling assumes a globally bounded interval. This is a slightly stronger fairness than "infinitely often". For example, scheduling at times 1, 2, 4, 8 satisfies "infinitely often" but not any fixed bound. Prophecy variables and a three-tier ranking keep the original fairness. LVR's multi-Paxos leaves out the local scheduler and the I/O queue. So fewer lines than IronFleet does not mean equally less effort. A cheap solver query is not the whole cost.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3632877); [notes: LVR and implicit ranking functions](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md`
+    - [source](https://doi.org/10.1145/3632877); [notes: LVR and implicit ranking functions](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `lvr-2024`
 - neuralmc (2024)
     - title: Neural Model Checking
@@ -516,7 +516,7 @@
     - number: 194 tasks over 10 designs
     - limits: It covers finite hardware models. Training failures and timeouts are separate from proved violations.
     - how much was read: most of it read
-    - [source](https://papers.nips.cc/paper_files/paper/2024/file/9d0947107ea92d6ce369dce7749180dd-Paper-Conference.pdf); [notes: Related work absent from the first pass: Neural Model Checking](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal416/neural.reading.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2410.23790.txt`
+    - [source](https://papers.nips.cc/paper_files/paper/2024/file/9d0947107ea92d6ce369dce7749180dd-Paper-Conference.pdf); [notes: Related work absent from the first pass: Neural Model Checking](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `neuralmc-2024`
 - rlive (finite-state) (2024)
     - title: Avoiding the Shoals - A New Approach to Liveness Checking
@@ -527,7 +527,7 @@
     - number: Table 3 virtual best proves 82 and refutes 101; without rlive 82/85
     - limits: It covers circuit models only. It reports no circuit sizes and no human-effort totals. The notes did not identify the modified nuXmv source archive.
     - how much was read: most of it read
-    - [source](https://link.springer.com/content/pdf/10.1007/978-3-031-65627-9_12.pdf); [notes: Related work absent from the first pass: original finite-state rlive](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal271/Avoiding_the_Shoals_A_New_Approach_to_Liveness_Checking_.txt`
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-031-65627-9_12.pdf); [notes: Related work absent from the first pass: original finite-state rlive](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `rlive-finite-state-2024`
 - SCTP formal analysis (2024)
     - title: A Formal Analysis of SCTP: Attack Synthesis and Patch Verification
@@ -544,7 +544,7 @@
     - what: Introduces nonnegative Streett supermartingale certificates for probability-one omega-regular properties of general discrete-time stochastic processes. Uniform expected decrease on A minus B, bounded increase on B and no increase elsewhere certify each Streett pair. For Markov models, combines deterministic Streett automata, inductive invariants and parametric policies into polynomial-real constraints. Gives template-relative synthesis reductions to quantified NRA, existential NRA, QCP or LP, and eleven small example timings. Completeness for every satisfying stochastic process is explicitly open. Uses Robbins–Siegmund to certify disjunction of finite A-visits or infinite B-visits without proving either disjunct individually almost surely. Derives product-state post-expectations and six classes of universally quantified constraints, preserving invariant and policy synthesis jointly. Explains parametric versus known guards, Farkas infeasibility disjunct, external shielding and finite-memory encoding. Complete table/control parameters support checking exact model/property consistency; reader calculations identify printed automaton boundary and controller discrepancies, not inspected tool defects.
     - limits: General theorem uses a filtered probability space, measurable/adapted processes, nonnegative real V and fixed positive epsilon,M. It certifies probability1, permitting measure-zero exceptional runs, not every possible trajectory or a quantitative failure probability/time bound. Conditional expectations must be well-defined with the stated nonnegative drift inequality. Any connection to implementation numeric/physical behavior remains outside the mathematical theorem. A Streett pair(A,B) means finitely many visits to A OR infinitely many visits to B. Drift is E[V_next|history]<=V−epsilon*1_(AminusB)+M*1_B. Uniform epsilon matters; arbitrary strictly positive but summable decreases would not exclude infinite A-visits. B may recharge the certificate, so V need not be an ordinary supermartingale globally. Reader derivation of Theorem2 from Theorem1:take U_t=epsilon*1_(AminusB),W_t=M*1_B. On finite B-visits,sumW finite; Robbins–Siegmund implies sumU finite almost surely, hence finite AminusB and finiteA. Finite conjunction of probability1 pair-events preserves probability1. The paper gives theorem statements/intuitive examples rather than a machine-checked derivation. Theorem3 restricts Markov drift conditions to a measurable supporting invariant I containing the initial state and preserved with probability1. This can exclude unreachable regions where no global certificate exists. V must remain nonnegative onI; disregarding invariant initiation/consecution would break the proof. Common epsilon,M across finitely many pairs can be obtained by min/max if separate finite constants exist. Synthesis model is time-homogeneous real-state update f(x,w;kappa),i.i.d.disturbances and known fixed policy templates. Memoryless deterministic policies are direct; finite-memory/random inputs can be encoded by extra state/disturbances with fixed memory size/template. This does not synthesize arbitrary history-dependent policies or verify adversarial nondeterministic schedulers without a separate semantics. Deterministic Streett automaton reads current state label, advances q using currentx and advances modelx synchronously. Certificate/invariant live on product(x,q); automatonq alone generally lacks Markov time-homogeneity. LTL-to-automaton correctness and measurable observation predicates are trusted. Rabin duality requires negating the property/probability appropriately, not interpreting a Rabin probability0 result as satisfaction of the same unnegated formula. Symbolic closed-form post-expectation is essential. Theory allows piecewise polynomial templates of fixed degree and polynomial post-expectations, reducing to existential parameters/universal real states with quantifier elimination. Non-polynomial dynamics, arbitrary distributions, unknown degree, non-real arithmetic and unbounded unknown memory lie outside this algorithmic decidability claim. Template completeness is relative to existence of certificate,invariant,policy satisfying the encoded constraints in supplied forms. The paper explicitly leaves completeness of Streett certificates over all satisfying stochastic processes open. SolverUNSAT can show no encoded-template solution, not generally disprove the temporal property; no claim that increasing degree/regions must eventually succeed. Eq16 requires closure for every disturbance w inW, which is sufficient but stronger than Theorem3 probability1 closure when W contains null-probability choices. Example uniform[0,1] hasP(w>0)=1but excludes point0onlyalmostsurely; robust all-wclosure of invariantx>0 would fail. Relative completeness should be understood for the stronger written constraints, not all measurable probability1invariants. Piecewise linear in state does not mean linear in unknown coefficients: controller/certificate products make existentialNRA. Farkas implication rewriting includes either nonnegative multipliers proving consequence or multipliers proving antecedent infeasible. With known guards/invariant, discard infeasible premises then use feasible Farkas form. QCP may be nonconvex; polynomial products can be encoded with fresh quadratic equations. Fixedautonomous dynamics plus fixedguards reduce toLP. Strict-guard reduction cites[20,Lemma1] without reproducing its preconditions. Simply replacing strict premises by weak ones is not equivalent for an infeasible strict antecedent whose closure becomes feasible: (y<0 AND −y<=0)=>1<=0 is vacuouslytrue, while closed version fails aty0. A correct reduction must preserve strict infeasibility or meet the cited lemma conditions. This is a missing justification/precondition issue, not an inspected solver bug. Visible Figure3 claims DSA for(x>=−1) U G(−1<=x<=1),but transitions classify x>=1asq0 and only−1<=x<1asq1. Constantx1satisfies the printed closed-interval formula yet stays inq0forever and is rejected by Streett({q0,q2},empty). Thus displayed automaton enforces the stronger eventualx<1boundary; examplecontroller kappa.5 avoids that boundary issue, but general translation claim is not exact as printed. Example3 continuous uniformnoise[-.1,.1],x0=100,kappa.5 has V=x+1inq0,0otherwise andI:q0x>=−.2,q1x∈[−.2,.9],q2false. Eq32driftε.5 atx>=1andEq33atx<1are valid onI. Eq26maps[-.2,1)to[-.2,.6),Eq29maps[-.2,.9]to[-.2,.55],so closure holds. This is a concrete worked proof, not an executed synthesis replication. Example4 Eq44 prints PostV determined solely by x for all q∈{q0,q1,q2}, although q2 is absorbing in Figure3. For q2 the actual post branch uses alpha2,beta2 regardless of x; setting the q2 invariant false makes that defect irrelevant for Example3. Eq43 has an unexplained printed fv prefix. These are presentation defects; no artifact behavior is inferred. Prototype uses one affine certificate case per automaton state, convex polyhedral invariant templates, Spot LTL translation, SymPy symbolic manipulation and Z3 QF_NRA. Eleven Table1 rows:5VIC,4VI,1VC,1V; all reported under30seconds. Table includes externally supplied-invariant VC/V cases, despite the generic paragraph saying none are required. No comparison benchmark table, failed instances, scaling study, CPU/RAM/OS/solver versions or public artifact link is identified in this paper. Benchmarks use discrete random variables for weighted enumeration of post-expectation, except countably infinite evenOrNegative whose post-expectation is manual. The continuous uniform-noise example is worked analytically; benchmark distributions are not all continuous. Authors report a single deterministic execution and negligible variance, without repeated timing data, error bars or independent replication. Temperature1 model is x_next=.99x+2.8+alpha*x+beta+noise, with fair independent noise±.1 and x0=280K. Hot means x>298, Cold x<292. Alpha−1/32,beta4787/512 yield contraction767/800, center≈294.536 and limiting extreme interval[292.111742,296.960227], consistent with eventual comfort. Observations classify292/298 as neither Hot nor Cold, while prose uses open interval(292,298); preserve the boundary distinction. Reader counterexample to printed Temperature3 controller:alpha−1/64,beta9/2 give x_next=(1559/1600)x+7.3±.1. Starting from280, interval[280,289] is invariant: smallest/largest images are280.025/288.994375. Cold is therefore always true and Hot never true; GFCold=>GFHot fails on every run. This contradicts the printed model/observations/controller/property combination. It may be a model or parameter printing mismatch, not an independently inspected tool defect. Reader Temperature4 check:below shield305, alpha−43/3200,beta4 give x_next=(125/128)x+6.8±.1. Interval[280,295] is invariant, with extreme images280.1375/294.9859375. Hot never occurs and shield never activates.32consecutive low disturbances map any state in this interval to<=290.142598<292. Independent fair Bernoulli blocks produce infinitely many such positive-probability blocks almost surely; hence GFCold holds almost surely and GFHot is false. The printed reactivity claim conflicts with these shared dynamics/thresholds/initial state; artifact uninspected. Temperature3 total28.58s includes23.65s SMT. Temperature4 Table1 total4.64s and prose QCP solve.03s measure different work. Comparison changes controller class, shield, supplied invariant and parameter bounds; the entire speedup cannot be attributed solely to solver choice. Original alpha,beta bounds[−10,10], shielded[−5,5], with305alpha+beta<5.24. FinMemoryControl has one memory bit b; parameters alpha56,l1/8,m14,p1/2,q51 give guards x<=112 in b1 and x<=102 in b0. The simultaneous x update is alpha+w in b1, w−1 in b0. The paper does not state this benchmark’s disturbance distribution, initial state or initial memory bit, so its full behavior cannot be independently reconstructed from this PDF. The other random-walk and Temperature2 rows also omit full model details. Relevance is probabilistic liveness certificates, automaton-product invariants, template synthesis and checking exact generated controller/specification agreement. No LLM writes proofs/specs, no Verus/verified Rust or TLA+ pipeline, and no specific distributed protocol/implementation is verified. Quantitative verification and neural certificate learning are future directions; priority claims are author statements.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-031-65633-0_18); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal484/omega.reading.txt`
+    - [source](https://doi.org/10.1007/978-3-031-65633-0_18)
     - record id: `stochastic-omega-regular-verification-2024`
 - Trillium (2024)
     - title: Trillium: Higher-Order Concurrent and Distributed Separation Logic for Intensional Refinement
@@ -554,7 +554,7 @@
     - number: Paxos client proof about 1100 lines of proof scripts (footnote 9, p.9:27)
     - limits: The authors translate the TLA+ models into Coq state-transition systems by hand. The distributed instantiation targets safety. Distributed liveness is future work.
     - how much was read: most of it read
-    - [source](https://github.com/logsem/trillium); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: papers and boundaries](../distributed_verification_review_b/review_b_liveness_20261007.md)
+    - [source](https://github.com/logsem/trillium); [notes: papers and boundaries](../distributed_verification_review_b/review_b_liveness_20261007.md)
     - record id: `trillium-2024`
 - ByMC (2023)
     - title: ByMC: Byzantine Model Checker, and Survey on Parameterized Verification with Threshold Automata
@@ -573,7 +573,7 @@
     - number: 2-Phase 20-round temperature 0.17–1.92% liveness, 0 false positives
     - limits: Testing is bounded by generated rounds and state abstraction quality; temperature threshold selection trades false positives against runtime, while lasso can use more memory. Twins models Byzantine behavior through twin replicas and injected network faults; results are not formal proofs and depend on implementation/version (Sync HotStuff eprint 20190312:115828, Δ=50 ms).
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2310.09006); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2310.09006.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2310.09006)
     - record id: `decouchant-kulahciogluozkan-zhou-liveness-testing-2023`
 - Finkbeiner Passing delay-dominance (2023)
     - title: Synthesizing Dominant Strategies for Liveness (Full Version)
@@ -584,7 +584,7 @@
     - number: parallel composition winning when phi realizable and bad-prefix criterion holds
     - limits: LTL specifications are represented by an ACA; delay-dominance depends on the chosen ACA structure, so a realizable formula may have no delay-dominant strategy. Composition requires the ACA to ensure bad prefixes; the authors state this is common for standard translations but leave parts marked TODO and give no implementation benchmark. Distributed architectures use Moore process strategies and standard bounded synthesis; complexity is worst-case 2EXPTIME.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2210.01660.txt`
+    -
     - record id: `finkbeiner-passing-delay-dominance-2023`
 - Geometric-logic LTL streams (2023)
     - title: Liveness Properties in Geometric Logic for Domain-Theoretic Streams
@@ -595,7 +595,7 @@
     - number: filter proof uses finite n,k approximants and Lemma 13, not experiments
     - limits: The semantic development assumes a set A (finite for the filter theorem), flat Bool and a Scott-continuous predicate p that is defined on every a∈A. Results concern denotational stream semantics, not an implemented language or distributed protocol. Negation-free formulas are the main tractable fragment; arbitrary negation and Fσ cases may lack a geometric-theory model presentation. Decidability and refinement-type automation are left open, and the filter proof handles a single recursively defined function/specification.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2310.12763); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2310.12763.txt`
+    - [source](https://arxiv.org/abs/2310.12763)
     - record id: `geometric-logic-ltl-streams-2023`
 - Henzinger Mazzocchi Sarac quantitative safety liveness (2023)
     - title: Quantitative Safety and Liveness
@@ -606,7 +606,7 @@
     - number: monitor with at most 2|Sδ| equivalence classes
     - limits: The core definitions assume a nontrivial complete lattice; finite-state monitoring Theorem 59 additionally assumes a limit property with finite real values, finite observation alphabet, and finite α/β error bounds. Quantitative liveness is intentionally stricter than prior multi-live or verdict-live notions, and the paper proves strict separations. The results are semantic and monitor-construction theorems rather than implementation benchmarks; applications to distributed systems require choosing an appropriate trace domain and quantitative metric. Limit-property converse results are left as conjectural/partial in places (e.g., the full converse of the countable-supremum characterization for lim-inf properties).
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2301.11175.txt`
+    -
     - record id: `henzinger-mazzocchi-sarac-quantitative-safety-liveness-2023`
 - PyLTA (2023)
     - title: PyLTA: A Verification Tool for Parameterized Distributed Algorithms
@@ -617,7 +617,7 @@
     - number: Supports parameterized process and fault counts
     - limits: Protocols must be parameterized, round-based and generally communication-closed with monotonically increasing message tags and threshold guards. Fairness assumptions are needed for infinite configurations. Identity-dependent behavior is over-approximated by counter abstraction, and results apply to the LTA model rather than executable code. General parameterized verification remains undecidable; no broad runtime benchmark is reported.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-031-30820-8_4); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/PyLTA_A_Verification_Tool_for_Parameterized_Distributed_Algorithms_.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://doi.org/10.1007/978-3-031-30820-8_4)
     - record id: `pylta-2023`
 - Taming Large Bounds in Synthesis from Bounded-Liveness Specifications (Full Version) (2023)
     - what: The paper synthesizes reactive systems from Safety LTL extended with bounded next/eventually/until operators. It translates formulas to countdown-timer games, representing large numeric bounds symbolically rather than expanding them into nested next operators. On-the-fly pruning, timer-index reduction, and abstraction-based game solving keep generated games finite and manageable. The construction defines timer ordering and closure invariants, expansion/tree/timeout/squeeze operations, and a safety-game reduction whose locations encode current obligations. The full evaluation compares the prototype to ebr-ltl-synth and Strix on LTLEBR, SYNTCOMP, discretized real-time, railroad, conveyor-belt, robot-camera, and office-robot benchmarks, including bounds up to 21,600.
@@ -627,7 +627,7 @@
     - number: Office-robot bounds reached 21,600; many larger instances timed out under 15 minutes, while Strix often timed out or rejected expanded formulas
     - limits: The logic is discrete-time and restricted to an extension of Safety LTL; dense-time MTL/MITL synthesis is outside scope. Solving uses an abstraction threshold and can time out or become infeasible without approximation; Strix cannot accept many formulas because it expands bounded operators, and ebr-ltl-synth cannot handle benchmark assumptions. The prototype is single-core and comparisons use adapted benchmarks where formalisms differ.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2301.10032.txt`
+    -
     - record id: `taming-large-bounds-in-2023`
 - Optimal-DPOR-Await (2022)
     - title: Awaiting for Godot: Stateless Model Checking that Avoids Executions where Nothing Happens
@@ -637,7 +637,7 @@
     - number: GenMC and baseline Nidhugg failed to find SafeStack-331 after more than 2,000 hours
     - limits: Correctness and optimality are stated for terminating programs; SMC requires loop bounds. PLP is static and can miss zero-net-effect loops or be limited by syntactic purity conditions. Experiments use C/C++ pthread programs on one Ryzen 5950X system, with one-hour benchmark and ten-hour SafeStack timeouts; fairness/livelock handling is limited.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2208.09259.txt`
+    -
     - record id: `optimal-dpor-await-2022`
 - PTA reachability and liveness (2022)
     - title: Reachability and Liveness in Parametric Timed Automata
@@ -648,7 +648,7 @@
     - number: EF-emptiness is decidable/PSPACE-complete for bounded IP-PTAs
     - limits: Results are complexity-theoretic and depend on parameter domains, strict/non-strict guards, boundedness, and open versus closed parameter valuations. The undecidability constructions show that unrestricted PTAs cannot generally support algorithmic synthesis or liveness checking; no empirical implementation benchmark is claimed.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2004.09171.txt`
+    -
     - record id: `pta-reachability-and-liveness-2022`
 - Red Belly holistic verification (2022)
     - title: Holistic Verification of Blockchain Consensus
@@ -659,7 +659,7 @@
     - number: complete compositional verification <70 s
     - limits: Fixed n sequential processes communicate through reliable fully connected asynchronous point-to-point links; delays are finite but unbounded, steps interleave, each receive is atomic and sender identities distinguish quorum members. Up to t<n/3 are Byzantine; f≤t is the actual fault count. The threshold abstraction assumes faulty senders cannot impersonate arbitrarily many distinct processes. Communication closure is essential: each process uses only messages for its current round, discards earlier tags and buffers later tags. Monotone send counters and threshold guards admit the prior ByMC reduction. Guarantees do not automatically extend to arbitrary protocols with cross-round data dependencies, timing constraints or changing membership. Reliable communication is encoded by progress assumptions on enabled rules and source-location emptiness. This excludes scheduler executions that indefinitely withhold enabled productive actions. Added consensus fairness is different: some round r has every correct process first deliver r mod2 in that round’s binary-value broadcast. Neither fairness follows from asynchronous reliability alone. Algorithm1 is the DBFT variant without coordinator/timeouts. The second DBFT variant uses partial synchrony, but this paper replaces that mechanism with a good-round assumption. It does not prove a synchronizer, coordinator rotation, timeout correctness or that the deployed environment enforces the assumption. Threshold models describe correct processes and abstract Byzantine influence with f-offset guards; global send counters abstract possible local receipt histories. Parameterized checking ranges over symbolic parameters satisfying n>3t≥3f, rather than testing a list of network sizes. Soundness still depends on faithful manual abstraction and ByMC’s reductions/SMT checks. Inner broadcast verification establishes justification,obligation,uniformity and termination. Replacement must preserve all behaviors relevant to the outer consumer because contestants is shared and the outer algorithm can proceed before the broadcast finishes. The paper argues this and supplies encoded preconditions; it is not a machine-checked source-to-source refinement of production code. ByMC handles a restricted LTL fragment and one-round systems. Cross-superround agreement,initial validity and existential good-round termination require manually chosen intermediate formulas and mathematical composition arguments. The model checker does not directly discharge each final quantified formula as written. The proof covers binary agreement,validity and eventual decision for the displayed algorithm. It does not prove blockchain transaction semantics,multi-value reduction,ledger consistency across all block heights,network/cryptographic code,resource bounds or end-to-end behavior of the deployed Red Belly software. Processes continue participating after deciding so others can finish; only the first decision matters. Text states safe exit after two later rounds but does not supply a verified executable stopping implementation. A process that halts immediately on first decision would change progress assumptions.
     - how much was read: most of it read
-    - [source](https://doi.org/10.4230/LIPIcs.DISC.2022.10); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal321/blockchain.reading.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2206.04489.txt`
+    - [source](https://doi.org/10.4230/LIPIcs.DISC.2022.10)
     - record id: `red-belly-holistic-verification-2022`
 - RFCNLP (2022)
     - title: Automated Attack Synthesis by Extracting Finite State Machines from Protocol Specification Documents
@@ -670,7 +670,7 @@
     - number: Six protocols extracted; TCP: 17 of 20 transitions correct or partly correct
     - limits: The attacks work against models, not deployed code. Experts write the canonical models and four LTL properties each. A progress property can pass vacuously (hold trivially, because the condition that should trigger it never occurs).
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2202.09470); [notes: RFCNLP: learned extraction followed by model-level attack synthesis](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: RFCNLP: learned extraction followed by model-level attack synthesis](../distributed_verification_review_b/deep_17_model_agents.md); notes outside this site: `lit_snowball/notes_coci3.md`
+    - [source](https://arxiv.org/abs/2202.09470); [notes: RFCNLP: learned extraction followed by model-level attack synthesis](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: RFCNLP: learned extraction followed by model-level attack synthesis](../distributed_verification_review_b/deep_17_model_agents.md)
     - record id: `rfcnlp-2022`
 - SMR synchronizers and PBFT-light liveness (2022)
     - title: Liveness and Latency of Byzantine State-Machine Replication
@@ -681,7 +681,7 @@
     - number: Theorem 8 deadline: GST+ρ+max{ρ+δ,6Δ}+4Δ+max{ρ,δ}+7δ under its stated assumptions
     - limits: n=3f+1, at most f Byzantine processes, authenticated point-to-point communication, signatures and collision-resistant hashing. Partial synchrony: unknown GST and δ; before GST messages may be lost/delayed and clocks drift unboundedly; after GST correct-process delays are ≤δ and clocks track real time. Correct clients invoke advance at most once between new_view notifications. Correct broadcasts are valid and unique. PBFT-light uses signatures and omits checkpoints/watermarks; reliable DECISION broadcast requires retransmission omitted from pseudocode. Latency results additionally assume known Δ>δ, timeout caps 6Δ/4Δ, retransmission period ρ and reliable-broadcast latency ≤δ+ρ. Theorem 8 assumes sufficiently large timeouts already at GST and a correct leader(V); Theorem 9 assumes synchronous startup, correct leader(1), timeout bounds and the view-1 optimization. Full synchronizer proof, PBFT safety proof, portions of timer proof, latency proofs, periodic-leader and HotStuff protocol details, and textbook-bug details are explicitly deferred to arXiv:2202.06679, which was not read in this batch. Theoretical proof, not a machine-checked artifact or implementation performance experiment.
     - how much was read: most of it read
-    - [source](https://doi.org/10.4230/LIPIcs.DISC.2022.12); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal261/Liveness_and_Latency_of_Byzantine_State_Machine_Replication_.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2202.06679.txt`
+    - [source](https://doi.org/10.4230/LIPIcs.DISC.2022.12)
     - record id: `smr-synchronizers-and-pbft-light-liveness-2022`
 - TLA+ verification trifecta (2022)
     - title: Specification and Verification With the TLA+ Trifecta: TLC, Apalache, and TLAPS
@@ -692,7 +692,7 @@
     - number: 219 million states and about 50 min for Safra N=4
     - limits: The abstract model assumes a nonzero finite N, natural pending-message counters, asynchronous actions and weak fairness only for DetectTermination; stronger fairness is optional but unnecessary for the stated liveness. TLC requires finite bounds on pending messages/counters for exhaustive checking, so finite checks cannot establish arbitrary executions. Apalache handles bounded prefixes and inductive invariants but needs type annotations and human-discovered invariants; it cannot directly handle the fairness temporal property. TLAPS proof effort is manual and backend-dependent. The Safra case is a ring algorithm and does not evaluate throughput, deployment behavior, or other distributed topologies.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2211.07216.txt`
+    -
     - record id: `tla-verification-trifecta-2022`
 - Dijkstra Monads Forever: Termination-Sensitive Specifications for Interaction Trees (2021)
     - what: This is a spec framework in Coq for programs written as interaction trees. It can express termination, divergence, and full infinite output traces.
@@ -712,7 +712,7 @@
     - number: first machine-checked proof claimed by authors
     - limits: Safety is inherited from Synod; the result is eventual progress, with no time bound. The sufficient condition CND assumes a nonfaulty proposer eventually ready to send a P1/P2 proposal to a quorum of nonfaulty acceptors. FAM assumes stable storage, uncorrupted but asynchronous messages, and fairness axioms; failures can be temporary or permanent, but progress requires the relevant actors eventually available. The proof does not use generic predicate fairness directly, instead relying on a system-specific uninterrupted-proposal property. Applicability to UAM timing requires additional bounds not proved here.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2103.14576.txt`
+    -
     - record id: `failure-aware-actor-synod-progress-2021`
 - Ghost Signals: Verifying Termination of Busy Waiting (2021)
     - what: Develops a modular Hoare/separation-logic approach to termination of busy-waiting programs under fair scheduling. Ghost signals represent conditions other threads must establish; linear obligations require setting them. A well-founded partial order forbids waiting on a signal at or above any obligation held by the waiter. Data-structure invariants tie signals to real conditions, allowing resource-local proof of waiting over arbitrary shared structures. §2 derives the logic through thread-safe physical signals, non-thread-safe signals guarded by mutexes, arbitrary heap cells, then erasure into ghost state. An augmented operational semantics makes a thread get stuck if it exits with outstanding obligations; fork transfers obligations rather than discarding them. A program-order graph tracks the path carrying each obligation. A minimal infinitely-waited signal would have an infinite obligation path that can wait only on finitely-waited lower signals, yielding contradiction under fairness. Points-to/signal ownership prevents races. Mutex acquisition creates a release obligation and also obeys the level order. §3 splits signal-ID allocation from initialization so a fixed finite collection of signal IDs can be named early without creating premature obligations. Loop iterations may select from a finite signal set, and outer productive loops use ordinary decreasing counters. §5 explains call/wait permissions and thread phases; permission consumption only in descendant phases prevents a self-fueling busy loop. §6 describes a possible reduction of termination to instrumentation safety for higher-order step-indexed logics.
@@ -721,7 +721,7 @@
     - number: example: FIFO capacity 10, 100 values, 200 signal IDs; levels pop(i)=102−i and push(i)=101−i, mutex level 0
     - limits: Termination relies on fair thread scheduling and a well-founded signal/mutex-level order; proof authors supply invariants, levels and ghost actions and must discharge every obligation. The proceedings presentation restricts busy loops to with-mutex-await syntax and ultimately to a finite fixed set of signals per loop; the external report generalizes looping/recursion. Physical machine memory models are not analyzed; claims use the presented language semantics. Higher-order assertions are not supported by this logic itself; Iris integration is proposed, not demonstrated as a mechanized embedding here. Abstract specifications for CLH require a suitable level universe supporting bounded infinite level sets. No automated signal/invariant/level inference or LLM experiment is reported. The server I/O-liveness result is a linked combined-logic artifact, not a full server proof included in these pages.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal270/Ghost_Signals_Verifying_Termination_of_Busy_Waiting_Verifying_Termination_of_Busy_Waiting_.txt`
+    -
     - record id: `ghost-signals-verifying-termination-2021`
 - Justness (2021)
     - title: Justness: A Completeness Criterion for Capturing Liveness Properties
@@ -732,7 +732,7 @@
     - number: Theorem 3 and Theorem 4 establish agreement with coinductive and abstract-path definitions
     - limits: Transition systems abstract distributed systems and assume atomic actions terminate. Blocking actions are explicitly identified; justness is weaker than fairness and cannot guarantee a task that is repeatedly postponed despite no interference. Feasibility theorem needs countably many enabled transitions/equivalence classes; the paper does not provide implementation or empirical evaluation, and future work is semantic equivalence with Petri/event-structure models.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1909.00286.txt`
+    -
     - record id: `justness-2021`
 - Static Race Detection and Mutex Safety and Liveness for Go Programs (extended version) (2021)
     - what: The paper develops GoL, a process-calculus model for shared memory, locks, read-write locks, and later channels, with behavioural types that encode happens-before synchronization. Type soundness and progress connect processes to µ-calculus types; model checking these types detects data races, lock safety/liveness, and mixed channel/shared-memory errors. The migoinfer+ extractor and Godel2/mCRL2 backend form a static toolchain. Beyond the abstract, the authors define race and lock properties over GoL, prove subject reduction, process safety/data-race transfer, and conditional equivalence of type and process liveness for terminating, may-converging, and finite-branching programs. The channel extension models channel-as-lock and pointer-through-channel errors. Evaluation includes mutex/channel variants, producer-consumer, and five-philosopher programs with explicit false-positive caveats for approximated cyclic analyses.
@@ -742,7 +742,7 @@
     - number: channel Dining Philosophers took approximately 185 minutes for the race version and 645 minutes for the fixed version
     - limits: The liveness correspondence requires restrictions such as termination, may-convergence, or finite branching; the implementation is sound for safety/data-race transfer but can report rare liveness (and possibly safety) false positives/negatives on approximated cyclic models. Extraction supports only a Go subset, has restrictions on embedded mutexes/structs and parameter passing, and does not scale to unbounded goroutine creation. mCRL2 state space grows rapidly with summands and action order.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2004.12859.txt`
+    -
     - record id: `static-race-detection-and-2021`
 - What's Live (2021)
     - title: What's Live? Understanding Distributed Consensus
@@ -753,7 +753,7 @@
     - number: TLA+ TLC illustrations cover up to 4 proposers and 4 acceptors for single-value Paxos; multi-value/larger cases become too expensive.
     - limits: It is an analytical comparison plus finite TLC runs, not new verified code. Appendix A uses a tick bound. Hours and lines of code are not stated.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2001.04787); [notes: What's Live? Understanding Distributed Consensus](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2001.04787.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2001.04787); [notes: What's Live? Understanding Distributed Consensus](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `what-s-live-2021`
 - Context-bounded multithreaded liveness (2020)
     - title: Context-Bounded Verification of Liveness Properties for Multithreaded Shared-Memory Programs
@@ -764,7 +764,7 @@
     - number: VASSB has decidable progressive runs and every progressive run has a shallow counterpart
     - limits: The bound K is fixed per decision instance and fairness means every thread ready infinitely often is eventually scheduled (with identity-equivalence subtleties handled by an angelic scheduler argument). Results concern the DCPS model: finite global state, pushdown stacks, shared global control and restricted scheduler rules. Fair problems are decidable but non-elementary; unbounded context switching remains outside the decidability claim.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2011.04581); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2011.04581.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://arxiv.org/abs/2011.04581)
     - record id: `context-bounded-multithreaded-liveness-2020`
 - DistAlgo runtime checking (2020)
     - title: Assurance of Distributed Algorithms and Systems: Runtime Checking of Safety and Liveness
@@ -785,7 +785,7 @@
     - number: dual-core 3.3 GHz machine with 16 GB RAM
     - limits: Hardware model checking uses supplied AIGER strategies and bounded synthesis scales much less than checking with given strategies. Experiments use small benchmark families and a dual-core machine; full dining-cryptographers synthesis timed out, and automatic strategy synthesis remains limited.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-030-25540-4_7); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2005.07425.txt`; notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-030-25540-4_7)
     - record id: `hyperliveness-verification-2020`
 - Lively RaTT guarded-recursion liveness (2020)
     - title: Diamonds are not forever: Liveness in reactive programming with guarded recursion
@@ -795,13 +795,13 @@
     - number: Future extension to dependent/temporal inductive types (§7)
     - limits: The language is a typed functional/reactive calculus with guarded recursion and specific modal/temporal types; results are semantic and do not provide empirical performance or automatic model checking. Expressing termination and richer dependent specifications remains future work, and ordinary inductive/coinductive extensions require care.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2003.03170.txt`
+    -
     - record id: `lively-ratt-guarded-recursion-liveness-2020`
 - NetSMC: A Custom Symbolic Model Checker for Stateful Network Verification (2020)
     - what: NetSMC checks temporal policies on models of stateful network functions with persistent tables and one packet traversing the network at a time. It translates a restricted LTL language into CTL and represents sets of network states as existential first-order formulas. Backward preimages and a containment algorithm adapted from database query containment avoid general solver costs. A packet-order argument gives equivalence to interleaved executions for selected policies under an order-preservation condition. Benchmarks compare VMN, a Z3 containment variant, NuSMV and Cubicle; author-run exercises inject configuration mistakes into real network functions. Records exact NF/packet transition semantics, commutation and order-preservation conditions, restricted temporal operators and full appendix proofs, EFO preimage and containment construction, proof/implementation boundaries, printed listing/formula concerns, every Table2 timing and the narrow scopes of speedup, planted faults and model fidelity.
     - limits: §§4/8: A fixed topology and NF rule set; packets contain modeled header/application fields, not arbitrary payload processing. State is a collection of finite key-value maps; tests use specified finite domains, updates assign modeled expressions or increment/decrement by constants, expressions may choose nondeterministically from a domain. No multicast/broadcast, averages, generic computations, clocks/timeouts or direct network failures. Failures require separate enumerated scenarios. Integer/counter bounds and overflow semantics are not developed into an implementation-level finite-state proof. §§4.1/4.3/AppendixA: Exactly one matching NF rule; sequential commands are atomic at NF network-step granularity. A link preserves packet and tables. Drop/Exit permits an arbitrary next packet at arbitrary ingress, retaining all tables. Correct rules/topology/initial tables/model extraction are trusted; sequential packets do not mean tables reset between packets. Nondeterministic backend choice abstracts a concrete policy rather than verifies its implementation. §4.3/AppendixC: Every packet eventually leaves or drops; transient loops allowed, indefinite loops excluded. Unique immutable IDs distinguish packets. Interleaved model buffers unordered sets, not FIFO queues, and proof considers finite closed traces with no unfinished nonterminal packets. No general liveness/fairness or live controller-update verification. AppendixC/Definitions4–5/Lemma1: Non-conflict means swapping two same-NF processing steps preserves both output packets and final table valuation for every relevant initial valuation. A strict total packet order must be respected wherever packets conflict. Adjacent inversion swaps decrease an out-of-order index until packets can be serialized with identical per-packet located-packet traces. Conditions are assumptions on networks; no checker that establishes them for arbitrary input models is evaluated. §5/AppendicesB/D: Policies universally quantify outer variables; basic predicates inspect fields/location/tables. Permitted temporal forms are basic, F basic, within-packet eventual f basic, X(guard→formula), G(guard→formula), and within-packet g(guard→formula). f/g expand to restricted strong-until formulas terminated by Drop/Exit. General until, arbitrary quantifier alternation, generic temporal nesting/past properties excluded. A positive answer for arbitrary policies under serialization does not establish concurrent correctness. §5/AppendixD/Theorem7/Corollaries2,8: Conditional equivalence explicitly covers isolation, tag preservation and tag-based isolation on order-preserving networks. Other policies such as flow affinity/NAT consistency/service chaining are checked under the one-packet model and may miss interleaving bugs. Do not read Table1 sound/conditionally-complete labels as unconditional verification of all concurrent deployments. AppendixD qualified proof-scope concern: Theorem7 syntactically uses basic guards without explicitly excluding table predicates, although Lemma1 preserves only located-packet input/output traces, not every intermediate table valuation while a packet waits. Reordered unrelated processing can alter such valuations. The printed transfer argument therefore needs a restriction to predicates determined by those traces or an additional preservation proof; isolation/tag examples avoid this issue. This is a reading concern, not an executed counterexample against the tool. §6.2: EFO state formulas are disjunctions of conjunctive clauses with membership, inequality, location/field equality and table lookup. Variables are existential and outermost; denotation is a set of concrete packet/table valuations. This is a symbolic representation, not sampling of packet histories. §6.3/Algorithms1–2: Preimage unions NF-rule, link and new-packet predecessors. Commands processed in reverse order; tests conjoined. New-packet transition drops successor field/location constraints but preserves their variable/table relationships, restricts successor ingress and predecessor Drop/Exit. Table updates split equal-index overwritten entry versus an unequal index retaining old value. Helper expression translation F and link routine are omitted; precise implementation behavior is not reconstructed from pseudocode alone. §6.4/Algorithm3: Interpret clauses as conjunctive queries; homomorphism maps variables of candidate containing clause into contained clause. Inequalities require splitting equality patterns into atomic clauses; finite domains need emptiness checks (e.g., singleton variables forcing incompatible table values). Every nonempty atomic clause must map to some disjunct of target. This avoids a naive implication query to Z3, while still potentially expanding many clauses. §6.4/Theorem3 and AppendixE: Authors state exact True iff satisfaction under one-packet semantics. Appendices provide detailed semantics, trace reordering, policy transfer and structural LTL→CTL arguments (Theorem9/Lemmas10–12); no separate complete proof of Algorithm1/2 preimages, Algorithm3 domain splitting/emptiness, or Python refinement appears. Theorem3 is not a machine-checked verified implementation. Algorithm2/p188 printed-listing concerns: loop binds β_j on line14 but line15 passes β_i, and line21 recursive COMPUTECLS call omits expression-environment arguments present in its signature. Figure11/p196 sequence rule leaves c2 as a pending command without giving the corresponding continuation rule in the displayed semantics. Treat as incomplete/inconsistent presentation; no artifact tested. AppendixF/p200 printed-policy concerns: NAT consistency formula contains p without the displayed outer binder (only ∀i), despite closed-formula requirement. Flow affinity shown for S1 needs analogous instances for other servers. Conditional reachability uses G(loc=B→f(loc=A)) from the same arrival state at B, so without distinguishing request arrival from new reply injection it can demand that the current packet return to A; the prose speaks of packets sent afterwards. Qualified formula/specification boundary, not a measured tool failure. §7: Python prototype,20core2.8GHz/128GB server. CPU model/OS/Python/solver versions, source LOC, repeated-run statistics, confidence intervals and memory usage not reported. Alembic-generated NF models and manual POX translation used; authors assert high fidelity, but no formal extraction/refinement theorem or measured model-fidelity error rate is provided. §7.1/Figures6–8: Synthetic host/rule scaling and extended fattree/Ai3/Sprint topology isolation checks; flow-space sliced for both tools. Specific speedups depend on policy/model and baseline. VMN lacks service-chain policy support, so policy-complexity comparison uses only NetSMC/Z3. NuSMV fixed16-entry table and NetSMC without that size constraint are different encodings; Cubicle750× lacks detailed absolute timing/setup in text. §7.2: Red team authors2/3 inject secret deleted/modified rules; blue team author1 diagnoses with NetSMC, then rechecks fixed model. Four described real-NF exercises and nine modeled Table2 scenarios all succeed as reported; no production-discovered fault count, exhaustive fault set, detection rate, false-positive rate or independent user study. All benchmark/tool outcomes here are authors reports, not reproduced.
     - how much was read: most of it read
-    - [source](https://www.usenix.org/conference/nsdi20/presentation/yuan); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal538/netsmc.reading.txt`
+    - [source](https://www.usenix.org/conference/nsdi20/presentation/yuan)
     - record id: `netsmc-a-custom-symbolic-2020`
 - Presburger stage graphs (2020)
     - title: Checking Qualitative Liveness Properties of Replicated Systems with Stochastic Scheduling.
@@ -812,7 +812,7 @@
     - number: flock-of-birds c=80: 1217s; threshold c=8: 1089s; remainder m=20: 1646s
     - limits: Systems are finite-state agent programs with fixed population size per run, clique-style rendezvous/multiway transitions, and stochastic scheduling satisfying the two stated probability assumptions. The complete decision problem has non-elementary complexity; the implemented constructor may fail or time out and uses existential Presburger formulas/linear certificates. Population-protocol families are checked instance by instance, not universally over the family parameter. The method addresses qualitative almost-sure stable liveness, not quantitative probabilities, arbitrary fairness notions, Byzantine faults, or Rust implementation details.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-030-53291-8_20); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2005.03555.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Checking_Qualitative_Liveness_Properties_of_Replicated_Systems_with_Stochastic_Scheduling_.txt`; notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://doi.org/10.1007/978-3-030-53291-8_20)
     - record id: `presburger-stage-graphs-2020`
 - SCP proofs (2020)
     - title: On the Formal Verification of the Stellar Consensus Protocol
@@ -827,14 +827,14 @@
     - number: {'printed_pages': 19, 'filter_cf_hol_lines': 1479, 'filter_direct_hol_lines': 1971, 'filter_message_bound': 256, 'myrepeat_proof_lines': 8, 'cat_proof_approx_lines': 90}
     - limits: Divergence semantics is a supremum of I/O traces over all clock values; divergent runs have no final heap state. The repeat transformation currently handles single-argument tail-recursive, non-mutually-recursive functions; mutual recursion, curried/multiple arguments and recursion through store are future work. The induction principle requires limited_parts to bound possible FFI calls and user proofs of each terminating iteration and the infinite trace equation. The seL4 filter assumes infinite input, null termination and message length ≤256; the paper says the communication backend enforces these. Binary liveness after CakeML compilation is conditional on not running out of memory; no unconditional space bound is proved here. Formal results are HOL4/CakeML proofs, not Verus/Rust or TLA+ specifications and not LLM-generated proofs.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal272/Characteristic_Formulae_for_Liveness_Properties_of_Non_Terminating_CakeML_Programs_.txt`
+    -
     - record id: `characteristic-formulae-for-liveness-2019`
 - CockroachDB Parallel Commits blog (2019)
     - title: Parallel Commits: An atomic commit protocol for globally distributed transactions
     - what: CockroachDB describes formalizing Parallel Commits in TLA+, checking atomicity, durability and an eventual explicit-commit property under coordinator failures, and publishing the model for readers to run.
     - limits: Engineering blog; model properties and assumptions are described by the authors and were not independently rerun.
     - how much was read: most of it read
-    - [source](https://www.cockroachlabs.com/blog/parallel-commits/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://www.cockroachlabs.com/blog/parallel-commits/)
     - record id: `cockroachdb-parallel-commits-blog-2019`
 - IBFT 2.0 (2019)
     - title: IBFT 2.0: A Safe and Live Variation of the IBFT Blockchain Consensus Protocol for Eventually Synchronous Networks
@@ -845,7 +845,7 @@
     - number: two-phase fast path claims 33% latency reduction
     - limits: Eventually synchronous gossip after GST with fixed delay Δ; cryptographic hash collision resistance and signature uniqueness/unforgeability; at most floor((n−1)/3) Byzantine validators per height; honest chains agree through h−1. Liveness (as distinct from weak liveness) depends on Fair Network Behaviour Assumption unless FairProposer is adopted. Formal specification and implementation details are explicitly future work; validator voting pseudocode is omitted.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1909.10194.txt`
+    -
     - record id: `ibft-2-0-2019`
 - Ivy liveness-to-safety (2018)
     - title: Reducing liveness to safety in first-order logic
@@ -856,7 +856,7 @@
     - number: liveness needs two to four times as many invariant conjectures as safety (§7.2)
     - limits: The user still supplies the inductive invariants (facts preserved by every step). Humans applied the reduction by hand. Paxos assumes that the actions of a chosen leader or quorum are fair, that messages are eventually delivered, and that competing proposals eventually stop. Multi-Paxos and Stoppable Paxos cover one incarnation with fixed membership. The comparison counts invariants, not person-time.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3158114); [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_tables.md`
+    - [source](https://doi.org/10.1145/3158114); [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `ivy-liveness-to-safety-2018`
 - XRP Ledger Consensus Protocol analysis (2018)
     - title: Analysis of the XRP Ledger Consensus Protocol
@@ -867,7 +867,7 @@
     - number: Theorem 11 guarantees no stuck state for a single agreed UNL of size at least k with q=n−floor((n−1)/k) plus leaves
     - limits: Safety is intended under arbitrary message asynchrony but assumes authenticated reliable channels and computationally bounded adversaries. Liveness only assumes eventual civil network delivery and no faulty nodes; FLP rules out full-asynchrony progress. Early analysis uses Byzantine accountability, explicitly rejected as tenuous; the broad theorem treats arbitrary deliberation outcomes, making the overlap condition sufficient rather than necessary. Results concern protocol rules and parameterized trust topology, not a measured deployment.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1802.07242.txt`
+    -
     - record id: `xrp-ledger-consensus-protocol-analysis-2018`
 - alpha-L2S (2016)
     - title: Infinite-State Liveness-to-Safety via Implicit Abstraction and Well-Founded Relations
@@ -878,7 +878,7 @@
     - number: 835 total LTL instances
     - limits: It checks liveness on a model. Its benchmarks come from programs, so they test translated program semantics, not the programs themselves.
     - how much was read: most of it read
-    - [source](https://link.springer.com/content/pdf/10.1007/978-3-319-41528-4_15.pdf); [notes: Related work absent from the first pass: αL2S](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Infinite_State_Liveness_to_Safety_via_Implicit_Abstraction_and_Well_Founded_Relations_.txt`
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-319-41528-4_15.pdf); [notes: Related work absent from the first pass: αL2S](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `alpha-l2s-2016`
 - CCSroll safety and liveness (2016)
     - title: A Safety and Liveness Theory for Total Reversibility?
@@ -889,7 +889,7 @@
     - number: Theorem 4 refusal soundness/completeness
     - limits: CCSroll reductions are totally ordered, rollback is controlled by explicit rlh keys, and proofs rely on the two stated reachability properties, including the difficult liveness property. Liveness should-testing is justified under a fairness assumption that infinitely enabled outputs eventually happen. Results are semantic theorems, not mechanized proofs or implementation measurements; the authors leave applicability of the second property to other causal-reversibility calculi open. The theory concerns CCS-like processes and does not model data, failures or real distributed timing.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1604.05555.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/Sections 2–8; Lemmas 1–6; Theorems 1, 3, 4`
+    -
     - record id: `ccsroll-safety-and-liveness-2016`
 - Debois Hildebrandt Slaats Yoshida session liveness (2016)
     - title: Type-Checking Liveness for Collaborative Processes with Bounded and Unbounded Recursion
@@ -899,7 +899,7 @@
     - number: request/response labels AI, RI, CO, DI, SI in shopping-cart example
     - limits: Binary sessions only, no delegation/name passing or multi-party extension. Liveness theorem explicitly assumes process lock-freedom; typing recursive processes requires guessing suitable invariants. Data-dependent unbounded loops are not inferred automatically; bounded iteration is used to remove a dependency. The calculus abstracts BPMN and omits value types. No implementation benchmark or empirical evaluation; evidence is formal definitions, examples, and proofs.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1510.06658.txt`
+    -
     - record id: `debois-hildebrandt-slaats-yoshida-session-liveness-2016`
 - randomised parameterised liveness (2016)
     - title: Liveness of Randomised Parameterised Systems under Arbitrary Schedulers (Technical Report)
@@ -910,7 +910,7 @@
     - number: 23-state invariant, 25 win calls, 4,324 refinements
     - limits: The core presentation assumes strictly alternating arenas, initial/final states controlled by Scheduler, no non-final dead ends, finite alphabets and length-preserving transducers; probability-zero transitions are removed. The reduction proves almost-sure liveness through a game strategy but does not retain quantitative probabilities. Termination/completeness of the learning loop depends on regular advice bits and minimum-size hypotheses; fairness is not modeled and is listed as future work. Experiments use a proof-of-concept Java tool, fixed resource limits, and protocol encodings that may not cover arbitrary data-bearing systems.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1606.01451.txt`
+    -
     - record id: `randomised-parameterised-liveness-2016`
 - short counterexample FTDA (2016)
     - title: A Short Counterexample Property for Safety and Liveness Verification of Fault-Tolerant Distributed Algorithms
@@ -921,7 +921,7 @@
     - number: Counterexample length is bounded independently of process parameters
     - limits: The bound and completeness arguments rely on threshold-guarded, symmetric protocols and fairness assumptions. Liveness search requires schedule bounds; failure to find a short trace does not prove correctness outside the theorem's class.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/1608.05327); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1608.05327.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://arxiv.org/abs/1608.05327)
     - record id: `short-counterexample-ftda-2016`
 - SLRP liveness synthesis (2016)
     - title: Liveness of Randomised Parameterised Systems under Arbitrary Schedulers
@@ -932,7 +932,7 @@
     - number: Lehmann–Rabin run uses 23-state reachable DFA, 25 progress pairs and 4,324 refinement iterations
     - limits: Each finite instance is treated as an MDP whose liveness depends only on transition topology, so actual nonzero probabilities are abstracted away; this proves almost-sure reachability only under the chosen scheduler/game interpretation. Systems are encoded by finite-state letter-to-letter transducers, excluding non-length-preserving/data-rich protocols; fairness is not handled and is future work. Results are proof-of-concept on finite benchmark encodings, with hard-coded invariant precision n=5 and substantial SAT/refinement cost for complex cases.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1606.01451.txt`
+    -
     - record id: `slrp-liveness-synthesis-2016`
 - T2 (2016)
     - title: T2: Temporal Property Verification
@@ -940,7 +940,7 @@
     - number: Termination benchmark timeout 300 s: AProVE 641 terminating/393 nonterminating/188 fail, avg 49.1 s; T2-GPDR 627/442/153, avg 23.6 s; T2-GPDR-NoP 589/438/195, 31.4 s; Spacer-NoP 591/429/202, 33.5 s; Impact-NoP 529/452/241, 37.2 s. Preprocessing removes ~80% loops. CTL 56/56 examples solved; T2 average 2.7 s vs Q’ARMC 3.6 s (100 s timeout).
     - limits: Core analysis supports only linear integer arithmetic fragments of C/native systems; numbers are mathematical integers unless front-end normalization handles machine overflow. Heap, recursion and concurrency are future work. Fair-CTL is relatively complete only relative to safety/termination procedures; CTL* is incomplete. Temporal experiments exclude Fair-CTL/CTL* due to lack of competing tools.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-662-49674-9_22); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/T2_Temporal_Property_Verification_.txt`
+    - [source](https://doi.org/10.1007/978-3-662-49674-9_22)
     - record id: `t2-2016`
 - Fairness Modulo Theory LTL checking (2015)
     - title: Fairness Modulo Theory: A New Approach to LTL Software Model Checking
@@ -951,7 +951,7 @@
     - number: Büchi product blow-up no more than four times on reported sets
     - limits: Finite-prefix feasibility and termination analyses are generally undecidable and can time out, yielding unknown. The approach depends on Büchi automaton translation and SMT theories, and ranking synthesis remains necessary for traces with no infeasible finite prefix. RERS verification succeeded on roughly 43% without modifications; a product optimization bug caused most abnormal results, and one Windows benchmark had undefined variables. Results are tool/benchmark dependent.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/§§1–8 and references`
+    -
     - record id: `fairness-modulo-theory-ltl-checking-2015`
 - IronFleet (2015)
     - title: IronFleet: Proving Practical Distributed Systems Correct
@@ -962,7 +962,7 @@
     - number: implementation-level proof/code ratio 3.6
     - limits: The top-level spec, event loop, Dafny, runtime, OS and hardware are trusted. IronRSL liveness needs eventual timing bounds and a live quorum. The reduction argument is on paper.
     - how much was read: most of it read
-    - [source](https://github.com/microsoft/Ironclad/tree/main/ironfleet); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: S8](../distributed_verification_review_b/deep_9_formulation_methods.md)
+    - [source](https://github.com/microsoft/Ironclad/tree/main/ironfleet); [notes: S8](../distributed_verification_review_b/deep_9_formulation_methods.md)
     - record id: `ironfleet-2015`
 - LTL distributed synthesis (2015)
     - title: Synthesis of Self-Stabilising and Byzantine-Resilient Distributed Systems
@@ -973,7 +973,7 @@
     - number: 64 GiB/8-core evaluation hardware
     - limits: Synchronous reactive processes with finite local state and a specified communication/failure model. Fixed-size completeness does not imply arbitrary-size correctness; the two arbitrary-size classes require stated structural hypotheses. Byzantine synthesis can be expensive; experiments use sequential solver runs and finite bounds. LTL specifications capture the modeled behavior, not physical network timing or implementation bugs.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-319-21690-4_19); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal257/Synthesis_of_Self_Stabilising_and_Byzantine_Resilient_Distributed_Systems_.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_batch_text/Synthesis_of_Self_Stabilising_and_Byzantine_Resilient_Distributed_Systems_.txt`
+    - [source](https://doi.org/10.1007/978-3-319-21690-4_19)
     - record id: `ltl-distributed-synthesis-2015`
 - Parallel explicit generalized Büchi checking (2015)
     - title: Parallel Explicit Model Checking for Generalized Büchi Automata
@@ -984,7 +984,7 @@
     - number: 2015 TACAS prototype
     - limits: The automaton is finite and transitions carry generalized acceptance marks; correctness relies on lock-free compare-and-swap union-find and stable SCC/DEAD facts. Local traversals may redo work when another thread marks a state DEAD. Speedups depend strongly on SCC shape and union-find contention; prototype absolute times lag sequential CNDFS, and one comparison precomputes products for LTSmin due to a bug. The approach is explicit-state and does not address symbolic or unbounded systems.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-662-46681-0_56); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Parallel_Explicit_Model_Checking_for_Generalized_B_chi_Automata_.txt`
+    - [source](https://doi.org/10.1007/978-3-662-46681-0_56)
     - record id: `parallel-explicit-generalized-bu-chi-checking-2015`
 - SACO (2014)
     - title: SACO: Static Analyzer for Concurrent Objects.
@@ -994,7 +994,7 @@
     - number: one active task per object
     - limits: Soundness depends on finite allocation-site abstraction, safe MHP over-approximation, and the circular finiteness assumptions used in termination proofs. get may deadlock; the dependency graph is a sufficient acyclicity test and may report false positives. The paper is a concept/tool report without a broad runtime benchmark table, and analyses apply to the cooperative concurrent-object model rather than arbitrary shared-memory threads.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-642-54862-8_46); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/SACO_Static_Analyzer_for_Concurrent_Objects_.txt`; notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://doi.org/10.1007/978-3-642-54862-8_46)
     - record id: `saco-2014`
 - Model-Based Trace-Checking (2011)
     - what: Replays observed traces of a distributed Java travel-booking application through B (ProB) and Promela (Spin) models. It checks invariants and a resource-allocation progress property on those particular traces.
@@ -1012,7 +1012,7 @@
     - number: implementation is an OCaml web tool
     - limits: HORS are finite abstractions of potentially infinite computation trees and the OCaml-to-HORS translation is manual; the paper explicitly says abstraction techniques are not covered. Fairness is imposed for unbounded file reads by excluding infinite reads. Worst-case complexity remains n-EXPTIME by function order, and no broad benchmark or automated front end is supplied.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2012.13333.txt`
+    -
     - record id: `t-hors-2011`
 - Robust GR(1) liveness robustness (2010)
     - title: Robustness in the Presence of Liveness
@@ -1023,7 +1023,7 @@
     - number: DCB game winning strategy problem co-NP-complete
     - limits: Specifications are finite products of deterministic Büchi automata over input/output signals and robustness is measured by counts of assumptions and guarantees, with a user-supplied total order. The model is reactive infinite-play games; liveness violations cannot be detected finitely, so safety guarantees cannot generally be sacrificed in response to a fairness-assumption violation. DCB-to-generalized-Büchi simplification is exponential and DCB game solving is co-NP-complete. The proposed GR(1) algorithm uses O(|S||E|(mn)^2) time but stores (m+1)(n+1) memory states (or n with an extra strategy computation); GR(k) incurs factorial/exponential factors. No implementation benchmark is reported beyond the worked examples and asymptotic analysis.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Robustness_in_the_Presence_of_Liveness_.txt`
+    -
     - record id: `robust-gr-1-liveness-robustness-2010`
 - Termination Analysis with Compositional Transition Invariants (2010)
     - what: Introduces Compositional Termination Analysis (CTA), replacing repeated expensive whole-program safety checks in Binary Reachability Analysis with ranking of loop-free unwindings and a transitivity check on a disjunctively well-founded candidate transition invariant. Increasing unwinding depth and removing already-ranked transitions permits short terminating fragments to yield a global termination argument. §2 defines transition invariants as supersets of transitive reachable transition closure, and disjunctive well-foundedness as finite unions of well-founded relations. §3 observes a transitive disjunctively well-founded relation is well-founded. Lemmas 1/2 accumulate rankings of increasingly deep, not-yet-covered unwindings and allow skipped intermediate depths; the implementation uses powers of two. Algorithm 1 tracks an overapproximation X of reachable states. A failed ranking produces a candidate nontermination precondition C: reachable C establishes nontermination; unreachable C is removed from X. Thus reachability checking remains where ranking fails rather than in every refinement. §4 slices each loop independently, havocs other loops and assignments depending on five or more variables, and uses CBMC symbolic execution to discover paths in loop-free fragments instead of enumerating all of them.
@@ -1033,7 +1033,7 @@
     - number: precise CTA: average speedup 52; up to 3 orders of magnitude; more than 3× analyzed benchmarks at equal precision under the limit
     - limits: Soundness depends on the rank subprocedure returning a disjunctively well-founded superset or a genuine nontermination precondition, and on valid reachability checks. Finite-state nontermination completeness requires a complete rank procedure, unlike the implemented incomplete engine. Per-loop slicing/havoc overapproximates behavior and can lose termination proofs; practical heuristics replace assignments depending on at least five variables. Evaluations compare identical abstracted slices, not untouched drivers. Baseline is selected from BRA-successfully-analyzed, nontrivial loops, so speedup figures are conditional on that subset. Fast variants skip path-precondition checking or all reachability checking, potentially reporting false nontermination outside these benchmarks; the paper reports no precision loss on its measured examples. No scheduler fairness or busy-waiting progress argument is supplied for concurrent programs.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal270/Termination_Analysis_with_Compositional_Transition_Invariants_.txt`
+    -
     - record id: `termination-analysis-with-compositional-2010`
 - Termination Cores (2010)
     - title: Interactive Termination Proofs using Termination Cores
@@ -1060,7 +1060,7 @@
     - what: The paper defines safety and liveness as properties of sets of infinite executions. It proves that every property is the intersection of a safety property and a liveness property.
     - limits: It covers properties of a single trace, not policies over several traces. Deadlock freedom is a safety property. Starvation freedom is a liveness property.
     - how much was read: most of it read
-    - [source](https://www.cs.cornell.edu/fbs/publications/DefLiveness.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_foundations.md`; [notes: What matters for turning a vague request into a proof](../distributed_verification_review_b/deep_2_liveness.md); [notes: separating forbidden events from required progress](../distributed_verification_review_b/review_b_foundations_20261007.md)
+    - [source](https://www.cs.cornell.edu/fbs/publications/DefLiveness.pdf); [notes: What matters for turning a vague request into a proof](../distributed_verification_review_b/deep_2_liveness.md); [notes: separating forbidden events from required progress](../distributed_verification_review_b/review_b_foundations_20261007.md)
     - record id: `alpern-schneider-liveness-1985`
 - Anvil repository
     - title: Anvil: Building Formally Verified Kubernetes Controllers
@@ -1068,14 +1068,14 @@
     - number: Three built-in controllers (ReplicaSet, Deployment, StatefulSet) and one RabbitMQ controller are reported in the README.
     - limits: The README says verification still requires SMT theorem-proving expertise; examples and assumptions are repository-specific.
     - how much was read: most of it read
-    - [source](https://github.com/anvil-verifier/anvil); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://github.com/anvil-verifier/anvil)
     - record id: `anvil-repository`
 - Liveness Manifestos
     - title: Liveness Manifestos (NYU ACSys 'Beyond Safety' workshop page)
     - what: Workshop participants state whether proving liveness is worth it. Lamport lists four problems. McMillan, Vardi, Boigelot and Sistla add views on when liveness helps, and when bounded safety can replace it.
     - limits: This is not a paper. The workshop year is not stated.
     - how much was read: most of it read
-    - [source](https://cs.nyu.edu/acsys/beyond-safety/liveness.htm); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://cs.nyu.edu/acsys/beyond-safety/liveness.htm)
     - record id: `liveness-manifestos`
 - Barnacle (2026)
     - title: Barnacle: Adaptive Multi-Leader Scheduling for DAG-Based Consensus
@@ -1084,7 +1084,7 @@
     - number: Four protocols across Byzantine, crash-only and mixed fault models
     - limits: One author group's claim. Not independently checked.
     - how much was read: parts read
-    - [source](https://github.com/gdanezis/lean-dag); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - [source](https://github.com/gdanezis/lean-dag)
     - record id: `barnacle-2026`
 - Lion (2026)
     - title: Lion: Modular Verification of Async Runtime Liveness
@@ -1095,7 +1095,7 @@
     - number: At least 95% of unverified-runtime throughput on nine workloads (claim)
     - limits: No machine-checked proof shows that the compiled runtime matches the model. The SOSP paper is not public, so the notes read the tech report and the repo in part.
     - how much was read: parts read
-    - [source](https://github.com/stonysystems/lion); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`; [notes: Lion: Modular Verification of Async Runtime Liveness](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: Newly found 2026 Verus liveness: Lion](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://github.com/stonysystems/lion); [notes: Lion: Modular Verification of Async Runtime Liveness](../distributed_verification_review_b/deep_1_verified_implementations.md); [notes: Newly found 2026 Verus liveness: Lion](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `lion-2026`
 - On the Power of Temporal Prophecy (2026)
     - what: It uses prophecy terms (guesses about the future) to prove termination of the Ackermann function in Ivy, a first-order model checker. The notes read only the open Ivy proof file, not the paper.
@@ -1110,19 +1110,19 @@
     - number: 2026 scoring: correct FALSE +1, correct TRUE +2, UNKNOWN 0, incorrect FALSE -16, incorrect TRUE -32
     - limits: Witnesses are not required for TRUE results in unsupported or demo categories. The specs are fixed, so it does not evaluate inventing specs. Termination differs from a service that keeps responding forever.
     - how much was read: parts read
-    - [source](https://sv-comp.sosy-lab.org/2026/rules.php); [notes: SV-COMP](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://sv-comp.sosy-lab.org/2026/rules.php); [notes: SV-COMP](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `sv-comp-2026`
 - Verifying Wait-Freedom for Concurrent Higher-Order Programs (2026)
     - what: The paper gives a mechanized framework in Rocq and Iris. It proves that every call to an operation on a concurrent data structure finishes, whatever other threads do. It works for higher-order clients. It builds on Lawyer.
     - limits: The examples are a higher-order list map and a single-producer single-consumer queue, which is wait-free only with one enqueuer and one dequeuer. The review notes did not extract the numbers.
     - how much was read: parts read
-    - [source](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ECOOP.2026.20); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gaps.md`
+    - [source](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ECOOP.2026.20)
     - record id: `verifying-wait-freedom-for-2026`
 - A Refinement Methodology for Distributed Programs in Rust (precursor: Refinement Proofs in Rust Using Ghost Locks) (2025)
     - what: Proves that Rust distributed programs match a simpler model of what they should do (a refinement proof), using the Prusti verifier. The precursor paper also proves liveness (something good eventually happens). It writes those proofs as ghost code (code used only for proving, never run), using a direct encoding of LTL (a logic for statements about time). Cases include a simplified Memcached.
     - limits: The review notes could not get the final OOPSLA PDF and read the precursor instead. The verifier is Prusti, not Verus. The review notes do not know whether the final version keeps the liveness part.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2311.14452); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://arxiv.org/abs/2311.14452)
     - record id: `a-refinement-methodology-for-2025`
 - Anvil thesis (2025)
     - title: Building and Verifying Cloud Infrastructure Systems with State-Centric Reasoning (PhD dissertation)
@@ -1133,7 +1133,7 @@
     - number: framework: 5353 lines of reusable lemmas, 7817 lines of trusted code; 70+ temporal-rule lemmas, 60 Kubernetes-environment lemmas
     - limits: The controller must be a state machine whose actions are atomic (they cannot be interrupted). The proof trusts the environment model, the shim layer, external APIs, the verifier, the compiler and the OS. After verification, testing still found one bug. It came from an incomplete spec of a trusted ZooKeeper API. About 40% of the 111 pages were read.
     - how much was read: parts read
-    - [source](https://tianyin.github.io/thesis/SUN-DISSERTATION-2025.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://tianyin.github.io/thesis/SUN-DISSERTATION-2025.pdf)
     - record id: `anvil-thesis-2025`
 - Korg thesis (2025)
     - title: Verification and Attack Synthesis for Network Protocols
@@ -1155,7 +1155,7 @@
     - number: detected 'no protocol exists' in 80 of 123 unrealizable problems vs 16 for Scythe (easy 46/50, medium 21/35, hard 13/38)
     - limits: A human supplies the sketch (state variables, actions, hole grammars) and the property; results hold only for the chosen finite parameters (e.g. number of nodes), and the all-parameters step is left to TLAPS proofs from prior work. Termination is guaranteed only when each hole grammar has finitely many expressions up to interpretation equivalence.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2501.14585); [notes: ## PolySemist: protocol synthesis by sketching (2025)](claude_readings.md); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://arxiv.org/abs/2501.14585); [notes: ## PolySemist: protocol synthesis by sketching (2025)](claude_readings.md)
     - record id: `polysemist-2025`
 - Shipwright (2025)
     - title: Shipwright: Proving liveness of distributed systems with Byzantine participants
@@ -1166,7 +1166,7 @@
     - number: implementation 1888 lines (Figure 11, PDF p.11)
     - limits: It assumes partial synchrony (the network eventually stabilizes), an unverified Go runtime, and unforgeable signatures. It covers only one PBFT iteration. Reply messages to clients are not in the top-level theorem. Some refinements are unfinished. Person-time is not given.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2507.14080); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`
+    - [source](https://arxiv.org/abs/2507.14080)
     - record id: `shipwright-2025`
 - Ticl (2025)
     - title: Structural Temporal Logic for Mechanized Program Verification
@@ -1175,7 +1175,7 @@
     - number: Scheduler queue: 137 lines definitions and 362 lines proofs
     - limits: It is shown only on ring leader election with no failures.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2410.14906); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2410.14906)
     - record id: `ticl-2025`
 - ZENITH (2025)
     - title: ZENITH: Towards A Formally Verified Highly-Available Control Plane
@@ -1185,14 +1185,14 @@
     - number: 26 race conditions from prior SDN controller bugs (9 state inconsistencies, 7 deadlocks)
     - limits: The code generator is assumed correct, as with PGo. Model checking alone does not scale across topologies. TLAPS needed history variables (extra variables recording the past). Person effort is not given.
     - how much was read: parts read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`
+    -
     - record id: `zenith-2025`
 - Caliper (2024)
     - title: Almost-Sure Termination by Guarded Refinement
     - what: Caliper moves a proof of almost-sure termination (termination with probability one) from a simple probabilistic model to higher-order code. It does this through refinement.
     - limits: The examples are sequential and probabilistic: loops, a list generator, treaps and a Galton-Watson sampler. It has no randomized network consensus. The notes extracted no effort totals.
     - how much was read: parts read
-    - [source](https://github.com/logsem/clutch); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`
+    - [source](https://github.com/logsem/clutch)
     - record id: `caliper-2024`
 - Fairneris (2024)
     - title: Fairneris: Verifying Liveness Properties of Distributed Systems via Trace Refinement in Higher-Order Concurrent Separation Logic
@@ -1206,14 +1206,14 @@
     - what: These are tool docs for FizzBee's liveness syntax. 'Always eventually' means a good state recurs. 'Eventually always' means the system stabilises. Fairness is set per action: weak, strong, or unfair by default.
     - limits: The example is a toy. There is no CTL support. The notes cover about half of the docs.
     - how much was read: parts read
-    - [source](https://fizzbee.io/design/tutorials/liveness/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`; [notes: FizzBee](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
+    - [source](https://fizzbee.io/design/tutorials/liveness/); [notes: FizzBee](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `fizzbee-2024`
 - LinearActris (2024)
     - title: Deadlock-Free Separation Logic: Linearity Yields Progress for Dependent Higher-Order Message Passing
     - what: A linear separation logic (a logic where resources are used exactly once), mechanized in Coq. For message-passing programs, deadlock freedom and leak freedom follow from the logic itself.
     - limits: It covers message passing only, with no locks, semaphores or monitors. Deadlock freedom is weaker than every request being answered (the notes' inference).
     - how much was read: parts read
-    - [source](https://doi.org/10.1145/3632889); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gaps.md`
+    - [source](https://doi.org/10.1145/3632889)
     - record id: `linearactris-2024`
 - Trillium / Fairis (2024)
     - title: Trillium and Fairis
@@ -1221,7 +1221,7 @@
     - number: about 1100 lines of proof scripts for Paxos
     - limits: The step from TLA+ to the Coq model was done manually. The distributed refinements give trace safety only. Distributed liveness is in a later manuscript. The notes' author read about 40%.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2109.07863); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://arxiv.org/abs/2109.07863)
     - record id: `trillium-fairis-2024`
 - Verification and synthesis of distributed systems with weak synchronisation (2024)
     - what: A theory thesis on deciding, for processes that talk only by broadcast or only by taking and releasing locks, whether a system meets a property, and whether processes can be given local strategies that guarantee it. The trick is to pick a small description of what each process may do alone (an invariant or a set of patterns) and check whether any combination of such local runs can go wrong.
@@ -1242,13 +1242,13 @@
     - number: DuoAI covers 27 protocols and solves Paxos more than two orders of magnitude faster than any alternative
     - limits: It handles only "eventually" properties, not bounded time. Ranking functions are polynomials only. It works on protocol-level models, not code. It assumes fair scheduling, minimum packet delivery and a contention-free Paxos round. Part of the line-count gap is Dafny versus mypyvy. The notes' author read about 20% of the 137 pages.
     - how much was read: parts read
-    - [source](https://academiccommons.columbia.edu/doi/10.7916/fexf-nt82/download); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://academiccommons.columbia.edu/doi/10.7916/fexf-nt82/download)
     - record id: `yao-thesis-distai-duoai-lvr-2024`
 - A Case Study on Parametric Verification of Failure Detectors (2023)
     - what: The authors model the Chandra-Toueg failure detector (a protocol that guesses which machines have crashed) in TLA+, Ivy and counter automata, assuming partial synchrony (the network is unpredictable at first, then becomes well-behaved). They prove liveness (something good eventually happens) by hand, turning it into a safety proof (nothing bad happens).
     - limits: The conversion from liveness to safety is done by hand. Ivy's automatic conversion was not used.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2112.08826); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2112.08826)
     - record id: `a-case-study-on-2023`
 - ByMC survey (2023)
     - title: Survey on Parameterized Verification with Threshold Automata and the Byzantine Model Checker
@@ -1266,13 +1266,13 @@
     - number: 10 liveness and 14 safety properties across 4 consistency levels
     - limits: The model was checked on all logs up to length 6, plus random simulation.
     - how much was read: parts read
-    - [source](https://doi.org/10.1109/ICSE-SEIP58684.2023.00006); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; [notes: P24. Understanding Inconsistency in Azure Cosmos DB with TLA+](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
+    - [source](https://doi.org/10.1109/ICSE-SEIP58684.2023.00006); [notes: P24. Understanding Inconsistency in Azure Cosmos DB with TLA+](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `cosmos-db-tla-2023`
 - Modular termination verification with a higher-order concurrent separation logic - intermediate report (2022)
     - what: Builds on Iris without modifying it. Reasons about termination of non-blocking concurrent algorithms one module at a time. Turns termination into a safety property by using call permissions. Applied to a lock-free stack with helping.
     - limits: Blocking concurrency under fair scheduling is only sketched.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2212.14126); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://arxiv.org/abs/2212.14126)
     - record id: `modular-termination-verification-with-2022`
 - Temporal prophecy (2021)
     - title: Temporal prophecy for proving temporal properties of infinite-state systems
@@ -1283,7 +1283,7 @@
     - number: Figure 3 (model lines; conjectures; checker seconds): ticket with task queues 90; 60; 7; alternating bit 143; 70; 25; hybrid reliable broadcast 166; 58; 25; TLB shootdown 468; 102; 240 (checking time, not authoring time)
     - limits: Prophecy formulas are extracted automatically only from an invariant the user supplies. Choosing the witness is manual. No claim of completeness.
     - how much was read: parts read
-    - [source](https://doi.org/10.1007/s10703-021-00377-1); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md`; [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md); [notes: additional temporal methods](../distributed_verification_review_b/review_b_liveness_20261007.md)
+    - [source](https://doi.org/10.1007/s10703-021-00377-1); [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md); [notes: additional temporal methods](../distributed_verification_review_b/review_b_liveness_20261007.md)
     - record id: `temporal-prophecy-2021`
 - Logres (2020)
     - title: A Formally Verified Protocol for Log Replication with Byzantine Fault Tolerance
@@ -1292,14 +1292,14 @@
     - number: IronFleet took about 3.7 person-years (the paper's figure)
     - limits: Liveness is cheap here because the model is lock-step, with no leader and no timing. That is the notes' inference. The proof is a counting argument, not a fairness argument.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2009.10664); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gaps.md`
+    - [source](https://arxiv.org/abs/2009.10664)
     - record id: `logres-2020`
 - Apalache (2019)
     - title: Apalache: temporal properties tutorial, feature table and TLA+ model checking made symbolic
     - what: Apalache is a model checker for TLA+ that works on symbols instead of listing states, using an SMT solver. It checks state, action and trace invariants, inductive invariants (a property that holds at the start and is preserved by every step) and temporal properties.
     - limits: Apalache parses ASSUME but does not pass it to the solver. It does not use THEOREM. Its bounded checks do not prove properties for unbounded runs. The authors did not read the original paper.
     - how much was read: parts read
-    - [source](https://github.com/apalache-mc/apalache); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md); [notes: Model checking: what a successful run means](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://github.com/apalache-mc/apalache); [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md); [notes: Model checking: what a successful run means](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `apalache-2019`
 - HotStuff (2019)
     - title: HotStuff: BFT Consensus in the Lens of Blockchain
@@ -1331,7 +1331,7 @@
     - number: approximately 10k lines of Isabelle/HOL per algorithm
     - limits: The work is old and manual. The review notes read about 50% of it.
     - how much was read: parts read
-    - [source](https://inria.hal.science/hal-01556227v1/document); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://inria.hal.science/hal-01556227v1/document)
     - record id: `formal-verification-of-distributed-2012`
 - Heard-Of (AFP) (2012)
     - title: Verifying Fault-Tolerant Distributed Algorithms in the Heard-Of Model
@@ -1339,7 +1339,7 @@
     - number: six consensus algorithms (OneThirdRule, Uv, LastVoting, Ute, Ate, Eigbyz)
     - limits: The communication predicate is a strong assumption about the environment: a good phase in which a coordinator hears a majority and everyone hears the coordinator. The user must argue that it is realistic (the notes' inference).
     - how much was read: parts read
-    - [source](https://www.isa-afp.org/entries/Heard_Of.html); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://www.isa-afp.org/entries/Heard_Of.html)
     - record id: `heard-of-afp-2012`
 - TLAPS (2012)
     - title: TLA+ Proof System (TLAPS) and its temporal support
@@ -1347,7 +1347,7 @@
     - number: Peterson mutual-exclusion example; proof obligations are split among back-end provers
     - limits: The 2012 tool could not check temporal-logic proofs. The current tlapm lists LS4 for propositional temporal logic. That does not mean arbitrary progress proofs are automatic.
     - how much was read: parts read
-    - [source](https://github.com/tlaplus/tlapm); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: T01. Current TLAPS support: distinguish temporal reasoning from automa](../distributed_verification_review_b/deep_2_liveness.md); [notes: TLA+, PlusCal, TLC, TLAPS](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
+    - [source](https://github.com/tlaplus/tlapm); [notes: T01. Current TLAPS support: distinguish temporal reasoning from automa](../distributed_verification_review_b/deep_2_liveness.md); [notes: TLA+, PlusCal, TLC, TLAPS](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `tlaps-2012`
 - Proving that non-blocking algorithms don't block (2009)
     - what: The first fully automatic tool to prove non-blocking liveness (lock-free and obstruction-free) of concurrent data structures. It uses rely-guarantee reasoning (each thread assumes what others do and promises what it does), shape analysis and a termination prover.
@@ -1355,7 +1355,7 @@
     - number: found a linked-list deletion in Fomitchev and Yahav that is not obstruction-free
     - limits: It is not about distributed systems. The review notes read about 25% of the paper.
     - how much was read: parts read
-    - [source](https://www.mpi-sws.org/~viktor/papers/popl2009-nonblocking.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://www.mpi-sws.org/~viktor/papers/popl2009-nonblocking.pdf)
     - record id: `proving-that-non-blocking-2009`
 - PBFT (1999)
     - title: Practical Byzantine Fault Tolerance
@@ -1379,14 +1379,14 @@
     - number: Theorem 4.1(b): N >= 3t+1
     - limits: The proofs are on paper, with no machine-checked artifact. The bound is counted in rounds of the basic round model, not in seconds. A timeout is not evidence of a crash.
     - how much was read: parts read
-    - [source](https://doi.org/10.1145/42282.42283); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_boundaries.md`; [notes: Dwork–Lynch–Stockmeyer partial synchrony](../distributed_verification_review_b/review_b_consensus_20261007.md); [notes: Consensus: where the assumptions enter the proof](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://doi.org/10.1145/42282.42283); [notes: Dwork–Lynch–Stockmeyer partial synchrony](../distributed_verification_review_b/review_b_consensus_20261007.md); [notes: Consensus: where the assumptions enter the proof](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `dls-partial-synchrony-1988`
 - FLP (1985)
     - title: Impossibility of Distributed Consensus with One Faulty Process
     - what: Shows that no deterministic asynchronous consensus protocol can guarantee a decision on every allowed execution if one process may stop, even when messages are always eventually delivered.
     - limits: This is an impossibility result under its stated assumptions only. Randomization or eventual synchrony changes the problem.
     - how much was read: parts read
-    - [source](https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: S26](../distributed_verification_review_b/deep_9_formulation_methods.md); [notes: Consensus: where the assumptions enter the proof](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf); [notes: S26](../distributed_verification_review_b/deep_9_formulation_methods.md); [notes: Consensus: where the assumptions enter the proof](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `flp-1985`
 - CockroachDB TLA+ models
     - what: ParallelCommits.tla states progress assertions: the transaction record is eventually aborted or committed, and all intents (pending writes) are eventually resolved. The central property in StoreLiveness.tla, 'Durable Support', is a safety obligation despite its name.
@@ -1434,7 +1434,7 @@
     - number: Allocator: 297 lines, no THEOREM for its three liveness properties
     - limits: By the notes' inference, there is exactly one fully proved non-toy liveness example, Dekker, with two omitted steps. The other proofs listed (Paxos, Bakery, Peterson, EWD840) are about safety.
     - how much was read: parts read
-    - [source](https://github.com/tlaplus/tlapm/tree/main/examples); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://github.com/tlaplus/tlapm/tree/main/examples)
     - record id: `tlaps-liveness-examples`
 - TLC
     - title: TLC model checker (LiveCheck implementation and Toolbox docs)
@@ -1449,7 +1449,7 @@
     - number: benchmarks: fat-tree and Internet2 networks with a 24 h timeout, compared with Timepiece and Minesweeper
     - limits: The notes cover only the abstract and the evaluation setup.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2604.03539); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`
+    - [source](https://arxiv.org/abs/2604.03539)
     - record id: `cb-ver-2026`
 - Liveness to Safety for Distributed Systems (2026)
     - what: It replaces a progress proof with a monitor over a sequence of weakly fair states (states where an action that stays enabled is eventually taken). Examples: spanning tree construction, leader selection in each tree of a forest, and maximal independent set.
@@ -1461,40 +1461,40 @@
     - what: Defines bounded bypass (a limit on how often others can overtake a waiting process) as a liveness property between starvation-freedom and fairness. Model checking found mistakes in the definitions and proofs.
     - limits: The review notes read the abstract only.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2606.19003); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2606.19003)
     - record id: `on-the-notions-of-2026`
 - SureDistrib (2026)
     - title: SureDistrib: Verifying Almost-Sure Termination of Composite Asynchronous Byzantine Protocols
     - what: SureDistrib is a Rocq framework with refinement and composition lemmas. It gives the first mechanized proof that an asynchronous Byzantine binary agreement algorithm terminates with probability 1. The common coin is treated as a black box.
     - limits: The review notes did not extract the effort and read only the introduction and the framework overview.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1145/3808293); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`; [notes: SureDistrib: Verifying Almost-Sure Termination of Composite Asynchrono](../distributed_verification_review_b/deep_1_verified_implementations.md)
+    - [source](https://doi.org/10.1145/3808293); [notes: SureDistrib: Verifying Almost-Sure Termination of Composite Asynchrono](../distributed_verification_review_b/deep_1_verified_implementations.md)
     - record id: `suredistrib-2026`
 - The Cross-Domain State Preservation Functor (2026)
     - what: An Isabelle/HOL development that claims safety plus starvation-freedom with f < n/3 Byzantine nodes.
     - number: 3,215 lines (search summary)
     - limits: A company preprint. The theorem and the model of partial synchrony are unchecked.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2604.03844); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2604.03844)
     - record id: `the-cross-domain-state-2026`
 - Towards Proving Liveness on Weak Memory (Extended Version) (2026)
     - what: The paper gives proof rules for liveness on weak memory. They are response rules under weak fairness plus memory fairness, and ranking functions over weak-memory state. It proves that a ticket lock avoids starvation under Release-Acquire.
     - limits: The review notes read only the abstract and introduction.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2602.19609); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2602.19609)
     - record id: `towards-proving-liveness-on-2026`
 - Accountable Liveness (2025)
     - what: A security notion about assigning blame when a system stalls. It is not a proof technique.
     - limits: The notes did not read past the abstract.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2504.12218); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2504.12218)
     - record id: `accountable-liveness-2025`
 - DafnyMPI (2025)
     - what: DafnyMPI is a Dafny library. It proves deadlock freedom, termination, and functional equivalence with sequential implementations of MPI programs. Deadlock freedom comes from preconditions on MPI calls.
     - number: Three PDE solver case studies
     - limits: The notes cover only the abstract.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2512.18842); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2512.18842)
     - record id: `dafnympi-2025`
 - Fortifying Integrity, Traceability, and Operational Efficacy in Blockchain-Based Examination Management Through Formal Verification with TLA+ (2025)
     - what: Models an Ethereum smart contract for exam records in TLA+ (a specification language for state machines), checks it with the TLC model checker for safety and liveness, and maps the TLA+ constructs to Solidity code. Hoare logic (pre- and postconditions) is applied to key functions.
@@ -1510,13 +1510,13 @@
     - number: Strong fairness can prevent completeness
     - limits: The results fix a synchronous session calculus and depend on the chosen process and fairness semantics; they are theoretical rather than implementation benchmarks.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2104.14226); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://arxiv.org/abs/2104.14226)
     - record id: `justness-and-lock-freedom-2021`
 - Making Weak Memory Models Fair (2021)
     - what: It shows that the standard fairness for threads is not enough under weak memory, and adds fairness for memory.
     - limits: Only the abstract was read.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2012.01067); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2012.01067)
     - record id: `making-weak-memory-models-2021`
 - Randomized threshold consensus (2021)
     - title: Verification of randomized consensus algorithms under round-rigid adversaries
@@ -1525,25 +1525,25 @@
     - number: Handles crashes and Byzantine faults
     - limits: Round-rigid schedules/adversaries are the fairness abstraction; probabilistic claims are model-specific.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/s10703-020-00355-7); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://doi.org/10.1007/s10703-020-00355-7)
     - record id: `randomized-threshold-consensus-2021`
 - TLA+ video course (2021)
     - what: Lamport’s official course page lists a sequence of TLA+ lessons covering behaviors, safety, liveness, fairness, invariants and proofs, with downloadable video material.
     - limits: Course page is instructional material, not an evaluation or a new result.
     - how much was read: only abstract or first pages read
-    - [source](https://lamport.azurewebsites.net/video/videos.html); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://lamport.azurewebsites.net/video/videos.html)
     - record id: `tla-video-course-2021`
 - Ensuring Liveness Properties of Distributed Systems: Open Problems (2020)
     - what: The paper argues that fairness assumptions can lead to false conclusions. It proposes justness instead.
     - limits: The review notes read only the abstract and introduction.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/1912.05616); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/1912.05616)
     - record id: `ensuring-liveness-properties-of-2020`
 - Making Byzantine Consensus Live (2020)
     - what: A spec for a view synchronizer (the component that gets nodes into the same view) strong enough to give liveness for single-shot HotStuff, Tendermint, PBFT and SBFT. The proofs are rigorous but not machine-checked.
     - limits: The review notes read the abstract only. The proofs are not mechanized.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2008.04167); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2008.04167)
     - record id: `making-byzantine-consensus-live-2020`
 - PoS Nakamoto Coq proof (2020)
     - title: Formalizing Nakamoto-Style Proof of Stake
@@ -1552,14 +1552,14 @@
     - number: Static corrupted parties in a synchronous network
     - limits: The model assumes synchrony and a static corruption set; it is a protocol model rather than deployed code.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-45237-7_13); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://doi.org/10.1007/978-3-030-45237-7_13)
     - record id: `pos-nakamoto-coq-proof-2020`
 - LiLi (2016)
     - title: A Program Logic for Concurrent Objects under Fair Scheduling
     - what: A program logic based on rely-guarantee reasoning (each thread assumes what others do and promises what it does). It verifies linearizability (operations appear to take effect at one instant) and progress together, under fair scheduling. Applied to ticket locks, queue locks, lock-coupling lists, optimistic lists and lazy lists.
     - limits: Abstract only. No effort numbers.
     - how much was read: only abstract or first pages read
-    - [source](https://popl16.sigplan.org/details/POPL-2016-papers/38/A-Program-Logic-for-Concurrent-Objects-under-Fair-Scheduling); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://popl16.sigplan.org/details/POPL-2016-papers/38/A-Program-Logic-for-Concurrent-Objects-under-Fair-Scheduling)
     - record id: `lili-2016`
 - Parameterized liveness proof spaces (2016)
     - title: Proving Liveness of Parameterized Programs
@@ -1568,14 +1568,14 @@
     - number: Method targets arbitrary unbounded thread counts
     - limits: The ticket example's non-starvation claim assumes every thread is scheduled infinitely often. The paper provides a theoretical foundation rather than a deployed distributed implementation.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/1605.02350); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://arxiv.org/abs/1605.02350)
     - record id: `parameterized-liveness-proof-spaces-2016`
 - Total-TaDA (2016)
     - title: Modular Termination Verification for Non-blocking Concurrency
     - what: A program logic for total correctness (the program terminates and gives the right result) of concurrent programs. Its specs constrain the thread's concurrent environment. It expresses lock-freedom, wait-freedom and a new property, non-impedance.
     - limits: As far as the review notes read, it is a pen-and-paper logic, and they did not check whether it is mechanized. The review notes read the abstract and intro only.
     - how much was read: only abstract or first pages read
-    - [source](https://www.doc.ic.ac.uk/~pg/publications/daRochaPinto2016Modular.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://www.doc.ic.ac.uk/~pg/publications/daRochaPinto2016Modular.pdf)
     - record id: `total-tada-2016`
 - Ranking templates (2015)
     - title: Ranking Templates for Linear Loops
@@ -1583,7 +1583,7 @@
     - number: Templates are reduced to existential constraints using Motzkin's transposition theorem
     - limits: The method targets linear loop programs and termination arguments; it is not a distributed-system implementation proof.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.2168/lmcs-11(1:16)2015); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://doi.org/10.2168/lmcs-11(1:16)2015)
     - record id: `ranking-templates-2015`
 - Termite (2015)
     - title: Synthesis of Ranking Functions Using Extremal Counterexamples
@@ -1593,14 +1593,14 @@
     - number: Termite solved 33% more examples than Loopus, in twice the time
     - limits: The method targets termination of programs whose transition relations include disjunctions and existential conditions; benchmark comparisons include front-end and invariant-generator limitations.
     - how much was read: only abstract or first pages read
-    - [source](https://hal.science/hal-01144622); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://hal.science/hal-01144622)
     - record id: `termite-2015`
 - LiLi tech report (2013)
     - title: Characterizing Progress Properties of Concurrent Objects via Contextual Refinements
     - what: The report gives formal operational definitions of all the common progress properties. It proves that, for linearizable objects, each one is equivalent to a kind of contextual refinement that preserves termination.
     - limits: The review notes read only the abstract. It has no effort numbers.
     - how much was read: only abstract or first pages read
-    - [source](https://cs.yale.edu/flint/certikos/publications/eqconcur.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://cs.yale.edu/flint/certikos/publications/eqconcur.pdf)
     - record id: `lili-tech-report-2013`
 - Paxos Commit (2006)
     - title: Consensus on Transaction Commit
@@ -1609,7 +1609,7 @@
     - number: Two-Phase Commit is the F=0 special case
     - limits: The paper's formal specifications omit liveness assumptions in the appendix; progress depends on the stated failure and majority assumptions.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/cs/0408036); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://arxiv.org/abs/cs/0408036)
     - record id: `paxos-commit-2006`
 - Colón-Sipma termination (2002)
     - title: Practical Methods for Proving Program Termination
@@ -1618,7 +1618,7 @@
     - number: The first method handles subtle linear combinations but is limited to few variables
     - limits: The algorithms target imperative programs and loop termination; the second method is heuristic and assumes structured programs.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/3-540-45657-0_36); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://doi.org/10.1007/3-540-45657-0_36)
     - record id: `colo-n-sipma-termination-2002`
 - Vacuity Detection in Temporal Model Checking (1999)
     - what: Checks whether every part of a temporal property actually affects whether it holds. Example: a property saying a request is eventually answered passes trivially if no request can ever occur.
@@ -1629,87 +1629,87 @@
 - AProVE: Termination and Memory Safety of C Programs - (Competition Contribution).
     - what: AProVE: Termination and Memory Safety of C Programs (Competition Contribution) Thomas Ströder, Cornelius Aschermann, Florian Frohn, Jera Hensel, and Jürgen Giesl RWTH Aachen University, Germany Abstract. AProVE is a system for automatic termination and complex- ity proofs of C, Java, Haskell, Prolog, and term rewrite systems. The particular strength of AProVE when analyzing C is its capability to rea- son about pointer arithmetic combined with direct memory accesses (as, e.g., in standard implementations of string algorithms).
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-662-46681-0_32); notes outside this site: `lit_snowball/notes_coci7.md`
+    - [source](https://doi.org/10.1007/978-3-662-46681-0_32)
     - record id: `aprove-termination-and-memory`
 - Commutativity for Concurrent Program Termination Proofs.
     - what: . This paper explores how using commutativity can improve the eﬃciency and eﬃcacy of algorithmic termination checking for concur- rent programs. If a program run is terminating, one can conclude that all other runs equivalent to it up-to-commutativity are also terminat- ing.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-37706-8_6); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1007/978-3-031-37706-8_6)
     - record id: `commutativity-for-concurrent-program`
 - Compositional Termination Proofs for Multi-threaded Programs.
     - what: . Automated veriﬁcation of multi-threaded programs is diﬃ- cult. Direct treatment of all possible thread interleavings by reasoning about the program globally is a prohibitively expensive task, even for small programs.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-642-28756-5_17); notes outside this site: `lit_snowball/notes_coci7.md`
+    - [source](https://doi.org/10.1007/978-3-642-28756-5_17)
     - record id: `compositional-termination-proofs-for`
 - Global Progress in Dynamically Interleaved Multiparty Sessions
     - what: . A multiparty session forms a unit of structured interactions among many participants which follow a prescribed scenario specified as a global type signature. This paper develops, besides a more traditional communication type system, a novel static interaction type system for global progress in dynamically interleaved multiparty sessions.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-540-85361-9_33); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/978-3-540-85361-9_33)
     - record id: `global-progress-in-dynamically`
 - Goblint: Abstract Interpretation for Memory Safety and Termination - (Competition Contribution).
     - what: Goblint: Abstract Interpretation for Memory Safety and Termination (Competition Contribution) Simmo Saan1(B) ⋆, Julian Erhard2,3 , Michael Schwarz2 , Stanimir Bozhilov2 , Karoliine Holter1 , Sarah Tilscher2,3 , Vesal Vojdani1 , and Helmut Seidl2 1 University of Tartu, Tartu, Estonia {simmo.saan,karoliine.holter,vesal.vojdani}@ut.ee 2 Technische Universität München, Garching, Germany {julian.erhard,m.schwarz,stanimir.bozhilov, sarah.tilscher,helmut.seidl}@tum.de 3 Ludwig-Maximilians-Universität München, Munich, Germany Abstract. Goblint is an abstract interpreter of C programs, focusing on the analysis of multi-threaded code. It is equipped with a variety of abstract domains, as well as analyses which allow it to reason about an array of program properties in a highly configurable manner.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-57256-2_25); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1007/978-3-031-57256-2_25)
     - record id: `goblint-abstract-interpretation-for`
 - Learning Probabilistic Termination Proofs.
     - what: . We present the ﬁrst machine learning approach to the ter- mination analysis of probabilistic programs. Ranking supermartingales (RSMs) prove that probabilistic programs halt, in expectation, within a ﬁnite number of steps.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-81688-9_1); notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://doi.org/10.1007/978-3-030-81688-9_1)
     - record id: `learning-probabilistic-termination-proofs`
 - Multiparty Session Typing in Java, Deductively.
     - what: . Multiparty session typing (MPST) is a method to automat- ically prove safety and liveness of protocol implementations relative to specifications. We present BGJ: a new tool to apply the MPST method in combination with Java.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-30820-8_3); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-031-30820-8_3)
     - record id: `multiparty-session-typing-in`
 - Proving Nontermination via Safety.
     - what: . We show how the problem of nontermination proving can be reduced to a question of underapproximation search guided by a safety prover. This reduction leads to new nontermination proving implementa- tion strategies based on existing tools for safety proving.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-642-54862-8_11); notes outside this site: `lit_snowball/notes_coci7.md`
+    - [source](https://doi.org/10.1007/978-3-642-54862-8_11)
     - record id: `proving-nontermination-via-safety`
 - Ranking Function Synthesis for Bit-Vector Relations.
     - what: . Ranking function synthesis is a key aspect to the success of modern termination provers for imperative programs. While it is well- known how to generate linear ranking functions for relations over (math- ematical) integers or rationals, eﬃcient synthesis of ranking functions for machine-level integers (bit-vectors) is an open problem.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-642-12002-2_19); notes outside this site: `lit_snowball/notes_coci7.md`
+    - [source](https://doi.org/10.1007/978-3-642-12002-2_19)
     - record id: `ranking-function-synthesis-for`
 - Sound and Complete Witnesses for Template-Based Verification of LTL Properties on Polynomial Programs.
     - what: . We study the classical problem of verifying programs with respect to formal speciﬁcations given in the linear temporal logic (LTL). We ﬁrst present novel sound and complete witnesses for LTL veriﬁcation over imperative programs.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-71162-6_31); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1007/978-3-031-71162-6_31)
     - record id: `sound-and-complete-witnesses`
 - Sound Verification Procedures for Temporal Properties of Infinite-State Systems.
     - what: . First-Order Linear Temporal Logic (FOLTL) is particularly convenient to specify distributed systems, in particular because of the unbounded aspect of their state space. We have recently exhibited novel decidable fragments of FOLTL which pave the way for tractable veriﬁ- cation.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-81688-9_16); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-030-81688-9_16)
     - record id: `sound-verification-procedures-for`
 - Temporal Property Verification as a Program Analysis Task.
     - what: . We describe a reduction from temporal property veriﬁcation to a program analysis problem. We produce an encoding which, with the use of recursion and nondeterminism, enables oﬀ-the-shelf program analysis tools to naturally perform the reasoning necessary for proving temporal properties (e.g.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-642-22110-1_26); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-642-22110-1_26)
     - record id: `temporal-property-verification-as`
 - Termination and non-termination specification inference.
     - what: To capture the termination and non-termination behaviors of Techniques for proving termination and non-termination of imper- each program, Le et al. [32] has recently proposed an integrated ative programs are usually considered as orthogonal mechanisms. specification logic with three temporal predicates Term M, Loop In this paper, we propose a novel mechanism that analyzes and and MayLoop, which denote, respectively, the scenarios for definite proves both program termination and non-termination at the same program termination (with a lexicographic ranking measure M made time.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1145/2737924.2737993); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1145/2737924.2737993)
     - record id: `termination-and-non-termination`
 - Toward Liveness Proofs at Scale
     - what: . While the problem of mechanized proof of liveness of reactive pro- grams has been studied for decades, there is currently no method of proving live- ness that is conceptually simple to apply in practice to realistic problems, can be scaled to large problems without modular decomposition, and does not fail unpre- dictably due to the use of fragile heuristics. We introduce a method of liveness proof by relational rankings, implement it, and show that it meets these criteria in a realistic industrial case study involving a model of the memory subsystem in a CPU.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-65627-9_13); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/978-3-031-65627-9_13)
     - record id: `toward-liveness-proofs-at`
 - Verification and Synthesis of Symmetric Uni-Rings for Leads-To Properties.
     - what: This paper investigates the verification and synthesis of parameterized protocols that satisfy leadsto properties R Q on symmetric unidirectional rings (a.k.a. uni-rings) of deterministic and constant- space processes under no fairness and interleaving semantics, where R and Q are global state predicates. First, we show that verifying R Q for parameterized protocols on symmetric uni-rings is undecidable, even for deterministic and constant-space processes, and conjunctive state predicates.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.23919/fmcad.2019.8894272); notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://doi.org/10.23919/fmcad.2019.8894272)
     - record id: `verification-and-synthesis-of-3`
 - VeriFuzz 1.4: Checking for (Non-)termination (Competition Contribution).
     - what: VeriFuzz 1.4: Checking for (Non-)termination (Competition Contribution) Ravindra Metta , Prasanth Yeduru , Hrishikesh Karmarkar , and Raveendra Kumar Medicherla?( ) TCS Research, Tata Consultancy Services, Pune, India {r.metta,prasanth.yeduru,hrishikesh.karmarkar,raveendra.kumar}@tcs.com Abstract. In VeriFuzz 1.4, we implemented two new techniques for checking Non-termination and Termination. VeriFuzz 1.4 won the Ter- mination category of SV-COMP 2023.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-30820-8_42); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-031-30820-8_42)
     - record id: `verifuzz-1-4-checking`
 - Verifying LTL Properties of Hybrid Systems with K-Liveness.
     - what: . The verification of liveness properties is an important challenge in the design of real-time and hybrid systems. In contrast to the verification of safety properties, for which there are several solutions available, there are really few tools that support liveness properties such as general LTL formulas for hybrid systems, even in the case of timed automata.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-319-08867-9_28); notes outside this site: `lit_snowball/notes_coci7.md`
+    - [source](https://doi.org/10.1007/978-3-319-08867-9_28)
     - record id: `verifying-ltl-properties-of`
 - AdoB (2024)
     - title: AdoB: Bridging Benign and Byzantine Consensus with Atomic Distributed Objects
@@ -1771,72 +1771,72 @@
     - number: About 30 lines
     - limits: It is a toy only. the review notes read a summary, not the paper.
     - how much was read: not read; title and metadata only
-    - [source](https://proofsandintuitions.net/2026/06/24/liveness-proofs-in-veil-part-1/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://proofsandintuitions.net/2026/06/24/liveness-proofs-in-veil-part-1/)
     - record id: `liveness-proofs-in-veil-2026`
 - Proving liveness with TLA (2026)
     - what: The post proves in TLA+ that Xen vchan data eventually arrives. The first Availability property was vacuously true (it held trivially and said nothing).
     - limits: The review notes read it only through a summarizer.
     - how much was read: not read; title and metadata only
-    - [source](https://roscidus.com/blog/blog/2026/01/01/tla-liveness/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://roscidus.com/blog/blog/2026/01/01/tla-liveness/)
     - record id: `proving-liveness-with-tla-2026`
 - TLA logic in Dafny (2024)
     - what: The post writes weak fairness as a Dafny predicate. The example is a countdown timer that the author calls silly.
     - limits: The review notes read it only through a summarizer.
     - how much was read: not read; title and metadata only
-    - [source](https://rdivyanshu.github.io/posts/2024/01/tla-logic-in-dafny.html); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://rdivyanshu.github.io/posts/2024/01/tla-logic-in-dafny.html)
     - record id: `tla-logic-in-dafny-2024`
 - Performal: Formal Verification of Latency Properties for Distributed Systems (2023)
     - what: This is a search lead from OpenAlex that nobody has read. The notes give only its title, year and DOI.
     - limits: The notes screened it as unreachable. The DOI PDF request returned paywall HTML, and no author copy was exposed. The notes mark it as a priority lead.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.1145/3591235); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/openalex_leads_20261012.md`
+    - [source](https://doi.org/10.1145/3591235)
     - record id: `performal-formal-verification-of-2023`
 - Formal Verification of Liveness Properties in Causal Order Broadcast Systems Using Event-B (2021)
     - what: An unread search lead from OpenAlex. The notes give only its title, year and DOI.
     - limits: Not read. The claims are unverified.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.1007/978-981-16-3346-1_16); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/openalex_leads_20261012.md`
+    - [source](https://doi.org/10.1007/978-981-16-3346-1_16)
     - record id: `formal-verification-of-liveness-2021`
 - Ramsey vs. Lexicographic Termination Proving (2013)
     - what: Citation-snowball lead; full text was not retrieved from the attempted open endpoints.
     - limits: Metadata-only: attempted open endpoints returned access-denied or non-PDF HTML; the paper was not read.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.1007/978-3-642-36742-7_4); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/unreachable_C.md`
+    - [source](https://doi.org/10.1007/978-3-642-36742-7_4)
     - record id: `ramsey-vs-lexicographic-termination-2013`
 - Detecting Fair Non-termination in Multithreaded Programs (2012)
     - what: Citation-snowball lead; full text was not retrieved from the attempted open endpoints.
     - limits: Metadata-only: attempted open endpoints returned access-denied or non-PDF HTML; the paper was not read.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.1007/978-3-642-31424-7_19); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/unreachable_C.md`
+    - [source](https://doi.org/10.1007/978-3-642-31424-7_19)
     - record id: `detecting-fair-non-termination-2012`
 - Formal verification of a consensus algorithm in the Heard-Of model (2009)
     - what: The paper proves a consensus algorithm correct in Isabelle, in the Heard-Of model. The proof is at least five times shorter than a fine-grained Paxos proof.
     - number: proof at least five times shorter than a fine-grained Paxos proof in Isabelle
     - limits: The review notes saw only a search summary and did not open the paper.
     - how much was read: not read; title and metadata only
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    -
     - record id: `formal-verification-of-a-2009`
 - Proving thread termination (2007)
     - what: Citation-snowball lead; full text was not retrieved from the attempted open endpoints.
     - limits: Metadata-only: attempted open endpoints returned access-denied or non-PDF HTML; the paper was not read.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.1145/1273442.1250771); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/unreachable_C.md`
+    - [source](https://doi.org/10.1145/1273442.1250771)
     - record id: `proving-thread-termination-2007`
 - A Complete Method for the Synthesis of Linear Ranking Functions (2004)
     - what: Citation-snowball lead; full text was not retrieved from the attempted open endpoints.
     - limits: Metadata-only: attempted open endpoints returned access-denied or non-PDF HTML; the paper was not read.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.1007/978-3-540-24622-0_20); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/unreachable_C.md`
+    - [source](https://doi.org/10.1007/978-3-540-24622-0_20)
     - record id: `a-complete-method-for-2004`
 - Liveness Checking as Safety Checking (2002)
     - what: Citation-snowball lead; full text was not retrieved from the attempted open endpoints.
     - limits: Metadata-only: attempted open endpoints returned access-denied or non-PDF HTML; the paper was not read.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.1016/s1571-0661(04)80410-9); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/unreachable_C.md`
+    - [source](https://doi.org/10.1016/s1571-0661(04)80410-9)
     - record id: `liveness-checking-as-safety-2002`
 - Lentil
     - what: Lentil is proof infrastructure for linear temporal logic in Lean 4. It has its own proof mode.
     - limits: It embeds LTL. It does not translate TLA+ files.
     - how much was read: not read; title and metadata only
-    - [source](https://reservoir.lean-lang.org/@verse-lab/lentil); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`
+    - [source](https://reservoir.lean-lang.org/@verse-lab/lentil)
     - record id: `lentil`

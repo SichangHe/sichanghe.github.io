@@ -6,8 +6,6 @@ Tag: `rocha2015model`, [paper](http://arxiv.org/abs/1502.02327v1)
 
 Rocha et al. combine k-induction with automatically inferred affine (polyhedral) invariants to verify C programs with bounded and unbounded loops. The abstract says: “The k -induction algorithm consists of three cases: in the base case, we aim to find a counterexample up to k loop unwindings; in the forward condition, we check whether loops have been fully unrolled and that the safety property P holds in all states reachable within k unwindings; and in the inductive step, we check that whenever P holds for k unwindings, it also holds after the next unwinding of the system.” (Abstract, p. 1).
 
-Inference: this is a loop-proof scheduling pattern for VL. It suggests automatically proposing affine invariants before asking Verus to prove a Rust loop, but the paper's C/GOTO transformations and PIPS invariants do not transfer as Verus syntax.
-
 ## technique 1: three-part k-induction
 
 For a C program `P`, property `φ`, and increasing `k`, run the following steps (Algorithm Figure 2, p. 4).
@@ -50,9 +48,7 @@ Verus form. Inference: translate each affine relation into a specification predi
 
 The evaluation uses 142 SV-COMP 2015 Loops tasks: 49 valid and 93 invalid, with 15-minute CPU and 15 GB memory limits and maximum `k = 100` (Section 3.1, p. 11). DepthK (k-induction plus polyhedral invariants) scores 141/235, ESBMC k-induction 115/235, and plain BMC 66/235 (Figure 7, p. 12). DepthK solves 66% of the 142 tasks and times out on 6%; ESBMC k-induction solves 53% and times out on 10% (Section 3.2, p. 13). DepthK takes about 11,518 seconds total versus 15,320 seconds for ESBMC k-induction, a reported 25% reduction (Section 3.2, p. 13). The conclusion gives 66% for polyhedral k-induction but 52% (not 53%) for k-induction without invariants (p. 14), so the paper is internally inconsistent by one point. Inference: 66% of 142 is about 94 tasks and 52–53% is about 74–75, so the percentages are rounded and the denominator is the 142-task suite. The implementations are called DepthK (with invariants) and ESBMC with k-induction, both on ESBMC v1.24.1 (Section 3, p. 11).
 
-The authors attribute DepthK's 28% of tasks without a solution to the invariants from PIPS, “which could not generate strong invariants to be k-inductive either due to the transformers or due to the invariants are not convex” (Section 3.2, pp. 12–13). The paper gives no soundness proof of the transformations; it states that “correctness of the loop-free program implies correctness of the program with loops” (Section 2.1, p. 4). Inference: what stays trusted includes ESBMC, PIPS, SMT solving, inserted assumptions, C-to-GOTO translation, and the property encoding. Inference: for VL, the main risk is importing analyzer-produced facts as trusted assumptions instead of proving them in Verus.
-
-Inference: product risk for agent-written verified Rust is moderate. Automatic affine candidates could reduce loop-proof effort, but the benchmark is C-specific and only 142 tasks. VL should reuse the three-case scheduling idea and reject any invariant that cannot be verified as a genuine Verus `invariant`.
+The authors attribute DepthK's 28% of tasks without a solution to the invariants from PIPS, “which could not generate strong invariants to be k-inductive either due to the transformers or due to the invariants are not convex” (Section 3.2, pp. 12–13). The paper gives no soundness proof of the transformations; it states that “correctness of the loop-free program implies correctness of the program with loops” (Section 2.1, p. 4).
 
 ## techniques for the catalog
 
@@ -61,5 +57,3 @@ Inference: product risk for agent-written verified Rust is moderate. Automatic a
 - loop-free induction encoding — transform each loop into finite `ite` copies and havoc/save/update state for induction
 
 - polyhedral invariant inference — compute affine constraints with abstract interpretation and use them to strengthen induction
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "In the SV-COMP benchmarks, we observed a substantial improvement in performance if we generate and check constraints as described in Equation (4)."): read the whole paper text and checked every quotation, number, page reference and technique step; changed one abstract quote word, the form of Equation 1 (R is after the loop), page references (Equations 1 and 2 on p. 5, invariant discussion on pp. 12–13), the inductive-step and state-vector descriptions, removed the unsupported claims that the paper proves soundness, that the formula is quantifier-free, and that the introduction shows induction proves the decrement example, and noted the 52% versus 53% inconsistency; did not check the cited references, the bar-chart percentages in Figure 8 beyond the text, or the DepthK tool itself.

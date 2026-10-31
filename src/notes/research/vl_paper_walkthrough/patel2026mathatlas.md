@@ -32,8 +32,6 @@ evidence and limits
 
 On a human-annotated random sample of 250 entities, 90.4% were valid overall. The type-specific validity denominators are 50 each: definitions 49/50 (98.0%), theorems 47/50 (94.0%), proofs 40/50 (80.0%), examples 43/50 (86.0%), and exercises 47/50 (94.0%) (Table 1b, p. 5). On 100 sampled references, 96% were correctly extracted. Relation retrieval and selection reached overall F1 94.8%, with 99% recall and 91% precision; entity-reference F1 was 94.7% (100% recall, 90% precision) and object-reference F1 94.9% (98% recall, 92% precision) (Table 1a, p. 5). These are small human-annotated samples, not all 52,052 entities.
 
-Inference: A VL analogue would index Rust APIs, specification definitions, imported contracts, and lemma dependencies, with source spans and exact identifiers. The graph could route a generated proof to missing contracts before invoking Verus. Inference: relation extraction errors would create either missing proof prerequisites or false dependencies, so every automatically retrieved dependency should be checked by compilation or a proof obligation.
-
 ## technique 2: evaluate compilation and semantic faithfulness separately
 
 what it is
@@ -51,8 +49,6 @@ how to do it
 Table 2 shows that the engineered gpt-5.2 prompt scores 86.0 on MA-Align definitions and 80.0 on statements, while CriticLean 32B scores 80.0 and 75.0, respectively. The table reports percentages over the benchmark's labeled examples; the paper does not state separate per-column denominators beyond the 200 total.
 
 Verus form (inference)
-
-Inference: Apply the same three-way accounting to Rust/Verus: parsing and Rust compilation, Verus proof checking, and semantic/specification faithfulness. A model-generated `ensures` clause can compile and verify while omitting a requirement. A faithfulness review can flag this but remains a heuristic unless tied to an executable reference model or human review. Inference: a VL benchmark should publish the number of targets in each split, the number that compile, the number that verify, and the number whose specifications pass an independent intent check.
 
 evidence and limits
 
@@ -81,13 +77,11 @@ The local-context ablation is negative for the best prompted system: adding 300 
 
 Verus form (inference)
 
-Inference: Build VL splits by specification complexity and dependency depth: standalone functions, functions requiring imported contracts, and functions whose proofs depend on long lemma chains. For each generated Rust item, record Rust compile, Verus verify, and independent requirement-faithfulness labels. Dependency depth can be the maximum imported-contract/lemma path; dependency mass can be the number of unique specifications required. Inference: a Verus benchmark should include definitions of ghost state and APIs, not only theorem-like postconditions, because missing definitions are a central failure mode in MathAtlas. Inference: add a “VL-Hard” split selected by deepest dependency paths and report degradation separately.
-
 evidence and product boundary
 
 MathAtlas tests autoformalization, not complete theorem proving. It leaves proof entities and full theorem proofs for future work. Approximately 30% of entities come from Springer textbooks; the public open split contains the remaining 70%, while all MA-Hard examples are open (Section 4.1, p. 6). Copyright exclusions may bias coverage, and the conclusion says research mathematics is left for future work. No implementation or model weights have been released for some cited prior systems, and the authors state their reimplementation failed to match reported numbers (footnote 9, p. 10).
 
-Proved or measured: extraction validity and relation F1 on annotated samples; compilation, faithfulness, and correctness rates under named Lean models; depth and Mathlib-grounding correlations. Trusted: PDF-to-MMD conversion, prompted extractors, retrieved relation candidates, Lean and `blv`, faithfulness judges, human labels, and the informal-to-formal specification of each entity. Inference: for agent-written verified Rust, the threat is high for specification drift and long dependency chains. A proof that Verus accepts can still encode a weaker property, and a retrieved contract can be wrong even if downstream proofs pass. MathAtlas already supplies the benchmark pattern VL needs: preserve dependency metadata, separate compile/prove from semantic faithfulness, and stress the deepest dependency trees. VL should not redo a benchmark that reports only compile success.
+Proved or measured: extraction validity and relation F1 on annotated samples; compilation, faithfulness, and correctness rates under named Lean models; depth and Mathlib-grounding correlations. Trusted: PDF-to-MMD conversion, prompted extractors, retrieved relation candidates, Lean and `blv`, faithfulness judges, human labels, and the informal-to-formal specification of each entity.
 
 ## techniques for the catalog
 
@@ -98,5 +92,3 @@ Proved or measured: extraction validity and relation F1 on annotated samples; co
 - dependency-depth stress testing: evaluate a deepest-tree subset separately from average examples
 - context and grounding ablations: measure local-context and existing-library effects with model, split, and denominator
 - judge calibration: test semantic-faithfulness metrics on a labeled benchmark instead of assuming judge scores are truth
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

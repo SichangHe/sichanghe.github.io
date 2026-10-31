@@ -54,8 +54,6 @@ Inference: The compiler is a strong syntactic/type oracle, but “builds” is w
 
 Inference: Threats the paper lists include possible training-data contamination of mined fixes, qualitative semantic review, handwritten tests, Clippy fixes checked only against Clippy, and OpenAI model behavior changing over time. The 182-commit audit compares repository fixes and estimated runtime behavior; it is not a proof of equivalence. RustAssistant also excludes `unsafe` and configuration errors (and foreign-function errors in the micro-benchmarks), so its results do not cover all systems code.
 
-Inference: For VL, the useful technique is checker-driven repair of compilation and verification failures, with error grouping and rollback. The product threat is that a Verus proof error may be “fixed” by weakening a specification, deleting an invariant, or adding `external_body`; the paper's compile/test criterion would miss this. VL therefore needs a specification-diff policy, proof-obligation coverage checks, and trusted-construct allowlists in addition to the loop. This is an inference grounded in the paper's compile-versus-semantics distinction.
-
 ## techniques for the catalog
 
 - diagnostic localization — extract compiler-linked source windows and related locations instead of sending whole files
@@ -64,4 +62,3 @@ Inference: For VL, the useful technique is checker-driven repair of compilation 
 - compiler feedback iteration — re-run the checker after each patch so propagated type/signature errors become new repair inputs
 - semantic acceptance tests — require build plus independent unit tests for benchmarks because compilation alone does not preserve intent
 - prompt ablation discipline — measure each formatting/localization feature against a fixed benchmark and report denominators for commits versus errors
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Without grouping, RustAssistant would fix errors in a random order, which increased the chances of it getting stuck with an error that it could not fix"): read all 10 body pages and skimmed the references; checked the three quotations word for word, their page numbers against the PDF, all numbers in Tables 1-7 and the algorithm, prompt and changelog descriptions; changed one quotation (it read "specializes in"), two page references, the 1.67.1 and 506 error-code claim, the ablation and completion-count wording (adding Table 4 numbers), the `<<=` example, the Cargo.toml claim, and removed an unsupported threat (compiler version coverage); did not check figures 5-7 values, references, or the Verus inferences beyond that they are labeled Inference.

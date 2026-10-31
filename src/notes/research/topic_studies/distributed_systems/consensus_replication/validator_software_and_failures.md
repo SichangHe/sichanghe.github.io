@@ -50,8 +50,6 @@ scope and reading rules
 - candidate experiment, in my opinion: check panic freedom, termination, or deterministic results for one small Rust module implicated in a documented incident
   - define one property and pin the buggy and fixed revisions before estimating proof work
 
-## the landscape
-
 ### solana: Agave, Firedancer, Tower BFT, Alpenglow
 
 - Agave `[Rust]` is the main Solana validator client, maintained by Anza
@@ -525,7 +523,6 @@ secondary (news, vendor blogs) read in full or part
 search summaries only (not fetched or blocked; claims unverified)
 - Besu Jan 2024 (Hyperledger wiki), Reth Sep 2025 root cause (The Block, Notion), May 2023 finality loss (ethstaker Notion), Geth Nov 2020 Infura effects, Jun 2022 Solana, CometBFT ASA-2025-003, Avalanche 2024 gossip, SIMD-0326 vote result, Firedancer mainnet Dec 2025, Hyperliquid closed source, Aptos Baby Raptr, EF zkEVM formal verification page, Runtime Verification K Beacon Chain, Twins/ByzzFuzz, Sync committee/EIP-7657, bridge hacks 2026, Celestia sampling
 
-saved to /hdd1/sichanghe/paper_collection (8)
 - Systematization of Knowledge- Formal Verification of Consensus Protocols, Nikita Bondarev, Kirill Ziborov, Yury Yanovich, arXiv, 2026
 - Block-STM- Scaling Blockchain Execution by Turning Ordering Curse to a Performance Blessing, Rati Gelashvili, ..., PPoPP, 2023
 - Finding Consensus Bugs in Ethereum via Multi-transaction Differential Fuzzing, Youngseok Yang, Taesoo Kim, Byung-Gon Chun, OSDI, 2021

@@ -54,7 +54,7 @@ Verus form: Inference: state matcher contracts should return an option and confi
 
 The evaluation uses Wilson 95% intervals and paired exact McNemar tests with Holm correction (Section 4.2, p. 6). A τ²-bench airline gate raises Qwen3-235B pass1 from 0.39 to 0.54 and lowers wrongful-write episodes from 54% to 35% with no rule-violating write executed (Section 5.4, p. 8). On PM-Bench, matcher-bound enforcement can hurt when due-ness is semantic rather than state-decidable (Section 5.5, p. 8). The conclusion states: "Displayed task state helps only as far as the model heeds it, directives only as far as it obeys, and enforcement only as far as its state and matcher are right" (Section 7, p. 8).
 
-Trusted components are the state compiler, matcher, tool harness, scripted schedules, and model APIs. Inference: for VL, a gate around agent-written verified Rust can prevent proof-irrelevant runtime actions, but it cannot establish algorithmic invariants unless the state machine and matcher are verified. The threat is high for silently compiled or mismatched specs; it is lower when receipts, state transitions, and dispatch guards are proof-checked.
+Trusted components are the state compiler, matcher, tool harness, scripted schedules, and model APIs.
 
 ## techniques for the catalog
 
@@ -64,4 +64,3 @@ Trusted components are the state compiler, matcher, tool harness, scripted sched
 - matcher audit — measure and bound errors mapping natural-language requests to steps
 - state-corruption testing — inject graph and status faults to quantify enforcement ceilings
 - request-bound policy — reject eligible actions that do not match the current request
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

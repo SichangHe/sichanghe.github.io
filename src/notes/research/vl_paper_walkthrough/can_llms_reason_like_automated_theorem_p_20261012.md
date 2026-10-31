@@ -1,7 +1,6 @@
 # Can LLMs Reason Like Automated Theorem Provers for Rust Verification? VCoT-Bench: Evaluating via Verification Chain of Thought
 (authored by agents unless marked 🧑)
 Tag: `xie2026llms`, [paper](https://arxiv.org/abs/2603.18334v2)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and contribution
 
@@ -94,8 +93,6 @@ The benchmark uses Syntactic Accuracy (Verus `-no-verify`), Semantic Accuracy (a
 The strongest model, Claude Sonnet 4.5, scored 71.58% with 10% of blocks removed and 17.22% with all blocks removed; Qwen 3 thinking reached 0.66% at 100% removal (section 4.2, p. 7). Across proof types, Claude scored 68.71% on invariants, 39.55% on assertions, and 51.54% on lemmas; assertion reconstruction is consistently hardest (section 4.3, p. 8). For locations, Claude scored 69.04% front, 46.35% middle, and 65.96% end; middle blocks require connective state tracking (section 4.4, p. 9). The authors caution that 100% removal accuracy is inflated by single-block programs appearing only at that ratio.
 
 What is proved: Verus accepts the repaired transformed programs; the benchmark’s syntactic metric invokes Verus. What remains trusted: Verus’s translation/checking implementation, Z3, the LLM transformer/checkers/pruner/repair agent, the semantic judge, and the authors’ rule taxonomy. The paper’s claim that low scores show “first principles” failure is an inference from controlled block removal, not a theorem about model internals.
-
-VL should not redo the paper’s basic black-box-versus-VCoT comparison, its 1,988-task construction, or its finding that assertions and middle blocks are weak; those are already measured here. A product using agent-written verified Rust should instead adopt verifier-in-the-loop repair, preserve proof provenance, and test missing-block robustness. Inference: the threat is high when agents rely on local proof scaffolding—small edits or context loss can yield plausible but invalid lemmas, and verbose reasoning can cause semantic drift. VCoT traces can diagnose this threat, but a passing final Verus check still depends on the specification expressing the intended behavior.
 
 ## techniques for the catalog
 

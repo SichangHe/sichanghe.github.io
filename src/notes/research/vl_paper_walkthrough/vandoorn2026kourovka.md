@@ -35,12 +35,8 @@ Inference: for Verus, keep executable Rust, Verus specifications, and explanator
 
 Inference: Lean checks the formal proofs, but the paper’s examples (Problems 21.147 and 21.149) show that whether the formal statement matches the intended question depended on human review of the problem authors. What is reported: eight solutions accepted by the Notebook editors, not a benchmark of discovery cost. Not shown: whether the agent’s informalisation preserves every proof dependency; the paper says the first informalisation pass was done by Aristotle and then refined by the authors.
 
-## implications for VeruLaw
-Inference: the direct threat to agent-written verified Rust is specification error and omitted assumptions more than kernel-level proof forgery. This paper’s strongest transferable practice is a staged loop: make the statement precise, decompose search, obtain independent review, and preserve reusable lemmas. VL should not redo the paper’s eight group-theory results; it should reuse the workflow and audit boundaries of trust.
-
 ## techniques for the catalog
 - mathlib-adjacent triage: select goals whose definitions and lemmas are already available before investing in formalisation
 - statement-first formalisation: encode definitions and the exact theorem before proof search
 - obligation decomposition: use outlines, intermediate lemmas, alternate formulations, and isolated subproblems
 - checked-proof review loop: translate formal proofs, obtain domain review, and refactor accepted code into reusable library results
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "There are many graphs naturally associated with a group, and these graphs often illuminate group properties that are not immediately obvious from the algebraic structure alone."): read the whole text (pp. 1-21) and checked every quotation, page reference and the technique steps against Section 1 and Appendix A; changed the link (the old arXiv 2510.01346 is the Aristotle paper, reference [1]; the paper's own identifier is arXiv:2607.17477v2), the workflow summary, the Appendix A selection steps (the paper lists three considerations, not four steps), the claim that the prompting techniques supplied all eight solutions, and the trust sentence (now marked Inference); did not check the mathematics of the eight solutions, the Lean repository, or the Verus Inference paragraphs beyond marking them as inference.

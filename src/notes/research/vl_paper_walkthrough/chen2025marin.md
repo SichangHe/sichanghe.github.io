@@ -81,18 +81,9 @@ Inference: The same measurement can count unresolved identifiers, compiler error
 
 Section 4.5 (p. 6) evaluates accuracy using EM, ES, and IM and evaluates hallucination using API names and parameter patterns. Inference: These measurements do not prove functional correctness. The reported validity depends on extracted declarations, tokenization, constraint implementation, and benchmark labels. A Verus product would need separate verification and behavioral checks; the paper does not evaluate such a product.
 
-## contradictions, limitations, and product threat
-
-The abstract states: “achieving an average decrease of 67.52% in MiHN and 73.56% in MaHR compared to the RAG approach.” (p. 1). The RQ1 answer instead reports a 67.31% MaHR decrease (p. 7). Inference: These aggregate MaHR claims conflict; the paper does not explain the difference. The industry study uses 109 samples and PanguCoder-11B/34B (section 5.4, p. 9). Section 1 reports “an average decrease of 59.41% in MaHR and an average increase of 72.39% in EM, with only an average 0.031s overhead increase compared to the base model.” (p. 2). The accuracy and hallucination changes compare with RAG; the overhead compares with Base. These are reported results, not independently reproduced experiments.
-
-The authors identify model selection, Java-only evaluation, prompt design, and automated benchmark curation as threats (section 6.2, p. 10). On curation, they state: “While automation enables scalability to handle extensive benchmarking tasks, it introduces potential concerns regarding dataset correctness and quality.” Inference: Automated labels and narrow task coverage limit how much confidence these results provide for verified Rust.
-
-Inference: The threat to agent-written verified Rust is substantial for API hallucinations, because a nonexistent or wrong proof helper can make a generated proof fail or, worse, lead the model to alter a specification. Dependency mining and identifier masks directly reduce invented names, but the paper offers no evidence on Rust, Verus, semantic contracts, or adversarial repository changes.
-
 ## techniques for the catalog
 
 - hierarchical dependency mining: statically collect local calls and global files, then provide the structural context to generation
 - dependency constrained decoding: mask API-name and parameter-pattern logits using a prefix tree built from valid declarations
 - hallucination metrics: report micro hallucinated elements and macro fraction of APIs with any hallucination, with explicit denominators
 - component ablation: remove local dependencies, global dependencies, and decoding constraints to measure each contribution
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For example, on APIHulBench-F, removing global dependencies causes a 33.39% drop in average EM and a 186% rise in average MaHR across six LLMs."): checked the full paper text, quotations, numbers, page and section references, and technique steps; corrected the abstract and metric quotations, motivation example, page references, prompt components, tokenizer handling, decoding stopping condition, and unsupported denominator claim, and marked analytical conclusions as inferences; did not inspect implementation code, validate benchmark labels, or reproduce experiments.

@@ -24,7 +24,7 @@ The implementation pipeline has three stages. The Verifier selects methods marke
 ## evidence and limits
 The corpus sampled 20 DafnyBench programs; 17 were supported by both strategies, giving 170 mutants. After excluding 22 non-compiling and 17 equivalent mutants, 131 were realistically killable. Spec_bva killed 123/131 (93.9%), including 106 explicit failures and 17 timeouts credited as kills; Block killed 108/131 (82.4%), and the union killed 125/131 (95.4%) (Table 2, p. 4). Spec_bva uniquely killed 17 mutants and Block 2. Spec_bva generated 860 tests across 131 files, 6.6 per file versus about 1.6 for Block; 52% of explicit-failure kills came from the first test and 73% from the first three. Runtime was 7,889 s versus 4,867 s, approximately 1.6× slower (Section 3.2, p. 4). Three programs crashed during generation for at least one strategy, so results are not 20/20.
 
-The paper reports limitations: mutable state such as arrays and class fields is unsupported, and specifications are not inlined. Mutation testing measures fault detection against generated mutants, not contract adequacy or semantic completeness. Inference: for VL, spec-derived tests can complement Verus proofs by checking executable behavior and generated Rust/Verus integration, but a passing test suite is not a proof of universal postconditions. Existing work already covers implementation-driven Dafny tests; VL should not redo the basic ECP/BVA idea without addressing Rust state, proof obligations, and trustworthy spec-to-test traceability.
+The paper reports limitations: mutable state such as arrays and class fields is unsupported, and specifications are not inlined. Mutation testing measures fault detection against generated mutants, not contract adequacy or semantic completeness.
 
 ## techniques for the catalog
 - safe DNF partitioning: decompose guarded contracts into mutually exclusive feasible conjunctions before test synthesis
@@ -32,4 +32,3 @@ The paper reports limitations: mutable state such as arrays and class fields is 
 - boundary value analysis: pin one variable at a time to exact interval edges and collection-size boundaries
 - novelty iteration: append an exclusion assumption after each generated input to obtain distinct tests
 - mutation adequacy comparison: compare specification-driven and implementation-driven suites on a denominator of realistically killable mutants
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

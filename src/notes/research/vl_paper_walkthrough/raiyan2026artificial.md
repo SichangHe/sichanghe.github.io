@@ -4,11 +4,7 @@ Tag: `raiyan2026artificial`, [paper](https://doi.org/10.48550/arxiv.2606.08728)
 
 ## scope and result
 
-This survey organizes mathematical reasoning around four task families: informal text and diagrams, formal theorem proving and autoformalization, mathematical discovery, and inference/training methods that connect generation to verification. Its key framework is the comprehension–generation–verification (CGV) triad. The survey says: “The CGV triad refines the two-stage comprehension–generation framing of recent LLM-centric surveys by promoting verification from an optional post-hoc filter to a co-equal component that participates both at inference time and during training.” (section IV, p. 13 in the extracted text). For VeruLaw, the formal track and the verifier-centered training lessons matter most.
-
 The survey distinguishes a numerical answer, an executable program, a formal proof, and an open-ended construction as progressively stronger artifacts. It states: “A final numerical answer gives only weak supervision; an executable program permits deterministic evaluation; a formal proof supplies a kernel-checked certificate; and an open-ended construction requires a task-specific verifier.” (section II-A, p. 6). This is a useful engineering rule: choose the artifact and verifier together.
-
-Inference: the survey is a map of prior work rather than a new verified system. Its reported results inherit the source papers' settings and trust assumptions. A VL design should use the taxonomy to select interfaces and measurements, not treat the survey's aggregate scores as direct evidence that Verus Rust can be generated reliably.
 
 ## technique 1: make the output a machine-checkable artifact
 
@@ -21,7 +17,7 @@ How to apply it.
 3. Run an independent verifier suited to that representation: exact execution, a symbolic solver, a process/outcome verifier, or a proof-assistant kernel (section IV-H, pp. 16–17).
 4. Feed verdicts back into search or training. Reject invalid artifacts and preserve accepted artifacts as data.
 
-Verus form. Inference: for VL, make the artifact Rust source plus Verus specifications and proof code. Compile only after Verus verification succeeds, and keep generated contracts, proof obligations, and external assumptions as explicit records. A final test result is weaker than a verified postcondition.
+Verus form.
 
 Evidence and boundary. The survey warns that execution cannot catch semantic misinterpretation: “a program that faithfully encodes a misunderstood problem will execute correctly but produce the wrong answer.” (section IV-B, p. 14). Thus a Verus proof can certify the encoded contract while leaving the natural-language-to-contract translation wrong.
 
@@ -121,18 +117,6 @@ Apply discovery as:
 
 Verus form. Inference: let the agent propose verified helper lemmas, data-structure invariants, or optimized Rust implementations. Require Verus proofs and benchmark the executable result. Novelty and product relevance still need a human or repository-level audit; a proof only establishes the stated property.
 
-## what this establishes for VL
-
-The survey's formal corpus shows that proof assistants are both verifiers and data generators. Lean kernel checking, compiler diagnostics, proof-state retrieval, recursive subgoals, and verified subproof datasets already cover most of the generic architecture a proof-producing agent needs. VL should not redo those ideas as if they were new. Its open engineering questions are Rust/Verus-specific: specification fidelity, unsafe and external-code boundaries, dependency upgrades, proof stability, and useful repair from Verus diagnostics.
-
-The survey reports 238 included records after a screening pipeline of 1,847 candidates, 1,535 deduplicated records, 1,089 title/abstract exclusions, and 446 full-text reviews, of which 208 were excluded (Figure 3, p. 5). This denominator describes the survey's corpus, not all mathematical-reasoning literature. Its benchmark table groups 15 neural provers, 15 autoformalization/library papers, 8 discovery papers, 25 benchmark/evaluation records, and 20 multilingual resources (Figure 3, p. 5).
-
-What is measured: benchmark answer accuracy, pass@k, proof-assistant acceptance, process scores, search budgets, and selected human audits. What remains trusted: formalization of the natural-language statement, proof-assistant kernel and libraries, compiler or transpiler layers, retrieval corpus, verifier implementation, and any expert formalization or answer-guessing assistance. The survey explicitly warns that theorem-proving benchmarks measure library coverage, notation alignment, premise retrieval, and proof-state feedback as well as model ability (section VI-F, p. 24).
-
-Inference: the threat to a product that generates Verus Rust is high if it reports answer accuracy without complete verification and specification audits, and moderate if it requires full Verus checking with explicit trust records. The closest transferable techniques are compiler-guided local repair, proof-state retrieval, process-level rewards, and test-time search with Verus as the independent judge. The survey's own synthesis already covers these general patterns; VL's contribution must be measured on real Rust systems and maintenance changes.
-
-No single benchmark number should be combined with another without its denominator and setting. Table XIII mixes Pass@32, Pass@64, Pass@8192, full-benchmark counts, expert-assisted TTRL, and automatically generated proofs. The survey marks those distinctions, and the comparison would be misleading if the markers were removed.
-
 ## techniques for the catalog
 
 - comprehension–generation–verification triad: treat parsing, candidate generation, and independent certification as separate components
@@ -143,4 +127,3 @@ No single benchmark number should be combined with another without its denominat
 - RL with verifiable rewards: train from execution or proof-assistant rewards with explicit baselines and budgets
 - verifier-guided test-time scaling: sample candidates and let an independent checker select accepted proofs
 - verified discovery: evolve executable constructions, then certify their properties and audit novelty
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

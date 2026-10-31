@@ -74,7 +74,7 @@ Inference: use Rust types and ghost/specification predicates to model attributes
 
 ## what remains trusted and product implication
 
-The paper gives proofs (Theorems 2.1 and 2.2, pp. 6–8; the invariant behind Theorem 2.1 is only outlined) of enumerator properties under grammar assumptions and reports benchmark timing comparisons. Inference: it does not prove that a corpus-derived grammar reflects developer intent, that a repaired program is adequate beyond its formal specification, or that Leon's translation and verifier are sound for all Scala features. Further inference: the method could automate candidate generation for VeruLaw but would complement, not replace, Verus proof obligations. Its direct threat is moderate for repair automation; its learned ranking does not undermine machine-checked guarantees when the final Rust candidate is verified.
+The paper gives proofs (Theorems 2.1 and 2.2, pp. 6–8; the invariant behind Theorem 2.1 is only outlined) of enumerator properties under grammar assumptions and reports benchmark timing comparisons.
 
 ## techniques for the catalog
 
@@ -83,5 +83,3 @@ The paper gives proofs (Theorems 2.1 and 2.2, pp. 6–8; the invariant behind Th
 - A* partial-term search — use negative-log probability plus a completion horizon to prioritize expansions
 - partial-evaluation pruning — discard incomplete terms already contradicted by known inputs
 - attribute and corpus grammars — encode semantic restrictions and learned local coding style in productions
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our enumeration procedure described above requires that each non-terminal symbol has a finite number of ground productions."): read the whole paper text; checked the abstract and section 2.2 quotations, the 0.0135 example, algorithm and theorem references, section and page numbers, the benchmark discussion and Table 1 row count; changed the link to the arXiv page from the paper text, fixed the repair-pipeline step and its citation, the Algorithm 3 step, the page references for cost and horizon, the depth-2 explanation (the paper says "one reason"), and marked unsupported conclusions as Inference; did not check the proofs for correctness, Table 1 individual cells (blank cells are ambiguous in the extracted text), cited works, or the VeruLaw/Verus inference sections beyond labeling them.

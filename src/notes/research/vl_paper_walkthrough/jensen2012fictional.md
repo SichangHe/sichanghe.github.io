@@ -53,9 +53,6 @@ Verus form: Inference: represent each layer as a ghost invariant and prove refin
 Evidence: “Relational composition masks the J-interpretation to the outside” (sec.6, p.392).
 Limits: “the converse of RelComp does not hold” (p.392); choosing what to expose is a design decision (Inference).
 
-## what stays trusted and implications for VL
-The paper’s proofs of the meta-theory are in an online appendix [14] that is not in the paper text and that I did not read. The paper says the indirect triple is defined in terms of the standard triple so that “it has been possible to conduct all meta-theoretical proofs without unfolding the definition of the standard triple” (sec.7, p.394). It presents no mechanized proof of FSL itself; it says encoding it in Coq “should be natural” (sec.7, p.394). It does not treat Rust, a compiler, or a concurrent memory model. Inference: VL can use FSL’s existential abstract algebra to specify packed representations, shared counters, copy-on-write, and permission APIs while keeping concrete layout hidden. Inference: threat reduction is high for specification leakage and modularity errors, but product risk remains in unsound interpretation lemmas, ghost fraction protocols, and the paper’s unaddressed concurrency and deallocation limits.
-
 ## techniques for the catalog
 - abstract interpreted separation — hide physical sharing behind an existential algebra and heap interpretation
 - indirect framed triples — quantify over arbitrary abstract frames and enter standard proof obligations
@@ -64,4 +61,3 @@ The paper’s proofs of the meta-theory are in an online appendix [14] that is n
 - indirect entailment — replace abstract predicates with concretely equivalent ones
 - fractional permission algebra — encode read/write sharing over a standard heap
 - stacked interpretations — expose or hide multiple abstraction layers
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Before calling a library function, a client will, as usual, have to frame out irrelevant facts."): read the whole paper text and checked every quotation, formula, section and page reference, and technique step against it; changed the monotonic-counter quote (it was not verbatim), page ranges (bit-pair proof is p.384, sec.6.1 is p.393, concurrency future work is p.395), the Enter1/get1 steps (now follow the paper's derivation), the separating-product steps (Create/Leak at the client bottom, Forget around calls), the claim of derived proofs and of soundness by reduction (proofs are in the unread online appendix), the indirect-entailment description, and the leak/deallocation limits; marked my own conclusions as Inference. Not checked: the online appendix [14], the Verus-form inferences against Verus itself, and the PDF layout of two-column pages beyond the text extraction.

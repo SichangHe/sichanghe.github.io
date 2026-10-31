@@ -59,10 +59,6 @@ The paper reports improvements over direct generation, chain of thought, self-re
 
 Represent an algorithm as an operation graph and compose rules such as `C(sort)=O(n log n)`, `C(BFS)=O(|V|+|E|)`, and `C(DP)=O(|S|·|A|)` (section 4.4, PDF p. 4). Compute penalties when estimated time or memory exceeds limits. Then run implementations at increasing sizes and fit `T̂(n)=cn^α(log n)^γ`; disagreement with the symbolic estimate adds a risk penalty (section 4.4, PDF p. 4). Inference: in Verus, complexity is generally a ghost relation or separately audited measurement, not something Verus proves automatically. This technique catches asymptotic mismatches but assumes representative sizes and a suitable fit.
 
-## trust, reuse and product threat
-
-The verifier, compiler, test oracle, stress generator, symbolic complexity model, policy model and benchmark labels remain trusted. The paper's experiments show measured pass rates, not kernel-level guarantees. Inference: VL should reuse typed decomposition, counterexample feedback and search over proof-relevant repair actions; it should not redo generic MCTS scheduling without testing whether proof obligations provide better signals than tests. The threat to agent-written verified Rust is medium to high: a candidate can be “verified” against an incomplete contract, while the algorithmic search may optimize the wrong property. A separate contract review and adversarial input suite are required.
-
 ## techniques for the catalog
 
 - typed skill state: represent problem, plan, code, failures and complexity explicitly and permit only precondition-satisfied skills
@@ -70,4 +66,3 @@ The verifier, compiler, test oracle, stress generator, symbolic complexity model
 - local skill credit: update a skill's value from the reward change after its transition
 - symbolic plus empirical complexity: compare operation-graph estimates with fitted runtime exponents
 - counterexample repair: feed failed tests, verifier messages and stress failures into later typed skills
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

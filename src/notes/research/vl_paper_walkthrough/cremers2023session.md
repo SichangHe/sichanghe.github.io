@@ -44,11 +44,8 @@ Evidence and limits: The clone-detection proof took 31 seconds and 23 helper lem
 ## what is proved, measured, and trusted
 Proved: single-session PCS, conversation PCS after sequential deprecation, and clone-warning soundness in symbolic Tamarin models. Measured: concrete Signal attack traces, run times, helper-lemma counts, and emulator behavior. Inference: the conclusions depend on idealized cryptography, the modeled compromise capabilities, and the X3DH/DR abstractions. The reported run times cover automated proof search and checking stored manual proofs, exclude supplementary proofs such as FS, and use four threads per Tamarin call on an Intel Xeon E5-4650L 2.60GHz server with 756GB RAM (Table 2, p. 1247). Inference: a Rust verification effort should check session lifecycle rules and attacker-triggered parallelism, because per-session DR correctness can coexist with a conversation-level failure.
 
-Inference: what VL should not redo: the paper already supplies the threat-model matrix, conversation-level PCS definition, sequential-session restriction, warning-key mechanism, and proof accounting. VL should reuse these patterns and focus new work on concrete Rust state, persistence, resets, and recovery after a warning.
-
 ## techniques for the catalog
 - threat-model matrix: parameterize proofs by key compromise and attacker network control
 - conversation PCS: lift session properties by quantifying over all parallel sessions
 - sequential-session restriction: forbid sending or asymmetric ratcheting from deprecated sessions
 - warning-key clone detection: cross-encrypt root-key identifiers and prove no false reports
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We also simplified the asymmetric ratchet step of the double ratchet, by collapsing the sending and the receiving steps into a single rule, which instantly provide the two parties with a new shared secret value to rely on."): checked the complete paper, quotations, attacker models, definitions, technique steps, numerical results, and section/page references; corrected the publisher link, page references, PCS conditions, asymmetric-ratchet scope, warning contents, proof limits, and inference labels; did not rerun the experiments, inspect source code or model artifacts, or independently reproduce the proofs.

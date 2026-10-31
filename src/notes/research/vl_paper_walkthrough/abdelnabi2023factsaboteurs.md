@@ -14,8 +14,6 @@ The authors define their setting as follows:
 
 The FEVER pipeline has three stages: document retrieval, evidence-sentence retrieval, and claim verification (Section 2, p. 6720). The tested victim is KGAT: a BERT-based evidence retriever followed by a graph neural-network verifier, with the top five retrieved sentences used for verification (Section 2, pp. 6720–6721). The adversary trains or uses analogous retrieval and verification models and modifies a Wikipedia-like repository before the defender retrieves and verifies again (Sections 3–4, pp. 6721–6723).
 
-Inference: The threat is relevant to VeruLaw whenever an agent writes a verified component whose contract assumes that input evidence is authentic, complete, or uniquely retrievable. The paper’s experiments establish model susceptibility under FEVER/KGAT settings; they do not establish a vulnerability in Verus or Rust.
-
 ## attack taxonomy and common procedure
 
 The taxonomy has four dimensions (Section 3, pp. 6721–6723):
@@ -38,8 +36,6 @@ The attack pipeline is explicit (Figure 3 and Section 4, p. 6723):
 5. measure the resulting label, retrieval recall, and the rate of predictions changing to NEI (paper, Section 5.1, p. 6726)
 
 Inference: A Verus analogue would represent repository state as an abstract map from document identifiers to sentence sequences, define an authenticated or otherwise trusted-state predicate, and prove that an approved update preserves the predicate. A `spec fn` can describe the map and a `proof fn` can establish a transition lemma; executable Rust performs the update. The paper does not provide this encoding, so this mapping is an inference.
-
-## camouflaging techniques
 
 ### lexical variation
 
@@ -74,8 +70,6 @@ Generation uses no verifier or additional fine-tuning by the adversary and aims 
 ### omitting generate
 
 When paraphrase omission is difficult, GPT-2 is fine-tuned on claim–supporting-evidence pairs. At attack time the old evidence is used as a prompt; generated alternatives are scored by the adversarial retriever and the lowest-scoring sentence is selected (Section 4.1.6, p. 6724). The implementation samples 20 candidates with top-k sampling (Appendix A, p. 6734). The paper warns that context coherence can be limited (Section 5.5, p. 6729).
-
-## planting techniques
 
 ### claim-aligned rewriting
 
@@ -114,8 +108,6 @@ Inference: For a product using agent-written verified Rust, the practical threat
 - Inference: the evaluation relies on FEVER labels and golden evidence, the KGAT/CorefBERT implementations, pretrained and fine-tuned language models, retrieval scores, and the assumption that generated text is a meaningful attack
 - not established: behavior on multi-source production fact checking, user deception rates, or soundness of any formal verifier
 
-Inference: Existing work already supplies a broad attack taxonomy and concrete NLP attack implementations; VL should not redo those attacks as if they were new verification algorithms. A useful VL contribution would instead verify the defensive state machine and make the paper’s assumptions machine-checkable.
-
 ## techniques for the catalog
 
 - evidence threat taxonomy — classify manipulation by camouflage or planting, repository replace/add control, required models, and adversary knowledge
@@ -128,4 +120,3 @@ Inference: Existing work already supplies a broad attack taxonomy and concrete N
 - claim-aligned rewriting — mask salient evidence tokens and train a T5 corrector to rewrite stance toward a claim
 - supporting generation — generate evidence from claim–support pairs and filter samples by verifier stance
 - claim-conditioned article generation — append Grover-generated claim-conditioned text under add-only repository modification
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This experiment also suggests that potential defenses based on claim paraphrasing might not be effective."): checked all paper text, quotations, numerical results, section and printed-page references, and attack procedures; corrected fabricated or incomplete quotations, page references, taxonomy constraints and knowledge, lexical-attack inputs, rewriting variants, retrieval recall versus NEI transitions, and the direction and setup of Table 6; replaced the PDF link with the publisher page printed in the paper; did not reproduce experiments, inspect source code, evaluate human effects, or validate the proposed Verus applications.

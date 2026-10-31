@@ -19,8 +19,6 @@ Use these metrics when a generator emits both a stimulus and an expected result.
 
 Aggregate correctness and validity divide by the fixed five-slot budget across 142 evaluation tasks, while O and K are task-macro averages with failed tasks assigned zero (section 3.3, p. 6). Oracle-conversion efficiency is the opportunity-weighted ratio Σ|Eq|/Σ|Pq|; it is undefined when no potential detections exist. The paper also reports the macro gap G=O−K and a harmonic Balanced TDD Score (BTS), but cautions that BTS does not replace effective union kill (section 3.3, p. 6).
 
-Inference: VL can apply the same accounting to generated verification lemmas or test harnesses: count which faulty implementations a proposed precondition/input can expose, then count only cases where the generated postcondition or expected result is verified. The Verus verifier should establish expected results; an unverified `assume` must not count as effective detection.
-
 ## technique: additive executable reward
 The generator jointly emits five tests. During training, audited references and faulty programs supply executable feedback. The additive reward is `0.05F + 0.05Q + 0.15Vq + 0.25Cq + 0.25Kq + 0.25Oq − 0.10L`, where F is strict JSON format, Q counts/uniqueness, Vq valid-input fraction, Cq full correctness, Kq effective kill, Oq potential kill, and L penalizes responses beyond 16,000 characters (section 4.2, pp. 6–7). NoKill removes both kill terms; FullKill-only retains Kq; Additive retains both. Coefficients are not redistributed in ablations (Table 1, p. 7).
 
@@ -42,8 +40,6 @@ Use this diagnostic to distinguish harder input selection from degraded output p
 
 The reported source input-kill increase is 2.02 points, while changing the target policy on identical inputs improves oracle accuracy by 1.18 points; the authors attribute the main free-generation loss to which inputs are selected, not general output deterioration (section 6.3.1, pp. 12–13). This experiment is diagnostic on training-pool tasks, not a held-out generalization result.
 
-Inference: for VL, freeze generated specifications and separately vary proof synthesis to tell whether failures arise from selecting hard-to-prove claims or from proving a fixed claim. Keep denominators and common-support filters explicit.
-
 ## evidence and limitations
 The authors caution, “This is a learning objective for competing requirements, not a guarantee that every policy update improves both.” (section 4.1, p. 6) The audited Quality-v2 split has 506 training, 56 validation, and 142 evaluation tasks; references per task range 5–8 and faulty programs 5–19 (section 5.1, Table 2, p. 9). Three Qwen3.5-9B seeds at step 75 improve full correctness from 28.59% to 42.54%, input kill from 24.06% to 25.27%, and effective full kill from 12.23% to 14.15% on the 142-task evaluation set (abstract and section 6.1, p. 10). The step-75 Additive OCE is 56.51%, up from 49.70%; only 7.28% of tasks have all five tests fully correct (section 6.1, p. 10). At matched 50-step training, NoKill has 47.04% correctness and 14.36% full kill but 21.60% input kill; Additive has 24.43% input kill and 13.67% full kill (section 6.2, p. 11). These are three-seed means, with five dependent slots per task.
 
@@ -56,4 +52,3 @@ What remains trusted is the audited reference consensus, faulty-program bank, ex
 - additive executable reward — jointly reward correctness, valid inputs, potential kill, and effective kill
 - group-relative suite training — normalize eight complete-suite rewards and apply a clipped policy update
 - fixed-input crossover — freeze inputs and cross policies to separate input-selection difficulty from oracle prediction
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

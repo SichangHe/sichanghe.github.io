@@ -98,13 +98,7 @@ Inference: Bounded search can miss a proof beyond its limits and cannot correct 
 
 ## what is proved, measured, and trusted
 
-The interpreter derives answers and proof trees from generated Prolog. The evaluation measures answer accuracy on all three datasets, graph proof similarity on ProofWriter and GSM8K, and exact proof accuracy on PrOntoQA (section 4.1.3, pp. 6–7). Inference: These measurements do not prove that translation preserves the user’s intended meaning. Translation correctness, interpreter correctness, search limits, and benchmark annotations constrain what the results establish. VL could reuse the separation between a model that writes a formal artifact and a checker that emits evidence, with Verus checking the resulting Rust proofs.
-
-## contradictions, limitations, and product threat
-
-The introduction reports 96.5% answer accuracy and 81.0% proof similarity on ProofWriter; Table 2 gives 96.50% and 81.02% (section 1, p. 2; Table 2, p. 6). Inference: The difference is rounding. On GSM8K, Code-LLaMA-7B has lower answer accuracy than CoT, 12.22% versus 13.70%, despite higher all-instance proof similarity, 6.57% versus 4.99% (Table 5, p. 7). Thus the reported improvements do not hold for every model and metric. The authors identify symbolic expressiveness and dependence on powerful translation models as limitations (pp. 8–9).
-
-Inference: The threat to agent-written verified Rust is high at specification translation and moderate at proof generation. The deterministic checker can prevent an invalid proof from passing, but it cannot detect a semantically incomplete contract that is internally satisfiable. The paper should not be read as evidence that Prolog traces transfer directly to Verus; its transferable result is the architecture of a model-to-formal-translation front end followed by an LLM-free, proof-producing checker.
+The interpreter derives answers and proof trees from generated Prolog. The evaluation measures answer accuracy on all three datasets, graph proof similarity on ProofWriter and GSM8K, and exact proof accuracy on PrOntoQA (section 4.1.3, pp. 6–7).
 
 ## techniques for the catalog
 
@@ -112,4 +106,3 @@ Inference: The threat to agent-written verified Rust is high at specification tr
 - proof-producing interpretation: execute symbolic code with a custom meta-interpreter that records each premise and inference edge
 - iterative-deepening search: bound recursive symbolic search with repeated depth-limited runs and explicit path limits
 - proof metrics: report answer accuracy, graph-edit proof similarity, and exact proof accuracy with their distinct denominators
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Note that the reasoning graph similarity is set to zero if the predicted answer is incorrect."): read the full paper, including references and appendix, and the full study; checked quotations, numbers, metric definitions, technique steps, section and PDF page references, title, tag, and the arXiv link identified on p. 1; corrected page references, proof similarity mislabeled as proof accuracy, the location of rounded results, and unsupported implementation details; marked conclusions as Inference; did not inspect released code, rerun experiments, or independently validate Verus proposals.

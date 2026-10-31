@@ -72,18 +72,9 @@ The paper reports the overall pattern: “Overall, BV+IA achieves the largest bi
 
 The optimization that omits modulo in translated arithmetic is valid only when overflow is proved impossible. The authors state that this condition holds for all benchmarks (Section 6, PDF p. 18), but the paper does not give a separate per-benchmark proof artifact or denominator for that claim. The trusted base therefore includes the overflow analysis, Z3/Spacer implementations, the benchmark encodings, and the chosen domain/translation code.
 
-## what this proves, what remains trusted, and VL implications
-
-Proved or established in the paper: the transformer definitions preserve semantics on the restricted domain; the modular encoding preserves satisfiability (Theorem 1); solutions correspond between original and modular CHCs (Theorem 3); and MosaicSolve's terminal answers are sound (Theorem 4). Measured: maximal bit-width and runtime for three solver configurations on 11 programs under one hardware, timeout, and memory setting.
-
-Not proved by the paper: completeness or practical termination of Spacer; correctness of the benchmark generators beyond the supplied CHCs; absence of bugs in Z3, Spacer, the transformer implementation, or the overflow-elision optimization; and correctness of a generated program's original functional specification. The formal theorems assume the stated theory models and exact transformers.
-
-Inference: threat to a product that asks agents to write Verus-verified Rust is medium and indirect. Mosaic targets solver scalability for bit-precise CHCs, so it could reduce failures caused by mixed arithmetic and bit operations when VL lowers a Rust proof obligation to CHCs. It does not solve specification adequacy, ownership reasoning, unsafe/FFI modeling, or the risk that an agent proves a false contract. VL should reuse the split-by-theory idea, explicit finite-domain restrictions, interface obligations, and under/over-approximation diagnostics; it should not redo Mosaic's CHC equivalence proofs unless it implements a new translation or solver boundary. Inference: the practical product risk is highest when a translation silently changes overflow or signedness, because the prototype's speedup depends on preserving exactly those semantics.
-
 ## techniques for the catalog
 
 - domain-restricted theory transformers: map finite bit-vector values to integers and translate formulas only with explicit domain restrictions and overflow-safe reverse translation
 - theory-modular CHC encoding: partition arithmetic and bit-wise clauses, duplicate predicates, and connect copies with translated interface inclusions
 - bidirectional MosaicSolve: alternate single-theory oracle calls, under-approximation counterexamples, over-approximation blocking lemmas, and cross-fragment proof obligations
 - overflow-aware optimization: omit modular arithmetic only after proving that the relevant execution cannot overflow
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `muller2026behavior`, [paper](https://arxiv.org/abs/2609.15318)
 
-
 ## scope and contributions
 
 The paper proposes an integrated hardware workflow with three specialized agents: a Gherkin specification agent, a Verilog RTL agent, and an SVA formal-verification agent. The input is a design requirement in plain text, Markdown, or PDF. The Gherkin agent emits a complete formal-verification Gherkin specification; the Verilog agent emits RTL; the SVA agent emits SystemVerilog Assertions (SVAs). A formal testbench combines RTL and SVAs and is run by a formal property verification (FPV) tool. The paper states: “Our proposed LLM-enabled behavior driven hardware development workflow is presented in Figure 1.” (Section 3, p.3)
@@ -64,11 +63,8 @@ Inference: In Verus, a temporal SVA property must be decomposed into state field
 
 Measured: syntax and functional pass rates for generated RTL, and proof, COI and formal coverage for generated SVAs, all pass@1, using Claude Sonnet 5 and Cadence tools (Section 4, p.7). In the SVA path, assertions are scored against a golden RTL provided by the benchmark (Section 4.2.1, p.9). Inference, not stated in the paper, on what is trusted: the input requirements, LLM-generated Gherkin, LLM judges, signal extraction, EDA tools, and the interpretation that a passing assertion set covers the intended requirements. The paper presents no formal proof that the LLM translation preserves requirements.
 
-Inference: For agent-written verified Rust, the workflow is a medium threat: the staged specification and deterministic verifier feedback can reduce omission and syntax errors, but semantic gaps in the first natural-language-to-specification translation remain outside the proof kernel. Inference: VL should reuse the symbolic-contract discipline and feedback loop, while replacing Gherkin/SVA with Verus contracts and explicit transition invariants.
-
 ## techniques for the catalog
 
 - FV Gherkin symbolic scenarios: express complete behavior with symbolic pre- and post-conditions and no example tables
 - deterministic agent refinement: iterate generated RTL or assertions using lint, simulation, and FPV feedback
 - Gherkin-to-SVA mapping: translate scenario triggers and symbolic post-conditions into temporal assertions and check them with an FPV tool
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We choose VerilogEval v2 as the largest scale benchmark that many baselines evaluate on, featuring over 150 designs to get a large sample size."): read the whole paper text and the whole study; checked every quotation, number, table and page reference, and the technique steps. Changed: the Section 4 quote ([7], p.7), page references for Example 1, Section 3.2 and 3.3 (several were off by one page), the RTL results (the study had mislabeled syntax rates as functional rates and cited Table 3 instead of Table 4), the basis of the 2.48x ratio (139/156 vs CodeV 56/156), the SVA evidence (Table 7 numbers added, wrong table references and wrong 'pass@1 rates' description removed), the inference labels, and the link (arXiv abs page from the arXiv id on the paper). Not checked: the PDF layout of figures, the cited external papers and the released artifacts, and table values only against pdftotext output, not the PDF image.

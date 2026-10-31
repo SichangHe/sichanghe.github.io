@@ -60,15 +60,6 @@ Sending a channel endpoint requires an impredicative protocol that carries a cha
 
 Inference: Verus users should avoid pretending that recursive protocol unfolding is free: carry a ghost fuel/credit measure when a proof joins or rewires buffered state. This is an inference; Verus’s SMT proof model differs from Iris step-indexing.
 
-## evidence, trust, limits, and VL risk
-The evidence is mechanization, not benchmarks: closed Coq proofs of Iris adequacy and of the channel Hoare rules (Sec. 3.5, p. 12), and a development that "also includes the verification of all example programs in this paper" (Data-Availability Statement, p. 28). Size (Sec. 8, p. 26): ca. 4,250 LOC, of which ca. 3,360 for the layered verification and ca. 890 for examples; linked-list queues 350, array-segment queues 680, ghost linking 550, channel LATs 210, pairing invariants 350, protocol specification 410, Actris ghost-theory linking extension 170, tactic extensions 500. The paper reports the queue swap reused the upper layers (Sec. 1, p. 3). The paper reports no runtime performance measurements.
-
-> “The Coq mechanization (§ 8) contains closed proofs (i.e., proofs without any axioms) of the adequacy theorem and the Hoare rules for the operations on session channel.” (Sec. 3.5, p. 12)
-
-> “Hence the trusted computing base consists of the statement of safety and the operational semantics of the HeapLang language, which are both standard as they are provided by Iris.” (Sec. 3.5, p. 12)
-
-Stated limitations (Sec. 1, p. 5): a sequentially consistent memory model; safety and functional correctness, not deadlock freedom or liveness; endpoints not shared between threads (hence single-reader/single-writer queues); binary, not multiparty, session types. The code is HeapLang, a garbage-collected untyped language (Sec. 3.1, p. 10). Future work (Sec. 9, p. 27) lists a real language such as C or Rust, relaxed memory, deadlock freedom of low-level channel implementations, and low-level multiparty session types. Inference: These omissions are a high threat to an agent-written verified Rust product that promises concurrent channels: protocol specifications and queue proofs are available patterns, but memory-ordering, progress, and endpoint lifecycle still need product-specific proof. Inference: VL should reuse the layer boundaries and abstract protocol transitions rather than redo this Iris development.
-
 ## techniques for the catalog
 
 - layered channel verification — prove queues, channels, and protocols against successive abstraction contracts
@@ -77,4 +68,3 @@ Stated limitations (Sec. 1, p. 5): a sequentially consistent memory model; safet
 - invariants and logically atomic triples — share concurrent state and hide a linearization point behind an abstract atomic specification
 - ghost linking and pairing invariants — change endpoint pairings through unique ghost tokens and a pairing map
 - higher-order protocols with later credits — carry channel assertions in recursive protocols and pay buffered unfolding obligations
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Ghost linking and higher layers depend only on the logically atomic specification, rather than implementation of queues."): checked every quotation, section and page reference, the queue/channel implementation steps, the ghost-linking and pairing-invariant rules, the later-credit argument, LOC figures and stated limitations against the paper text; changed a misquoted Sec. 2.1 quotation, moved the atomic-update quotation from a wrong Sec. 2.2 citation to Sec. 4.3, corrected the dequeue/NIL description, the ghost-linking description (ghost map plus ghost link set, not a ghost list), the pair-update-2 description, the future-work citation (Sec. 9, not Sec. 8), and added the Sec. 8 LOC figures and Sec. 1 limitations; did not check the Coq artifact, the math typeset in the PDF beyond the pdftotext rendering, or the Verus mappings, which remain inferences.

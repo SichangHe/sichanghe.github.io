@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `kamath2023finding`, [paper](https://arxiv.org/abs/2311.07948v1)
 
-Audit: audited 2026-10-13 against the paper; checked all counts (469, 293, 237, 383, 398, 370, 430, 31, the Table 2 rows), Algorithms 1 to 3 step by step, the prompt descriptions, the two quotations on Houdini, the repair-prompt quotation and the Example 1 description, and the Verus forms; changed the Repair success condition (the paper also returns a Houdini subset of the repaired set) and marked three unmarked inferences.
-
 ## paper and scope
 
 Kamath et al. build an LLM-plus-verifier pipeline for inductive loop invariants. The LLM proposes candidates; a sound symbolic oracle rejects candidates that are syntactically invalid, non-inductive, or too weak to prove assertions. The paper’s important engineering result is that combining several incomplete LLM outputs and feeding verifier errors back to the LLM works better than asking for one perfect invariant. The dataset and experiments are C/ACSL and Frama-C, so the Verus mapping below is an inference. The paper has no earlier full walkthrough in the research notes.
@@ -89,16 +87,6 @@ The paper’s M1 prompt merely asks for invariants. M2 explains the precondition
 Verus form (inference)
 
 Prompt with the Rust function, the exact loop guard, mutable variables, pre/postconditions, and the required Verus syntax. Ask for separate invariant clauses and prohibit undeclared names. Sample several completions, because diversity supplies clauses that one completion misses. Keep model and prompt versions in the experiment record; otherwise pass-rate comparisons are not reproducible.
-
-## what is measured, what remains trusted, and threat to VL
-
-The positive dataset contains 469 benchmarks; 44 failed cases require disjunctions, 5 require clauses with at least three variables, 9 require more precise constraints, 3 require floating-point reasoning, and 10 were attributed to Frama-C failures. Ultimate Automizer solves 430/469 while Loopy with Repair solves 398/469; Loopy solves 31 benchmarks Ultimate misses. The negative 86 benchmarks in the original 555 one-loop category are excluded from the positive success denominator because they contain assertion counterexamples.
-
-The measured claim is conditional on Frama-C WP and its three SMT backends. The proof obligation that a passing oracle result establishes the Hoare triple is trusted; model sampling, prompt compliance, and benchmark ground truth are not proofs. The dataset excludes arrays, pointers, ambiguous semantics, and programs over 500 lines, so it does not measure heap-rich Rust or concurrent code.
-
-VL should not redo the generic lesson that a model must be checked by a verifier, nor assume one completion is representative. The directly reusable ideas are unioning candidate invariants, linear blame-based pruning, and diagnostic-guided repair. The missing work is a Verus-native oracle harness and an evaluation on Rust ownership, quantified sequences, nonlinear arithmetic, and concurrency.
-
-Threat to agent-written verified Rust (inference): medium to high for loop-heavy code. An agent can write plausible but weak invariants; Houdini and Repair can turn partial suggestions into checked proofs. The residual risk is specification mismatch: Verus may prove the supplied postcondition while the product requirement is absent or too weak, and this pipeline does not discover missing functional specifications. For concurrent Rust, the paper’s C integer model says little about atomic ordering or ownership interference.
 
 ## techniques for the catalog
 

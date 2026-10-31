@@ -54,15 +54,8 @@ Lean_m2 translates ring and field expressions to Macaulay2, reconstructs members
 
 Inference: in Verus, prefer a certificate-producing external tool whose certificate is checked by Verus-compatible lemmas. If only an oracle answer exists, state the solver result as a trusted assumption in the specification and report it separately from proved facts. For Rust arithmetic, a translated certificate can be represented by ghost data and checked with `proof fn`; solver execution itself cannot be called at runtime through proof code.
 
-## evidence, limits, and VL implications
-
-DSLean demonstrates three nontrivial automations and short implementations, but no benchmark denominator or success-rate table is reported. The paper's own limits include syntax whose grammar depends on prior semantic expressions, indentation-based syntax, parser API restrictions, and unverified parser/serialization code. Round-trip consistency is a design goal, not a theorem. Desolve additionally trusts SageMath; Gappa and lean_m2 aim to reconstruct Lean proofs.
-
-Inference: threat to a product generating verified Rust is moderate and concentrated at interoperability boundaries. A DSLean-like layer could let VL call specialized analyzers while keeping proof certificates inside the prover, but foreign parsing, solver correctness, and semantic adequacy remain trusted. Existing work has already shown bidirectional DSL bridges, proof-certificate reconstruction, oracle-based ODE tactics, and algebraic solver integration; VL should focus on Rust/Verus certificate formats and measured maintenance rather than reimplementing generic translation infrastructure.
-
 ## techniques for the catalog
 
 - typed bidirectional DSL specification — declare external-to-prover equivalences and let prover types reject ill-typed foreign syntax
 - recursive translation with termination guards — match definitional patterns, recurse through nonterminals, and cap non-progressing translations
 - certificate versus oracle integration — check external certificates inside the prover when possible and mark uncertified solver answers as explicit trusted axioms
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

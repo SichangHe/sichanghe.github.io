@@ -7,8 +7,6 @@ Araújo, Hůla, Janota, Lee, and Naskręcki describe SEMIBASE, a catalogue of fi
 
 The workflow has workers, a coordinator, a referee, and humans. Workers propose bases, counter-models, and Lean proofs; the referee rebuilds from source; humans choose targets and approve repository changes (§3, p. 3). The key trust claim is kernel checking, not an LLM's verdict: "Our referee agent is therefore not trusted to verify: it triages work and settles disputes, but a class is accepted only when the Lean kernel re-checks its proof in the whole-corpus audit." (§1, p. 2.)
 
-Inference: this separation maps directly to VL. An agent may search and draft Verus proofs, but acceptance should rebuild the source and run the verifier over the complete dependency set. The agent's review message is evidence about process, not a trusted proof.
-
 ## technique 1: counter-model screening before formal proof
 what it is and when to use it
 A candidate identity basis is first tested against finite counter-models. A semigroup satisfying the candidate but violating a target identity refutes the candidate before expensive Lean work. The paper says: "A candidate basis is first screened for counter-models: a semigroup that satisfies the candidate but not some identity of the target refutes it." (§3, p. 3.) Inference: use this when candidate specifications are cheap to falsify on small models and formal proof construction is costly.
@@ -59,16 +57,9 @@ A common transfer starts from a previously certified semigroup S with basis B. I
 
 The certificate size has a heavy tail: among 445 generated proofs, median 334 lines, mean 7,227, p99 126,350, maximum 333,557; nine exceed 100,000 lines (§4.1; Appendix B, p. 9). The largest proof took more than a day on one core (Appendix B, p. 9). Inference: verification throughput must budget for long-tail proof costs rather than average proof size.
 
-## measurements, gaps, and product threat
-The 536 certified bases define 505 distinct varieties. For the 143,380 basis pairs, a semigroup in the order-6 catalogue separates all but 31; Vampire proves those 31 pairs equivalent. Vampire proofs and their transitive consequences give 13,321 inclusions, with 1,320 covering pairs and 87 maximal varieties; four inclusions remained unresolved after 12 hours each (§4.2, pp. 4–5). These Vampire results were not checked in Lean; they rest on Vampire proofs and table counter-models (§4.2, p. 5). Inference: the derived ordering has a different verification basis from the Lean-checked catalogue.
-
-The campaign ran for 90 days and used about 2,260 Codex agent sessions; Lean builds on the WMI cluster used about 1,500 core-hours (Appendix C, Table 3, p. 10). Order 7 has 836,021 semigroups and is the next target (§5, p. 5). Humans wrote no proofs, but supplied 440 prompts to Codex agents and 674 to the referee, chose targets, approved pushes, and restarted agents (§3, p. 3). Inference: for VL, accepting review messages or generated metadata without verifier execution would leave proof validity unestablished. Counter-model screening, shared proofs, and whole-project rebuilds are reusable ideas; this paper does not test them in Verus.
-
 ## techniques for the catalog
 - counter-model screening: refute candidate specifications on finite models before writing expensive proofs
 - family normal forms: share a rewrite and finite-feature proof across instances with the same basis
 - whole-corpus audit: rebuild every theorem and table from source and let the kernel decide acceptance
 - transfer certificates: derive new-instance proofs from embeddings, quotients, products, or earlier certified cases
 - verifier boundary accounting: distinguish kernel-checked results from Vampire-derived or externally trusted computations
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each family keeps its own lemma files next to the proofs of its members, and each module imports only what it needs."): checked every quotation, number, section and page reference, and technique step against the full paper; corrected the paper link, screening steps, page references, class accounting, transfer explanation, and attribution of basis separation; marked application advice and trust comparisons as inferences; did not independently rebuild Lean proofs, rerun Vampire, or test the Verus proposals.

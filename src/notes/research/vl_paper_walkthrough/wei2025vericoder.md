@@ -37,7 +37,7 @@ How to apply it:
 3. Evaluate with fixed prompts and post-processing on VerilogEval V1.0 and RTLLM V1.1 (Section IV-D, pp. 6–7; Table III, p. 7)
 4. Train a control model from non-validated data and compare functional correctness, syntax/VCS validity, and Pass@k (Section V-B, p. 8)
 
-Table IV (p. 8) reports VerilogEval Pass@5 of 53.5% with unvalidated data and 55.8% with validated data, RTLLM syntax Pass@5 of 75.9% and 79.3%, and RTLLM functional Pass@5 of 44.8% and 48.3%, respectively. Inference: for VL, this supports filtering generated Verus Rust by compiling and running proof checks before using it as training data; the direct transfer is an engineering hypothesis because RTL simulation and Verus proof checking have different failure semantics. Inference: the data-generation loop does not establish that the natural-language specification itself is correct. The paper explicitly says, “While functional correctness under all possible inputs cannot be guaranteed, the inclusion of unit tests makes our augmented dataset substantially more robust than prior approaches that rely solely on syntactic checking.” (Section III-C, p. 6)
+Table IV (p. 8) reports VerilogEval Pass@5 of 53.5% with unvalidated data and 55.8% with validated data, RTLLM syntax Pass@5 of 75.9% and 79.3%, and RTLLM functional Pass@5 of 44.8% and 48.3%, respectively.
 
 ## what is proved, trusted, and already done
 
@@ -50,5 +50,3 @@ Inference: the evidence supports test-based validation rather than a universal c
 - bounded acceptance loop — retain a triple only after successful compile and simulation within a fixed attempt budget
 - validation-aware fine-tuning — train on specification/implementation pairs selected by test passing and compare with non-validated controls
 - functional-quality audit — manually sample generated artifacts and report the denominator separately from benchmark pass rates
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This prompt is then passed to the teacher model, which attempts to fix the issue by making edits to the design, the test, or both."): checked the full paper, quotations, numbers, references, technique steps, tag, and arXiv link; corrected the training inputs, ablation control, attempt budget, metric explanation, references, and unsupported risk rating; did not reproduce experiments or inspect code, data, or cited papers.

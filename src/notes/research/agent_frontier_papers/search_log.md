@@ -23,12 +23,9 @@ route and artifacts
 - searches used the persistent default personal Chrome session over local CDP
 - the Etsy and Texas-proxy lanes were not used
 - exact queries and UTC capture times are in [search_queries.tsv](search_queries.tsv)
-- raw result captures remain under `/ssd1/sichangheagent/work_logs/agent_frontier_20260726/browser_searches/`
-- official-page captures remain under `/ssd1/sichangheagent/work_logs/agent_frontier_20260726/source_pages/`
 - selection decisions are in [selection_ledger.tsv](selection_ledger.tsv)
 - browser-backed ChatGPT discovery timed out after 300 seconds
   - it supplied no selection evidence
-  - the diagnostic is `/ssd1/sichangheagent/work_logs/agent_frontier_20260726/chatgpt_discovery_diagnostic.json`
 
 search design
 

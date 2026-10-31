@@ -90,8 +90,6 @@ The studies give four rules.
 4. Commit a state with holes.
    - Yao: `update_base` saves a partial proof. It may add helper lemmas that bring new holes. `undo_base` goes back.
 
-## variants by paper
-
 ### many samples versus a long chain
 
 [Baldur study](../vl_paper_walkthrough/baldur_20261012.md), Isabelle.
@@ -326,7 +324,6 @@ Ensembles.
 ## where it fails
 
 - Benchmarks are mostly not Verus. Rates measure Lean, Dafny, Isabelle or C behavior.
-- The [Yao study](../vl_paper_walkthrough/automating_formal_verification_with_agen_20261012.md) says its Lean rates "are transfer evidence rather than VL performance".
 - Those words are the study's.
 - Saturation and contamination. Yao flags both for his 95%.
 - One run per cell. P^3 has no variance or significance test. VeruSAGE shows 39 to 41% between runs of the same setup.

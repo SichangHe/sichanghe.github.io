@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `lahiri2026neuroformal`, [paper](https://arxiv.org/abs/2608.21516v3)
 
-Audit: audited 2026-10-13 against the paper; checked every number, table and page reference, quotation and step; changed the Verus refutation form (proof lemma cannot keep the executable body), the page of the abstention quotation, the attempt definition, the baseline evidence wording and the account of the five mutant proofs, and marked unmarked inferences.
-
 ## what is being verified
 
 Neuro-formal verification (NFV) is a staged way to use an LLM to translate an ordinary-language correctness claim about a program into a verification-aware language, then return only a verdict backed by a machine-checked proof. The paper instantiates the idea with Python as source, Dafny as the deductive target, CBMC as a bounded target, and a 206-entry benchmark: 103 reference programs labeled correct and 103 mutants labeled incorrect. Its combined Dafny pipeline issued proofs for 128/206 entries, correctly resolving 118/206 (57.3% recall) at 118/128 (92.2% precision), with 10 wrong verdicts (Table 3, page 12).
@@ -63,8 +61,6 @@ In Verus, record every abstention reason: translation/type failure, provenance/a
 Inference: NFV proves conditional properties of translated Dafny or bounded C artifacts. It does not prove the source-to-target translation, library/environment model, natural-language intent, or final proof sketch. The dataset is also narrow: 206 small Python entries, 103 tasks, with 9% L3 library-heavy entries; the benchmark is balanced by construction and filtered with additional LLM-generated tests. The paper reports 57% correct resolution at 92% precision, leaving 43% unresolved, so the method is not a complete verifier.
 
 The main contradiction to watch is the difference between “machine-checked proof” and semantic correctness: five mutant proofs and six reference refutations were issued by the Dafny arm. Three mutant proofs were valid only under stronger inferred preconditions or an incorrect type translation; one copied a mutant bug into the library model; one (entry 116) came from a test case that violates the docstring's precondition (Section 4.2.3, page 14). These are not kernel failures; they are formalization failures.
-
-For VL, the threat is high to any agent pipeline that lets a model freely edit Rust, specs, or trusted assumptions while chasing a Verus proof. NFV already supplies a general pattern for freezing source and goals, provenance tagging, mechanically negating refutations, and abstaining without proof. VL should not redo those ideas. Its remaining product work is Verus-specific: model Rust libraries and ownership faithfully, audit `assume`/external bodies, preserve source correspondence, and expose missing preconditions and environment assumptions to users.
 
 ## techniques for the catalog
 

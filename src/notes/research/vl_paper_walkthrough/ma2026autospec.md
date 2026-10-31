@@ -59,7 +59,7 @@ Limits: fixed triggers are assumed; rewriting trigger `g` is left for future wor
 
 The implementation is Python 3.10 (12K lines), ILASP 4.4.1 with a 120-second timeout per learning task, on a MacBook Pro M2 Max with 32 GB RAM (Section 5.6, p. 5). Evaluation compares expert rules, an LLM classifier, CEGIS without ILP, random search, and AutoSpec. Generalization used a 70% initial/30% incoming split; reported gaps were 1.6% for code and 4.7% for embodied tasks (Figure 5, p. 6).
 
-Trusted elements include human labels, predicate implementations, ILASP, candidate evaluator, and the assumption that trace-level labels represent deployment safety. Inference: AutoSpec is useful to VL as an invariant/specification repair assistant: failed Verus proofs or counterexample traces can populate FN/FP-like examples, ILP can rank predicates such as ownership, epoch, and timer state, and a human or proof checker must approve generated edits. The threat to agent-written verified Rust is medium to high if rule evolution changes guards without re-proving code; it is reduced when each edit produces a proof obligation and regression trace.
+Trusted elements include human labels, predicate implementations, ILASP, candidate evaluator, and the assumption that trace-level labels represent deployment safety.
 
 ## techniques for the catalog
 
@@ -68,4 +68,3 @@ Trusted elements include human labels, predicate implementations, ILASP, candida
 - constrained rule rewrites — use conjunct, exception, disjunct, and relax operators to control precision and recall
 - greedy candidate verification — score every candidate on the full labeled set and accept only strict improvements
 - finite convergence controls — stop at a target score, no-improvement point, or iteration budget while reporting local optimality
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

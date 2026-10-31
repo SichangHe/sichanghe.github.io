@@ -39,13 +39,6 @@ A WDF-driver case shows recovery: the first WDM-style script assumed an `IRP_MJ_
 
 Verus form (Inference). Encode validation as executable predicates over typed artifacts and use proof functions to show that a report cannot be produced when a predicate is false. A repair loop needs a decreasing fuel or bounded retry count and a loop invariant preserving artifact provenance. Verus can prove checker and provenance code; it cannot prove that an LLM’s regenerated plan is complete without a formal specification of completeness.
 
-## Evidence, trust, and product threat
-A run succeeds only if all rubric fields are present and backed by checkable evidence; no partial credit is given for ungrounded explanations (§4.2, PDF p. 8). Experiments run on Ubuntu 20.04 with an AMD EPYC 7K62, 1TB RAM, and 8 Nvidia A100 GPUs; GPT-5 runs at temperature 0 (§5.2, PDF p. 9). Total runtimes on the test set are 36.1 hours for B IN R E X, 73.9 for Codex, and 87.9 for Codex with IDA (Table 4, PDF p. 11); time-to-completion includes tool execution and retries (§5.2, PDF p. 9).
-
-The paper assumes the target is unpacked and loadable by IDA Pro and treats the LLM as "honest-but-probabilistic" (§2.7, PDF p. 6). In deployment, all 395 findings were "independently re-validated by three senior reverse engineers at the deploying vendor, who confirmed zero false positives" (§5.6, PDF p. 13). Inference: this is human revalidation of those findings, not a formal proof; the trusted components include the LLM, retrieval corpus, IDA and IDAPython semantics, ground-truth labeling, the IR specification, and the checker implementation.
-
-Inference: For VeruLaw, the transferable lesson is to make agent output a typed, checkable intermediate artifact before accepting a claim. The threat is high when an agent can emit plausible Rust proof text without an executable checker: retrieval may mislocalize code, an API may be hallucinated, and a failed check may be silently omitted. A Verus layer can enforce syntax, state invariants, and evidence provenance, but model quality, foreign libraries, and the specification remain outside the proof.
-
 ## techniques for the catalog
 - dual semantic retrieval — use code-to-text and code-to-name embeddings to localize stripped functions
 - hierarchical predicate planning — decompose intent into subtasks with local verification predicates and re-plan on gaps
@@ -53,4 +46,3 @@ Inference: For VeruLaw, the transferable lesson is to make agent output a typed,
 - evidence back-pointers — require each reported field to reference an artifact that a validator can recompute
 - validation and repair — reject unsupported results, generate a repair plan, and re-execute
 - rubric-based grading — score complete fields and evidence against explicit ground truth with fixed denominators
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "This stems from semantic retrieval narrowing the search space early and verifiable reasoning avoiding ungrounded exploration."): what I checked: every quotation, number, section and page reference, and technique step against the full text; what I changed: corrected PDF page numbers (most were off by one), the link (now the USENIX presentation page from the paper text), the training-data and hint-attachment steps of Technique 1, the IR pipeline steps, the Figure 3 description, and the string-obfuscation failure detail; marked the trusted-component list and the ablation-scope remark as Inference; what I did not check: appendix figures beyond Table 7, Figure 11 and Table 8, and the Verus forms, which are the study's own inferences.

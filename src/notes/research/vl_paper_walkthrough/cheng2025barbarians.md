@@ -6,8 +6,6 @@ Tag: `cheng2025barbarians`, [paper](https://arxiv.org/abs/2510.06189v3)
 
 The paper describes AI-Driven Research for Systems (ADRS), a loop that generates candidate algorithms, evaluates them in a simulator or system, stores results, and feeds selected candidates back into prompts. Its components are Prompt Generator, Solution Generator, Evaluator, Storage, and Solution Selector (Section 4.2, pp. 5–6). The authors state: “At its core, ADRS implements a loop that, in each iteration, creates or refines prompts for LLMs to generate new solutions or improve existing ones, and then evaluates these solutions in either a real system or a simulator.” (Section 4.2, p. 6.) The paper argues that systems-performance tasks are suitable because candidate behavior can often be measured and correctness constraints can be tested, while emphasizing that results are early case studies with inconsistent configurations (Sections 3 and 5, pp. 4, 8).
 
-Inference: ADRS is an evolutionary search pattern with testing-based evaluation, not formal verification. For VeruLaw, a Verus checker can strengthen the Evaluator for functional contracts, while performance measurements and workload traces remain separate evidence.
-
 ## technique 1: specify a complete problem and evaluator schema
 
 What it is. Table 2 expands the setup into dimensions for the Prompt Generator, Solution Generator, Evaluator, Solution Selector, result analysis, and evolution analysis (Section 5, pp. 8–9). The schema records the problem, optimization objective, constraints, model configuration, and iteration budget. Its Evaluator entries cover the environment and traces, initial program, additional baselines, and feedback. Section 6.1 additionally recommends specifying required APIs in the prompt (p. 18). Result analysis compares performance, cost, robustness, and generalization; evolution analysis records trajectories, failure patterns, and feedback utility (Table 2, p. 9).
@@ -22,7 +20,7 @@ How to apply it. Inference: these steps combine the cited recommendations into a
 
 Verus form. Inference: put safety and functional requirements in explicit Verus `requires`, `ensures`, loop invariants, and proof lemmas, while retaining performance metrics as evaluator outputs. Inference: include API contracts and external assumptions in the schema so a passing proof cannot silently rely on undocumented behavior. The paper does not use Verus syntax.
 
-Evidence and limits. The authors report that missing context causes execution and algorithm failures and recommend structured specifications (Section 6.1, p. 18). Inference: this supports a specification-first VL workflow, but it does not show that a structured prompt guarantees correct requirements.
+Evidence and limits. The authors report that missing context causes execution and algorithm failures and recommend structured specifications (Section 6.1, p. 18).
 
 ## technique 2: iterative generator–evaluator loop with storage and selection
 
@@ -54,7 +52,7 @@ How to apply it. Inference: these steps combine the cited recommendations into a
 
 Verus form. Inference: use Verus proofs as a fast semantic evaluator and simulator or benchmark runs as a separate performance evaluator. Inference: a simulator cannot discharge proof obligations about memory safety, ownership, or crash behavior; those require explicit specifications and checked proofs.
 
-Evidence and limits. The paper states: “Simulator-based verification is relatively cheap.” (Section 3, p. 4.) It also warns that building inexpensive but faithful simulators for complex systems is difficult (Section 3, p. 4). Inference: a simulator can reward an implementation that exploits an abstraction mismatch, so VL should test abstraction boundaries and linked implementations.
+Evidence and limits. The paper states: “Simulator-based verification is relatively cheap.” (Section 3, p. 4.) It also warns that building inexpensive but faithful simulators for complex systems is difficult (Section 3, p. 4).
 
 ## technique 4: evolutionary algorithm discovery with concrete systems examples
 
@@ -80,7 +78,7 @@ How to apply it. Inference: these steps combine the cited recommendations into a
 4. Use broad, diverse workloads and adversarial tests to reduce overfitting and reward hacking (Section 6.3, p. 19).
 5. Balance exploration and exploitation with diverse selectors or island methods rather than purely greedy or random selection (Section 6.4, p. 19).
 
-Verus form. Inference: classify verifier failures, solver timeouts, specification weakening, and proof-preserving semantic regressions as separate failure types. Inference: reject candidates that pass by adding `assume`, strengthening `requires` or weakening `ensures`, or moving the target function outside the proof boundary; these are VL controls, not ADRS findings.
+Verus form.
 
 Evidence and limits. The authors recommend two-model ensembles: reasoning models for exploration and non-reasoning models for efficient refinement, while warning that more than two models can create conflicting ideas and mutation drift (Section 6.2, p. 19). They recommend combining correctness, efficiency, and robustness signals and adding adversarial tests to resist reward hacking (Section 6.3, p. 19).
 
@@ -112,7 +110,7 @@ Inference: these statements should remain separately attributed; the paper does 
 
 Inference: the workflow relies on the problem formulation, evaluator and simulator fidelity, baseline implementation, workload selection, metric weighting, LLM-generated code, and human interpretation of results. The paper’s conclusion is empirical: “Our case studies show that the ADRS approach can already outperform human baselines on key performance problems.” (Section 9, p. 23.) Inference: this does not prove safety, functional correctness, or semantic equivalence for arbitrary generated code. Inference: threat to agent-written verified Rust is high if a benchmark score is treated as a correctness proof; it is lower when every candidate must first pass Verus contracts and then performance tests.
 
-The paper already covers LLM evolutionary search, simulator feedback, island selection, workload evaluation, reward-hacking defenses, and cascading evaluators. Inference: VL should not redo these as generic ideas; a new VL contribution would connect the ADRS loop to machine-checked functional and safety specifications, quantify proof-repair cost, and test whether performance evolution preserves those specifications under real dependency and hardware changes.
+The paper already covers LLM evolutionary search, simulator feedback, island selection, workload evaluation, reward-hacking defenses, and cascading evaluators.
 
 ## techniques for the catalog
 
@@ -121,4 +119,3 @@ The paper already covers LLM evolutionary search, simulator feedback, island sel
 - simulator with held-out traces: use fast sampled feedback during evolution and broad final workloads to detect overfitting
 - failure taxonomy: separate runtime, search, and algorithm failures, including interface errors, mutation drift, reward hacking, and constraint violations
 - cascading evaluation: progress from cheap checks to high-fidelity simulators, emulators, and real-system validation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The search begins with the published GGR algorithm, which achieves a good Prefix Hit Rate (PHR) but suffers from repeated counter operations and deep recursion."): read the full paper, including references and appendices, and the full study; checked quotations, numbers, section and printed-page references, and technique steps; corrected the unrelated DOI to the paper’s arXiv identifier, page references, schema wording, and Verus precondition wording, and separated conflicting reported metrics and baselines; marked proposed procedures and conclusions as Inference; did not reproduce experiments, inspect implementation code, or independently validate the proposed Verus extensions.

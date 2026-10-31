@@ -95,10 +95,6 @@ Measured quantities are class accuracy, numerical pass rate, complexity-honesty 
 
 Inference: In a Verus product, the trusted boundary should include the formal specification of the partition function and transformation, the Verus verifier and solver, the parser for model input, and any external CAS certificate checker. LLM proposals and numerical probes should remain untrusted search artifacts. Inference: the threat to agent-written verified Rust is high if numeric tests are the only gate; it falls when structural invariants and machine-checked proofs are required before accepting a class or complexity claim.
 
-what VL should not redo
-
-Inference: VL should not build another purely numeric propose–verify loop and claim formal assurance. This paper has already established that numerical repair is useful but insufficient for class and complexity validation. The reusable ideas are staged benchmarks, negative controls, independent brute-force checks, richer symbolic and graph invariants, and a reject or human-review path for ambiguity.
-
 ## techniques for the catalog
 
 - tiered structural benchmark — separate canonical, established, and open mapping tasks and include negative controls
@@ -107,4 +103,3 @@ Inference: VL should not build another purely numeric propose–verify loop and 
 - symbolic transformation checking — use a CAS to verify each algebraic mapping step rather than relying on output equality
 - interaction-graph invariants — compute treewidth, planarity, symmetry, and connectivity to constrain admissible mappings
 - scalable oracle stack — combine bounded enumeration with MCMC or tensor-network checks as system size grows
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -134,10 +134,6 @@ The main split specifies 20% validation (Sec. 9.1, p. 17), but baseline tuning s
 
 The authors identify remaining algorithmic-reasoning limitations, context-window constraints, test-suite dependence, and SMT timeouts (Secs. 11.3–11.4, p. 29). Inference: Structural constraint satisfaction should not be presented as full functional correctness.
 
-## what VL should not redo
-
-Inference: VL can use this combination of repository graphs, learned context selection, incremental SMT checks, and selective graph updates as an architectural starting point. The additional question is whether an adaptation around Verus diagnostics improves proof completion and contract quality; the Python measurements do not answer it.
-
 ## threat to agent-written verified Rust
 
 Inference: Stale graph facts can waste proof attempts, and SMT-level type/signature constraints do not establish that a contract expresses the intended property. Review contracts and run Verus on the final code. This paper provides no evidence for assigning a numerical or qualitative risk level to verified Rust.
@@ -148,5 +144,3 @@ Inference: Stale graph facts can waste proof attempts, and SMT-level type/signat
 - neural graph-query planning — learn structured context queries with graph-aware REINFORCE rewards
 - SMT-guided beam decoding — prune constraint-violating generation prefixes with incremental solver checks
 - incremental semantic maintenance — update only impacted graph regions and lazily resolve cross-file references
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We measure knowledge graph accuracy as test coverage increases from 20% to 90% across 10 representative repositories."): read the entire paper and study; checked quotations, numbers, printed page and section references, algorithm steps, tag, and arXiv identifier; corrected references, baseline comparisons, percentage-point terminology, query/code algorithm confusion, and unsupported conclusions; noted conflicting reward, timing, validation, and interaction claims; did not reproduce experiments, validate proofs, inspect supplementary material or released code/data, or test the Verus adaptations.

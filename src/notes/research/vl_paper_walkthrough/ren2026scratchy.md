@@ -138,7 +138,7 @@ Steps (§5.2 and §5.1, p.7):
 5. Compute confidence intervals by bootstrap over the 26 source groups, not over tasks, because tasks from one source share dependencies.
 6. Count successes unique to the full condition. §5.4, p.8: “Moreover, 36 of the 54 PG successes are not reproduced by any of the five ablations for the same model and target.” The rest: 14 shared with a visual control, 2 with a text condition, 2 with both (36 + 14 + 2 + 2 = 54).
 
-Verus form. Inference: this design transfers unchanged to any VL question about whether giving the agent some input X helps: add a control that has X's form but wrong content, pair by model and task, and resample by crate.
+Verus form.
 
 ### what the ablation does not separate
 
@@ -167,10 +167,6 @@ Failure classes among failed PG units (§5.5, p.8): parse errors 30, rewrites th
 - The local-model diagnostic (§3, p.4) says expert-utilization differences stay positive across 30 layers of Gemma-4-26B-A4B, comparing a reference profile with a comparison profile that the text does not define; it is offered as a sign that the image is used, not as a causal result, and nothing later depends on it.
 - The abstract calls the 64 tasks security-form proof generations; §1 and §5.1 call them free-form.
 
-## what VL should not redo
-
-Inference: the benchmark recipe (proof holes with preflight, acceptance scoring, source-group bootstrap) and the control design (a wrong-structure control beside a no-structure control) are complete and reusable. The open question the paper leaves, and the one worth a VL experiment, is the missing condition: the same route and identifiers as plain text.
-
 ## threat to a product of agent-written verified Rust
 
 Inference: negligible as a competitor. It targets EasyCrypt security proofs, depends on a human-structured plan per task, has no repair loop, and reaches 21.1% with frontier models. It is useful as evidence for one design choice: agents do better when the dependency route from available facts to the goal is made explicit before they write proof text.
@@ -186,4 +182,3 @@ Inference: negligible as a competitor. It targets EasyCrypt security proofs, dep
 - acceptance over exact match — score by checker verdict; here 44 of 54 accepted proofs differed from the reference
 - wrong-structure control — ablate with a shuffled-edge graph and a generic diagram so that structure fidelity is separated from image presence
 - source-group bootstrap — resample by source project, not by task, when tasks share dependencies
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

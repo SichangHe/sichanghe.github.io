@@ -125,8 +125,6 @@ The paper says, “Extending VeriFast to support Rust, or more accurately to sup
 
 what transfers to Verus
 
-Inference: a VeruLaw pipeline can similarly lower Rust to a stable intermediate representation for analysis, but Verus already verifies Rust-like source and does not use VeriFast's C AST. The transferable lesson is to reuse the compiler's checked representation and to keep generated proof obligations tied to source contracts. Not checked against Verus documentation.
-
 evidence and limits
 
 At the report date, the tool verifies one simple allocation/access/deallocation example (Figure 3, p. 17). Generic definitions are “not generally handled yet,” and the supported Rust subset is “very limited” (Section 5.2, p. 16). The code is available as a Zenodo drop, https://doi.org/10.5281/zenodo.7472607 (Section 5.2, p. 16). No count of passing examples or false negatives is given. The claimed advantage over RustBelt is that developers need VeriFast separation logic rather than Iris and a translation to λRust, and that Rust code and annotations sit together; the paper calls the second point “Our hypothesis” and gives no measured study (Section 5.3, pp. 16–17).
@@ -159,8 +157,6 @@ The report states no new theorem. It relies on RustBelt's published safety resul
 
 Assumed by the paper: the input passed Rust's type and borrow checker (Section 1, p. 2), and RustBelt's semantic model is the meaning of Rust types. Inference: the trusted base also includes the MIR extractor and MIR semantics, the translation from MIR and RustBelt predicates into VeriFast, VeriFast's engine, user annotations, and the absence of unsupported language features. The report itself names the missing rigorous soundness proof and the very limited Rust subset as open (Sections 5.2 and 6.1, pp. 16, 18).
 
-Inference: threat to VeruLaw is high for unsafe libraries, interior mutability, panic paths, and foreign or compiler-generated code, because a safe public type can hide a violated invariant. Threat is lower for ordinary safe Rust already covered by Verus contracts. Existing RustBelt work and this MSE proposal already cover the generic idea of semantic safe-abstraction checking; VL should focus on concrete Verus support gaps, such as panic-aware ownership APIs or measured raw-pointer libraries, rather than redo the proposal abstractly.
-
 ## techniques for the catalog
 
 - contract-based MSE — verify a function once against heap contracts (ideally weakest precondition, strongest postcondition), then reuse them at calls
@@ -169,5 +165,3 @@ Inference: threat to VeruLaw is high for unsafe libraries, interior mutability, 
 - MIR lowering — compile checked Rust to MIR and translate its control flow and type semantics into a reusable verification backend
 - safe-abstraction checking — prove that unsafe implementation bodies satisfy the semantic predicate of their safe public type
 - panic-path verification (proposed, not implemented) — symbolically execute MIR unwind edges; the exact post-panic checks are left open
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "One of the facts this ensures clause asserts is that when a call to create_deque returns, its mentioned chunks have been added to the Heap."): read the whole paper (pp. 1-22, including Appendix A) and checked every quotation, section and page reference, the contract, symbolic execution, MSE, RustBelt Cell::set, MIR and panic step lists, and the statements on evidence, limits and trust; changed the quotation endings in the contract and panic sections, page references (Listing 5 is on p. 11, the traits and panics remark on p. 6, the Rustonomicon panic quote on p. 18, Listings 10-11 on p. 19), the Table 1 row numbers, the Cell invariant step (a type-system fact encoded in the shr predicate, not a checked step), the panic section (proposal only, removed destructor-validity checks the paper does not state), the "path explosion" motivation (the paper says repeated execution is wasteful and may not terminate), and marked recursive-call reuse as an inference; removed the unsupported Verus `old(...)` remark; did not check the Verus, VeruLaw or Verus API statements (all marked Inference) against Verus documentation, the cited works (RustBelt, Rustonomicon, Rust issue 25842), the figures' graphical content beyond the extracted text, or the Zenodo artifact.

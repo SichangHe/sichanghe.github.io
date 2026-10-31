@@ -6,7 +6,6 @@ archive
 - retrieved from publisher, author, or arXiv sites on 2026-10-06
 - downloaded files checked for PDF signature and successful text extraction
 - source metadata and SHA256 recorded in each collection folder
-- collection location: `/hdd1/sichanghe/paper_collection`
 
 saved PDFs
 

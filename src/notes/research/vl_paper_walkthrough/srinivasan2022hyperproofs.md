@@ -46,8 +46,6 @@ Inference: Verus can prove deterministic transcript assembly—ordering position
 
 Exponentiate every evaluation proof by a secret alpha held by a proof-serving node (PSN). Publish g_2^alpha together with a zero-knowledge proof of knowledge of alpha. Verify that proof and require alpha ≠ 0 before checking the watermarked pairing equation against the original digest (Eq. 26). The knowledge proof prevents an adversary from claiming the key g_2^{alpha·delta} after raising a stolen proof to a known delta. The paper claims that producing a proof under a known key cannot be asymptotically faster than computing it through `Open`, even with access to a watermarking oracle; the security proof uses the algebraic group model and is deferred to the extended version. The paper also exponentiates public parameters as an optimization. Homomorphism lets the PSN update watermarked proofs after vector changes (Sec. 3.4, pp. 3008–3010).
 
-Inference: this mechanism is relevant when VL pays agents or services for maintaining proof caches; it does not make the underlying proof statement stronger. A Verus wrapper could specify key handling and the inputs to watermark verification; secrecy and the unstealability theorem would remain external cryptographic assumptions.
-
 ## evidence and limits
 
 The single-threaded implementation uses Go bindings to mcl and BLS12-381 on an Intel Core i7-4770 at 3.40 GHz with 32 GiB of RAM. Table 2 evaluates ell ∈ {22,24,26,28,30}; starred commitment and `OpenAll` times are interpolated. Individual proofs are 1.44 KiB at ell=30, and verification takes about 8.2 ms at ell=22 to 11 ms at ell=30. Updating the MLT costs 1.74–2.58 ms per change, averaged over batches of 1,024 changes. Aggregating 1,024 proofs takes 105–123 s and verifying the aggregate takes 13–17.5 s; Table 2 reports 51.6 KiB, rounded to 52 KiB in the prose (Sec. 5.1, pp. 3011–3012). These aggregation times cover the whole batch, not one proof.
@@ -58,12 +56,6 @@ The macrobenchmark assumes ell=30, 1,024-transaction blocks, and P2P network dia
 
 The paper's limitations include linear public parameters and trusted setup, slower aggregate verification and larger aggregate proofs than SNARKs, and macrobenchmarks omitting communication, competing-block proof updates, and signature verification. It states, “Lastly, while we show Hyperproofs are faster than other VCs for stateless validation, we do not claim they make the stateless setting practical.” (Sec. 5.3, p. 3013). Section 6 discusses the adaptive security proved in Theorem B.1 for PST evaluations restricted to the Boolean hypercube, improving on prior selective security, but losing log_2 n security bits in the reduction (p. 3014). Updating already aggregated proofs remains future work (Sec. 6, p. 3015).
 
-## implications for VL
-
-Inference: the reusable formal-verification pattern is to separate algebraic protocol correctness from cryptographic soundness. Verus can prove indexing, tree shape, update-path selection, transcript consistency, and functional invariants; it should state pairing and knowledge assumptions explicitly rather than presenting them as proved Rust facts. Hyperproofs' O(n log n) proof construction and path-local updates could help verified Rust agents maintain large evolving vectors; mapping arbitrary keys to values is future work in this paper. The 2n−1 setup elements, large aggregate proofs, and 13–17.5 s aggregate verification are a threat to latency and deployment simplicity if VL products require interactive proof checks.
-
-Inference: VL could reuse the construction and implementation while verifying its deterministic bookkeeping separately. The reported speed advantage and the larger aggregate proof measure different costs; a deployment choice would also depend on setup, memory, bandwidth, and latency requirements.
-
 ## techniques for the catalog
 
 - multilinear-extension commitment: encode a 2^ell vector as an MLE and commit to its secret-point evaluation with PST
@@ -73,4 +65,3 @@ Inference: VL could reuse the construction and implementation while verifying it
 - homomorphic proof maintenance: multiply corresponding commitment-tree nodes to represent vector addition and updates
 - batched IPA aggregation: randomize and combine b pairing equations, then prove one b·ell equation with an inner-product argument
 - unstealable watermarking: exponentiate proofs with a nonzero PSN secret; verify with its public key and proof of knowledge of that secret
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Second, an MLT of watermarked proofs can be computed directly, if the prover uses watermarked public parameters."): checked all paper text, quotations, numbers, section and page references, and technique steps; corrected the publisher link, update-path rule, aggregation transcript, watermark-key requirements, benchmark scope and citations, and adaptive-security claim; marked Verus/VL conclusions as inferences; did not check the implementation, extended-version proofs, or the proposed Verus adaptations.

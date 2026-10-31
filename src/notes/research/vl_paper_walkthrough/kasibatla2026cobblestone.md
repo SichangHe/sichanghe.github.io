@@ -40,12 +40,6 @@ Cobblestone exposes two useful inputs. A perfect-premises oracle supplies lemmas
 
 Failures expose limits: “Cobblestone and its variants cannot prove 45 theorems from Wigderson100 and 42 from CoqGym100”; of 14 such theorems sampled for manual study, 5 have human-written proofs of 20+ tactics, and some theorems make partial progress difficult because their ground-truth proofs use tactics like `unfold` and `apply` without decomposing the goal (Sec. 3.6, p. 713). Sec. 3.7 (p. 714) cautions that the oracle results do not indicate how an interactive, semi-automated approach would perform. Inference: they are upper-bound style evidence because the “perfect” information comes from human-written proofs.
 
-## trust, assumptions, and VL threat
-
-The LLM is not trusted: the abstract says the final proof is “guaranteed to be sound, despite the reliance on unsound LLMs”, and Cobblestone returns a proof only after executing it in Coq (Sec. 2.5). Inference: the trusted components then include Coq's checker, CoqHammer's proof reconstruction when it is accepted, and the benchmark's theorem statements and libraries; the paper does not list a trusted base. The paper argues that all proofs can be expressed as a prefix followed by bullet subproofs (Sec. 2.5, p. 708), but the method gains most when subgoal decomposition exposes reusable progress. It does not establish that an LLM understands Rust, Verus, unsafe code, or temporal properties.
-
-Inference: Cobblestone is a high threat to a VL workflow that asks an agent for one monolithic Verus proof and discards intermediate failures; recursive reuse of verified partial progress is directly applicable. It is a lower threat to Verus's soundness because the verifier remains the final checker. VL should not redo Coq-specific bullet parsing, but should investigate verifier-diagnostic localization, bounded recursive prompting, and premise/decomposition retrieval. The reported benchmarks are small 100-theorem samples and use Coq; they do not measure product-scale Rust verification.
-
 ## techniques for the catalog
 
 - hammer-first synthesis — try automated theorem proving globally and again on each unfinished subgoal
@@ -53,4 +47,3 @@ Inference: Cobblestone is a high threat to a VL workflow that asks an agent for 
 - fail-safe localization — execute nested proof structure while replacing failing suffixes with temporary admits
 - recursive divide and conquer — preserve verified subproofs and recursively repair only deepest unfinished goals
 - premise and decomposition oracles — supply relevant lemmas or a goal-splitting prefix as external guidance
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Since Cobblestone uses an LLM as a black box, it works with any LLM that supports tool use."): read the whole paper text (references skimmed) and checked every quotation, number, section and page reference and the technique steps against it; changed the page and section references that were off (Sec. 2 to Sec. 1, Sec. 3.3 to Sec. 3.4, pp. 708-709 to p. 709), the description of the two fail-safe complications, the recursion call arguments, the failure-count wording (variants, 14 sampled theorems), and the trust section; added the per-dataset cost, setup numbers and a note that Sec. 3.5 text swaps the 58%/55% figures; labelled my own conclusions as Inference. Not checked: the Verus transfer claims (my inferences, not in the paper), the replication package, the references list, and figure pixel details beyond the numbers in the text layer.

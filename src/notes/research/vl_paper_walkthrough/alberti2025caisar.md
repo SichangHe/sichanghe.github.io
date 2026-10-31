@@ -8,8 +8,6 @@ CAISAR is a Why3-based platform for writing high-level properties of machine-lea
 
 The platform extends Why3 with ML theories, vector operations, a Neural Intermediate Representation (NIR), an interpretation phase for built-ins, graph transformations, and dispatch to α-β-CROWN, PyRAT, Marabou, nnenum, AIMOS, SAVer, CVC5, Z3, and Alt-Ergo. NIR is a pure recursive OCaml variant representing a directed acyclic graph and can be translated back to ONNX or SMT-LIB/VNN-LIB.
 
-Inference: this is a useful architecture for VeruLaw's specification-to-checker boundary: keep a typed, high-level specification, lower it through an explicit intermediate representation, and preserve a trace of each lowering so a verifier checks the same property the user wrote. CAISAR's models are ML graphs rather than Rust programs.
-
 ## technique 1: typed high-level specifications
 
 What it is. Users write WhyML declarations of types, predicates, and functions. CAISAR extends the Why3 standard library with a `Model` theory and a `Vector` theory (Section 2.1); datasets are read with `read_dataset` from a CSV file (Figure 3, Section 2.3). Models are pure abstract functions over vectors; built-ins such as `read_model`, `read_dataset`, `@@`, `length`, `has_length`, indexing, and `mapi` receive special interpretation, and bounded quantification over vectors of known size is interpreted element by element (Section 2.3).
@@ -97,14 +95,6 @@ Evidence. ACAS Xu tests averaged three runs (Table 1). The paper says PyRAT's ou
 
 Verus form. Inference: model normalization as proved arithmetic functions and prove range/nonzero assumptions for division. If executable Rust uses `f32`, a proof over mathematical reals must include a rounding error bound or use an exact fixed-point representation; silently assuming equality is unsound.
 
-## evidence, scope, and threat to VL
-
-CAISAR's SVM translation agreed with SAVer on all ten MNIST instances, but Table 2 reports SAVer runtimes of 35–53 ms versus PyRAT through CAISAR at 18,552–22,001 ms, which the paper describes as approximately two orders of magnitude higher runtime (ten instances of the MNIST linear-1k SVM, PyRAT as verifier, Table 2, Section 3.2, p. 16). For sequential NN composition, maraboupy reported Invalid while nnenum and PyRAT timed out within one hour; Marabou could not consume required ONNX operators (Table 3, Section 3.3). The equality-up-to-δ example timed out on all provers.
-
-What is proved or measured: CAISAR can express richer properties, translate them to several tools, and preserve selected outcomes in the reported examples. Inference, from the architecture: what stays trusted is Why3 and CAISAR interpretation and graph transformations, model parsers, ONNX semantics, backend verifiers, floating-point behavior, and the assumption that generated models encode the source formula. Inference: I found no machine-checked proof in the paper that every transformation preserves semantics.
-
-Inference: threat to agent-written verified Rust is moderate. The embedding gap has a direct analogue when a Rust implementation, specification, normalization, and Verus model differ. A typed IR and semantic translation certificates could expose this gap, but backend timeouts and numeric mismatches remain product risks. Existing VL work should reuse the source specification plus lowering trace idea and avoid rebuilding a general ML verifier; its target is Rust semantics and Verus's proof checker.
-
 ## techniques for the catalog
 
 - typed high-level specification — express multi-model and vector properties with typed pure model functions and explicit preconditions
@@ -112,4 +102,3 @@ Inference: threat to agent-written verified Rust is moderate. The embedding gap 
 - staged condition lowering — interpret built-ins, expand fixed-size vectors, transform formulas, and dispatch backend-specific conditions
 - specification embedding — compile arithmetic and nested model applications into one equivalent intermediate graph
 - explicit numeric preprocessing — put normalization and denormalization in the checked graph and compare backends
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Since NN verifiers are typically optimized for high-dimensional tensor computations, this flattening introduces overhead, as empirically evaluated in Section 3.1."): I read the whole paper text and the whole study; checked every quotation, number, figure and section reference, page numbers (PDF page), the technique steps, the Table 1 to 3 claims, the author and year in the tag, and the arXiv link (arXiv:2506.12084v2 appears in the paper text). Changed: three wrong page numbers in quote citations (now p. 6, p. 10, p. 11) and the Table 2 page (p. 16); the claim that alternating quantifiers "cannot be lowered" (paper: "not directly supported"); the floating-point attribution (paper hedges: "may explain"); the Marabou issue description (Marabou/maraboupy ONNX operator inconsistency, not a precision issue); added the Marabou Concat failure on unnormalized properties; theory and interpretation wording; moved the trusted-component list and the numeric-precision lesson under "Inference:". Not checked: the reference list contents, the cited external works, the artifact at the Zenodo DOI, the PDF figure images beyond their extracted text, and the per-cell values of Table 1 beyond the entries cited.

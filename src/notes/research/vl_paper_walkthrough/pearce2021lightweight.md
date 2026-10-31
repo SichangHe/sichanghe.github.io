@@ -76,8 +76,6 @@ Section 6 extends the core with conditionals and tuples. A branch can leave a re
 
 The reason for step 3 is concrete: the paper says it must ensure “(&mut x,&mut x)” is prohibited (section 6.2, p. 3:43). Without carrying the first result type forward, its borrow would be absent while checking the second operand. Section 6.1.3 also shows that joined environments may appear to contain conflicting mutable borrows from different paths; the borrow-safety claim uses a more precise environment for the path actually executed (p. 3:43).
 
-Inference: for VL, preserve temporary ownership facts during verification of compound expressions and check each branch’s semantic postcondition before joining. These rules describe a calculus, not a demonstrated Verus integration.
-
 ## technique 5: validate a calculus with generated programs
 
 Section 5 reports a Java implementation with an abstract syntax tree, type/borrow checker, and interpreter. Its structures follow the rules closely to permit manual comparison. The paper reports “model checked our calculus using over 500B input programs” (abstract, p. 3:1).
@@ -91,8 +89,6 @@ Section 5 reports a Java implementation with an abstract syntax tree, type/borro
 
 The abstract reports testing against 2B programs; Table 2 separately lists generated spaces and ignored inputs, so that headline does not mean 2B distinct successful compilations. Section 5.3.2 reports an accepted and eventually fixed compiler issue, linked in footnote 18 to Rust issue 63719. The conclusion calls it “previously known”, while the abstract and discussion describe discovery through this work; the paper’s wording is inconsistent.
 
-Inference: VL could use a small executable model to generate targeted compiler or verifier regression cases. A finite experiment checks only the tested bounds and translation; it does not prove correctness of rustc or Verus.
-
 ## what is proved, measured, and trusted
 
 Theorem 4.12, Corollary 4.14, and Appendix 9 provide a handwritten argument for the core calculus, with explicit starting-state assumptions. Section 6 gives completed conditional and tuple extensions and a function-extension sketch; section 6.3.3 says work remains on relating caller stores to function typing environments. Section 8 states: “While this does not constitute a full mechanical proof”, model checking supports confidence in the argument (p. 3:61). The experimental check also found bugs in earlier FR formulations, which were corrected (section 5.2.3).
@@ -100,10 +96,6 @@ Theorem 4.12, Corollary 4.14, and Appendix 9 provide a handwritten argument for 
 Inference: trust rests on the formal rules, handwritten proofs, implementation correspondence and program-generation/translation logic. Rust’s implementation and Verus are outside the proved calculus.
 
 Inference: for agent-written verified Rust, FR is a precise checklist for lifetime, move, borrow, reborrow, and drop obligations. The threat is model mismatch: code using unsafe, traits, closures, or advanced control flow may satisfy FR-like reasoning while violating assumptions outside the calculus.
-
-## prior work VL should not redo
-
-The paper already supplies a compact ownership/lifetime calculus, flow-sensitive borrow rules, reborrow restoration, and a soundness proof. Inference: VL can use the calculus to explain ownership obligations, and reuse its test-generation and expression-typing ideas when evaluating verifier behavior; its lexical-lifetime model is not an exact account of current Rust.
 
 ## techniques for the catalog
 
@@ -113,5 +105,3 @@ The paper already supplies a compact ownership/lifetime calculus, flow-sensitive
 - drop and dangling prevention: expire lifetime-owned locations and reject outliving references
 - branch joins and carry typing: retain alternative reference targets and temporary operand borrows
 - bounded model and compiler comparison: enumerate constrained programs and classify static/runtime or compiler disagreements
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "As is the case with bounded model checking, this demonstrates correctness for the specific range of programs examined."): read all 73 pages of the supplied paper text, including Appendix 9 and references, and the whole study; checked quotations, section/page references, typing and reduction rules, theorem assumptions, extensions, experimental counts and translation limits; corrected the nonexistent section 3.5, incorrect borrowing pages and tests, core-versus-tuple scope, and missing empirical and expression-typing techniques; did not execute Java or rustc, inspect the repository or linked issue, mechanically verify the handwritten proofs, or test Verus adaptations.

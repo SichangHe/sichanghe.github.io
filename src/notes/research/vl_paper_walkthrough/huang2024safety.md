@@ -6,7 +6,7 @@ Tag: `huang2023safety`, [paper](https://arxiv.org/abs/2305.11391v2)
 
 Huang et al. survey safety and trustworthiness of large language models (LLMs) using verification and validation (V&V). They separate falsification and evaluation, formal or mathematical verification, runtime monitoring, and regulation and ethical use. The abstract states, “Specifically, we consider four complementary techniques: falsification and evaluation, verification, runtime monitoring, and regulations and ethical use.” (abstract, p. 1)
 
-The paper’s lifecycle framework places falsification and explanation during evaluation, expensive verification after falsification/evaluation and explanation, runtime monitoring during online operation, and ethical principles throughout the lifecycle (§4, pp. 19–20). It surveys techniques mostly developed for smaller neural networks and argues that LLM scale, nondeterminism, inaccessible training data, and generative outputs require adaptations. It does not verify a deployed LLM or a Rust program. Inference: for VL, the paper supplies a layered assurance plan and threat taxonomy; Verus translation below is an inference.
+The paper’s lifecycle framework places falsification and explanation during evaluation, expensive verification after falsification/evaluation and explanation, runtime monitoring during online operation, and ethical principles throughout the lifecycle (§4, pp. 19–20). It surveys techniques mostly developed for smaller neural networks and argues that LLM scale, nondeterminism, inaccessible training data, and generative outputs require adaptations. It does not verify a deployed LLM or a Rust program.
 
 ## technique: lifecycle staging of V&V
 
@@ -23,8 +23,6 @@ paper procedure
 5. Apply regulations, responsible-AI principles, transparency, and ethical controls at every lifecycle stage (§4 and §8, pp. 19–20, 36–38).
 
 Verus form
-
-Inference: make this a VL prerequisite check: adversarial tests and fuzzing first; Verus proof obligations for the component contract next; runtime checks and sandboxing around external calls; and human approval for trust-boundary changes. A Verus proof can discharge a specified Rust property but cannot replace threat discovery or governance.
 
 evidence and limits
 
@@ -215,17 +213,9 @@ The paper makes the direct connection: “Similar to fact-checking, we argue tha
 
 Verus form
 
-Inference: this is the closest technique to VL. Require every agent-generated Rust component to compile under Verus, prove explicit `requires`/`ensures` and loop `invariant` clauses, and run runtime checks for assumptions outside the proof. Store the proof artifact with the source and reject outputs with unresolved obligations. The paper does not discuss Verus; this mapping is a recommendation.
-
 evidence and limits
 
 The survey calls research on LLM output failures “still blank” and says application-specific monitors are needed (§7.3, p. 35). The authors warn of substantial offline or online overhead (§7.3, p. 35). Inference: a monitor only checks the properties it encodes.
-
-## what stays trusted and threat to VL
-
-The paper distinguishes empirical evidence from provable guarantees: “Empirical evaluation provides certain evidence about the performance, but cannot be regarded as a rigorous justification, especially in safety critical domains.” (§9, p. 39) Inference: applying this taxonomy requires trust in specifications, test oracles, confidence thresholds, abstraction soundness, statistical assumptions, and checker implementations. Deployment isolation is an additional VL concern. The paper also reports that service behavior can change over short periods and cites a recommendation to release raw benchmark results, not only high-level metrics (§5.3, p. 23).
-
-Inference: VL should reuse red-team falsification, oracle and coverage design, staged lifecycle checks, abstract over-approximation, independent checking, runtime monitors, and the distinction between empirical rates and proofs. Inference: VL should make Verus proof checking the independent verifier for generated Rust, then surround it with the paper’s falsification, runtime, and governance layers. Inference: the main threat to agent-written verified Rust is a mismatch between what is proved and what the product needs, followed by unmonitored external effects and changing dependencies. Inference: a sound proof of an incomplete contract does not establish that a product meets its needs.
 
 ## techniques for the catalog
 
@@ -240,4 +230,3 @@ Inference: VL should reuse red-team falsification, oracle and coverage design, s
 - runtime OoD monitoring — classify inputs with density, embedding, or calibrated-confidence thresholds
 - runtime attack monitoring — detect backdoors or adversarial inputs from activations, uncertainty, density, or disagreement
 - formal output monitoring — compile and verify generated code or theorem-prove generated mathematical outputs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In order to conduct runtime monitoring for the aforementioned output errors, substantial offline or online overheads are incurred."): checked every study quotation, number, section/page reference, and technique description against the complete supplied arXiv v2 paper; corrected the year and source link, page references, the generated-code quotation, and descriptions that conflated separate methods; removed unsupported procedure steps and marked recommendations and conclusions as inferences; did not check cited works independently, the later publisher version, or implement or validate the proposed Verus mappings.

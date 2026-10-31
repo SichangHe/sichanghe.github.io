@@ -93,8 +93,6 @@ Inference: the result relies on the foundational proof checker and on the adequa
 
 The control-flow limitation is explicit: “Our verification tooling is designed to work on regular control flow graphs, and will simply fail otherwise.” (Section 9, p.21) Timing concerns the signature application: “For the application described in Section 7, compiling and checking all the files in Lean requires only a few minutes on an ordinary desktop.” “Compiling and checking the specification files alone, with the user specifications and correctness proofs, takes less than two minutes from scratch.” (Section 9, p.22)
 
-Inference: the VL lesson is to generate low-level contracts and checked proofs, then prove that those contracts imply the intended high-level contracts. Adapting this to Rust and Verus would require separate work on Rust semantics, ownership, and the proof checker. The paper does not establish that adaptation.
-
 ## techniques for the catalog
 - machine-to-proof semantics: define a small-step machine and prove instruction transition lemmas
 - generated weakest-precondition contracts: extract naive specs and proof code from compiler data
@@ -102,4 +100,3 @@ Inference: the VL lesson is to generate low-level contracts and checked proofs, 
 - range-check threading: carry boundedness hypotheses through calls and address rewrites
 - layered crypto refinement: connect limb representations to abstract field/group properties
 - read-only dictionary squash: verify append-only access histories via sorted witnesses and invariants
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The verification of the secp256k1 and secp256r1 operations are similar, but in each case the code is carefully adapted to specific features of the computation."): checked the full paper, quotations, numbers, section/page references, and technique steps; corrected specification extraction, read-only memory constraints, recursion setup, range-check bounds, dictionary coverage, trust claims, timing scope, and references; marked proposed Verus adaptations as inferences; did not check the implementation, reproduce proofs or timings, or validate the proposed Verus adaptations.

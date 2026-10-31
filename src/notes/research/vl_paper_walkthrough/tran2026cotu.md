@@ -48,8 +48,6 @@ Live runs use a 4B backbone, SGLang, RadixAttention prefix caching, DFLASH specu
 
 Error analysis gives denominators: Round 1 has 36/50 fully correct, with 10 premise and 4 answer errors; Round 2 has 45/50, with 2 premise and 3 answer errors; final Task 1 has 2 correct, 3 premise errors, 1 answer error (Section 5.3, PDF p. 16). Thus premise selection, rather than symbolic deduction, is the dominant failure mode. Trusted components are Z3/Python execution, sandbox policy, and challenge scoring; the LLM, retrieval, offline teachers, and self-correction are untrusted search/data components. The paper's soundness claim assumes faithful translation; a misencoded premise can produce a formally correct but semantically wrong verdict (footnote in Section 4.2, PDF p. 12).
 
-Inference: the product threat to VeruLaw is a capable small model that emits compilable proof scaffolding and uses verifier feedback to repair it, reducing the value of manual boilerplate. The residual risk is specification translation and premise selection: a Verus proof can verify the wrong postcondition if the generated spec omits a caller obligation. VL should therefore preserve explicit statement review, proof coverage, and a fail-closed unknown state. Existing work already demonstrates solver-grounded PoT and retries; VL should adapt the pattern to ownership-aware Rust rather than replicate a generic Z3 wrapper.
-
 ## techniques for the catalog
 
 - task routing and clarity guard — classify proof tasks, reject malformed context, and select a specialized output contract
@@ -59,4 +57,3 @@ Inference: the product threat to VeruLaw is a capable small model that emits com
 - verifier self-correction — regenerate after parse or execution failure within a bounded retry budget
 - latency fallback — switch to majority-voted fast samples before a hard timeout
 - verifier-filtered distillation — train task adapters only on teacher traces whose generated programs pass the symbolic verifier
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

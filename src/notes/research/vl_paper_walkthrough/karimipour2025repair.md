@@ -6,7 +6,7 @@ Tag: `karimipour2025repair`, [paper](https://arxiv.org/abs/2507.20674v3)
 
 NullRepair repairs residual Java nullability-checker errors after annotation inference. The paper studies 1,119 residual errors in 12 real-world projects. Its abstract reports that NullRepair “resolves 63% of the 1,119 nullability errors that remain after applying a state-of-the-art annotation inference technique” (abstract, p. 1). The system combines a human-derived decision flowchart, static analysis, safe-usage retrieval, LLM decisions and patch generation, and iterative checker feedback.
 
-The paper separates static correctness, dynamic correctness, and manual acceptability. It reports all unit tests passing in 10 of 12 projects, with at least 98% passing in the other two (abstract, p. 1). It warns that patches may “repair the surface problem (the error from the static checker) but break something else in the process” (§1, p. 2). Inference: the key lesson for VL is to treat a verifier error as a structured diagnosis problem and to validate semantics after the checker is quiet.
+The paper separates static correctness, dynamic correctness, and manual acceptability. It reports all unit tests passing in 10 of 12 projects, with at least 98% passing in the other two (abstract, p. 1). It warns that patches may “repair the surface problem (the error from the static checker) but break something else in the process” (§1, p. 2).
 
 ## technique 1: derive a decision flowchart from real errors
 
@@ -50,12 +50,6 @@ Decision prompts are tuned from labeled examples, tested on at least 20 benchmar
 
 Verus form. Inference: require machine-parseable patch and proof outputs, rerun Verus after each edit, and bound retries. Syntax validation is weaker than proof validation; a Verus success is evidence only for the written contract.
 
-## evidence, trust, and VL relevance
-
-Table 2 reports 62% per-patch NullRepair success (696/1,119) and 63% combined resolution (704/1,119); SinglePrompt is 69% per-patch and 72% combined, while mini-SWE-agent is 76% and 78% (§7.2, Table 2, pp. 11–13). The combined evaluation regenerates patches sequentially in the changing codebase and retains only those reducing the total error count; its patches need not match the independently generated per-patch set (§7.2, p. 13). Table 3 tests the selected combined patches, not every attempted edit. It has 35 failing tests out of 15,003 total (0.2%), with zero failures in 10 of 12 projects and 98% or more tests passing in the remaining two (§7.2, Table 3, p. 14). Manual review covers 225 patches from 75 shared error cases, at least two reviewers per patch, drawn from three senior developers who are paper authors and blinded to patch source; 29/75 (39%) NullRepair patches are likely acceptable, 16/75 need work, and 30/75 are likely unacceptable (§7.2, pp. 14–16). Initial reviewer agreement was low (Cohen’s Kappa 0.18), and disagreements were resolved by discussion (§7.2, p. 15). The paper also reports 1.2 minutes, 15,000 tokens, and $0.05 per error (Table 4, p. 17). All experiments use GPT-5.1 without reasoning; NullRepair and mini-SWE-agent each have budgets of 50 distinct prompts and $0.50 per error (§7.1, p. 11). These are the paper's reported costs and configuration, not independently reproduced measurements.
-
-Inference: this workflow relies on NullAway, annotation inference, JavaParser, LLM classifications, test coverage, and reviewer judgments. Passing tests does not establish that all original behavior is preserved. The authors state: “Tests can show the presence but not the absence of errors” (§8, p. 18). Inference: VL should reuse staged diagnosis, safe-context retrieval, bounded repair, and post-repair semantic testing for Verus errors. Inference: agents writing verified Rust could likewise optimize only for passing verification; NullRepair demonstrates that baselines can remove more checker errors while breaking behavior. The paper does not evaluate Verus, Rust, or formal proof soundness, so the threat magnitude is an inference.
-
 ## techniques for the catalog
 
 - error-derived decision flowchart — refine repair branches from manually analyzed residual errors
@@ -64,4 +58,3 @@ Inference: this workflow relies on NullAway, annotation inference, JavaParser, L
 - safe usage-region retrieval — index symbol contexts and prompt patches with project-consistent safe examples
 - triggered-error propagation — rerun the checker after each annotation and process newly exposed errors under a fixed budget
 - structured prompt validation — enforce XML schemas, benchmark prompt decisions, bounded retries, and syntax checks
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each residual nullability error, we attempt to generate a patch using both the baselines and NullRepair."): checked the full paper, quotations, numbers, section and page references, technique steps, and inference labels; corrected rewrite order, cast classification, usage fallback, combined-patch selection, and evaluation limits, and linked the supplied v3; did not reproduce experiments, inspect implementation or artifact code, or validate the proposed Verus adaptations.

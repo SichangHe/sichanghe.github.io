@@ -59,7 +59,7 @@ What it is: build validated semantics, specification languages and testing/analy
 
 Steps implied by the infrastructure discussion (pp. 6–7): define the semantics of each abstraction; validate it against intended behavior; provide executable testing and test generation; provide proof tooling; define cross-layer relations (for example Rust to LLVM to assembly); and maintain the artifacts as production infrastructure. The authors stress that isolated projects with incompatible definitions will not integrate later.
 
-Verus form (Inference): use Verus to verify Rust-level components, then establish explicit contracts at FFI, compiler and hardware boundaries. Verus proofs do not by themselves prove LLVM or hardware semantics; those layers need their own validated models and refinement theorems. Inference: a VL product that emits verified Rust should document which lower layers remain trusted.
+Verus form (Inference): use Verus to verify Rust-level components, then establish explicit contracts at FFI, compiler and hardware boundaries. Verus proofs do not by themselves prove LLVM or hardware semantics; those layers need their own validated models and refinement theorems.
 
 Evidence and limits: no completion estimate, coverage number or cost denominator is given. The authors say each existing success story required a substantial multi-year project and call for coordinated “100s of M$, not of B$, of funding” (p. 7), a funding opinion rather than a measured requirement.
 
@@ -69,12 +69,6 @@ Quote: “But much requires a body of semantics infrastructure: well-validated a
 
 Nothing is formally proved or empirically measured by this paper. It makes engineering claims and proposals. Trusted elements include the executable specification/checker, instrumentation, abstraction function, semantic definitions, test generators, proof kernels and the mapping from prose intent to formal intent. The authors' assurance claim is conditional: mechanized proofs are checkable by small non-AI prover kernels, but only for the formal statement actually proved.
 
-## what VL should not redo and product threat
-
-Already done here: a unified workflow combining executable partial specifications, concrete tests, property-based tests, symbolic execution and proof; executable abstraction functions; code-first/spec-first/hybrid adoption; and an explicit call for cross-layer Rust/LLVM/architecture semantics. VL should turn these principles into Verus-specific tooling and measurements rather than repeat the argument that testing and proof can coexist.
-
-Inference: threat to a product that emits agent-written verified Rust is high at the boundary level but actionable. The paper identifies the exact gap a VL system must address: a Verus proof can establish a Rust theorem while leaving prose intent, library semantics, compiler behavior, hardware and runtime observations outside the proof. The proposed assurance ladder offers a practical mitigation: use executable contracts and property tests for rapid agent feedback, then gate releases on Verus proofs and record the remaining trusted layers.
-
 ## techniques for the catalog
 
 - executable test-oracle specifications — compute whether observed behavior is allowed and check it during ordinary tests
@@ -82,4 +76,3 @@ Inference: threat to a product that emits agent-written verified Rust is high at
 - partial-specification assurance ladder — move from concrete tests to property tests, symbolic execution and proof
 - specification-driven design clarification — use mechanized contracts to expose ambiguity and contradictory intent
 - cross-layer semantics infrastructure — relate Rust, compilers, intermediate languages and hardware with tested and proved semantics
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

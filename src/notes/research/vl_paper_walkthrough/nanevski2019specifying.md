@@ -94,10 +94,6 @@ evidence, assumptions, limits
 
 The paper defines the indexed family and derives the quiescent stack contract; the Coq stack development is for the Treiber variant with minor modifications (footnote 20, PDF p. 22). Its conclusion notes, “Morphisms compose and can support different constructions and applications.” (Section 7, PDF p. 27). It insists that the `layout` predicate is precise so that `gΣ` is a function (footnote 21, PDF p. 23). No empirical denominator or timing result is reported.
 
-## trusted boundary and VL implications
-
-The paper does not state a trusted base. Inference: it includes Coq, the shallow embedding and denotational semantics of Appendix D, the model of atomic primitives, and the correctness of each resource and PCM definition; the paper itself says the erasure of actions to read-modify-write commands was checked only by hand (footnote 11, PDF p. 13). It proves a logic rule and examples, not a verified Rust runtime. Inference: the threat to VL is high for concurrent libraries that duplicate proofs for every wrapper or ownership policy. Morphisms offer a direct reuse pattern for Verus state machines: prove a generic lock or queue once, then add ownership, permissions, or private ghost state through a simulation wrapper. Inference: VL should not redo the mathematical morphism idea as a new contribution; the product-specific work is a sound, ergonomic Verus library and evidence that wrappers preserve the actual Rust implementation and memory model.
-
 ## techniques for the catalog
 
 - resource-typed concurrency — bound interference by putting allowed atomic transitions in a Hoare specification
@@ -105,5 +101,3 @@ The paper does not state a trusted base. Inference: it includes Coq, the shallow
 - simulation invariant — preserve a commuting diagram so every source step has a target step
 - coupled ownership refinement — derive exclusive locks by coupling lock transitions to heap-transfer transitions
 - indexed morphism family — pass omitted ghost state as an index to express quiescent or private execution
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "A thread may have more than one permission to unlock, which it can distribute among its children upon forking, who can then race to unlock."): I read the whole arXiv technical-report text (pp. 1-40, including appendices) and checked every quotation, section and page reference, the Morph and MorphX descriptions, the Section 4 construction and the Section 5 stack example against it; I also viewed PDF p. 18 to read the overlined own symbols. I changed the link to the DOI given in the paper text, fixed the exlock precondition (it requires not-owned, not ownership), corrected the MorphX page, the Sim/derivation scope (only exunlock is derived in the text), the quiescence index description, and the Appendix C reference, removed an unsupported claim about composing simulations across layers and a misplaced precision assumption in Section 4, and marked trusted-base and interference-bound remarks as Inference. I did not check the Coq artifact, the cited related work, or the Verus mappings (these are the study's own inferences). Page numbers are those of the PDF.

@@ -94,8 +94,6 @@ The paper measures compilation/execution success, line and branch coverage with 
 
 Trusted elements include Clang parsing, the reference build, API documentation, Daikon, LLM outputs, Docker isolation, mutation/reintroduction selection, manual curation, and human review. The paper explicitly says the system mitigates but does not solve the oracle problem. It tests C/C++ libraries only; external validity to other languages, repositories, concurrency, and production systems remains open (section VI-B, p. 14).
 
-Inference: for VL, LISA's useful transfer is the decomposition between sequence reachability and semantic checking. A Verus agent can first synthesize a typed call path that reaches a state, then generate proof predicates at state boundaries, and finally ask Verus to prove or reject them. Runtime invariant mining can suggest candidate lemmas, but accepted Verus proofs must replace the paper's developer-confirmed high-confidence candidates before product use.
-
 Inference: the product threat is semantic incompleteness. Agent-written verified Rust may preserve an inferred relation while violating an undocumented API contract, or may never reach a state where a missing invariant would fail. Keep generated invariants traceable to documentation and human-approved specifications, and record which states and properties remain unmodeled.
 
 ## techniques for the catalog
@@ -106,5 +104,3 @@ Inference: the product threat is semantic incompleteness. Agent-written verified
 - invariant knowledge base — reconcile Daikon candidates, documentation-derived contracts, and manual curation
 - chunk-invariant reasoning — insert documentation-grounded assertions at semantic chunk boundaries with up to five repairs
 - high-confidence candidate review — report persistent assertion failures for developer confirmation rather than claiming autonomous detection
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

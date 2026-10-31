@@ -35,8 +35,6 @@ Inference: for Verus, classify failures from Verus diagnostics (parse/type, unre
 
 TLC explores a full reachable state space for one reference configuration and named properties. It does not certify equivalence to the reference implementation, and 112 of 403 gold configurations name only the specification rather than an explicit safety or temporal property (§6, pp. 4–5). The authors explicitly warn that “It is not a proof that 𝑚 reproduces the reference behavior.” (§3, p. 3). Descriptions are model-generated; one sample per specification gives roughly ±4–7 percentage-point binomial error; hosted model snapshots and decoding settings differ (§9, p. 8; Appendix A2, p. 10).
 
-Inference: the threat to agent-written verified Rust is a high parse/proof rate masking a weak or vacuous contract. VL should report separate compile, Verus-proof, behavior, and mutation-survival rates, with all denominators and model/settings stated. This paper provides configuration-scoped exact-oracle grading, pass-quality probes, a failure taxonomy, and reproducible configurations; VL should adapt these patterns rather than count parse-valid Rust as verified behavior.
-
 ## techniques for the catalog
 
 - two-stage execution oracle — separate parser validity from full-state model-checking correctness
@@ -44,4 +42,3 @@ Inference: the threat to agent-written verified Rust is a high parse/proof rate 
 - mutation pass-quality probe — replace checked safety properties with `TRUE` and require the checker to fail
 - reproducible dataset pipeline — parse, model-check, clean, checksum, and ship runnable configurations
 - checker-grounded failure taxonomy — classify failures from deterministic tool outcomes and preserve the category counts
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each passing output we replace every checked safety invariant named by the configuration with the literal TRUE and re-run TLC."): read the complete paper, including appendices, and checked quotations, numbers, section and PDF-page references, technique steps, oracle scope, and the arXiv link; corrected page references, the audit staffing, the separate configuration-aware generations, and the mutation denominator; added resource limits and clarified property scope; did not rerun experiments, inspect the released dataset or code, or validate the proposed Verus adaptations.

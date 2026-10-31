@@ -6,8 +6,6 @@ Tag: `huang2026forex`, [paper](http://arxiv.org/abs/2606.21867v1)
 
 ForEx evaluates whether an LLM’s explanation can be translated into a Lean4 derivation from premises encoded by the reasoner. It does not verify the original natural-language argument. The abstract says: “We propose ForEx (Formal Verification for Explainable Reasoning), a framework that translates LLM-generated explanations into Lean4 and verifies whether the translated rationale is derivable under encoded premises, not the logical validity of the original natural language argument.” (Abstract, p. 1.) The paper repeats the trust boundary: “A successful Lean4 verification therefore certifies only that the translated conclusion is derivable from the encoded premises within the given formalization.” (Introduction, p. 2.)
 
-Inference: this is a verified self-consistency check for a formalization, not a soundness theorem about natural-language meaning. For VL, the distinction matters whenever an agent turns requirements or explanations into Verus specifications: a proof can establish the encoded contract while the encoding omits an intended requirement.
-
 ## technique 1: candidate generation with an explicit formalization
 
 What it is. A Reasoner receives a statement and produces at most (k) candidates. Each candidate (c_i=(f_i,a_i,s_i)) contains a predicted fallacy (f_i), a natural-language argument (a_i), and a Lean4 structure (s_i). A Modifier converts (s_i) into initial Lean4 code. (Section 3, Fig. 1, p. 2.) The paper’s example formalizes “Faulty Generalization” with predicates `is_vague`, `lacks_specificity`, `draws_broad_conclusion`, and `faulty_generalization`; an axiom says the first three premises imply the conclusion, and a theorem applies the axiom. (Section 3, Fig. 2, p. 3.)
@@ -48,8 +46,6 @@ How to use it. For each predicted label, classify the compiled proof and compare
 
 Results. CC+CA ranges from 89.52% for Gemini 2.5 Flash (thinking) to 97.59% for GPT-5 (thinking), with each denominator the model’s Table III count (193–302 predictions). GPT-5 has Count 290: CC+CA 97.59%, CC 17.93%, CA 79.66%, UC 0.34%, and UI 2.07%. The average CC+CA is not the same as average CC: the table reports high compilability alongside much lower exact label agreement. (Section 4, Table III, p. 4.)
 
-Inference: VL can use an analogous matrix for Verus proof status versus whether the human contract is covered A pass should mean only that the checked Verus obligations hold. The paper’s two-axis design is transferable; Lean4 syntax and the human-label axis are not.
-
 ## technique 4: consensus-guided label augmentation
 
 What it is. Each model becomes a 14-dimensional multi-hot vector over 13 fallacy classes and no-fallacy. The pipeline averages verified outputs per model, projects model signatures with PCA, removes models outside a 95% Mahalanobis confidence ellipse, computes pairwise Jaccard disagreement for each statement, retains statements at or below the first quartile, and adds a label only when at least 50% of retained models support it. (Section 3, pp. 3–4.)
@@ -71,15 +67,9 @@ Inference: this method is useful for discovering candidate interpretations, not 
 
 The paper’s headline “over 90%” formal-pass result depends on the repair setting and model-level output counts: Table II’s average reaches 91.11% after one repair and 98.65% after four. Label agreement is around 20% in the abstract, consistent with Table III CC values near 18–23% for many models, but “around 20%” is a summary rather than one common denominator. The paper reports a median Jaccard distance of 0.63 (Q1 0.56, Q3 0.71) across statements. (Section 4, pp. 4–5.)
 
-What stays trusted is the natural-language formalization, generated Lean4 structure before checking, encoded premises and axioms, the human labels, and the Lean4 kernel/toolchain. Inference: for VL, the corresponding trusted base includes the requirement translation, any assumptions, Verus itself, Rust compilation, and external APIs. The paper does not measure adversarial prompt injection, unsound formalizations, or proof-kernel bugs.
+What stays trusted is the natural-language formalization, generated Lean4 structure before checking, encoded premises and axioms, the human labels, and the Lean4 kernel/toolchain.
 
 The authors identify several limitations. “Formal verification does not guarantee semantic alignment between the formalized reasoning and the original natural language.” (Section 4, p. 5.) Limited context can cause No-Fallacy predictions that disagree with broader human context; UC is generally below 2%, but this is a model-level table result, not a universal property. The 27 augmented statements and 0.77 recall show a small, conservative augmentation experiment, not improved annotation quality. Inference: threat to agent-written verified Rust is medium at the specification boundary and low as evidence that an agent can autonomously prove arbitrary Rust correct.
-
-## transfer to VL and prior work
-
-Reuse the separation of candidate generation, compiler-feedback repair, proof-status reporting, and human-contract consistency. Preserve exact denominators and distinguish compilability from semantic agreement. Inference: VL should add a third axis for coverage of the intended contract or trusted assumptions, because a Verus proof can pass for an incomplete specification.
-
-The paper already supplies the basic pattern of translating model explanations into Lean4, repairing with compiler errors, separating proof status from labels, and consensus-filtering alternatives. VL need not re-propose those as novel ideas. A new result would need a Verus-specific contract language, evidence over real Rust APIs, and an audit of what remains trusted.
 
 ## techniques for the catalog
 
@@ -87,4 +77,3 @@ The paper already supplies the basic pattern of translating model explanations i
 - semantic-drift-controlled repair: use bounded compiler-feedback iterations while forbidding new logical content
 - argument verification matrix: report formal proof status independently from agreement with a reference label
 - consensus-guided augmentation: filter verified model interpretations by confidence and Jaccard consensus before proposing new labels
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

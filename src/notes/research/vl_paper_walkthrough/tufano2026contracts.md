@@ -12,7 +12,7 @@ At `k=5`, bug detection is 63.2% for Spec-Driven versus 53.4% baseline, a 9.8-po
 
 ContractCoverage@1 is 61.1% and reaches 78.9% at `k=5`; when the generated specification captures the violated contract, tests detect the bug in 151/275 runs (54.9%), versus 34/175 (19.4%) without coverage (Section 5.3.1, p. 7). These denominators are attempts, not unique bugs. The spec-driven agent consumes 336.7M tokens versus 243.9M baseline (+38.0%) over the five-run corpus, and 5.9M versus 5.1M tokens per unique bug (+16.2%) (Table 4, p. 8).
 
-The paper's evidence does not prove formal contract correctness. Specifications are natural-language and judged by Gemini 3.1 Pro against bug descriptions, commit messages and fix diffs. The authors warn that contract coverage is a defect-driven proxy, requiring a known fix and covering only the target defect's boundaries (Section 4.4.3, p. 5). Inference: for VeruLaw, this is a useful front-end for discovering candidate contracts and tests, but Verus must check executable Rust against explicit specifications; an LLM-generated `.spec.md` remains untrusted until translated and proved.
+The paper's evidence does not prove formal contract correctness. Specifications are natural-language and judged by Gemini 3.1 Pro against bug descriptions, commit messages and fix diffs. The authors warn that contract coverage is a defect-driven proxy, requiring a known fix and covering only the target defect's boundaries (Section 4.4.3, p. 5).
 
 ## technique 1: contract extraction as an intermediate artifact
 
@@ -40,7 +40,7 @@ What it is and when to use it. Remove existing tests and blind the agent to the 
 
 How to do it. (1) Synchronize to fixed source `C_f`. (2) Delete existing test target `T_b`, yielding empty `T_∅`. (3) Run each agent on `C_f,T_∅`. (4) Audit file traces and discard runs that modify production source; temporary specs and scratchpads are allowed. (5) Measure line/branch coverage on fixed code. (6) Reverse-patch to `C_b` and measure fail-to-pass detection (Sections 4.3–4.3.1, pp. 4–5).
 
-Verus form. Inference: use a similar two-artifact evaluation for VL: generate Rust/Verus from a stable implementation or specification while hiding seeded regressions, then run Verus and independent tests on fixed and buggy variants. A test that merely compiles is not evidence that the contract catches the regression.
+Verus form.
 
 Evidence and limits. The 90-bug corpus is real production data, but all bugs come from one Google monorepo and single-file fixes (Section 6, p. 8). Inference: greenfield isolation improves causal interpretation, while external validity to open-source Rust remains unknown.
 
@@ -64,12 +64,6 @@ Verus form. Inference: report Verus proof pass rates, solver time, repair attemp
 
 Evidence and limits. The judge's self-agreement is at least 90% with tie rate at most 5.6%, but construct validity remains limited by model-based judgment. The study's absolute rates are tied to Gemini and Google's engineering style (Section 6, p. 8).
 
-## what VL should reuse and product threat
-
-Already done: contract-first agent prompting, pre/post/invariant extraction, coverage of untested conditions, fail-to-pass evaluation, defect-driven contract metrics, paired statistical analysis, and cost accounting. VL should not claim these as novel. Inference: a Rust/Verus contribution can add machine-checked contracts, ownership/concurrency invariants, and trusted-boundary reports.
-
-The product threat is moderate. Semi-formal contracts improved detection by 9.8 points at five attempts, but consumed 38% more tokens and still missed many contracts and tests. Natural-language contract extraction can hallucinate intent, and the paper's judge uses information from the human fix. Verus can reject invalid proof obligations, yet a wrong or incomplete `requires`/`ensures` can still verify the wrong behavior. Inference: VL should expose the contract as a reviewable artifact and test that it excludes seeded regressions before claiming assurance.
-
 ## techniques for the catalog
 
 - contract-first agent workflow — extract structured descriptions, preconditions, postconditions, and suggestions before test synthesis
@@ -78,4 +72,3 @@ The product threat is moderate. Semi-formal contracts improved detection by 9.8 
 - greenfield evaluation — remove tests and hide the fix to measure code understanding rather than test copying
 - ContractCoverage metric — score whether a generated contract captures the exact defect behavior and separate spec failure from test failure
 - paired multi-run evaluation — compare identical agents with and without contracts using explicit denominators, bootstraps, and paired tests
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

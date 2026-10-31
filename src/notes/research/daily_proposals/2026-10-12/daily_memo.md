@@ -3,8 +3,6 @@ Bound recovery work before accepting a transaction
 
 status
 - provisional research proposal with six checked primary papers
-- ChatGPT Pro selected correctly but expired without a captured answer
-- daily-family separation passes
 - literature novelty, advisor fit and implementation feasibility remain unresolved
 - no system was implemented or verified today
 
@@ -158,38 +156,3 @@ first experiment and stop rules
 - stop if a fixed journal-size limit provides the same useful guarantee with comparable throughput
 - stop if proof and admission complexity exceed the benefit
 - experiments above are proposed, not executed
-
-fit and funding
-- human fit is explicit
-  - requested “program verification, Verus stuffs”
-  - local related work: [verified implementations](/ssd1/sichanghe.github.io/src/notes/research/distributed_verification_review_b/deep_1_verified_implementations.md)
-  - existing agent-authored planning notes name storage engines and crash consistency as systems targets
-- advisor fit is unsupported
-  - config/alignment.yaml still records pending evidence
-  - cannot label this memo agent-passed
-- funding case is an inference
-  - intellectual merit would be a compositional connection between durability, admission control and recovery work
-  - broader impact would be predictable restart behavior for services that retain critical data
-  - current Verus storage artifacts make a narrow prototype plausible
-  - no grant call, sponsor commitment or advisor support was verified
-
-completion limits
-- six primary papers retrieved, identity checked and relevant passages reviewed
-  - supporting PoWER README makes seven source objects, exceeding the six-source cap by one
-  - selected papers date from 2019–2025; newest checked paper is PoWER, OSDI 2025
-  - focused literature set, not a comprehensive current SoTA survey
-  - numerical performance claims were not reproduced
-- main search, analysis and drafting were submitted to GPT-5.6 Sol with verified Pro selection
-  - same job resumed without duplicate submission
-  - final diagnostic: terminal_deadline_expired
-  - final helper exit status: 6
-  - no actual assistant answer captured
-  - substantive memo is local synthesis, not a completed Pro draft
-- current Verus installation compatibility was not retested
-  - yesterday's run recorded missing GLIBC_2.39 for its July 2026 binary
-  - no recovery program or proof was run today
-- new paper PDFs, text and provenance staged on /ssd1 under the disk-fault hold
-  - no writes to /hdd1 and no PostgreSQL retry
-- draft-only setting honored
-  - no human email or email-sent marker
-  - notes saved without Git commands in the held checkout

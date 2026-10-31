@@ -40,7 +40,7 @@ A formal plugin maps a model in a modeling language to its executable formal sem
 
 Steps. For Ptolemy II discrete-event models, the paper describes (1) defining a real-time rewriting semantics, (2) automating the mapping through Ptolemy II’s code generation facilities, and (3) providing a GUI plugin for stating temporal properties and invoking Real-Time Maude model checking (Section 6.1, p. 19). For AADL, the executable semantics covers a behavioral subset, not the entire language. AADL2Maude integrates translation and analysis with OSATE; SynchAADL2Maude supports Synchronous AADL models (Section 6.2, pp. 20–21). The paper motivates synchronous modeling through PALS, allowing analysis of smaller synchronous counterparts of suitable asynchronous systems (p. 20). It does not prescribe a separate simulation or bisimulation proof step for every plugin user.
 
-Verus form. Inference: a VL front end could translate a restricted design language into Rust models and Verus contracts. Establishing that this translation preserves the intended source behavior would be a separate obligation; the paper does not supply such a translation.
+Verus form.
 
 ## what is proved, trusted, and reusable
 
@@ -48,13 +48,9 @@ IBOS was designed in Maude from the start. The author describes close interactio
 
 ROLA was designed, verified, and implemented in Maude from the beginning (Section 5.2, pp. 13–14). The D-transformation generated a distributed implementation. Comparing statistical predictions and implementation experiments in two scenarios, the author reports “a substantial agreement between the ROLA performance predictions and the corresponding experimental evaluations.” (pp. 16–17). The chapter refers to earlier papers for detailed consistency verification and experimental results.
 
-Inference: VL could reuse this separation of executable designs, property specifications, verified transformations, and implementation correspondence arguments. A verified abstract design still needs a justified connection to the implementation. The chapter demonstrates Maude workflows; applicability and cost for agent-written Rust remain untested here.
-
 ## techniques for the catalog
 
 - executable formal design — Capture behavior in an executable theory and analyze requirements from early design
 - formal patterns — Reuse theory transformations with explicit input assumptions and proved output guarantees
 - qualitative and quantitative checking — Select reachability, temporal, real-time, or statistical analysis for the property and model
 - semantic plugins — Translate supported modeling-language constructs into an executable formal semantics for analysis
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Using the D-transformation it was then possible to automatically transform the ROLA Maude design into a ROLA implementation and to experimentally evaluate ROLA."): checked all paper text, study quotations, numbers, section and page references, technique steps, title, author, year, and DOI; corrected reference locations, conditional pattern behavior, IBOS verification scope, and unsupported procedural claims; marked proposed Verus and VL adaptations as Inference; did not check cited works, tool implementations, or reproduce experiments.

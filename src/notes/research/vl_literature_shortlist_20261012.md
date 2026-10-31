@@ -20,8 +20,6 @@
 - Group and technique labels were also assigned by cheap models.
 - Papers with a study link have a longer walkthrough.
 
-## Verus itself (8)
-
 ### Ghost state, permissions and ownership logic (3)
 
 - Verus: Verifying Rust Programs using Linear Ghost Types (2023), score 95
@@ -49,12 +47,6 @@
   VerusBelt: semantic soundness proof of Verus's proof-oriented types, with lifetimes, concurrency and borrows, mechanized in Iris/Rocq.
   Study: [verusbelt](vl_paper_walkthrough/verusbelt_20261012.md)
 
-### Benchmarks, evaluations and surveys (1)
-
-- Identifying Challenges and Practitioner Techniques in the Use of Verification-Aware Programming Languages (2026), score 75
-  https://openalex.org/W7200480583
-  mines practitioner videos of verification-aware languages to find proof debugging and error message pain points, guides VL developer-experience design
-
 ### Other verification methods (2)
 
 - Verus: A Practical Foundation for Systems Verification (2024), score 90
@@ -64,8 +56,6 @@
 - Verifying Rust code with Verus (2026), score 85
   https://doi.org/10.34727/2026/isbn.978-3-85448-093-8_1
   Tutorial on Verus, its design rationale versus prior approaches, getting started, and examples, from a core developer.
-
-## Other Rust verifiers and Rust semantics (126)
 
 ### Invariant and annotation inference (1)
 
@@ -162,7 +152,7 @@
   Aeneas translates Rust to pure lambda calculus via borrow semantics so proofs avoid memory reasoning; a direct Rust verifier competitor to Verus
 - A Hybrid Approach to Semi-automated Rust Verification (2025), score 90
   https://doi.org/10.1145/3729289
-  gillian-rust semi-automated separation logic for unsafe rust linked to creusot for safe code, a direct hybrid rust verification design for vl
+  gillian-rust semi-automated separation logic for unsafe rust linked to creusot for safe code
 - RustyDL: A Program Logic for Rust (2026), score 88
   https://doi.org/10.1007/978-3-032-26204-2_19
   Source-level program logic for Rust in the KeY deductive verifier with human-in-the-loop proofs; a direct competitor design to Verus-style deductive verification
@@ -340,10 +330,6 @@
 - Modular Responsiveness Verification of Rust Async Runtimes (2026), score 80
   http://arxiv.org/abs/2610.09198v1
   modular proof technique with static analyses proving eventual progress of Rust async runtimes, a liveness technique transferable to Verus concurrency proofs
-- Converos: Practical Model Checking for Verifying Rust OS Kernel Concurrency (2025), score 70
-  https://www.semanticscholar.org/paper/b1647e60460b6e0a555255de4d66d1e6178a8ced
-  Practical model checking for Rust OS kernel concurrency; title only, but a direct verification technique for Rust kernel code like VL targets.
-  (title only, no abstract)
 - RustMC : Automated Verification of Real-World Concurrent Rust (2026), score 62
   https://www.semanticscholar.org/paper/ab8e2a8d3eef9f7cf5de033c09cfff9c020b0010
   title only: automated verification of real-world concurrent Rust, a competing verifier class for Rust concurrency code
@@ -386,9 +372,6 @@
 
 ### System case studies (4)
 
-- Reproducible development environment for the Aeneas ACL2 backend (AES-128 verification artifact) (2026), score 90
-  https://doi.org/10.5281/zenodo.22365955
-  reproducible environment for Aeneas with ACL2 backend verifying Fixsliced AES-128 in Rust, direct Rust verification pipeline work usable by VL
 - Verifying the Rust Standard Library (2026), score 85
   http://arxiv.org/abs/2606.17374v1
   Crowdsourced verification of the Rust standard library with tools in CI, showing what machine-checked proofs of unsafe std code achieve and where they fall short
@@ -434,9 +417,6 @@
 - Prusti: deductive verification for Rust (keynote) (2020), score 85
   https://www.semanticscholar.org/paper/7b64ff3854a1931043362adb77589e188022a4ae
   Prusti tutorial on deductive Rust verification with specs at Rust-expression level; core background for Verus design choices
-- Verifying Extract Method Refactoring in Rust (2025), score 85
-  https://doi.org/10.1145/3758316.3765486
-  verifies Rust extract-method refactorings via Charon and Aeneas functional equivalence; a direct Rust verification pipeline that could feed VL
 - Crust: A Bounded Verifier for Rust (N) (2015), score 85
   https://www.semanticscholar.org/paper/4f23104f00d382cf20184f5f1c14bf959d2b2f6b
   bounded verifier for Rust; title alone, direct peer of Verus with unknown method details since abstract missing
@@ -504,16 +484,11 @@
   internship topic on formally verified compilation of C and Rust, title alone is on-topic but no method detail, no abstract
   (title only, no abstract)
 
-## Proof automation and verified-code generation by language models (192)
-
 ### Proof repair from verifier feedback (23)
 
 - ExVerus: Verus Proof Repair via Counterexample Reasoning (2026), score 95
   http://arxiv.org/abs/2603.25810v2
   ExVerus: counterexample-guided LLM proof repair for Verus that generalizes counterexamples into inductive invariants.
-- AxDafny: Agentic Verified Code Generation in Dafny (2026), score 95
-  https://doi.org/10.48550/arxiv.2606.32007
-  verifier-guided repair loop generating Dafny code with invariants, assertions and termination proofs, with a 250-problem benchmark; direct LLM-writes-verified-code analog for VL
 - Large Language Models and Language Server Protocol: a match made in context (2026), score 88
   https://doi.org/10.48550/arxiv.2609.03086
   LSP tool where LLMs generate code and specs for Eiffel, checked by a static verifier with retries, fixing 76-95% of bugs; direct analog of the LLM-plus-verifier loop for Verus
@@ -523,9 +498,6 @@
 - VeCoGen: Automating Generation of Formally Verified C Code With Large Language Models (2025), score 85
   https://doi.org/10.1109/formalise66629.2025.00017
   LLM plus Frama-C loop generating verified C from ACSL and tests, solving 13 of 15 problems, closely parallel to LLM-written Verus code
-- Position: Vibe Coding Needs Vibe Reasoning: Improving Vibe Coding with Formal Verification (2025), score 85
-  https://doi.org/10.1145/3759425.3763390
-  position that a formal-verification sidecar autoformalizes specs and feeds verifier counterexamples back to LLM coding, close to the VL product thesis
 - APOLLO: Automated LLM and Lean Collaboration for Advanced Formal Reasoning (2025), score 80
   https://doi.org/10.52202/085713-1389
   compiler-guided LLM proof repair in Lean isolating failing sub-lemmas; repair loop transfers to Verus proof failures
@@ -573,7 +545,7 @@
   LLM repair of Rust undefined behavior guided by runtime feedback and a state machine; transferable feedback loop for LLM-written Rust fixes
 - Proof-Refactor: Refactoring Generated Formal Proofs into Modular Artifacts (2026), score 60
   https://doi.org/10.48550/arxiv.2606.03743
-  agent that refactors generated lean proofs into helper lemmas and modules, a proof-repair and modularity technique transferable to vl proof maintenance
+  agent that refactors generated lean proofs into helper lemmas and modules
 - MoVer: Motion Verification for Motion Graphics Animations (2025), score 60
   http://arxiv.org/abs/2502.13372v2
   LLM loop synthesizes animations, checks them with a first-order-logic DSL, and feeds failed predicates back; pattern transfers to LLM plus verifier feedback for Verus
@@ -609,7 +581,7 @@
   mines structural proof-state patterns to guide LLM search over seL4 proofs in Rocq, beating Rango and Selene, a retrieval technique transferable to Verus proof search
 - Lean Copilot: Large Language Models as Copilots for Theorem Proving in Lean (2024), score 75
   https://doi.org/10.48550/arxiv.2404.12534
-  llm tactic, goal completion, and premise selection tools inside lean with 74 percent proof steps automated, a proof automation pattern vl could copy
+  llm tactic, goal completion, and premise selection tools inside lean with 74 percent proof steps automated
 - Thor: Wielding Hammers to Integrate Language Models and Automated Theorem Provers (2022), score 75
   https://doi.org/10.48550/arxiv.2205.10893
   hammers select premises for LLM theorem provers via ATPs, a premise-selection pattern directly usable for Verus proof search
@@ -649,9 +621,6 @@
 - Laurel: Unblocking Automated Verification with Large Language Models (2025), score 90
   https://doi.org/10.1145/3720499
   LLM generates missing Dafny assertions using verifier error locations and proof-similarity example retrieval; directly applicable to LLM proof hints for Verus
-- WybeCoder: Verified Imperative Code Generation (2026), score 88
-  https://doi.org/10.48550/arxiv.2603.29088
-  Agentic prove-as-you-generate framework co-evolving code, invariants and proofs with VC generation plus SMT and Lean, directly comparable to LLM-written verified code for VL
 - Neuro-Symbolic Software Verification: Hyper-charging Local Language Models with Symbolic Reasoning at Scale (2026), score 88
   https://doi.org/10.48550/arxiv.2606.16886
   LLM loop-invariant synthesis with structured ESBMC verifier feedback on local open-weight models; directly applicable to invariant generation for Verus under privacy constraints
@@ -664,9 +633,6 @@
 
 ### Specification synthesis (20)
 
-- Automatically Building Machine-Checked Assurance Cases from C Codebases to Requirements (2026), score 92
-  https://doi.org/10.48550/arxiv.2609.40119
-  LLM builds specs and VST proofs in Rocq that verify memory safety of 299 C functions with modular feedback, directly the LLM verified-code pattern VL sells
 - Fewer Assumptions by Design: A Reusable Skill for LLM-Assisted Verus Verification (2026), score 90
   http://arxiv.org/abs/2609.34886v1
   LLM skill encoding domain knowledge to write low-trust Verus specs for doubly linked lists while minimizing assume and axioms.
@@ -692,26 +658,14 @@
   GPT-4 and PaLM-2 Dafny synthesis with signature and retrieval-augmented CoT prompts yielding 153 verified MBPP solutions, a prompt-design result transferable to Verus generation
 - ProofLoom: Proof-Obligation-Driven Theory Construction for Autoformalizing Research-Level Stochastic Optimization (2026), score 72
   https://www.semanticscholar.org/paper/6e8239a22f6f224b4422cf411fa045bab19d2c8e
-  llm agents building lean theories driven by proof obligations, with a judge rejecting weakened assumptions, a transferable spec-revision guard for vl
-- Smart Contract Synthesis via Multi-modal Specifications (2026), score 72
-  https://www.semanticscholar.org/paper/26a68031846df2471b5514af3470bfc878ab8dc8
-  synthesizes contract code from functional and safety specs with verification in the loop, a spec-first paradigm close to VL agents writing verified code
-- Accessible Smart Contracts Verification: Synthesizing Formal Models with Tamed LLMs (2025), score 70
-  http://arxiv.org/abs/2501.12972v1
-  LLM fills in formal models transpiled from smart contract code with iterative syntactic and semantic repair, a direct LLM-to-formal-model pipeline close to VL
+  llm agents building lean theories driven by proof obligations, with a judge rejecting weakened assumptions
 - SatLM: Satisfiability-Aided Language Models Using Declarative Prompting (2023), score 70
   https://doi.org/10.52202/075280-1974
   LLM writes declarative specs solved by an SMT prover, separating generation from solving; transferable to LLM spec-to-SMT pipelines
-- A Neurosymbolic Approach to Natural Language Formalization and Verification (2026), score 65
-  https://doi.org/10.1007/978-3-032-32526-6_28
-  LLM autoformalisation of policies with redundant formalisation checks and auditable verdicts, a direct example of verification-backed LLM output that competes with VL
 - Bridging Requirements and Assurance: Neurosymbolic Autoformalization for C++ Verification and Requirements-Coverage Testing (Keynote) (2026), score 65
   https://doi.org/10.1145/3842652.3850233
   keynote on neurosymbolic autoformalization for C++ verification and requirements coverage, title only, close to LLM-driven verified code work
   (title only, no abstract)
-- Theory-Level Autoformalization: From Isolated Statements to Unified Formal Knowledge Bases (2026), score 65
-  https://doi.org/10.2139/ssrn.6922158
-  Position on autoformalizing whole theories into machine-verifiable libraries with LLMs; relevant to VL spec and library generation.
 - PAT-Agent: Autoformalization for Model Checking (2025), score 60
   https://www.semanticscholar.org/paper/12119b826190f543bae0f2464f2b8aa538789e38
   LLM autoformalization into PAT model-checker models with counterexample-driven repair loop, transferable repair ideas though not a Rust verifier
@@ -754,9 +708,6 @@
 - AutoVerus: Automated Proof Generation for Rust Code (2025), score 95
   https://doi.org/10.1145/3763174
   AutoVerus: multi-agent LLM system generating Verus proofs in three phases, with a 150-task benchmark and over 90% success.
-- AlphaVerus: Bootstrapping Formally Verified Code Generation through Self-Improving Translation and Treefinement (2024), score 95
-  https://doi.org/10.48550/arxiv.2412.06176
-  self-improving LLM pipeline with verifier-guided tree search generates Verus code from translated programs; direct method for verified codegen in VL
 - Reducing the Costs of Proof Synthesis on Rust Systems by Scaling Up a Seed Training Set (2026), score 92
   http://arxiv.org/abs/2602.04910v3
   VeruSyn: synthesizes 6.9M Verus-verified Rust programs with specs and proofs, fine-tuning a Qwen model that rivals Claude Sonnet 4.5 cost-wise.
@@ -766,9 +717,6 @@
 - Automated Proof Generation for Rust Code via Self-Evolution (2024), score 92
   http://arxiv.org/abs/2410.15756v3
   self-evolving LLM generates Rust proofs using verifier feedback and self-debugging; 52.5 percent on expert benchmark vs GPT-4o 14.4
-- StarVerus: LLM-Powered Multi-Agent Collaboration for Industrial Rust Code Verification Automation (2026), score 92
-  https://www.semanticscholar.org/paper/2b1d8926a978f468ce80781baac50661a44a851f
-  Multi-agent LLM generates full specifications and repairs proofs for industrial Rust under call-graph context, with contract alignment and proof repair; direct competitor to VL
 - Can Large Language Models Verify System Software? A Case Study Using FSCQ as a Benchmark (2025), score 92
   https://doi.org/10.1145/3713082.3730382
   off-the-shelf LLMs with best-first tree search prove 38% of FSCQ file-system theorems in Coq; direct evidence for LLM proof automation on system software
@@ -780,7 +728,7 @@
   hierarchical proof search with an 8B model that decomposes Lean code verification goals, 62 percent success, a direct model for llm-written verified code transferable to Verus
 - P$^{3}$: Joint Program-and-Proof Planning for Verified Code Generation (2026), score 88
   https://doi.org/10.48550/arxiv.2608.09277
-  joint program-and-proof planning for llm verified code generation with a lean benchmark, directly the llm-writes-verified-code problem vl solves
+  joint program-and-proof planning for llm verified code generation with a lean benchmark
 - Inductive Deductive Synthesis: Enabling AI to Generate Formally Verified Systems (2026), score 87
   https://doi.org/10.48550/arxiv.2605.23109
   Agent jointly synthesizes implementation and proof for distributed key-value stores at 7/7 specs, a direct competitor to AI-built verified systems
@@ -816,9 +764,6 @@
 - BRIDGE: Building Representations in Domain-Guided Program Synthesis (None), score 85
   https://www.semanticscholar.org/paper/67c4fd01725cadc81b8864c6ea601966e45312d7
   structured prompting makes LLMs generate code, spec, and proof together in Lean, and spec-oriented prompting and fine-tuning on reasoning traces transfer directly to LLM-written verified code for Verus
-- Advancing mathematics research with AI-driven formal proof search (2026), score 82
-  https://doi.org/10.1126/science.aej2213
-  LLM agent alternates proof generation with Lean compiler checks and resolves open Erdos problems, the same generate-then-verify loop VL agents need for Verus
 - Second-Order Problem Solving for Recursive Self-Improvement in Formal Verification (2026), score 80
   https://doi.org/10.48550/arxiv.2610.05701
   Second-order recursive self-improvement of agent workflows, evaluated on Lean proof generation and Verus verifiable code generation.
@@ -850,9 +795,6 @@
 - Harnessing Code Agents for Automatic Software Verification (2026), score 75
   http://arxiv.org/abs/2607.06341v1
   Unstructured code agent given whole lemmas with a kernel-checked harness proves all Iris and reglang lemmas in Coq and Lean, beating prior LLM provers.
-- TypePilot: Leveraging the Scala Type System for Secure LLM-generated Code (2025), score 75
-  https://doi.org/10.26615/978-954-452-101-1-011
-  Type-guided agentic LLM codegen in Scala with Stainless verification; closest analogue of VL idea of generating code in a verifier-friendly language
 - ShannonProver: Towards Automating Formal Cryptographic Proofs (2026), score 75
   https://doi.org/10.48550/arxiv.2607.02847
   agentic LLM system decomposing cryptographic theorems into lemmas and generating EasyCrypt proof scripts, a direct analogue of agent-written machine-checked proofs
@@ -870,7 +812,7 @@
   neural translation of Hoare-triple imperative code into Coq correctness proofs, direct precedent for LLM-written verified code
 - Long-horizon autoformalization of a core theorem underlying MIP* = RE (2026), score 72
   https://www.semanticscholar.org/paper/4ca11236662f424a6f3541b42ce47343a39f7dab
-  agent-generated 126k-line lean proof with a shared blueprint and review loops, evidence that agent teams can produce large verified artifacts, a direct competitor pattern to vl
+  agent-generated 126k-line lean proof with a shared blueprint and review loops, evidence that agent teams can produce large verified artifacts
 - CoqPilot, a plugin for LLM-based generation of proofs (2024), score 72
   https://doi.org/10.1145/3691620.3695357
   vs code plugin that fills admit proof holes in Coq by combining llm and symbolic candidates, checks each candidate, a plugin design directly applicable to Verus proof holes
@@ -906,12 +848,6 @@
 - Towards Language Model Guided TLA+ Proof Automation (2025), score 70
   https://doi.org/10.48550/arxiv.2512.09758
   same TLA+ approach as 2011 in an earlier version, llm decomposes obligations into sub-claims for symbolic provers, 119-theorem benchmark for distributed protocols
-- LLM-as-a-Verifier: A General-Purpose Verification Framework (2026), score 70
-  http://arxiv.org/abs/2607.05391v2
-  scores candidate agent outputs by expected scoring-token logits and ranks candidates; verifier-as-scorer method transferable to choosing among VL proof candidates
-- The LLM Era Demands Natural-Language-Aligned Theorem Provers for Mathematics (2025), score 70
-  https://doi.org/10.1145/3759425.3763384
-  argues theorem provers should use natural-language-like proof languages for LLMs, relevant to proof interface design for VL
 - Translating Informal Proofs into Formal Proofs Using a Chain of States (2026), score 70
   https://doi.org/10.4208/csiam-am.so-2025-0105
   turns informal proofs into Lean via chain of intermediate proof states then tactics between states, a decomposition idea for LLM proof generation
@@ -989,15 +925,9 @@
 - Proof Artifact Co-training for Theorem Proving with Language Models (2021), score 60
   https://doi.org/10.48550/arxiv.2102.06203
   mines self-supervised data from Lean kernel proof terms to co-train a tactic predictor, a data-scarcity fix for LLM proof automation
-- Closing the Loop: Formally Verified Law as a Reward Signal for Self-Improving Legal AI (2026), score 60
-  https://doi.org/10.48550/arxiv.2606.23913
-  LLM autoformalizes law into a verifier-checked calculus, using verifier outcomes as RL reward, a training-signal pattern for VL
 - Generative Language Modeling for Automated Theorem Proving (2020), score 60
   https://doi.org/10.48550/arxiv.2009.03393
   transformer prover for Metamath whose proofs entered the main library, an early llm proof-generation technique usable for Verus proof search
-- Self-Authored Verification Is Unreliable in Heuristic Self-Improving Agents (2026), score 60
-  http://arxiv.org/abs/2607.24300v1
-  self-written tests let agents accept regressions; sealed external audit fixes it, a warning for VL agents grading their own proofs
 - Self-Trained Verification for Training- and Test-Time Self-Improvement (2026), score 60
   http://arxiv.org/abs/2605.30290v2
   trains an LLM verifier by imitating a reference-informed version of itself, transferable to LLM verifier loops that check generated verified code
@@ -1027,7 +957,7 @@
 
 - VERT: Verified Equivalent Rust Transpilation with Few-Shot Learning (2024), score 82
   https://www.semanticscholar.org/paper/f7d0578c630649bda8a1e4c1d4661ae0acc38a63
-  title only: llm few-shot transpilation to verified equivalent rust, a direct llm-plus-verification pipeline that competes with or informs vl code generation
+  title only: llm few-shot transpilation to verified equivalent rust
   (title only, no abstract)
 - STAFF: Towards Translating Formal Verification Benchmarks between Formal Specification Languages (2026), score 80
   https://doi.org/10.1145/3843777.3844531
@@ -1047,9 +977,6 @@
 - Mostly Automatic Translation of Language Interpreters from C to Safe Rust (2026), score 65
   http://arxiv.org/abs/2606.27122v1
   Feature-reduction milestones plus multi-agent validation translate C interpreters to safe Rust; staged decomposition idea transfers to building Verus-verified translations
-- Heimdall: Formally Verified Automated Migration of Legacy eBPF Programs to Rust (2026), score 62
-  http://arxiv.org/abs/2605.25411v2
-  LLM translates eBPF C to Rust with per-program equivalence via symbolic execution and Z3; translation-equivalence pattern transferable to VL
 - Fine-Tuning Qwen3-27B for C-to-Rust Code Translation: A Three-Stage Curriculum of Pretraining, Debugging-Aware SFT, and Task-Specific SFT (2026), score 60
   http://arxiv.org/abs/2608.13681v1
   fine-tunes Qwen3-27B on Verus training data for C-to-Rust with agentic verification; shows Verus data can help Rust code LLMs
@@ -1074,9 +1001,6 @@
 - Quantitative Comparison of Credible Compilation and Verification In Coding Agent Compiler Development (2026), score 65
   http://arxiv.org/abs/2605.08927v1
   measures effort of verified versus credible compilation done by a coding agent; direct evidence on agent cost of proofs and agent avoiding hard algorithms
-- ML + FV = $\heartsuit$? A Survey on the Application of Machine Learning to Formal Verification (2018), score 65
-  https://doi.org/10.48550/arxiv.1806.03600
-  catalogues where machine learning helps theorem proving, model checking, SAT and static analysis; survey of ML-guided proof automation directly relevant to VL
 - Human agency in initial human-AI proof formalization workflows (2026), score 60
   https://www.semanticscholar.org/paper/4c330dcdabbfff8e2536ec09345c7e5a92180964
   user study of AI-assisted proof formalisation, found higher accuracy with AI; direct evidence on how people will use AI for verified-code work
@@ -1089,12 +1013,6 @@
 
 ### Other verification methods (15)
 
-- The Fusion of Large Language Models and Formal Methods for Trustworthy AI Agents: A Roadmap (2024), score 80
-  https://doi.org/10.48550/arxiv.2412.06512
-  roadmap pairing LLMs with formal methods for certified outputs and usable FM tools, a direct map of VL's positioning
-- Verify-in-the-Loop: Proof-Carrying AI Mathematics — a case study certifying, expanding, and stress-testing the Jacobian counterexample with Claude Code (Opus 4.8) and a signing verifier (2026), score 78
-  https://doi.org/10.5281/zenodo.21567374
-  proposer agent cannot certify its own result; a separate verifier signs a certificate only when its checker passes, a trust pattern directly applicable to agent-written verified code in VL
 - Agentic Model Checking (2026), score 75
   https://doi.org/10.48550/arxiv.2605.21434
   Agentic bounded model checking for LLM-generated C and Rust systems code, with spec inference and counterexample validation pipeline.
@@ -1116,9 +1034,6 @@
 - FANS: Formal Answer Selection for LLM Natural Language Math Reasoning Using Lean4 (2025), score 65
   https://doi.org/10.18653/v1/2025.emnlp-main.158
   LLM math answers translated to Lean4 theorems, proved and kept only when the compiler accepts, a verified-selection pattern transferable to checked code output
-- The Verification Horizon: No Silver Bullet for Coding Agent Rewards (2026), score 65
-  http://arxiv.org/abs/2606.26300v2
-  analyzes why verifiers for coding agents reward-hack and proxy gaps, a threat model for VL verification signals
 - Formal-Method-Guided Vibe Coding: Closing the Verification Loop on AI-Generated Safety-Critical Software Through Model-Driven Engineering (2026), score 60
   http://arxiv.org/abs/2606.22413v2
   Closed-loop vibe coding for Java where Dafny, CSP and Isabelle checks drive regeneration, targeting safety-critical certification.
@@ -1131,20 +1046,12 @@
 - Guiding Symbolic Execution with Static Analysis and LLMs for Vulnerability Discovery (2026), score 60
   https://www.semanticscholar.org/paper/261db6778f5806762b76f3cecda5fd93cf50fb14
   LLM orchestrates symbolic execution harness synthesis guided by static analysis, validated by concrete replay; LLM harness generation pattern applicable to Verus harnesses
-- Watchdogs and Oracles: Runtime Verification Meets Large Language Models for Autonomous Systems (2025), score 60
-  https://doi.org/10.4204/eptcs.436.8
-  argues runtime verification can guard LLM agents while LLMs help write specs, a direct framing of VL's formal-plus-LLM role
-
-## Specification writing (77)
 
 ### Retrieval of lemmas, examples and skills (2)
 
 - PropertyGPT: LLM-driven Formal Verification of Smart Contracts through Retrieval-Augmented Property Generation (2025), score 85
   https://doi.org/10.14722/ndss.2025.241357
   retrieves similar human-written properties and iterates LLM generation with compiler and prover feedback, directly transferable to retrieval-augmented Verus spec generation
-- Learning-Infused Formal Reasoning: From Contract Synthesis to Artifact Reuse and Formal Semantics (2026), score 60
-  https://doi.org/10.48550/arxiv.2602.02881
-  vision for LLM plus graph-based reuse of contracts and proofs across verification systems; supports a knowledge-reuse strategy for VL
 
 ### Invariant and annotation inference (11)
 
@@ -1245,9 +1152,6 @@
 - KBSpec: LLM-driven Formal Specification Generation with Evolving Domain Knowledge Base (2026), score 80
   https://doi.org/10.48550/arxiv.2606.21339
   LLM spec generation where verifier feedback feeds a self-evolving knowledge base with no fine-tuning, directly applicable to generating Verus specifications
-- Natural Language based Specification and Verification (2026), score 80
-  http://arxiv.org/abs/2605.11315v1
-  LLMs write and check natural-language specifications compositionally against implementations, close to VL spec-driven generation though only preliminary
 - Verifying LLM-Generated Code in the Context of Software Verification with Ada/SPARK (2025), score 80
   http://arxiv.org/abs/2502.07728v1
   LLM writes SPARK annotations so Ada code verifies, 50.7 percent correct on a benchmark; direct analogue of LLM annotation writing for Verus
@@ -1270,9 +1174,6 @@
 - Specula: Scaling formal specifications for autonomous model checking of system code (2026), score 75
   https://doi.org/10.48550/arxiv.2607.25333
   LLM agents write TLA+ specs of real system code and model check them, finding 249 bugs; spec-generation at scale
-- nl2spec: Interactively Translating Unstructured Natural Language to Temporal Logics with Large Language Models (2023), score 75
-  https://doi.org/10.1007/978-3-031-37703-7_18
-  LLM translates requirements to temporal logic with interactive sub-translation edits, a spec-writing method for VL
 - SpecLoop: An Agentic RTL-to-Specification Framework with Formal Verification Feedback Loop (2026), score 72
   http://arxiv.org/abs/2603.02895v1
   LLM generates specs from RTL and refines them using equivalence-checker counterexamples; the feedback loop transfers to LLM spec generation checked by Verus
@@ -1296,9 +1197,6 @@
 - Verification of PETSc with CIVL using LLM-generated ACSL contracts and deterministic driver generation (2026), score 70
   https://doi.org/10.48550/arxiv.2609.31687
   LLM generates small ACSL contracts from docs, checked by CIVL with a deterministic driver, finding a 1997 PETSc bug; directly transferable to LLM-written specs checked by a verifier
-- Position: Natural Language Should Not Fully Replace Formal Languages (2026), score 70
-  https://doi.org/10.48550/arxiv.2607.20432
-  argues formal languages stay necessary for strict specs and proves a specificity crossover; directly informs VL spec-writing strategy
 - AGVTS: Automated Generation and Verification of Temporal Specifications for Aeronautics SCADE Models (2024), score 70
   https://doi.org/10.1007/978-3-031-71177-0_21
   turns restricted natural-language requirements into LTL and CTL with a BERT-augmented translator, then verifies SCADE models in nuXmv; a direct NL-to-spec-to-verification pipeline
@@ -1332,9 +1230,6 @@
 - Passing Proofs That Prove Nothing: Deciding Postcondition Vacuity, Precondition Satisfiability, and Contract Completeness for Rust and Kani (2026), score 88
   https://doi.org/10.5281/zenodo.21865170
   vacuity tool decides vacuous postconditions and preconditions for Kani contracts, Lean-proved; Verus proofs could pass vacuously too
-- Formalizing Numerical Analysis: An Agent Pipeline and Quality Audit Beyond Kernel Acceptance (2026), score 80
-  https://www.semanticscholar.org/paper/0bd5f9e42a027296b3c78134a3b766733d14b206
-  coding agent formalizes an ODE textbook in Lean and shows compilation overstates quality via unfaithful specs, a direct warning and audit method for VL spec fidelity
 - How Powerful are LLMs in Generating Formal Program Specifications? (2026), score 75
   https://doi.org/10.48550/arxiv.2608.13077
   Evaluates LLM-written Rocq specs by testing them on concrete cases, sidestepping proof difficulty; a useful method for measuring spec quality in Verus
@@ -1353,9 +1248,6 @@
 - Detecting Inconsistencies in Arm CCA's Formally Verified Specification (2026), score 70
   https://www.semanticscholar.org/paper/c32071320a0860fdc6cb570abee16a42ebfe122c
   Scope models the Arm CCA RMM spec in Verus with SMT to find 35 specification bugs, beating LLM-based checkers on precision.
-- Trustworthy Formal Natural Language Specifications (2023), score 65
-  https://doi.org/10.1145/3622758.3622890
-  addresses mistranslation of natural-language specs into formal claims, a spec-auditing problem central to VL specification writing
 - Explainable Program Synthesis by Localizing Specifications (2023), score 65
   https://www.semanticscholar.org/paper/341947f9c3e4009c820a5fb04da957df25fb7e8b
   subspecifications explain each part of a synthesized program and aid debugging, transferable to explaining Verus specs and proof obligations
@@ -1371,9 +1263,6 @@
 
 ### Benchmarks, evaluations and surveys (3)
 
-- An Empirical Study of LLM-Generated Specifications for VeriFast (2026), score 85
-  https://doi.org/10.48550/arxiv.2606.26490
-  empirical study of LLM-generated specs for 303 C functions verified by VeriFast; shows low verification success and domain-knowledge errors, a key benchmark for VL
 - Survey of annotation generators for deductive verifiers (2024), score 80
   https://doi.org/10.1016/j.jss.2024.111972
   Surveys specification inference tools for Java deductive verifiers, with their spec types and gaps; directly informs automated spec generation for Verus.
@@ -1390,8 +1279,6 @@
   https://doi.org/10.1145/3644033.3644380
   formal Coq semantics of ACSL unions and underspecified terms, a spec-language semantics relevant to Verus spec design
 
-## Verified systems (82)
-
 ### Invariant and annotation inference (1)
 
 - Experiments in Verification of Linear Model Predictive Control: Automatic Generation and Formal Verification of an Interior Point Method Algorithm (2018), score 78
@@ -1400,9 +1287,6 @@
 
 ### Specification testing and failure explanation (2)
 
-- Using Lightweight Formal Methods to Validate a Key-Value Storage Node in Amazon S3 (2021), score 75
-  https://doi.org/10.1145/3477132.3483540
-  lightweight formal methods on production S3 storage with reference-model specs and automated checks; practical workflow model for sustaining VL proofs as code evolves
 - Smart Casual Verification of the Confidential Consortium Framework (2024), score 65
   http://arxiv.org/abs/2406.17455v2
   checks a C++ system against a TLA+ spec in CI and finds six bugs, a spec-to-implementation validation method relevant to verified systems work
@@ -1447,10 +1331,7 @@
   VerCors deductive proofs of data-race freedom and functional correctness for CUDA prefix-sum and stream compaction; extends a verifier to GPU code, a close analogue for verified parallel Rust
 - Verified Lock-Free Session Channels with Linking (2024), score 65
   https://doi.org/10.1145/3689732
-  iris-verified lock-free session channels with linking, a layered concurrent separation logic proof of an implementation, transferable to vl lock-free code
-- Practical Verification of Distributed Systems: Streamlining Safety Proofs Using Invariant Taxonomies, and Verifying Latency Properties Using Symbolic Latency (2025), score 65
-  https://doi.org/10.7302/25607
-  invariant taxonomies streamline inductive safety proofs of distributed systems and extend verification to end-to-end latency; directly transferable to proof structuring for VL
+  iris-verified lock-free session channels with linking, a layered concurrent separation logic proof of an implementation
 - Resume Means Resume: A Machine-Checked Conformance Contract for Checkpoint, Interrupt, and Resume Semantics in Workflow Persistence Layers (2026), score 60
   https://doi.org/10.48550/arxiv.2608.03836
   Machine-checked resume contract (TLA+, TLAPS) for agent workflows, with a Verus-verified recovery core and concurrent-resume failures.
@@ -1479,17 +1360,9 @@
 
 ### System case studies (60)
 
-- Applying Modern Verification Techniques to a Root-of-Trust Bootloader (2025), score 95
-  https://www.semanticscholar.org/paper/76540fe938e6624a337f82f6922441e98113f760
-  Retrofits Verus onto an existing root-of-trust bootloader, reporting annotation overhead and workarounds, a direct field report for VL-style Verus adoption
 - TickTock: Verified Isolation in a Production Embedded OS (2025), score 85
   https://www.semanticscholar.org/paper/d1c2e3bb58f75f473613be526ac9c6df7c8fff17
   Flux verifies process isolation in a production Rust OS kernel, finding real bugs; direct precedent for verified systems code
-- Formal Verification of a Rust-Based Buddy Physical Memory Allocator (2026), score 85
-  https://www.semanticscholar.org/paper/bf4ef1803c55ae2b9141a3fe121d940cc07c1ed8
-  title only: formal verification of a Rust buddy allocator, a verified-systems case directly comparable to VL targets
-  Study: [buddy_allocator](vl_paper_walkthrough/buddy_allocator_20261012.md)
-  (title only, no abstract)
 - Verifying Rust Implementation of Page Tables in a Software Enclave Hypervisor (2024), score 85
   https://www.semanticscholar.org/paper/d026a9156ac24ea878f37a56a37e61cf3dbd2781
   verifies a Rust hypervisor page-table implementation with a MIR semantics and layered proof framework, a verified-systems template for Verus
@@ -1502,9 +1375,6 @@
 - Auto-active Verification of Graph Algorithms, Written in OCaml (2022), score 85
   http://arxiv.org/abs/2207.09854v1
   auto-active proofs of real OCamlgraph algorithms with Cameleer and SMT, mostly automatic; a close analogue of Verus-style proofs of real Rust libraries
-- How We Built Cedar: A Verification-Guided Approach (2024), score 85
-  https://doi.org/10.1145/3663529.3663854
-  Cedar team builds a Rust-era production policy engine with executable model proofs, differential testing and PBT; found 25 bugs, a direct blueprint for VL
 - Atmosphere: Practical Verified Kernels with Rust and Verus (2025), score 80
   https://www.semanticscholar.org/paper/72319e8b81d851f112403809a0b3886a288e6681
   Verus-verified Rust microkernel with refinement proofs, reporting effort, proof-to-code ratio, and verification time as practicality evidence.
@@ -1526,7 +1396,7 @@
   experience report verifying a flight stack in SPARK 2014, with pitfalls and design advice for proof-friendly code, directly transferable to Verus design
 - Protocols to Code: Formal Verification of a Secure Next-Generation Internet Router (2025), score 72
   https://doi.org/10.1145/3719027.3765104
-  isabelle protocol refinement linked to automated verifier proving go router code crash and race freedom, a protocol-to-code verification pattern transferable to vl
+  isabelle protocol refinement linked to automated verifier proving go router code crash and race freedom
 - Automatic kernel code synthesis and verification (2020), score 72
   https://www.semanticscholar.org/paper/7c811d7c5ead10f5abd13dc65640790dfbc277d1
   Builds an OS kernel with high proof automation by restricting interfaces to finite forms and generating C from specs, a transferable approach to low-burden verified systems code
@@ -1542,9 +1412,6 @@
 - Formal Security and Functional Verification of Cryptographic Protocol Implementations in Rust (2025), score 70
   https://www.semanticscholar.org/paper/465d08faa15b3a0cc0d0e80f07f064b3fc933bc1
   Multi-backend verification of a post-quantum TLS 1.3 Rust implementation (Bert13), spanning F*, ProVerif and SSProve.
-- Lightweight Hypervisor Verification: Putting the Hardware Burger on a Diet (2025), score 70
-  https://www.semanticscholar.org/paper/cb4c82a40b5420bfa373c8824ed272c6d462691a
-  lightweight hypervisor verification using Kani on a RISC-V model, finding 21 bugs; practical Rust model-checking case study close to VL's needs
 - Lessons Learned From Microkernel Verification -- Specification is the New Bottleneck (2012), score 70
   http://arxiv.org/abs/1211.6186v1
   Lessons from L4 microkernel verification showing specification writing is the main bottleneck, directly relevant to Verus spec cost
@@ -1565,7 +1432,7 @@
   verifies raw-pointer system software in standard C with low annotation burden; technique transfers to verified systems code in Verus
 - StarMalloc: Verifying a Modern, Hardened Memory Allocator (2024), score 68
   https://doi.org/10.1145/3689773
-  verified concurrent c allocator in steel separation logic with smt and drop-in use in firefox, a verified systems artifact close to what vl targets
+  verified concurrent c allocator in steel separation logic with smt and drop-in use in firefox
 - Combining Type Checking and Formal Verification for Lightweight OS Correctness (2024), score 65
   http://arxiv.org/abs/2501.00248v1
   Hybrid of type-system invariants, formal verification and informal reasoning in the Theseus Rust OS, cutting proof effort.
@@ -1584,9 +1451,6 @@
 - Verified Low-Level Programming Embedded in F* (2017), score 65
   https://doi.org/10.48550/arxiv.1703.00053
   Low* embeds a C subset in F* with SMT plus manual proofs for verified crypto; a template for verified systems code
-- StarMalloc: A Formally Verified, Concurrent, Performant, and Security-Oriented Memory Allocator (2024), score 65
-  https://doi.org/10.48550/arxiv.2403.09435
-  verified concurrent allocator in Steel separation logic with reusable verified data structures; shows verified systems components that VL could target
 - Formal Verification of Voting Schemes (2014), score 65
   https://doi.org/10.5445/ir/1000092716
   auto-active VCC proofs of voting schemes combined with bounded checking in an iterative workflow; direct analogue of auto-active verification practice for Verus
@@ -1625,18 +1489,12 @@
 - Prove your Colorings: Formal Verification of Cache Coloring of Bao Hypervisor (2025), score 60
   https://doi.org/10.1007/978-3-031-90900-9_11
   formal verification of a hypervisor's cache coloring code with nested loops and linked lists found two real bugs, a verified systems-code precedent
-- Towards Formal Verification of a TPM Software Stack: Achievements and Opportunities (2025), score 60
-  https://doi.org/10.1145/3743153
-  Frama-C verification of a real C library with linked lists needed Coq lemmas and exposed tool limits, the same pain VL faces on systems code
 - Formal Verification of Prim’s Algorithm in SPARK (2023), score 60
   https://doi.org/10.24251/hicss.2023.809
   implements Prim's algorithm in SPARK with contracts proving absence of runtime errors, a concrete verified-algorithm case study close to Verus-style code verification
 - Formally Verifying an Efficient Sorter (2024), score 60
   https://doi.org/10.1007/978-3-031-57246-3_15
   KeY deductive verification of an efficient in-place Java sample sort, shows verifying performance-tuned code without sacrificing efficiency, relevant to Verus systems code
-- Verified Erasure Correction in Coq with MathComp and VST (2022), score 60
-  https://doi.org/10.1007/978-3-031-13188-2_14
-  Coq and VST proof of a C Reed-Solomon erasure code, finding a latent bug; end-to-end verified C with separation logic, a model for VL's real-world verified code
 - Formal Verification of Resource Synchronization Protocol Implementations: A Case Study in RTEMS (2022), score 60
   https://doi.org/10.1109/tcad.2022.3197501
   deductive verification of RTEMS real-time synchronization code against contracts found real mismatches with theory; shows deductive proof of real OS implementations
@@ -1662,9 +1520,6 @@
 - Verification of Configurable SRA Systems (2026), score 60
   http://arxiv.org/abs/2605.21385v2
   contract-based deductive verification of configurable schedulers with quantified invariants using Dafny; closely comparable to Verus-style modular proofs.
-- Verification of a Smart Contract for a Simple Casino (2021), score 60
-  http://arxiv.org/abs/2106.14457v1
-  Whiley with Boogie and Z3 verified a smart contract and fixed spec bugs; a real verify-and-fix case relevant to VL spec writing.
 
 ### Other verification methods (2)
 
@@ -1674,8 +1529,6 @@
 - Formal Verification of Minimax Algorithms (2025), score 60
   http://arxiv.org/abs/2509.20138v2
   Dafny proofs of alpha-beta minimax with transposition tables, plus a witness-based correctness criterion; shows deductive proof of tricky optimized algorithms
-
-## Benchmarks (36)
 
 ### Proof repair from verifier feedback (1)
 
@@ -1721,25 +1574,15 @@
 - NL2VBench: A Benchmark for End-to-End Natural-Language to Verifiable Rust Generation (2026), score 90
   https://www.semanticscholar.org/paper/e7d2e1fc06824923deab3df82b24df8b533c7eb2
   NL2VBench: 762 verifier-checked tasks for generating verifiable Rust from natural language with Verus, showing low LLM success.
-- Can LLMs Reason Like Automated Theorem Provers for Rust Verification? VCoT-Bench: Evaluating via Verification Chain of Thought (2026), score 90
-  http://arxiv.org/abs/2603.18334v2
-  VCoT-Bench tests LLM steps in Rust verification proofs with 1988 tasks; shows models fragile versus provers, a baseline for VL evals
 - Selene: Pioneering Automated Proof in Software Verification (2024), score 90
   https://doi.org/10.18653/v1/2024.acl-long.98
   Selene benchmark for project-level automated proof generation on seL4 with LLMs; direct benchmark template for LLM proof generation in Verus
 - AlgoVeri: An Aligned Benchmark for Verified Code Generation on Classical Algorithms (2026), score 88
   https://doi.org/10.48550/arxiv.2602.09464
   Aligned vericoding benchmark of 77 classical algorithms with identical contracts in Dafny, Verus and Lean, showing Verus memory-constraint gaps.
-- SWE-Proof: Can Language Models Resolve Real-World Issues with Machine-Checked Proofs? (2026), score 88
-  https://doi.org/10.48550/arxiv.2609.21190
-  Machine-checked proofs for real SWE-bench issues with agent-written specs, showing faithful spec synthesis is the bottleneck, direct evidence for VL-style agents
-  Study: [swe_proof](vl_paper_walkthrough/swe_proof_20261012.md)
 - Can LLMs Enable Verification in Mainstream Programming? (2025), score 85
   http://arxiv.org/abs/2503.14183v1
   Evaluates LLMs producing verified code in Dafny, Nagini and Verus from HumanEval-derived sets, and what context helps.
-- VerifyThisBench: Generating Code, Specifications, and Proofs All at Once (2025), score 85
-  https://doi.org/10.48550/arxiv.2505.19271
-  Benchmark where LLMs write specs, verified code and proofs end-to-end with under 4% pass; direct benchmark for VL-style verified code generation
 - DafnyBench: A Benchmark for Formal Software Verification (2024), score 85
   http://arxiv.org/abs/2406.08467v1
   DafnyBench measures LLM-generated hints that make Dafny verify 750 programs; a direct benchmark template for evaluating LLM proof generation in Verus.
@@ -1766,7 +1609,7 @@
   Curated dataset of 506 Frama-C-verified C and ACSL spec pairs, a usable training and benchmark resource analogous to Verus datasets
 - CLEVER: A Curated Benchmark for Formally Verified Code Generation (2025), score 75
   https://www.semanticscholar.org/paper/1b6d9b4899d196be6bd9d244ec6fbcfadfb4aee9
-  curated lean benchmark of 161 verified code generation tasks that avoids leaked specs and vacuous solutions, a benchmark design vl can reuse for verus
+  curated lean benchmark of 161 verified code generation tasks that avoids leaked specs and vacuous solutions
 - s2n-bignum-bench: A practical benchmark for evaluating low-level code reasoning of LLMs (2026), score 72
   https://www.semanticscholar.org/paper/5f4c2b5785a0a469fc6ed2e0c4a1b4e541bc9cd8
   benchmark for LLM proof synthesis on verified cryptographic assembly in HOL Light; a direct testbed for LLM proofs on industrial low-level code
@@ -1805,40 +1648,6 @@
 - SV-LIB 1.0: A Standard Exchange Format for Software-Verification Tasks (2025), score 60
   http://arxiv.org/abs/2511.21509v1
   SV-LIB exchange format with SMT-LIB and witnesses lets Rust verifiers share tasks and validate witnesses
-
-## Competing products (5)
-
-### Specification synthesis (1)
-
-- Copper: Unifying Correctness and Performance Specification in Code Generation (2026), score 75
-  https://www.semanticscholar.org/paper/554956d1d0d64da37a92274ca56753b721dc7703
-  combines AI code synthesis with formal verification and performance profiling to produce provably correct, efficient code; direct competitor pattern for VL's verified generation
-
-### Proof agents, search and training (1)
-
-- Saarthi: The First AI Formal Verification Engineer (2025), score 60
-  http://arxiv.org/abs/2502.16662v2
-  agentic LLM system that does end-to-end formal verification of RTL; its agent loop design transfers to a Verus proof agent in VL
-
-### Benchmarks, evaluations and surveys (1)
-
-- Systems Correctness Practices at Amazon Web Services (2025), score 75
-  https://doi.org/10.1145/3729175
-  AWS industry practice using formal and semi-formal methods; direct evidence of what leading firms already do, benchmark for VL positioning.
-
-### System case studies (1)
-
-- An AI Approach to Verified Production Cryptographic Libraries (2026), score 98
-  http://arxiv.org/abs/2608.00965v1
-  AI system writes Verus proofs for curve25519-dalek and RustCrypto chacha20 with mechanical anti-weakening gates; direct competitor to VL in verified production crypto
-
-### Other verification methods (1)
-
-- Ethics by Design in Smart Environments: A Formally Verified Sidecar for Deterministic Legal Compliance in Public Transit (2026), score 65
-  https://doi.org/10.52731/liir.v007.573
-  intercepts LLM-generated code and checks information flow with Z3 on its control flow graph, a verification gate for LLM output like VL needs
-
-## Other transferable techniques (171)
 
 ### Proof repair from verifier feedback (2)
 
@@ -1899,9 +1708,6 @@
 
 ### Specification testing and failure explanation (8)
 
-- Escaping the Quicksand: A Call to Arms (2026), score 80
-  https://doi.org/10.48550/arxiv.2608.19674
-  argues for executable partial specs plus proof alongside testing so AI and humans get cheap-to-expensive feedback loops, matching the VL thesis
 - F-IDEs with Features and VCs Designed to Assist Human Reasoning When Verification Fails (2021), score 80
   http://arxiv.org/abs/2111.08207v1
   IDE features and alternative VC generation that help humans reason when verification fails, directly relevant to Verus failure UX
@@ -1914,9 +1720,6 @@
 - Fulminate: Testing CN Separation-Logic Specifications in C (2025), score 65
   https://doi.org/10.1145/3704879
   runtime checks of separation-logic pre/post specs for C, tested on a production hypervisor allocator; a way to test the specs Verus users write
-- A user study for evaluation of formal verification results and their explanation at Bosch (2023), score 62
-  https://doi.org/10.1007/s10664-023-10353-4
-  user study showing engineers grasp counterexample explanations better than raw model checker output, guidance for how VL should present Verus failures
 - Why does it fail? Explanation of verification failures (2026), score 60
   http://arxiv.org/abs/2603.21788v1
   Explains SAT counterexamples of failed verification conditions in domain terms via predicate relevance; transfers to explaining Verus verification failures
@@ -1968,7 +1771,7 @@
   extended version of gobra: separation-logic verifier for go over viper and smt; direct analogue for verifying concurrent systems code
 - SecRef*: Securely Sharing Mutable References between Verified and Unverified Code in F* (2025), score 75
   https://doi.org/10.1145/3747522
-  f* monotonic state and higher-order contracts to guard verified code calling unverified code, a verified-unverified interop technique applicable to vl trust boundaries
+  f* monotonic state and higher-order contracts to guard verified code calling unverified code
 - Ownership Refinement Types for Pointer Arithmetic and Nested Arrays (2026), score 75
   https://openalex.org/W7157506019
   ownership-indexed refinement types for pointer arithmetic and nested arrays with soundness proof and verifier, directly transferable to ownership and array reasoning in Verus
@@ -2169,9 +1972,6 @@
 - Diaframe: automated verification of fine-grained concurrent programs in Iris (2022), score 60
   https://doi.org/10.1145/3519939.3523432
   automates separation-logic proofs for fine-grained concurrency via proof search in Iris, transferable to automation for concurrent Rust
-- RacerD: compositional static race detection (2018), score 60
-  https://doi.org/10.1145/3276514
-  compositional static race detector deployed in CI at Facebook with high-confidence reporting, a practical model for concurrency checks in VL
 - Specification and verification of GPGPU programs (2014), score 60
   https://doi.org/10.1016/j.scico.2014.03.013
   specification and verification of GPGPU kernels, a verifier-for-parallel-code topic that transfers to verifying Rust GPU or concurrent code
@@ -2191,9 +1991,6 @@
 - QED at Large: A Survey of Engineering of Formally Verified Software (2019), score 88
   https://doi.org/10.1561/2500000045
   survey of proof engineering for verified software covering proof automation, organization and maintenance; directly applicable to Verus proof workflows
-- Toward Practical Deductive Verification: Insights from a Qualitative Survey in Industry and Academia (2025), score 88
-  http://arxiv.org/abs/2510.20514v2
-  Interview study of 30 practitioners on deductive verification barriers: proof maintenance, automation control, usability; directly informs VL adoption risks.
 - What's in a Proof? Analyzing Expert Proof-Writing Processes in F* and Verus (2025), score 80
   http://arxiv.org/abs/2508.02733v1
   User study of expert proof-writing telemetry in F* and Verus, with design guidance for AI proof assistants and an F* proof agent.
@@ -2210,9 +2007,6 @@
 - Usability Barriers for Liquid Types (2025), score 62
   https://doi.org/10.1145/3729327
   developer study of nine barriers to liquid types, directly reusable lessons for Verus usability and adoption
-- Understanding the Usability of Cryptographic Verification Tools (2026), score 62
-  http://arxiv.org/abs/2609.16323v1
-  user study of Tamarin and ProVerif users shows proof-debugging pain points; directly informs usability design for VL verification tooling.
 - Review of Recent Heap Specification and Verification Techniques (2019), score 60
   http://arxiv.org/abs/1910.10176v2
   review of heap specification and verification methods including separation logic and proof automation gaps, background for heap reasoning in Verus

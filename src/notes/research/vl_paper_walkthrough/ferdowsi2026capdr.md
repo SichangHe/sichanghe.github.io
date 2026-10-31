@@ -77,8 +77,6 @@ Inference: The threat to agent-written verified Rust is low at the final-certifi
 
 Existing PDR/IC3, independent certificate checking, and invariant minimization are prerequisites CAPDR reuses. The paper explicitly says it is “neither a new certificate format nor a new checker.” (Section I, p. 1). 
 
-Inference: VL should reuse checker-first trust separation and log replay, rather than build a learned component into the proof kernel.
-
 ## techniques for the catalog
 
 - checker-accepted certificates — report SAFE or UNSAFE only after independent invariant or trace acceptance
@@ -87,4 +85,3 @@ Inference: VL should reuse checker-first trust separation and log replay, rather
 - certificate-aware objective — optimize solving time, artifact size, and checker time with explicit denominators and solved-set scope
 - frozen ranker and replay logs — train on a disjoint corpus, freeze deployment, and record choices for deterministic re-execution
 - post-hoc invariant minimization — apply a shared checker-preserving clause/literal deletion pass to compare raw search artifacts fairly
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The verifier generates proposals, the policy orders them, and the appropriate guarded or fair control decides what is committed."): read the whole paper text (Sections I–VII and Appendices A–D) and compared every quotation, number (Tables I–III, 319 held-out and 190 development instances, 24.6%, 49%, 16.3%, 38.5%, weights (1, 10^-3, 1)), equation and theorem reference, page number and technique step against it; changed the attribution of the first quotation (it is in Section I, not the abstract), the trusted-base description (the paper says only the standalone checker is trusted; guards, fairness and fallback are untrusted search control), the page of Assumptions A1–A2 (p. 7, not p. 8), the page range of the corpus description (pp. 9–10), the wording of the LeGend coverage check, a heading using a banned word, and marked one unmarked conclusion as Inference; did not check the Verus encodings (marked Inference, not from the paper), the cited external papers, the artifact repository, or the numbers behind Fig. 2 beyond the text, and the link is the arXiv link from the fetch record (arXiv:2605.16472v2 appears in the paper text).

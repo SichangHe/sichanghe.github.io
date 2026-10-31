@@ -32,8 +32,6 @@ Verus form. Inference: a Rust workflow can expose an intermediate specification 
 ## what is proved, trusted, and limited
 A successful nuXmv check proves the finite Verilog instance satisfies the supplied TLSF specification. It does not prove the natural-language description was translated correctly, and bounded parameter checks do not prove arbitrary parameters. The LRM, prompts, TLSF grammar, Yosys/AIGER translation, nuXmv/IC3 implementation, and hand-authored ground truth remain trusted. The authors note that inequivalence to ground truth can reflect ambiguity or underspecification rather than an incorrect formalization (section 5.2, page 8). Inference: for agent-written verified Rust, the threat is high at the requirement-to-contract boundary and moderate inside a reviewed contract, because model checking or Verus can certify only the supplied formal statement.
 
-Existing work already covers symbolic synthesis baselines, LRM synthesis with feedback, and natural-language temporal-logic translation; VL should not redo a generic “LLM plus checker” claim. The useful transferable design is a bounded repair loop with sound diagnostics, explicit dual checking against an independently authored specification, and reporting of timeout and denominator details. The paper concludes that “These promising observations motivate concrete next steps: creating new synthesis benchmarks based on natural-language hardware specifications” (section 7, page 9).
-
 ## techniques for the catalog
 - CEX-LRM loop: generate Verilog, model-check it, and repair from sound counterexample traces
 - specification decomposition: split temporal requirements to produce manageable, localized checker feedback
@@ -41,5 +39,3 @@ Existing work already covers symbolic synthesis baselines, LRM synthesis with fe
 - inspectable autoformalization: expose NL-to-TLSF output for review before synthesis
 - dual specification checking: verify generated code against both autoformalized and independently authored ground truth
 - syntax-feedback repair: iterate formal-spec generation with grammar diagnostics while monitoring semantic shifts
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

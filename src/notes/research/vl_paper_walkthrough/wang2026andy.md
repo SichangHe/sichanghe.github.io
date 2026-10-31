@@ -4,8 +4,6 @@ Tag: `wang2026andy`, [paper](https://arxiv.org/abs/2608.15052)
 
 ## what the paper proves or measures
 
-Andy is a workflow for autonomous mathematical research. It separates a generating solver from an independent evaluator, gates proposed research problems, builds a versioned proof DAG, verifies each node, freezes certified nodes, and repairs only affected descendants. The paper’s abstract says Andy “organizes proof steps in an executable DAG, verifies each step independently and binds the result to a certificate, retains verified work whose interfaces remain unchanged during local repair, and records the full path from problem formulation to final proof.” (Abstract, p.1). The case study is a delayed heterogeneous-network synchronization theorem, not a software-verification benchmark; transfer to Verus is therefore an inference.
-
 The paper evaluates one small efficiency comparison and reports a detailed research trace. For studying the zeros and monotonicity of `x^3 − x`, the ordinary process took 1 hour 22 minutes 12 seconds and the DAG process about 37 minutes 59.7 seconds, a reported 53.8% decrease (Section 2.4, p.5). The authors caution that “The entire time difference cannot be attributed to the DAG.” (Section 2.4, p.5). In the larger case study, nine proposal versions (eight revisions), seven explored proof routes, nineteen immutable node revisions, seven frozen nodes, one failed node, and four invalidated nodes are recorded (Appendix A, pp.17–20).
 
 ## technique 1: independent solver–evaluator separation
@@ -22,8 +20,6 @@ how to do it:
 5. repeat until the proof passes the evaluator and the later final verification
 
 The paper states: “The evaluator cannot directly modify a proof. It can only provide structured verification conclusions, error locations, and revision suggestions.” (Section 2.1, p.2). It used DeepSeek V4 Pro as solver and Claude Sonnet 5 as evaluator; Codex running GPT-5.6 Sol acted as an external monitor in this study (Remark 2.1, p.2).
-
-Verus form (Inference): let an LLM propose Rust and Verus specifications, but invoke Verus independently to check `requires`, loop `invariant`, `ensures`, and proof functions. Treat model feedback as search guidance. A second model can inspect failed diagnostics, but it cannot replace Verus’s proof result; the Verus checker is the independent evaluator.
 
 evidence and limits: the reported time comparison uses two runs and different random generations; it does not isolate evaluator separation. The evaluator’s correctness is itself an assumption, and the paper’s mathematical case study does not establish that the workflow catches all errors. Inference: for agent-written verified Rust, this architecture reduces correlated model error only when the final verifier and specifications are independently trustworthy.
 
@@ -42,7 +38,7 @@ Algorithm 1 gives `Q0 ← FORMULATE(R,L,U)`, `EVALUATE`, `TARGETEDREVISION`, and
 
 Verus form (Inference): before asking an agent to write verified Rust, score whether the intended property matters, is distinct from existing specifications, has a feasible Verus model, and has one coherent objective. Keep the score as metadata; it cannot substitute for Verus proof obligations. A failed feasibility gate should trigger a concrete contract or lemma revision rather than relaxed `ensures`.
 
-evidence and limits: in the case trace, Version 1 scored 6, 5, 3, and 4 and total 4.65; Version 4 onward scored 8, 8, 7, and 8 and total 7.75 (Table 2, p.18). The final acceptance criterion also required one principal conclusion (Appendix A.1, p.18). These are scores for one control problem, not predictive validity for software projects. Inference: the gate can prevent VL from spending proof effort on a restatement, but its scores remain model judgments unless tied to externally checked requirements.
+evidence and limits: in the case trace, Version 1 scored 6, 5, 3, and 4 and total 4.65; Version 4 onward scored 8, 8, 7, and 8 and total 7.75 (Table 2, p.18). The final acceptance criterion also required one principal conclusion (Appendix A.1, p.18). These are scores for one control problem, not predictive validity for software projects.
 
 ## technique 3: versioned proof DAG and certificate-bound execution
 
@@ -79,16 +75,14 @@ Algorithm 3 gives this contract and four system invariants: dependencies are ver
 
 Verus form (Inference): organize proofs so a changed `requires`/`ensures` interface invalidates dependent proof modules, while a proof-body-only edit can be rechecked locally. A build orchestrator can enforce dependency hashes and rerun Verus on the invalidation set. Do not treat a cached certificate as proof after a specification or dependency change.
 
-evidence and limits: one backup branch failed at `N9` after three revisions; a second branch succeeded through `N11` and `N12` (Appendix A.4, p.20). This demonstrates traceability in one theorem, not a measured repair-success rate across tasks. Inference: this local-repair policy threatens VL less than wholesale regeneration because it preserves verified Rust, but stale external-library assumptions still require separate checks.
+evidence and limits: one backup branch failed at `N9` after three revisions; a second branch succeeded through `N11` and `N12` (Appendix A.4, p.20). This demonstrates traceability in one theorem, not a measured repair-success rate across tasks.
 
 ## trusted boundary and product relevance
 
-The paper proves the final control theorem only under its stated assumptions and reports one numerical illustration; it does not prove the correctness of DeepSeek, Claude, Codex, the memory store, or route-selection heuristics. Inference: for VL, Verus’s final checking of executable Rust against explicit specifications remains the safety boundary; Andy’s DAG, evaluator, hashes, and repair policy are untrusted orchestration unless separately verified. The paper’s own result that scores and certificates are recorded improves auditability, while the single-task timing experiment and model-based scores limit evidence for product-wide reliability. VL should reuse independent checking, explicit dependency interfaces, local invalidation, and frozen proof artifacts; it should not claim that a passing gate establishes requirement adequacy.
+The paper proves the final control theorem only under its stated assumptions and reports one numerical illustration; it does not prove the correctness of DeepSeek, Claude, Codex, the memory store, or route-selection heuristics.
 
 ## techniques for the catalog
 
-- solver–evaluator separation — generate proof candidates with one model and check premises, calculations, and logic with an independent evaluator
 - research-value gating — score importance, originality, feasibility, and coherence and revise failed proposals against explicit criteria
 - certificate-bound proof DAG — execute verified dependency nodes topologically and bind certificates to exact versions
 - interface-sensitive repair — revoke only changed nodes and descendants, preserve unchanged certified work, and switch to backup proof routes
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

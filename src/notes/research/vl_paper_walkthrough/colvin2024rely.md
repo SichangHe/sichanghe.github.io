@@ -82,14 +82,8 @@ what shows it works and limits
 
 Theorem 5 establishes Arm trace equivalence modulo fences and release constraints between acquire and its sequential/parallel form, and Theorem 7 concludes the CLH lock works under Arm (sections 5.2 and 5.5, pp. 15–17). The authors state that the reasoning applies to RISC-V and x86-TSO as well, but the formal theorem shown is for Arm and relies on the cited memory-model interpretation (section 5.5, p. 17). Inference: porting the result to Rust’s target architectures requires rechecking the exact atomic implementation and compiler mappings.
 
-## what VL should retain and threat assessment
-
-Inference: abstract lock contracts, coupling invariants, compositional thread proofs, and a separate weak-memory analysis are established techniques here, so using them alone would not distinguish VL. For agent-written verified Rust, a possible transfer is to specify the abstract queue and interference contract before proving pointer and atomic code, then justify each target’s ordering. The paper reports Isabelle/HOL proofs and says “theory files available on request” (section 7, p. 18); it supplies no Verus/Rust implementation or automated proof procedure for arbitrary locks. Inference: it is relevant prior work for synchronization proof design; a direct product comparison cannot be established from this paper alone.
-
 ## techniques for the catalog
 
 - rely/guarantee composition: specify environment interference and thread guarantees, then compose individual proofs under cross-thread rely conditions
 - coupling-invariant lock proof: relate concrete CLH nodes and abstract queue state with a persistent invariant and per-operation contracts
 - weak-memory reorder analysis: transform reorderable instructions into parallel composition and insert fences only where invariants require order
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The reserved and η auxiliary variables are only modified at this key line of release, which straightforwardly ensures that reserved remains injective, and that η is not reserved."): checked the whole paper, quotations, theorem and equation references, page numbers, assumptions, and technique steps; corrected incomplete quotations, a page reference, the weak-memory transformation, the role of prev, and termination claims, and marked proposed adaptations and VL conclusions as inferences; did not inspect or rerun Isabelle theory files, inspect deployed seL4 code, or validate a Verus/Rust translation.

@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `silva2025inferring`, [paper](https://arxiv.org/abs/2511.00125)
 
-Audit: audited 2026-10-13 against the paper; checked every number and fraction in Tables 1-8 and Table 5 overlaps, the cost arithmetic, the percentages, the page and section references, the prompts, the removal procedure, the failure counts, the quotations and the Verus forms; changed 3 slips: the worked example misplaced the condition inside its own by block, at most 4 positions for at most 4 generated assertions, and the insertion script said to add only assert statements, which the paper does not state.
-
 source: Álvaro Silva, Alexandra Mendes, Ruben Martins (INESC TEC / University of Porto; Carnegie Mellon), arXiv:2511.00125v1, 31 Oct 2025, 21 pages, no appendix. The tool is DAISY (Dafny Assertion Inference SYstem). It builds on Laurel (Mugnier et al., the paper's reference 25). Section and page references below were located in the PDF text; the printed page number equals the PDF page.
 
 Earlier coverage in the notes: research/distributed_verification_review_b/deep_12_second_pass_intent_eval.md has one section on this paper. It records the inputs (verified DafnyBench programs with helper assertions removed, contracts kept), the default of at most two insertion sites with ten candidates each, the hybrid row of Table 3, the dataset sizes 241, 235 and 30, the combined multiple-assertion figure 84/265, and the point that only removals that make verification fail are kept. It has no procedure for any technique, no error-to-position table, no retrieval formula, no position-validity metric, no per-type or failure analysis, and no Verus form. Those are what follows.

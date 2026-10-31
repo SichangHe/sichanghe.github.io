@@ -73,8 +73,6 @@ The authors find that iLLM-synth approaches cvc5 but performs worse than stand-a
 
 Verification uses Z3 4.8.12 (64-bit); cvc5 1.1.0 is the baseline. The standalone LLM and pCFG experiments use GPT-3.5-turbo-16k at temperature 1.0, while iLLM-synth uses GPT-3.5-turbo, at temperature 1 for the probabilistic search and 0 for A* (Section 7, pp. 15–16). The authors warn that publicly available problems might have appeared in training data, GPT-3.5 responses may not be reproducible, the model may change or be deprecated, benchmarks may not represent problems in the wild, and hyperparameters were not tuned (Section 8, p. 18).
 
-Inference: the threat to agent-written verified Rust is search bias. A plausible but wrong proof template can dominate weights and waste enumeration, while an omitted production can hide the correct proof. Verus’s acceptance check limits unsoundness, but cost and timeout can still leave an unproved function. Inference: VL should reuse the paper’s verifier-in-the-loop design, weighted candidates, and explicit counterexamples, then measure Rust-specific proof completion and timeouts. VL should not redo generic SyGuS baselines unless it needs a controlled comparison.
-
 ## techniques for the catalog
 
 - prompt library: iterate structured prompts, intermediate languages, and format checks for direct formal synthesis
@@ -83,4 +81,3 @@ Inference: the threat to agent-written verified Rust is search bias. A plausible
 - weighted A* synthesis: search grammar derivations by negative log probability with a completion heuristic
 - inline LLM oracle: query an LLM during enumeration with partial programs and counterexamples
 - helper-function grammar updates: add well-typed LLM helpers as productions and update rule weights
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The disadvantage of the method described in the preceding section is that the language model cannot benefit from any additional information that the enumerator learns during enumeration, as all prompting happens prior to starting the enumerative synthesis."): checked all quotations, numbers, section and page references, technique steps, and limitations after reading the full paper; corrected the paper link, depth-limit behavior, integrated prompts, grammar updates, final verification, and attribution of syntactic feedback, and marked the probability-formula inconsistency as an inference; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

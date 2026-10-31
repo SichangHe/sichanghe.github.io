@@ -46,14 +46,6 @@ Steps: choose the theorem's objective, gradient, and step assumptions; supply pr
 
 Table 1 reports 8/12/8 VCs for the general/PL/quadratic variants, with 6/9/4 closed directly (75%/75%/50%), and 1,085 lines overall (page 14). Inference: a Verus version would need formal objective and gradient laws plus reusable descent and convergence lemmas.
 
-## evidence, trust, and relevance to vl
-
-“Across the seven VCG invocations in Table 1, 43 of 62 obligations close directly, an aggregate rate of 69%.” (section 7, page 14). Direct automation counts direct prover calls or one-line simplification, excluding structured Isar arguments even when intermediate steps are automated. LOC excludes comments, blank lines, and `text`, `section`, and `subsection` commands (section 7, page 14). These measurements assume library dependencies are available.
-
-Section 8 says, “The execute command only performs arbitrary precision operations.” and discusses stability and rounding-error support as future work (page 15). However, the conclusion also says, “The accompanying Isabelle theories now also contain floating-point variants and Refinement Framework counterparts, which strengthens the evidence that the approach is not limited to idealised real-arithmetic models.” (section 9, page 16). Inference: the paper's displayed contracts and reported VCG counts do not specify a rounding-error guarantee for those floating-point variants; the study should not imply either comprehensive floating-point verification or the absence of all floating-point work.
-
-Inference: for VL, the transferable technique is to package mathematical lemmas and ghost parameters so that a small imperative loop exposes the convergence proof. The numerical assumptions must remain explicit when adapting these examples to verified Rust.
-
 ## techniques for the catalog
 
 - executable imperative Hoare model — execute rational instances, state total correctness, and discharge VCs from invariants and variants
@@ -61,5 +53,3 @@ Inference: for VL, the transferable technique is to package mathematical lemmas 
 - contraction fixed-point proof — use ghost contraction data, geometric decay, and calculus lemmas
 - perceptron margin proof — combine margin growth and norm bounds to derive an update limit
 - gradient-descent regimes — reuse one loop with smoothness, PL, or quadratic assumptions and matching convergence lemmas
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The separation of the programs enables us to carry only the necessary invariants from the inner loop to the outer one."): checked all paper text, study quotations, numerical counts, references, assumptions, and technique steps; corrected page references, gradient-descent VC counts, bisection early-exit interpretation, perceptron conditions, and floating-point scope; marked Verus adaptations and other conclusions as Inference; did not inspect or run the accompanying Isabelle theories or verify Verus adaptations.

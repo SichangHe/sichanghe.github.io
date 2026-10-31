@@ -72,12 +72,6 @@ Verus form. Inference: each invariant becomes a state-machine invariant or a reu
 
 Evidence and measurements. The correctness theorem is a deductive proof over the protocol model; no bounded number of clients, transactions, or executions is used. The implementation evaluation uses about 12 kLoC of Java per protocol, 32 threads per client, one million keys, 90% reads, Zipf skew 0.8, eight servers and eight clients, and five 60-second trials (Section 5, p. 57). Eiger-PORT+ reports up to 1.8× throughput over Eiger-PORT and 2.5× over Eiger, when scaling clients and servers; its latency is similar to Eiger-PORT (Section 5, pp. 57–58). The paper states, “Eiger-PORT+ also scales well with an increasing number of clients (Figure 6b) and servers (Figure 6c), with up to 1.8x (resp. 2.5x) throughput improvement over Eiger-PORT (resp. Eiger).” (Section 5, p. 58) Inference: these measured speedups depend on the evaluated workloads and deployments.
 
-## what is proved, trusted, and relevant to VL
-
-Proved: Eiger-PORT+'s mapped reachable states are included in the abstract TCCv model's reachable states. The restricted protocol model refines that abstract model, and reduction proves equality of the restricted and unrestricted protocols' reachable states (Sections 4.2–4.4, pp. 54–56). Measured: the separate Java implementation's throughput and latency under the stated CloudLab workload. Inference: the assurance depends on Isabelle/HOL and the abstract isolation specification; this protocol-model proof does not establish the correctness of the Java implementation, its network or storage components, hardware, or its correspondence to the model. The paper itself says implementation verification and a connection to the protocol proof are future work (Conclusion, p. 59).
-
-The authors distinguish their mechanized proof from bounded model checking, pen-and-paper proofs of COPS and Clock-SI, and mechanized proofs of textbook protocols such as two-phase locking (Section 6, pp. 58–59). Inference: VL should reuse the proof architecture when an agent writes concurrent Rust: define a small abstract state machine, maintain ghost history, reduce inconvenient executions, and prove transition correspondence. Inference: the product threat is high for claims about database isolation if VL verifies only an abstract model; it is lower for a Rust protocol whose implementation, storage, and message layer are separately connected by refinement proofs.
-
 ## techniques for the catalog
 
 Inference: the following are reusable techniques from this proof.
@@ -87,5 +81,3 @@ Inference: the following are reusable techniques from this proof.
 - reduction by commutation: reorder causally independent events to eliminate inverted commits before refinement
 - refinement obligations: prove guard strengthening and update correspondence under explicit state invariants
 - timestamp and view invariants: maintain causal closure, session guarantees, sorted commit order, and monotonic safe-time inequalities
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To address this problem, we introduce an extra proof step to reorder the inverted commits before the refinement."): checked all quotations, numbers, section/page references, technique steps, and proof scope; corrected page references, timestamp and history-variable descriptions, reachable-state versus refinement wording, and inference labels; did not check the artifacts, Isabelle proofs, Java implementation, or proposed Verus encodings independently.

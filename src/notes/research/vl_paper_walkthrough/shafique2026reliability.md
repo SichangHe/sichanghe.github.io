@@ -35,8 +35,6 @@ Use this to prevent an implementation agent from making architectural choices wh
 
 The paper states, “We fix the design and implementation plan before writing any code so that the agent resolves the program structure and any gaps in the specification in advance.” (Section 2.3.2, p. 8.)
 
-Inference: for VL, freeze a Rust module plan and a Verus proof-obligation list before implementation. Record unresolved ownership, arithmetic, and state-transition decisions and require human resolution. In Verus, the resulting plan can identify where `requires`, `ensures`, `assert`, `assert forall`, and loop invariants will be needed; the paper does not prescribe these constructs.
-
 Evidence: the paper reports experience across ten utilities, but gives no count of design-review findings or critic iterations. The workflow’s claim is procedural rather than a quantified causal comparison.
 
 ## technique 3: implement one bounded requirement at a time with execution feedback
@@ -61,8 +59,6 @@ Stage 4 steps are: review source, build and execute selected inputs, compare beh
 
 Stage 5 starts only after Stage 4. The fresh agent inspects memory safety, resource management, unchecked inputs and return values, and exploitable vulnerabilities, using compiler diagnostics, static analyzers, sanitizers, GDB, or Valgrind where appropriate (Section 2.3.5, p. 10). The workflow prohibits fuzzing in this stage so independent fuzz evaluation remains unbiased (Section 2.3.5, p. 10).
 
-Inference: a VL version should have a specification audit that checks whether the Verus contracts encode the user’s requirements, followed by an independent proof audit that checks the verifier invocation and trusted boundaries. Verus proving a wrong contract is analogous to a conformance audit that checks the wrong specification; it does not establish intended behavior.
-
 ## technique 5: classic black-box fuzzing with environmental isolation
 Use this for broad, grammar-free input exploration and to find crashes or hangs. The paper generates eight random-input sets across four sizes from below 1 KB to 100 MB, totaling 4,280 cases and about 12 GB of data (Section 5.1, p. 16). Inputs include arbitrary bytes, printable characters, NULL bytes, unstructured streams, line-oriented data, standard input, files, pseudo-terminals, and randomly selected command-line options (Section 5.1, p. 16).
 
@@ -83,16 +79,8 @@ Table 2 reports 24 unique failures across both implementations and ten utilities
 
 Inference: this complements Verus by exploring environmental, parser, and resource behaviors that a functional proof may abstract away. It cannot prove absence of bugs. Verus can express loop termination and bounded-resource assumptions where modeled, but external OS behavior and the fuzz harness remain trusted.
 
-## what is proved, measured, and trusted; threat to VL
-The study measured crashes, hangs, and root causes under two fuzz methods. It did not prove memory safety, semantic equivalence to the Unix utilities, or absence of untested failures. The human repository versions are a practical baseline, not a formal specification. Fuzzing, Docker isolation, manual triage, compiler instrumentation, and the agent workflow are trusted for the reported measurements.
-
-Inference: the threat to an agent-written verified-Rust product is high for requirements omissions and nontermination, medium for memory/resource interactions outside the model, and lower for the exact properties Verus proves under explicit preconditions. The paper’s observation that AI code had fewer memory failures but more hangs is a warning that proving local functional properties does not automatically establish termination or resource bounds.
-
-The paper already provides checklist/oracle synthesis, staged design and coding, independent audits, classic fuzzing, AFL++ mutation, root-cause deduplication, and prompt-based sustainability maintenance. VL should not redo these generic workflow components; it should adapt the checklist to Verus contracts, make `verus` success a required acceptance condition, and fuzz the compiled verified artifact.
-
 ## techniques for the catalog
 - specification artifacts: convert documentation into a feature checklist and specification-derived test oracle before coding
 - staged agent workflow: freeze architecture, resolve ambiguities, implement bounded checklist items with execution feedback, then audit independently
 - black-box fuzzing: generate varied byte and option inputs in isolated containers and manually classify crashes and hangs
 - coverage-guided fuzzing: mutate seeded inputs with AFL++, replay and reduce reports, and deduplicate by root cause
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This suggests that claims produced by an agent should be treated as hypotheses to verify, rather than as the truth."): read the whole paper text and checked every quotation, the 24/19/5 and 17/7 failure counts against Table 2 and Section 6, the input-size, 4,280-case and 12 GB figures, the AFL++ 5.01a and afl-clang-fast details, the stage descriptions, and section and page references; changed the paper link (the old arXiv id 2506.11022 is a cited prior paper; the paper text gives arxiv.org/abs/2609.18298), corrected page references for Section 2.1 (p. 6), Section 6 (p. 19), the Section 5.1 hang quotation (p. 17), Sections 5.2–5.3 (pp. 17–19) and Section 4.3, reworded the Section 4.3 evidence sentence, and marked one quotation as truncated; did not check the Verus mappings (marked Inference, not from the paper), the cited external works, or the PDF figures and layout beyond the text extraction.

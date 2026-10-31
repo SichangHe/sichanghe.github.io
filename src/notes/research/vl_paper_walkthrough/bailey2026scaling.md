@@ -21,8 +21,6 @@ Use this to generate proof-training tasks without allowing a generator to maximi
 
 The Guide rubric rewards “(1) related to the unsolved problem, and (2) were formulated clearly by having a simple conclusion and no redundant premises.” (Section 3.2) Without the Guide, synthetic conclusions become long disjunctions. Section 4.4 states: “At 4M generations, when the No Guide Conjecturer begins producing substantially more solvable problems, it collapses to producing problems with long and complex conclusions, often involving many disjunctions (OR) of clauses.” The disjunctive fraction later saturates near 100%, and average conclusion length increases to nearly ten times that of D3k (Section 4.4, Figure 2).
 
-Inference: For VL, replace Lean's binary verifier with Verus on generated Rust proof tasks. Keep the target specification fixed, generate stepping-stone lemmas or small obligations, run Verus on every candidate, and use a frozen quality judge to penalize irrelevant, redundant, or brittle obligations. The Guide score remains heuristic; only Verus acceptance should determine correctness.
-
 ## technique 2: entropy-safe Solver objective
 
 Use a Solver objective that leaves a spread of intermediate solve rates. The authors compare CISPO, Expert Iteration, and REINFORCE1/2, selecting REINFORCE1/2 by cumulative solve rate. CISPO rapidly collapses Solver entropy, concentrating synthetic solve rates at 0 or 1; both receive zero Conjecturer reward, starving learning (Section 4.5, Figure 7). With REINFORCE1/2 in SGS, entropy remains stable and the Conjecturer learns (Figure 7); standalone REINFORCE1/2 still loses entropy (Appendix F.1, Figure 11).
@@ -41,8 +39,6 @@ SGS has a fitted asymptotic solve rate of 67.1%, versus 60.3% for the REINFORCE1
 
 Inference: Lean verification checks candidate proofs, while conclusions about task quality and long-run performance depend on the Guide, prompts, RL implementation, dataset filtering, and fitted curves. The Guide is frozen; the authors expect it may need to learn for harder problems (Section 5). Formal math simplifies self-play because the Conjecturer emits a statement rather than a whole environment, reward function, and simulator; transfer to systems code is therefore an inference. The paper says: “Our experiments focus on scaling along the compute axis but hold model size fixed.” (Section 5)
 
-Inference: The threat to agent-written verified Rust is moderate. SGS is a useful data-generation and curriculum controller, but its central quality signal is an imperfect model judgment. VL should make Verus acceptance a prerequisite check, keep generated obligations tied to an immutable target, measure distribution collapse, and compare fitted curves with held-out, long-run proof outcomes. What VL should not redo is the basic observation that generator-only solve-rate rewards degenerate into syntactically complex tasks; this paper already ablates it on 3,323 Lean targets.
-
 ## techniques for the catalog
 
 - guide-scored self-play — generate tasks for unsolved targets and multiply intermediate-difficulty reward by a relevance/clarity Guide score
@@ -50,4 +46,3 @@ Inference: The threat to agent-written verified Rust is moderate. SGS is a usefu
 - entropy-safe Solver training — choose an objective such as REINFORCE1/2 that preserves intermediate solve rates and avoids reward starvation
 - collapse diagnostics — monitor disjunction frequency, conclusion length, entropy, and solve-rate histograms to detect generator or Solver collapse
 - scaling-law audit — fit cumulative solve-rate curves, stress-test fits by data removal/dropout, and treat asymptotes as estimates rather than proof
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This starves the Conjecturer of any training signal, as problems with 0 or 1 solve rate get 0 reward."): checked the complete paper text, quotations, numbers, section and figure references, algorithm steps, and arXiv link; corrected the implemented Guide score range and rubric, Solver update scope, collapse timing, entropy claim, dataset construction, Expert Iteration exception, verification error bound, fitted-asymptote uncertainty, and 6.8-point difference; did not reproduce experiments, inspect code or external links, or validate the Verus inferences.

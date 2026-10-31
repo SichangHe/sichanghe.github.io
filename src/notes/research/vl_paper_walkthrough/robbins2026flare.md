@@ -70,14 +70,9 @@ Verus form: Inference: build a Verus benchmark with valid and invalid contract-p
 
 evidence and what remains trusted: Table 2 gives five transformation categories with 14 total pairs: category pair counts are 2, 3, 2, 2, and 5. FLARE and FLARE-NL each score 100% in every category and 100% worst-case accuracy; execution and EquivaMap score 0% on several categories. However, FLARE can produce false negatives when ATP cannot find a proof, and the paper reports other models doing so; DeepSeek V4 Pro reaches 79.6% accuracy in additional experiments (Appendix G, p. 33). A failed certificate does not prove invalidity, and a successful one proves only the formalized statement. The benchmark is drawn from academic formulations, so general product risk remains an inference.
 
-## implications for VL
-
-Inference: FLARE's reusable pattern is certificate-per-output: every generated transformation is accepted only after an independent verifier checks an explicit universal contract. In VL, the corresponding boundary is a successful Verus run over the exact Rust and specification, with assumptions and external bodies recorded. The paper already addresses what VL should not redo: ad hoc instance testing and implicit assumptions cannot establish universal behavior. Inference: VL should add deterministic or reviewed translation from source requirements to Verus specifications, because the paper's own guarantee is conditional on faithful formalization. The reported seven invalid or assumption-missing prior “equivalent” formulations (Introduction, p. 2) show that generated code can look valid while omitting necessary premises.
-
 ## techniques for the catalog
 
 - constructive reformulation contracts — specify universal forward/backward maps and objective preservation before proving equivalence
 - certificate-producing autoformalization — have an LLM write Lean definitions and proofs, then accept only compiled no-`sorry`, no-new-axiom certificates
 - explicit-assumption screening — use a structured LLM proxy with definitions and assumptions, followed by formal verification
 - formulation-level benchmark auditing — test unseen-instance failures with TP/FP/TN/FN, costs, and ATP-failure analysis
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

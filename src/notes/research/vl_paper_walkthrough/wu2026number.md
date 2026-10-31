@@ -22,8 +22,6 @@ Use a state representation that makes incompleteness and contradiction explicit 
 
 The final refusal branch matters: when elicitation cannot converge, the system says what it can answer instead of guessing (section 3.3, p. 7). The paper calls this structural abstention because unanswerable requests are unrepresentable; statistical confidence is unnecessary for that refusal (section 3.6, p. 8).
 
-Inference: in VL, an analogous partial state can contain a candidate operation, typed arguments, preconditions, and missing proof facts. A verifier-facing kernel should return either a fully elaborated obligation or an explicit refusal; an LLM should never fill an unrepresented obligation by intuition.
-
 ## technique: five design decisions for a bounded kernel
 Before implementation, answer five questions (section 4.1, pp. 8–9):
 
@@ -52,7 +50,7 @@ Inference: in verified Rust, analogous checks should reject incompatible predica
 ## evidence, trust, and limits
 The case study is a bilingual conversational analytics system operated for roughly two years (section 5, p. 10). The paper reports no controlled user study: “The central claim of this report has not been tested directly.” (section 13, p. 20) It also states that coverage is bounded by manually authored templates, elicitation costs turns, and personalization has a cold start (section 13, p. 20). The deployed implementation is therefore an existence proof and design case, not a measured accuracy or formal-soundness result.
 
-Trust is moved to template authors, entity dictionaries, compiler code, the governed query engine, and the user’s confirmation; it is not removed (section 3.4, p. 7). Inference: for VL, this lowers the risk of a model fabricating a verified result only if the deterministic kernel itself is verified. A bad specification or incorrect lemma can still return a confidently wrong value; structural abstention controls generation, not specification correctness. The strongest reusable pattern is a small trusted kernel with explicit refusal and an auditable boundary around the generative shell.
+Trust is moved to template authors, entity dictionaries, compiler code, the governed query engine, and the user’s confirmation; it is not removed (section 3.4, p. 7).
 
 ## techniques for the catalog
 - trusted-kernel invariant — let generative components choose or phrase questions but never compute returned values
@@ -60,4 +58,3 @@ Trust is moved to template authors, entity dictionaries, compiler code, the gove
 - deterministic intermediate compilation — map confirmed requests through a typed tree to a fixed query/function
 - structural abstention — refuse requests outside the enumerable answer space instead of estimating confidence
 - confirmation perimeter — require the user to read and assent to the exact grounded question before execution
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -38,11 +38,7 @@ The theorem is a mathematical argument about the defined MBA expressions. The ex
 
 Section 8 explicitly limits the result: “First, the simplification result from MBA-Blast may not be the simplest form.” (p. 1714). Repeated substitutions can also require dependency analysis beyond the implementation's handling of common subexpressions. Combinations with other encodings can fall outside the paper's MBA definition and are not directly resolved (pp. 1714–1715). Prior work had already verified a set of MBA obfuscation rules in Coq (Section 2.3, p. 1704).
 
-Inference: for VL, the transferable technique is expression normalization with explicit semantic preservation. Its applicability depends on whether a target expression fits the supported form and dependencies. The paper does not establish whole-program properties for VL.
-
 ## techniques for the catalog
 - truth-table identity synthesis: solve a linear system over bitwise truth-table columns to construct MBA identities
 - one-bit reduction: use the paper's two-way correspondence to investigate identities through one-bit assignments
 - recursive MBA simplification: substitute table rules, reduce arithmetic terms, and retain simpler subexpressions
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Because the MBA samples in Dataset 2 are diverse and well-labeled, this experiment reveals more detailed findings."): checked the entire paper, study claims, quotations, numbers, section and printed-page references, technique steps, and publisher link; corrected page references, restricted the theorem's scope, expanded measured results and limitations, and removed unsupported Verus details and product-risk judgments; did not rerun experiments, inspect implementation code, or independently verify the mathematical proof.

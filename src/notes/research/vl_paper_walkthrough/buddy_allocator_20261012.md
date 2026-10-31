@@ -1,8 +1,5 @@
 # UtManager: a verified Rust buddy physical memory allocator
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
-
-Shaojie Wang, Yuting Wang, Qianying Zhang, Weituo Dai, Tian'ao Xie, Shijun Zhao and Yongwang Zhao, *Formal Verification of a Rust-Based Buddy Physical Memory Allocator*, [DOI 10.1007/978-3-032-30693-7_5](https://doi.org/10.1007/978-3-032-30693-7_5). [Saved PDF](/ssd1/sichangheagent/vlpw/buddy_allocator.pdf), [text](/ssd1/sichangheagent/vlpw/buddy_allocator.txt). The collection labels it TASE 2026; the PDF title-page imprint says “TASE 2026, LNCS 16697, pp. 73–80, 2027.” Preserve that distinction rather than silently changing the publication year.
 
 The useful result is a small concrete allocator verification with a real defect found during proof construction. The specification described in the paper emphasizes metadata consistency; a claim about all allocator behavior needs examination of the artifact's exact contracts.
 
@@ -40,18 +37,6 @@ The zero-runtime-overhead claim follows from erasing ghost annotations: “the R
 
 The prose does not explicitly state a theorem over a set of allocated address intervals proving global non-overlap, completeness of allocation failure, preservation of clients' payloads, or lowest-address selection across all eligible levels. It also does not analyze concurrent access. These remain artifact questions; do not promote the stated metadata invariant into those stronger properties without checking the contracts. Figure 1 contains the allocation specification as an image; a complete code audit requires the artifact, not just text extraction.
 
-## Prior work and VL threat
-
-§5 distinguishes implementation verification from abstract buddy/TLSF models: “but stops short of verifying concrete implementations.” Its references point to the 2019 verified buddy model and code verification for L4 and Zephyr. The paper's contribution is a Rust/Verus bitmap allocator case study, not a new buddy algorithm or proof logic.
-
-Inference: this is prior evidence that manually engineered Verus proofs can cover concrete memory-management code and find control-flow defects. It supplies a useful candidate for VL specification/proof-generation exercises if the code and trusted boundaries can be obtained. It does not establish autonomous agents doing this work. A competing service can use similar libraries and examples; VL's differentiator would need to be intent recovery, automation, proof quality and auditable evidence rather than merely producing a verified allocator.
-
-First artifact question: does the successful-allocation contract prove disjointness from every live allocation, or only that selected metadata changes correctly?
-
-## Evidence and VL context
-
-Page numbers below are the printed LNCS pages (73–80). Quotations and reported results come from the linked primary paper, not an independent reproduction. Recommendations and competitive assessments are our inferences. VL's current [vision](/ssd1/sichangheagent/VeruLaw/docs/vision.md) says: “The product direction is autonomous Verus project generation.” Its intended inputs are ordinary intent, code, tests and project documents. This study does not establish that VL currently achieves that goal.
-
 ## Validation
 
 Material quotations were checked against the PDF text. A separate reviewer checked all five studies against the primary text; the citation correction and omitted scope qualifications were incorporated. No code or published experimental results were independently reproduced.
@@ -67,6 +52,3 @@ The answer found a real specification wording conflict. Figure 1's displayed all
 The answer's stronger specification-completeness concerns are appropriately qualified. The paper explicitly says that the verified result covers “bitmap manipulation, free-block set maintenance, invariant preservation, and memory safety” (§5, p. 78), and its published invariant synchronizes those metadata structures. The PDF does not show a full theorem for global non-overlap, physical-address mapping, allocation completeness, concurrent access, or caller ownership. The countermodel and always-fail discussion in the answer demonstrate that the displayed predicates and conditional postcondition alone do not establish those stronger properties; unpublished predicates or helper contracts could still supply them.
 
 The defect and trusted-base claims are source-supported. The paper says verification uncovered “a previously unknown defect in the original implementation: a control-flow error that bypassed metadata updates during specific allocation paths” (§4, p. 77), and it states, “we assume that the Verus verifier, the underlying Z3 SMT solver, and the Rust compiler are correct” (§4, p. 78). The answer correctly notes that the paper gives no patch or reproducible failing path, so the defect report is evidence of one discovery, not a measured detection rate.
-
-Finally, the answer's threat assessment is a judgment bounded by the study's evidence. UtManager is strong direct prior art for concrete Rust allocator verification, bitwise and loop proofs, and metadata invariants. The paper reports no coding agent, autonomous specification synthesis, repository-scale maintenance, or proof-repair benchmark. VL's differentiating opportunity therefore remains automation, specification adequacy, and auditable composition across callers and modules.
-Audited 2026-10-12 against the paper: checked all numbers (1,923, 349, about 2,300, 2 person-months, 4.3 s, 4096, 0b111 and 0b000, ratio 5.5), page references, quotations, Invariants 1 and 2, the Figure 1 image, and the TCB and defect claims; changed one invented proof-staging sentence, the page-number convention (printed pages), a stray Vosti reference from another paper, and the res = 0 claim, which is an extraction artifact of the not-equals symbol; could not check the separate-reviewer claim or the recovered ChatGPT diagnostic file.

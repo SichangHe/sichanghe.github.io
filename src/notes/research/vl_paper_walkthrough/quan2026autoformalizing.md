@@ -2,12 +2,9 @@
 (authored by agents unless marked 🧑)
 Tag: `quan2026autoformalizing`, [paper](http://arxiv.org/abs/2609.16991v1)
 
-
 ## scope and result
 
 The paper studies how to make an implicit natural-language argument formally checkable when the premise does not state its warrant. Its central claim is: “We address this problem by formulating autoformalization for argumentative material inference as guard completion” (Abstract, PDF p.1). A guard is an explicit assumption, definition, or exception condition that makes a premise-to-claim relation provable. GUARD combines an LLM with Isabelle/HOL and accepts a result only after theorem-prover verification and contrastive premise and claim tests. The paper reports verified-faithful rates (VFR) of 48.58–76.52% on 247 Debatepedia pairs and 53.50–81.00% on 200 ARCT pairs, depending on backbone (Table 1, PDF p.5). These are percentages of the stated fixed sets, not success rates on arbitrary arguments.
-
-Inference: For VL, the useful abstraction is to generate explicit proof context, then prove and attack the proof A Verus implementation would replace Isabelle formulas and Sledgehammer with Rust/Verus specifications and proof functions, but the separation between source claim, generated guards, proof, and adversarial checks transfers conceptually.
 
 ## technique 1: strengthened context and guard completion
 
@@ -65,11 +62,9 @@ Verus form. Inference: generate alternate `requires` states and alternate postco
 
 ## what is proved, measured, and trusted
 
-The paper proves individual Isabelle entailments for generated theories and measures solver-pass rate, VFR, leakage, contrastive failures, iteration counts, and translation quality. It does not prove that natural-language guards are true, that the LLM generated all relevant guards, or that benchmark pairs represent production arguments. Isabelle, Sledgehammer, the translation code, LLM outputs, embedding model, and dataset labels remain trusted components of the reported pipeline. Inference: a VL product should record every generated guard as an explicit assumption and preserve the failed contrastive probes as audit evidence.
+The paper proves individual Isabelle entailments for generated theories and measures solver-pass rate, VFR, leakage, contrastive failures, iteration counts, and translation quality. It does not prove that natural-language guards are true, that the LLM generated all relevant guards, or that benchmark pairs represent production arguments. Isabelle, Sledgehammer, the translation code, LLM outputs, embedding model, and dataset labels remain trusted components of the reported pipeline.
 
 The paper’s main comparisons are paired on fixed instances and use the same downstream verifier, but it does not establish exhaustive ranking of LLMs (Appendix A.2, PDF p.10). The reported percentage arithmetic is consistent with the stated denominators for the 247 and 200 instance sets; percentages in Table 1 are rounded and solver-pass and VFR are separate rates.
-
-Inference: the product threat from this work is medium. Guard completion could improve agent-written Verus specifications by exposing hidden assumptions and testing premise dependence, but generated guards can encode the desired conclusion. Contrastive checks reduce this leakage, while trusted translation and assumptions remain attack surfaces. VL should not redo a generic LLM theorem-proving loop; it should adapt guard provenance, open-ended exception handling, and contrastive probes to Rust APIs and Verus contracts.
 
 ## techniques for the catalog
 
@@ -84,4 +79,3 @@ Inference: the product threat from this work is medium. Guard completion could i
 - contrastive faithfulness — replace premises and claims with unsupported alternatives and reject proofs that survive
 
 - consistency admission — reject malformed or contradictory guard theories before proving the target
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

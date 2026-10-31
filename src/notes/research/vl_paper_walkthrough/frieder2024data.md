@@ -6,8 +6,6 @@ Tag: `frieder2024data`, [paper](http://arxiv.org/abs/2412.15184v2)
 
 The paper studies what data and evaluation must contain if a language model is to become a useful mathematical copilot rather than a system that emits plausible final answers. Its central diagnosis is that common datasets map a theorem statement directly to a final proof and therefore omit proof discovery, tool interaction, error recovery, and mathematical workflow. The abstract states: “In particular, it is necessary for benchmarks to move beyond the existing result-based datasets that map theorem statements directly to proofs, and instead focus on datasets that translate the richer facets of mathematical research practice into data that LLMs can learn from.” (Abstract, p. 1.) The authors explicitly include formal mathematics and interactive theorem provers (ITPs), while warning that a single formal system cannot cover all research activity.
 
-Inference: for VeruLaw (VL), retain the complete interaction trace around a verified Rust artifact, and test repair, context sensitivity, resource use, and explanation alongside whether the final proof checks. Training only on successful Verus snippets would omit the failures and decisions represented by the paper's proposed process data.
-
 ## technique: represent proving as a mixed-mode tool trajectory
 
 What it is. A mixed-mode datapoint records a short trajectory instead of only an input and final response. The paper gives five components: “(i) natural-language problem context, (ii) intermediate formal objects (expressions, goals, proof states, or formal statements), (iii) tool calls with arguments, (iv) tool outputs (for example, the result of executing code, a CAS simplification, or a proof assistant error message), and (v) a final response that integrates the tool outputs into a mathematically coherent explanation.” (Section 2.0.1, p. 11.) The representation is intended to teach when to call a tool, how to translate between representations, and how to recover from timeouts, type errors, missing imports, and failed searches.
@@ -25,13 +23,13 @@ How to apply it.
 
 Verus form. Inference: represent each trajectory as a record containing the user goal, Verus source revision, verifier invocation, diagnostics, and successive patches. Preserve the original contracts and failed attempts. Replay with a pinned Verus toolchain and retain the verification output and executable build result. These are proposed applications; the paper does not study Verus.
 
-Evidence and limits. The paper does not report a new model trained on this trajectory format. It presents the format as a recommendation: “Tool outputs depend on the toolchain (version, library state, and sometimes randomness).” (Section 2.0.1, p. 11.) Inference: evidence for VL is methodological, not a measured Verus gain; replay assumes that the recorded environment and trace are sufficiently complete.
+Evidence and limits. The paper does not report a new model trained on this trajectory format. It presents the format as a recommendation: “Tool outputs depend on the toolchain (version, library state, and sometimes randomness).” (Section 2.0.1, p. 11.)
 
 ## technique: make formal benchmarks specify the task and environment
 
 What it is. Under “Unclear benchmarking protocols,” the paper recommends specifying the task, input and output, success criterion, automation, resource limits, environment, and metrics. It enumerates five task variants: theorem proving from scratch, tactic prediction, proof repair or hole filling, premise selection, and autoformalization (Section 2, pp. 10–11). It recommends reporting pass@k when multiple attempts are allowed and average time to solution; proof length and tactic counts are optional secondary measures (p. 10).
 
-When to use it. Inference: use this protocol for VL evaluations and product regression claims, recording source files, imported specifications, solver settings, attempt budget, and timeout to make comparisons interpretable.
+When to use it.
 
 How to apply it.
 
@@ -41,9 +39,9 @@ How to apply it.
 4. Pin prover version and library commit, and use a harness that replays proofs in a fixed environment (Section 2, p. 10).
 5. Report time and memory limits, internal prover and search limits, maximum attempts, pass@k when multiple attempts are allowed, and average time to solution. Optionally report proof length or tactic count (Section 2, p. 10).
 
-Verus form. Inference: a VL benchmark should pin the Verus commit, Rust toolchain, imported crate revisions, solver version and flags, and the exact verifier command. A repair task should require a patch that compiles and verifies with the original contracts and should explicitly prohibit bypassing the required verification. Report pass@k over candidate patches, verification time, and solver resource settings.
+Verus form.
 
-Evidence and limits. The recommendations are not a controlled experiment. The paper gives a concrete reason for the protocol: “Without these details, two papers can report the same score while solving different tasks under different constraints.” (Section 2, p. 10.) Inference: VL comparisons that omit these fields may confound agent quality with differences in tasks or evaluation settings.
+Evidence and limits. The recommendations are not a controlled experiment. The paper gives a concrete reason for the protocol: “Without these details, two papers can report the same score while solving different tasks under different constraints.” (Section 2, p. 10.)
 
 ## technique: diagnose failures with structured labels and checker feedback
 
@@ -51,7 +49,7 @@ What it is. Binary correct/incorrect scoring hides why a model failed. The paper
 
 How to apply it. The paper recommends multi-aspect feedback and, as a middle ground, deriving ratings from error and warning codes (Section 3.1.2, p. 15). Inference: attach a label to each failed attempt and retain its raw diagnostic; distinguish syntax/type/import failures, unsolved goals, resource exhaustion, and evidence of a false statement.
 
-Verus form. Inference: define a VL error taxonomy covering Rust compilation, Verus elaboration, failed preconditions, failed postconditions, invariant failures, solver timeouts, and specification mismatches. Preserve the verifier message and source location, pair failing patches with subsequent repairs, and evaluate verification separately from whether the specification captures the user's intent.
+Verus form.
 
 Evidence and limits. The reported counts (15 and 11 labels) are dataset descriptions, not accuracy results. The authors say: “We speculate that this feedback may be useful but still limited in its ability to diagnose AI systems.” (Section 3.1.2, p. 15.) Inference: labels can expose failure categories without establishing that an agent understood the underlying algorithm.
 
@@ -63,7 +61,7 @@ How to apply it. Capture compile–diagnose–fix edits, before/after refactorin
 
 Verus form. Inference: apply the same corpus shape to Verus functions and proofs. Require refactorings to preserve executable behavior and specifications; record solver time and failed obligations before and after each change to assess maintenance costs alongside verification success.
 
-Evidence and limits. This section is a design proposal, not a measured benchmark. The authors write: “This makes formal proof engineering a promising setting for process-level datasets.” (Section 4.3.1, p. 36.) Inference: a VL maintenance evaluation should include repair sequences alongside final artifacts.
+Evidence and limits. This section is a design proposal, not a measured benchmark. The authors write: “This makes formal proof engineering a promising setting for process-level datasets.” (Section 4.3.1, p. 36.)
 
 ## technique: decompose mathematical work into explicit workflows
 
@@ -71,7 +69,7 @@ What it is. The authors recommend a taxonomy of workflow steps, distinguishing g
 
 When to use it. Inference: use decomposition when a verification task contains repeated subgoals, domain-specific transformations, or exploratory choices, so that intermediate progress can be evaluated.
 
-How to apply it. The paper proposes categorizing workflow steps and turning workflows into tuples, while noting that a complete taxonomy and dataset structure remain future work (Section 4.1, pp. 25–26). It also recommends structured problem analysis for reinforcement learning: “Concretely, this can include a normalized restatement of the problem, the relevant definitions and constraints, a decomposition into subgoals that a solver would aim to establish, and examples of admissible intermediate claims (or failure modes) that an evaluator can recognize.” (p. 26.) Inference: for VL, identify expected intermediate objects, record alternatives and failures, and check intermediate results where possible.
+How to apply it. The paper proposes categorizing workflow steps and turning workflows into tuples, while noting that a complete taxonomy and dataset structure remain future work (Section 4.1, pp. 25–26). It also recommends structured problem analysis for reinforcement learning: “Concretely, this can include a normalized restatement of the problem, the relevant definitions and constraints, a decomposition into subgoals that a solver would aim to establish, and examples of admissible intermediate claims (or failure modes) that an evaluator can recognize.” (p. 26.)
 
 Verus form. Inference: decompose a Rust verification task into a data-structure invariant, helper lemmas, loop invariants, mutation steps, and postconditions. Record dependencies and failed obligations to assess which parts the agent can discharge. The paper does not test this decomposition in Rust or Verus.
 
@@ -79,7 +77,7 @@ Verus form. Inference: decompose a Rust verification task into a data-structure 
 
 What it is. The paper defines the concept: “Broadly speaking, a motivated proof is one that makes clear to the reader where each step comes from.” (Section 4.4, p. 37.) For Cantor’s theorem, it starts with a generic subset `{x ∈ X : P(x)}`, analyzes what is required for it to differ from every `f(y)`, tries `y` as the distinguishing element, and obtains `P(y)` as `y ∉ f(y)` (Section 4.4.1, p. 37). For nilpotent units, it parameterizes an integer-polynomial inverse, compares coefficients, and uses nilpotence to truncate the polynomial (p. 37). Inference: the printed coefficient recurrence omits the minus sign required by its own subsequent alternating coefficients; this study does not reproduce that erroneous equation.
 
-How to apply it. The older-model generation experiment used o1-preview and Llama 3.2-90B on five problems, with a definition and motivated examples from the other four problems, then also with examples and non-examples. If generation failed, the authors prompted once for a correction and identified the unmotivated step (Section 4.4.2, p. 38). Recognition evaluated human and machine proofs individually, with three attempts per proof per problem; the reported table totals are 46/48 true positives and 39/60 true negatives. A separate pairwise task used three valid attempts per motivated/unmotivated pair per problem and reported 80/96 correct (pp. 39–40). These are reported table totals, not estimates of general model accuracy. The authors advise permuting proof order, including in-context examples, and ensuring negative examples also contain superficial features associated with motivated proofs (p. 40). Inference: VL could test whether agents can explain the origin of constructions in an existing proof, using these controls.
+How to apply it. The older-model generation experiment used o1-preview and Llama 3.2-90B on five problems, with a definition and motivated examples from the other four problems, then also with examples and non-examples. If generation failed, the authors prompted once for a correction and identified the unmotivated step (Section 4.4.2, p. 38). Recognition evaluated human and machine proofs individually, with three attempts per proof per problem; the reported table totals are 46/48 true positives and 39/60 true negatives. A separate pairwise task used three valid attempts per motivated/unmotivated pair per problem and reported 80/96 correct (pp. 39–40). These are reported table totals, not estimates of general model accuracy. The authors advise permuting proof order, including in-context examples, and ensuring negative examples also contain superficial features associated with motivated proofs (p. 40).
 
 Verus form. Inference: ask a Verus agent to accompany a checked proof with an explanation of why each invariant or lemma was chosen and how the postconditions follow. Evaluate explanation separately from verification; a successful check alone does not establish that the accompanying narrative explains the construction faithfully.
 
@@ -87,11 +85,7 @@ Evidence and limits. In newer-model generation, GPT-5.2 Pro, DeepSeek Prover-V2,
 
 ## what is proved, measured, and trusted
 
-The paper proves no theorem about LLMs and introduces no new soundness result for Lean, Isabelle, or Verus. It measures small preliminary model-generation and recognition tasks, reports dataset label counts, and gives engineering recommendations. The formal checker is trusted to validate formal artifacts, but the paper notes that formalization does not cover informal conjecture, exploration, proof summaries, or tool choice. Inference: for VL, the trusted base additionally includes Verus, its solver and translation, the Rust compiler, external libraries, and the specification itself. A passing check proves the written contract under the pinned environment; it does not prove that the contract captures product intent.
-
-## what VL should not redo
-
-Inference: VL should adapt the paper's proposed mixed-mode trace schema, benchmark protocol, workflow decomposition, repair/refactoring corpora, and motivated-proof evaluation, then measure their value for Verus-specific contracts, solver behavior, and maintenance. A result-only benchmark would leave the process gap identified by the paper unmeasured.
+The paper proves no theorem about LLMs and introduces no new soundness result for Lean, Isabelle, or Verus. It measures small preliminary model-generation and recognition tasks, reports dataset label counts, and gives engineering recommendations. The formal checker is trusted to validate formal artifacts, but the paper notes that formalization does not cover informal conjecture, exploration, proof summaries, or tool choice.
 
 ## threat to a product of agent-written verified Rust
 
@@ -105,4 +99,3 @@ Inference: the threat is substantial when product claims rely on one-shot pass r
 - repair and refactoring corpora — capture compile–diagnose–fix edits and before/after proof maintenance with lint metadata
 - workflow decomposition — turn a long proof into checked intermediate transformations and explicit subgoals
 - motivated-proof evaluation — require each construction's origin and test pairwise against unmotivated proofs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While creating a complete taxonomy of workflow steps is beyond the scope of this article, we want to examine selected workflows and their steps (both local and global) in order to highlight issues in translating these to data and specific challenges."): checked the entire paper, study, quotations, numerical claims, technique steps, and section/page references; corrected benchmark-protocol sections, label-count and experiment pages, experimental procedures, and unsupported application claims, and marked VL recommendations as Inference; did not reproduce experiments, validate cited external works, or test Rust/Verus proposals.

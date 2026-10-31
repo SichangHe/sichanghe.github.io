@@ -6,8 +6,6 @@ Tag: `nikitin2017chainiac`, [paper](https://www.usenix.org/conference/usenixsecu
 
 CHAINIAC is a decentralized software-update framework. Its verification techniques are collectively signed release approval, verified reproducible builds, authenticated skipchains, and freshness proofs. The abstract states: “Independent witness servers collectively verify conformance of software updates to release policies, build verifiers validate the source-to-binary correspondence, and a tamper-proof release log stores collectively signed updates, thus ensuring that no release is accepted by clients before being widely disclosed and validated.” (§abstract, p.1271). The paper is a system design with an informal security analysis, not a machine-checked proof of the protocol.
 
-Inference: for VL, the useful lesson is a layered evidence pipeline: developers or agents produce code and proof artifacts, independent verifiers check the build and proof, and an append-only log binds the checked artifact to a release. Verus can prove Rust contracts, but CHAINIAC's trust and release protocol still needs cryptographic and operational assumptions.
-
 ## technique: threshold release approval and verified builds
 
 What it is and when to use it. Developers sign a source release with individual keys; a threshold is required. Build verifiers independently reproduce the binary and compare it with the announced binary. The result is a source-to-binary attestation that clients can verify without rebuilding. The paper says: “CHAINIAC’s verified builds are an improvement over reproducible builds, in that they ensure that binaries are not only reproducible in principle, but have indeed been identically reproduced by multiple independent verifiers from the corresponding source release.” (§1, p.1272).
@@ -18,8 +16,6 @@ Steps from §§5.1–5.3 (p.1277).
 3. Combine source and binary hashes in a Merkle tree; developers sign the root, binding all release components (§5.3).
 4. Have the build verifiers compile the source reproducibly and compare the resulting binaries against the announced binaries (§5.3).
 5. After the witnesses check the developer signatures against the policy and the build verifiers validate the binaries, have the cothority collectively sign the release; clients verify that signature and Merkle inclusion proofs (§5.3).
-
-Verus form (inference). A VL release could include the Rust source, Verus proof result, compiler/toolchain identifiers, and a reproducible binary hash. A `proof fn` establishes source-level contracts; an external build-verifier process checks that the exact source and toolchain produce the binary. Verus does not provide Merkle trees, threshold signatures, or reproducible-build enforcement, so these are release-layer components around the proof.
 
 Evidence and assumptions. The threat model requires fewer than the developer threshold `td` compromised, at most `fw = nw − tw` faulty witnesses, `nw ≥ 3fw + 1`, and at least `tv` honest build verifiers with a trustworthy compiler (§3.2, p.1274). The authors explicitly say developers’ review discipline is security-critical but outside scope (§1, p.1272). Inference: a passing Verus proof does not make review or the compiler assumption disappear.
 
@@ -59,8 +55,6 @@ The security analysis is explicitly informal (§1, p.1272; §6, p.1280). It trus
 
 Key retention limits forward links: witnesses retain old signing keys until their forward links are generated, but delete expired keys unconditionally; expiration must leave enough time to create direct forward links (§6, p.1281). Recovery also has a timeliness limitation: “Old clients, whose network connectivity is attacker controlled, could be denied the knowledge of the new configuration, hence remain reliant on the old, compromised cothority configuration.” (§6, p.1280).
 
-Inference: VL should not redo threshold signing, reproducible-build attestation, skipchain logging, or freshness proofs as if they were new. A distinct contribution could connect Verus proof obligations and erased binaries to CHAINIAC's verified-build evidence, then measure whether independent verifiers detect source/proof/binary mismatches.
-
 ## techniques for the catalog
 
 - threshold release approval — require independent developer signatures before a release enters the update system
@@ -68,4 +62,3 @@ Inference: VL should not redo threshold signing, reproducible-build attestation,
 - skipchain history — use hash back-links and signature forward-links for logarithmic authenticated traversal
 - freshness and key-rotation chains — separate root, configuration, release, and time records to support safe evolution
 - aggregate package verification — bind many package heads in a Merkle tree and aggregate skipblock
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Old clients, whose network connectivity is attacker controlled, could be denied the knowledge of the new configuration, hence remain reliant on the old, compromised cothority configuration."): checked all quotations, numbers, section and page references, technique steps, assumptions, and limits; corrected page references, build-validation wording, developer-key rotation, TIME role structure, and append invariants, and added key-retention and recovery limits; did not check external references, prototype code, experiments independently, or proposed Verus applications.

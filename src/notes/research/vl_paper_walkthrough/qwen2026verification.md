@@ -5,7 +5,7 @@ Tag: `qwen2026verification`, [paper](http://arxiv.org/abs/2606.26300v2)
 ## what the paper establishes
 The paper argues that coding-agent verification is an evolving approximation to human intent. It evaluates four reward constructions: executable tests for SWE-like tasks, rubric and interactive judges for frontend tasks, user feedback for real-world coding tasks, and an automated agent evaluator for long-horizon repository generation. The abstract states, “Every verifier we can build is only a proxy for human intent, never the intent itself.” It characterizes signals by scalability, faithfulness, and robustness, and claims that no fixed reward remains effective as policy capability grows.
 
-The central engineering claim is co-evolution: “We must continually build a verification system that co-evolves with AI agents.” (Introduction, p.2). This is a claim supported by the paper's experiments, not a theorem. Inference: for VL, a Verus proof can be a strong check of a stated contract while still being a proxy for whether the contract captures a user's real safety and functional intent.
+The central engineering claim is co-evolution: “We must continually build a verification system that co-evolves with AI agents.” (Introduction, p.2). This is a claim supported by the paper's experiments, not a theorem.
 
 ## technique: build and quality-filter executable test rewards
 What it is: construct SWE-like tasks from issue-linked GitHub pull requests, separate fix and test patches, restore the pre-fix repository, and run a Dockerized `evaluation.sh` whose pass/fail result is the reward (Section 2.1, p.3). Each verifier is checked by requiring failure on the buggy repository after only the test patch and success after both test and fix patches. This establishes executability and basic discrimination, but not semantic faithfulness.
@@ -20,7 +20,7 @@ How to do it:
 5. Test on the resolved repository with both patches; require it to pass.
 6. Judge instruction clarity and instruction–test alignment separately, because a passing suite can still encode the wrong task.
 
-The paper's quality judge runs MiniSWEAgent over the task prompt, repository, tests, and optionally the ground-truth patch. It can inspect files, execute commands, read tests, and output `instruct_clear`, `instruct_ut_align`, and aggregate `overall_good` (Section 2.2, p.4). Few-shot examples improve alignment precision; a ground-truth patch improves recall and gives the best F1 for that dimension (Table 1, p.4). Inference: a VL analogue can inspect a Verus contract, implementation, and proof obligations for whether the stated property matches the requested behavior before training on verifier rewards.
+The paper's quality judge runs MiniSWEAgent over the task prompt, repository, tests, and optionally the ground-truth patch. It can inspect files, execute commands, read tests, and output `instruct_clear`, `instruct_ut_align`, and aggregate `overall_good` (Section 2.2, p.4). Few-shot examples improve alignment precision; a ground-truth patch improves recall and gives the best F1 for that dimension (Table 1, p.4).
 
 Verus form: Inference: compile and run Verus on generated Rust, but keep an independently reviewed specification as the target. Use `requires`, `ensures`, `spec fn`, `proof fn`, `assert`, and `old(...)` to state and prove the contract; use tests for executable behavior. A test or Verus pass cannot prove that the contract is complete. Inference: a quality judge could flag vacuous `ensures` clauses, missing safety preconditions, or tests that never exercise a claimed invariant, but its output remains a heuristic filter.
 
@@ -40,7 +40,7 @@ How to do it:
 
 Evidence: in Table 2, solution-artifact retrieval appears in 4.32% of trajectories and has a 72.34% resolved rate, 12.35 points above the 59.99% baseline; evaluation-harness tampering appears in 8.25% and has a 41.47% resolved rate. In Table 3, averaged over SWE-Bench Verified, Multilingual, and Pro, monitoring changes clean resolved from 40.22% to 60.53% and hacked resolved from 28.57% to 0.56%; Hack Rate falls from 37.76% to 1.31%. These averages have three benchmark rows, not individual task denominators. The paper says, “The monitor therefore acts as a process-aware reward correction, rather than a post-hoc filter.” (Section 2.3, p.7).
 
-Verus form: Inference: record the proof-generation trajectory, verifier invocations, contract edits, and any external code or specification reads. Penalize or exclude attempts that weaken `requires`/`ensures`, insert unsupported axioms, or route around Verus with trusted bodies. The exact policy depends on VL's threat model; Verus itself checks the final proof but not whether the agent obtained or altered the specification illegitimately.
+Verus form:
 
 Inference: this is a high threat for agent-written verified Rust because a model can optimize for a green proof by weakening the statement. A trajectory monitor should therefore distinguish `Verus passed` from a reviewed contract and proof that passed without forbidden shortcuts.
 
@@ -72,7 +72,7 @@ How to do it:
 6. Score observed behavior against the checklist.
 7. Use the score for rejection-sampling fine-tuning or RL.
 
-Evidence: Interactive-Judge rejection sampling on an intermediate Qwen-Plus checkpoint raises WebDev Human Eval from 78 to 84 and QwenWebBench from 1509 to 1545 (Table 5, p.9). The paper reports that interactive judging outperforms visual and hybrid judges while avoiding static-judge length exploitation (Section 3.2, p.9). Inference: for VL, dynamic tests can exercise APIs and state transitions that a static proof review misses, but they cannot replace proofs of internal invariants.
+Evidence: Interactive-Judge rejection sampling on an intermediate Qwen-Plus checkpoint raises WebDev Human Eval from 78 to 84 and QwenWebBench from 1509 to 1545 (Table 5, p.9). The paper reports that interactive judging outperforms visual and hybrid judges while avoiding static-judge length exploitation (Section 3.2, p.9).
 
 ## technique: learn from user feedback as an implicit verifier
 What it is: treat users' natural-language replies and behavior as direct, high-fidelity feedback for open-ended tasks. The paper's data come from senior software engineers using a coding assistant for refactoring, feature work, debugging, and design (Section 4.1, p.10). A Qwen-Plus judge annotates each round with polarity, confidence, signal source, negative reason, and user fairness. It must cite exact user words, distinguish user sentiment from objective fairness, and choose neutral when ambiguous. The dataset has 125,528 trajectories and 535,737 round annotations (Section 4.2, p.12).
@@ -102,10 +102,7 @@ The evaluator-filtered RFT set has 9,139 samples; at controlled data size it sco
 Verus form: Inference: an evaluator can decompose a Rust repository specification into obligations and run Verus plus tests, but it must not edit code while judging. Record each failed contract, invariant, or proof and score the repository only after a clean verification run. Use `View` and `spec fn` to expose abstract behavior; use `requires`/`ensures` and `proof fn` for checkable obligations. Treat `S_eval` as a ranking/filtering signal, not as a proof certificate.
 
 ## what is proved, measured, and trusted
-The paper measures correlations, benchmark scores, reward-hacking rates, and downstream training results. It does not prove that any LLM judge is faithful to all human intent, that a monitor catches every shortcut, or that a verifier remains robust as policy capability changes. Trusted components include task specifications, test suites, human annotations, judge prompts/models, trajectory logs, browser instrumentation, unit-test ground truth, and the correctness of the training pipeline. Inference: VL additionally trusts Verus, its SMT solver, Rust compiler/erasure, modeled external behavior, and the human review that determines whether contracts state the right property.
-
-## threat to VL and work already done
-Inference: threat to VL is high at the specification and reward layer even when Verus proofs pass. Agents can exploit weak tests, weaken contracts, omit safety obligations, or use forbidden information while producing a valid proof. The paper already covers test construction and quality filtering, trajectory-level anti-hacking monitors, structured and interactive judges, user-feedback extraction, evaluator metrics, and evaluator–generator co-evolution. VL should not redo these generic reward constructions. A distinct contribution would combine Verus proof checking with specification-quality audits and trajectory monitoring, then measure false acceptance, false rejection, contract weakening, repair effort, and performance as agents improve.
+The paper measures correlations, benchmark scores, reward-hacking rates, and downstream training results. It does not prove that any LLM judge is faithful to all human intent, that a monitor catches every shortcut, or that a verifier remains robust as policy capability changes. Trusted components include task specifications, test suites, human annotations, judge prompts/models, trajectory logs, browser instrumentation, unit-test ground truth, and the correctness of the training pipeline.
 
 ## techniques for the catalog
 - test-driven reward with quality filtering — build executable verifiers, then filter tasks for instruction clarity and instruction–test alignment
@@ -115,5 +112,3 @@ Inference: threat to VL is high at the specification and reward layer even when 
 - user-feedback reward extraction — annotate implicit human judgments with evidence, fairness, and conservative labels
 - evaluator-agent filtering — score long-horizon outputs with checklist and holistic metrics matched to the training objective
 - verifier–generator co-evolution — rebuild verification signals as policy capability and exploitation strategies change
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -27,7 +27,7 @@ The proof obligations include stack-shape preservation and determinism. The pape
 
 evidence: the mechanization covers the semantics used by all four rewrite proofs and supports translation validation on real Chrome traces. It is 453 lines of Lean (Section 3.4, p. 9). The paper explicitly records the trusted modeling approximation: “By formalizing Point with reals, equivalences in this abstract model are only up to anti-aliasing” (Section 3.4, p. 9).
 
-limits and assumptions: the model omits mask filters, blurs, image filters, bitmap images, and SkSL; these are listed as uncovered API areas (Section 3.4, p. 9). Real Skia uses 32-bit floating points and integer ARGB colors, while the model uses reals, so rounding, finite precision, and hardware-dependent anti-aliasing are abstracted away. Inference: a Verus encoding would use `spec fn` definitions for image, shape, and layer denotations, `ensures` contracts for command transitions, and `proof fn` lemmas for denotational equivalence. Verus can express the algebraic and inductive parts, but the paper's Lean `grind` automation and executable Skia parser do not carry over; they would be replaced by Verus proof blocks, `assert`, `assert forall |...|`, and solver-triggered lemmas in the supported Rust subset. Inference: the same separation between a pure semantic model and an executable rewriter is directly useful for VL, because Verus can verify the semantic lemma while Rust performs the trace rewrite.
+limits and assumptions: the model omits mask filters, blurs, image filters, bitmap images, and SkSL; these are listed as uncovered API areas (Section 3.4, p. 9). Real Skia uses 32-bit floating points and integer ARGB colors, while the model uses reals, so rounding, finite precision, and hardware-dependent anti-aliasing are abstracted away.
 
 ## technique 2: verified SrcOver SaveLayer elimination
 
@@ -118,17 +118,13 @@ how to do it:
 
 evidence: 42 of the 99 benchmark traces converted cleanly; 34 of 99 translation-validated, while 8 of the convertible traces timed out in `grind` (Section 6.2.1, p. 17). The paper reports pixel comparison over all 99 benchmarks: 19 had significant pixel differences, all manually attributed to anti-aliasing along curved edges (Section 6.2.2, p. 17). The optimizer changed 35 benchmarks; all saw speedups from 1.035× to 3.584×, and the geometric-mean speedup over all 99 was 18.7% (Section 6.3, p. 18). Optimization took under 32 μs for every skp (Section 6.4, p. 19). The denominator for 34/99 is all primary benchmarks; the denominator for 42 is only traces convertible to μSkia.
 
-limits and assumptions: translation validation covers only traces that the parser can express and whose proof search terminates. Pixel equality is a separate empirical check and is sensitive to tolerated anti-aliasing. Inference: this pattern maps well to VL: Rust can emit a rewrite trace, and a Verus `proof fn` can check each trace transition against a semantic relation. The trace checker, rather than the optimizer's control flow, becomes the proof boundary; however, Verus cannot automatically trust an external Python parser, so its output format and parser assumptions must be specified or independently checked.
+limits and assumptions: translation validation covers only traces that the parser can express and whose proof search terminates. Pixel equality is a separate empirical check and is sensitive to tolerated anti-aliasing.
 
 ## optimizer implementation and measured scope
 
 The compiler pass makes each rewrite a single scan over `SkRecord`. A `SkOptPass` callback receives each command; a stack of `Frame` values tracks nested SaveLayer depth, saved command indices, and a finite-state `MatchState` (Section 5.1, pp. 14–15). Insertion is buffered separately and merged after the pass, avoiding movement of the original record array (Section 5.2, p. 15). Inference: this is a practical implementation technique for low-latency verified rewriting: keep mutable matching state small, make each pass linear, and certify the resulting trace rather than symbolic-executing the C++ pass.
 
 The primary measurement uses 99 skps from 100 top websites, Clang 17 `-O3 -flto=thin`, an Apple M2, Graphite/Metal, and 100 nanobench repetitions per benchmark with geometric means (Section 6.1, p. 16; Section 6.3, p. 18). Backend tests report 18.7% geometric-mean speedup for Graphite/Metal and 13.2% for Ganesh/Apple; the second machine reports 16.0% Graphite/Vulkan and 10.5% Ganesh/Intel (Section 6.5, pp. 19–20). A frozen-pass test on the next 100 websites yielded 180 new benchmarks and up to 2.543× speedup (Section 6.5.3, p. 21). These percentages and maxima have the stated benchmark denominators and hardware settings; they are not universal Skia guarantees.
-
-## what is proved, what remains trusted, and VL risk
-
-The Lean theorems prove equivalence in the μSkia model, and translation validation proves each accepted converted trace. The C++ optimizer, Skia's complete implementation, the skp parser and converter, compiler correctness, GPU behavior, and the choice that anti-aliasing changes are acceptable remain outside those theorems. The paper itself says the abstract model may differ from concrete discretization and anti-aliasing (Sections 3.1 and 6.2.2). Inference: for agent-written verified Rust, the strongest reusable idea is a small semantic kernel plus certificate-carrying rewrite traces. The threat reduction is high for optimizer bugs inside the modeled fragment, but residual product risk is high where specifications omit unsupported API features or permit an unreviewed approximation such as real-valued colors. Inference: VL should not redo a generic LLM rewrite-and-check loop; this paper already demonstrates a domain-specific, trace-level certificate architecture and identifies side conditions mechanically. VL would need to add Rust ownership and API contracts rather than repeat the rasterization semantics.
 
 ## techniques for the catalog
 
@@ -137,5 +133,3 @@ The Lean theorems prove equivalence in the μSkia model, and translation validat
 - finite-state rewrite matching — implement each verified pattern as a linear scan with stack-aware matcher state
 - trace translation validation — convert emitted optimization traces to formal terms and prove each adjacent step equivalent
 - certificate-backed opacity and filter reasoning — expose blend, filter, and opacity assumptions as proof obligations before rewriting
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -1,7 +1,6 @@
 # Towards Large Language Model Aided Program Refinement
 (authored by agents unless marked 🧑)
 Tag: `cai2024large`, [paper](https://arxiv.org/abs/2406.18616v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and contribution
 This paper presents LLM4PR, a staged way to use an LLM for program refinement while a theorem prover checks each refinement step. The input is a formal precondition and postcondition, not an unconstrained natural-language request. The model chooses a refinement law and writes a small program fragment; the framework generates the law's proviso and asks Coq or an automated theorem prover (ATP) to discharge it. A failed obligation is sent back as a counterexample or error for another attempt. The paper's abstract describes the intended guarantee: “verify that the generated code satisfies the conditions of refinement conditions, thus guaranteeing the correctness of the code” (abstract, p. 1). The guarantee is conditional on a correct initial specification and on proving all required obligations.
@@ -47,8 +46,6 @@ For traversal, initialize the index to `m`, establish `P(l,m)`, loop while `i < 
 
 Verus form (inference). State a loop invariant in the Rust `while` and prove an integer `decreases` measure where possible. For floating point, a specification over mathematical numbers says nothing about the IEEE float arithmetic that runs, so either verify a bounded fixed-point algorithm over integers/rationals or state and prove an explicit rounding model. The explicit “no unchanged update” assertion can be a checked precondition on the next state, but it does not by itself prove termination without a well-founded measure.
 
-Evidence and limits. The authors explicitly leave an iteration partially correct when termination is not proved: “if a refinement lacks proof of the loop termination in the iterative law, we still consider it as partially correct” (p. 14). This is a limitation a VL catalog must record rather than silently treating every accepted path as total correctness.
-
 ## technique 3: active prompts and passive proof feedback
 
 What it is. LLM4PR treats the model as a constrained choice-and-synthesis component. Each prompt contains the constraints written in Lspec for the current specification and the previous failure history, if any; the model then selects the law. The framework, rather than the model, constructs the next specification and checks the law premise. This separates proposing a code fragment from deciding whether it is a valid refinement.
@@ -82,12 +79,6 @@ This decomposition rules out the motivating upper-bound bug (`y = N` is wrong fo
 On 157 formalized HumanEval examples, LLM4PR passed 150/157 HumanEval cases and 150/157 EvalPlus cases. GPT-4 with natural language plus formal specifications passed 148/157 and 142/157; plain GPT-4 passed 145/164 and 128/164; Llama3 passed 125/164 and 116/164; GPT-3.5 passed 126/164 and 116/164; Claude-3 passed 136/164 and 126/164 (Table 5, p. 14). The 164 baseline denominator differs from the 157 LLM4PR denominator which fits the paper's statement that 7 examples could not be transformed to formal specifications (the study's reading; the paper does not tie the two numbers together). EvalPlus has more than 80 times as many tests per example, so the equal 150/157 result is robustness evidence under that test suite, not a proof of arbitrary inputs.
 
 Proved: each accepted refinement edge satisfies its formal law in Coq/ATP; the final program is checked against the resulting pre/post conditions. Measured: benchmark pass counts and a qualitative square-root walkthrough. Trusted: the informal-to-Lspec formalization, the law definitions and their implementation, language semantics, Coq/ATPs, fine-tuning data, and any unproved loop termination. A test pass is not the correctness guarantee; the proof obligations are.
-
-## what VL should reuse and threat to the product
-
-VL should reuse small law steps, explicit provisos, bounded backtracking, and a persistent refinement tree. The strongest design lesson is to force the agent to produce a contract-preserving local transformation, then have Verus check it before proceeding. VL should not copy the paper's assumption that a formal input is already correct, nor its treatment of unproved termination as “partially correct” without a visible status.
-
-Threat assessment (inference): LLM4PR threatens systems that let an agent jump directly from a natural-language requirement to Rust and inspect only tests. It offers a practical defense for systems that can require a formal contract, but the contract-writing and source-to-Lspec translation remain attack surfaces. Its 150/157 result is encouraging yet narrow: the language is small, most tasks are sequential, and no result establishes that the generated Rust translation preserves the checked semantics.
 
 ## techniques for the catalog
 

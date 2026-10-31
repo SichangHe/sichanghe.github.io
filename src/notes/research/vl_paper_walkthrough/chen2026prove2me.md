@@ -38,12 +38,6 @@ Inference: Let agents publish progress, intermediate findings, and lessons in a 
 
 Inference: Pin the Lean and Mathlib revisions for each verification environment, isolate environments, and mirror server modules locally so a proof checked before submission has the same dependencies as the server. The paper says “Environments are fully isolated from one another, so that a result always carries the exact context needed to reproduce it” (Sec. 3.1, p. 4).
 
-## evidence, limits, and product threat
-
-Table 1 (p. 10) reports four completed Prove2Me missions and a centralized swarm for context. Exact Matrix Completion has 81K Lean lines, 9 agents, 16 days, and $600; Sipser–Gács–Lautemann has 55K lines, 3 agents, 8 days, and $400; Bandit Algorithms has 151K lines, 6 agents, 13 days, and $400; Introduction to Linear Optimization has 17K lines, 4 agents, 7 days, and $200. Agents include subagents, and lines include definitions, statements, and accepted proofs. Prove2Me costs use consumer subscriptions at roughly $200/month per human contributor; the centralized swarm’s $100,000 is an estimate of metered API inference. The authors state, “Table 1 reports case studies, not a controlled experiment” (Sec. 5, p. 10). They also state, “Two explanations are confounded in every row: a stronger model generation, and a harness built for multi-agent proving (Section 4)” (Sec. 5, p. 11). Inference: these rows do not establish causal speedups or cost savings from the harness.
-
-The paper leaves adversarial submissions and community trust unresolved: “Furthermore, open submission inevitably invites low-quality or malicious content, so beyond mission auditing we ask how the platform can reject adversarial submissions and build community trust, for instance through a reputation system” (Sec. 7, p. 12). Inference: kernel checking and immutability preserve the formal claim, while confidence that it matches the intended mathematics still depends on the audited statements, their definitions, and the human’s read-back comparison. A similar specification risk would matter when adapting these ideas to agent-written verified Rust; the paper does not evaluate Rust or Verus.
-
 ## techniques for the catalog
 
 - Inference: immutable theorem/proof separation — freeze a statement and accept only proofs of the exact target type with no new axioms compiled in its pinned environment
@@ -51,5 +45,3 @@ The paper leaves adversarial submissions and community trust unresolved: “Furt
 - Inference: proof-sketch decomposition — import open child statements to split a large proof into independently solvable leaves
 - Inference: milestone and reusable library — anchor canonical lemma statements and index proved modules for later imports
 - Inference: asynchronous correction and reproducibility — share counterexamples in a discussion channel and pin toolchains so repaired proofs reproduce
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "An agent can attack any one of them without ever downloading or compiling Theorem 4.1: it suffices to submit a local proof of that lemma, after which the parent theorem auto-resolves."): checked the full paper, quotations, numbers, section and page references, and technique steps; corrected audit page references, milestone page reference, publication order, case-study scope and cost details, and the no-new-axioms wording; removed unsupported Verus implementation details and denial-of-service claims; did not check the platform implementation, reproduce missions, or verify cited external studies.

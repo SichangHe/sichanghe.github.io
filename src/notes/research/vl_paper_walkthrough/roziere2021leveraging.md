@@ -6,8 +6,6 @@ Tag: `roziere2021leveraging`, [paper](https://arxiv.org/abs/2110.06773)
 
 The paper introduces TransCoder-ST, which uses generated tests to reject bad pseudo-translations before self-training. Its central claim is: "To address this issue, we propose to leverage an automated unit-testing system to filter out invalid translations, thereby creating a fully tested parallel corpus." (Abstract, PDF p. 1). The method targets unsupervised Java, Python, and C++ translation where back-translation creates noisy pairs.
 
-Inference: For VeruLaw, the direct lesson is to make Verus compilation and proof checking a data filter. A generated Rust function, specification, or proof fragment becomes training data only when the relevant checker accepts it. Unit tests are weaker than a deductive proof, so they can supplement but cannot replace Verus verification.
-
 ## technique 1: generate tests with evolutionary search and select by mutation score
 
 The authors use EvoSuite on isolated Java functions. They describe tests as "lists of inputs and asserts testing the semantics of a program (e.g., the output of the function, the side effects on its arguments such as sorting the input list)." (Section 3.1, PDF p. 5). EvoSuite evolves candidate inputs with crossover and mutation, scores them for coverage or mutation score, and wraps the final inputs into test cases (Section 3.1, PDF p. 5).
@@ -21,8 +19,6 @@ The selection procedure is:
 5. compute mutation score as the ratio of killed mutants and retain only suites with score greater than 90% (Section 3.1, PDF p. 5)
 
 The paper cautions that one generated test can be insufficient: of its clamp example (a single test case), it says "This test case is not sufficient to test the semantics of the function thoroughly but could be part of a suitable test suite." (Figure 3 caption, PDF p. 5). In the dataset, the authors additionally require at least two asserts (Section 4.1, PDF p. 7).
-
-Inference: A Verus adaptation can generate concrete tests with Rust test functions and use mutation testing to prioritize inputs, but the sound acceptance check remains Verus proof checking. Mutation score measures fault detection against selected syntactic mutants, not theorem validity; this distinction is not in the paper's claim and is an inference for VL.
 
 ## technique 2: translate tests and filter candidate programs by semantic agreement
 
@@ -58,17 +54,9 @@ Inference: Verus should report top-k candidate proof success, compile success, a
 
 The authors explicitly report that generated tests can disagree with benchmark tests and that passing generated tests is not perfectly correlated with benchmark performance (Section 4.2 "Limitations", PDF p. 9). Their factorial example differs on integer overflow: the text says the Java implementation (with long integers) "would return a negative number for the input 21 due to integer overflow while the Python implementation would return 21! correctly"; Figure 4 shows the Java int version and a Python translation using np.int32 that passes the generated tests but fails some benchmark tests (PDF p. 9). The paper says: "By using the test suites from EvoSuite as source of truth, we sometimes train the model to generate translations that are more rigorous but also less natural." (Section 4.2, PDF p. 9).
 
-Inference: In VL, the contract is the source of truth only when its intended domain and overflow semantics are reviewed. Generated tests can encode accidental behavior, miss quantified cases, or disagree with a product specification. A Verus proof establishes the written contract, so product review must establish that the contract is the right one.
-
 ## what is proved, measured, and trusted
 
 The paper measures test-passing translation accuracy and self-training gains; it does not prove full semantic equivalence. Inference: the paper's results rest on the adequacy of its test suites, mutation operators, type mappings, benchmark tests, translation models, and EvoSuite implementation, none of which it verifies formally. A Verus pipeline can reduce this trusted base by requiring proof, but still trusts the Verus verifier, Rust compiler assumptions, specifications, and any external-body or axiomatized code.
-
-Inference: What VL should not redo is a benchmark that treats BLEU or exact text as correctness. The paper reports gains from test-filtered pseudo-labels, mutation-score selection, offline/online self-training, cache stabilization, and CA@N evaluation. VL should adapt them to proof obligations and contract review rather than copy their finite-test-only acceptance rule.
-
-## threat to a product of agent-written verified Rust
-
-Inference: The threat is moderate for productivity and low for soundness when every generated artifact must pass Verus. The method shows that checker-filtered self-training can improve generation substantially, but its own limitations show how an incomplete or mismatched oracle can teach the model the wrong behavior. The principal VL risk is a valid proof of an unintended contract, not a proof bypass; contract provenance, domain assumptions, and independent review remain necessary.
 
 ## techniques for the catalog
 
@@ -78,5 +66,3 @@ Inference: The threat is moderate for productivity and low for soundness when ev
 - offline checker self-training: fine-tune on filtered pairs, regenerate with the best checkpoint, and iterate to validation convergence
 - online cache self-training: generate verified examples during training while sampling and aging a cache to prevent collapse
 - CA@N evaluation: count a task correct when any of the top N candidates passes all checker cases
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Training on the generated parallel examples brings substantial improvements for every language pair, direction, and metric."): read the whole paper text and checked every quotation, number, table value, section and page reference, and the technique steps (test generation, mutation-score selection at 90% and two asserts, 20-candidate beam filtering, offline and online self-training, cache parameters, CA@N); changed the link to the arXiv page (2110.06773, from the paper text), corrected a misquote ("much less stable"), the Table 3 and Limitations/Figure 4 page numbers (pp. 8 and 9), the ablation comparison (greedy vs beam-10 evaluation), the baseline of the 25.5% error reduction, the factorial overflow description, the 500-example cache rule, and an unsupported "several branches" remark, and marked one unsupported statement as inference; did not check the Inference paragraphs about Verus/VL beyond labeling them, the cited external works, the appendix figures 9-15 beyond reading them, or the PDF layout for two-column pages.

@@ -27,8 +27,6 @@ What it is: let each model exclude a subset of `{A1,A2,A3,A6}`. The paper define
 
 How to apply it: first specify the anomaly set; then choose the weakest mechanism that excludes the next anomaly; provide a lower-level witness and an upper-level prevention theorem at each edge. L0–L1 are deployed Rust runtimes; L2–L4 are verified models plus dependency-free exec-mode twins. Treat each edge as a separate contract and proof target.
 
-Inference: for VL, the chain is a useful product configuration vocabulary: an agent-written Rust service can state whether it prevents stale reads only, adds causal tracking, orders tool effects, or stabilizes its registry. A single “concurrent-safe” label would hide these distinct guarantees.
-
 ## technique 3: verify executable detectors against TLA+ predicates
 The paper says: "The chain discharges twenty-four verification obligations, all without assume and without adding axioms." It verifies primitive `reads`, `writes`, `contains_tool`, and deterministic `first_value` helpers as exec–spec equivalences. It then proves detector soundness and completeness, including nested-loop invariants for A1 and exact correspondence for A2 and A6. A3's executable detector is complete for the residue over-approximation; the precise predecessor predicate is decided by the runtime-state theorem.
 
@@ -48,16 +46,9 @@ Pessimistic locking, SSI with read-set validation, and default SI realize L1 and
 
 Costs are measured, not assumed: snapshot isolation adds about 8% tokens on one workload; pessimistic locking costs 1.6–2.3×. Inference: these denominators are the paper's reported workload cells, so they do not establish a universal overhead bound.
 
-## trusted boundary and product threat
-The trust base includes Verus, Z3, vstd, two structural axioms (string injectivity and the `NULL` sentinel mapping), and three RustBelt obligation stubs for mutex correspondence. The paper explicitly says: "‘Zero assume, zero admit’ is a statement about proof bodies; it is not a claim of an empty trust base." The stochastic-generation extension is not fully proved; it establishes only the direction that probabilistic events are caught by the deterministic screen.
-
-Inference: the threat to a product of agent-written verified Rust is high for stale generation and irreversible tool effects because a functionally verified detector can still receive an incomplete or reordered history. VL should separately verify channel refinement, mutex semantics, registry snapshots, and external-effect ordering. Existing work already covers the classical mechanisms; VL should not redo the Boolean lattice without a concrete runtime and evidence.
-
 ## techniques for the catalog
 - anomaly-history predicates — model stale reads, revoked tools, aborted causal predecessors, and effect-order permutations as explicit trace predicates
 - realizable consistency chain — select and prove a sequence of concrete guarantees from L0 through L4
 - detector equivalence — prove executable Rust detectors sound and complete against TLA+ predicates with prefix loop invariants
 - concrete-to-abstract refinement — map deployed state and transitions through an abstraction function to a verified safety machine
 - mechanism-matched prevention — use locking, SSI, causal tracking, commit ordering, and registry snapshots for distinct anomalies
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

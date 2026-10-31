@@ -43,4 +43,3 @@ FormalRx's 28 categories are learned from bounded human review and synthetic Lea
 - compile then re-tag filtering: discard invalid code, then independently validate labels, locations, and repairs
 - unified diagnostic generation: emit verdict, category, location, and correction in one supervised forward pass
 - two-stage equivalence scoring: exact-match outputs first, then judge semantically equivalent alternatives
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

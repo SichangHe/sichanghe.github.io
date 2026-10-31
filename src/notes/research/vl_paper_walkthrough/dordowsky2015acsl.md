@@ -61,14 +61,6 @@ Use this when source uses compiler-specific register extensions or volatile hard
 
 Inference: Verus can wrap FFI, raw-pointer and device operations behind a small API with explicit `requires`/`ensures`; the wrapper's external behavior remains a trusted assumption until separately verified. This mirrors the paper's isolation rule but is not a result reported there.
 
-## verification evidence, limits, and product threat
-
-Table 1 reports denominators by function: `cbit_set_work_cond` 6 scheduled / 5 valid / 1 unknown; `cbit_check_temperature` 22 / 17 / 5; `acq_measure_temp` 237 / 221 / 1 unknown / 15 timed out; `adc_read` has no obligations because WP could not execute on its non-standard C. Thus 243 of 265 scheduled obligations were valid, 7 unknown, and 15 timed out; this sum is an inference from the table, not a percentage claimed by the authors. The paper says all failed obligations except those 15 timeouts were explained (section 7, page 38).
-
-The study found specification defects: an inaccurate discrepancy count, ambiguous permanent-discrepancy temperature behavior, and an omitted condition allowing unconstrained `WorkCondition` updates (sections 6.1–6.3, pages 34–36). It concludes that formalization “is an excellent tool to ‘debug’ specifications” (section 9, page 40), but recommends ACSL and Frama-C “only in highly safety critical applications and even there only in areas that need extra scrutiny”, supported by an experienced consultant (section 9, page 40). Not all proof obligations were proved or explained, and the Frama-C GUI with interactive provers could not be tested because of installation problems (section 8, pages 39–40).
-
-Inference: agent-written verified Rust faces the same threat when contracts omit outputs, state transitions, hardware effects, or external-library assumptions. The paper supports investing in contract-review patterns and isolation boundaries; it does not establish that Verus eliminates these omissions. Trusted components remain the specification, ghost models, manually reviewed hardware wrappers, solver/verifier implementation, compiler, and any unverified external code.
-
 ## techniques for the catalog
 
 - ghost state contracts — expose hidden persistent state with ghost variables and prove alignment assertions
@@ -77,4 +69,3 @@ Inference: agent-written verified Rust faces the same threat when contracts omit
 - specification factoring — flatten call hierarchies or factor repeated conditions to limit contract proliferation
 - approximation for unsupported math — replace unavailable math functions with piecewise-linear approximations (the paper's proof attempt timed out)
 - hardware isolation — confine compiler-specific and volatile operations to small manually reviewed boundaries
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "It is an example of specification proliferation where higher level functions partially repeat and aggregate those of lower level functions."): read the whole paper and checked every quotation, page and section reference, Table 1 numbers and sums, and the technique steps; changed the link to the DOI, fixed the section for the \at/\old reference (6.2, not 6.1), corrected the specification-macro and predicate description, removed the unsupported word "syntactically", marked the claim that the unknown obligation is the assertion as an inference, and added the paper's actual recommendation wording; did not check the cited external works, ACSL/Frama-C behaviour itself, or the Verus inference statements beyond that they are labelled as inferences.

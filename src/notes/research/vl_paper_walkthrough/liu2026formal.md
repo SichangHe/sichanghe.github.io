@@ -54,16 +54,9 @@ Verus form. Inference: encode each observation as a verified harness calling the
 
 Evidence and limits. The evaluation uses 22 APIs with Booleans, integers, floating point, arrays, and loops, excluding strings and reachability-style heap properties unsupported by JJBMC (Section 4, p. 4). Nine of 22 (40.9%) are Errors caused by unsupported constructs such as `\\num_of`, ghost/model fields, and quantified arithmetic; two of 22 (9.1%) are Fails. The paper's successful count is therefore 11/22 (50%), with 7/22 (31.8%) first-iteration successes and 4/22 (18.2%) requiring refinement. The denominator is API tasks, not generated candidates or executions.
 
-## evidence, trust, and threat to VL
-
-The implementation-consistency check assumes the existing implementation is the behavioral reference. BMC's default loop bound of 5 can miss longer behaviors; the paper calls bounded verification a source of precision concerns (Section 4, p. 4). Checker compatibility also dominates failures: a standard JML clause can be rejected by JJBMC without proving the clause semantically wrong. The paper reports average instruction coverage of 76.9% for generated JUnit tests, but this is a coarse sanity check, not specification completeness (Section 4, p. 4).
-
-Inference: the corresponding Verus trust boundary includes the inferred contract, selected observations, external-library specifications, Rust compiler, Verus verifier, solver, and any erasure step. A passing Verus proof establishes the supplied contract, not that the test-derived contract expresses the product requirement. Threat to agent-written verified Rust is high for under-specification and moderate for checker integration: this workflow can reduce contract-authoring cost but can also automate a false sense of completeness.
-
 ## techniques for the catalog
 
 - structured execution observations — record selected arguments, pre-state, post-state, and outcomes as reusable behavioral evidence
 - two-stage test-derived inference — infer a contract from tests, then refine it with repeated state relations while isolating unsupported hypotheses
 - bounded consistency checking — reject candidates that contradict implementation executions within the BMC bound and feed counterexamples back
 - observation-coverage checking — require every recorded test behavior to be admitted by the candidate, while reporting the finite evidence boundary
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -20,13 +20,8 @@ The method rejects operators that decide from syntax without running code, explo
 ## technique: composing operators by a weighted vote
 A candidate is rejected when at least two of up to six selected operators flag it. The original objective `J = TP − FP` was enumerated over every subset, then replaced by `TP − (nTP/nFP) FP`; the training counts were nTP=222 and nFP=1183 (Composition, p.7). Across 2,007,327 non-vacuous subsets of the larger 35-operator pool, zero harmed the held-out endpoint, with minimum delta +0.0007 (p.8). Inference: a Verus checker ensemble can use several independent predicates and a Rust vote function, but proof conjunction is usually safer than a statistical threshold; the weighted objective is useful for choosing which checks to run, not for weakening a required safety proof.
 
-## relevance to VL and threat
-Inference: EvalCEGAR directly suggests a Verus-proof search loop: collect failing proof obligations as blind spots, ask for a targeted lemma or invariant, compile and verify it, and admit only changes that improve a held-out behavior oracle. The threat to agent-written verified Rust is medium: the paper shows executable checker synthesis transfers across code benchmarks, but it does not establish specification adequacy, Rust memory safety, or Verus proof soundness. VL should reuse the collision-targeting and interface-escalation ideas, while measuring proof repair cost and false assurances. Existing work already supplies CEGAR, solver-backed checking, and Verus contracts; VL should not redo those as if they were new.
-
 ## techniques for the catalog
 - collision-targeted CEGAR: find same-signature correct/incorrect pairs and synthesize a checker that separates the class
 - interface escalation: widen checker inputs after repeated failures on the same blind spot
 - null-calibrated admission: accept checks on held-out decision improvement against size-matched shuffles
 - weighted vote composition: enumerate small check subsets and weight false alarms by the deployment endpoint
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -8,8 +8,6 @@ Page numbers below are PDF page numbers of the arXiv v2 file (page 1 is the titl
 
 De Angelis, Fioravanti, Pettorossi, and Proietti transform constrained Horn clauses (CHCs) before solving them. The target is a solver that searches for models definable in a constraint class A, such as a subset of linear integer arithmetic (LIA). The paper's stated motivation (section 7, PDF page 30) is that "state-of-the-art solvers often fail to prove the satisfiability of sets of clauses encoding relational properties because they can only infer relations among the variables of individual atoms." The paper introduces Predicate Pairing, which, in the paper's words, "introduces a new predicate defined by the conjunction of two predicates together with a conjunction of constraints." (section 1, PDF page 4).
 
-Inference: For VL, this is a solver-preprocessing pattern for relational lemmas: pair calls whose arguments are synchronized, then let the SMT-backed verifier discover cross-call invariants in a simple theory.
-
 ## technique: encode program properties as CHCs
 
 What it is. A Hoare triple or relational property is reduced to satisfiability of clauses. For `sum_upto` (Figure 1), the paper encodes the loop relation `su` and a false-headed clause that represents a violation. It explains: “This triple is valid if the following set of clauses, called verification conditions, is satisfiable.” (section 1, PDF page 2).
@@ -88,14 +86,6 @@ Size increase: the paper says the transformed clauses are larger, "size increase
 
 These numbers show increased solver coverage, not proof of all 163 properties. Inference: 135/163 is 82.8%; the paper does not state a percentage. The three regressions are consistent with the paper's explanation of syntactic sensitivity in Z3, but the paper does not test that explanation. The paper also says it "experimentally checked that most of the problems considered in Section 6 cannot be solved via (non-conjunctive) specialization alone" but does not report these results (section 7, PDF page 32).
 
-## trust, limits, and VL implications
-
-Proved claims concern CHC encodings and transformation theorems; the proofs of Theorems 3 and 5 are in the appendix (PDF pages 38-41). Inference: trusted components for a user of this method include the interpreter specialization that generates CHCs, the correctness of the transformation implementation, the constraint theory and SMT solver, and the adequacy of each relational encoding; the paper itself omits the details of generating the relational verification conditions ("For brevity, we do not give here the details", PDF page 8, citing De Angelis et al. 2016). Inference: for VL, a Verus backend would additionally trust the Verus verifier and SMT solver, while ghost-predicate generation must preserve Rust heap and termination semantics.
-
-The study already covers CHC encoding of relational properties, a terminating equality-based pairing algorithm, A-soundness, and a broad benchmark. VL should not redo these generic ideas. Inference: useful new work is a Verus lemma generator that detects shared equalities between two executions, generates relational ghost predicates, and reports solver regressions when transformed obligations grow.
-
-Inference: threat to agent-written verified Rust is medium to high for relational claims. Pairing can substantially improve automation (31/163 to 135/163 in the paper's benchmark), but transformed clauses are about 2.16 times larger on average, three problems regressed to timeouts, and the guarantee is about solver-definable models rather than the correctness of the source-to-CHC translator or Rust implementation.
-
 ## techniques for the catalog
 
 - CHC property encoding — represent operational semantics recursively and put a negated relational property in a false-headed clause
@@ -103,5 +93,3 @@ Inference: threat to agent-written verified Rust is medium to high for relationa
 - equality-guided predicate pairing — pair atoms whose arguments share the most entailed equalities and summarize them with a fresh predicate
 - relational verification via paired executions — encode equivalence, monotonicity, injectivity, functional dependence, non-interference, and optimization correctness for specific instances as two-run CHCs
 - solver coverage measurement — compare solved counts, time, clause growth, and timeout regressions before and after preprocessing
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This program HL1 does satisfy the non-interference property, and thus the corresponding set of clauses is satisfiable."): read the whole paper text (sections 1-8, references, appendix) and checked every quotation, number (163/153/10/14 benchmark split, 31 to 135 solved, Table 2 totals and averages, 2.16 times, three regressions, 28-problem comparison, hardware, timeout), theorem, rule and Algorithm 1 step, and page reference against it; changed: moved the su_sq quotation from the Ackermann example to its own sum_upto/square example, corrected Ackermann program description, A-completeness (A = C requirement), Theorem 2 wording, the non-interference quote page (23), Table 2 average interpretation and page references, and marked own conclusions as Inference; did not check: the appendix proofs in detail, the arXiv abstract page or the published TPLP version, or anything outside the paper (the referenced benchmark and tools).

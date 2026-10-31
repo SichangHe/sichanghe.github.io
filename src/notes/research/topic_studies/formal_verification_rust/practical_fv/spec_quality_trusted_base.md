@@ -176,7 +176,6 @@ ChatGPT's opinion
 
 - pending: first Extra High attempt failed during preparation with a timeout
   - the parent agent has a shared consultation running; no opinion is invented here
-  - `/tmp/practical_fv/distributed_specs/opinion.md` will contain the captured response if successful
   - no fabricated consultation result
 
 what was opened and searched

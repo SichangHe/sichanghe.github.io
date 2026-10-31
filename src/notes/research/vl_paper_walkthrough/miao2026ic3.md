@@ -22,8 +22,6 @@ Use this when evolving a verifier's heuristics while keeping edits auditable and
 
 Compass&Jump ranks move m=(slot,direction,confidence,risk,cost) by `wc·conf − wr·risk − wk·cost`; Jump probability decreases under steady improvement and increases under stagnation (Section 3.5). The policy controls search scope only. The paper emphasizes: “correctness is guaranteed solely by the proof-/witness-gated validation.” (Section 3.5)
 
-Inference: VL can apply the same loop to Verus verifier or proof-generation infrastructure: constrain a patch to a named module or function, require a hypothesis and a rollback plan, run `verus` and product regression tests, and promote only after all proof obligations pass and no regression budget is exceeded. Verus does not provide IC3 certificates, AIGSIM, or CERTIFAIGER; those are replaced by the exact Rust/Verus validation artifacts.
-
 ## technique 2: independent SAFE and UNSAFE certificates
 
 For each benchmark instance solved within 1,800 seconds, require an artifact independent of the evolved solver. An UNSAFE result dumps a counterexample trace replayed by AIGSIM; a SAFE result dumps an inductive invariant checked by CERTIFAIGER. A missing artifact, a failed replay or check, or an inconsistent return code rejects the challenger before performance scoring (Section 3.4). The evaluator prompt also reverts a challenger whose build fails (Appendix 6.1). AIGSIM is a simulator from the AIGER library and CERTIFAIGER is a certificate checker; both are existing tools, not part of the evolved solver.
@@ -42,8 +40,6 @@ Evolution uses 100 public HWMCC instances; transfer uses 100 unseen HWMCC instan
 
 Inference: the trusted boundary includes SAT, IC3 certificate logic, AIGSIM, CERTIFAIGER, benchmark labels, timeout/PAR2 accounting, and the independent checkers. The LLM, knowledge packs, evaluator diagnosis, slot definitions, and promotion threshold are not covered by the gate, so they remain heuristic. The paper does not establish that all industrial hardware semantics are captured by the benchmark, or that broader edit spaces preserve the same safety.
 
-Inference: Threat to agent-written verified Rust is high if VL lets an LLM change verifier or proof infrastructure without an independent gate, and lower if every change must pass Verus plus separate executable tests and artifact checks. The product should adopt slot restrictions, provenance logs, rollback, regression budgets, and independent proof/witness validation. VL should not redo the paper's basic result that performance-only evolution can accept an unsound improvement; the paper's r093–r094 counterfactual already reports one such case.
-
 ## techniques for the catalog
 
 - slot-restricted code evolution — constrain each patch to named verifier heuristic slots with a small auditable diff
@@ -51,4 +47,3 @@ Inference: Threat to agent-written verified Rust is high if VL lets an LLM chang
 - Compass&Jump search — rank evaluator moves by confidence, risk, and cost, then explore one or a few slots adaptively
 - instrument–gate–adapt heuristic design — measure progress, skip stalled work, and allocate budgets by observed yield
 - regression-aware champion loop — benchmark under fixed timeouts, promote only improvements, and revert all failures with provenance
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

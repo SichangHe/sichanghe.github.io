@@ -81,5 +81,3 @@ The paper presents no formal theorem. It measures Miri pass rate, semantic accep
 - slow decomposed verification — split candidates into steps and validate them with specialized agents
 - adaptive rollback — retain the state with the fewest detected errors instead of always resetting to the initial state
 - AST feedback generalization — index focused semantic ASTs and feed evaluated fixes back into future generation
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "RustBrain designs a feedback mechanism that integrates validation results into solution generation, allowing further adjustments to initial solutions."): checked the whole paper, quotations, numbers, section and page references, technique steps, tag, and arXiv link; corrected quotations, AST and rollback references, candidate-count scope, acceptance wording, and timing interpretation, and marked recommendations as inferences; did not reproduce experiments, inspect implementation code, or verify external references.

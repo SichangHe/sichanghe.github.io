@@ -72,7 +72,7 @@ The implementation extends `spen`. It starts with a normalization step "based on
 
 This split is useful when spatial matching is syntactic but content constraints are not. In the sorted-list example, matching two cells generates `M = {v1,v2}` (as `η = {M → {v1} ∪ {v2} ∪ ∅}`) and `Slice` finally checks `Π1 ∧ EQ(η) |= v2 ∈ M` (§6, p. XIII; Appendix D, p. XXIV).
 
-Verus form. Inference: represent content measures as sequences, sets, or ghost maps and prove arithmetic/set lemmas in Verus. Use solver-friendly definitions and expose equalities with `assert`; do not assume Verus automatically supports the paper's multiset theory. Inference: an external SMT result must be imported only through a proof-producing or replayed certificate if it is to remain inside VL's auditable boundary.
+Verus form.
 
 ## evidence and limits
 
@@ -81,12 +81,6 @@ RDBI is described as verification conditions for iterative procedures (delete, i
 SL-COMP'14 contains 16 nested-list VCs, 4 two-level skip-list VCs, and 10 three-level skip-list VCs. spen takes 4.428 s, 1.629 s, and 3.858 s respectively, while the comparison `spen-TA` (the decision procedure of [11]) takes 4.382 s, 1.636 s, and 3.485 s (Table 3, p. XIV). The paper says "The times of the two decision procedures are almost the same, which demonstrates that our approach, as an extension of that in [11], is robust." (§7, p. XIV). Inference: this is not evidence of a speedup.
 
 Proved (Appendices A–B, pp. XVIII–XX): Theorem 1's syntactic criterion implies semantic compositionality, and Theorems 2–4 justify the three derived lemma classes. Stated without proof in the paper: Theorem 5 (soundness), with an informal termination argument. Measured (Tables 2–3, p. XIV): VC counts, lemma-application counts, the number of data-constraint entailments (`⇒D`), and system times. Inference: trusted or assumed are the least-fixed-point semantics of the inductive predicates (§3, p. VII), the correctness of the SMT solver and of the normalization, the finite lemma set, and the restriction that RHS existential variables are data variables (§6, footnote 5, p. XI, where the authors write "We believe that this restriction is reasonable for the verification conditions appearing in practice"). The method is incomplete: Remark 2 says the lemmas “may not cover all the lemmas for a given set of inductive predicates.” (§5.3, p. X)
-
-Inference: the threat to agent-written verified Rust is moderate and specific. Automatic generation can remove repetitive list/tree lemmas, but it cannot choose a suitable predicate representation when the intended invariant is absent. Inference: wrong ghost content parameters can make a generated proof succeed for a specification that does not capture the implementation's real property. Inference: the strongest reusable component for VL is a predicate-to-lemma compiler with proof replay, not an untrusted text generator.
-
-## what VL should not redo
-
-The paper already provides a principled way to make inductive predicates compositional, four generated lemma classes, a deterministic matching/slicing strategy, a soundness argument, and benchmark evidence across balanced trees and lists. VL should not reimplement these as ad hoc proof templates. It should adapt them to Verus ghost predicates, ownership, Rust pointer APIs, and proof-producing arithmetic/set reasoning, while preserving the paper's explicit incompleteness and domain restrictions.
 
 ## techniques for the catalog
 
@@ -97,5 +91,3 @@ The paper already provides a principled way to make inductive predicates composi
 - deterministic spatial entailment — apply matching, lemma, and slicing rules in a fixed terminating order
 - SMT data discharge — separate heap-shape matching from arithmetic, multiset, and size constraints
 - proof-producing lemma compiler — generate finite lemma sets whose applications are checked by a sound entailment procedure
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The choice of the atom A in Slice is done arbitrary, since it does not affect the efficiency of proving validity."): I read the full paper text, including the appendices, and checked the quotations, numbers (Tables 2 and 3, VC counts, times, hardware), section and page references (roman page numbers as printed), the definitions of the four lemma classes, and the proof-rule descriptions against it. I changed: page references for §1, §5.2, §5.3 and Fig. 2; the description of Match2 (it lifts a syntactic-matching judgement, not a partial match); the claim that Theorem 5 is proved (the paper states it without proof; Theorems 1-4 are proved in the appendix); the claim that RDBI has AVL and red-black delete rows (Table 2 does not); the meaning of the spen and SMT time columns; the claim that all generated lemma classes were exercised (static-parameter contraction lemmas are not used in the experiments); the EXPTIME remark (cited from [15], not proved here); and I marked my own conclusions "Inference:". Tag line and link kept (arXiv:1507.05581v1 appears in the paper text). I did not check the cited external works ([11], [12], [15]), the Verus translation advice, or the VL-specific assessment, which are inference rather than paper content.

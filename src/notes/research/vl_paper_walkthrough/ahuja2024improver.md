@@ -5,8 +5,6 @@ Tag: `ahuja2024improver`, [paper](http://arxiv.org/abs/2410.04753v2)
 
 ImProver rewrites an existing Lean proof to optimize a user-selected metric while preserving correctness. The abstract (p. 1) defines the task as “rewriting a proof so that it is correct and optimizes for an arbitrary criterion, such as length or declarativity.” Its agent combines symbolic proof-state annotations, output formatting, sampling, iterative error correction, and retrieval. The paper evaluates GPT-4o-based ImProver on Mathematics in Lean (MIL), Compfiles, Mathlib, and MiniF2F. It reports 100.0% correctness on the optimization tables because returning the input proof is counted as a correct output; improved accuracy measures correct outputs with positive metric improvement (§4.1.1, p. 7).
 
-Inference: this is directly relevant to VeruLaw as a post-generation repair and refactoring loop. A Verus candidate can be rewritten for shorter proof code, more explicit intermediate facts, or a project-specific metric, with Verus rerunning after each rewrite. The paper is about Lean and does not establish that its prompt or metric choices transfer to Rust ownership, concurrency, or Verus specifications.
-
 ## technique 1: define an explicit optimization metric
 
 What it is. Given theorem statement `x`, context `c`, input proof `y0`, and output proof `y`, ImProver optimizes a metric `mu(x,c,y0,y)`. Section 3.1 defines four metrics. Length counts tactic invocations. Declarativity is the ratio of explicitly typed `have` tactics to total tactic invocations. Mixed scoring gives −1 to each tactic and +5 to each declarative tactic. Completion counts errors and is used to view theorem proving as a special case.
@@ -115,12 +113,6 @@ Section 4.2 (pp. 7–8) calls the aggregate improvements “566%”, “423%”,
 
 The introduction (p. 2) states that “naively applying LLMs to proof optimization falls short”. The conclusion (§5, p. 10) states: “ImProver is limited by its high cost, which is exacerbated by its reliance on proprietary LLM’s.” Declarativity can be gamed by unused `have` statements, and higher-difficulty Mathlib proofs have lower improvement. Inference: Verus adds failure modes from ownership, lifetimes, concurrency, solver instability, and dependency changes. A candidate that keeps the contract true but changes performance, allocation, or panic behavior may still be a bad product rewrite.
 
-## transfer notes for VL implementation
-
-Inference: VL can reuse correctness-first selection, proof-state prompts, structured outputs, error correction, retrieval, and explicit metrics. VL should measure whether these controls reduce Verus proof repair time and preserve contracts across dependency upgrades, with denominators for accepted rewrites, metric-improving rewrites, verifier calls, and human interventions.
-
-Product relevance for ahuja2024improver. Inference: ImProver suggests a workflow for automatically maintaining VL proof code. Verus must check each rewritten artifact, and executable code and contracts should remain fixed during proof optimization. Metric gaming can still produce accepted but less maintainable proofs; metric definitions and rewrite costs therefore need evaluation.
-
 ## techniques for the catalog
 
 - explicit proof metrics — define correctness-preserving scores for length, declarativity, mixed style, or completion
@@ -133,4 +125,3 @@ Product relevance for ahuja2024improver. Inference: ImProver suggests a workflow
 ## evidence references
 
 The task definition and metrics are in Sections 1 and 3.1, PDF pages 1–3. CoS, output, sampling, and retrieval are in Sections 3.2.1–3.2.4, PDF pages 4–5. Setup and metric definitions are in Section 4.1, PDF pages 6–7. Aggregate and per-dataset results are in Tables 1–5, PDF pages 7–9; dataset counts are in Appendix B.1, PDF page 17. Ablations are in Tables 6–8, PDF pages 9–10. Neural theorem-proving results are in Table 9 and Section 4.2.2, PDF page 10. The conclusion spans PDF pages 10–11; the cost limitation is on page 10. Prompt templates are in Appendix A, PDF pages 14–16; detailed ablations are in Appendix B.2, PDF pages 18–19.
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For the main prompt sent to the LLM on each sample, we build a prompt string using a chat prompt template that is then invoked at runtime to fill in the variables."): read all 23 pages, including references, prompts, dataset details, ablations, and examples; checked quotations, metrics, numbers, section/page references, technique steps, tag, and arXiv link; corrected dataset counts, nonempty-improvement ambiguity, comparator incompleteness, accuracy interpretation, baseline-budget caveat, trust claims, and unsupported recommendations; did not reproduce experiments, inspect the implementation, or test Verus transfer.

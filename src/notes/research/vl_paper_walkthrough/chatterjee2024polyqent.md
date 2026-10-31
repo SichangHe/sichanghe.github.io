@@ -38,14 +38,9 @@ Experiments ran on Debian 11 with AMD EPYC 9654 at 2.40 GHz, 6 GB RAM, and a 180
 
 The almost-sure termination set has 10 benchmarks from one source and 7 from another (17 total). Direct Z3 and CVC5 solve 0/17; PolyQEnt solves 13/17 in its reported best union, using quadratic ranking-supermartingale templates and Handelman (Section 3.2, pp. 9–10; Table 2). The synthesis set has 32 PolySynth benchmarks. Direct Z3 solves 24/32 and CVC5 0/32; PolyQEnt's Table 3 Base and Base+H2 unions solve 30/32, while Base+H1 and Base+H1+H2 solve 29/32 (Section 3.3, p. 10). The table also combines theorem choices, taking the faster successful run. For two benchmarks, direct Z3 succeeds and PolyQEnt succeeds with Putinar degree 2 but fails with Farkas and Handelman.
 
-## trusted parts, limits, and VL threat
-
-Inference: accepting a generated solution without independent checking trusts the canonicalization, positivity-theorem implementation, and SMT solver. Completeness assumptions instead limit which valid entailments the search can discover. The paper reports that “our experimental results show significant improvements in runtime when positivity theorems are used to eliminate quantifier alternation.” (Section 1, p. 3) This is an empirical claim for the reported machine, solver versions, timeout, and benchmark sets. Integer translations are explicitly incomplete; Assume-SAT is incomplete; solver Unknown remains possible; and relative completeness has the theorem-specific assumptions and degree-bound limitations described above. Inference: for VL, PolyQEnt suggests a way to generate arithmetic invariants and ranking functions for subsequent proof checking. A SAT result alone is not a checked Verus proof; the proposed integration would need to validate the original obligations or a sufficient certificate. The paper provides no Verus or VL evaluation.
-
 ## techniques for the catalog
 
 - PQE canonicalization: translate arbitrary Boolean polynomial entailments into equisatisfiable conjunction-to-single-inequality form
 - positivity elimination: use Farkas, Handelman, or Putinar translations to remove universal quantifiers under stated assumptions
 - Assume-SAT: keep only satisfiable-antecedent obligations for smaller but incomplete systems
 - UNSAT-core search: constrain fresh coefficients to zero and relax only constraints implicated by unsat cores
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each benchmark, we ran PolyQEnt using Farkas lemma as well as Handelman’s and Putinar’s theorem with polynomial degree 2 templates."): checked all paper text, quotations, numerical results, references, and technique steps; corrected page references, parsing order, Putinar assumptions, degree-bound and UNSAT limitations, heuristic claims, and synthesis counts; marked proposed Verus/VL applications as inferences; did not run PolyQEnt, reproduce experiments, verify cited papers, or validate a Verus integration.

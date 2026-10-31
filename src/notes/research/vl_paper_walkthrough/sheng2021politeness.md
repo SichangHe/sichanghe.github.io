@@ -75,17 +75,9 @@ Evidence: the paper reports on the one difficult benchmark that “the optimizat
 
 Verus form: Inference: a Verus integration could reduce facts exported from datatype-like libraries into arithmetic proofs, but it must preserve all equalities needed for soundness. Selective fact exposure is analogous to limiting `assert`/lemma visibility; it does not justify deleting specifications from the verified model.
 
-## trusted boundary, contradictions, and product threat
-
-The theorems assume disjoint signatures and the stated properties of the component theories (stable infiniteness, smoothness, strong finite witnessability). Inference: they also rely on correct component decision procedures and a correct witness implementation, so solver implementations, arrangement enumeration, and the CVC4 optimization remain trusted engineering. The Move-to-Boogie translation and the smart-contract specifications are outside the theorem's scope. Inference: for agent-written verified Rust, the threat is medium where mixed datatypes, finite bit-vectors, and quantifiers produce arrangement explosions; it is low for ordinary single-theory ownership proofs. Inference: VL should reuse sort-aware context reduction and should not redo a generic all-shared-variable arrangement strategy once stable-infinite subsets are known.
-
-Inconsistency in the paper: Section 5 reports a 75% total-time reduction, but Figure 3's 81.5 s to 34.9 s is a 57.2% reduction (Inference, from the paper's numbers). The 83% combination-time reduction is consistent with 20.3 s to 3.4 s (83.3%). The abstract does not state a percentage; it says only “demonstrating a speed-up on a smart contract verification benchmark”. The study preserves both reports. No aggregate benchmark denominator is supplied beyond the single difficult benchmark.
-
 ## techniques for the catalog
 
 - polite theory interface — use smoothness and finite witnesses to combine a theory that is not stably infinite with another decision procedure
 - strong-witness validation — Inference: check witness formulas under every arrangement before invoking strong polite combination; the paper shows by proof (Lemma 3) that no strong witness exists for `T2,3`
 - sort-partitioned arrangements — use Nelson–Oppen shared variables on stably-infinite sorts and polite witness variables on the rest
 - selective datatype term sharing — restrict CVC4's shared terms to the sorts justified by the refined combination theorem
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "All three items of Theorem 4 include assumptions that guarantee that the two theories agree on cardinalities of shared sorts."): read the whole paper text (pp. 1-23 including appendix) and checked every quotation, number (Figure 3 values, 75%, 83%, 24%, 81 s, 20 s, 10%), section, theorem, lemma and page reference, and the arXiv link (id from the paper text); changed the abstract-versus-Section-5 attribution of the 75% claim (it is in Section 5, not the abstract), page references for the T1,1 counterexample (p. 7) and Proposition 1 (p. 8), the authors' claim about representativeness, the datatype-solver description (share only Boolean terms), the Theorem 4 case descriptions and where proofs live (appendix), and labelled the distilled procedures, the 57.2% and 23.1% recomputations, trusted-boundary and recommendations as Inference; did not check the Verus-related statements, the cited external works, or the appendix proofs in logical detail.

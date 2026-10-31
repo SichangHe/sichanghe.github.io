@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `zhang2025building`, [paper](https://arxiv.org/abs/2502.11901)
 
-Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 to 4 and Figure 4, page and section references, quotations, step lists and appendix prompts; changed the repair-versus-resampling claim (true only for the last three fine-tuned rows), the six-model count and best-in-F* claim, the 64% derivation, the seed-dataset attribution, the generator-choice wording, the Table 3 and 4 cross-reference, the two repair caps, and six unmarked inferences; could not check the Verus forms against a source.
-
 source: Zhang, Wang and Sun, arXiv:2502.11901v2 (13 Apr 2025), 18 pages with appendices A to D. The PDF's own title spells the last word “Scarcity”. An abstract-level entry on the same paper (PoPilot) is in the notes file c_and_systems_proofs.md; what follows is from the full text.
 
 ## the paper in short
@@ -137,7 +135,7 @@ steps (Section 6.3, “Repair Using Outputs from Other Models”, p.7): as techn
 
 evidence (Figure 4, p.7, percent of the 1K problems after the tuned model repairs each baseline's failures): Qwen2.5-Coder-32B 31.3, DS-Coder-33B 32.1, GPT-4o 36.9, Qwen2.5-72B 35.0, Llama-3.3-70B 28.3. For GPT-4o that is 22.2 from its own 5 samples, 23.9 with its own repair, 36.9 with the tuned repairer.
 
-Verus form. Inference: this is the cheapest of the six to try for VL, because it needs no change to the drafting agent. It needs a Verus repair model, which needs technique 4's source B data first.
+Verus form.
 
 limits: the tuned model's own Generate@5 on these problems is 34.0, so (inference) a share of what it “repairs” it could have solved from scratch. The paper has no arm in which the tuned model sees the statement without the failed draft, so the draft's contribution is unmeasured.
 
@@ -158,14 +156,6 @@ Trusted: the F* checker and its solver; the seed dataset and its premise selecti
 - Table 4: the 7B model fine-tuned on the full PoPilot data reaches Generate@5 of 21.9, below the untuned 7B's 23.4 in Table 2, and the 7B tuned on existing repositories alone reaches 12.9. Appendix D.2 calls the small model “reasonably good” without remarking that fine-tuning lowered Generate@5.
 - The abstract says the gain over GPT-4o is “by 54%”; the introduction says PoPilot can boost GPT-4o's performance “to 54%”. Figure 4's 36.9 supports the first wording only.
 - Appendix A.3's hardware line is garbled in the PDF (stray digits), so the GPU count cannot be read.
-
-## what is already done, and threat to VL
-
-Done here and not worth redoing: showing that checker-filtered synthetic data lifts a small open model above untuned large ones on SMT-backed proof completion; the comparison of mutation-made against model-made repair data, which model-made data wins; the two repair-sampling variants.
-
-Open after this paper (inference): the same recipe for Verus (the authors name “verified Rust” among low-resource proof languages in Section 2 and test only F*); any measure of whether synthetic statements are worth proving; tasks beyond one definition per problem.
-
-Threat. Inference: low as a product, moderate as a cost trend. PoPilot fills in one F* definition given its type and context, at 39.4% with ten samples; it does not write specifications, choose what to verify, or handle Rust. The part that bears on VL is technique 6: a 14B model repaired 13 points more of GPT-4o's failures than GPT-4o did. If that holds for Verus, proof repair inside an agent loop can move to a small specialized model, and a competitor with a Verus corpus could offer it cheaply.
 
 ## techniques for the catalog
 

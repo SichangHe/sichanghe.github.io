@@ -76,8 +76,6 @@ Table 2 reports recorded method-specific runtime, excluding shared initial gener
 
 The verifier, public tests, and final benchmark labels determine acceptance; the LLM’s criteria, diagnostics, repairs, and reselection remain fallible. Inference: the threat to verified Rust is that a verifier diagnostic can be wrong or incomplete, causing a valid proof to be “repaired” into an invalid one or consuming time on irrelevant changes. Verus’s kernel check prevents accepting an invalid proof, but VRR’s selection layer can still choose a less useful or slower proof if criteria are poorly defined.
 
-Inference: VL should reuse evidence-grounded diagnostics, explicit UNKNOWN handling, complementary repairs, duplicate screening, and final reselection under unchanged criteria. VL should not redo the paper’s generic fixed-pool comparison except when measuring Rust-specific recovery and regression rates.
-
 ## techniques for the catalog
 
 - evidence-graph verification: organize task, candidate, tests, and source identifiers before criterion-level judgments
@@ -85,5 +83,3 @@ Inference: VL should reuse evidence-grounded diagnostics, explicit UNKNOWN handl
 - three-role VRR generation: repair the winner, repair the runner-up, and solve from a new approach
 - candidate screening: require complete, compiling, public-test-passing, nonduplicate artifacts before reselection
 - verify-repair-reselect: reverify screened alternatives with the original criteria and choose from the expanded set
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

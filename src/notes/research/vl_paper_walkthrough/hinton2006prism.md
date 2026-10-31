@@ -62,19 +62,9 @@ Verus form. Inference: a possible proof target is that generated execution seque
 
 Evidence and limits. There are no reported simulation estimates, confidence intervals, or error bounds. The case-study discussion says the website provides details of over thirty studies developed by the PRISM team and external groups. The listed areas include communication protocols, probabilistic security protocols, randomised distributed algorithms, dynamic power management and voltage scaling, and biological signalling pathways (section 4, p. 444). This is a catalog of applications, without an aggregate success rate or controlled comparison.
 
-## trust boundary and relevance to VL
-
-Section 1 describes constructing a finite-state model of a real-life system and computing quantitative measures from that model (p. 441). Inference: applying those measures to a Rust implementation requires justifying that the model captures the relevant implementation and environment behavior. The paper does not verify a Rust implementation, its random source, or a model-to-code correspondence.
-
-Inference: potential reusable ideas for VL are finite transition models, explicit probability and reward questions, analysis of unresolved choices, and trace exploration. A contribution involving Verus would need to explain which relationship or algorithm is proved. Simulation estimates would require an explicit statistical argument before being used as quantified guarantees. These are proposed applications, not claims made by the PRISM authors.
-
-Section 4 also describes import through translation, native support for a subset of PEPA, and direct textual import of transition matrices and state spaces. PRISM is distributed under the GPL and supports Linux, Solaris, Windows, and Mac OS X, with ports for 64-bit architectures (p. 444). These availability statements describe the tool at the time of the paper, not its current distribution.
-
 ## techniques for the catalog
 
 - probabilistic state modeling — compose finite modules with probabilistic guarded commands under DTMC, MDP, or CTMC semantics; attach state or transition rewards
 - quantitative temporal properties — express event probability, long-run probability, and expected reward using PCTL/CSL-based properties
 - symbolic and numerical model checking — analyze finite models with graph algorithms, numerical methods, and BDD-based symbolic representations
 - Monte-Carlo analysis — approximate quantitative results from simulated executions, with independently generated samples permitting distribution
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The core functionality of PRISM, namely constructing a probabilistic model, and then evaluating the result of one or more corresponding properties, is available from either a command-line or a graphical user interface."): checked the complete paper text, quotations, numbers, section and printed-page references, model classes, property examples, analysis methods, interfaces, and case-study statements; corrected the account of recent additions, reward terminology, property-reference location, and unsupported procedural details; marked proposed workflows and Verus/VL applications as Inference and removed unsupported Verus capability claims; retained the existing DOI as a link from the fetch record because the paper text provides no DOI, arXiv link, or publisher page; did not check external documentation, cited case-study publications, the DOI destination, current PRISM features, or Verus implementations, and did not reproduce experiments.

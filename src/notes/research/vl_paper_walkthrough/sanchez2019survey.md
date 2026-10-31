@@ -7,8 +7,6 @@ This check uses the preprint identified on p. 1 as “arXiv:1811.06740v1 [cs.SE]
 
 RV checks observed executions against specifications rather than proving all possible executions correct: “Compared to static formal verification, RV gains applicability by sacrificing completeness as not all traces are observed and typically only a prefix of a potentially infinite computation is processed.” (Section 1, p. 2.) The conclusion identifies seven domains and “a total of 47 challenges”: distributed systems, hybrid systems, hardware monitoring, security and privacy, transactional systems, contracts and policies, and monitoring large and unreliable traces (Section 9, p. 43).
 
-Inference: for VL, RV could supplement verified Rust when specifications concern deployment inputs, external devices, or policies outside the scope of static Verus proofs. The domain taxonomy helps identify the assumptions a monitor needs.
-
 ## technique: distributed and decentralized monitoring
 Section 2.1.1 lists heterogeneity and dynamicity, distributed clocks and latency, partial failure, non-determinism, administrative domains and accessibility, mixed criticality, and evolving requirements (pp. 4–5). These constrain observability: “As a result of this asynchrony, the order of computational events occurring at distinct execution units may not be easy (or even possible) to discern.” (p. 5.)
 
@@ -52,5 +50,3 @@ Inference: a deployment's correctness argument may depend on instrumentation, cl
 - hardware RV — observe bus events or process hardware traces online, depending on the architecture (Section 4.1.4, p. 17)
 - hybrid information-flow analysis — combine static and dynamic analysis to address the limitations of purely dynamic analysis (Section 5.1.2, p. 22)
 - policy monitoring and enforcement — identify obligations that can be monitored or enforced; general GDPR coverage remains a challenge (Sections 5.1.1 and 5.2, pp. 21, 24–25)
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Understanding what is happening at the level of the concurrency protocol itself (including the algorithm internal state and the ordering of concurrent events) plays an important role in such process and must be supported by lightweight (non-intrusive) monitoring techniques, so that the errors are not masked when monitoring is active."): checked the entire paper, study claims, quotations, numbers, section/page references, and technique descriptions; corrected references and quotations, replaced the link with the paper's arXiv identifier, removed an unsupported distributed workflow, distinguished hardware architectures, qualified privacy claims, and marked Verus conclusions as inferences; did not check cited works independently or verify the Verus proposals experimentally.

@@ -48,14 +48,9 @@ Section III requires formal proof before generated helpers become assumptions. I
 
 Inference: for agent-written verified Rust, the main threat is specification and invariant hallucination. A plausible lemma can overconstrain the state model or encode the wrong safety property; Verus can prove the resulting statement while the intended requirement remains unmet. The required control is to prove generated lemmas in Verus and review that their preconditions, state abstraction, and postconditions match the product requirement. The paper's human review recommendation applies directly; its hardware experiments do not establish effectiveness for Rust.
 
-The first flow supplies specification and RTL to the LLM; the second supplies CEX and RTL. Neither flow describes syntax-error repair or what happens when a generated helper cannot be proved. It notes that GenAI can hallucinate “vulnerable results” (Conclusion, p. 4). It does not discuss confidentiality of RTL or CEX data, prompt length, model nondeterminism, or how to detect a helper that makes the property vacuous. Inference: VL should add checks that helper assertions do not erase required behaviors and should record the exact generated proof obligation and denominator for every accepted suggestion.
-
-## what VL should not redo
-
-The paper supplies a two-input LLM-to-assertion pattern, a CEX-guided repair flow, and a synchronized-counter example. Inference: a VL project should not present those as new techniques; a useful extension would measure the same loop on Verus proof failures with fixed models and explicit denominators, while separating candidate generation from kernel-checked acceptance and testing whether strengthened invariants preserve reachable behaviors.
+The first flow supplies specification and RTL to the LLM; the second supplies CEX and RTL. Neither flow describes syntax-error repair or what happens when a generated helper cannot be proved. It notes that GenAI can hallucinate “vulnerable results” (Conclusion, p. 4). It does not discuss confidentiality of RTL or CEX data, prompt length, model nondeterminism, or how to detect a helper that makes the property vacuous.
 
 ## techniques for the catalog
 
 - specification-plus-RTL helper synthesis — prompt an LLM with a hardware specification and RTL, verify generated SVA, and reuse proven assertions as assumptions
 - CEX-guided induction repair — feed an inductive-step waveform and RTL to an LLM, then verify the generated invariant in the next proof iteration
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The LLM uses these two pieces of information and analyzes them to come up with a set of helper assertions that can be used for formal verification."): read the entire four-page paper and study; checked quotations, numbers, section/page references, both technique flows, the counter example, and the arXiv identifier printed on p. 1; restored the reduction-AND operators, corrected page references, qualified proof-acceptance claims, and marked conclusions as inferences; did not reproduce experiments, inspect external references, or independently validate the Rust/Verus adaptations.

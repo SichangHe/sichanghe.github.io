@@ -50,8 +50,6 @@ What the paper states:
 
 Inference: This is a domain automation strategy. The paper says projects have on average "1.5-2.5K Boolean variables and 100-200 Integer variables, but this is irrelevant to the type of verification we conduct" (section 3, p. 11). It says scheme elements "are not a good predictor of verification complexity"; complexity, "especially its upper boundary, is better explained by the maximum cyclomatic code complexity of the verified SSI program" (section 3, p. 11).
 
-Verus form (Inference): A VL product can provide reusable proof lemmas for common state-update patterns and expose them through a domain library. A tactic generator can choose lemmas based on transition shape, while Verus remains the final checker. This can reduce proof effort, but the tactic library and generated preconditions are trusted engineering inputs unless independently validated.
-
 ## technique 4: industrial diagnostics and safety-case traceability
 
 Inference: Treat reporting and deployment assumptions as part of verification, not as a separate user-interface concern. SafeCap violations fell into four categories: errors, vulnerabilities, intentional violations, and false positives (section 3, p. 9). A formal-methods expert and an experienced signalling engineer remain involved; the railway expert "leads the production of the final report including the categorisation of the violations found and the selection of the counter examples" (section 3, p. 11).
@@ -76,12 +74,9 @@ Table 1 gives three recently completed projects run on a professional PC with 16
 
 Inference: The main assumptions are that signalling standards correctly capture acceptable risk, that schema and GDL match installed equipment, and that the tool's interpretation and reporting are correct. The paper names an undetected serious error in signalling data (a "false negative") as the credible worst-case failure consequence in replacing manual checks (section 4, p. 13). Current use is advisory and "proven manual processes remain in place" (section 4, p. 13).
 
-Inference: For agent-written verified Rust, SafeCap is a high product-relevance precedent for domain-specific verification, traceability, and deployment governance. VL should reuse these patterns rather than inventing a generic verifier for every domain. The remaining risk is semantic coverage: a proof can be complete for 55 encoded invariants while a required property is absent or incorrectly formalized. A product that hides formal methods still needs explicit evidence about requirements, assumptions, and reporting.
-
 ## techniques for the catalog
 
 - notation-preserving domain translation: import industrial schemas and programs into a common formal model with bidirectional source traceability
 - inductive proof-obligation generation: express safety principles as invariants and check preservation over every generated state update
 - domain-specialized automation: use a custom symbolic prover and reusable tactics tuned to recurring transition structures
 - safety-case integration: trace invariants to standards, maintain hazard logs and assumptions, and stage deployment dependency
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Practical experience of SafeCap with real-world data has led to refinements of safety properties to reduce false positives by reflecting the manner in which SSI GDL data is constructed."): read the whole paper text (pp. 1-16) and checked every quotation, number, page and section reference, Table 1 values, and the step lists in techniques 1, 2 and 4; viewed the p. 7 PDF page to confirm the reachable-state figure; changed the reachable-state figure from 22,000 to 2^2,000, corrected page references, an altered traceability quote and the abstract quote's end punctuation, rewrote technique 3 steps (the paper gives no tactic procedure), and removed claims not in the paper (update hypotheses, counterexample page range, the claim of agreement between plans and data); did not check the cited earlier papers, the Verus mappings (not from the paper), or the arXiv link (kept from the fetch record, the paper text has no DOI or URL for itself).

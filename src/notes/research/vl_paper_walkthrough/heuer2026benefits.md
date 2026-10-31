@@ -40,7 +40,7 @@ Inference: In Verus, model expected outcomes with an enum and prove each match a
 
 ## what is proved, measured, and trusted
 
-The thesis measures execution-time distributions, static complexity metrics, and four expert interviews. It reasons that type-directed sequencing eliminates classes of invalid states, but explicitly does not prove functional correctness. Benchmarks use Criterion's warmup, regression, resampling, and t-test; code quality conclusions depend partly on expert opinion. The three use cases are backend components, not safety-critical systems. Inference: For VL, the direct threat is structural: an agent may encode a plausible typestate or newtype while leaving its invariant unproved, bypassing wrappers, or marking external operations trusted. Verus specifications and proof obligations must therefore cover constructor validity, transition preservation, and boundary adoption.
+The thesis measures execution-time distributions, static complexity metrics, and four expert interviews. It reasons that type-directed sequencing eliminates classes of invalid states, but explicitly does not prove functional correctness. Benchmarks use Criterion's warmup, regression, resampling, and t-test; code quality conclusions depend partly on expert opinion. The three use cases are backend components, not safety-critical systems.
 
 ## techniques for the catalog
 
@@ -48,4 +48,3 @@ The thesis measures execution-time distributions, static complexity metrics, and
 - newtype validation: parse a primitive into a checked wrapper at the earliest boundary
 - explicit outcome enums: enumerate expected business outcomes and handle them exhaustively
 - criterion-rs comparison: use warmup, repeated samples, regression, confidence intervals, and a noise threshold
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

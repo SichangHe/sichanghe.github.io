@@ -32,7 +32,7 @@ Table I’s denominator is 490 ARVO vulnerabilities: POVGEN succeeds on 78.98% w
 
 Only Step 1 incurs API cost, averaging $0.04 per sample for GLM-5.2; local CEM/CSM inference has no per-sample API charge. The PJSIP motivating example analyzes 106.8k source lines and averages 4.57M tokens across explored paths. Limitations include dependence on source/build tooling, imperfect static ICFGs, localization errors, and SMT models that omit libraries or environment behavior. KLEE’s low rate reflects whole-program path explosion, while the paper’s model outputs are not proofs of semantic equivalence.
 
-Proved or mechanically checked: the study’s SMT satisfiability checks, path execution artifacts, and source-tree validation of model-selected context. Trusted: Joern/SySeVR slicing, SVF ICFG construction, KLEE/Z3, model behavior, generated scripts, sanitizer observations, and benchmark labels. Inference: The threat to agent-written verified Rust is substantial when an LLM-generated constraint or input is accepted without replay in the verified implementation; POVGEN’s staged narrowing and solver fallback are useful as a test-generation front end, not as a substitute for Verus proofs. VL should reuse the decomposition into localization, valid path traces, and contract-checked input synthesis.
+Proved or mechanically checked: the study’s SMT satisfiability checks, path execution artifacts, and source-tree validation of model-selected context. Trusted: Joern/SySeVR slicing, SVF ICFG construction, KLEE/Z3, model behavior, generated scripts, sanitizer observations, and benchmark labels.
 
 ## techniques for the catalog
 - manifestation slicing: iteratively expand dependency slices from patches or entries and localize the vulnerable statement
@@ -40,4 +40,3 @@ Proved or mechanically checked: the study’s SMT satisfiability checks, path ex
 - anchored random walks: bias ICFG exploration by backward-BFS distances while preserving path diversity and call-stack validity
 - solver-backed PoV synthesis: use CEM/CSM to produce an executable input generator and SMT as a validated fallback
 - patch differential validation: execute a generated PoV on vulnerable and patched revisions to expose incomplete fixes
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

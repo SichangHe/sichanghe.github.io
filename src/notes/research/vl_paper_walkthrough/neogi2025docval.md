@@ -75,11 +75,8 @@ Inference: VAL, detector outputs, teacher traces, and the training data form ass
 
 The paper reports handwriting with ANLS = 1.0 but IoU = 0.68 versus typical >0.9 for print in one qualitative example (Appendix C, p.15), and says handwriting, degraded scans, and chart/figure pages lie outside its current benchmark distribution (Appendix H, p.19). Inference: product risk is concentrated in specification or training-data validators that omit relevant cases; a checked validator can consistently reject or accept the wrong abstraction.
 
-Inference: VL should reuse deterministic verifier feedback, accepted-trace filtering, and ablations that separate answer correctness from localization. It should not redo a generic teacher/student distillation baseline without a Verus-specific contract or proof-success measure. Inference: this paper’s method poses moderate threat to agent-written verified Rust because training-time checks can improve generation quality while leaving the generated specification’s adequacy unproved.
-
 ## techniques for the catalog
 - dual-mode rule validator — apply deterministic answer, geometry, reasoning, and feedback checks as filter and verifier
 - validator-curated teacher traces — keep only high-quality teacher CoT/answer/box tuples using a threshold
 - iterative feedback distillation — fine-tune a compact student on structured verifier corrections until convergence
 - validation ablation protocol — isolate filtering, feedback, detector, teacher, scale, threshold, and iteration effects
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The combination of CoT supervision and multi-aspect validation prevents error propagation and enables precise spatial learning."): checked all study quotations, numbers, section/page references, technique steps, tag, and arXiv identifier against the entire paper including appendices; corrected appendix pages, teacher use of detected regions, validator scoring, the nonidentical validation-ablation data, and the iteration-count inconsistency; did not reproduce experiments, inspect implementation/data, or validate the proposed Verus inferences.

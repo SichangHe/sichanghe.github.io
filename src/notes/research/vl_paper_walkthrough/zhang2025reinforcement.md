@@ -104,21 +104,9 @@ evidence, limits, and assumptions
 
 Proposition 5.2 (p. 8) proves non-negativity only for γ=1, fixed non-negative weights, same diagnostic scope, componentwise improvement, and no structured error. The author states that with `wE=0` and bundle features in the Markov state, the shaping term is standard potential-based shaping; with `wE>0`, the penalty is an explicit design choice that may change the optimal policy (Section 5, p. 7). The paper reports no downstream coding-agent task benchmark. Inference: reward usefulness depends on the chosen weights and feature definitions; the arithmetic proposition does not establish improved task performance.
 
-## what remains trusted and product threat (inference)
-
-Inference: The trusted base includes the language server/compiler, parser, filesystem, canonicalizer, cryptographic hash, environment pinning, and reward implementation. The paper's formal statements are conditional on deterministic tool semantics and frozen snapshots; they do not verify Python programs, Rust ownership, unsafe code, or specification adequacy.
-
-Inference: For VeruLaw, the most direct transfer is to emit deterministic proof diagnostics and counterexamples as bundles, require preview and workspace invariants before edits, and use reward shaping only to guide search. The product threat is moderate: agents can be grounded in compiler facts, but a low diagnostic count can still reflect an incomplete or incorrect specification. A verified Verus checker and explicit trusted-kernel boundary remain necessary.
-
-## what VL should not redo
-
-The paper specifies selector encodings (Section 3.2), relocation scoring (Section 3.3), canonical bundle hashing (Section 5.1), preview/apply guardrails (Section 5.2), reward equations (Section 5), worked examples (Appendix E), and conditional proofs (Propositions 5.1–5.2). Inference: repeating a generic LSP wrapper would not add knowledge. New work should test these ideas on Verus diagnostics, proof-state counterexamples, and Rust-specific edits while measuring false confidence and trusted components.
-
 ## techniques for the catalog
 
 - robust selector DSL — address code by symbolic, AST, anchor, or explicit-coordinate intent and resolve it with deterministic ranked evidence
 - canonical Analysis Bundles — normalize tool responses, pin environment metadata, and hash stable fields for replay
 - preview-first guarded mutation — preview edits, enforce jail and conflict policies, then modify files only with explicit `--apply`
 - RLCSF reward shaping — convert diagnostic, safety, and confidence changes plus structured tool errors into a replayable transition reward
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Fields explicitly excluded from the hash domain, such as timestamps and run-local trace spans, are not covered by this claim."): read the full paper text, including references and appendices; checked quotations, numbers, section/page references, technique steps, and formal assumptions; corrected the paper link, page references, 10⁵ reference cap, encoding distinctions, hash exclusions, reward scope rules, and optional Git rollback; marked recommendations as inferences. Did not inspect the implementation, reproduce experiments, or verify the proposed Verus adaptations.

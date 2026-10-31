@@ -97,12 +97,6 @@ Verus form: Inference: turn recurring Rust API contracts, representation invaria
 
 evidence and limits: The paper argues that formal verification can extend to engineering and physical science but notes that most such fields lack mature checked libraries (Section 5.2, p. 23). It supplies examples, not a coverage or defect-rate denominator. Inference: library growth can reduce repeated proof effort but can also propagate a wrongly formalized specification widely.
 
-## trusted boundary, contradictions, and product threat
-
-The paper measures output volume, cost estimates, review backlog, and selected Lean status. It does not establish that all 45 potential papers are correct, novel, or useful. It explicitly says its “finding no error” in checked material does not show that none remains (Section 4.4, p. 18). The strongest evidence is mechanical checking of an exact formal statement; the remaining trust problem is whether that statement matches the claim and assumptions.
-
-Inference: VL should reuse the paper's three-level evidence model, fresh-context review, independent-provider review where practical, replayable proof artifacts, and statistical audits with denominators. VL should not redo the generic observation that LLMs can draft proofs; it should measure Verus acceptance, specification mismatch, trusted-boundary defects, and reviewer error on a fixed task population. The threat to agent-written verified Rust is high at specification meaning and external interfaces, moderate at proof search, and lower for a precisely stated body accepted by a reproducible Verus toolchain. These are inferences from the paper's evidence structure, not measurements in the paper.
-
 ## techniques for the catalog
 
 - open-ended swarm orchestration — define scope, provide literature/tools, and let many agents pursue and review candidate results without a fixed stopping point
@@ -110,4 +104,3 @@ Inference: VL should reuse the paper's three-level evidence model, fresh-context
 - three-level evidence — combine mechanical proof or replayable computation with agent judgment and selected human judgment
 - statistical review audit — sample accepted claims, publish error rates and denominators, and repeat after model changes
 - formal library building — encode established results and assumptions in a checker so later work composes trusted lemmas
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

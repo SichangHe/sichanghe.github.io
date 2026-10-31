@@ -56,8 +56,6 @@ The assembly case study annotates x86-64 `sortbits` with two loop invariants and
 
 Steps (Section 7, p. 198): (1) parse annotated assembly; (2) build the control-flow graph; (3) compute dominators; (4) nest handlers according to the dominator tree; (5) translate invariants into assertion/barrier pairs; (6) translate jumps and instructions using a logical instruction model; (7) compute the VC and discharge the tasks. The example proves only population-count preservation: “we do not show that bits are indeed sorted” (Section 7, p. 197).
 
-Inference: Verus can verify a Rust implementation of the same algorithm with loop invariants and bit-vector lemmas, but it does not consume this assembly-to-dominator-tree pipeline. A VL compiler could use dominators to place invariants before emitting Rust, then let Verus check the generated code.
-
 ## evidence, limitations, and product relevance
 The benchmark used the Creusot test suite: of the Rust files that did not change when Creusot switched from Why3 to Coma (235 files), files whose absolute VC-generation-time difference “was smaller than the sum of two standard deviations” were excluded, leaving 33. Coma’s VC generator was faster than Why3’s on all but one of those 33, and “For a third of the tests, Coma was more than 50% faster” (Section 5, p. 194). The denominator is the 33 retained files, not all 235.
 
@@ -65,7 +63,7 @@ Stated limitations: VCs are for partial correctness; termination needs variants 
 
 Inference: the proof-task counts (44 and 5) measure decomposition, not confidence. Trusted components include the Why3 logic, SMT solvers, instruction model, parser and translation, and the specifications themselves. For agent-written verified Rust, a wrong barrier placement, ghost predicate, instruction model, or inferred contract can yield a valid proof of the wrong claim. The paper’s abstraction boundaries and dominator-based lowering do not establish that a generated specification matches product intent.
 
-The authors state: “To our knowledge, no deductive verification system features explicit abstraction barriers in the style of Coma” (Section 8, p. 199). Inference: VL could reuse the separation of interface and implementation obligations, path-specific contracts, continuation postcondition wrappers, and dominator-guided invariant placement; it should not redo the paper’s VC-generator performance comparison, but test whether analogous Rust transformations preserve Verus proofs and intended behavior.
+The authors state: “To our knowledge, no deductive verification system features explicit abstraction barriers in the style of Coma” (Section 8, p. 199).
 
 ## techniques for the catalog
 - explicit abstraction barriers: expose assertions to callers while checking hidden implementation once under those assumptions
@@ -75,4 +73,3 @@ The authors state: “To our knowledge, no deductive verification system feature
 - contract extraction by neutralization: instantiate continuation recipes to derive preconditions and postconditions
 - CPS ghost predicates: specify higher-order continuations with ghost predicates and lexicographic termination variants
 - dominator-guided invariant lowering: nest handlers by control-flow dominators so loop invariants are asserted once at the right scope
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The caller mode extracts the specification (or the contract) of a defined handler from its definition."): what I checked: all quotations, code, formulas, numbers (235, 33, 44, 5 tasks), section and page references, and technique steps against the paper text; what I changed: fixed wrong page/section references (Why3 implementation p. 192, regex study Section 6 pp. 195–196, white-box barrier p. 189), corrected the removeRoot assertion (iff, not "came from"), the triple barrier placement, the standard-deviation exclusion rule, and the mode description; marked step lists not given by the paper and VL/Verus advice as Inference; added stated limitations; removed an unsupported Verus ghost-wrapper claim and a repeated ghost-code sentence; what I did not check: the extended version, the proofs, Figures 10 and 15a beyond their captions, and the Verus statements.

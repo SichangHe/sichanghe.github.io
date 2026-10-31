@@ -8,8 +8,6 @@ The paper studies the MacNeille completion `Mac(W)` of a Coxeter group `W` order
 
 The mathematical results include vertex-decomposability of unions of subword complexes, an equivalence between graded weak-order intervals and Cohen–Macaulay ASM varieties, a pop-stack operator with worst-case orbit length `h−1`, and a shellable abstract simplicial MacNeille complex. The article also uses ChatGPT 5.4 Pro as a research assistant. Its abstract states: “The proof of the conjecture of Escobar–Klein–Weigandt and the disproof of the conjecture of Hamaker–Reiner were obtained autonomously by ChatGPT 5.4 Pro.” (Abstract, p. 1.) The account records successful proof completion, counterexample discovery, and a substantive model error that the author corrected (Section 7, p. 14).
 
-Inference: these are mathematical proof techniques rather than Rust or Verus techniques. Their relevance to VeruLaw is methodological: each generated claim is accepted only after its exact assumptions and proof obligations are checked.
-
 ## technique: closure-preserving 0-Hecke action
 
 Use this when extending an order action from a base poset into its completion. For a poset `P`, define `U(X)` as common upper bounds and `D(X)` as common lower bounds. First establish `X⊆U(D(X))` and `U(X)=U(D(U(X)))`; therefore every MacNeille filter is `U(X)` for some `X` (Lemmas 2.1–2.2 and Corollary 2.3, p. 6).
@@ -52,8 +50,6 @@ In May 2026 the author uploaded his notes to ChatGPT 5.4 Pro and asked it to fil
 
 What is proved or measured is the set of stated mathematical theorems under Coxeter, order, algebraic, and field assumptions. What remains trusted includes the cited prior theorems, correctness of ChatGPT-generated intermediate reasoning until human repair, interpretation of `∇`, and the author's final proof checking. I found no proof-assistant certificate, benchmark denominator, or independent replication reported in the paper text. Inference: “autonomously” describes model contribution, not machine-checked soundness.
 
-Inference: for VeruLaw, the direct product threat is specification hallucination. An agent may silently replace an order closure with a different operation, use the wrong multiplication convention, or prove a theorem under stronger assumptions than the Rust program guarantees. Require explicit definitions, counterexample search, and proof replay in Verus; treat model provenance as a lead, never as evidence of a verified contract.
-
 ## techniques for the catalog
 
 - completion-action extension — prove closure and action equivariance before lifting a base-poset operator to a MacNeille completion
@@ -62,4 +58,3 @@ Inference: for VeruLaw, the direct product threat is specification hallucination
 - ranked pop-stack dynamics — combine commuting descents, parabolic projections, and a bounded orbit rank to prove termination
 - maximal-parabolic reconstruction — recover each face from maximal-parabolic projections, then prove purity and shellability
 - adversarial AI proof checking — preserve counterexamples and semantic corrections as required evidence before accepting generated mathematics
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "A similar argument appears in Jahn’s thesis [Jah22], which is a precursor for studying unions of subword complexes."): read the whole paper text (pp. 1–15 and references) and compared every quotation, theorem and lemma number, page reference, and technique step in the study; the tag and the arXiv link (2605.08033v2, shown in the paper text) are right. Changed: corrected the second quotation, which began with the name ChatGPT where the paper has the word Its (and moved its page, and the Section 7 range, from p. 15 to p. 14); corrected “Lemmas 2.1–2.3” to Lemmas 2.1–2.2 and Corollary 2.3; made the pop-stack lemmas state `J=S\{s}`; changed “extends to a facet” to the paper's “is a facet”; added the ChatGPT interaction details, the paper's own remark that the proof is not terribly intricate, and the credits for prior results; marked the absence-of-certificate and Verus remarks as the agent's own. Not checked: the cited external results (Weigandt, Axelrod-Freed et al., Knutson–Miller, Stembridge, Defant 2022B), the correctness of the paper's proofs, and the Inference paragraphs about Verus and VeruLaw beyond their stated links to the paper; the paper's outline mentions a table of ChatGPT conversations that is not in the extracted text.

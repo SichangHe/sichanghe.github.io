@@ -76,12 +76,6 @@ Verus form. Inference: use an executable reference implementation for runtime di
 
 Evidence. The authors report that this regime found “nearly two dozen bugs since the project’s inception” and forced CI to keep the Lean specification and proofs up to date (Section 3.6, p. 13). Performance tests used one EC2 m5.4xlarge, 200 datastores and 500 random requests per datastore, totaling 100,000 requests per datapoint; they report medians and p99 times (Section 5.2.1, p. 20). Cedar was 28.7×, 34.4×, and 35.2× faster than OpenFGA on gdrive, github, and TinyTodo, and 60.4×, 80.8×, and 42.8× faster than Rego, respectively, averaged over tested input sizes and median performance (Section 5.2.2, p. 20). These comparisons exclude storage, parsing, initialization, and HTTP time (Section 5.2.1, p. 20).
 
-## what remains trusted and what VL should learn
-
-Inference: assurance depends on the formal model matching intended authorization behavior, the proof checker, the Rust implementation and build tools, and the analysis implementation and solver. Schemas and input conformance are assumptions of the validation and analysis claims. Differential testing checks agreement on sampled inputs; it does not prove Rust/Lean equivalence. The authors write: “Moreover, writing down a formal spec forced us to think deeply about corner cases, and the process revealed other subtle bugs in our semantics.” (Section 3.5, p. 13)
-
-Inference: VL could adapt Cedar’s separation of executable code, reference semantics, validation, symbolic analysis, and differential testing when synthesizing or repairing Rust/Verus contracts. This paper does not evaluate Verus, agent-written Rust, or VL; it does not establish their performance, correctness, or competitive position. The main performance comparison uses three example applications and specified settings; Section 6 also reports a small experiment with translated AWS IAM policies.
-
 ## techniques for the catalog
 
 - schema-directed validation — specialize policy typing to action schemas and use capabilities and singleton booleans to exclude type and optional-attribute errors under the soundness assumptions
@@ -89,4 +83,3 @@ Inference: VL could adapt Cedar’s separation of executable code, reference sem
 - sound policy slicing — index scopes to evaluate a smaller policy set while proving excluded policies cannot match
 - symbolic SMT compilation — encode policies and finite hierarchy constraints to find equivalence counterexamples
 - differential model testing — compare generated Lean-model and Rust executions and fuzz parser/printer properties in CI
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We have also implemented the symbolic encoder in Lean, and proofs of soundness and completeness using the Lean encoder are underway, as of this writing."): read the complete extended paper, including references and Appendix A; checked quotations, numbers, section/page references, and technique steps; corrected the unrelated DOI to the paper’s arXiv identifier, validation assumptions and environments, slicing details, symbolic encoding steps, page references, and unsupported Verus/VL claims; did not inspect code or proof artifacts, reproduce experiments, or independently validate the proposed Verus adaptations.

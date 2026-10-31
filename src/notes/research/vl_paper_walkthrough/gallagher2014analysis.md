@@ -61,8 +61,6 @@ Apply it to a benchmark set as follows.
 4. Report unsupported numerical ranges as unsolved rather than safe (inference). The paper says problems marked `*` "contain numbers which do not fit in 32 bits, the limit of our Ciao Prolog implementation", and problems marked `**` "are solvable by simple ad hoc modification of the tool-chain" (§5, PDF p.8; Table 1, p.9).
 5. Choose transformation order and heuristics per benchmark; the paper lists this as future work (§7, PDF p.10) and proposes better heuristics plus lazy or implicit generation of transformed programs, for example a fixpoint engine that simulates query-answer programs, to control blow-up (§6, PDF p.10).
 
-Verus form (inference). For VL, use the chain as a proof-obligation scheduler: specialize generated Rust specs, split disjoint cases, infer candidate linear invariants, then feed explicit lemmas and `invariant` clauses to Verus. The chain can reduce solver load but does not replace Verus's checked proof. This is an inference.
-
 Evidence. Table 1 contains 32 benchmarks: 27 marked verified, 5 marked NOT. Two verified rows (`amebsa.smt2`, `DAGGER-barbr.map.c`) carry the `**` mark (ad hoc modification of the chain); three NOT rows (`sshsimpl-s3-srvr-1a-safeil.c`, `bandec.smt2`, `crank.smt2`) carry the `*` mark (numbers over 32 bits). Of the other two NOT rows, the text explains only `systemc-token-ring.01-safeil.c`: its loop structure has "large strongly connected components" and the polyhedron tool "is unable to derive the required invariant"; no reason is given for `sshsimpl-s3-srvr-1b-safeil.c` (§5, PDF pp.8–9). The authors report no timings: "We do not report timings, though all these results are obtained in a matter of seconds, since our tool-chain is not at all optimised, relying on file input-output and the individual components are often prototypes." [§5, PDF pp.8–9]
 
 ## what is proved, trusted, and incomplete
@@ -71,8 +69,6 @@ The paper argues safety conditionally, by citing standard correctness results: t
 
 Inference: the trusted base includes CHC translation, each transformation's correctness, the abstract interpreter and widening implementation, the background linear-arithmetic theory, and the assumption that numerical limits or prototype failures are reported correctly; the paper says the components "are often prototypes" (§5, PDF p.9). The benchmark denominator is 32 programs, with 27 verified and 5 NOT in Table 1; the paper gives no per-program timings, only "a matter of seconds".
 
-Inference: For agent-written verified Rust, the threat is indirect but substantial when an inferred invariant over-approximates the wrong state relation or when a transformation drops a dependency. VL should not redo generic CHC transformations, query-answer logic, or convex-polyhedron abstract interpretation as if new. A Verus integration could instead reuse these as candidate-invariant and obligation-prioritization components, then require Verus to check the final executable code and contracts.
-
 ## techniques for the catalog
 
 - CHC-preserving unfolding: replace predicate calls with definitions while preserving the minimal model and safety query
@@ -80,4 +76,3 @@ Inference: For agent-written verified Rust, the threat is indirect but substanti
 - predicate splitting: separate mutually exclusive clauses so each case gets a precise abstract polyhedron
 - thresholded polyhedral analysis: compute widening thresholds from three concrete iterations and exclude `false` from the over-approximation
 - compositional CHC tool chain: order transformations and analysis, reporting safe versus unknown with explicit numerical limits
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We have found that polyhedron analysis alone is seldom precise enough to solve non-trivial CHC verification problems; in combination with the other tools, it is very effective."): read the whole paper text and checked quotations, page and section references, technique steps, Figure 5 polyhedra, and Table 1 counts; changed the chain order in the procedure (RAF before unfolding), the Table 1 counts (27 verified, 5 NOT, not 25 and 7), several page references, the splitting description, and marked unsupported claims as inference; did not check the cited external works or the PDF figures beyond the text layer.

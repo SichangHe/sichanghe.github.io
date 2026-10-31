@@ -43,8 +43,6 @@ how to apply it
 5. After invention, divide a one-minute budget into time slices. Greedily assign each slice a strategy that solves the most problems still unsolved by previous selections. Shuffle the slice sequence 100 times and repeat selection; try multiple divisions and choose the schedule with greatest problem coverage (Section 3.2, p. 4).
 6. Execute the chosen strategies sequentially under their assigned time limits. A Python program invokes CSI with separate configuration documents to avoid naming conflicts (Appendix G, pp. 26–27).
 
-Inference: For VL, candidate proof plans could vary invariant candidates, lemma order, and solver settings. Retaining several plans can cover different obligations; the portfolio search would organize attempts while Verus checks each result.
-
 ## technique 3: balanced random dataset generation
 
 what it is
@@ -60,7 +58,7 @@ how to apply it
 5. Run 26 labeling strategies: the 24 initial strategies and two additional decompositions isolating development closedness and decreasing diagrams. Allow one minute for the competition strategy and 30 seconds for the others (Section 4.2, p. 5).
 6. Randomly retain at most 300 problems mastered by each labeling strategy, and add 1,200 problems unsolved by every labeling strategy. The resulting random dataset contains 5,267 TRSs: 1,647 confluent, 1,910 non-confluent, and 1,710 indeterminate under the one-CPU, one-minute competition-strategy run (Section 4.2, p. 5).
 
-The paper says the final distribution is “not perfectly balanced” (Section 4.2, p. 5). Before capping, four strategies master over 1,000 problems each and 16 master fewer than 250 each. Inference: A VL dataset should record the solver, budget, label source, and train/test membership, since an indeterminate answer reflects a particular search attempt rather than the underlying mathematical truth.
+The paper says the final distribution is “not perfectly balanced” (Section 4.2, p. 5). Before capping, four strategies master over 1,000 problems each and 16 master fewer than 250 each.
 
 ## technique 4: evaluation and incomplete certification
 
@@ -74,17 +72,9 @@ On all 566 ARI-COPS TRSs, Table 2 reports 469 solved by the competition strategy
 
 Across the one- and four-CPU final portfolios, nine ARI-COPS problems had not been solved by any CSI version; five had not been solved by any participant in CoCo. Of those five, three have CeTA-certifiable proofs (Table 3, p. 6). The checks also include consistency with competition results and manual examination of certification errors. Unsupported cases include unavailable CSI certificate output and techniques absent from CeTA (Appendix H, pp. 27–30).
 
-## interpretation for VL
-
-Inference: The transferable idea is to search over an existing prover's strategies, retain complementary configurations, schedule them under a fixed budget, and measure checked success on held-out obligations. The paper's certification limits mean its solved counts should not be equated with independently certified proof counts.
-
-The paper provides a concrete example of useful parameter search: replacing `redundant -narrowfwd -narrowbwd -size 7` with `redundant -development 6 -size 7` enables a non-confluence proof for 846.ari (Introduction, pp. 1–2). Appendix H.2 reports certifiable proofs for both 846.ari and 852.ari using this change (p. 28). Inference: For VL, parameter choices that initially appear unhelpful can merit reconsideration as the benchmark changes. Verus acceptance would still establish only the supplied specification; a search score should not reward weakening that specification.
-
 ## techniques for the catalog
 
 - sound strategy-space restriction — preserve required strategy structure and flags, and forbid unsound parameter combinations
 - complementary portfolio invention — specialize strategies on their strongest problems and combine them under a time schedule
 - balanced synthetic benchmarks — generate systems, label under fixed budgets, remove duplicates, and cap dominant strategy groups
 - separate result and certificate evaluation — distinguish held-out coverage, competition consistency, external certification, and manual analysis
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The structures are also kept unchanged, meaning that we first execute dp and then edg, etc."): read all 33 PDF pages, including appendices and references; checked quotations, numbers, section and PDF-page references, strategy steps, dataset construction, evaluation scope, and certification limits; corrected quotations and page references, distinguished CSI's strategy language from Grackle's parameter encoding, removed a certifiability restriction absent from the method, and identified the inconsistent ARI-COPS split descriptions; retained the tag and linked the arXiv identifier printed on page 1; did not rerun experiments, inspect implementation code, or independently verify mathematical proofs.

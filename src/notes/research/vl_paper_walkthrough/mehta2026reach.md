@@ -43,17 +43,12 @@ Inference: in Verus, a boot check can be represented as a trusted boundary predi
 
 The authors grade by assigned condition (intention-to-treat) even if a model ignores a tool. They record every tool call, token count, and prompt hash. They expose passive screenshots through Playwright so each observation is countable and does not mix looking with clicking. A full shell costs 2.35 times the no-tools token cost; the boot probe is cheaper than every other condition. This prevents attributing quality to only runs that chose to verify. The paper cautions: “Granting a screenshot tool, or any other tool, does not guarantee that a model will use it.”
 
-Inference: VL should log capability grants, actual calls, observed feedback, and repair actions separately. A Verus proof's trusted assumptions and erased proof code should likewise be listed separately from executable checks; a successful proof does not establish that the specification captures visual or deployment failures.
-
 ## what is proved, trusted, and left open
 
 The evidence supports these controlled comparisons: execution versus no_verification functional score +12.26 (CI [+7.04,+17.47], Holm p=.0006); boot survival +13 percentage points; and increased token cost, execution minus no_verification log tokens +0.80 (CI [+0.73,+0.87], Holm p=.0006). Static versus no_verification is −3.60 functional points (CI [−11.36,+3.61], p=.3886), a null result. Behavioral self-authored tests versus execution is −16.07 (CI [−31.67,−1.70], p=.0425 uncorrected secondary S5), so parity is not shown. The six-model and seven-task sample, passive screenshots, fixed applications, and human grading limit generalization. The authors report 45/1,116 builds (4%) with a wiring problem; 5 of 10 frontend parse-error cases occurred in the static condition, showing that granting a linter did not ensure repeated use or repair.
-
-Inference: threat to a product that lets agents write verified Rust is moderate. A capability ladder can remove build failures and target specific contract-visible defects, but Verus cannot automatically observe deployment, pixels, timing, or unspecified behavior. VL should map each intended guarantee to an executable or proof-visible observation, measure cost and non-use, and retain negative controls for failures that a checker cannot reach. Existing work has already measured shell, boot, screenshot, linter, delayed, and self-test surfaces; VL should not repeat a generic “more tools help” experiment without a new failure class or proof obligation.
 
 ## techniques for the catalog
 
 - failure-matched verification surface — choose a checker whose observable signal reaches the product failure, and include a negative-control task where it cannot
 - boot-probe-first ladder — measure a one-bit startup check before paying for a full shell, preserving within-model comparisons and token denominators
 - intention-to-treat tool evaluation — score assigned capabilities while logging actual use, feedback, repair, and cost separately
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

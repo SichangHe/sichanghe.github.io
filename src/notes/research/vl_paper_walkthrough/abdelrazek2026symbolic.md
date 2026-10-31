@@ -61,12 +61,6 @@ Evidence. The authors report 31 CVE nodes, 5 error-type nodes, 11 CWE nodes, 1,2
 
 Verus form. Inference: a graph could organize verified contracts, assumptions, and counterexamples, with explicit links to proof results. Graph connectivity itself supplies no proof. The paper's graph inherits the generated wrappers' fidelity limitations and the distinction between path counts and vulnerability counts (Sections 7.4 and 8.3, p. 9).
 
-## what is proved, trusted, and relevant to VL
-
-The paper reports compilation and symbolic-execution results, rather than a proof that wrappers preserve original-program semantics. It acknowledges that a wrapper assigned the wrong class can produce real KLEE errors of that wrong class, and that the Oracle's constraint is enforced through prompting rather than formal verification (Section 8.1, p. 9).
-
-Inference: VL could reuse the planning, wrapper-generation, execution, and error-triage pattern as a way to propose verification targets. Accepting a wrapper result as evidence about production code would additionally require source correspondence and justified models of external operations. A Verus contract for the wrapper alone would not supply those links. This paper evaluates neither that extension nor Verus proofs.
-
 ## techniques for the catalog
 
 - role-specialized JSON orchestration — split planning, security analysis, wrapper generation, and KLEE tuning among four sequential agents
@@ -74,5 +68,3 @@ Inference: VL could reuse the planning, wrapper-generation, execution, and error
 - KLEE harness construction — declare exported functions, make inputs symbolic, constrain indices, and select execution paths
 - typed error triage — prioritize pointer errors and inspect whether external errors arise from CVE-specific functions or generic fallback code
 - graph post-processing — organize CVEs, CWE categories, error types, and symbolic test cases with labelled relationships
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For our 31-CVE dataset, the resulting Graph DB contains 31 CVE nodes, 5 ErrorType nodes, 11 CWE nodes, and 1,206 SymPath nodes, connected by 1,310 labelled edges."): read the full paper and study; checked quotations, reported numbers, section/page references, and technique steps; corrected references and quotation wording, separated inferences, and recorded baseline, listing, graph-schema, and numerical limitations; did not inspect the replication repository, rerun experiments, or independently validate the original CVEs or Verus adaptations.

@@ -15,7 +15,7 @@ Inference: a Verus library for a callback-driven Rust subsystem can represent ev
 ## technique: use litmus tests to expose programming consequences
 Section V presents small tests that programmers can check against the MCM: no-callback message passing, read-modify-write synchronization to phantom addresses, callback instruction ordering, `FlushRange`, and callback-induced races. The paper says: “We now show how programmers can use litmus tests to write and analyze täkō programs using our MCM.” (§V, PDF p. 8). For each test, construct a candidate execution graph, compute relations, and ask whether all axioms hold. A forbidden outcome identifies a missing synchronization edge or callback condition; an allowed outcome is a programming guarantee only under the stated initial state and event assumptions.
 
-The `FlushRange` test is especially actionable: nonblocking `OnWB` permits a race, while inserting `FlushRange` orders the writeback and forbids the stale read (§V-D, PDF pp. 9–10). Inference: VL can use analogous small Rust/Verus litmus tests for callback, interrupt, or persistence APIs, but each result must include the model assumptions and the denominator of tested executions if explored automatically.
+The `FlushRange` test is especially actionable: nonblocking `OnWB` permits a race, while inserting `FlushRange` orders the writeback and forbids the stale read (§V-D, PDF pp. 9–10).
 
 ## technique: overapproximate microarchitecture with environmental transitions
 The operational model is parameterized over prefetching, cache replacement, and network-on-chip behavior. Environmental transitions can issue cache requests or schedule callbacks whenever preconditions hold, including repeated `OnMiss`–`OnEvict` sequences without a core request (§VI-D, PDF p. 14). This overapproximation proves correctness for all choices of those policies. The model decomposes a load into independent “perform load” and “send request” transitions so prefetches and out-of-order requests are represented (§VI-D, PDF p. 14).
@@ -32,8 +32,6 @@ Inference: in Verus, define a ghost partial graph and an invariant predicate; pr
 ## evidence, trust, and limits
 The authors report 119 clauses in the inductive invariant and 61K lines of proof annotations even after assuming a known coherent protocol (§VII-E, PDF p. 18). The artifact requires Dafny 4.11.0 and Alloy 6.2.0 (Artifact Appendix, PDF p. 19). The proof covers all programs in the modeled operational system and all parameter choices admitted by the abstractions, but it assumes coherence properties and does not prove the real closed-source implementation of täkō. It trusts Dafny, Alloy, the model, the abstraction function, and the coherence assumption.
 
-Inference: threat to agent-written verified Rust is medium. The strongest transferable idea is proof decomposition around a prefix-closed abstract event graph; the hardware-specific MCM is not directly reusable. VL should not redo generic litmus-test or refinement methodology, but should adapt prefix-closed invariants and explicit environment transitions when verifying callback-heavy or concurrent Rust.
-
 ## techniques for the catalog
 
 - ISA event axiomatization: expose callbacks, cache events, phantom values, and ordering relations as execution-graph events
@@ -41,5 +39,3 @@ Inference: threat to agent-written verified Rust is medium. The strongest transf
 - environmental overapproximation: parameterize hidden scheduling and replacement behavior with nondeterministic transitions
 - prefix-closed invariants: reformulate full-execution axioms so every partial execution satisfies them
 - intermediate-state refinement: prove an abstract event-graph machine and separately connect it to the detailed implementation
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

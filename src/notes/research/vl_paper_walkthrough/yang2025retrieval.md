@@ -4,8 +4,6 @@ Tag: `yang2025retrieval`, [paper](https://doi.org/10.18653/v1/2025.findings-emnl
 
 The paper studies natural-language theorem proving from raw textbook and research documents. Its central claim is that retrieval should supply both statements and reusable proof methods: “they can follow proof techniques found in unstructured contexts and effectively apply them to construct correct proofs for new theorems” (§1, p.21302). The system, Dual RAG, rewrites both query and context before embedding, then retrieves and reranks chunks for a generator.
 
-## techniques
-
 ### preserve theorem-proof units during chunking
 
 What it is: chunk raw LaTeX while retaining each theorem (or proposition/lemma), its proof, and nearby examples or remarks as one retrievable unit. The authors explain that “we utilize an LLM-based chunking method” (§4, p.21303), and the appendix prompt requires: “Keep all theorem/proposition/lemma environments and their corresponding proofs intact within the same segment” (Appendix A, p.21311).
@@ -54,7 +52,7 @@ The paper measures retrieval coverage and human ratings of generated natural-lan
 
 The reported “up to 34.19%” is the largest Dual RAG minus Vanilla RAG coverage difference in Table 2 (Real Analysis, K=4: 68.00−33.81); it is not a proof-success percentage. Table 3’s improvements are generation score differences, not percentages of the 100 problems unless normalized as stated. The paper’s research example is one case and experts say minor adjustments are needed (§5.4, p.21307), so it is evidence of feasibility, not general research-level reliability.
 
-The paper distinguishes prior premise selection over structured theorem libraries from its retrieval of proof techniques in raw documents (§§2–3, p.21303). Inference: that distinction matters for VL when retrieving explanations and proof patterns alongside verified lemmas. Inference: this threatens an agent-written Verus product mainly through plausible but unverified proof plans and specification hallucinations; mandatory Verus checking, provenance links, and human review of specifications address that risk. The reported limitation provides no evidence that it reliably discovers fundamentally new invariants absent from its model and retrieved material.
+The paper distinguishes prior premise selection over structured theorem libraries from its retrieval of proof techniques in raw documents (§§2–3, p.21303).
 
 ## techniques for the catalog
 
@@ -67,5 +65,3 @@ The paper distinguishes prior premise selection over structured theorem librarie
 - zero-shot reranking — order retrieved chunks by direct usefulness to the target proof
 
 - mimetic generation — condition an LLM on retrieved proofs so it can transfer their structure to a new theorem
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The LLM generates a correct proof for a recently proposed open problem by retrieving and leveraging relevant results from the arXiv corpus."): read the entire supplied 13-page paper text, including references, prompts, and appendices B–E, and the entire study; compared quotations, all reported table values, evaluation denominators, page references, and pipeline steps; corrected source wording, table/prompt locations, ablation denominators, unsupported augmentation-format and novelty claims, and distinguished model roles and inference; did not run the system, inspect supplementary proofs, audit expert ratings, validate cited papers, or visually inspect PDF figures.

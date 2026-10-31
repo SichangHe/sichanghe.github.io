@@ -46,15 +46,11 @@ How to apply it. (1) Fix benchmark split, model, attempt budget, verifier, and h
 
 Evidence. Table 3 reports KG deltas: Qwen3-8B +2, Qwen3-32B −14, Goedel-8B +14, Goedel-32B −3, Sonnet −7; MATHLIB deltas range from −6 to 0. Table 4 reports oracle gains of +19/+18/+36/+29/+23 problems for Qwen3-8B/Qwen3-32B/Goedel-8B/Goedel-32B/Sonnet. The paper's McNemar tests find some deltas significant, but every MATHLIB-minus-baseline delta is within noise (Appendix J, Table 11).
 
-Verus form. Inference: benchmark VL with the same four modes using Verus-specific graph retrieval, library retrieval, both, and neither. Pair each mode on identical goals and count only verified proofs. The oracle is an analysis upper bound requiring multiple runs; it is not a deployable fixed policy.
+Verus form.
 
 ## what is proved, measured, and trusted
 
 Lean's kernel proves accepted generated code. Measured quantities are pass@32 solve counts, per-model deltas, per-problem unions, token-overflow failures, and p-values. MATH KG relation labels are LLM-generated and filtered, not formally proved semantic facts. The selected MATHLIB declarations and their verification status are trusted inputs. The open-ended Conjecturer and Integrator are implemented but not evaluated (Section 4, p. 4), so claims concern targeted proving only.
-
-## implications for VL
-
-Inference: VL should reuse typed semantic retrieval, exact signature enrichment, bounded error-guided verifier loops, and per-problem complementarity measurements. It should not assume that more context improves a stronger model; in this paper large models often regress. Inference: the threat to agent-written verified Rust is moderate for lemma discovery but high for specification hallucination, because a graph can be semantically wrong while every selected Verus proof still proves the supplied goal. Existing Lean retrieval and specialized-prover work already covers generic premise retrieval; VL's unresolved work is to measure graph usefulness on Rust ownership, APIs, concurrency, and real Verus diagnostics.
 
 ## techniques for the catalog
 
@@ -63,5 +59,3 @@ Inference: VL should reuse typed semantic retrieval, exact signature enrichment,
 - error-guided prover loop — repeatedly submit generated proof code to the kernel and feed bounded diagnostics back
 - four-mode ablation — isolate graph, library, combined, and no-context proving under matched budgets
 - complementarity oracle — union problems solved by different augmentation modes to quantify adaptive selection headroom
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

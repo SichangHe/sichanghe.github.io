@@ -6,8 +6,6 @@ Tag: `pati2026mathconstraint`, [paper](http://arxiv.org/abs/2605.08498v1)
 
 MathConstraint is an adaptive generator and evaluator for combinatorial reasoning. The abstract describes “constraint satisfaction problems with rigorous solver-based verification” and an adaptive generator that creates instances remaining difficult as models improve (Abstract, p.1). It releases MathConstraint-Easy (266 instances) and MathConstraint (329 instances), evaluates 12 models, and compares no-tool answers with a sandboxed Python environment containing SAT/SMT solvers (Abstract, p.1).
 
-Inference: this paper teaches a verified-instance and verifier-contract pattern for VL evaluation, rather than a Rust proof algorithm. The paper’s formal guarantee is about instance labels and submitted witnesses under its solver and verifier, not about model explanations.
-
 ## technique 1: profile-driven solver-certified instance generation
 
 what it is: a profile specifies problem types, parameter domains, counts, prompt templates, and a seed. Each sampled parameter tuple is encoded by a pycsp3 or pysms backend, solved by a reference solver, and rendered into a natural-language prompt plus a record containing polarity, optional witness, difficulty metadata, and a verifier contract (Sections 3 and 3.2, pp.3–4). The registry has 39 parameterized types spanning designs, graph thresholds, sequences, placement, scheduling, and extremal graphs (Section 3.1, p.3).
@@ -55,7 +53,7 @@ how to do it:
 4. release an easy slice and a harder slice from the same machinery, preserving prompt and verification contracts (Section 3.4, p.5)
 5. repeat as models improve (Figure 3, p.5)
 
-verus form: Inference: use the same strategy for a VL regression suite: generate parameterized verified-Rust tasks, run Verus, and retain tasks that expose model failures. Store the exact specification and toolchain with each task. Inference: admission by model failure measures challenge, not completeness of the task distribution.
+verus form:
 
 evidence: no-tools frontier/near-frontier mean accuracy falls from 80.5% on Easy to 42.0% on hard; the number of 12 models above 50% falls from 11 to 3 (Section 4.1, p.6). GPT-5.5 solves 220/329 (66.9%), while Sonnet solves 61/329 (18.5%) (Table 2, p.6). Easy no-tools accuracies range from 72.6% to 87.6% over frontier models on 266 instances (Table 3, p.6). Inference: the filter restores separation but may preferentially select failures of the admitted models.
 
@@ -70,17 +68,11 @@ how to do it:
 4. for SIM@k, truncate each logged trace after k rounds and rerun the same parser/verifier (Section C, p.15)
 5. compare SIM@1, @2, @4, and @8 to measure how much accepted work needs multiple rounds (Section 4.3, p.8)
 
-verus form: Inference: a VL agent could call a sandboxed Verus compiler or solver, but acceptance must still be based on independently checking the submitted Rust proof artifact. SIM@k can replay logged verification attempts; it cannot prove that an adapted policy would behave identically.
+verus form:
 
 evidence: on hard 329-instance MathConstraint, tool access raises GPT-5.5 from 220/329 (66.9%) to 266/329 (80.9%), and Sonnet from 61/329 (18.5%) to 232/329 (70.5%) (Tables 2 and 4, p.7). The paper reports mean frontier gain +28 percentage points and up to +52 points for Sonnet (Abstract, p.1; Table 4, p.7). Table 11 gives GPT-5.5 SIM@4=63.2% versus SIM@8=80.9%, and Sonnet 33.7% versus 70.5%; denominator is 329 for every percentage (Appendix, p.20). Halving 8 to 4 rounds erases up to 37 points (Figure 5 and conclusion, pp.8–9).
 
-limits: SIM@k truncates observed trajectories and does not allow a model to adapt to a smaller budget (Section C, p.15). The paper’s released benchmarks use a fixed prompt format and fixed maximum budget (Conclusion, p.9). Inference: tool access can hide weaknesses in encoding and debugging; a VL product should log both proof attempts and verifier outcomes.
-
-## trusted boundary, contradictions, and VL implications
-
-The paper proves or measures solver labels, witness acceptance, model accuracy, tool budgets, and replay curves. Trusted components include pycsp3/pysms encoders, reference solvers, parser, verifier implementation, model APIs, and the assumption that the natural-language prompt matches the backend encoding. Inference: a Verus-backed product should retain an independently rerun verifier as the acceptance boundary and should report denominators, model, dataset slice, and budget with every result.
-
-What VL should not redo (Inference): fixed hand-authored combinatorial benchmarks and LLM-as-judge grading are already superseded here by parameterized solver-certified generation and witness checking. Inference: the main product threat is accepting a plausible proof explanation without compiling and verifying the actual Rust/Verus artifact; MathConstraint’s witness gap is a direct warning.
+limits: SIM@k truncates observed trajectories and does not allow a model to adapt to a smaller budget (Section C, p.15). The paper’s released benchmarks use a fixed prompt format and fixed maximum budget (Conclusion, p.9).
 
 ## techniques for the catalog
 
@@ -89,4 +81,3 @@ What VL should not redo (Inference): fixed hand-authored combinatorial benchmark
 - adaptive frontier filtering — crank parameters and admit candidates that at least one frontier model fails
 - sandboxed solver orchestration — expose bounded SAT/SMT tool calls and verify the final structured submission
 - SIM@k replay — truncate logged tool trajectories and rerun the verifier to quantify budget sensitivity
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

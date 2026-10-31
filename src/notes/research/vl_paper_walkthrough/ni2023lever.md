@@ -59,14 +59,6 @@ With Codex-Davinci, LEVER improved greedy baselines by 6.6% on Spider to 17.3% o
 
 The method is sensitive to inference sample size: reducing samples from 50 to 10 lowered performance by 1.8% on Spider to 5.2% on WikiTQ, while training sample size had gaps below 1% across three datasets (Section 5.2, p. 7). The main failure is absence of a correct candidate; another is an incorrect candidate with execution results of the same type and range as the correct one (Section 5.4, p. 8).
 
-## what is proved, trusted, and relevant to VL
-
-No theorem proves semantic correctness. The measured quantity is execution accuracy against dataset gold results or test cases. Trusted components include the executor, test cases or gold result, LLM probabilities, classifier, and dataset labels. Inference: for VL, LEVER is a candidate triage layer, not a replacement for Verus proofs. A practical integration could sample Rust implementations, run them, rank by a learned verifier, and then pass only candidates to Verus; the final acceptance condition remains verified specifications.
-
-What VL should reuse. Inference: reuse result-aware candidate grouping, explicit error representation, normalized per-input training loss, and oracle-gap reporting. VL should not reuse the paper's term “verify” as a formal guarantee, and should not treat execution agreement as proof over all inputs.
-
-Threat to a product of agent-written verified Rust. Inference: medium threat before Verus and low threat after a successful Verus proof. The method can prioritize candidates but inherits test incompleteness, sampling coverage limits, and classifier errors; a product that exposes its score as assurance would overstate evidence.
-
 ## techniques for the catalog
 
 - execution-aware candidate sampling: sample, execute, and deduplicate multiple generated programs
@@ -75,4 +67,3 @@ Threat to a product of agent-written verified Rust. Inference: medium threat bef
 - execution-result aggregation: sum scores for candidates with equivalent execution outcomes
 - weakly supervised verifier training: label candidates from gold execution results without gold source
 - calibration and oracle-gap analysis: measure score quality, sample sensitivity, and whether a correct candidate exists
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Ideally, correct program samples shall be given higher probabilities thus we should observe higher percentage of programs being correct when it is closer to the top."): I read the whole paper text (main text and appendix A to C) and the whole study, and checked every quotation, number, section and page reference, and the technique steps (Sections 2.2, 2.3, 3.3, 3.4, 4.1, 4.2, 5.2 to 5.4; Equations 3 and 4; Figure 1; Table 6). Changed: the tag link (it pointed to an unrelated 2016 paper, Dong and Lapata, which is a reference of this paper; now the arXiv page, 2302.08468, whose ID is printed on the paper first page); the verifying quote (it omitted its first words and was misplaced as Section 2.2 footnote, when it is footnote 2 of the introduction, p. 2); the beam search reason now quoted; page for the error-string format (p. 5); the oracle upper-bound reference (defined in Section 4.2, p. 6, not Section 5.4); the aggregation and calibration findings now match the paper wording; removed the unsupported "denominators" remarks. Not checked: the 17.3% WikiTQ improvement over greedy, which I could not reproduce from Table 3 (Figure 2 is a bar chart not readable from the text); Figure 2 to 7 values; the appendix prompts and references beyond reading them; the claims marked Inference are my own and not verified against the paper.

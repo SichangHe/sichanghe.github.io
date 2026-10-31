@@ -7,8 +7,6 @@ The paper addresses information-flow policies whose confidentiality or integrity
 
 The policy is “dynamic release”: a label can change when security events occur, either transiently or persistently. A transient policy does not allow an old release to justify a later release after restrictions tighten; a persistent policy can allow a previously released immutable value to be released again. The paper’s examples cover declassification, erasure, and revocation (Background §2, pp. 3–5). Immutability is a restriction of the type system’s persistent-output rule, rather than a requirement in the semantic definition of persistent policies (Definition 9, p. 12; Figure 7, p. 16).
 
-## technique 1: dynamic-release labels and event traces
-
 ### what it is and when to use it
 Represent a value’s security policy as a conditional label such as `¬release?S →t P`: the value starts at level S and can flow to public P only after event `release` is set. Use this when a security requirement depends on execution history. The paper says: “Furthermore, dynamic release is formalized in a framework that allows apples-to-apples comparisons across existing dynamic policies.” (Background §2, p. 4).
 
@@ -26,8 +24,6 @@ Inference: A Verus encoding can represent the event trace as a ghost sequence an
 
 ### evidence and limits
 The prototype is built on Filament as a Rust library without compiler modifications and is compatible with the standard Rust compiler (Implementation §6, p. 21). It extends Filament’s wrapper to `DRLabel<T,S,LFrom,LTo>`, uses a Boolean event and a unique static event type, and stores the runtime event trace in a vector (§6.1, p. 21). The authors report that “our implementations of flows-to and release-to relations use Rust traits for compile-time checking” (§6.1, p. 22). The authors list the missing features as “(1) nested dynamic labels, (2) user-defined security events and (3) first-order functions” (§6.1, p. 22). Section 6.1 also describes support for procedure calls; §8.2 (p. 25) discusses first-class functions and heap manipulation as future extensions to the formal language and type system. Inference: The prototype does not implement all of the formal language’s label and event features.
-
-## technique 2: separate flows-to and release-to relations
 
 ### what it is
 The type system has two static relations parameterized by a set S of facts about security events. `flows-to` checks whether one label may safely flow to another across future trace extensions. `release-to` checks whether a value may be released to a concrete security level at the current output point. The distinction is necessary because a future event can change a label after a flow, while an output decision depends on the current trace only (Type System §4, pp. 12–16).
@@ -47,8 +43,6 @@ Inference: In Verus, `flows-to` and `release-to` can be modeled as `spec fn`s ov
 
 ### evidence and limits
 Theorem 1 states soundness of the flows-to relation: if the static derivation holds and S holds on a trace, the semantic label ordering holds on that trace and its extensions (Theorem 1, p. 15). The paper’s proof is by induction on static inference rules, with explicit cases for `R-To` and `D-To` (p. 15). Inference: Soundness relative to these semantics does not establish that a developer’s chosen labels express the application’s intended requirements.
-
-## technique 3: end-to-end soundness via trace-indexed indistinguishability
 
 ### what it is and when to use it
 Standard noninterference uses a fixed set of public variables and an invariant indistinguishability relation. Dynamic release changes which data are public, so the paper parameterizes indistinguishability by the security-event trace and adds consistency conditions for intentional release (Introduction §1, p. 3; Soundness Proof §5, pp. 17–21).
@@ -71,13 +65,9 @@ The authors ported a conference-reviewing system and Civitas, totaling approxima
 
 The Civitas port excludes a component described as “excluding its cryptography proof component” (§6.2, p. 22). Inference: Applying the theorem to a deployed Rust application requires confidence in the compiler, trait encodings, event-trace code, wrappers, and correspondence between application behavior and the formal model. A policy/specification mismatch or an operation bypassing labeled APIs would require separate analysis; the paper does not rank these risks or establish a Verus proof of its Rust library.
 
-## what VL should reuse and avoid repeating
-Inference: VL could reuse the distinction between future-safe label flow and current-output permission, explicit event history, conservative nested-label rules, and an end-to-end trace property. A Verus model of dynamic labels and an audit of unsafe code, foreign calls, and I/O boundaries would extend this work; the paper provides no such evaluation.
-
 ## techniques for the catalog
 - dynamic-release labels — attach conditional, transient or persistent security labels whose meaning changes with an event trace
 - event-trace oracle — carry `using` facts about event history and prior releases into compile-time checks
 - separate flows-to and release-to — distinguish future-safe label flow from current-point output permission
 - trace-indexed unwinding proof — establish termination-insensitive dynamic release through memory equivalence, effective-output consistency, and a separate persistent-output case
 - Rust trait enforcement — encode label relations in phantom types and trait bounds for compile-time checking
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To support dynamic release labels, we expand the generic struct to support dynamic labels and leverage Rust’s phantom types for compile-time checking."): checked the whole paper and appendices against the study’s quotations, numbers, references, label relations, proof steps, implementation scope, and evaluation; corrected quotation wording, event-history facts, nested-label premises, effective-output consistency, termination scope, page references, and inference markings; did not independently verify the proofs or inspect or execute the external artifact, and did not validate the proposed Verus adaptations.

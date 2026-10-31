@@ -7,8 +7,6 @@ This paper gives a decision procedure for a restricted first-order logic used to
 
 The motivating architecture runs certified and newly updated variants in parallel. A small supervisor compares their suggestions and explanations; agreement over a long enough period can dynamically certify an updated variant. The paper says: “The supervisor itself consists of a rather small set of rules that can be automatically verified and run by a reasoner.” (Section 1, p. 2.) The Datalog hammer is a translation of verification conditions into Datalog. The paper concerns first-order supervisor rules, not Rust code.
 
-Inference: the useful lesson for VL is to isolate a decidable verification-condition fragment and compile it to a complete backend. This is a possible specialized path for small, relational supervisor policies, but it does not replace Verus’s contract and ownership proofs.
-
 ## technique: finite test-point abstraction for quantified BS(SLR)
 
 when to use it
@@ -42,7 +40,6 @@ step-by-step
 The paper identifies the practical advantage: “Therefore, the Datalog approach is much faster in practice because the Datalog reasoner wastes no time (and space) on trivially satisfied ground rules that would have been part of the greedily computed ground HBS(SLR) clause set.” (Section 3, p. 7.)
 
 Verus form
-Inference: a Verus implementation would encode each rule as a lemma over an abstract state or a pure relation, then use a finite ghost set of test-point facts. Use `proof fn` and `lemma` for derivation; do not call proof code at runtime. A state-machine `invariant` can express that every derived fact respects the rule relation, but `invariant` is a declaration inside the state-machine proof, not a function call. The Datalog engine and stratified negation remain external unless VL builds a verified interpreter. The paper’s Horn restriction should be retained as an explicit precondition on the compiler.
 
 ## technique: supervisor verification conditions as executable rule specifications
 
@@ -54,8 +51,6 @@ how to apply it (Inference: this recipe is mine, assembled from the case studies
 3. Express safety as existential conjectures (for example, whether a forbidden output can occur) and totality as universal conjectures; this matches how the paper's benchmark problems are described (Section 5, p. 21).
 4. Run the hammer; retain the status (`true` if the conjecture is a consequence, `false` otherwise, as in Figure 2) and, as my suggestion, the generated hammered formula as an audit artifact.
 
-Inference: in VL, this technique fits policy code around a verified component. Verus can prove the component’s Rust contract, while a separate rule compiler checks consistency among multiple implementations or explanations. The two proofs have different trusted bases and should not be conflated.
-
 ## evidence and limits
 
 The implementation is SPASS-SPL plus Rulewerk/VLog. The paper calls it “the first implementation of a decision procedure for HBS(SLR) with positive conjectures.” (Section 5, p. 19.) Experiments use two real-world supervisor encodings: a lane-change assistant and an engine-control unit. The machine was a Debian Linux server with 32 Intel Xeon Gold 6144 (3.5 GHz) processors and 754 GB RAM; the toolchain “employs no parallel computing, except for the java garbage collection”, the other tools none, and each tool got a 40-minute limit per problem (Section 5, p. 21).
@@ -66,22 +61,9 @@ The comparison tools are cvc4-1.8, z3-4.8.10, spacer, and vampire-4.5.1. Several
 
 The paper states a complexity tradeoff: the abstraction grows exponentially in the maximum number of variables in any input clause, while for the Datalog hammer “the formula grows only exponentially in the number of variables in the universal conjecture”, which never exceeds three in its examples (Section 6, p. 22). Its implementation is expressly “of prototypical nature”: it cannot handle positively grounded theory atoms beyond simple bounds, unless they are variable comparisons, and positive universal conjectures have to be flattened to the form `Λ ‖ P(x̄)` (Section 5, p. 20). Future work includes having SPASS-SPL “produce explications that prove that its translations are correct”, using aggregation and stratified negation, and optimizing the selection of test points (Section 6, p. 23). These are unresolved trust and scalability boundaries.
 
-## trusted boundary, contradictions, and threat to VL
-
-Inference: the mathematical soundness argument assumes the BS(SLR) syntax restrictions and the interval abstraction lemmas (Lemmas 10–12, 14); the toolchain's results further assume correct implementations of SPASS-SPL, Rulewerk, and VLog, whose correctness the paper does not prove (its future work is explications that prove translations correct). The supervisor’s rule model, sensor abstraction, and conjectures are also trusted inputs. A decision procedure proves the encoded conjecture; it does not show that the predicates capture a real vehicle or engine.
-
-The paper’s “first implementation” claim is scoped to HBS(SLR) with positive conjectures, while the experiments include both existential and universal rows; no contradiction follows because both are within the stated fragment. The table has 16 rows, and I found no report of independent repetitions, variance, or failed runs outside the listed instances. Inference: performance percentages beyond 16/16 would be unsupported.
-
-Inference: the threat to agent-written verified Rust is low for general code and moderate for a narrow supervisor layer. This work does not verify Rust, memory safety, ownership, concurrency implementation, or solver translation into Verus. It could nevertheless make a product’s policy layer easier to audit by compiling a restricted rule language to a complete finite backend. The added trusted compiler and model of the environment would be a new attack surface. VL should measure whether the restriction captures useful policies and whether generated explanations can be checked independently.
-
-## what VL should not redo
-
-Inference: VL should not present finite test-point abstraction, Horn-to-Datalog compilation, or universal/existential supervisor-condition checking as new general verification ideas. A new contribution would need a Verus-specific, independently checked translation, a broader fragment with a proof of completeness, or measured maintenance and explanation benefits in real Rust systems.
-
 ## techniques for the catalog
 
 - test-point abstraction: partition simple-arithmetic bounds into intervals and decide quantified consequences using finitely many representative constants
 - Horn Datalog hammer: preserve Horn rules, add theory facts over test points, and use a Datalog engine for complete entailment in HBS(SLR)
 - stratified-negation query encoding: represent missing expected groundings with `expected` and `missing` facts to check universal claims efficiently
 - supervisor rule verification: encode cross-variant safety, lane, and actuator conditions as Horn clauses and classify existential or universal conjectures
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "It is well known that such a formula can be transformed easily into a Datalog problem by adding a nullary predicate Goal and adding it as a positive literal to any clause without a positive literal."): I read the whole paper text (pp. 1-23 plus references) and the whole study, and checked every quotation, page and section reference, Figure 2 numbers (row counts, test-point range, times, timeouts), the machine and time limit, and the technique steps against Sections 3.0.1-3.0.3, 4, 5 and 6. Changed: the benchmark has 16 rows (8 lc, 8 ecu), not 14; the Lemma 14 page (p. 14), the difference-constraint remark (p. 10) and the first-implementation quote (p. 19) page numbers; the Datalog hammer steps now include the tren renaming, tfacts, beta assignment, Goal predicate and flattening (Section 3.0.3), and mark the expected/missing negation encoding as an implementation choice; added the garbage-collection caveat, cvc4 and spacer speed observations from Figure 2, the 15 to 1609 versus 1500 discrepancy, and the paper's wording on complexity and future work; marked my own recipe and trust claims as inference. Not checked: the proofs of the lemmas in detail, the cited external works, the PDF figure layout beyond the text extraction, and the benchmark files in the linked repository.

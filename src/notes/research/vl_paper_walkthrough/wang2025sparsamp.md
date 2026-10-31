@@ -6,7 +6,7 @@ Tag: `wang2025sparsamp`, [paper](https://www.usenix.org/conference/usenixsecurit
 
 SparSamp is a message-embedding sampler for generative text, image, and audio models. It combines a message chunk with a pseudorandom number, samples from the model's unchanged probability distribution, and progressively reduces the set of message candidates that could have produced the observed token. The sender and receiver share the model, context, PRNG, and key (Figure 6, p. 6824). The paper's central claims are distribution preservation and constant additional work per sampling step. It says: “SparSamp preserves the original probability distribution of the generative model, thus ensuring security.” (Abstract, p. 6817)
 
-The method is a steganographic coding algorithm, not a formal verification system. Its security proof assumes a pseudorandom generator and finite numerical precision; its experiments evaluate speed, capacity, KLD, decoding, token ambiguity, and steganalysis. Inference: the relevant lesson for VL is how to specify and prove preservation of a distributional invariant while keeping the implementation's state transitions executable.
+The method is a steganographic coding algorithm, not a formal verification system. Its security proof assumes a pseudorandom generator and finite numerical precision; its experiments evaluate speed, capacity, KLD, decoding, token ambiguity, and steganalysis.
 
 ## baseline sampling and message-derived randomness
 
@@ -64,12 +64,6 @@ Across additional models, Table 7 reports Qwen-2.5 at 117.2 bits/s, 3.31 bits/to
 
 Token-ambiguity tests embed 64-bit messages at a time and generate 10,000 pairs of stego texts. Table 8 gives TA occurrence rates per 64-bit embedding of 2.49% (GPT-2), 0.67% (Qwen-2.5), and 3.81% (Llama-3); SparSamp detects TA in 79.3%, 73.2%, and 65.4% of cases, respectively, versus 0% for AC (Table 8, p. 6830). The paper says: “We verified that for every 60-bit embedding, only 4 bits of the checkpoint are needed to backtrack to the correct path thus enabling accurate extraction based on SaprSamp.” (Section 4.8, p. 6830)
 
-## trust, limits, and implications for VL
-
-The work proves a computational indistinguishability theorem conditional on PRNG and precision assumptions. It measures speed, capacity, KLD, decoding, and neural steganalysis. Inference: it does not verify the model, tokenizer, PRNG, floating-point arithmetic, or shared-state synchronization, and TA, EOS truncation, finite precision, and model changes can break extraction. Figure 6 requires the sender and receiver to share the key, and the paper says: “In the future, we hope to further extend SparSamp to realize robust PSS and build public-key PSS.” (Section 5, p. 6831)
-
-Inference: threat to agent-written verified Rust is moderate for covert-channel and distribution-preservation components: an agent can implement a compact state machine whose key invariant is mathematically clear, but synchronization, floating-point edge cases, tokenizer ambiguity, and PRNG assumptions create substantial unverified surface. Existing work already covers message-driven sampling, sparse candidate narrowing, constant-overhead updates, and checkpoint-based disambiguation; VL should reuse these invariants and focus on verified finite-precision arithmetic and state synchronization rather than redo generic steganographic coding.
-
 ## techniques for the catalog
 
 - message-derived random sampling — add a fixed-size message fraction to each PRNG sample modulo one and sample the unchanged model distribution
@@ -79,4 +73,3 @@ Inference: threat to agent-written verified Rust is moderate for covert-channel 
 - token-ambiguity detection — detect `N_m=0` and locate the approximate TA position before extraction completes
 - BackCheck integration — use segment checkpoints and backtracking to recover the sender's token path
 - distribution-preservation proof — reduce stego/cover indistinguishability to PRNG indistinguishability and finite-precision bounds
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "In typical generation processes, sampling time constitutes only a tiny fraction of the total time, approximately 0.02 of the inference time."): checked every quotation, number, table, section and page reference, and algorithm step against the paper text; changed the link to the USENIX presentation page given in the paper text, corrected page numbers (Theorem 1, Algorithms 3–4, Tables 2–3 and 6–8, Section 4.8), the section of the O(1) quote (3.3, not 3.2), the proof's bound (summed absolute difference, not total variation), the misnamed Example 1, and Table 8's subject (SparSamp detection, not BackCheck); deleted unsupported claims (the SyncPool mechanism description, the denominators sentence for Table 7, the information-theoretic label for the claim); marked own conclusions "Inference:"; did not check the PDF figures' graphics or the referenced artifact.

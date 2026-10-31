@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `nagatomi2026prophecybased`, [paper](https://arxiv.org/abs/2606.28066)
 
-Audit: audited 2026-10-13 against the paper; checked numbers, tables 1 and 2, page and section references, quotations, clauses of Figure 4 and the appendix, and the five proof moves; changed one widened claim about Verus, one unmarked inference, one unsupported statement on the benchmark authorship, and one empty sentence about the status table.
-
 source: Takashi Nagatomi, Musashi Katsura, Naoki Kobayashi, Ken Sakayori (University of Tokyo), Yusuke Matsushita (Kyoto University, MPI-SWS), arXiv:2606.28066v1, 26 Jun 2026; 38 pages: body to p.16, references p.16 to 19, Appendix A (auxiliary predicates, a three-thread example) p.20 to 21, Appendix B (proof of the main theorem) p.21 to 34, Appendix C (benchmark programs) p.34 to 38
 
 earlier notes: topic_studies/formal_verification_rust/rust_verifiers/collected_papers.md lists the paper by title with a link to the saved copy and says nothing about its content.
@@ -180,8 +178,6 @@ evidence: one program, confirmed by the authors by hand; no time is reported for
 ## what was already done, and threat
 
 Already done: a sound and complete Horn-clause encoding of assertion safety for integer-carrying, clonable-sender, single-receiver asynchronous channels with spawn and recursion; variants for three orderings, bounded buffers and deadlock, sketched. The authors' novelty claim: “Most such verification techniques have primarily been developed for sequential programs, and, to the best of our knowledge, the CHC-based verification of message-passing concurrent programs has not been studied before.” (Section 6, p.16)
-
-Inference: threat to a product of agent-written verified Rust is low now. The tool does not read Rust, handles integers only, fails on the short client-server program of Figure 5 without a hand-written hint, and takes 19.5 seconds on the counting example of Figure 1. The idea is the lasting part: a channel specification in which each thread is verified alone against a shared list. If VL needs verified message-passing code, the prophecy-list contract of technique 2, with the causality condition of technique 4, is a candidate design for the trusted channel interface, and Example 5 and Example 7 are ready-made tests of whether such an interface is too permissive.
 
 ## techniques for the catalog
 

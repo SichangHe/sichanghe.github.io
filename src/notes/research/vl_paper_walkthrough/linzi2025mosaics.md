@@ -55,15 +55,11 @@ Verus form. Inference: define `le(x,y)` as a specification predicate and state u
 
 The final two theories are reported to prove that the forward and reverse transformations are mutual inverses (section 3.5, p. 5). Section 5.2 reports using LLMs to suggest lemma statements, tactic combinations, and missing intermediate steps (p. 7). It cautions: “However, all AI-generated suggestions required careful verification and adaptation, as the tools occasionally proposed syntactically correct but logically flawed approaches.” (p. 7).
 
-Inference: for VL, use agents to propose proof scaffolding but require Verus to discharge every obligation and preserve a reviewable contract. Track which lemmas were machine-generated and test that proofs still pass after specification changes.
-
 ## what is proved, trusted, and missing
 
 The reported formal result covers the stated Isabelle locales, definitions, and mutual-inverse theorems. Theorem 4.3 states: “The functors between the category of L-mosaics and the category of bounded join-semilattices are mutually inverse.” (section 4, p. 6). Inference: that claim is broader than the abstract’s explicit “object part”; the paper presents no morphism definitions or proofs, so this study credits the object constructions and their reported mutual-inverse properties.
 
 Section 5.3 says: “The use of Hilbert’s choice operator (THE) in Isabelle/HOL was crucial for defining the inverse constructions, allowing us to extract the unique elements guaranteed by the existence and uniqueness conditions in the L-mosaic axioms.” (p. 7). Inference: unique selection and its proof obligations are the transferable pattern; this study does not independently establish the paper’s further claim about the axiom of choice. Trust in the formal encoding and Isabelle/HOL is assumed, rather than independently audited here. The paper claims reduced development time but reports no measured engineering effort, proof maintenance, or executable performance.
-
-Inference: threat to agent-written verified Rust is low and indirect. The useful risk lesson is that an AI can produce a plausible but logically flawed proof strategy, and set-valued specifications can hide underspecified behavior. VL should not redo generic claims that locales, set-valued relations, canonical joins, mutual-inverse proofs, and AI lemma suggestions are useful; a new result needs Rust/Verus semantics or systems evidence.
 
 ## techniques for the catalog
 
@@ -73,4 +69,3 @@ Inference: threat to agent-written verified Rust is low and indirect. The useful
 - diagonal join recovery: obtain a least upper bound from unique diagonal membership in an L-mosaic
 - mutual-inverse formalization: prove forward and reverse constructions equal through dedicated equivalence theories
 - AI-assisted interactive proving: use LLM lemma and tactic suggestions only after machine checking and human adaptation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This was proved via antisymmetry using the upper-bound and leastness lemmas in a standard order-theoretic argument."): checked all quotations, numbers, section and page references, and technique descriptions; corrected quotations and page references, distinguished reported results from independent verification, and noted the scope and file-count inconsistencies; did not inspect the repository, run Isabelle, or validate the proposed Verus translations.

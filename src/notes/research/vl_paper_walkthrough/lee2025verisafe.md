@@ -84,8 +84,6 @@ Developer effort was estimated by enumerating relevant predicates for 18 commerc
 
 The authors discuss false-positive predicates halting otherwise successful tasks (Sec. 8.3, p.12). They also propose interactive confirmation after repeated rule violations and human approval for critical operations regardless of VSA's decision; these are future safeguards, not evaluated features (Sec. 10, p.13).
 
-Inference: for VeruLaw, the reusable ideas are typed intent rules, explicit state-update contracts, two levels of prerequisite checks, and feedback derived from unmet conditions. The paper provides empirical evidence for this pattern under annotated state information, rather than proofs of memory safety, implementation correctness, or fidelity of generated specifications.
-
 ## techniques for the catalog
 - Horn-clause intent DSL — encode user goals as typed predicates, ordered objectives, and `Done` rules
 - developer state library — expose named typed state predicates and application-specific update triggers
@@ -94,5 +92,3 @@ Inference: for VeruLaw, the reusable ideas are typed intent rules, explicit stat
 - two-tier runtime verification — provide advisory predicate checks and blocking rule checks for critical actions
 - structured feedback — derive roadmap, predicate, and rule feedback from logical conditions and current progress
 - majority verification — repeat stochastic verification and return the majority decision
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For critical actions subject to rule-level verification, VSA provides comprehensive feedback at the rule level, detailing all state predicates that remain unfulfilled."): checked the entire paper, quotations, technique steps, figures, table entries, section and page references, and paper link; corrected page references, LlamaTouch accuracy, encoding-call scope, evaluation assumptions, and unsupported interpretations; did not inspect implementation code or reproduce experiments.

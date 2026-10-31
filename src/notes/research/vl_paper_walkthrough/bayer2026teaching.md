@@ -71,11 +71,9 @@ The best model improves violated accuracy over the no-thinking base by 28.5 poin
 
 Verus form
 
-Inference: For VL, report both fixed-denominator (including verifier failures and timeouts) and parseable-only rates. Separate property families such as memory safety, functional postconditions, termination, and concurrency invariants. A Verus proof that times out or fails to compile should remain a failure in the primary denominator; parseable candidate metrics can diagnose the model but cannot establish soundness.
-
 ## what is proved, trusted, and not established
 
-The paper reports empirical evidence about model responses on its benchmark; SV-COMP tools establish the benchmark ground truth. It does not establish that LLM explanations are sound, that Soteria traces are complete, or that any Verus proof is correct. The benchmark is single-file C, binary classification, and 500 tasks. The training experiments use Qwen3-8B, with Qwen3-32B as a scale reference, one symbolic engine, and one language; the authors report no contamination test, limited per-cell statistical power, and no assessment of downstream transfer (section 6.3, p. 9). Inference: the relevance to VL is an engineering risk: an agent may miss violations, especially on longer code, while a trace-trained model might improve triage. Continue to require Verus's checker for acceptance and treat model judgments as prioritization or repair proposals.
+The paper reports empirical evidence about model responses on its benchmark; SV-COMP tools establish the benchmark ground truth. It does not establish that LLM explanations are sound, that Soteria traces are complete, or that any Verus proof is correct. The benchmark is single-file C, binary classification, and 500 tasks. The training experiments use Qwen3-8B, with Qwen3-32B as a scale reference, one symbolic engine, and one language; the authors report no contamination test, limited per-cell statistical power, and no assessment of downstream transfer (section 6.3, p. 9).
 
 ## techniques for the catalog
 
@@ -84,5 +82,3 @@ The paper reports empirical evidence about model responses on its benchmark; SV-
 - structure-preserving CPT — retain HTML or equivalent hierarchy during continued pretraining instead of flattening tool output
 - reasoning-plus-budget evaluation — combine curated traces with explicit reasoning and report fixed and parseable denominators
 - transfer and ablation checks — compare trace semantics against code-only, all-trace, format, property, and output-budget controls
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We filtered out these problematic cases, reducing the evaluation set to 179 tasks with unambiguous ground truth."): checked the full text including appendices against the study's quotations, numbers, page and section references, and technique steps; corrected aggregate denominators, failure-analysis and format references, the informalized-trace thinking setting, corpus-overlap wording, unsupported implications, and the paper link; did not rerun experiments, inspect external artifacts, or validate the proposed Verus adaptations.

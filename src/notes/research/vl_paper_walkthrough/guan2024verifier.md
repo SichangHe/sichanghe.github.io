@@ -6,7 +6,7 @@ Tag: `guan2024verifier`, [paper](https://arxiv.org/abs/2411.11504)
 
 Guan et al. propose “verifier engineering” as a post-training framework for foundation models. It separates a closed loop into search, verify, and feedback. The abstract says: “The core of verifier engineering involves leveraging a suite of automated verifiers to perform verification tasks and deliver meaningful feedback to foundation models.” (Abstract, p. 1) Search generates candidate responses, verify evaluates them, and feedback changes either model parameters or inference-time choices. The authors formalize the loop as a goal-conditioned Markov decision process (GC-MDP) `(S, A, T, G, Rg, pg)`, where states include context and partial outputs, actions are token choices, and a goal-conditioned policy maximizes expected discounted reward. They write: “The objective for improving model capabilities can be defined as a goal-conditioned policy π : S × G × A → [0, 1] that maximizes the expectation of the cumulative return over the goal distribution.” (Section 2.1, p. 4)
 
-The paper is a taxonomy and design discussion. It does not introduce a new verifier implementation or report a controlled benchmark with a denominator. Its evidence is the classification of prior methods in Table 2 and Table 3 and cited results from those methods. Inference: for VL, the transferable contribution is a pipeline design vocabulary, rather than measured evidence that one configuration is best.
+The paper is a taxonomy and design discussion. It does not introduce a new verifier implementation or report a controlled benchmark with a denominator. Its evidence is the classification of prior methods in Table 2 and Table 3 and cited results from those methods.
 
 ## technique 1: search over candidate proofs or programs
 
@@ -60,7 +60,7 @@ Inference: A Verus route should put the compiler and Verus checker first, with b
 
 evidence and limits
 
-Table 2 is a taxonomy, not a performance dataset. The paper reports no denominator for verifier accuracy and warns that existing verifier metrics may correlate weakly with downstream performance (Section 6.2.2, p. 11). Specialized verifier training can improve domain accuracy while increasing sensitivity to the training distribution (Section 4.1, pp. 6–7). Program-based verifiers are consistent and interpretable but may lack flexibility in complex environments (Section 4.1, p. 6); keyword-based content filters can be bypassed by paraphrasing (Section 4.2, p. 7). Inference: for VL, a model-based verifier should be treated as a search heuristic or repair aid unless its claims are independently formalized.
+Table 2 is a taxonomy, not a performance dataset. The paper reports no denominator for verifier accuracy and warns that existing verifier metrics may correlate weakly with downstream performance (Section 6.2.2, p. 11). Specialized verifier training can improve domain accuracy while increasing sensitivity to the training distribution (Section 4.1, pp. 6–7). Program-based verifiers are consistent and interpretable but may lack flexibility in complex environments (Section 4.1, p. 6); keyword-based content filters can be bypassed by paraphrasing (Section 4.2, p. 7).
 
 ## technique 3: feedback to improve the generator
 
@@ -86,12 +86,6 @@ evidence and limits
 
 The paper is a review, so its feedback examples inherit the cited methods' evidence. It gives no aggregate pass rate, model size, training budget, or denominator for the framework itself. Section 6.2.3 (p. 12) discusses noise robustness, model capacity, and query generalization; Section 6.3 (pp. 12–13) discusses online/offline efficiency. It also says that online feedback can use on-policy responses but requires frequent sampling, whereas offline feedback uses pre-prepared datasets to streamline training but has lower data utilization efficiency (Section 6.3, p. 13).
 
-## scope, trust, and VL risk
-
-Inference: the paper proves nothing about a particular Verus program; the GC-MDP equations define an optimization abstraction, and the taxonomy organizes prior techniques. Measured: no new controlled result in this paper. Inference: applying the framework requires assessing the underlying verifiers, cited methods, reward models, training procedures, and chosen goals. Inference: for agent-written verified Rust, the threat is reward misspecification and verifier routing. A model may optimize an easy proxy, such as compiling without proving the intended postcondition, or a model-based critique may reward an invalid proof. Inference: VL should use this paper's loop structure, require formal checking, and log verifier provenance.
-
-The paper warns that verifier combinations need instruction coverage, automatic routing, and a result-integration strategy when checks disagree (Section 6.2.2, pp. 11–12). Inference: these are already engineering requirements for VL, so VL should not redo a generic “search, verify, feedback” proposal. A useful product experiment would measure proof pass rate, repair time, timeout rate, and regression rate under a fixed Verus version and held-out tasks.
-
 ## techniques for the catalog
 
 - goal-conditioned verifier loop: model post-training as search, verification, and feedback under explicit goals
@@ -100,5 +94,3 @@ The paper warns that verifier combinations need instruction coverage, automatic 
 - verifier composition: combine program checks and learned checks with explicit conflict rules
 - training-based feedback: turn verified responses, preferences, or rewards into parameter updates
 - inference-based feedback: use verifier-guided selection or interactive repair without changing model parameters
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This approach allows the model to actively consider and incorporate verifier feedback while producing its output."): read the complete paper, including references, and checked the study’s quotations, taxonomy, technique steps, numerical claims, section/page references, title, author/year tag, and paper link; corrected page references and training/generalization claims, marked unsupported procedural recommendations as Inference, and used the arXiv identifier printed on p. 1; did not independently verify cited papers, reproduce experiments, or test the proposed Verus adaptations.

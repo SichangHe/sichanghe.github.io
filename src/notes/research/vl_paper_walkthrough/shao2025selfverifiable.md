@@ -66,12 +66,6 @@ Evidence and limits. This is the search used for the contest results above. The 
 
 Verus form. Inference: keep multiple proof candidates and refine them using diagnostics, while preserving the intended specification. Verus should determine final acceptance.
 
-## what is proved, trusted, and relevant to VL
-
-The paper's four stated contributions include “training an accurate and faithful LLM-based verifier,” “using meta-verification to largely reduce hallucinated issues,” “incentivizing the proof generator to maximize proof quality through self-verification,” and “scaling verification compute to automatically label increasingly hard-to-verify proofs” (Section 5, p. 10).
-
-Inference: VL could borrow the cycle of generation, checking, diagnosis, repair, and training on difficult cases. The paper's evidence depends on expert judgments, model evaluations, and rubric design. A Verus adaptation needs correctness evidence from checking the intended program specification; it cannot equate a model's failure to find an issue with a verified program.
-
 ## techniques for the catalog
 
 - rubric-scored verifier — train a model to identify proof issues and assign 0/0.5/1 labels from expert-scored examples
@@ -79,5 +73,3 @@ Inference: VL could borrow the cycle of generation, checking, diagnosis, repair,
 - self-verifying generator — reward proof quality and faithful self-analysis, then refine outputs
 - scaled automated labeling — label hard proofs using independent analyses and majority-confirmed meta-analyses
 - high-compute proof search — refine a pool of high-scoring proofs using sampled verification feedback
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "All experiments used a single model, our final proof generator, which performs both proof generation and verification."): read the full paper, including references and Appendix A; checked quotations, numbers, section and page references, reward definitions, training and search steps, and the paper link; corrected the wrong-paper link, an inexact quotation, dataset selection wording, format checks, page references, and evaluation wording; added the meta-verifier scope limitation and high-compute search steps; did not reproduce experiments, independently grade proofs, or test the proposed Verus adaptations.

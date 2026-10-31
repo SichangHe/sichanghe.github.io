@@ -31,7 +31,7 @@ Inference: Represent a block as a `Seq<V>` or a ghost map from block identifiers
 
 evidence and limits
 
-The semantics gives precise state transitions and the appendix gives step-by-step state evaluation for a copy program. It assumes finite sequences and disjoint heaps for separating conjunction. The paper does not measure solver time or coverage over real BCSS implementations. Inference: the two-tier abstraction is valuable for VL storage proofs, but every abstraction link from Rust buffers to the ghost sequences must be proved.
+The semantics gives precise state transitions and the appendix gives step-by-step state evaluation for a copy program. It assumes finite sequences and disjoint heaps for separating conjunction. The paper does not measure solver time or coverage over real BCSS implementations.
 
 ## technique 2: paired location, block, and global assertions
 
@@ -108,11 +108,7 @@ Inference: Use ownership or disjoint ghost maps to isolate the frame state. Prov
 
 evidence and limits
 
-Theorem 6.1 claims soundness for both partial and total correctness (Section 6, p. 10); the proof is written out for partial correctness, and the total-correctness case is dismissed with “can be handled similarly” (p. 10). Lemma 6.1 supplies safety and termination monotonicity, Lemma 6.2 the frame property, and Lemma 6.3 write locality (Section 6, p. 10); the paper takes these local properties from Yang's thesis [28] and does not reprove them. No experimental error rate or performance denominator is given. Inference: frame reasoning can reduce VL proof size, but an incorrect `ModifyS` approximation would invalidate the locality argument.
-
-## trust, reuse, and product risk
-
-Inference: The trusted core is the denotational semantics, assertion satisfaction relation, primitive axioms, and soundness lemmas. The paper's Hoare derivation for Transfer establishes the specified postcondition under its model; the copy program in Appendix A is a concrete execution trace, not a general proof. Inference: VL should reuse the two-tier abstraction and frame decomposition for storage-like Rust, while avoiding a direct claim that these rules cover concurrency, crashes, or distributed failures; the paper models sequential management commands and says future work includes parallelism. Inference: threat to agent-written verified Rust is medium where ghost/executable correspondence is complex, because the framework's guarantees stop at the modeled heap and axioms.
+Theorem 6.1 claims soundness for both partial and total correctness (Section 6, p. 10); the proof is written out for partial correctness, and the total-correctness case is dismissed with “can be handled similarly” (p. 10). Lemma 6.1 supplies safety and termination monotonicity, Lemma 6.2 the frame property, and Lemma 6.3 write locality (Section 6, p. 10); the paper takes these local properties from Yang's thesis [28] and does not reprove them. No experimental error rate or performance denominator is given.
 
 ## techniques for the catalog
 
@@ -120,5 +116,3 @@ Inference: The trusted core is the denotational semantics, assertion satisfactio
 - paired global assertions: combine location and block assertions, with quantifiers for dynamic block sequences
 - Hoare axioms and loop invariants: verify primitive storage commands, compose them, and preserve quantified copy invariants
 - frame-rule locality: decompose heaps, prove a command on its footprint, and recombine untouched state
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Since we treat predicates semantically in this paper, we need to reformulate the Frame Rule to get a semantic version and we need to rewrite the condition in the syntactic version of the Frame Rule."): read the whole text (pp. 1–16 incl. appendices) and checked all quotations word for word, page and section references, the state/heap definitions, the assertion forms, the transfer function, axioms and rules R1–R7, Section 6 lemmas and Theorem 6.1, and the Transfer derivation. Changed: corrected the hB/StoresB description (hB maps block addresses, not block variables); moved the Frame Rule quote to the Introduction p. 2 and the “pair form” quote to p. 6; fixed section/page references (3.3 pp. 4–5, 4 pp. 5–6, R1 p. 8, lemmas p. 10, Appendix A pp. 13–14); completed the truncated Point 1 quote; moved the “most complex one” remark to Section 5.4; corrected the loop-rule description (R3 only needs body preservation); described Algorithm 1 fully; noted total correctness is only sketched; the copy program in Appendix A is a trace, not a proof; added the PDF title “Local Reasoning about …”. Link: arXiv page from the paper text (arXiv:1904.04442v2). Not checked: Verus-form paragraphs and product-risk judgments (Inference by the study author, outside the paper), the individual axiom soundness proofs in Appendix B, and the cited references.

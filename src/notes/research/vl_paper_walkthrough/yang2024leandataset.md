@@ -41,15 +41,11 @@ The stated total is `3n−7`. The paper presents this as a theoretical count and
 
 The evaluation prompts o3-mini with the formal Lean statement and asks it to explain the theorem, approach, and proof step by step. The authors verify that its natural-language explanation matches the supplied statement (Section 3.1, p. 5). They also compare the natural-language and Lean proof approaches: “A LLM may describe a proof in NL, but follow a different approach when writing the proof in Lean.” (pp. 5–6) Table 2 reports 75.5% correct natural-language proofs, 23.8% correct Lean proofs, and 96.4% agreement between the two proof approaches (p. 6).
 
-Inference: use a prerequisite check that compares the source requirement with the formal statement, checks the proof with the verifier, and compares its explanation with its implementation. For VL, the corresponding artifacts are the Rust requirement, Verus contract, and proof. A verified contract still needs a separate check that it represents the requirement.
-
 ## technique: compiler-feedback repair loop
 
 Section 3.1 describes automatic feedback from REPL, “a library in Lean which summarizes the errors when compiling a Lean file.” (p. 6) Incorrect o3-mini proofs receive up to ten rounds. Table 3 reports 6.0% correct initially, 18.4% after five rounds, and 23.8% after ten across 1,329 lemmas. For 1962-p2 the rate rises from 7.1% to 42.9%; for 1959-p1 it stays at 50.0% (p. 6). Although Section 1.4 mentions expert feedback, the experimental procedure in Section 3.1 explicitly describes automatic compilation feedback.
 
 The final audit distinguishes nonexistent library lemmas or tactics, an invalid approach, incorrect implementation, incomplete proofs, and minor argument errors (pp. 6–7). Table 4 reports, over all 1,329 final attempts, 23.8% without errors, 2.3% with hallucinations, 20.4% with a wrong approach, 46.9% with wrong implementation, 9.0% incomplete, and 75.1% with minor errors. Categories overlap: “A given proof may have several lines of code, and many of these issues may arise.” (p. 7)
-
-Inference: VL can feed Verus diagnostics back to the model for a bounded repair loop. Preserve the original contract through repairs and distinguish planning failures from local implementation errors.
 
 ## evidence about model capability and proof length
 
@@ -58,8 +54,6 @@ Table 5 reports DeepSeek-Prover-v1.5-RL at 522/1,329 (39.3%), Goedel-Prover at 5
 Table 6 groups lemmas by the dataset’s human-written proof lengths: 497 at 1–2 lines, 204 at 3–5, 169 at 6–10, 103 at 11–15, 128 at 16–25, 210 at 26–100, and 18 at 101–298 (p. 9). DeepSeek scores 84.3% on the first group and 0% on every group longer than ten lines. o3-mini scores 5.8% at 11–15 lines and 1.9% at 26–100. These percentages use each group’s lemma count, not the full dataset.
 
 Generated-proof length is a different measure. Section 3.3 says the longest correct generated proofs have 15 lines for Goedel, 12 for DeepSeek, and 34 for o3-mini (p. 8); Figure F1 instead gives DeepSeek a maximum of 13 (p. 20). For generated proofs, the authors remove redundant lines before counting: “This correction was done, merely, by commenting out the unnecessary lines, not by revising the proof sketch or by replacing existing with more compact lines.” (Appendix G, p. 21)
-
-Inference: VL should report proof length with its counting method and distinguish reference-proof length from generated-proof length. Short-lemma success alone does not demonstrate the ability to compose a long proof.
 
 ## trusted scope and limitations
 
@@ -75,5 +69,3 @@ Inference: Lean checking supports correctness relative to the formal statement; 
 - compiler-feedback repair: provide compilation errors for a bounded number of correction rounds
 - proof-length stratification: report results by reference-proof length and define how generated-proof length is counted
 - overlapping error taxonomy: distinguish nonexistent lemmas or tactics, approach, implementation, incompleteness, and argument errors
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The second backward path generates lemmas where their proofs are the first m lines of the original n line proof."): checked the entire paper, quotations, numerical results, page and section references, decomposition steps, and stated limitations; corrected the author/year tag, Table 5 page, unsupported dependency requirement, and unlabeled recommendations; added the unstructured decomposition procedure and documented inconsistent counts and proof lengths; did not rerun Lean proofs, model experiments, or independently verify cited prior work or Verus applicability.

@@ -24,8 +24,6 @@ Steps from Algorithm 1 (Section III-A, p. 3).
 
 The paper says: “Every branch that is not an explicit acceptance is a rejection, which is what makes the trusted base fail closed.” (Section III-A, p. 3).
 
-Inference: For VeruLaw, an LLM can propose a Rust/Verus patch plus metadata, but a separate verifier process must re-read the actual patch, run Verus, and issue the acceptance record. The patch metadata must never be treated as proof. A fail-closed wrapper should reject parse failures, unsupported syntax, changed files outside the allowed region, verifier errors, and unknown proof modes.
-
 What is proved and trusted. The Lean decision procedures are compiled functions proved sound for the abstract model; the deployed checker is separate Python code validated by tests and a VM differential oracle (Section IV-C, p. 4; Section VI, p. 9). The trusted base is 9,921 checker lines, 5,909 Lean lines, and two named model-to-VM conformance assumptions (Section VI and VII-D, pp. 9, 12). Inference: In Verus, proof soundness remains relative to Verus, its solver, trusted external specifications, and the Rust/Verus execution model; the wrapper and any bridge from model to deployed checker must be audited separately.
 
 ## technique: parameterize behavior by an observation lens
@@ -93,16 +91,6 @@ Inference: In Verus, verify each commit or patch against the exact checked prede
 
 The paper's RQ1 validation has five complementary methods: per-family unit suites, an independent integrated-checker audit, a cross-family adversarial campaign, VM differential conformance, and an ablation removing semantic side conditions (Section VII-A, p. 10). The six unit suites have 274 tests and all pass, but the audit still found eight false accepts that per-family suites missed (Section VII-A, p. 10). The campaign creates variants with a second edit; all 4,278 variants are rejected. The VM oracle runs Scratch VM 1.6.19 for 240 scheduler ticks under a fixed seed and compares frames, sounds, monitor values, and termination; six accepted rewrites are not adjudicable because their own behavior is nondeterministic, and none is a mismatch (Section VII-A, p. 10; Table IV, p. 11).
 
-Inference: For VeruLaw, combine unit tests for each checker obligation, integrated adversarial edits that cross obligation boundaries, independent re-verification of accepted Rust, and differential execution where a deterministic executable oracle exists. Treat nondeterministic runs as not adjudicable rather than as evidence of equivalence. Remove a critical side condition in an ablation to show that the condition rejects real unsound patches, not only synthetic invalid inputs.
-
-## applicability, limits, and VL threat
-
-The paper reports 94.3% prevalence on a uniformly sampled 300-project corpus, but says conservative families make prevalence lower bounds and the player lens approximates perceived behavior rather than exact pixels or audio (Section VIII, p. 12). The variable dead-store family is inert on natural code: 113 projects write a variable and 105 write one twice, yet none has a removable transaction-local dead store because the variable is read elsewhere (Section VII-B, p. 12). This is a useful warning against interpreting a proved technique's low firing rate as a checker failure.
-
-Inference: VeruLaw should treat certificate-carrying transformation as a product pattern for LLM-generated Rust refactoring and proof repair. It directly addresses the threat that an optimizer or agent can propose a plausible but unsound change. The major residual threat is the trusted model-to-executable boundary: the paper explicitly says its Python checker has a transcription gap and that a verified bridge is future work (Section VIII, p. 12). A second threat is a lens that omits a product-visible channel. A third is adversarial edits that cross families; the paper's eight missed false accepts show why integrated audits are required.
-
-Already done. CertiBlock already combines fail-closed acceptance, certificate recomputation, observational refinement, a mechanized theorem, differential testing, and trusted-base accounting. VL should not claim these generic ideas as new. Inference: A distinct VL contribution would need Rust-specific evidence, such as ownership-aware patch obligations, external-crate contract checking, or measured repair over dependency upgrades.
-
 ## techniques for the catalog
 
 - fail-closed certificate checker: recompute hashes, parse both versions, pin lens and family, discharge fixed obligations, and mint the only acceptance
@@ -112,4 +100,3 @@ Already done. CertiBlock already combines fail-closed acceptance, certificate re
 - multi-family obligation registry: share well-formedness, lens, and structural checks while adding family-specific side conditions
 - certified sequence composition: check each rewrite against the actual intermediate produced by the previous rewrite
 - adversarial and differential validation: combine unit suites, cross-family perturbations, deterministic VM traces, and side-condition ablations
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

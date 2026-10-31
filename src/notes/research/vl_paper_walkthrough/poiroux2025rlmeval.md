@@ -2,12 +2,9 @@
 (authored by agents unless marked 🧑)
 Tag: `poiroux2025rlmeval`, [paper](http://arxiv.org/abs/2510.25427v1)
 
-
 ## purpose and result
 
 RLMEval is a benchmark for neural theorem proving and proof autoformalization on research-level Lean projects. Its unit is a blueprint theorem: a high-level theorem linked to an informal project blueprint, rather than one of the many auxiliary lemmas. The paper reports 613 theorems from six projects. Its headline result is: “the best model achieving only a 10.3 % pass rate” (Abstract, PDF p.1), specifically DeepSeek-Prover-V2-7B on proof autoformalization in normal mode at pass@128 (Figure 1, PDF p.4; Table 5, PDF p.8).
-
-Inference: For VL, this is evidence that benchmark scores on short, curated problems should not be used as product capability estimates. RLMEval tests long project context, research-level statements, and missing intermediate lemmas. The task is Lean-specific, so its numbers do not directly measure Verus.
 
 ## technique 1: curate blueprint theorems instead of all lemmas
 
@@ -15,7 +12,7 @@ What it is. RLMEval selects theorems that appear in the informal blueprint of si
 
 How to apply it. Inference: (1) Start from a real formalization project. (2) Identify theorem declarations linked to its informal blueprint. (3) Exclude technical lemmas that are not blueprint milestones. (4) Preserve each theorem’s project, domain, Lean version, and original source. (5) Report counts and proof-length distributions separately for selected theorems and auxiliary lemmas. (6) Version the benchmark as projects evolve.
 
-Verus form. Inference: build a VL benchmark from milestone `proof fn` declarations in real Verus crates, retaining module context and dependency versions. Selectors could use repository metadata or explicit tags. Inference: validate proof length as a difficulty proxy before applying it to Verus.
+Verus form.
 
 Evidence and limits. The six-project corpus contains 613 theorems (Abstract, p.1). Table 2 labels 68.3% as the average auxiliary-lemma proportion, with project proportions from 15.9% (FLT3) to 85.9% (Carleson) (PDF p.3). Inference: 68.3% is an unweighted mean of the six project percentages, not the fraction of auxiliary lemmas across the combined corpus. Table 1 states: “Difficulty is a subjective assessment based on our experience with the projects and the models’ performance.” Inference: project selection and blueprint quality are sampling assumptions; the benchmark does not represent all mathematics or all Rust systems.
 
@@ -35,7 +32,7 @@ What it is. Easy mode exposes all project definitions and lemmas, including non-
 
 How to apply it. Inference: (1) Define an allowlist of declarations available before each target. (2) In normal mode, exclude non-blueprint auxiliary lemmas. (3) In easy mode, expose all project lemmas. (4) Keep theorem statements, sampling, model, and decoding fixed. (5) Compare pass rates and report the context difference with each score.
 
-Verus form. Inference: construct a normal VL mode exposing only public API contracts and previously catalogued milestone lemmas, and an easy mode exposing all crate proofs. Inference: freeze dependency manifests and module visibility to keep the available context reproducible.
+Verus form.
 
 Evidence. DeepSeek-Prover-V2-7B improves from 8.8% normal to 14.7% easy on NTP, and from 10.3% normal to 16.7% easy on autoformalization (Section 4, PDF p.4). Inference: the totals in Tables 5–6 are unweighted means of project pass rates, as their arithmetic shows, rather than pooled fractions of the 613 theorems. The comparison supports the value of auxiliary lemma access but does not separate retrieval, discovery, and proof search.
 
@@ -65,8 +62,6 @@ Inference: RLMEval measures verifier-accepted proof existence under fixed contex
 
 The paper finds large project variation: in normal-mode proof autoformalization, DeepSeek-Prover-V2-7B reaches 32.14% on FLT3 and 2.73% on Carleson (Table 5, PDF p.8). Easy-mode Carleson reaches 3.64%, so 2.73% is not its maximum across modes. Section 4 orders projects by mean human proof length as FLT3 < TLB < FLT < PNT < PFR < Carleson (PDF p.4). Inference: this correlation does not establish that length causes difficulty. The main 10.3% result uses 128 samples, normal mode, and 7B DeepSeek-Prover-V2 on a benchmark containing 613 targets; comparisons with MiniF2F must account for different theorem sets and sampling budgets.
 
-Inference: VL should test agent-written verified Rust on a versioned corpus of real project milestones, with normal/easy context modes, explicit score aggregation, and verifier-pinned replay. RLMEval motivates this evaluation design; it does not establish how well the same models would perform on Verus or whether a Verus corpus would be novel.
-
 ## techniques for the catalog
 
 - blueprint theorem curation — select high-level project theorems and report them separately from auxiliary lemmas
@@ -74,4 +69,3 @@ Inference: VL should test agent-written verified Rust on a versioned corpus of r
 - controlled context modes — measure performance with only milestone lemmas versus all project lemmas
 - pass@k sampling — count a theorem solved when one of k generated candidates verifies
 - versioned benchmark maintenance — pin verifier versions, expose a stable runner, and add newer projects to limit contamination
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Manual inspection reveals this model tends to generate verbose proofs with repetitive or redundant steps, suggesting room for improvement in proof conciseness and efficiency."): checked all 12 PDF pages through the full paper text, quotations, numerical claims, section and page references, and technique descriptions; corrected quotations, page references, project-average interpretations, the unsupported success-count estimate, and the Carleson maximum, and marked proposed application steps and conclusions as inferences; did not reproduce experiments or inspect benchmark code, external links, or Verus implementations.

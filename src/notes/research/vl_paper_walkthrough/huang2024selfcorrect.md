@@ -4,8 +4,6 @@ Tag: `huang2024selfcorrect`, [paper](https://arxiv.org/abs/2310.01798)
 
 ## scope and result
 
-Huang et al. study whether an LLM can improve a reasoning answer by reviewing its own answer without an external correctness signal. They define this setting as intrinsic self-correction. The paper's central result is negative: on the tested reasoning benchmarks, intrinsic self-correction usually reduces accuracy. The authors also test oracle-label stopping, multi-agent debate, and a prompt-design confound. This matters to VeruLaw (VL) because a model-generated proof revision is not evidence that the revised Rust or Verus proof is more correct; an independently checkable verifier must supply the feedback.
-
 The paper states: “our findings indicate that LLMs struggle to self-correct their reasoning in this setting.” (Introduction, p. 1). It defines the studied setting as follows: “We term this setting intrinsic self-correction.” (Section 2, p. 2). The benchmarks are GSM8K (1,319 test questions), CommonSenseQA (1,221 development questions), and a 100-question HotpotQA set (Section 3.1, p. 3). Only GPT-3.5-Turbo uses the full evaluation sets; for the other models (GPT-4, GPT-4-Turbo, Llama-2) the authors "randomly sample 200 questions for each dataset (100 for HotpotQA)"; temperatures are 1 for GPT-3.5/GPT-4 and 0 for GPT-4-Turbo/Llama-2 (Section 3.1, p. 3).
 
 ## technique 1: three-step intrinsic self-correction loop
@@ -52,11 +50,9 @@ The paper reports GPT-3.5 standard versus oracle self-correction as 75.9→84.3 
 
 Verus form (inference)
 
-Inference: the corresponding VL diagnostic is to run a generated proof candidate through the Verus verifier after each iteration and stop only when verification succeeds. The verifier is the oracle-like checker in this analogy, not the LLM. A Verus success still proves only the written specification; it does not prove that the specification captures the product requirement. Do not report verifier-guided repair as intrinsic self-correction.
-
 what remains trusted
 
-The benchmark labels and the evaluator (exact match for HotpotQA; automatic answer extraction for the others) are trusted for the reported numbers. The paper does not claim that oracle-label performance predicts deployment performance; it explicitly separates the two settings. Inference: a VL evaluation that supplies hidden tests, a trusted reference implementation, or Verus counterexamples must disclose those signals and compare against a same-cost baseline.
+The benchmark labels and the evaluator (exact match for HotpotQA; automatic answer extraction for the others) are trusted for the reported numbers. The paper does not claim that oracle-label performance predicts deployment performance; it explicitly separates the two settings.
 
 ## technique 3: equal-cost multi-agent debate versus self-consistency
 
@@ -78,11 +74,9 @@ The authors conclude: “Furthermore, for self-consistency with an equivalent nu
 
 Verus form (inference)
 
-Inference: for VL, generate several independent Rust/Verus candidates, run the Verus verifier on each, and compare this to a debate-style model that critiques candidates. The analogous fair baseline is equal numbers of model generations and equal verifier calls. Majority vote over text is insufficient for proofs; select only candidates whose Verus verification succeeds, then test semantic requirements that the Verus specification does not encode. Inference: this is candidate selection with machine checking, not proof by debate.
-
 what it assumes and where it fails
 
-The comparison assumes response count is a meaningful proxy for inference cost. The paper reports response counts but does not provide token, wall-clock, or dollar costs. Inference: VL should record those costs separately if product impact matters. The experiment uses one model version and GSM8K; it does not establish that debate never helps on other tasks.
+The comparison assumes response count is a meaningful proxy for inference cost. The paper reports response counts but does not provide token, wall-clock, or dollar costs.
 
 ## technique 4: prompt-completeness control for self-correction evaluations
 
@@ -101,8 +95,6 @@ Table 8 reports prior prompts/results of 44.0 standard and 67.0 self-correct, th
 
 Verus form (inference)
 
-Inference: put every checkable requirement in the initial VL prompt: exact Rust interface, ownership behavior, safety conditions, arithmetic bounds, and the intended Verus contracts. Keep critique prompts from introducing new requirements. Compare a one-generation candidate against a multi-generation repair process at equal model and verifier cost. If a feedback prompt adds a missing postcondition, the resulting gain is specification disclosure, not evidence that self-correction repaired reasoning.
-
 what it assumes and where it fails
 
 This control applies when requirements can be stated before generation. The authors note that their paper focuses on reasoning and that self-correction may help other domains, such as style or safety alignment, where the model can assess the requested property more reliably (Section 7, p. 9). Inference: the result should not be generalized to externally checked formal verification without running the checker.
@@ -111,13 +103,7 @@ This control applies when requirements can be stated before generation. The auth
 
 The paper measures model accuracy and answer-transition percentages under stated prompts, models, temperatures, datasets, and call counts. It does not prove a formal property of an LLM, Rust program, or Verus proof. Its evaluators trust benchmark labels, answer extraction, and the reported model APIs. Inference: the strongest evidence is the repeated drop across the tested intrinsic settings and the equal-response-count comparison against self-consistency.
 
-The paper recommends external feedback when available. It says that “when the problem description clearly specifies the intended code execution behavior, e.g., with unit tests, the code executor serves as the perfect verifier to judge the correctness of predicted programs” (Section 6, p. 8), and separately describes error messages as informative feedback that "guides the LLMs to improve their responses". Inference: Verus verification errors and counterexamples can fill this role for VL, but only for properties encoded in the Verus specification. Inference: external libraries, compiler behavior, hardware, erased proof code, and the correctness of the specification remain trusted according to VL's existing Verus notes.
-
-## implications for VL and product threat
-
-Inference: the direct threat is that an agent may present repeated self-review as evidence while silently changing a correct proof candidate into a wrong one, weakening a contract, or optimizing for a prompt-level metric. A Verus success blocks many such errors, but it cannot detect requirements absent from the specification. The safer design is a generate–verify–repair loop where model critique proposes changes and Verus plus executable tests decide acceptance.
-
-The paper says future methods should include comparable inference costs and strong multi-response baselines (Section 6, pp. 8–9). Inference: VL experiments should record candidate count, verifier calls, model calls, tokens, latency, and accepted/rejected candidates, with denominators for every percentage. Inference: existing work already supplies the intrinsic-loop failure analysis, oracle-label warning, equal-cost self-consistency baseline, and prompt-completeness control; VL should not redo these as if they were new techniques. The paper does not evaluate formal verification, so a VL study must add evidence from actual Verus runs.
+The paper recommends external feedback when available. It says that “when the problem description clearly specifies the intended code execution behavior, e.g., with unit tests, the code executor serves as the perfect verifier to judge the correctness of predicted programs” (Section 6, p. 8), and separately describes error messages as informative feedback that "guides the LLMs to improve their responses".
 
 ## techniques for the catalog
 
@@ -126,4 +112,3 @@ The paper says future methods should include comparable inference costs and stro
 - equal-cost debate comparison: compare multi-agent debate with self-consistency at equal response counts
 - prompt-completeness control: include all easily stated scoring requirements in the initial prompt before measuring feedback gains
 - external-verifier repair: use executable checks, tools, or a verifier to produce feedback that model self-assessment cannot supply
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "If we aim to argue that LLMs can self-correct reasoning through multi-agent debate, it is preferable to exclude the effects of selection among multiple generations."): I read the whole paper text (Sections 1 to 7, references, Appendix A) and checked every quotation, table number, Figure 1 percentage (against the page image), section and page reference, and the technique steps against it. Changed: GPT-4 used a 200-question sample, not the full set; removed an unsupported "not a proof method" remark; corrected the quote location (p. 4), the Figure 8 page (p. 17), the Table 8 row labelling, and the Section 6 page range; completed two quotes with their original context; added the single-run caveat and the HotpotQA footnote; marked two own conclusions as Inference. Not checked: the cited prior papers, the appendix prompts beyond the CommonGen prompt, and the VL/Verus inferences, which are the study's own and not in the paper. Link: arXiv 2310.01798 matches the identifier printed on the paper.

@@ -100,14 +100,6 @@ evidence and limits
 
 The paper's threat assumptions are explicit: kernel uncompromised, test runners honest, and guidebook authors trusted (Section 7, p. 12). It does not claim defense against adversarial kernel modification or colluding insiders. Inference: this is a direct threat to agent-written verified Rust workflows that accept agent-reported “tests passed” as evidence.
 
-## what remains trusted, contradictions, and product threat
-
-Nidus proves properties of its finite artifact transition system, not semantic correctness of code, completeness of requirements, correctness of PO formulas, solver implementation, test-runner honesty, or deployment behavior. The lesion study's 65% total is a sandbox measurement and includes known gaps; production claims should not be read as 100% coverage. The abstract's “100,000-line system” is a self-hosting delivery claim, while the evaluation tables concern 461 features and 238 POs; these are different denominators and artifacts. Inference: for VL, the main threat is specification and evidence drift: a Verus proof can pass while requirements or contracts are wrong, and an agent can present a passing local run unless evidence is tied to trusted execution. Nidus's useful pattern is a mutation gate that carries contracts, provenance, counterexamples, and monotonic history around Verus, not replacing Verus's program proofs.
-
-## what VL should not redo
-
-Nidus already demonstrates external mutation gating, inherited constraints, recursive self-governance, evidence-provenance checks, gate DAGs, friction routing, and lesson provenance. VL should not present these generic governance mechanisms as new without a distinct Verus construction or evaluation. Inference: a valuable extension is a Verus-aware obligation that links a contract to the exact compiled dependency and verifies that evidence was generated from that revision; Nidus does not evaluate this.
-
 ## techniques for the catalog
 
 - representational closure — store requirements, traces, proof obligations, evidence, and agent context in one solver-aligned artifact
@@ -115,5 +107,3 @@ Nidus already demonstrates external mutation gating, inherited constraints, recu
 - recursive guidebook constraints — inherit organizational predicates and govern changes to the constraint surface itself
 - evidence provenance gate — require registered witnesses, server hashes, and fused test execution before accepting evidence
 - gate-sequence and lesson obligations — encode SOP prerequisites and past failure causes as machine-checked DAG and negative constraints
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

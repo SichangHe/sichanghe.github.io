@@ -89,16 +89,9 @@ Exact string matching underestimates semantic equivalence, but the relaxed judge
 
 The paper demonstrates an agentic pipeline on three synthetic or literature-inspired HRI scenarios, not a soundness theorem for LLM translation. It measures extraction agreement, verifiability classification, compiler acceptance, exact match, and judged semantic equivalence. Ground truth is manually constructed, and stage-wise independence prevents one stage’s errors from inflating another’s score. The trusted artifacts are the LIrAs/SHA model, hand-crafted ground truth, UPPAAL compiler, and evaluation prompts; the extraction and semantic judges remain probabilistic.
 
-Inference: For a product generating agent-written verified Rust, the threat is medium to high. The architecture’s decomposition and hard compiler gate are reusable, but omitted constraints and hallucinated assumptions can yield a proof of an incomplete contract. VL should require requirement traceability, explicit model assumptions, and independent review of semantic equivalence before accepting a Verus proof.
-
-## what VL should not redo
-
-The paper already gives a three-stage decomposition, JSON traceability, a verifiability gate, grammar-constrained translation, compiler filtering, and a distinction between exact and semantic equivalence. VL should reuse these patterns and focus new work on Rust/Verus mappings, trustworthy requirement authority, and proof-based equivalence checks.
-
 ## techniques for the catalog
 
 - atomic requirement extraction — normalize prose into identified JSON requirements before formal translation
 - verifiability gate — filter properties outside the target model’s observable and semantic boundaries
 - grammar-constrained translation — generate formal queries under an explicit BNF and model mapping
 - three-level validation — apply compilation, exact comparison, and carefully justified semantic-equivalence checking
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -43,10 +43,6 @@ The paper reports that a prototype entered SMT-COMP'07 and “won 4 first places
 
 Inference (the paper has no trust discussion): the mathematical specification and generated formula remain trusted inputs; the solver, its simplifier, theory implementations, quantifier instantiation, model generation, and the checker or proof consumer are part of the trusted verification chain. A `sat` result comes with a model; an `unsat` result supports validity only under the solver's soundness assumptions. Inference: the threat to agent-written verified Rust is medium: Z3 is a powerful backend, but quantifier heuristics, relevancy choices, and theory-combination performance can make proofs timeout or become fragile while leaving the source contracts unchanged.
 
-what VL should reuse
-
-Inference: expose stable formula patterns, record solver versions/options, and treat model-producing counterexamples as debugging artifacts rather than proofs. Reuse the layered architecture idea in proof search: simplify first, separate theories, and avoid presenting irrelevant facts. The paper only describes these backend mechanisms, without measurements; VL should measure their behavior on its own Rust contracts instead of reimplementing an SMT solver.
-
 ## techniques for the catalog
 
 - DPLL(T) SMT architecture — combine SAT search, congruence closure, theory solvers, and incremental model reconciliation
@@ -54,5 +50,3 @@ Inference: expose stable formula patterns, record solver versions/options, and t
 - E-matching quantifiers — instantiate universal formulas from E-graph matches and retain useful conflict clauses
 - relevancy propagation — suppress expensive theory reasoning for atoms that do not affect the current branch
 - theory reductions — solve arrays lazily and bit-vectors by bit-blasting while sharing a SAT core
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Equalities asserted by the SAT solver are propagated by the congruence closure core using a data structure that we will call an E-graph following [8]."): read the whole 4-page text (abstract, §§1-4, references) and checked every quotation, the §1/§2/§3 references, the client list, the pipeline steps, the SMT-COMP and Spec# claims, and the catalog bullets against it. Changed: moved the client list from §2 to §1 (and added Vigilante); replaced "lemmas" with the figure's "clauses"; made step 4 follow the paper's solver-reference rule; corrected the contextual-simplification bullet (the defining conjunct is kept aside, not discarded); labelled the unsupported quantifier-completeness, trust-chain and theory-choice remarks as Inference; added page range and model-generation quotes. Not checked: external facts about Verus, the cited papers, and the semantic-scholar link (kept from the fetch record; the paper text gives no DOI or URL for itself).

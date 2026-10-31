@@ -63,12 +63,6 @@ The MIT experiment counts a problem as solved if a numerically verified correct 
 
 Verus form (Inference): for a failing proof, generate related obligations, reward verified proofs, and temporarily adapt a proof policy before retrying the original. Restore the starting policy between targets and recheck the original contract after adaptation.
 
-## trusted boundary, contradictions, and VL implications
-
-Numerical checking supplies training rewards, and official solutions check final MIT results. Numerical checking is fallible, as the authors acknowledge. The paper also cautions: “Unlike our approach, o1 does not have access to a numerical checker, meaning it operates under different constraints.” (Section 4.3, p.10). Inference: the reported comparison therefore does not isolate the effect of the learning method from checker access or compute.
-
-Inference: VL could evaluate related proof curricula when direct training fails. Generated easier obligations might omit necessary assumptions or weaken the target, so each accepted final proof must verify against the original contract. The integration results support testing this approach; they do not establish its effectiveness for Verus. Questions 12 and 13 remained incorrect after LADDER+TTRL (Appendix, p.13).
-
 ## techniques for the catalog
 
 - recursive variant tree — generate intended simpler children to form a difficulty gradient
@@ -76,5 +70,3 @@ Inference: VL could evaluate related proof curricula when direct training fails.
 - test-time reinforcement learning — adapt on variants of individual test questions, then answer those questions
 - temperature and persona diversity — vary sampling temperature and mathematical perspectives to reduce repetition
 - per-instance restoration — restore the starting parameters after each test question
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To validate the diversity of our variant set, we performed exact matching against our test set and found minimal overlap (only 5 matches among 5,000 variants)."): checked all quotations, numbers, section and page references, technique steps, and the arXiv link; corrected algorithm and verifier page references, removed unsupported prefiltering and duplicate filtering, added verifier limitations and test-time restoration, and marked Verus proposals as inferences; did not reproduce experiments, inspect code, independently validate numerical checking, or check cited works.

@@ -1,7 +1,6 @@
 # Synthesizing Proofs Using Proof Sharding and Exploration
 (authored by agents unless marked 🧑)
 Tag: `ghahani2026synthesizing`, [paper](https://arxiv.org/abs/2609.28535v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
 
@@ -174,14 +173,6 @@ The final output is ordinary Dafny proof code checked by an unmodified Dafny, so
 The evaluation removes one or more annotations from already published proofs. It therefore measures recovery of known proof steps, not discovery from an unconstrained specification. The from-scratch result (8/49) confirms the latter limitation. The benchmark set is mostly distributed protocols and one Library example; no Verus implementation or Rust benchmark is evaluated.
 
 A numerical caveat is that the abstract says 86 of 103 tasks complete in one minute to two hours, while the scalability section reports one single proof taking over six hours on one node and under 25 minutes on ten nodes. These are different tasks and configurations (the six-hour case is one hand-modified ring-election search, while section 6.1 says all but a few Paxos cases finish within 20 minutes), so not a contradiction, but the abstract's range should not be read as a bound independent of hardware.
-
-## relevance and threat to VL
-
-The direct opportunity is a Verus proof-search service that shards `requires`/`ensures`, synthesizes bounded trigger and helper calls, and runs independent candidates in parallel. This could reduce agent iteration time for the last annotations. The threat is an agent-written Rust verifier that emits plausible but incomplete proof candidates and stops at a local shard; ProofSaX's low from-scratch success and its reliance on existing helper signatures show that search automation does not replace specification, invariant design, or trusted verification. This threat assessment is my inference.
-
-## what VL should not redo
-
-VL should not treat generic “try more annotations” prompting as a complete proof-search strategy. The paper already supplies a concrete decomposition: shard first, then search only trigger matches, existing helper calls, local reveals, and quantifier introductions, with bounded complexity and parallel checking. New work should measure the Verus-specific grammar, ownership constraints, and useful batch sizes instead of reproducing the Dafny numbers.
 
 ## techniques for the catalog
 

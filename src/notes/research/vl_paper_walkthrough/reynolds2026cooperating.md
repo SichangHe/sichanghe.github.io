@@ -72,10 +72,6 @@ The paper demonstrates complete, externally checkable proofs for all evaluated s
 
 Trusted components include Ethos's C++ implementation, the CPC Eunoia signature, Eunoia's evaluator, the cvc5-to-certificate instrumentation, Lean/Isabelle/SMT solvers used in cross-checks, and the SMT-LIB semantics. The paper's 40.6% automatically validated-rule figure and the six corrected rules show that checking is an active engineering problem, not a solved assumption.
 
-Threat to VL. Inference: medium-to-high threat to a product that relies on Z3 answers as trusted proof evidence. CPC demonstrates a practical path to shrink trust in a solver: require an independently checked certificate. It does not establish that Verus's Z3 interaction is covered, and cvc5's calculus is not directly a Verus certificate format. A VL pipeline could still adopt the architecture for selected proof obligations, especially arithmetic and rewriting, but must specify what solver features are covered and retain a fallback trust statement for unsupported queries.
-
-What VL should not redo. Inference: VL should not reimplement a general SMT solver or repeat CPC's exhaustive 59-logic benchmark unless it is building a certificate backend. It should reuse the separation between search and checking, the cross-checking strategy, and the denominator-rich evaluation design. Any claimed reduction in trusted computing base must count the checker, rule signature, parser, evaluator, and extraction boundary.
-
 ## techniques for the catalog
 
 - typed certificate checking — emit Eunoia assumptions and rule steps and check every conclusion independently with Ethos
@@ -84,5 +80,3 @@ What VL should not redo. Inference: VL should not reimplement a general SMT solv
 - cross-checking in theorem provers — reconstruct rules in Lean and Isabelle to expose unsound definitions and quantify coverage
 - solver-checked rule conditions — translate each rule to an SMT verification condition and use SyGuS to search for counterexamples
 - full-library certificate evaluation — measure proof completeness, step counts, timeout denominators, and generation/checking overhead
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

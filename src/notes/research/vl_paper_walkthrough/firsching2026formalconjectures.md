@@ -2,12 +2,9 @@
 (authored by agents unless marked 🧑)
 Tag: `firsching2026formalconjectures`, [paper](http://arxiv.org/abs/2605.13171v1)
 
-
 ## purpose and result
 
 Formal Conjectures is an open Lean 4 repository and benchmark for research-level mathematical proof discovery and proof autoformalization. The release contains 2,615 statements: 1,029 research-open conjectures, 836 research-solved problems, and 750 test, API, or textbook statements (Abstract, PDF p.1; Figure 1, p.2). Its key design is to keep open problems public while preventing known solutions from defining the discovery task. The authors state: “A proposed solution is definitively correct if and only if its corresponding proof is accepted by the kernel without relying on forbidden axioms like sorry” (Introduction, PDF p.2).
-
-Inference: VL can adapt this as a public, versioned corpus of unsolved Verus obligations and solved contract-repair tasks. Lean’s kernel and Mathlib are different from Verus and vstd, so the reported rates do not transfer directly.
 
 ## technique 1: split discovery from autoformalization
 
@@ -27,7 +24,7 @@ How to apply it. (1) State the property and the answer type. (2) Put `answer(sor
 
 Verus form. Inference: represent an unknown parameter as a Rust ghost value or an explicit specification variable, then require a candidate witness and a proof of its postcondition. Inference: Verus does not provide this Lean elaborator; a task runner must generate separate “find witness” and “verify witness” jobs, with the witness treated as untrusted input until proved.
 
-Evidence and limits. `answer(sorry)` supports mathematical questions whose result is not known in advance, but the placeholder itself is not a proof. The paper’s formal benchmark still relies on kernel acceptance after replacement. Inference: for VL, an agent selecting an overly strong contract could make witness discovery trivial while proving the wrong requirement, so the requirement must be reviewed independently.
+Evidence and limits. `answer(sorry)` supports mathematical questions whose result is not known in advance, but the placeholder itself is not a proof. The paper’s formal benchmark still relies on kernel acceptance after replacement.
 
 ## technique 3: external proof links with @[formal_proof]
 
@@ -47,7 +44,7 @@ How to apply it. (1) Compare the formal statement with the informal source. (2) 
 
 Verus form. Inference: classify a Rust specification mismatch as translation (wrong predicate or type), underspecified (missing precondition or environment assumption), or source (the product requirement is wrong). Keep the original requirement and revised contract linked so a passing proof cannot erase the history.
 
-Evidence and trust. Every contribution receives human review by Lean experts and relevant domain experts. The review process also uses LLM cross-checks and AlphaProof runs, but the authors still require manual inspection. The 291 repaired cases are repository observations, not a measured model error rate. Inference: this taxonomy is directly useful for VL because a Verus proof can be valid while its `requires`/`ensures` contract is incomplete.
+Evidence and trust. Every contribution receives human review by Lean experts and relevant domain experts. The review process also uses LLM cross-checks and AlphaProof runs, but the authors still require manual inspection. The 291 repaired cases are repository observations, not a measured model error rate.
 
 ## technique 5: test-based definitions and prover auditing
 
@@ -73,8 +70,6 @@ Evidence. FC100SolvedSet1 and FC100OpenSet1 each have exactly 100 statements and
 
 A solution is counted only when accepted by the Lean kernel without forbidden axioms such as `sorry`; this verifies the formal statement, not its correspondence to informal intent. Trusted components include the kernel, Mathlib and dependencies, statement formalizers, human reviewers, metadata, and external proof links. The paper acknowledges residual risks from kernel bugs, unintended axioms, source selection bias, and future contamination of once-open problems (Limitations, PDF p.9).
 
-Inference: the threat to a product of agent-written verified Rust is high for specification quality and medium for proof discovery. Formal Conjectures demonstrates that public, evolving tasks can expose genuine reasoning gaps while its misformalization pipeline shows why contract review is indispensable. VL should not redo frozen-subset design, kernel-gated scoring, or basic proof-link metadata. It should adapt the taxonomy, test/API statements, open-versus-solved split, and immutable versioning to Verus contracts and systems properties.
-
 ## techniques for the catalog
 
 - open/solved split — separate zero-contamination proof discovery from autoformalization of known arguments
@@ -83,4 +78,3 @@ Inference: the threat to a product of agent-written verified Rust is high for sp
 - misformalization taxonomy — classify translation, underspecification, and source errors with repair evidence
 - test/API definition checks — add proven edge-case statements and run automated proof/disproof audits
 - frozen benchmark snapshots — pin statements and toolchains while evolving a separate living repository
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -58,14 +58,6 @@ The Internet2 demonstration uses a modified May 2015 configuration with more tha
 
 The proof assumes exact analysis and verification of the modeled network (Appendix A, p. 984). Inference: this does not establish that the failure model captures actual failures or that inferred behavior matches operator intent. A verified Rust implementation would still need to justify its parser, solver interface, and correspondence between configuration and model.
 
-## relevance to VL
-
-Inference: Config2Spec suggests maintaining explicit over- and under-approximations, pruning obligations with concrete checks, and proving the residual policies universally. A Verus implementation should expose the failure model and policy semantics in its contracts. Exact mining of configured behavior alone does not establish that this behavior is what an operator wants.
-
-## comparisons and work VL should not redo
-
-The large-topology runtimes and the baseline speedups come from separate experiments (§8.1–§8.2, pp. 977–978). Batfish and Minesweeper supply the existing analysis and verification engines (§8, p. 976). Related reachability-mining work either approximates bounds over failure environments or mines a single environment (§9, p. 980). Inference: VL should focus on a verified Rust/Verus implementation and its model correspondence rather than rebuilding those engines. The paper does not establish whether such a verified implementation exists elsewhere.
-
 ## techniques for the catalog
 
 - candidate/verified invariant — maintain a superset and subset whose equality identifies the specification
@@ -73,5 +65,3 @@ The large-topology runtimes and the baseline speedups come from separate experim
 - policy-aware sampling — weight failed links by unclassified-policy usage
 - grouped verification — conjoin policies sharing a destination prefix
 - topology trimming — use edge connectivity and the failure model to prune impossible policies
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Namely, we can only gain from verifying multiple policies in the same execution of the verifier."): checked all study claims, quotations, numbers, references, and technique steps against the complete paper, including references and Appendix A; corrected citations, switching and trimming details, precision assumptions, and the OSPF runtime discrepancy, added evaluation scope, and marked conclusions as inferences; did not reproduce experiments, inspect implementation code, or independently validate external references.

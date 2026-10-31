@@ -99,10 +99,6 @@ Trusted or assumed: Coq's standard axioms and excluded middle; the correctness o
 
 Inference: the strongest product threat is specification and model mismatch. An agent can reproduce a sound proof for a barrier state machine while choosing the wrong states, shares, or termination condition. Inference: the paper's independent-thread workflow and explicit resource-conservation checks are directly useful for agent-written verified Rust, but the missing inference step and incomplete share solver remain high-risk automation gaps. Inference: the 2.55–3.04 s HIP timings are too small and too modified to predict performance on a large Rust codebase.
 
-## what VL should not redo
-
-Inference: the paper already supplies a soundness pattern for stateful rendezvous: explicit barrier automata, full-share accounting, mutually exclusive transitions, thread-modular Hoare rules, unerased/erased semantics, and a machine-checked proof. A new VL component should reuse these ideas rather than invent another informal barrier invariant. It should focus on Rust/Verus encodings, inference of barrier definitions, realistic memory models, and checking that generated specifications match ordinary Rust intent.
-
 ## techniques for the catalog
 
 - stateful barrier automaton — encode each rendezvous as mutually exclusive state transitions that conserve all non-barrier resources
@@ -113,4 +109,3 @@ Inference: the paper already supplies a soundness pattern for stateful rendezvou
 - fractional-share decision procedure — solve share joins, bounds, existential elimination, unsatisfiability, and implication with a sound overapproximation
 - inductive fractional entailment — combine predicate fold/unfold with full and split permission matching
 - automated HIP/SLEEK integration — compile barrier diagrams to entailment obligations and discharge calls through structured specifications
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Oracle soundness says that if each of the threads on a machine are safe with respect to the oracle semantics, then the entire concurrent machine combining the threads together is safe."): read the whole paper text (pp. 1-36 including Appendix A) and checked every quotation, number, Figure 5 and benchmark-table figure, section and page reference, and the technique steps against it; changed the link to the DOI printed in the paper (the arXiv link was from the fetch record), corrected the step-4 postcondition claim (the postcondition-state check is from SLEEK, §8.5), corrected the loop-rule citation (footnote 12, p. 15), corrected the description of the three HIP specifications (only barrier-strong.ss is in Appendix A), reworded the SLEEK predicate list, and marked two own-conclusion passages as Inference; did not check the Verus encodings (marked Inference, not claims of the paper), the Coq files or the HIP/SLEEK tool themselves, or the cited external papers.

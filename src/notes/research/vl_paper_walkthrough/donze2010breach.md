@@ -44,13 +44,9 @@ Verus form. Inference: represent a finite sampled trace as a Rust sequence and d
 
 Evidence and limits. The paper reports experimentally linear computational time in trace size and formula size and says Breach outperformed TaLiRo in experiments, while noting TaLiRo's reported memory explosion for larger formulas (section 3, p. 170). It states, "The computational time is experimentally linear in the size of the trace and the size of the formula, which is a light overhead to the cost of the simulation (see Breach website for examples and data)." (section 3, p. 170) The paper provides no trace counts, formula sizes, machine specifications, or timing measurements. Inference: the paper alone does not support an independent quantitative performance comparison. The paper also says hybrid transitions currently require user-written C portions and that Simulink support still needs work (section 4, p. 170).
 
-## trust boundary and relevance to VL
-
-Breach measures simulations, sensitivity estimates, approximate reachable sets, and temporal-property robustness. Inference: the paper does not establish a soundness proof covering the nonlinear hybrid model, ODE solver, floating-point arithmetic, and user-written C transitions. Inference: for agent-written Rust verified with Verus, the useful transferable techniques are explicit transition modeling, interval/box refinement, and proof-oriented monitors over finite traces. Inference: the threat to a product is overclaiming numerical exploration as formal verification; a Verus contract can be fully proved while its model-to-physics assumptions remain untrusted. Inference: VL should use Breach-style exploration to discover counterexamples or candidate parameter regions, then require a separately proved discrete abstraction or numerical soundness argument before declaring a property verified.
-
 ## what prior work already provides
 
-The paper already provides the hybrid-system equations, CVodes sensitivity integration, first-order reachable-set estimate, adaptive parameter-box refinement, STL/MITL robust monitoring, and a GUI workflow for parameter exploration. Inference: VL should not redo these as generic features without a distinct contribution such as a proved Rust implementation of the finite monitor, a verified refinement invariant, or a measured account of numerical assumptions.
+The paper already provides the hybrid-system equations, CVodes sensitivity integration, first-order reachable-set estimate, adaptive parameter-box refinement, STL/MITL robust monitoring, and a GUI workflow for parameter exploration.
 
 ## techniques for the catalog
 
@@ -58,4 +54,3 @@ The paper already provides the hybrid-system equations, CVodes sensitivity integ
 - affine reachable-set approximation — use one trajectory and its sensitivity to estimate a parameter box, then refine boxes when the estimate is too coarse
 - robust temporal monitoring — evaluate MITL/STL predicates both as Boolean satisfaction and quantitative robustness over simulated traces
 - property-driven parameter synthesis — refine parameter boxes for safety synthesis and use heuristics to seek regions separated by other properties
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "If the approximation with one trajectory is too coarse, it can be improved by reﬁning P into smaller sets until an error tolerance factor is satisﬁed [DKR]."): checked all paper text, quotations, equations, technique steps, section and page references, and stated limits; corrected solver attribution, the incomplete timing quotation, and claims about monitoring and synthesis, marked conclusions as inferences, and identified the link as from the fetch record; did not check the linked website, cited works, Breach implementation, or proposed Verus adaptations.

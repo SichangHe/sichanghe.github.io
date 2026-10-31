@@ -6,8 +6,6 @@ Tag: `ge2025vibe`, [paper](https://arxiv.org/abs/2510.12399v2)
 
 Ge et al. survey the emerging workflow in which a human states intent, an LLM coding agent edits a project, and the human judges observable results. The paper defines Vibe Coding as an engineering methodology, formalizes the interaction as a constrained Markov decision process (CMDP), surveys model, agent, environment, and feedback techniques, and proposes five composable development models. It is a survey: most benchmark numbers and named systems are reported from cited papers, not new experiments in this paper. The authors write, “Drawing from systematic analysis of over 1000 research papers, we survey the entire vibe coding ecosystem, examining critical infrastructure components including LLMs for coding, LLM-based coding agent, development environment of coding agent, and feedback mechanisms.” (abstract, p. 1)
 
-Inference: for VL, the useful content is the feedback and assurance pipeline: compile and static-analysis feedback, tests, runtime diagnostics, formal verification hooks, self-refinement, context retrieval, and human approval. The paper does not teach a Verus proof or machine-checked Rust contract. Inference: the Verus mappings below are design translations, not claims made by Ge et al.
-
 ## technique: formalize agent development as a constrained interactive process
 
 scope and trigger
@@ -25,8 +23,6 @@ paper procedure
 The paper’s exact statement is: “The collaboration among the three parties can be modeled as a Constrained Markov Decision Process (Constrained MDP) [34], wherein humans define the goal space and constraint boundaries, projects provide the state space and transition constraints, and Agents execute policies and state transitions:” (§3.1, p. 8)
 
 Verus form
-
-Inference: represent the project state and requirements as ghost state, define a `spec fn` transition relation, and use `requires`/`ensures` on each agent action wrapper. Encode safety constraints as predicates that every transition must preserve. A Verus `proof fn` can establish monotonic requirements and preservation of an abstract contract across edits, but the LLM itself remains outside the proof. Inference: VL should treat compiler, test, and Verus results as typed observations in the transition model rather than as unstructured text.
 
 evidence and limits
 
@@ -49,8 +45,6 @@ paper procedure
 The survey says, “Core technologies of this model include retrieval-augmented generation, codebase vector indexing, documentation loading, and rule constraints.” (§8.6, p. 35)
 
 Verus form
-
-Inference: index Verus specifications, `requires`/`ensures`, invariants, trusted-boundary notes, and neighboring proof lemmas together with source code. Retrieval should prioritize the exact contract and its implementation, then relevant lemmas, then tests. A Verus proof can reject an implementation when the retrieved contract is inconsistent, but retrieval itself is not verified. Inference: VL should record which context items were used for each proof attempt so a passing proof can be audited against the intended requirement.
 
 evidence and limits
 
@@ -148,8 +142,6 @@ The paper’s architectural requirement is: “A robust Vibe Coding ecosystem mu
 
 Verus form
 
-Inference: treat Verus contracts, unsafe-block reviews, dependency audits, and sandbox execution as separate layers. Before generation, retrieve the security and trust-boundary specifications. During generation, verify incrementally where possible. After generation, run tests, fuzzing, and dynamic checks in isolation. Require human approval for `external_body`, axiomatized models, changed contracts, or new unsafe code. These are VL recommendations inferred from the paper’s layered architecture.
-
 evidence and limits
 
 The paper presents this as an architecture proposal and says detailed real-time specifications are not standardized (§9.2.3, p. 38). It reports a cited finding of a tenfold increase in security warnings and technical debt within six months of autonomous-agent adoption (§9.3.1, p. 38), but does not provide the study’s denominator in the survey text. Inference: this statistic should not be generalized to all products without reading the cited source.
@@ -173,17 +165,9 @@ The paper’s summary is: “in TDM, machines verify while humans define standar
 
 Verus form
 
-Inference: VL should use a PDM+CEM+TDM baseline for verified Rust: humans define architecture and proof obligations, retrieval supplies exact local contracts, tests and Verus check behavior, and humans approve changes to specifications. UAM is inappropriate for safety-critical verified components because a passing test or proof can still target the wrong contract. ICCM can handle low-risk maintenance when a human reads each proof change.
-
 evidence and limits
 
 Table 5 assigns TDM `Strict` structured constraints, `Strict` code quality, `High` maintainability, and `None` for technical-debt risk; it assigns UAM `Low` code quality and `High` technical-debt risk (p. 35). Section 8.2 describes UAM as emphasizing high development velocity (p. 33). Inference: these are qualitative assessments, not measured guarantees or a controlled comparison. The paper explicitly says the five models are composable rather than mutually exclusive (§8.1, p. 33).
-
-## what is proved, what remains trusted, and product threat
-
-The paper proves no Verus theorem and reports no new formal-verification experiment. It surveys methods and cited results: compiler/static analysis, unit and integration tests, formal-verification feedback, self-refinement, security analysis, and context retrieval. Inference: its formal CMDP and taxonomy are conceptual models, and its cited benchmark percentages cannot be read as universal reliability rates. Generated tests, reward models, retrieval, human judgments, static analyzers, compilers, LLM behavior, sandbox isolation, and the correctness of the target specification remain trusted or partially trusted.
-
-Inference: ideas already surveyed that VL should not present as new generic techniques include iterative compile/test/repair; multi-layer static, dynamic, and formal feedback; TDD as machine-checkable constraints; self-refine and reflection memory; retrieval-based context engineering; and human final arbitration. Inference: VL’s useful contribution is to bind these ideas to Verus contracts, exact proof logs, trust-boundary accounting, and regression checks that prevent contract weakening. Inference: the largest threat to agent-written verified Rust is specification drift or omission. A proof can pass after an agent weakens `ensures`, retrieves incomplete context, or tests only generated examples. Inference: the warning about unreliable generated tests supports combining proofs, tests, and human contract review in VL.
 
 ## techniques for the catalog
 
@@ -197,4 +181,3 @@ Inference: ideas already surveyed that VL should not present as new generic tech
 - reflection memory — separate actor, evaluator, and reflection roles and store trajectory and long-term lessons
 - layered security loop — inject secure context, scan in flight, sandbox and fuzz execution, and maintain a threat model
 - assurance taxonomy — choose UAM, ICCM, PDM, TDM, and CEM according to human control and constraint needs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "They are responsible for interpreting the outputs of these automated security tools, resolving ambiguities, and making the final risk-based decision."): checked the full paper text, study quotations, numbers, equations, sections, pages, technique steps, tag, and paper identifier; corrected truncated quotations, Equation 4 and test-feedback page references, reward-signal scope, inference labels, and the link to the arXiv version identified on the paper; did not independently check cited studies, benchmark results, external links, or execute the proposed Verus workflows.

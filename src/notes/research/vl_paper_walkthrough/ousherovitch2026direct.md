@@ -8,8 +8,6 @@ The paper asks how to train a language-model tactic generator when deployment us
 
 The paper states, “We extend Compute-Aligned Training (CAT) to this setting through an abstraction of policy-guided search, deriving tractable, trace-supported losses.” (Abstract, PDF p.1). It contributes search-aware CAT losses and a search-agnostic uniform-allocation (UA) loss. The paper states, “Both induce scalar weights on per-tactic cross-entropy gradients.” (Abstract, PDF p.1) Both are weighted sums of ordinary per-tactic CE gradients. The evaluation uses Lean 4 through LeanDojo, Qwen2.5-Math-7B-Instruct with LoRA, and a held-out pool of 458 theorems whose reference proofs have 2–5 steps (§5, PDF p.7).
 
-Inference: The direct product implication for VeruLaw is training an agent's Verus-proof tactic or edit generator against the actual verifier-search procedure, rather than treating each successful proof trace as an independent language-model target. The paper studies Lean and does not establish transfer to Verus.
-
 ## technique 1: formalize policy-guided proof search
 
 Inference: Use this as the objective's foundation. Let X be proof states, Y tactics, and `T : X × Y → X ∪ {xerr}` the transition that either applies a tactic or returns an error state. The model is a stochastic policy `πθ(y | x)`. A demonstrated proof trace is `τ* = (x0, y1*, x1, …, yL*, xL)` with `xL = xQED`; write `pt = πθ(yt* | xt−1)` (§2.1, PDF p.3).
@@ -47,8 +45,6 @@ Use UA when one generator must serve several search algorithms or the deployment
 
 The paper contrasts this with strategy-specific CAT: CAT preserves selected details of node selection and budget allocation, while UA is deliberately search agnostic. In the experiments, the same UA adapter is used for Pass@N, BFS, DFS variants, and MCTS (Table 1 caption, PDF p.8).
 
-Inference: In Verus, UA is suitable for a general proof generator used by different CI search modes. It weights each proof-state action according to a common expansion budget, while CAT should be used when VL standardizes on one search engine. The choice is an engineering inference; no Verus experiment appears in the paper.
-
 ## technique 4: specialize objectives to Pass@N and best-first search
 
 Inference: For Pass@N, the search samples N independent complete rollouts. If `πproof = Π_t pt` is the probability of the demonstrated proof, the trace-supported success is `1 − (1 − πproof)^N` (Eq. 11, §3.1, PDF p.5). Differentiation gives the same scalar weight to every step of the trace. This is simple because every rollout has the same path structure.
@@ -65,8 +61,6 @@ The paper proves that for Pass@N with N > 1, the true weight is no greater than 
 
 With increasing Pass@N budget, the paper states, “More compute can compensate for a delay, but not for permanent loss of the opportunity to recover.” (§4.2, PDF p.7). In the all-recoverable model, true and surrogate weights tend toward zero; if a miss can permanently absorb the search, the true weight remains positive while the surrogate misses that risk (§4.2, PDF p.7).
 
-Inference: For VeruLaw, record one-step deviations and their repair cost instead of assuming every failed proof step costs one expansion. Train with CAT only after measuring whether off-trace lemmas rejoin the demonstrated proof, lead to an alternative proof, or consume the entire budget. The paper's non-identifiability result means no trace-only loss can recover these facts without additional exploration data.
-
 ## evidence and denominators
 
 At budget N = 256, Table 1 evaluates six strategies on 458 held-out theorems. CE proof-found percentages are Pass@N 21.2, BFS 23.8, DFS 19.2, RDFS 20.7, VDFS 21.2, and MCTS 20.3. Search-aware CAT gives 26.6, 25.1, 20.7, 23.6, 23.8, and 22.5; shared UA gives 25.1, 26.9, 23.6, 25.3, 24.5, and 25.1 (Table 1, PDF p.8). Each percentage uses the same denominator of 458 theorems and counts any kernel-verified proof as success (§5, PDF p.7). Capped runs without a proof count as failures (§5.1, PDF p.7).
@@ -74,8 +68,6 @@ At budget N = 256, Table 1 evaluates six strategies on 458 held-out theorems. CE
 Budget-matched paired comparisons in Table 2 use n = 458 at Pass@N budgets 16 and 64, n = 408 at 256; BFS uses n = 458 at 16 and 64 and n = 407 at 256. Search-aware CAT gains over CE are +2.0, +4.4, and +4.2 percentage points for Pass@N, and +4.4, +4.6, and +6.9 for BFS (Table 2, PDF p.8). The table reports paired CAT-only/CE-only successes and exact two-sided McNemar p-values; the changing n means the plotted lines are not a common-cohort comparison.
 
 Trusted elements include Lean's kernel, LeanDojo's environment, the theorem statements and reference traces, the proof-search implementation, and the assumption that the finite expansion budget reflects deployment cost. The experiments use one base model, short proofs, and offline SFT. The paper states, “Both remain trace-only.” (Conclusion, PDF p.9), referring to UA and search-aware CAT. It leaves one-step deviation sampling, deeper local-tree exploration, and allocation of training compute for future work (§6, PDF p.9).
-
-Inference: The product threat is objective mismatch: an agent can become better at following recorded proof traces while becoming worse at discovering valid alternative Verus proofs or recovering from a bad edit. A second threat is cost-model mismatch when Verus verification time varies dramatically by lemma. VL should reuse search-aware weighting and explicit off-trace audits, but should not claim universal gains from the 458-theorem Lean benchmark.
 
 ## techniques for the catalog
 
@@ -85,4 +77,3 @@ Inference: The product threat is objective mismatch: an agent can become better 
 - strategy-specific recurrences: derive separate objectives for Pass@N, best-first, and other frontier policies
 - off-trace error analysis: account for alternative proofs and the recovery cost of exploratory branches
 - paired proof-search evaluation: report proof-found rates with theorem, expansion-budget, and paired-cohort denominators
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

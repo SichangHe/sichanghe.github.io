@@ -1,7 +1,6 @@
 # StateSync-GKR: Machine-Checking the Trust Chain from Sparse-Merkle State Transitions to GKR Verification
 (authored by agents unless marked 🧑)
 Tag: `kim2026statesyncgkr`, [paper](https://arxiv.org/abs/2610.05335v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
 
@@ -62,10 +61,6 @@ Evidence and limits: two vacuity defects were found: unsatisfiable specification
 ## what is proved, measured, and trusted
 
 Isabelle proves the mathematical model, compiler equivalence, composition, batching, and field lift under stated assumptions. Creusot/Why3 checks only the declared partial code correspondence. Trusted items include Rust/LLVM/OS, pinned Plonky3 field/challenger/hash crates, abstract hash functions, one tool-artifact axiom, the value-correspondence premise between running traces and model objects, and the challenge-distribution assumptions. Fiat–Shamir and multi-round non-interactive security are outside the model. The artifact reports 194 Rust release tests passed, 0 failed, and 2 intentionally ignored, but this is not a whole-program verification claim.
-
-## implications for VeruLaw
-
-Inference: VL should adopt StateSync-GKR’s trust-chain decomposition for verified Rust systems: define semantic transitions first, prove compiler acceptance equivalence, compose with protocol or solver theorems, and maintain explicit code correspondence. Nonvacuity activation is directly useful for Verus contracts and agent-generated proofs. The paper is a warning against reporting a green verifier build as end-to-end assurance: value correspondence, library semantics, challenge generation, and cryptographic reductions can remain trusted. VL should not redo a generic GKR development; the reusable lesson is the ledger, activation discipline, and partial-refinement boundary.
 
 ## techniques for the catalog
 

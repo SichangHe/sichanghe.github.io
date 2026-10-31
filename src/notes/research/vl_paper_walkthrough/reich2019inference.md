@@ -34,17 +34,9 @@ The abstract expects the technique “to produce too many uninteresting properti
 
 For validation (RQ3), the paper says: “The idea is to execute the proof directly after APF and only publish the failed proofs to the engineer.” The user then identifies “whether the failure was made during provision of example data or on the implementation.” (section III-A, p. 1225)
 
-Inference: the overall loop is generate formulas true on the examples, validate, reduce, derive lemmas and prover parameters, run the prover, and show failures to the engineer. For Verus, the analogue is generating candidate lemmas and solver hints, running `verus`, and returning failures. A lemma the solver proves can still miss the requirement; the paper’s RQ1 measures interestingness by “its match to the requirement itself and whether it contributes to the automation of ATP” (section III-B, p. 1225). Inference: VL should rank by proof success and review requirement adequacy separately.
-
 ## proposed evidence and what remains unknown
 
 The paper defines three research questions and a planned evaluation, with no results (sections III-A and III-B, pp. 1224–1225). RQ1 measures match to the requirement and contribution to ATP automation, and will determine the algorithm’s scalability. RQ2 compares the number of manual prover interventions with and without EDSS, and counts how many parameters APF can predetermine. RQ3 injects misleading example data, assesses “the continuation of the process”, and counts false positives the proof produces. The authors say: “We expect to receive false positives, e.i., properties that do not match to requirements, but represent a true information for the given set.” (section III-B, p. 1225) Experiments are to follow Wohlin et al. [36] (footnote 16, p. 1225).
-
-Inference: with no experiment, there is no denominator, model, setting or numeric result to transfer to VL. The SML meta-model, APF algorithm and quality measurements are all still to be developed. The main risk is properties that overfit the examples or are easy to prove but unintended. Trusted inputs include the engineer’s examples, the requirement interpretation, the background knowledge and the grammar.
-
-## what VL should reuse
-
-Inference: reuse the three-step separation (generate from structured examples, validate on data, reduce) and connect generation to Verus proof feedback. Do not claim the paper demonstrates automatic specification or reduced proof effort: it proposes measurements but reports none. Existing Verus contracts and lemma libraries could supply background knowledge; failed proofs could guide example refinement.
 
 ## techniques for the catalog
 
@@ -52,4 +44,3 @@ Inference: reuse the three-step separation (generate from structured examples, v
 - ILP/ATF property formation: generate candidate first-order (possibly higher-order) formulas from examples, a grammar and background knowledge
 - validation and reduction: check candidates on the examples, keep valid formulas, and reduce them to an optimized property set
 - proof-guided tailoring: generate use-case lemmas and prover parameters, run the proof, and show failed proofs to the engineer
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We propose to extend the functionality of ATF to be able to deduce properties from example data provided by the engineer."): read all four pages (pp. 1222–1225, including references) and checked every quotation, section and page reference, the Figure 3 steps, the RQ evaluation plan, and the DOI tag; changed all page numbers from 1–5 to the printed pages 1222–1225, corrected the mergeLMI requirement R4 (“delete numbers that occur more than once”, not deduplicate), the two problem areas, the Figure 3 inputs and output name, the extension target (ATF), removed an altered “[s]” in a quote, and marked the assembled workflows and Verus mappings as Inference; did not check the cited works or the Verus claims.

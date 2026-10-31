@@ -98,8 +98,6 @@ The paper formally proves the ten LTL properties only for its finite PROMELA mod
 
 The model omits crashes, restarts, packet loss, reordering, corruption, data exchange while Established, and unbounded parallel sessions. Its “Perfect channel” and two-agent assumptions are explicit (Sect. 3.4, pp. 3105–3106; Sect. 4.2, p. 3108). Inference: the patch result covers the ten properties and four attacker models, not universal patch correctness.
 
-Inference: verified Rust can still implement an incorrect protocol abstraction or omit relevant attacker capabilities. Verus can make the transition relation, packet ownership, bounded channels, and regression obligations explicit, reducing implementation errors. It cannot infer the right RFC properties, prove omitted network behavior, or turn a finite attack search into universal security without a complete model. VL should reuse the paper’s separation of protocol model, temporal properties, attacker capabilities, and patched-vs-unpatched differential checks. VL should not redo generic finite-state attack synthesis as if KORG’s method were new; the product-specific contribution would be a verified Rust refinement and an auditable certificate boundary.
-
 ## techniques for the catalog
 
 - RFC-to-FSM modeling — encode protocol states, packet fields, channels, and explicit omissions as a finite transition system
@@ -108,4 +106,3 @@ Inference: verified Rust can still implement an incorrect protocol abstraction o
 - capability-scoped attackers — model Off-Path, Evil-Server, Replay, and On-Path powers as separate finite grammars
 - differential patch verification — rerun the same properties and attack searches with a patch and compare every attacker/property result
 - ambiguity attack analysis — model plausible RFC misinterpretations, synthesize attacks, and validate the intended reading against implementations
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The purpose of this attacker model is to study the degree to which an adversary capable of temporarily controlling one peer in a connection can negatively impact the other."): checked the full text, quotations, counts, references, model assumptions, attacker capabilities, and technique steps; corrected an altered model quotation, page references, the publisher link, attack-count attribution, and speculative adaptations; did not rerun the paper’s experiments, inspect its artifacts or implementation sources, or verify the proposed Verus adaptations (quote: Sect. 4.2, p. 3109).

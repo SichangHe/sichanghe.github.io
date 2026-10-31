@@ -48,11 +48,8 @@ The implementation considers only local contexts, which the author says “could
 
 The proof-tree algorithm can report inaccurate results for compound tactics, tactics resolving multiple goals, and focus-shifting tactics. The author did not filter these proofs, accepting missed clones or inaccurate proof boundaries (section 6, p. 14). The evaluation covers syntactic clones, not semantic clones or otherwise matching quantified goals whose independent binders occur in a different order. Refactoring effort and practical impact were not measured: “Additional metrics, such as the effort required to refactor or eliminate the clones will be studied in a future work.” (section 6, p. 14)
 
-Inference: for VL, the main threat is engineering cost and false positives from incomplete context capture, rather than a new proof soundness axiom. A Verus integration should keep the Verus verifier as the final authority and treat clone reports as refactoring suggestions until the shared lemma is reverified.
-
 ## techniques for the catalog
 - live proof-tree extraction — execute each proof step, record goal-state deltas, and attach vanished goals to newly created children
 - dependency-aware goal generalization — quantify context free variables in reverse topological dependency order
 - α-equivalence clone reporting — compare generalized goals under bound-variable renaming and report pairs with their locations and proofs
 - manual classification of reports — distinguish identical or near-identical proofs, generalized proofs, and entirely different proofs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Our Python implementation of Gallina parser calls for disabling the notations that might have been used in the proof scripts."): checked every study quotation, numerical claim, section/page reference, and technique step against the full paper; corrected the paper link, author wording, algorithm attribution, and soundness claim, clarified dependency binding order, and added omitted limitations and the benchmark-count inconsistency; did not inspect the implementation, reproduce experiments, or validate the Verus inferences.

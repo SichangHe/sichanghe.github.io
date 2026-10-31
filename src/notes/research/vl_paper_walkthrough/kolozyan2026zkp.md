@@ -5,8 +5,6 @@ Tag: `kolozyan2026zkp`, [paper](https://doi.org/10.48550/arxiv.2607.23752)
 ## scope and main findings
 This survey evaluates automated security tools, formal-verification efforts, and practitioner adoption for zero-knowledge proof (ZKP) systems. It separates circuit-level bug finding from proofs of soundness and completeness across the zkVM stack. The abstract reports six tools evaluated on 70 real-world vulnerabilities: detection is 45.7% on isolated targets and 19.6% on full codebases. The paper also finds that formal verification mostly targets constraint correctness, while witness generation, lookup/permutation arguments, proof systems, and verifiers remain largely outside the proven boundary.
 
-Inference: these percentages measure known-bug detection, not the probability that a system is secure. For VeruLaw, the most transferable lesson is explicit accounting of specifications, model-to-code gaps, and trusted tooling; ZKP arithmetic itself is a specialized domain.
-
 ## technique: ZKP pipeline decomposition
 Use this before choosing a proof target. A ZK-DSL compiles application computations and constraints into a witness generator and constraint system; a zkVM compiles an ordinary program to an ISA, records an execution trace, and checks that trace in a circuit (Fig. 1, pp.2–3). Weak constraints break soundness by accepting impossible witnesses; overstrict constraints break completeness by rejecting honest executions (Sec. II, p.3).
 
@@ -68,11 +66,6 @@ The practitioner survey has 48 respondents. Interactive LLMs are used by 85% of 
 
 Inference: the survey's covered percentages are perceptions, not measured detection rates. The results support CI-friendly, clear reports and low integration effort as product requirements, but do not establish that LLMs or formal verification are safe by default.
 
-## what VL should reuse and threat assessment
-Existing work already supplies a useful layered assurance vocabulary, isolation-versus-project evaluation design, model-creation tradeoffs, and TCB reporting. VL should reuse these patterns when measuring agent-written verified Rust: test full repositories, record denominator and tool failures, and state exactly which specification and generated artifact are linked. It should not redo a ZKP-specific taxonomy unless its product handles circuits or zkVMs.
-
-Inference: threat to VeruLaw is medium for ZKP products and low for ordinary systems code. The paper shows that formal claims can cover only a small component while leaving high-impact integration gaps. An agent that emits Verus proofs can still be unsafe if the specification is vacuous, the model is detached from executable code, or unverified glue and cryptographic assumptions dominate. The paper's evidence supports treating verification claims as scoped evidence, not a binary security label.
-
 ## techniques for the catalog
 - ZKP stack decomposition — separate computation, constraints, witness generation, prover, verifier, and recursion artifacts
 - isolated/project tool evaluation — measure bug detection on wrappers and full codebases with explicit compile, error, timeout, and detection labels
@@ -80,4 +73,3 @@ Inference: threat to VeruLaw is medium for ZKP products and low for ordinary sys
 - model creation strategies — choose extraction, IR translation, hand-written models, or correctness by construction with their correspondence assumptions
 - proof-backend selection — match interactive theorem proving, SMT, or specialized tactics to algebraic scope and CI needs
 - trusted-base audit — report verified components, specifications, model gaps, extraction tools, kernels, axioms, and theorem fidelity
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

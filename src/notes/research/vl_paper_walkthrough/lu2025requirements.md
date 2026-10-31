@@ -72,8 +72,6 @@ Inference: these code-derived artifacts should remain labeled as inference. Code
 
 The paper describes a workflow and a Solar Search walkthrough using LTL, ACSL, NuSMV, and Frama-C (Sections II–III, pp. 2–4). It reports no quantitative evaluation, number of successfully verified modules, or baseline comparison. Inference: the walkthrough does not establish that LLM agents can reliably perform the steps. Elements whose correctness still needs justification include agent interpretation, domain knowledge, formalizer choices, generated specifications, verifier soundness, model/code correspondence, and human judgments. The authors identify specification completeness, semantic consistency, code quality, training data, feedback policy, and scalability as open challenges (Section IV, pp. 4–5).
 
-Inference: for VeruLaw (VL), the requirement-to-contract boundary needs explicit review. ReDeFo's separation of analyst, formalizer, and coder matches VL's need to distinguish intent extraction, Verus specification writing, and Rust implementation. Its practical contribution is a reviewable artifact chain: every Verus contract should point to a refined requirement and architecture transition, every generated module should discharge its contract, and integration proofs should preserve assumptions. VL should not claim that a verified Rust function satisfies a human requirement until the requirement-to-specification link has evidence and human/domain review.
-
 ## techniques for the catalog
 
 The following summarize the proposed techniques in Sections II–III (pp. 2–4).
@@ -83,5 +81,3 @@ The following summarize the proposed techniques in Sections II–III (pp. 2–4)
 - specification composition: generate, merge, complete, and consistency-check formal segments with traceability
 - contract-directed code generation: produce modular code from requirements and formal specifications, verify modules and models, and assemble the system
 - human-in-the-loop clarification: route ambiguity, contradictions, and verification failures to engineers and formal-methods experts
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "By engaging in the above process, agents can gradually develop a comprehensive understanding of how requirements, architecture, specifications, and code are interrelated."): read the full paper text and study; checked quotations, numbers, section/page references, technique steps, and evaluation claims; corrected the paper link, quotation punctuation, page references, and unsupported step requirements, and labeled recommendations as inference; did not reproduce the case study, run its tools, or validate the Verus adaptations.

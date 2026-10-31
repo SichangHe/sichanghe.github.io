@@ -1,7 +1,6 @@
 # A Hybrid Approach to Semi-automated Rust Verification
 (authored by agents unless marked 🧑)
 Tag: `ayoun2025hybrid`, [paper](https://doi.org/10.1145/3729289)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
 Ayoun, Denis, Maksimović, and Gardner propose splitting end-to-end Rust proofs: Creusot handles safe code while Gillian-Rust handles unsafe code with separation logic. The paper claims this is viable on standard-library LinkedList and Vec fragments and gives a shared specification boundary. Its central claim is explicit: “We propose a hybrid approach to end-to-end Rust verification where the proof effort is split into powerful automated verification of safe Rust and targeted semi-automated verification of unsafe Rust.” (abstract, p. 1). This is a proof-of-concept, not a complete Rust verifier.
@@ -31,8 +30,6 @@ Use shared `hybrid::requires` and `hybrid::ensures` attributes on APIs called by
 
 ## what is proved, trusted, and missing
 Proved: TS and/or FC for EvenInt, LinkedPair, subsets of standard-library LinkedList and Vec, MiniVec, and clients using the resulting contracts. The authors call this “the first verification of TS and FC of unsafe code from the Rust standard library” for those subsets, with minor source changes (sec. 7, p. 19). Trusted: the Gillian-Rust and Creusot implementations, Why3, the semantic interpretation of Pearlite/Gilsonite, RustBelt/RustHornBelt foundations, compiler translations, and externally supplied Creusot contracts. Meta-theory removes “later” modalities and omits a formal causal-loop proof. Unsupported or restricted: closures and some MIR constructs; at most one lifetime in specifications; shared references and fractional permissions; concurrency and Send/Sync obligations; ZST vector elements; allocator parameterisation; some closure/trait layers manually inlined; StackedBorrows and TreeBorrows.
-
-Vec evidence has explicit caveats: ZSTs cannot be represented; the borrow-extraction magic-wand proof for `get_index_mut`/`index_mut` is left unproven; and standard-library code is modified. Thus reported speedups are not end-to-end guarantees for arbitrary Rust. Compared with earlier work, the paper says RefinedRust needs 30m40s for MiniVec versus 1.35 s here, and EvenInt 4m36s versus 0.04 s, but scopes and annotation styles differ. Verus cannot verify traditional raw pointers; Kani does not prove type safety or layout independence; VeriFast-Rust focuses on TS without this hybrid automation. VL should not redo the basic safe/unsafe split, ownership-predicate encoding, or prophecy bridge. It could reuse the design while addressing unsupported lifetimes, shared borrows, closures, and soundness formalisation. Inference: this is a high threat to agent-written verified Rust if VL targets unsafe abstractions, because the paper demonstrates automatic proofs with a one-line annotation for the `push_front` and EvenInt mutators, though LinkedList needs 176 (TS) to 227 (FC) annotation lines; threat is lower for safe-only Verus-style code and for production soundness, where the listed gaps remain material.
 
 ## techniques for the catalog
 - safety-boundary hybrid: send safe Rust to Creusot and unsafe modules to Gillian-Rust through shared contracts

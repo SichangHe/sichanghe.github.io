@@ -65,11 +65,8 @@ Verus form (Inference): use a Verus-verified parser as the oracle, but keep the 
 ## evidence, trust, and limits
 The paper proves parser/serializer properties in Rocq and relies on OCaml runtime memory safety and Rocq extraction: “We do not explicitly prove memory safety, but rely on the memory safety provided by the OCaml runtime, and trust Rocq’s extraction mechanism to preserve the properties established in the proof assistant.” (Section 4.1, p. 10) It limits Open Type encoding to 16K bytes, excludes a verified compiler, and prioritizes correctness over speed. The tests cover selected 4G/5G/V2X messages and 11 implementations; they do not establish correctness for every ASN.1 feature or every implementation.
 
-Inference: a Verus implementation must state trusted boundaries explicitly: Rust compiler, Verus verifier, bit-buffer implementation, generated-code compiler, and schema parser. The product threat is high for unverified protocol parsing because malformed lengths, defaults, and extensions can cause semantic or memory bugs; a verified reference parser substantially reduces this threat but does not remove application-level misuse. Existing work already provides the round-trip, extension, combinator, compiler, and oracle patterns; VL should reuse them rather than repeat a parser-theory survey.
-
 ## techniques for the catalog
 - refined bitstream parser: return constrained values, exact bit cursors, and version flags from option-typed parser results
 - weak-injection round trip: use strict injection for same-version messages and validity-preserving re-encoding for unknown extensions
 - verified combinator compiler: compose proved primitive and structural ASN.1 combinators, then generate parsers and serializers
 - verified-oracle fuzzing: compare real implementations against a formally verified parser and classify minimized discrepancies
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

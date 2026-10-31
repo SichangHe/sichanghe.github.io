@@ -96,16 +96,6 @@ Section V-E (p. 8) separately reports an NVIDIA A6000 experiment with batch size
 
 Verus form. Inference: generate and check ordinary Rust contracts locally when source confidentiality matters; send only minimized proof diagnostics or abstract counterexamples to a cloud critic. Any cloud suggestion remains untrusted until local Verus verification passes.
 
-## evidence, trust, and product threat
-
-The full pipeline reports 0% violation on the 300-task benchmark for LLaMA+B, GPT-4+B, nl2spec+B, AutoSafeLTL, AutoSafeLTL-C, and AutoSafeLTL-D (Table II, p. 8). Their average interaction rounds are 16.2, 7.8, 6.5, 4.3, 15.0, and 11.0 respectively. AutoSafeLTL has the fewest rounds among these variants. Section V-A (p. 7) identifies the evaluation benchmark from section IV-A; section V-D defines safety compliance by passing inclusion checking. The text in section V-D reports 5.7 interaction rounds for AutoSafeLTL, whereas Table II reports 4.3; section V-E also uses 4.3. The study retains the table value and records this discrepancy.
-
-Semantic consistency is measured separately on 1,000 navigation tasks: S1 94.7%, S2 92.5%, S3 91.1% (section V-C, p. 7). Inference: safety compliance and semantic fidelity are different metrics. The paper also reports AutoSafeLTL* without the automated loop at 98% violation, so native safety priors do not replace checking (section V-B, p. 7). Inference: this supports retaining verification even after safety-oriented fine-tuning.
-
-Inference: the formal guarantee depends on correct LTL semantics, Büchi construction, RABIT inclusion checking, AP alignment, and the safety constraints themselves. It does not prove that a natural-language task was formalized with the intended meaning. The authors explicitly prioritize safety over strict semantic fidelity when the request is unsafe. Remark 4 specifies maximum repair rounds and a timeout (p. 6). Inference: termination without a compliant output remains possible; the tables do not separately report timeout or no-output counts.
-
-Inference: a Verus Rust generator that changes requirements during repair could satisfy the checker while losing the intended behavior. Keep requirements independently fixed and reverify each patch. The transferable ideas are canonical proposition alignment, deterministic syntax checks, formal counterexample extraction, critic-guided local repair, progressive datasets, and separate safety/fidelity metrics. AutoSafeLTL already demonstrates these generic ideas for LTL; VL should test them against actual Verus obligations, unsafe code, external APIs, and specification drift.
-
 ## techniques for the catalog
 
 - language-inclusion safety: accept a generated temporal specification only when its behavior language is contained in every safety language
@@ -115,4 +105,3 @@ Inference: a Verus Rust generator that changes requirements during repair could 
 - progressive correction training: train separate translation, syntax-repair, and semantic-repair stages on filtered data
 - cloud–edge verification: keep generation and local repair on-device while delegating abstract alignment and critique
 - separate safety and fidelity metrics: report verified-violation rates, semantic consistency, repair rounds, and latency independently
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Our ideal objective is to search for an LTL specification that satisfies all safety constraints while making the minimal semantic modification to the Desired Task."): checked the full supplied paper, quotations, numbers, section and PDF-page references, technique steps, and paper link; corrected page references, unsupported algorithm steps, adapter reuse, formula placement, and privacy claims, and recorded the 5.7/4.3 interaction-round discrepancy; did not reproduce experiments, inspect implementation code, independently prove theorems, or validate the proposed Verus adaptations.

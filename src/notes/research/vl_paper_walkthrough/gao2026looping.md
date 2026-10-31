@@ -124,12 +124,6 @@ Evidence: “At the frozen snapshot, all 35 deterministic failure-injection case
 
 The mechanical claims are state-hash mismatch cannot trigger a commit and parser/action-schema failure cannot erase a checkpoint. The paper explicitly leaves semantic correctness of hash-matched patches to executable and learned verifiers. Empirical claims concern fixed HumanEval branches, 24 historical bugs from nine Python projects, four coder stacks, and one scaffold; they are mechanism tests rather than random samples of agents, languages, projects, or bugs. Trusted components include the host, verifier, test suites, Git, operating system, cryptographic hash behavior, and the correctness of the contract specification itself. Verus can formalize the orchestration state machine, but these external assumptions remain unless separately modeled.
 
-## implications for VeruLaw
-
-Inference: VL should carry evidence hashes and suite identity with every verifier result, refuse stale diagnostics, use an explicit typed action protocol, and retain a last verified Rust/Verus state. A proof that the state machine preserves a checkpoint would complement, rather than replace, Verus proofs of the Rust program's functional contract. The paper's repository and prospective results warn that strict guards can reduce repair and completion; VL should measure current versus ever-correct, harm from correct starts, coverage, risk, sound completion, and action-budget exhaustion. The paper's completion-floor failures are a direct warning against claiming product reliability from zero unsafe completions when accepted completions are nearly absent.
-
-Inference: Threat to a product that generates agent-written verified Rust is substantial at the orchestration boundary: a stale verifier result can cause a correct proof-bearing patch to be replaced, while a hash-matched but inadequate oracle can still accept a wrong patch. The paper does not measure Verus or Rust, so this is a transfer inference, not a reported result. Existing VL work should not redo generic “more iterations help” experiments; it should test state-bound evidence, checkpoint preservation, and risk-aware stopping with Verus-specific artifacts.
-
 ## techniques for the catalog
 
 - transition reliability decomposition — measure current and ever-correct states plus wrong-to-correct and correct-to-wrong transitions using α, β, and q
@@ -139,4 +133,3 @@ Inference: Threat to a product that generates agent-written verified Rust is sub
 - gated admission and recertification — run challenge/full checks before commit and re-execute them on the selected completion
 - risk/dependence stopping — choose verifier thresholds using selective risk and conditional false-accept dependence at stated coverage
 - conformance failure injection — exercise replay, mutation, malformed action, rollback, and recertification cases with auditable receipts
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

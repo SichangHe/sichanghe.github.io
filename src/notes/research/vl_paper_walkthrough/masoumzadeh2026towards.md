@@ -27,8 +27,6 @@ How to do it:
 
 Evidence: ten initial simulated workflows give Cohen’s κ=0.55; after reconciliation and continued labeling, 55 simulated workflows give κ=0.89 and saturation at 15 emergent types. Ten OpenAGI workflows add no new type, yielding 15 observed categories; five additional categories produce the final 20-category taxonomy (Section 3.1, pp. 8–9). Section 3.2 (p. 11) reports, “The taxonomy of defects in FM-generated DSL workflows comprises 20 categories, sorted into three distinct groups.”
 
-Inference: For VL, construct a taxonomy covering malformed Rust/Verus syntax, missing specifications, invalid proof calls, stale evidence, unreachable proof states, and incorrect contracts before building an automatic repair loop. Keep observed and literature-derived categories separate so zero observations are not mistaken for zero risk.
-
 Failure and assumptions: open coding depends on inspector judgment and the generated scenarios are synthetic or dataset-derived. The authors call the taxonomy initial, not complete.
 
 ## technique: validate structure before deeper static analysis
@@ -46,8 +44,6 @@ How to do it:
 5. After repair, rerun the structure validator before continuing.
 
 Evidence: on 40 simulated workflows, Timon reports 100% precision and recall for invalid DSL; injected unparsable JSON and malformed-expression fixtures also receive 100%/100%. On ten OpenAGI workflows, invalid DSL is likewise 100%/100%. Table 2’s denominators are defect incidences in the stated workflow samples, not all possible malformed outputs.
-
-Inference: In VL, make successful parsing and compilation a prerequisite check before analyses that require valid Rust/Verus syntax; use verifier diagnostics to guide proof repair. This paper does not evaluate Rust or Verus.
 
 Failure and assumptions: structure validation does not detect semantic omissions, over-engineering, infeasible paths, or concurrency violations. Discussing runtime-dependent paths in Section 5, Implication 2 (p. 23), the authors state, “Therefore, sole static analysis cannot confidently detect whether any defect exists.”
 
@@ -87,8 +83,6 @@ How to do it:
 
 Evidence: Timon has 100% precision and recall for hallucinated skills, defective skill parameters, and incorrect outputs in the 40 simulated workflows. On OpenAGI, each of those categories also reaches 100%/100% (Table 2). The 40-workflow evaluation is selected from 55 open-coded simulated workflows; the OpenAGI denominator is ten workflows.
 
-Inference: For VL, maintain a hash-locked registry of allowed Verus proof helpers, executable tools, and dependency contracts. A proof-oriented API can make impossible calls unrepresentable, while a verifier checks parameter and module compatibility. This registry and external tool behavior remain trusted unless formally modeled.
-
 Failure and assumptions: a registry comparison cannot detect a semantically wrong but valid skill, inefficient choice, or over-engineered workflow. Those categories require human judgment.
 
 ## technique: repair with structured analyzer feedback and category-specific prompts
@@ -127,8 +121,6 @@ Inference: a possible implementation, beyond what the paper implements:
 3. Ask an SMT solver whether that defect condition is satisfiable. A feasible path alone does not establish a defect; an unknown solver result remains unresolved.
 4. Combine the result with the static report before repair.
 
-Inference: Verus already discharges SMT-backed proof obligations when contracts and invariants are explicit. A VL analyzer can expose the same path predicates as `requires` facts and use proof functions to show a path is impossible. Inference: solver success still depends on the abstraction and specification; it does not prove unmodeled workflow effects.
-
 Evidence: the paper does not report an SMT implementation or accuracy number; it presents SMT as a suggested extension after observing Timon’s path-feasibility limits. This distinction matters: the 80%/87% recall numbers are for current Timon, not a hypothetical SMT-enhanced detector.
 
 Inference: dynamic analysis may miss paths; SMT models can be incomplete or expensive. Concurrency constraints require execution or a concurrency model.
@@ -136,14 +128,6 @@ Inference: dynamic analysis may miss paths; SMT models can be incomplete or expe
 ## what is proved, measured, and trusted
 
 Inference: the paper provides empirical detector/repair measurements, not a formal proof that repaired workflows meet user requirements. Its evaluation depends on the WorkflowDSL grammar, scenario and requirement annotations, skill database, open-coded ground truth, and FM behavior; model-generated repairs are re-examined by Timon. The 89.23% prevalence is from 65 open-coded workflows, not all 385 generated workflows (Section 3.2). Table 2’s precision/recall measurements use defect incidences in 40 simulated and ten OpenAGI workflows, including injected JSON and expression defects in simulated workflows. Table 3’s repair denominators are Timon detections in 40 simulated workflows. Invalid DSL has 3 detected incidences in that table. Inference: the 0/3 result provides limited evidence about repair success beyond this sample.
-
-## implications for VeruLaw
-
-Inference: VL should place a verifier-in-the-loop after every agent-generated Rust/Verus patch: parse and compile; construct a proof/dataflow IR; run Verus; emit structured diagnostics; repair one defect class; and re-run all checks. Hash the source, dependency environment, and diagnostic so stale proof errors cannot be applied to a new code state.
-
-Inference: the paper’s static/dynamic split maps directly to VL. CFG and use-def checks can catch undefined proof facts, unused lemmas, type mismatches, invalid verifier constructs, and unreachable branches; Verus proofs and SMT reasoning can discharge path-specific obligations; executable tests or model checking are needed for runtime and concurrency behavior. Threat to agent-written verified Rust is high for generated plumbing around proofs, tools, and APIs: syntactic validity and a passing local check do not cover omitted logic, wrong contracts, or unsupported environmental behavior.
-
-Inference: VL should report detection precision/recall and repair success by defect category, with denominators, rather than one pass rate. Existing VL work should not redo generic self-correction without external verifier feedback; this paper's baseline repairs 45/990 incidences (4.55%) versus 286/990 (28.89%) with Timon reports, while the latter still leaves most defects unresolved.
 
 ## techniques for the catalog
 
@@ -154,4 +138,3 @@ Inference: VL should report detection precision/recall and repair success by def
 - verifier-feedback repair — feed localized static-analysis reports and category-specific context to an FM repairer
 - iterative rechecking — rerun the analyzer after every repair to catch both unresolved and newly introduced defects
 - path-feasibility support (proposed extension) — add dynamic execution or SMT solving when static dataflow cannot decide runtime reachability
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each FM setting, Pumbaa iteratively prompts the model to repair the sample workflow for its defect incidences per category till all reported incidences for the target defect type are repaired or the maximum count of repair attempts is exhausted."): checked the full text, quotations, counts, references, and technique steps; corrected the paper link, taxonomy derivation, detector scope, output-format rule, baseline description, and proposed SMT steps, marked recommendations as inferences, and flagged Table 4's inconsistent totals; did not inspect the replication package or execute the tools described in the paper.

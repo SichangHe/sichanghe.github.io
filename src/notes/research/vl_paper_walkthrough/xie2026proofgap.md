@@ -31,14 +31,9 @@ For an executable certificate, emit a line-oriented DSL program over 18 commands
 
 Verus form (Inference): use Verus compilation as the deterministic checker, isolate candidate files, pin the Verus revision and dependencies, retain failed proof states/logs, and replay accepted proofs from a clean root. Replace DSL commands with valid Verus constructs such as `assert`, `calc`, `lemma` declarations only where supported by the local Verus guide, and proof-function calls that are erased after verification. Do not treat a proof pass as evidence that the specification matches intent.
 
-## trusted boundary, failures, and VL threat
-The checker, parser, solver portfolio, theorem-library snapshot, Lean kernel, semantic reviewers, and source-to-formal translation are trusted to different extents. The paper explicitly says unsupported solver input returns unknown and that checks cannot guarantee full mathematical semantics (Appendix A.6, p. 18). Inference: for VL, the useful product lesson is a traceable local-proof loop with explicit assumptions, replay, and typed failure—not automatic discovery of the right Rust specification. ProofGap shows a substantial threat from local proof failures being misread as whole-program failure or success, and from semantic translation errors being hidden by a compiling formal target. Existing work already covers local proof benchmarking and verifier-guided repair; VL should reuse these interfaces rather than claim novelty for step-level feedback alone.
-
 ## techniques for the catalog
 - relaxed-to-core proof representation — preserve natural proof structure, then elaborate it into an explicit proof-state AST
 - notation and scope elaboration — resolve overloaded terms, binders, compound propositions, and analysis notation with checked transformations
 - proof-gap generation — turn each AST transition into a local `Γ ⊢ G` obligation tied to a source step
 - replayable verifier DSL — execute deterministic state transitions, reject unsupported automation, and require all branches to close
 - verifier-guided workflow — combine bounded candidate generation, isolated checker feedback, replay, and semantic audit
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

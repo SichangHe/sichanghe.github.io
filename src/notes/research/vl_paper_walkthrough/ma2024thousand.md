@@ -35,11 +35,8 @@ The baseline comparison concerns crash detection because SNIPUZZ cannot detect n
 
 For Nanoleaf Lightstrip, the first bug was found within 10 minutes and all bugs within 110 minutes and at most 3,100 test messages. For Eve Motion Sensor, all four bugs were found within 90 minutes and at most 1,200 messages (Section 6.7, p. 4796). These are two examples, not timing guarantees for all devices. The controller design relies on the observation that the controller certificate is not checked; a custom ordinary device would need a legitimate attestation certificate (Section 4.4, p. 4787). The implemented fuzzer is limited to Matter devices; generalization to Zigbee, Thread and Bluetooth is proposed in Section 7, not evaluated.
 
-Inference: for agent-written verified Rust, a proof can show that tests follow an extracted model while that model omits a command or misstates a range. VL could reuse this paper’s state-machine extraction and response/state comparison while separately checking extraction against the source specification.
-
 ## techniques for the catalog
 
 - LLM specification extraction: use temperature-zero, few-shot, structured prompts and self-consistency to convert long protocol text into typed commands and FSMs
 - stateful specification fuzzing: traverse FSM edges with boundary, malformed, type-changing and unsupported-command inputs
 - black-box state oracle: classify crashes and compare response plus queried destination state against the specification
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We then pick a cluster, LevelControl, and check whether all the transitions described in the specification are covered by the FSM, and result is positive."): read the complete paper, including references and Appendix A; checked quotations, numbers, section/page references, technique steps, evaluation scope and catalog entries; corrected cluster FSM terminology, context-limit history, policy details, device-table and conclusion references, baseline scope and timing claims, and marked interpretations as Inference; did not reproduce experiments, inspect implementation code or verify cited external sources.

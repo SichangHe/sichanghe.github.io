@@ -32,13 +32,11 @@ Declassification: where Owl deems a value always public but it is held in a `Sec
 
 Compilation (Sec. 6): OwlC relies on Verus to type check the emitted Rust but tracks enough Rust-level detail (ownership, borrowing) to avoid violating the Rust type system. `PublicBuf` uses reference counting so values copy cheaply. Parsers and serializers come from Vest's verified combinators. Encryption, serialization, and output can be fused into one in-place computation; these optimizations are untrusted and verified. EverCrypt (via libcrux) provides primitives; the Verus-to-EverCrypt connection is axiomatized and trusted, and EverCrypt routines are added to `SecretBuf`'s API (Sec. 8.1.1, Figure 12).
 
-Inference: VL can adopt the same separation: source-level Rust proofs for memory and functional correctness, an explicit declassification API, and a small axiomatized cryptography boundary. Information-flow security is Owl's capability; ordinary Verus annotations alone do not reproduce it.
-
 ## technique 4: compositional verified applications
 
 Applications can be written in Owl, giving end-to-end cryptographic proofs for the composed system, or written directly in Verus with a handwritten ITree that calls OwlC's generated ITrees; the Verus route cannot prove properties beyond functional correctness without significant extensions to Verus (Sec. 7). Owl has no recursion or loops, so the Owl echo server runs once and a trusted 3-line wrapper calls it in an infinite loop (Sec. 7.1). In Verus, a recursive ITree with a fuel parameter specifies the echo server; the executable is a loop whose invariant states that the current token holds `echo_server(cfg, cur_fuel)` (Sec. 7.2, Figure 11).
 
-The paper says: "ITrees provide a flexible spec format for verified applications, without constraining implementation choices—we are free to use a more performant looping implementation, rather than perfectly mirroring the ITree’s control flow." (Sec. 7.2, p. 5079). Inference: this is directly reusable for VL components whose implementation loop differs from a simple specification recursion.
+The paper says: "ITrees provide a flexible spec format for verified applications, without constraining implementation choices—we are free to use a more performant looping implementation, rather than perfectly mirroring the ITree’s control flow." (Sec. 7.2, p. 5079).
 
 ## evidence and limits
 
@@ -48,8 +46,6 @@ WireGuard interoperation was unit-tested in four initiator/responder configurati
 
 Limits. The WireGuard proof covers the core handshake and transport protocol, not virtual network devices or UDP, and not anonymity or receive-once properties (Sec. 9.2.1, p. 5081). Owl does not model dynamic compromise, so perfect forward secrecy cannot be proved in full generality (Sec. 9.1). HPKE is proved in the plain model for AuthPSK secrecy and integrity; CCA security and other modes are future work (Sec. 9.3.1, pp. 5081–5082). The TCB is the Rust compiler, Verus, Owl, and the specification compiler; the EverCrypt connection is axiomatized and `SecretBuf` is trusted to be constant time (Sec. 2.1). Side-channel resistance holds only at the Rust source level; microarchitectural channels are out of scope.
 
-Inference: OwlC is a direct threat to any product whose differentiator is automatically compiling a protocol design into verified Rust. VL should reuse ITrees, linear effect tokens, explicit declassification, and compositional handwritten Verus specs instead of rebuilding those mechanisms.
-
 ## techniques for the catalog
 
 - ITree effect specification — represent protocol returns, input, output, sampling, and declassification as an inductive Verus specification
@@ -57,4 +53,3 @@ Inference: OwlC is a direct threat to any product whose differentiator is automa
 - type-guided verified compilation — track Rust ownership and borrowing while emitting code, and let Verus type check and verify it
 - semantic declassification — mark each secret-to-public step (branch, enum parse, equality check, failing crypto op) as an ITree node spent via a linear token
 - compositional application specification — connect generated protocol ITrees to handwritten recursive Verus application specs
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "PublicBuf internally uses reference counting, so that PublicBuf values can be copied cheaply without copying the underlying bytes in memory."): read all 1,261 lines of the paper text; checked every quotation, number, section and page reference, and technique step. Changed: link to the USENIX presentation page from the paper text; abstract quote (missing "formally") and its page (5073 to 5071); case-study count (15 to 16); HPKE limits pages; TCB list (removed unsupported "host environment" and "EverCrypt's verification"); recast the Verus requires/ensures form as paper fact; removed the unsupported Verus-keyword advice and the unsupported claim that spurious output is unrepresentable; rewrote technique 3 around SecretBuf, two-level lattice, and two-step declassification; fixed the declassification catalog entry (not only crypto ops); added HPKE performance and the extra limits. Not checked: the PDF figures (Figures 6 and 14 are images), the extended version's appendices D–F, and the code repository.

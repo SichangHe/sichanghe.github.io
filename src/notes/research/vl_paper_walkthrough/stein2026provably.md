@@ -68,7 +68,7 @@ how to do it:
 
 The paper guards against three cheating routes: editing the theorem or its semantics, relying on unjustified axioms, and exploiting incremental elaboration or metaprogramming. It reports, "We further verify that the final code contains a theorem exactly as written in Listing 8." (Section Preventing LLM cheating, p. 6) It also checks for axioms beyond standard ones and rebuilds from scratch (same section, p. 6).
 
-Verus form. Inference: place the universal claim in the immutable Verus function contract, using `requires` for `ValidInstance` and `ensures` for plan validity and goal satisfaction. Use `spec fn` predicates for the state and goal relations, and `proof fn` lemmas for action preservation and list execution. Inference: Verus does not have Lean's theorem-type identity check, so VL should keep the contract in a protected specification module and reject agent edits to that module. It should also scan for unjustified `assume`, `admit`, or newly introduced external specifications, then rerun Verus from a clean build.
+Verus form.
 
 evidence: Lean kernel acceptance is the proof check. The paper's final result is 12 accepted completeness proofs out of 13 domains after the iterative method. The statement is conditional on the supplied valid-instance constraints and invariants.
 
@@ -92,7 +92,7 @@ Verus form. Inference: define each invariant as a `spec fn` or ghost predicate o
 
 evidence: the paper explicitly generates one preservation lemma per action schema and reports that the resulting complete proofs are accepted by Lean. It does not report a separate count of invariant lemmas that failed or needed manual repair.
 
-where it fails or assumes: adding an invariant to the validity constraints can make the theorem easier while shrinking the claimed instance set. The paper acknowledges that the guarantee is relative to supplied constraints. Inference: VL must version and review invariant changes because an agent can make a proof easier by strengthening `requires` rather than repairing the implementation.
+where it fails or assumes: adding an invariant to the validity constraints can make the theorem easier while shrinking the claimed instance set. The paper acknowledges that the guarantee is relative to supplied constraints.
 
 ## technique 5: switch from whole-proof repair to declaration-level iterative proof debugging
 
@@ -110,7 +110,7 @@ how to do it:
 
 The basic whole-proof method succeeds for 7/13 domains with a maximum of six debugging iterations. The iterative method succeeds for 5 additional domains, yielding 12/13 overall. The missing Transport proof does not show the plan is wrong: the authors tested its easy and medium IPC Learning Track 2023 splits and obtained perfect coverage, but no universal Lean proof (Results proofs, p. 7).
 
-Verus form. Inference: split a difficult Verus proof into small `proof fn` lemmas, add them in dependency order, and rerun Verus after each declaration. Keep accepted lemma signatures and protected contracts fixed while an agent repairs only the failing body or adds a new helper lemma. Inference: Verus's diagnostics are file-level rather than Lean's declaration REPL state, so VL can emulate the method with generated modules or isolated proof files and a clean full build after each accepted step.
+Verus form.
 
 evidence: 5/6 previously failed domains gain accepted proofs under iterative debugging, a 5/6 denominator within the fallback group. Across all 13 domains, 12 proofs are accepted. The proof interaction counts range from 11 for Miconic to 45 for Rovers in Table 1, and proof time ranges from 495 seconds for Heavy to 2,914 seconds for Rovers in the basic/iterative rows shown there.
 
@@ -122,15 +122,11 @@ The formal result is a Lean theorem about each generated `solve` function, relat
 
 The trusted boundary includes Lean's kernel and standard axioms, the PDDL-to-Lean converter, the manually or automatically specified validity constraints and invariants, the generated helper lemmas, and the semantics of VAL for finite debugging tasks. Inference: a Verus port would additionally trust Verus's verifier, SMT translation, Rust compiler model, and any external API specifications. Inference: a proof accepted by the kernel does not prove that the instance constraints describe the production domain unless those constraints are independently checked.
 
-The paper's strongest reusable idea is the separation between plan synthesis and proof synthesis, with an external checker between them. Inference: VL should preserve that separation: freeze the Rust/Verus contract, let an agent propose executable code and proof lemmas, run Verus independently, and retain finite behavior tests as evidence rather than as a substitute for the universal proof.
+The paper's strongest reusable idea is the separation between plan synthesis and proof synthesis, with an external checker between them.
 
 ## contradictions, reuse, and product risk
 
 The paper reports 12/13 provably complete domains, but this denominator excludes four domains before evaluation and includes only the chosen 13 of 17. The result is therefore 12/13 of the selected set, not 12/17 of all earlier domains. Transport's perfect easy and medium test coverage coexists with no completeness proof; the paper explicitly treats those as different claims.
-
-Inference: VL should reuse the fixed-theorem guard, explicit invariant layer, symbolic action-preservation lemmas, finite debugging gate, anti-cheating checks, and declaration-level fallback. VL should not claim that six passing examples or a successful proof repair establish universal correctness. A Verus benchmark should report both finite tests and universal proof status with separate denominators.
-
-Inference: the threat to agent-written verified Rust is high for specification and proof-generation workflows that rely on examples alone. The paper shows that an LLM can produce 13 plans that pass six tests each, yet one domain remains without a universal proof. The threat is lower when VL freezes contracts and invariants, reruns a clean verifier, and treats unproved or externally assumed lemmas as trusted gaps.
 
 ## techniques for the catalog
 
@@ -141,4 +137,3 @@ Inference: the threat to agent-written verified Rust is high for specification a
 - anti-cheating kernel checks — reject theorem edits, nonstandard axioms, unsafe notation/macros, and incremental-build loopholes, then rebuild standalone
 - declaration-level proof repair — debug generated definitions and lemmas one at a time while retaining accepted declarations
 - Verus contract freezing — preserve `requires`, `ensures`, and ghost predicates while agents modify executable code and proof bodies
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

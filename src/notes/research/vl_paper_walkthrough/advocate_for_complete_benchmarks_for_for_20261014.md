@@ -60,12 +60,6 @@ The paper calls for reproducible information about human involvement and trainin
 
 Verus form: Inference: an agent-written Verus benchmark should publish prompts, generated candidates, rejected candidates, repair traces, contracts, and tool logs. Ablations should separate model generation from proof repair and solver settings. This makes “verified” measurable as a reproducible process rather than a final green check.
 
-## what is proved, what stays trusted, and threat to VL
-
-This is a position paper, but it also reports evaluations. For Deep Seek Prover v1.5, the authors write, “When we evaluated the accuracy of this model on the miniF2F validation set, we obtained an accuracy of 64% pass 32.” (Sec. 4.1, p. 7) They also report that correcting an informal proof changed Kimina Prover 7B from failing pass 32 to succeeding pass 1 on `aime_1987_p5` (Sec. 3, p. 7), and report the Herald evaluator comparison described above. Inference: applying their recommendations still relies on benchmark creators, expert semantic judgments, the proof assistant, and accurate reporting. A checked formal proof establishes the formal statement; it does not establish alignment with the informal requirement or reproduce a model's training and search process.
-
-Inference: for VeruLaw, the largest threat is evaluation overclaim: an agent can produce a valid Verus proof for a weakened or mismatched contract, and a single pass percentage can hide proof length, solver dependence, or benchmark leakage. The paper's complete-item and audit practices directly reduce that threat. VL should reuse the four-artifact record, per-item logs, denominator discipline, and evaluator validation. It should not redo the paper's broad debate about whether proofs should be public; it should implement an open, versioned benchmark and measure the resulting reproducibility.
-
 ## techniques for the catalog
 
 - complete benchmark unit: release informal/formal statements and informal/formal proofs together, creator-verified
@@ -73,4 +67,3 @@ Inference: for VeruLaw, the largest threat is evaluation overclaim: an agent can
 - proof-effort reporting: publish proof lengths, automatic-solver-only counts, settings, and per-item outcomes
 - evaluator audit: validate automated autoformalization judges against expert labels before deployment
 - open reproducibility: release code, data, search procedures, training sources, and ablations
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We suggest, at the minimum, that the lengths of the proofs be reported, as well as the number of theorems that are proved only by automatic solvers."): checked all paper text, quotations, numbers, section/page references, technique steps, title, authors, year, and arXiv link; corrected page references and an incomplete quotation, marked added procedures as inference, and replaced the incorrect claim of no new prover experiments; did not independently reproduce experiments or verify cited works or Verus proposals.

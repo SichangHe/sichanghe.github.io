@@ -40,5 +40,3 @@ Inference: verified Rust would still require correct specifications and trusted 
 - relational noninterference — compare executions with equal public inputs and equal declassified values to prove equal output values
 - explicit declassification — authorize secret-derived outputs through a state-machine policy
 - incremental and cached verification — use preliminary checks, modular interfaces, and dependency-keyed result sharing
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "To convey the work necessary to complete the verification, this section gives a sampling of the key lemmas we proved along the way."): checked the whole paper and study, quotations, numbers, section and proceedings-page references, technique steps, and trust assumptions; corrected network equivalence, relational proof conditions, automation purposes, assembly line counts, and unsupported generalizations, and marked Verus proposals as inferences; did not reproduce proofs or benchmarks or check Verus implementations. The paper link is printed on the paper’s cover.

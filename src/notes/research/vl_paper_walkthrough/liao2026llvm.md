@@ -76,16 +76,6 @@ The quotient example's invariant relates completed and remaining subtractions: `
 
 The loop counterexample branch adds a concrete execution bound so candidate evaluation terminates, then certifies it with the same deterministic comparison and allows five attempts (sec.3.3.2, p.8). General CFGs remain unsupported because every cycle needs an invariant-bearing cutpoint (sec.3.3, p.7).
 
-## evidence, limits, and VL threat
-
-The setup used Ubuntu 22.04, a 32-core Intel Xeon Gold 5217, 376 GB RAM, and a two-hour limit per transformation (sec.4, p.8). On 60 valid loop-free cases, Trivet proved 60/60, with mean 684 s; Alive2 proved 20/30 fixed-bitwidth cases and cannot handle symbolic widths (Table 3, p.9). On 60 invalid loop-free cases, Trivet refuted 60/60 with mean 61 s; Alive2 refuted 29/30 fixed-width cases (Table 4, p.10). For 14 valid loop cases, Trivet proved 7/7 symbolic and 7/7 fixed; for invalid loop cases it refuted 7/7 symbolic and 6/7 fixed (Table 5, p.10). These fractions use the table's per-stratum denominators.
-
-The implementation formalizes integer instructions and supports loop-free single-block transformations plus the restricted loop class; memory operations, floating point, and richer loops are future work (sec.3.4, p.8). Undef inputs are unsupported, and the Alive2 comparison disables undef for fairness (sec.4, p.8). One invalid loop transformation remained unresolved after 306 seconds and five candidate attempts (sec.4.4, p.10). Inference: threat to agent-written verified Rust is high for arithmetic rewrites and optimizer-style transformations where a kernel-checked proof can catch UB-sensitive mistakes; threat is lower for memory, floating-point, concurrency, and general control flow until corresponding semantics and scaffolds exist. Inference: Verus can host the deterministic/agent split, but Lean's LLVM model and Trivet's refinement relation cannot be copied directly.
-
-## what VL should not redo
-
-The paper already demonstrates domain-specific scaffolding, kernel-checked acceptance, deterministic counterexample certification, and induction for a restricted loop class. Inference: VL should compare any agent-plus-Verus translation-validation design against these baselines and report both validity coverage and unresolved cases. The paper's cost and runtime measurements show why a scaffold matters: on jointly solved cases, it reports 4.3× refinement and 15.1× counterexample speedups (sec.4.5, p.11), with mean loop-free costs falling from $13.23 to $1.47 for 47 valid cases and from $3.15 to $0.08 for 49 invalid cases (sec.4.5.2, p.12).
-
 ## techniques for the catalog
 
 - LLVM refinement semantics — compare source and target under UB-aware refinement rather than plain equality
@@ -95,5 +85,3 @@ The paper already demonstrates domain-specific scaffolding, kernel-checked accep
 - counterexample certification — turn a concrete LLM candidate into a kernel-checked non-refinement proof
 - inductive loop scaffolding — prove initialization, preservation, and exit for a canonical loop without bounded unrolling
 - deterministic semantic harness — accept results only after the formal kernel checks the assembled proof
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -57,14 +57,9 @@ The benchmark contains 180 buggy solutions from 90 recent Codeforces problems; e
 
 Ablation (Table V, p.10) reports that removing α alone drops Pass@1 by 2.45 percentage points, removing β alone drops it by 1.67 points, and removing both drops it by 3.23 points; the table's denominator and model are the Qwen3-235B SpecTune configuration used for that ablation. Sensitivity tests θ,γ∈{0.9,0.95,1.0}; (0.9,1.0) is best overall (Section X, p.12). Fault-localization comparison uses 119 tasks whose generated conditions satisfy α≥0.9 and β<1; GPT-5.4 judging prefers SpecTune over the naive baseline in 85.72% of pairwise cases, with 8.40% baseline wins and 5.88% draws (Table II, p.8).
 
-## trusted boundary, failures, and VL implications
-
-The paper proves no universal correctness theorem for LLM-generated conditions or repaired programs. Its evidence is test execution, LLM-as-judge localization, and final hidden-test pass rates. Inference: for VL, α/β can prioritize candidate `assert`/invariant suggestions before invoking Verus, but only Verus verification of the final Rust proof should be treated as the soundness boundary. Inference: VL should retain counterexamples and failed proof obligations because a high α condition may still be incomplete, and β depends on the available failing tests. The authors' own threat section says postcondition quality can suffer from hallucinations and generation is nondeterministic (Section XI, p.12). Existing APR baselines already use test outcomes, natural-language intent, and iterative repair; a VL implementation should add checkpoint-level semantic conditions rather than redo those coarse signals (Inference).
-
 ## techniques for the catalog
 
 - checkpoint postconditions — decompose a function at execution checkpoints and generate executable local behavioral relations
 - alpha consistency filter — retain conditions satisfied on a threshold fraction of passing executions that reach the checkpoint
 - beta discriminative filter — retain conditions violated by a threshold fraction of failing executions
 - dual-signal repair guidance — pass conditions satisfying α≥θ and β<γ to the patch generator
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

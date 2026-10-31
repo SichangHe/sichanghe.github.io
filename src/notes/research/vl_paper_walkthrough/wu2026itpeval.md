@@ -82,9 +82,9 @@ Verus form: Inference: use a Rust natural-language specification round trip as a
 
 ## trusted boundary, contradictions, and product implications
 
-The native provers and their libraries are the acceptance boundary for type/proof correctness. BEq adds a deterministic semantic-fidelity check for a subset of Lean statements. LLM outputs, natural-language intermediates, prompt templates, restricted proof cascades, and benchmark alignment are not trusted proofs. Inference: for VL, Verus remains the final checker; translation agents should be measured on both contract equivalence and proof acceptance, with artifact-level isolation.
+The native provers and their libraries are the acceptance boundary for type/proof correctness. BEq adds a deterministic semantic-fidelity check for a subset of Lean statements. LLM outputs, natural-language intermediates, prompt templates, restricted proof cascades, and benchmark alignment are not trusted proofs.
 
-The paper itself limits BEq to verified MiniF2F source-to-Lean translations and says proof-strategy semantic fidelity remains open (Section 4.8, p.8). Public benchmark contamination may inflate rates, and results are zero-shot pass@1 rather than agentic search (Section 4.9, p.8). The main measured threat to agent-written verified Rust is semantic drift hidden by successful Verus checking of a weaker or shifted specification; a checker cannot detect that the wrong contract was requested. Inference: VL should preserve a reference contract and add bidirectional contract checks where feasible. Existing ITPEval already covers benchmark construction, artifact isolation, and semantic equivalence; VL should reuse those patterns rather than rebuild prompt-only translation evaluation.
+The paper itself limits BEq to verified MiniF2F source-to-Lean translations and says proof-strategy semantic fidelity remains open (Section 4.8, p.8). Public benchmark contamination may inflate rates, and results are zero-shot pass@1 rather than agentic search (Section 4.9, p.8). The main measured threat to agent-written verified Rust is semantic drift hidden by successful Verus checking of a weaker or shifted specification; a checker cannot detect that the wrong contract was requested.
 
 Inference: the headline fractions are arithmetically consistent: 174/322 = 54.0%, 62/74 = 83.8%, and 10/29 = 34.5% after rounding. The 29.1% statement and 10.5% proof figures use different directed-pair denominators, 4,680 and 888, so they are not directly comparable as a single success rate.
 
@@ -94,4 +94,3 @@ Inference: the headline fractions are arithmetically consistent: 174/322 = 54.0%
 - state-isolated native checking — run each artifact with reset, environment-keyed prover state and record provenance
 - bidirectional semantic equivalence — prove generated and reference statements entail each other after native checking
 - formal–natural-language round trip — re-formalize an intermediate natural-language description and compare executable verification rates
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

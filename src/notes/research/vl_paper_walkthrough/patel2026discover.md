@@ -36,13 +36,9 @@ Inference: the Verus version is a verified-lemma queue: generate candidate `proo
 ## what is proved, measured, and trusted
 Lean checks the syntax and proofs of retained statements. The measured numbers use 4,615 validation prompts for value prediction, 160 verified statements per model for interestingness, and six fixed discovery rounds for pruning comparisons. The learned value model, conjecturer, Claude proving agent, semantic judge, mathlib definitions, and the choice that mathematical interestingness predicts practical value remain trusted or empirical. The paper explicitly limits its metric: “Proof length in terms of lines of code can be a stylistic artifact, as automation tactics, such as aesop and grind, often trade proof length for runtime.”
 
-Inference: for agent-written verified Rust, this reduces proof-search effort only after a specification is written and accepted. The major product threat is specification and API selection: a highly ranked Verus lemma can be irrelevant, vacuous, or expensive to maintain even if its proof passes. Existing VL should already use proof assistants for checking; it need not redo this paper's premise-expansion and candidate-pruning experiments unless it wants autonomous lemma discovery.
-
 ## techniques for the catalog
 - premise expansion unwraps dependency DAG edges and adds proof costs to create non-atomic training labels
 - conditional value axioms train a proof-cost predictor with grounding, monotonicity, and Bellman composition rewards
 - interestingness divides verified proof cost by conditional statement-description length
 - GRPO rewards a conjecturer for valid, relevant statements with high estimated normalized proof cost
 - iterative discovery proves candidate theorems, de-duplicates them, and promotes the highest interestingness into later premise sets
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

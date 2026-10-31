@@ -8,8 +8,6 @@ The paper presents Paranoid Scientist, a Python library for runtime verification
 
 The authors emphasize accessibility: “Paranoid Scientist uses simple syntax and is intuitive to those without a background in formal methods or software engineering.” (Section 1, p. 3).
 
-Inference: this is lightweight dynamic checking, not a proof that all executions satisfy a contract. It is relevant to VeruLaw as a specification usability pattern and as a runtime defense for code or libraries outside Verus's verified subset.
-
 ## technique 1: refinement types as executable predicates
 
 What it is. A refinement type is a Python predicate deciding whether a value belongs to a scientific type. Predicates can express conceptual properties such as “Number” (float or integer but neither NaN nor infinity), a probability distribution (nonnegative entries summing to one), or a correlation matrix (symmetric positive semidefinite with diagonal one) (Section 3.1, p. 6). They are ordinary Python functions, so they can encode domain-specific conditions without a separate specification language.
@@ -58,16 +56,9 @@ Table 1 reports runtimes with standard error of the mean over 10 runs for four e
 
 In PyDDM, approximately 10% of the codebase had annotations; over 95% of annotations “require refinement types which cannot be checked using existing static type checkers for Python”, and hyperproperties were specified for less than 5% of function exit conditions (Section 5, p. 9). Paranoid Scientist found four non-trivial PyDDM bugs (Section 5.1, pp. 9–10): a negative value violating `Positive`, a stale zero-first-element assumption, a discretization approximation that exploited limited numerical resolution to pick unnatural parameters, caught by a postcondition that the distribution integrates to 1, and a slightly negative probability from numerical instability. It also found three bugs in user code that had no Paranoid Scientist annotations, each caught by a precondition (Section 5.3, p. 11); Inference: the paper does not say where those preconditions were written, presumably in annotated PyDDM functions. The paper says bugs (1) and (2) “would have been very difficult to detect without our tool” (Section 5.1, p. 10). Unit tests found one bug missed by Paranoid Scientist, and code review found two more; those did not affect results (Section 5.2, pp. 10–11).
 
-## what remains trusted and implications for VL
-
-Inference: trusted components are Python execution, the decorator and predicate implementation, runtime values and side effects, generated-value quality, reservoir sampling, and any code marked `Unchecked`. I found no formal proof of Paranoid Scientist or of PyDDM in the paper; its evidence is dynamic bug detection and measured overhead.
-
-Inference: for VeruLaw, the useful lesson is to write domain predicates at API boundaries before attempting deep proofs. Verus can strengthen these predicates from runtime checks into universal `requires`/`ensures`, while a monitor can protect unverified dependencies. Inference: the product threat is false confidence if sampled hyperproperty checks or generated tests are reported as proofs. Existing work already explores a practical contract syntax and reports concrete bug/overhead denominators; VL should not redo that interface, but should connect the same domain predicates to Verus specifications and make the trusted boundary explicit.
-
 ## techniques for the catalog
 
 - executable refinement types: define scientific value predicates and check them on function entry and exit
 - relational contracts: state cross-argument, input/output, and prior-call hyperproperties in Python predicates
 - reservoir-sampled hyperproperty monitoring: retain a uniform sample of calls to bound memory while checking relational behavior
 - refinement-driven test generation: generate valid inputs from type predicates and run each function's contracts
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Paranoid Scientist was able to find three bugs in user code, even though this code did not have Paranoid Scientist annotations."): I read the whole paper text and checked every quotation, section/page reference, Table 1 figure (including the slowdown arithmetic), the case-study bug list, and the three technique descriptions. I changed the link to the arXiv page given in the paper text (the paper text has no DOI; the Springer year 2020 in the tag was not checked), corrected the slowdown-factor citation, the pyddm_sim and pyddm_fit rows (they have no annotations), the refinement-type percentage wording, the bug-3 description, the Section 6 limits and page, and marked own conclusions as Inference. I did not check the cited references, the Verus mappings (own inference), or the PDF figures beyond the text layer.

@@ -58,4 +58,3 @@ The rewrite vocabulary limits available alignments, and neighbor/cost heuristics
 - syntactic plus annealed extraction: start with fused-loop cost, then search neighboring representatives
 - trace-based alignment cost: rank candidates by merged-loop and runoff execution ratios
 - invariant-guided backend proof: feed extracted products to Houdini-style Dafny or SeaHorn verification
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In practice, we have found that these heuristics identify good neighbors for our suite of benchmarks."): checked the entire paper, quotations, numbers, page and section references, and technique steps; corrected the publication year and DOI link, CoreRel syntax, page references, extraction and invariant-inference workflow, SeaHorn results, and soundness claims; did not inspect the artifact, check the Coq proofs, run experiments, or test the proposed Verus adaptations.

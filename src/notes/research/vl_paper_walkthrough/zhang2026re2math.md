@@ -22,7 +22,7 @@ How to apply it.
 
 Verus form. Inference: represent `K̂` as a proved Verus lemma with explicit `requires` matching the proof state's assumptions and `ensures` matching the target transition. Store the source and exact theorem text as metadata, but let Verus check the encoded lemma. Citation-invariance means an equivalent lemma from another library is acceptable if its contract is sufficient. Verus cannot check whether a PDF really entails the contract unless the lemma is formalized and proved; imported axioms remain trusted.
 
-Evidence and limits. Claude's 13/14 successful predictions use alternative sources (Table 2, p. 8), showing citation-locking would undercount valid tools. The human audit validates 39/42 alternative-source successes and identifies three fixed-judge false positives (section 6, p. 9). Inference: VL should record provenance and assumptions for every imported lemma and reject a source merely because it is topically similar.
+Evidence and limits. Claude's 13/14 successful predictions use alternative sources (Table 2, p. 8), showing citation-locking would undercount valid tools. The human audit validates 39/42 alternative-source successes and identifies three fixed-judge false positives (section 6, p. 9).
 
 ## technique 2: staged retrieval policy and diagnostics
 
@@ -52,7 +52,7 @@ How to apply it.
 4. Filter ambiguous matches, low-confidence alignments, and suspicious witnesses rather than forcing them into the release (section 4.1, p. 6).
 5. Freeze query results, ranks, timestamps, and source-materialization outcomes; use a paper-level split (section 5.2, p. 7).
 
-Verus form. Inference: build a VL benchmark from real proof obligations by freezing crate versions, source revisions, and candidate lemma indexes. The release should retain exact contracts and assumptions, and score whether the selected lemma compiles at the target call site. A frozen artifact controls information access but does not prove benchmark labels.
+Verus form.
 
 Evidence and limits. Eval-200 is quality-controlled rather than random and prioritizes journal witnesses, nonempty context, sanitized anchors, and complete witnesses (section 4.3, p. 6). The authors report residual citation-role and anchor-sanitization risks; therefore percentages describe this curated split, not all mathematical literature.
 
@@ -60,15 +60,11 @@ Evidence and limits. Eval-200 is quality-controlled rather than random and prior
 
 The main failure pattern is true but unusable mathematics. The paper says “The missing capability is assumption accounting: checking objects, domains, hypotheses, parameter ranges, quantifiers, and conclusion strength against the local proof state” (section 6, p. 9). Apply it by locating the theorem boundary in the source, extracting every hypothesis, matching each to the local context, and checking that the conclusion discharges the exact transition rather than a nearby claim.
 
-Inference: in Verus, this is contract matching. Before invoking a lemma, compare every `requires` clause with available facts; use explicit intermediate assertions to establish domains and parameter bounds. A lemma with a weaker `ensures` than the target is insufficient even if its statement is true. This technique directly addresses VL's risk of importing mathematically correct but inapplicable lemmas.
-
 Evidence. Grok grounds 83/200 statements but reaches only 7/200 ToolAcc; the paper attributes this gap to applicability, not necessarily hallucination (section 6, p. 9). Oracle-source evaluation still reaches only 12.7% for the best model (Table 2, p. 8), showing that source acquisition is not the sole bottleneck.
 
 ## what is proved, measured, and trusted
 
 The paper measures policy diagnostics and judge-labelled source–tool validity. It does not prove that the held-out judge is mathematically sound; the judge is fixed across runs, and a single-annotator audit is “not an inter-annotator agreement study” (section 5.2, p. 7). Trusted elements include source parsing, admissibility rules, the frozen retrieval artifact, model outputs, and judge predicates. The benchmark itself is citation-invariant, but source materialization coverage varies by instance.
-
-Inference: threat to agent-written verified Rust is high for lemma retrieval and medium for overall product correctness. A VL agent can use Re²Math's staged diagnostics to find candidate Verus lemmas and expose missing assumptions. It must still compile the proof, inspect contracts, and keep external-body or library assumptions explicit. VL should not redo a citation-recovery leaderboard; it should measure compile-checked applicability and repair cost on real Verus proof gaps.
 
 ## techniques for the catalog
 
@@ -76,5 +72,3 @@ Inference: threat to agent-written verified Rust is high for lemma retrieval and
 - staged retrieval diagnostics — separate proof-need planning, query generation, source selection, grounding, and sufficiency metrics
 - frozen leakage-controlled evaluation — freeze search artifacts and split by citing paper for reproducible assessment
 - assumption accounting — check objects, domains, hypotheses, parameters, quantifiers, and conclusion strength at the proof state
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

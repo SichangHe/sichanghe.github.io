@@ -33,8 +33,6 @@ Steps are:
 
 The paper describes the certificate criterion: “If the associated optimization problem is feasible, the result is a certificate for the specification.” (Abstract, p. 1.) In the case study the invariants were found “after post-processing, rounding the coefficients, and reverifying” (Section V-A, p. 26), and footnote 1 there says, “Note that rounding is not essential.” (p. 26.)
 
-Inference: a VL pipeline could synthesize candidate coefficients with an optimizer, emit them as Rust constants, and have Verus prove the finite set of inequalities. This is a synthesis-plus-check workflow, not a claim that Verus can trust the optimizer.
-
 ## technique 3: prove finite-time termination and boundedness
 Inference: use this when each transition satisfies V(next) ≤ θV(state) − µ for some chosen θ, µ. The paper's Definition 4, Proposition 4, Theorem 1 and Corollary 1 connect such inequalities to finite-time termination and unreachability (Section III, pp. 12–15). Its IntegerDivision example uses V(dd,dr,q,r)=r and states that this “is a (1, dr)-Lyapunov invariant for IntegerDivision” (Example 3, Section III-A1, p. 14). The paper adds that this “only proves absence of infinite loops” and the program could still terminate with an overflow (p. 14).
 
@@ -55,10 +53,7 @@ The evidence is worked examples, not a benchmark suite. Example 3 (IntegerDivisi
 
 The paper reports no common benchmark denominator or aggregate success percentage. The authors caution that “The success and efficiency of the proposed approach depend on computability of φ (·) and its subgradients.” (Section IV-A1, p. 19.) They also write that abstraction brings “conservatism of the analysis and (potentially) undecidability” (Section II-A2, p. 5).
 
-Inference: trusted components for a reuse of this approach include the program abstraction, the numerical solver, coefficient rounding, and re-verification; the paper's Table IV NAN result shows solver failure can occur. Inference: threat to VL is medium for arithmetic-heavy code. The approach can reduce manual invariant discovery, but it does not solve heap ownership, aliasing, quantifier instantiation, or specification adequacy. VL should reuse the template-and-check split and avoid redoing a generic Lyapunov theory; a product experiment would need denominators for solved versus attempted programs and exact machine-arithmetic rechecks.
-
 ## techniques for the catalog
 - transition-graph abstraction: attach state sets and edge maps to program locations before proof search
 - convex Lyapunov synthesis: parameterize an invariant template and solve LP, SDP, or SOS constraints
 - decrease certificates: prove edge-wise Lyapunov decrease to certify boundedness, unreachability, or finite-time termination
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The advantage of using semidefinite programming is that efficient SDP relaxations for treatment of binary variables exists, though the computational cost is typically higher than the LP-based approach."): read the whole paper text (pp. 1-37, including appendices and references); checked every quotation, page and section reference, theorem and equation conditions, and the case-study numbers (Tables II-IV) against it; changed several wrong page and section references, a quotation with a wrong word (subgradients), a misused quotation (the (28) restriction, which the paper rejects), the solver attribution (SOSTOOLS was not used for the found invariants), and added the Proposition 4, Theorem 1 and Corollary 1 conditions; marked own conclusions "Inference:". Did not check: the proofs in Appendix II, the cited references, the matrices of the MILM examples, or the Matlab code and extended report [49].

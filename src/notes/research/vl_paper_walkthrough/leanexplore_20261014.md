@@ -74,10 +74,7 @@ Evidence: “Both interfaces are designed to return data in consistent Pydantic 
 Verus form (Inference): an MCP server could expose indexed Verus/vstd declarations and dependency context, while every proposed use must be compiled and verified by Verus. Remote availability introduces service/version trust; local indexes improve reproducibility.
 
 ## what is proved, measured, and trusted
-The paper measures search-result rankings and reports no soundness evaluation of generated translations or proofs. Inference: its retrieval pipeline supplies candidate declarations; it does not establish that a retrieved declaration proves a particular goal. The paper compares its 109-million-parameter embedding model with LeanSearch's E5mistral-7b and reports: “LeanExplore occasionally struggled with very general queries, such as "vector space axioms," where LeanSearch performed better.” (Section 6, p.8) Inference: for VL, a declaration index could reduce agent search cost and repeated rediscovery, but it does not reduce the threat that an agent writes an incorrect Verus specification; the verifier still checks only the stated contracts.
-
-## what VL should reuse and avoid
-Inference: reuse the StatementGroup idea, dependency-first summaries, hybrid ranking, and MCP interface. VL should not redo a generic embedding benchmark before building a Verus/vstd corpus; it should first measure retrieval against real Verus proof goals and ensure index versions match the crate. Section 7 states: “We plan to implement nightly updates and significantly broaden the indexed corpus by incorporating a wide array of repositories from platforms like Reservoir [Lean FRO, 2025].” It also proposes selectable embedding models and considers proof-state search (p.9). These are future directions in this paper.
+The paper measures search-result rankings and reports no soundness evaluation of generated translations or proofs.
 
 ## techniques for the catalog
 - dual-resolution extraction: combine compiled-environment metadata with source AST/dependency traces
@@ -85,5 +82,3 @@ Inference: reuse the StatementGroup idea, dependency-first summaries, hybrid ran
 - dependency-first translation: generate informal descriptions in graph topological order
 - hybrid ranking: combine embedding similarity, BM25+, and PageRank after local normalization
 - MCP premise retrieval: expose declaration search and dependencies to theorem-proving agents
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The evaluator was permitted to assign ties if it deemed the results from multiple engines to be of equal quality."): checked every quotation, number, section/page reference, technique step, and the tag/link against the full text, including appendices; corrected PageRank, ranking, and MCP page references, embedding step order, API name-lookup scope, and the paper link; marked recommendations and trust conclusions as inferences; did not inspect the implementation, reproduce experiments, or validate the Verus adaptations.

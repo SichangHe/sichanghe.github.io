@@ -68,10 +68,6 @@ Proved claims are relative to RC11 RAR operational semantics, the abstract-objec
 
 Inference: The threat to agent-written verified Rust is high for concurrent libraries: an agent can prove a sequential-looking API while omitting client-visible synchronization or using an unsound memory-order abstraction. The strongest reusable product pattern is to generate (1) an abstract operation/view specification, (2) a client proof, and (3) a concrete-to-abstract simulation artifact, with memory-order assumptions explicit in each contract. This is an inference.
 
-## what VL should not redo
-
-The paper already covers modular abstract-library semantics, observation assertions, Owicki-Gries stability, contextual trace refinement, forward simulation, lock implementations, and a weak-memory Treiber stack. VL should not repeat a lock-only proof as if it established general Rust concurrency. Inference: a useful new experiment would measure whether agents preserve a client-observable refinement relation across realistic Rust atomic API changes and dependency upgrades, including cases where the implementation still satisfies a local method contract but loses release-acquire visibility.
-
 ## techniques for the catalog
 
 - operational weak-memory semantics — combine thread steps, per-thread observations, and abstract or concrete library transitions
@@ -81,4 +77,3 @@ The paper already covers modular abstract-library semantics, observation asserti
 - forward simulation — relate abstract and concrete states and classify implementation steps as stuttering or matching
 - weak-memory object specification — use timestamped operations, matching relations, and view transfer for queues and stacks
 - invariant-guided Treiber verification — preserve linked-order, address-set, and view invariants and map concrete nodes to abstract operations
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The Release operation contains only one releasing write on variable glb, which is considered to be a refining step."): I read the whole paper text and checked every quotation, section/page reference, number (25 KLOC, 2.5 KLOC, 12 KLOC, nine theories), the invariants 7.1-7.6, Definitions 2-5, Theorem 1, Propositions 1-4 and the lock and Treiber proof descriptions against it; changed one misquoted sentence ("enables you" to "enables one"), a dropped-comma and a lowercased quotation, the count of assertion forms (four to five), the invariant summary, the scope of the Theorem 1 caveat, and removed two unsupported sentences; labelled my own conclusions as Inference; I did not check the Isabelle proofs, the figures' typeset detail beyond the text layer, or any Verus/Rust application, which is Inference and not in the paper.

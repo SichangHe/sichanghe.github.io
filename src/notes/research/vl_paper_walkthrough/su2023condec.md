@@ -6,7 +6,7 @@ Tag: `su2023condec`, [paper](https://arxiv.org/abs/2311.06736)
 
 Su, Liu, and Guo study natural-language proof generation for entailment trees. Their ConDec method trains a generator to produce one reasoning step at a time and uses contrastive learning with hard negative proof steps to reduce repetition and invalid entailment. It is a language-generation method, not a machine-checked proof system. The abstract reports, “Additionally, our further analysis reveals that even larger LLMs still struggle to generate rigorous logical chains.” (abstract, p. 1)
 
-The target task is to derive a proof tree from a hypothesis and supporting facts. A tree contains leaf facts, intermediate conclusions, and reasoning steps whose premises entail a conclusion (§3, p. 3). Inference: the method is relevant to VL as a proposal generator or explanation assistant, and Verus must remain the independent checker because ConDec’s natural-language entailment and BLEURT metrics do not establish Rust semantics.
+The target task is to derive a proof tree from a hypothesis and supporting facts. A tree contains leaf facts, intermediate conclusions, and reasoning steps whose premises entail a conclusion (§3, p. 3).
 
 ## technique: represent a proof as a sequence of entailment steps
 
@@ -112,8 +112,6 @@ paper procedure
 
 Verus form
 
-Inference: use two independent checks: the final Rust contract and each proof lemma’s obligation. A function that happens to satisfy postconditions while its proof plan is redundant may still be acceptable, but an unexplained `external_body` or weakened contract should fail VL review. Keep proof coverage and trusted assumptions as additional metrics.
-
 evidence and limits
 
 On Task 2 test data, ConDec with vanilla negatives reports Leaves F1 91.0, Steps F1 50.2, Intermediates F1 70.3, and Overall AllCorrect 34.1; combining vanilla and enhanced negatives reports 91.1, 50.7, 70.7, and 34.7 respectively (Table 3, p. 7). The denominators are the Task-2 test trees. Inference: intermediate and overall scores remain low relative to leaf scores, so improved premise selection does not establish rigorous chains.
@@ -124,12 +122,6 @@ The paper trains Flan-T5-Large for 500 epochs on Task 1 and 600 on Task 2; avera
 
 The authors report that ConDec is one-stage at inference and reduces inference time compared with two- and three-stage methods: on the Task 2 validation set with Flan-T5-Large on an A800, ConDec takes 294 s, NLProofs generator+search 430 s (31.6% improvement), and NLProofs generator+search+verify 544 s (46.0%) (Table 4, p. 7). In the model-size ablation, Flan-T5-XL (3B) reaches Overall AllCorrect 33.8 versus 33.5 for Flan-T5-Large, and the authors write, “Though much larger in model size, Flan-T5-XL achieves similar performance over the metrics.” LLaMA-3.2-1B (1.2B) is much worse in the ablation, with Overall AllCorrect 3.2 stepwise and 2.7 without (Table 5, p. 8). The authors draw the conclusion: “It shows that proof planning requires a higher level of understanding of deductive reasoning over multi-hops.” (§6.3, p. 8) Section 7 adds that ConDec⋆ outperforms all closed-source LLMs tested in all metrics of Table 6 (p. 8).
 
-## what remains trusted and threat to VL
-
-ConDec shows only that a training objective and negative construction improve benchmark metrics. Inference: the learned generator, Vera checker, BLEURT metric, dataset annotations, tokenization, optimizer, and evaluation scripts remain trusted. The authors’ own results show a large gap between leaf correctness and overall proof-tree correctness: on Task 2 test, ConDec⋆ has Leaves F1 91.1 but Overall AllCorrect 34.7 (Table 3, p. 7). Inference: natural-language proof generation can help an agent draft a Verus proof plan or explanatory text, but accepting it as proof creates a severe soundness risk. VL should independently verify every generated Rust proof with Verus and reject contract weakening, unsupported axioms, and proof steps that do not map to checked lemmas.
-
-Inference: ideas VL should reuse: stepwise decomposition, hard-negative generation, separate candidate generation and checking, and metrics that score intermediate reasoning rather than final answers alone. Inference: VL should adapt enhanced negatives by constructing near-miss Rust implementations and invalid invariants, then use Verus failures as labels. This is a proposed adaptation, not a result in the paper.
-
 ## techniques for the catalog
 
 - proof-tree decomposition — represent a conclusion as ordered entailment steps over facts and prior intermediates
@@ -139,4 +131,3 @@ Inference: ideas VL should reuse: stepwise decomposition, hard-negative generati
 - independent candidate checking — use a separate verifier or checker rather than trusting the generator
 - structural proof metrics — score leaves, steps, intermediate conclusions, and overall correctness separately
 - multi-stage versus one-stage tradeoff — compare search and verifier cost against a single contrastive generator
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "To increase diversity, enhanced hard negatives and vanilla hard negatives are jointly sampled for training."): read all 15 PDF pages of the paper text including the appendix and checked every quotation, number, table value, equation reference and technique step against it; changed page references to PDF page numbers (many were off by one), corrected a wrong quote location (the ConDec leverages quote is in §1, not the abstract), corrected the enhanced-negative filter (low-score negatives are filtered out, high-score kept; the study said keep low-score), fixed a quote that began mid-sentence with a capital letter, added the reasoner, substitution, Table 4, Table 7 and Flan-T5-XL details, switched the link to the arXiv page given in the paper text, and marked unsupported own conclusions as Inference; did not check the cited external works, the appendix case studies (Tables 8-11), or the Verus-specific adaptations, which are the study's own proposals.

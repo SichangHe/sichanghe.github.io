@@ -19,14 +19,8 @@ Evidence: the provenance examples are hand-specified and not rerun. In the 249-i
 ## technique 2: requirement evolution and explicit infeasibility
 Use the same graph across changing requirements. Keep old evidence, add the newly required root, and recompute closure/minimum support. Pong’s R0={prior} costs 1; R1 adds a horizontal-velocity root and costs 2. The old envelope remains applicable but is insufficient for R1 (Section 3.3, p. 5). If no support reaches a root, report infeasibility instead of treating a failed check as assurance.
 
-Inference: VL could use this as a pre-edit evidence manifest: source hash, Verus command/context, proof obligations, test/trace artifacts, and derivation edges. A changed dependency or compiler should invalidate or re-check applicability before reuse. This paper does not provide an invalidation algorithm, automatic root discovery, or evidence that a downstream coding agent improves when given an envelope. The authors caution, “an envelope certifies only that the selected evidence derives the supplied obligations under the supplied rules, not that those obligations are complete or that the underlying judgments are sound.” (Section 7.4, p. 10).
-
-## proved, trusted, and product threat
-Proved/measured: closure semantics, optimizer behavior, exact small-graph optima, requirement expansion, and bounded runtime on synthetic and hand-specified graphs. Trusted: root completeness, rule soundness, evidence applicability, hand-specified Rust/IronBlocks/Pong outcomes, and the semantic correctness of source artifacts. The paper’s strongest product-relevant threat is omission: an agent-written verified Rust change can satisfy a selected proof root while leaving unmodeled trace, environment, unsafe-code, or requirement obligations unsupported. Inference: envelope selection is useful as auditable context control, but it cannot replace Verus proof, specification review, or human confirmation that roots are complete.
-
 ## techniques for the catalog
 - typed assurance envelope: select minimum-cost evidence leaves whose typed hypergraph closure reaches supplied task roots
 - independent closure validation: reject optimizer supports unless forward chaining under original AND/OR rules derives every root
 - requirement-evolution recomputation: add new roots and recompute support, reporting infeasibility explicitly when no derivation exists
 - conjunction-preserving graph model: retain multi-premise rules so pairwise projections cannot create false coverage
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

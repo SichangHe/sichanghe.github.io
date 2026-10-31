@@ -35,9 +35,9 @@ Steps from the paper:
 3. Import the generated macros in the LaTeX blueprint and replace a hand-written node with `\inputleannode{label}` (§3.4, p. 5; macros saved and imported as described in §A.2, p. 15).
 4. Run `leanblueprint` to build the PDF, HTML, and dependency graph (§3.4, p. 5).
 
-Verus form. Inference: generate a deterministic Markdown or graph fragment from the Verus source and its verified contracts, then include that fragment in a human-maintained design document. Inference: a build script can fail closed when Verus fails, when a referenced function is absent, or when a contract is marked trusted; it should never turn a failed proof into a green status. Inference: unlike LeanArchitect's LaTeX macros, this exporter would be VL tooling around Verus, not a Verus language construct.
+Verus form.
 
-Evidence and limits. The paper gives the exact expansion shape for `thm:add-comm` (§3.4, p. 5), but reports no timing, failure rate, or independent audit of generated LaTeX. Its limitation section says: "the additional build steps of LeanArchitect deepen the build pipeline and increase the possibility for build and CI failures." (§5, p. 9). Blueprint nodes that exist only in informal LaTeX still require manual management (§5, p. 9). Inference: a VL exporter should preserve the distinction between verified Rust and informal design nodes and include build failures in CI evidence.
+Evidence and limits. The paper gives the exact expansion shape for `thm:add-comm` (§3.4, p. 5), but reports no timing, failure rate, or independent audit of generated LaTeX. Its limitation section says: "the additional build steps of LeanArchitect deepen the build pipeline and increase the possibility for build and CI failures." (§5, p. 9). Blueprint nodes that exist only in informal LaTeX still require manual management (§5, p. 9).
 
 ## technique: migrate and debug existing hand-maintained blueprints
 
@@ -66,14 +66,9 @@ Evidence and limits. The mathematical target and the five-step AI/human pipeline
 
 LeanArchitect proves no mathematical theorem by itself; Lean checks the tagged declarations and the package reports extracted metadata. The evidence consists of one external adoption (PrimeNumberTheoremAnd, which is also one of the five projects in the conversion test), conversions of five projects at Lean v4.25.0, and one Taylor-theorem AI/human case (§§4.1–4.3, pp. 6–9). The paper gives an approximately one-day migration time and a three-node residual in the Taylor case, but no total-node denominator, speed baseline, or statistical study. Inference: trusted elements include Lean, the LeanArchitect implementation and extractor, `leanblueprint`, the correctness of labels and prose, and the user's mathematical specification. Inference: product threat is highest where an agent can make a wrong statement that still verifies; dependency visualization can expose suspicious missing edges but does not prove semantic intent.
 
-## what VL should reuse
-
-Inference: VL should reuse the paper's separation between authoritative formal declarations, generated synchronization artifacts, and human-authored exposition. Inference: it should not redo the basic idea of a proof-dependency graph without measuring whether Verus agents actually repair proofs faster or with fewer specification errors. Inference: the missing experiment for VL is a denominator-based study over real Rust modules: graph-guided generation versus flat context, measured by verified functions, proof time, repair count, and specification defects.
-
 ## techniques for the catalog
 
 - declaration metadata and dependency inference — annotate formal declarations, recursively collect referenced constants, and record proof status and prose in a graph node
 - deterministic blueprint export — render verified metadata into incremental build artifacts consumed by a human-maintained document
 - blueprint migration audit — convert manual nodes, then inspect isolated, missing, and contradictory dependency/status edges
 - graph-guided AI proof decomposition — let an agent draft small subgoals, run an automated prover, refine residual nodes, and finish the remainder by hand
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "A minor source of disruption was that existing pull requests had to be manually updated by their authors to conform to the new annotation format."): read all pages of the paper text; checked every quotation, section and page reference, the technique steps, the five-project list, the one-day migration figure, the three-node residual, and the Lean v4.25.0 version; changed the paper link (it pointed to the Carleson paper's DOI, now the paper's own arXiv 2601.22554 from the paper text), corrected page references for §5 (p. 9), the three-node result (p. 7), the lakefile step, and Appendix A.2 (p. 15), changed "four-stage" to the paper's five steps, reworded the Infinity Cosmos finding, and marked uncited steps and the trusted-elements list as inference; did not check the cited external repositories, the figures' node counts, or the Verus-form sections beyond marking them as inference.

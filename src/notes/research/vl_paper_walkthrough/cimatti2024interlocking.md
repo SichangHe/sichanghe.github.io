@@ -24,8 +24,6 @@ how the paper does it
 
 Verus form
 
-Inference: In VL, the CNL/SysML layer corresponds to a typed Rust data model for components and transitions, with generated executable methods and Verus contracts. Use enums for states, `Seq` or `Set` for connected components, and `requires`/`ensures` to express guards and effects. Inference: preserve a trace identifier from each natural-language guard to its generated Rust contract and later proof obligation. The paper does not discuss Rust or Verus, so this mapping is an engineering analogy.
-
 evidence and limits
 
 The earlier Kratos2 approach could verify only a configured station because it “is unable to deal with objects of unspecified size”, and large instantiated systems created scalability problems (section 2, PDF p. 2). The paper instead studies parameterized verification without a fixed station configuration; automatic SysML-to-Dafny generation remains future work (sections 2 and 5, PDF pp. 3 and 5–6). Inference: generated code and its model need cross-checks, because a proof of the Dafny model does not by itself establish that C or Rust generation preserves the model.
@@ -52,7 +50,7 @@ Inference: The direct Verus analogue uses enum-like Rust types, `requires` and `
 
 evidence and limits
 
-The authors describe component checks against method specifications and report successful scheduler verification with the stronger inductive invariant (section 3, PDF pp. 3–4). They do not report line counts, proof time for Dafny, or a complete station configuration. Inference: extending the result to generated C/Python requires contracts and implementations to agree. Inference: VL should treat generated postconditions as claims requiring tests or refinement evidence, especially for aliasing and shared mutable state.
+The authors describe component checks against method specifications and report successful scheduler verification with the stronger inductive invariant (section 3, PDF pp. 3–4). They do not report line counts, proof time for Dafny, or a complete station configuration.
 
 ## technique 3: strengthen a safety property into an inductive invariant
 
@@ -74,7 +72,7 @@ Inference: In Verus, state the target and strengthening as `spec fn` predicates 
 
 evidence and limits
 
-The strengthening is demonstrated on the simplified station, not on the full AIDA-generated railway system. Figure 3 uses an unbounded scheduler loop with `decreases *` in Dafny (PDF p. 4). Inference: the reported proof establishes safety preservation, not scheduler termination. Inference: a VL proof should state separately whether it proves safety only, termination, liveness, or fairness.
+The strengthening is demonstrated on the simplified station, not on the full AIDA-generated railway system. Figure 3 uses an unbounded scheduler loop with `decreases *` in Dafny (PDF p. 4).
 
 ## technique 4: slice the system into a symbolic parameterized transition system
 
@@ -117,21 +115,9 @@ how to do it
 
 Verus form
 
-Inference: The analogous VL pipeline can export an abstract invariant as a Verus `spec fn`, then connect concrete Rust state to the abstract model with a representation invariant. Use a `proof fn` to show that every concrete transition maps to an abstract transition and preserves the imported predicate. Inference: the imported invariant is evidence from an external tool, not automatically trusted Verus proof text; Verus must prove the translation and refinement obligations.
-
 evidence and limits
 
 Inference: transferring the symbolic result to the Dafny implementation requires the manually simplified abstraction to cover the relevant behavior. The paper says that without Dafny, a monolithic model checker “often struggles to scale effectively when dealing with exceptionally large models.” (section 4, PDF p. 5) The paper does not quantify scalability on realistic stations, nor does it demonstrate automatic translation from SysML to Dafny or automatic invariant translation.
-
-## trusted boundary, scope, and implications for VL
-
-The paper reports verification of the simplified Dafny component code and preservation of the strengthened scheduler invariant, plus discovery of the strengthening lemma by a parameterized model checker in less than one second (sections 3–4, PDF pp. 3–5). The authors plan an encoder from SysML to Dafny, a way to express properties likely using TOSCA's scenario language, template generation of simple invariants, and integration of a parameterized model checker for more complex invariants (section 5, PDF pp. 5–6).
-
-Inference: an end-to-end correctness argument would also need to justify CNL-to-SysML translation, C/Python generation, manual abstraction and variable selection, correspondence between symbolic and object-oriented models, solver correctness, and adequacy of the safety property. This paper does not establish that whole chain.
-
-Inference: the threat to VL is concentrated in abstraction and specification translation. An agent can produce a valid Verus proof for an abstract map while omitting a concrete field, alias relation, or transition. VL should therefore preserve a concrete-to-abstract representation invariant, trace each imported lemma to its source abstraction, and test that generated transitions cover all runtime effects. Inference: VL should cite this paper for the demonstrated combination of modular Dafny verification and invariant discovery on a reduced parameterized model; automatic integration is proposed future work.
-
-Inference: a useful new VL experiment would compare proofs with manually selected versus automatically sliced ghost state, measuring missed behaviors, proof repair, verifier time, and the number of concrete transitions whose abstraction obligations fail. This follows the paper's open challenge and is not a result reported by the authors.
 
 ## techniques for the catalog
 
@@ -141,5 +127,3 @@ Inference: a useful new VL experiment would compare proofs with manually selecte
 - parameterized transition abstraction: represent all station sizes with abstract sorts, state functions, and a relational transition system
 - external invariant synthesis: use a parameterized model checker to discover a quantified invariant for a reduced abstraction
 - invariant correspondence: match the discovered abstract invariant to a Dafny predicate and verify scheduler preservation; extension to Verus and explicit refinement proofs are inferences
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The source and destination states, guards, and eﬀects of transitions are translated into a series of preconditions and postconditions for each method."): checked all paper text, quotations, state names, formulas, technique steps, section and PDF page references, and scope of reported results; corrected quotations and page references, distinguished scheduler assumptions from initialization proofs, and marked extrapolations as inferences; did not execute Dafny or the parameterized model checker, inspect their implementation, or validate the proposed Verus mappings. The arXiv identifier is printed on PDF p. 1; link from the fetch record.

@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `nok2026improving`, [paper](https://doi.org/10.18653/v1/2026.findings-acl.1615)
 
-Audit: audited 2026-10-13 against the paper; checked numbers, steps, quotations and Verus forms; fixed the last step of technique 3 (Bob is fine-tuned once, in the final round, with no further rounds), the tau value (5 is the example in Section 3.4.1, 3 is used in Appendix E.2), the purpose of the ablation, the PLE condition in SEQ step 3, and marked unmarked inferences.
-
 ## paper and scope
 
 Poon and Miceli Barone train two models in a self-play game about Haskell program equivalence. Alice generates a variant; Bob judges whether it is equivalent. Liquid Haskell proves positive equivalence examples, while execution checks a supplied counterexample for negative examples. The study’s useful lesson for Verus is a training architecture: use a verifier as a reward gate, retain only validated traces, and make the generator produce harder cases over rounds. The paper is about Haskell and model training, not Rust or Verus; all Verus mappings here are inferences. The paper’s dataset is released as OpInstruct-HSx (about 28,000 validated functions).
@@ -87,12 +85,6 @@ The four regimes isolate the effect of SEQ supervision from data volume (Section
 Verus form (inference)
 
 Run the same ablation with fixed Rust reference programs, fixed model budgets, and a denominator that includes every attempted generation, every verifier rejection, and every retained proof. Compare proof-backed transformations with counterexample-only data at equal retained-pair counts. Report both verifier pass rates and downstream correctness; otherwise a high yield from weak counterexamples can hide low proof quality.
-
-## what is proved, trusted, and threatening to VL
-
-The paper proves or checks each retained SEQ pair with Liquid Haskell and each retained SINQ pair by execution. It measures model accuracy and transfer, not the semantic correctness of arbitrary generated code. Inference: trusted components include Liquid Haskell’s refinement checker, GHC compilation/execution, the input generator, Bob’s labels, and the chosen function specification. Nontermination, partial functions, reflection limits, state, memory, side effects, and bit-level behavior remain outside much of the formal fragment; the authors explicitly identify these as limitations.
-
-Opinion (the study's own): VL should not redo the generic idea of verifier-gated self-training. The work to adapt is the proof-trace dataset schema, hard-example selection, and controlled separation of positive proofs from negative counterexamples. The product threat is high for an agent that learns transformations from tests alone: it may preserve common cases while changing edge behavior. A Verus-backed SEQ gate could train agents toward proof-producing edits, but the threat remains high where specifications omit ownership, resource, panic, or concurrency semantics. This threat assessment is an inference from the paper’s low-level transfer failures and the differences between Haskell and Rust.
 
 ## techniques for the catalog
 

@@ -28,12 +28,6 @@ If compilation repair fails, stop with failure; otherwise run the fuzzer. If E�
 
 Restart and Hinted outperform BaseRepair and CAPR. The authors suggest that counterexamples may confuse the LLM; they do not establish this explanation. The best feedback strategy gives a proportional improvement in success rates of 7–21% across benchmarks (Figure 12, p. 10). Inference: an agent repairing Verus code should preserve counterexamples as regression tests but may benefit from restarting generation with concise evidence rather than appending a long history. Never weaken a contract to make a counterexample disappear.
 
-## evidence, limits, and VL implications
-
-The study measures compile success, fuzzer success, coverage, Clippy warnings, and feedback improvements. Complexity matters: success declines as lines of code increase and tends to fall after about 100 lines; GPT-4o and Claude 2 achieve around 80% on ACH, largely due to roughly 40 very similar benchmarks; their ACH success rates drop to around 55% when those are removed (p. 8). Among successful translations, style, complexity, or performance warnings occur occasionally (1–15% of the time); correctness warnings are very few, and unsafe code occurs occasionally (Section 6.2, RQ1.3, p. 9). The C2Rust comparison uses opl because C2Rust failed on most of libopenaptx. C2Rust translations average 1.98 times as many lines as LLM translations and show more unsafe code and style warnings (Section 6.2, RQ3, p. 10).
-
-The paper acknowledges that the fuzzer may miss counterexamples (Section 7, p. 10). Inference: correctness claims depend on the source implementation as oracle, state mappings, JSON serializers, compiler, FFI, and test harness. Five minutes without a counterexample and high line coverage do not establish equivalence. For agent-written verified Rust, state mappings and the source oracle need explicit assumptions; a passing fuzzer does not certify a Verus contract. VL work could reuse whole-state differential testing and path-specific counterexample storage as supplementary checks.
-
 ## techniques for the catalog
 
 - benchmark extraction: slice a project around a function and its transitive dependencies into a compilable translation unit
@@ -44,5 +38,3 @@ The paper acknowledges that the fuzzer may miss counterexamples (Section 7, p. 1
 - hinted feedback: add path-grouped positive and negative examples to the original prompt
 - counterexample-guided repair: retain the faulty candidate and ask for a correction using E− from one path class
 - conversational repair: append successive failed translations and counterexamples in a bounded dialogue
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This requires the LLM to produce data types with field names that match the source program, but in our benchmarks LLMs always do this."): read the full paper including references; checked quotations, numbers, section and PDF page references, technique steps, tag and arXiv link; corrected experiment counting, page references, the add example, warning categories, feedback interpretation, and C2Rust comparison scope; marked analytical recommendations as Inference; did not rerun experiments, inspect the artifact, or verify Verus/VL proposals.

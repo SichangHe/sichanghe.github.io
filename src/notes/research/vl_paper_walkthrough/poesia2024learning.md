@@ -6,8 +6,6 @@ Tag: `poesia2024learning`, [paper](http://arxiv.org/abs/2407.00695v2)
 
 M INIMO jointly trains a conjecturer and a theorem prover from only axioms in a dependent type theory. The authors define the goal as “generating new problems that are challenging for the current agent but still provable within its given search budget.” (section 1, p. 2). Their agent uses one language model for a difficulty-conditioned conjecturer, a proof-search policy, and a value function (section 3, p. 4). Experiments cover propositional logic, arithmetic, and group theory. Appendix D.3 includes commutativity among the group axioms (pp. 16–17).
 
-Inference: the paper’s direct value for VL is an open-ended training and evaluation loop whose correctness signal is formal proof acceptance. It does not verify Rust, model memory, or concurrency.
-
 ## technique 1: constrained, type-directed conjecture generation
 
 What it is. An autoregressive language model normally assigns probability to arbitrary strings. M INIMO constrains generation to inhabitants of `prop` in the domain’s dependent type theory. The paper says: “To that end, our main insight is to leverage constrained decoding to obtain valid conjectures by construction.” (section 3.1, p. 4). A completion engine maps a prefix to allowed continuations; Constrained Semantic Decoding (CSD) samples only strings accepted by that engine (section 3.1, pp. 4–5).
@@ -50,7 +48,7 @@ The loop alternates conjecture generation, proof search, extraction, and cross-e
 
 Inference: How to do it. (1) Generate a batch of conjectures conditioned on difficulty. (2) Search each with MCTS. (3) Extract direct and hindsight proofs. (4) Compute log-likelihood under the current policy. (5) Assign percentile labels. (6) Train the LM for the next iteration on policy, value, and conjecturer examples (section 3.4). The appendix gives an approximately 8.45M-parameter GPT-2-style character model, 2000 AdamW steps per iteration, learning rate 10^-4, and 288 GPU-hours for the main runs (Appendix A, p. 14).
 
-Verus form. Inference: a VL training harness can classify verified Rust contracts by measured proof-search cost, then generate harder contracts. Difficulty must remain metadata; it cannot weaken a `requires` or `ensures` clause. The proof itself must still pass Verus.
+Verus form.
 
 Evidence. For generated conjectures, excluding hindsight discoveries, groups average proof length rises from 2.67 steps in the first iteration to 5 in iteration 4; hard proofs rise from 3.67 to 6.10, and the longest from 4 to 9 (section 5, pp. 9–10). Propositional logic averages rise 2.75→4.21 and longest 5→11; arithmetic averages 2.36→3.35 and longest 4→7 (section 5, p. 10). These are step counts, not success fractions. Section 4.2 reports improving success on human-written problems within 2000 MCTS expansions (pp. 8–9; Figure 4, p. 9). It describes “35 useful statements of Propositional Logic” (p. 8), but Appendix E.2 says “there are 30 statements, even if the last one is labeled 25.” (p. 18). Inference: the paper is inconsistent about this evaluation count. Arithmetic uses 10 Natural Number Game levels (section 4.2, p. 9; Appendix E.1, p. 17).
 
@@ -60,8 +58,6 @@ The authors state: “In M INIMO, since our problems are formal conjectures and 
 
 Inference: the threat to agent-written verified Rust is indirect but material. A model can learn to propose difficult-looking contracts, exploit shallow proof patterns, or optimize for search likelihood rather than useful system properties. Verus proof acceptance protects the formal claim, but does not ensure that the claim models memory, scheduling, external libraries, or product intent.
 
-Inference: Already done that VL should not redo: constrained type-directed generation, MCTS policy/value guidance, hindsight relabeling, percentile difficulty conditioning, and axiom-only self-improvement. A VL contribution should add Rust/Verus semantics, system-level contracts, or maintenance evidence.
-
 ## techniques for the catalog
 
 - type-directed constrained conjecturing: use recursive type rules and constrained decoding to generate only well-formed propositions
@@ -69,4 +65,3 @@ Inference: Already done that VL should not redo: constrained type-directed gener
 - hindsight relabeling: turn proved subgoals in failed trees into new proof and conjecture data
 - percentile difficulty loop: label proof log-likelihoods and train the next conjecturer on hard, easy, and trivial bands
 - formal proof signal: use discovered proofs to supply successful policy/value examples and true conjecture examples (sections 3.2–3.3); the value function also receives randomly sampled states labeled 0
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This allows us to estimate difficulty easily without running search for theorems that we have proofs for (such as those we find by hindsight relabeling)."): checked all paper text, quotations, numbers, section/page references, and technique steps; corrected quotation wording, type-generation rules, action likelihoods, hindsight scope, proof-length references, and the conflicting logic-evaluation counts; retained the arXiv link identified on p. 1; did not check code, reproduce experiments, or validate the proposed Rust/Verus applications, which are marked Inference.

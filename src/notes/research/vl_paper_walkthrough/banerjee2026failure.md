@@ -7,8 +7,6 @@ The paper studies four failure modes in research proofs: F1 citation fabrication
 
 Table 2 reports zero correct final answers: Q1 0/3, Q2 0/2, Q5 0/3, total 0/8 (section 5.1, p. 3; Table 2, p. 4). Every proof had at least one manually identified load-bearing smuggle, 8/8. The paper reports 5/5 judge-confirmed smuggles as true positives (100% precision), detection of four of eight proofs (50% proof-level recall), and an F1 score of approximately 0.667 (section 5.3, p. 4). The precision denominator counts confirmed flags; the recall denominator counts proofs. One of six regex flags was never adjudicated because the judge crashed. These are a tiny corpus and one model; the author states, “eight proofs is a small corpus, and Gemini 2.5 Flash is not the model First Proof tested” (section 1, p. 1).
 
-Inference: a VL verifier must check assumptions and theorem applicability, not merely retrieve citations or check that Rust syntax compiles. The paper proposes that prevention require every load-bearing claim to be derived from stated premises, grounded in a retrieved and verified source, or explicitly flagged as unverified before returning the output (section 7, p. 5). It states: “The main contribution is the characterisation itself, and in particular the finding that F2 dominates the corpus even though F1 is what most mitigation proposals are aimed at.” (section 1, p. 1).
-
 ## technique 1: citation-verification instrument (F1)
 What it is: a two-stage measurement pipeline that extracts citations and checks whether an arXiv search plausibly matches them. It is intended as an instrument, not production mitigation (section 4).
 
@@ -47,11 +45,7 @@ Inference: turn the taxonomy into a review checklist:
 
 Inference: in Verus, F3 corresponds to proving a different `requires`/`ensures` contract, while F4 corresponds to composing verified modules without a shared invariant. Verification checks the encoded contract; a proof of a mistaken contract need not establish the intended property.
 
-## trusted boundary, prior work, and VL threat
-The manual audit was conducted by one reader without independent verification of inter-rater agreement; the judge and extraction model use the same model family, creating a potential shared blind spot; arXiv matching is intentionally lenient (section 6.4, p. 5). The author states, “Eight proofs is too few to make population-level claims.” Thus the reported percentages are instrument characteristics under this setting, not population estimates. The paper says RAG may suppress F1 but does not address premise smuggling. Existing process-reward, debate, and retrieval methods are acknowledged, but the paper’s empirical contribution is the F2 audit and four-mode taxonomy. Inference: false specifications and hidden assumptions are possible failure modes for agent-written verified Rust; this paper did not study Rust or Verus. Verus can guarantee implementation-level properties only after the contract and mathematical premises are encoded correctly; a prevention pipeline should force explicit assumptions and independent checking before code generation.
-
 ## techniques for the catalog
 - citation verification — extract citations, search top arXiv hits, and label matches or inconclusive cases
 - premise audit — regex-flag rhetorical claims, then judge load-bearing unsupported premises with context
 - four-mode review — Inference: use the taxonomy to check citation truth, premise support, problem identity, and local-to-global compatibility
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The judge is explicitly instructed to return a negative verdict when the phrase is attached to something elementary, or when a citation is present."): checked every quotation, number, section and page reference, technique step, tag, and paper link; corrected page references, quotation attribution, precision denominators, the missed-proof list, and the boundary between reported methods and inferred applications; did not independently validate generated proofs, cited literature, or Verus applications.

@@ -80,9 +80,7 @@ Evidence and limits. The top three filters catch 48.6% of trigger events on aver
 
 The paper formally defines errors, soundness, distributional soundness, and constrained generation; it does not prove that learned filters are globally sound. It measures filter capture, validity, quality, transferability, token overhead, and TypeScript pass@10 on disjoint tasks. The main validity denominator is generated samples: TypeScript uses 500 test samples, while pass@10 uses 50 MultiPL-E tasks (§4 and §C, pp. 5, 14). The paper reports 95% bootstrap confidence intervals for comparisons (§5, p. 6), and notes one molecule increase is significant only at 90% (§5.4, p. 8).
 
-Trusted components include each domain oracle (compiler, RDKit, leak detector, or execution engine), external valid-solution sets, the synthesizer LLM, model checkpoints, CARS implementation, and filter validation policy. The paper itself says prefix filters can fail on competent models with too few invalid examples, non-prefix-expressible errors, and shifting error modes (§6, p. 9). Inference: for VeruLaw, these filters are a search optimization and early-error guard, not a proof of Rust correctness; Verus and the specification review remain the acceptance gates. For an agent-written verified-Rust product, filters mainly reduce malformed proposals and wasted verifier calls; distributional false positives or model-specific blind spots can still hide valid proofs or miss semantic failures.
-
-The paper already provides the reusable architecture VL should not redo: oracle-based error grouping, symbolic prefix filters, validation with external valid sets, adaptive rejection sampling, and repeated learning on shifted errors. VL-specific work is defining useful Verus diagnostic groups, building a trusted corpus of verifying Rust, and measuring proof success rather than compilation alone.
+Trusted components include each domain oracle (compiler, RDKit, leak detector, or execution engine), external valid-solution sets, the synthesizer LLM, model checkpoints, CARS implementation, and filter validation policy. The paper itself says prefix filters can fail on competent models with too few invalid examples, non-prefix-expressible errors, and shifting error modes (§6, p. 9).
 
 ## techniques for the catalog
 
@@ -90,4 +88,3 @@ The paper already provides the reusable architecture VL should not redo: oracle-
 - distributionally sound prefix filters: synthesize `str -> bool` predicates and validate false-trigger rates on model and external valid distributions
 - CARS rejection sampling: reject a generation as soon as any filter matches and rebalance the token trie
 - shifted-distribution rounds: relearn filters after earlier filters expose different recurring failures
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

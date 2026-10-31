@@ -78,10 +78,6 @@ Rex's implementation includes 3.5K lines of kernel-crate Rust, 360 lines of unsa
 
 The usability evaluation uses a heuristic assessment and the authors’ experience implementing BMC (Section 7.1, pp. 9–10). Inference: this supports the specific code-simplification examples, but does not measure independent developer productivity or Verus proof effort.
 
-## prior work VL should not redo
-
-Rex already demonstrates safe-Rust kernel wrappers, typed helper interfaces, sealed transmute traits, panic cleanup, hybrid stack checks, watchdog termination, and a BMC port with performance measurements. Inference: VL should avoid claiming that removing a verifier automatically removes the trust boundary. A VL study could investigate explicit application proofs alongside Rex-style runtime limits, reporting which properties are proved, dynamically checked, or trusted. This paper does not evaluate that combination.
-
 ## techniques for the catalog
 
 - safe-subset kernel extensions — enforce a no-unsafe, no-std Rust subset and expose kernel helpers through typed wrappers
@@ -89,4 +85,3 @@ Rex already demonstrates safe-Rust kernel wrappers, typed helper interfaces, sea
 - safe transmutation — seal a trait and permit byte-to-struct casts only for allowed scalar types or structs whose members are safe types
 - panic resource cleanup — record helper-acquired resources per CPU and release them in a trusted panic handler
 - hybrid stack and watchdog checks — combine static call-graph sizing with runtime stack checks and per-CPU timer termination
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Since spinlock acquisition in Rex is implemented by a kernel helper function, a deadlocked program will never return from the helper, and therefore will never be terminated properly."): checked the entire paper, quotations, numbers, section and page references, technique steps, safety assumptions, and limitations; corrected quotations and their locations, map-lookup comparisons, panic cleanup steps, watchdog limitations, and unsupported Verus claims; did not reproduce experiments, inspect source code, or independently validate cited work.

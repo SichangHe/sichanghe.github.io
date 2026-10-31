@@ -6,8 +6,6 @@ Tag: `krings2024verified`, [paper](https://doi.org/10.1007/s10009-024-00750-5)
 
 The paper presents a MISRA C implementation of the ABZ 2020 adaptive exterior light system (ELS) and speed control system (SCS), first validated with test-driven development and then checked with CBMC. It explicitly positions the result as a baseline rather than a complete formal-method development. The abstract states: "Rather than using a (correct-by-construction) approach following a formal method, we use C for a low-level implementation instead." (Abstract, p. 403)
 
-Inference: For VeruLaw, the useful lesson is a staged workflow in which executable code, tests, and bounded model checking expose different classes of defects; the paper's own evidence does not establish a complete proof of all requirements.
-
 ## technique: derive tests and assertions directly from requirements
 
 What it is and when to use it. The authors keep the case-study requirements unchanged and derive both executable tests and CBMC assertions for each covered requirement. They say: "For each requirement we covered, we generated: • Unit tests, which are used for test-driven development. See Sect. 6.1 for details. • Assertions to be checked via CBMC as presented in Sect. 6." (Section 4.1, p. 406) The validation sequences "were taken from an Excel file and encoded in integration tests, using the same techniques as the unit tests."
@@ -76,10 +74,6 @@ The authors report that by default CBMC "only is able to work with internal stat
 
 The paper itself concludes: "Overall, for an untrained developer, it is very easy to show “the wrong thing” and obtain a “proven correct” signal while the code may still be faulty." (Section 9, p. 417) Just before it they write that "we seemed to have hit every pitfall and in many instances actually did not verify anything." Inference: this is a direct threat to agent-written verified Rust: agents can satisfy an incorrectly stated contract or an overly strong assumption while leaving the product requirement unmet. The threat is high for specification translation and environmental modeling, and lower for routine arithmetic properties once the contract and state model are independently reviewed.
 
-## what VL should not redo
-
-Inference: VL should not repeat the paper's baseline experiment of implementing a low-level automotive controller in C, using tests, and then adding CBMC assertions; the workflow and its failure modes are already documented here. VL should instead reuse the requirement-to-test/property split, monotonic-time modeling, explicit domain invariants, and counterexample projection as Verus design patterns, while measuring the stronger guarantees and remaining trusted assumptions.
-
 ## techniques for the catalog
 
 - requirement-to-test-and-assertion derivation — derive executable tests and general CBMC properties from each covered requirement
@@ -87,4 +81,3 @@ Inference: VL should not repeat the paper's baseline experiment of implementing 
 - enumeration domain modeling — encode finite or bounded values with named enums and explicit verifier assumptions
 - CBMC state and temporal checking — place assertions at loop boundaries or use ghost history variables for bounded temporal properties
 - counterexample state visualization — collapse low-level traces into complete step iterations and render relevant state variables
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Mocking the sensor also has the advantage that test scenarios, which would take several minutes of wall time, can be executed in milliseconds instead."): read the whole paper text (pp. 403–419, including the references) and the whole study; checked every quotation, number, section and page reference, and each technique step against the paper; changed the Section 4.1 quotation (a sentence had been dropped inside it), the curly quotation marks in the Section 9 quotation, the requirement counts (the paper itself gives SCS as 43 requirements but SCS-1 to SCS-41), the ELS-22 account (the counterexample first revealed a code error; the hazard-blinking conflict came from further analysis), the temporal-property step, the "proves" wording, the visualization-boundary claim, the cmockery init arguments, and marked the trusted-base list and denominator remarks as Inference; did not check the Verus translations (all labeled Inference), the GitHub repository, the figures beyond their captions, or the cited works; the DOI link is from the paper text.

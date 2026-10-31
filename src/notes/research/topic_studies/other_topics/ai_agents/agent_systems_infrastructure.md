@@ -283,4 +283,3 @@ what I searched
   - E2B, Modal, Sprites, Daytona vendor docs; GKE sandbox snapshots
   - RL training infrastructure for agents (SkyRL and similar), which overlaps with sandbox scaling
   - agent security proper, memory, evaluation, multi-agent coordination: sibling topics
-- local collection: CompileAgent (ACL 2025) is in /hdd1/sichanghe/paper_collection and belongs to environment building; I did not open it

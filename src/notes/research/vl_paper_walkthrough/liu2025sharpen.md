@@ -79,8 +79,6 @@ The paper explains, “This dual-agent design is critical for overcoming LLM hal
 
 Verus form
 
-Inference: A VL toolchain can separate a contract/code generator, a Verus verifier worker, and a specification assistant. Feed verifier diagnostics into bounded retries, but accept output only after a clean Verus run and relevant executable tests. Keep human review for intent and contract completeness.
-
 ## evidence, numbers, and limitations
 
 For 45 AtomFS modules, a generated module is counted correct only if it passes all functional tests and is manually judged logically equivalent to ground truth (Sec. 6.1, p. 11). With the SYS SPEC specification, Gemini-2.5-Pro and DeepSeek-V3.1 achieve 100% on the 45 modules; the strongest oracle baseline reaches 81.8% even when given dependency ground-truth code (Fig. 11a, p. 11). In the DeepSeek-V3.1 Reasoning ablation of 40 concurrency-agnostic and five thread-safe modules, Table 3 reports functionality alone as 12/40 and 0/5; adding modularity yields 40/40 and 0/5, adding concurrency yields 40/40 and 4/5, and adding SpecValidator yields 40/40 and 5/5 (Sec. 6.3; Table 3, p. 11). The functionality-only concurrency-agnostic cell inconsistently prints “40.00%” above “(12/40)”; 12/40 is 30%, so the paper does not establish an unambiguous percentage for that cell.
@@ -89,10 +87,6 @@ The ten evolution features are indirect blocks, extent, inline data, multi-block
 
 The prototype is a FUSE user-space file system: it lacks kernel-mode integration, direct storage-stack access, and crash consistency, so its performance is not an apples-to-apples comparison with native Ext4 (Sec. 6.6, p. 13). Its 754 regression tests fail 64 cases, all attributed by the authors to unimplemented functionality (Sec. 5.1, p. 9). The authors explicitly say that “an LLM enforces adherence to this logic during code generation, replacing the role of a formal theorem prover” (Sec. 4.1, p. 6). Integration with push-button verification remains a proposed direction (Sec. 6.6, p. 13). Inference: Confidence in these results depends on the specifications, C compiler, tests, manual equivalence judgments, SpecEval, and the adopted AtomFS design.
 
-## what VL should reuse and product threat
-
-The paper already develops structured Hoare-style contracts, rely-guarantee module interfaces, separate concurrency synthesis, DAG patches, retry-with-feedback, and validator/assistant roles. Inference: VL should distinguish its Verus-specific contribution from these existing patterns. The threat to agent-written verified Rust is high at the specification boundary: a generated function can satisfy incomplete contracts, preserve an invariant that omits crash or aliasing behavior, or pass tests while violating intended concurrency semantics. Verus can turn many of SYS SPEC's contracts into machine-checked obligations, but it cannot decide whether the chosen contract captures the product requirement. The paper's FUSE scope also leaves kernel, storage, and crash guarantees unaddressed.
-
 ## techniques for the catalog
 
 - multi-part functionality specification — combine Hoare-style pre/post conditions, invariants, and algorithm intent for each module
@@ -100,4 +94,3 @@ The paper already develops structured Hoare-style contracts, rely-guarantee modu
 - two-phase concurrency generation — synthesize sequential behavior first, then instrument and validate locking behavior
 - DAG specification patches — evolve leaves through dependency nodes to roots whose unchanged guarantees permit atomic replacement
 - compiler-validator-assistant loop — generate code, review it with a separate model, retry with feedback, and run regression tests
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This separation of concerns makes the synthesis task tractable for current LLMs, allowing them to correctly handle two distinct, complex problems one at a time."): checked the complete paper, including references and appendices, against the study’s quotations, numbers, section and PDF page references, technique steps, tag, and arXiv link; corrected page references, the ablation values and its internal percentage discrepancy, patch-size denominators, the feature list, participant count, a quotation, and inference labels; did not run the artifact, reproduce experiments, or verify the proposed Verus adaptations.

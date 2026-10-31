@@ -33,11 +33,7 @@ The executor delegates loop invariant and summary generation to plugins, includi
 
 The evaluation uses 281 programs across SyGuS (133), OOPSLA-13 (46), Frama-C (51), SV-Comp (14), X-509 (6), and openHiTLS (31) (Section 4.1, PDF p. 15). The paper reports 68/281 fully verified for the new tool versus 10/281 for AutoDeduct (Table 1, PDF p. 16). It reports 143/281 partial, 1/281 timeout, and 69/281 generation failures for its tool; these counts sum to 281. Average runtime is reported as 0.148 seconds for successful generated cases in the table, while the text separately says weighted average 0.160 seconds; this is an internal reporting discrepancy. AutoDeduct’s table average is 2.703 seconds, while text says 2.706 seconds. The text claims approximately 17.1× speedup from those weighted averages.
 
-Generation fails mainly on unsupported `%`, `<<`, `>>`, nested loops, and recursive-function handling; partial proofs need stronger invariants or have ACSL/WP compatibility issues (Section 4.2, PDF pp. 16–17). The authors state: “Our symbolic execution has limited ability to handle pointers.” (Section 1, PDF p. 3) It supports base-plus-offset array pointers but not linked lists or trees. Inference: this limits direct transfer to Rust ownership-heavy structures and means a VL product must detect unsupported pointer shapes before promising a proof.
-
-## trusted boundary and product threat
-
-Frama-C WP, ACSL semantics, LLVM front-end, invariant plugins, and the generated contract are trusted inputs to the result. Inference: the proof establishes C implementation compliance with the generated ACSL, not that the generated contract captures the user requirement. For agent-written verified Rust, the array-segment strategy is a medium threat: it can improve loop and buffer reasoning, but it does not replace specification review, ownership proofs, or handling of unsupported control flow. Existing work already combines path conditions, array summaries, split/merge, and external invariants; VL should reuse these patterns instead of rebuilding a generic array contract generator.
+Generation fails mainly on unsupported `%`, `<<`, `>>`, nested loops, and recursive-function handling; partial proofs need stronger invariants or have ACSL/WP compatibility issues (Section 4.2, PDF pp. 16–17). The authors state: “Our symbolic execution has limited ability to handle pointers.” (Section 1, PDF p. 3) It supports base-plus-offset array pointers but not linked lists or trees.
 
 ## techniques for the catalog
 
@@ -45,4 +41,3 @@ Frama-C WP, ACSL semantics, LLVM front-end, invariant plugins, and the generated
 - contiguous segment summaries — represent base/offset/length/content and carry quantified array facts across statements
 - segment split and merge — split on writes and merge adjacent equal summaries to preserve precision compactly
 - external invariant generation — feed affine and idiom-specific loop invariants into symbolic execution, then check ACSL with Frama-C WP
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

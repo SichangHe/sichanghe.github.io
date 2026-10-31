@@ -81,18 +81,9 @@ limits: The paper concludes that scaling offers limited robustness and adds a co
 
 The causal manipulation setup establishes a controlled experimental contrast, not a formal proof of judge internals. Measured quantities are JFR, absolute/relative FPR changes, recall, and F1 across the stated models and denominators. Human-label validation uses 50 tasks; GPT-5 achieved precision, recall, and F1 of 1.000 on that set, while Claude-Sonnet-4-thinking had F1=.250 and Claude-Sonnet-4 F1=.100 (Table 3, p. 16). The silver labels therefore depend heavily on GPT-5-high, and the authors acknowledge this as methodology rather than universal ground truth (§B.2, p. 15).
 
-Inference: Verus can make an evaluator's state-to-verdict mapping explicit and prove that observable evidence is consulted, but it cannot certify screenshots, natural-language rubrics, or model honesty. A VL product that uses an LLM judge as evidence of verified Rust correctness faces the same attack: agent narration can claim a proof passed while the actual Verus output, compiler state, or repository diff says otherwise. The paper's direct design lesson is to bind verdicts to machine-observable artifacts and treat agent reasoning as untrusted metadata.
-
-## prior work VL should not redo and product threat
-
-The paper already supplies a reusable adversarial harness: fixed trajectories, controlled CoT rewrites, JFR/FPR metrics, five attack strategies, prompt/rubric mitigations, and compute scaling. Inference: VL should not claim novelty for merely warning an evaluator about hallucinated reasoning. A new contribution would need a Verus-specific evidence checker that consumes compiler/verifier output, hashes the checked source and dependencies, and rejects unsupported success claims.
-
-Inference: threat to agent-written verified Rust is high if a product scores or repairs code using agent-written explanations. The measured 20–30-point FPR increases under content fabrication show that a judge can report success on unchanged failed behaviour. Threat is lower when acceptance is based on independently captured Verus output and exact source identities; the paper's results do not measure that design.
-
 ## techniques for the catalog
 
 - counterfactual CoT rewriting — hold actions and observations fixed, rewrite only reasoning, and measure judgment flips
 - adversarial manipulation taxonomy — test style confidence, reflective reasoning, progress fabrication, environment blaming, and goal framing
 - manipulation-aware/rubric judging — ground verdicts in task requirements and observable evidence with explicit prompts or key points
 - judge-time scaling — use parallel self-consistency or longer sequential reasoning and report robustness/recall tradeoffs
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -14,8 +14,6 @@ The authors identify six schemes—GGPR, Pinocchio, Groth ’16, Baghery et al.,
 
 Lean proofs are checked by the Lean kernel; the development uses mathlib’s finite-field and multivariate-polynomial structures and proof-producing simplification tactics (Section 1.2, p. 1490). In the AGM, every proof element is a linear combination of structured-reference-string (SRS) group elements. Toxic-waste samples are formal variables, not values known to the prover.
 
-Inference: The directly transferable VL lesson is the separation of a generic protocol structure, an extractor, and a soundness predicate. In Verus, this can be represented with `spec fn` predicates over abstract field/group values and `proof fn` proofs that verification implies the extracted relation. The cryptographic algebra would remain an explicit model or trusted primitive unless separately formalized.
-
 ## generic SNARK representation and soundness predicate
 
 The formalization represents SRS components as multivariate polynomials in toxic-waste variables, proof elements as parameterized linear combinations, verifier checks as polynomial equalities, and the NP relation as a predicate on statements and witnesses (Section 2.3, pp. 1493–1494). Soundness is defined by an extractor that receives the prover’s AGM coefficients:
@@ -62,8 +60,6 @@ The procedure exploits three stated regularities and their consequence for schem
 
 The paper’s theorem states that for the set of cryptographically secure pairings and all circuit instances, a straightforward linear PCP SNARK’s verification-to-extraction proposition is decidable (Theorem 1, p. 1499). Gröbner-basis methods are technically super-exponential, but the authors report that their scheme-level procedure terminates in reasonable practical time (Section 4, p. 1499).
 
-Inference: For VL, the design principle is to choose proof APIs whose algebraic obligations have bounded, reusable normal forms. A Rust verifier can expose uniform polynomial components as ghost values and prove one scheme-level theorem instead of regenerating a proof for every circuit instance.
-
 ## handling awkward algebra and flawed source proofs
 
 Groth ’16 uses denominators γ and δ, yielding Laurent polynomials that mathlib’s multivariate-polynomial type does not support. The authors multiply every SRS element by γδ, prove that this transformation preserves soundness, and formalize the transformed system (Section 5.2, pp. 1500–1501).
@@ -86,10 +82,6 @@ What is proved is the formalized algebraic soundness implication. The paper says
 
 Inference: Applying these results to a deployed verifier requires trusting the kernel and its logical foundations, validating the protocol and theorem statements, accepting the cryptographic assumptions, and establishing that the implementation matches the model. The formal results do not establish zero knowledge, completeness, or implementation side-channel resistance.
 
-Inference: The threat to agent-written verified Rust is high for cryptographic verifier code if a product treats paper proofs as sufficient: this work shows that published soundness arguments can contain typos and missing span conditions. VL should reuse the generic verification-implies-extracted-relation shape and insist on machine-checked algebraic obligations, but it should not claim Lean proof artifacts as Verus proofs.
-
-Inference: Existing formal SNARK work already covers six prominent linear PCP constructions and a reusable decision procedure. A new VL effort should focus on connecting a verified Rust implementation to the formal protocol model, or on producing independently checkable certificates for the algebraic simplification, rather than re-formalizing the same schemes without an integration target.
-
 ## techniques for the catalog
 
 - generic AGM structure — represent SRS, proof elements, verifier equations, relation, and extractor in one parameterized formal object
@@ -102,4 +94,3 @@ Inference: Existing formal SNARK work already covers six prominent linear PCP co
 - straightforwardness abstraction — isolate the one unbounded-degree variable in the coefficient ring, use projection extractors, and abstract uniform SRS components
 - soundness-preserving transformation — multiply Groth ’16 SRS elements by denominators to replace unsupported Laurent polynomials
 - formalization audit — use kernel-checked proofs to expose typos, missing span arguments, and ambiguous coefficient reasoning
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The convenience of this is that a projection function is always linear, and can therefore be interpreted as a polynomial function in the prover coefficients which make up its inputs."): checked all paper text, quotations, numbers, section and page references, and technique steps; corrected references, the Lean 4 porting scope, the Groth ’16 typo, the Pinocchio check identification, and the formalization’s limits; replaced the link with the publisher page printed in the paper; did not inspect the code artifact, reproduce timings, or validate the proposed Verus transfer.

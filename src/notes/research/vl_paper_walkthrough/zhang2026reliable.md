@@ -7,8 +7,6 @@ The paper studies self-improvement training in which a model generates its own t
 
 The method is a filter on generated training data, not an inference-time proof system. The paper’s stated goal is reliable repeated training: “By asking that every reasoning step, not just the final answer, hold up, VSI keeps lucky guesses out of the finetuning data, so the model learns from solutions that are right for the right reasons” (Introduction, p. 2).
 
-## technique 1: verified self-improvement loop
-
 ### what it is and when to use it
 For each round, sample several candidate solutions from the current model, retain candidates accepted by a verifier, fine-tune on retained pairs, and evaluate. Use this when generated solutions have an automatically checkable correctness signal. The paper’s concrete experiment uses GSM8K word problems, where arithmetic and simple quantity constraints can be checked.
 
@@ -29,28 +27,19 @@ On GSM8K with Qwen3-4B-Thinking, the paper reports baseline 80.5% accuracy and V
 
 The check is incomplete. Arithmetic expressions are parsed with patterns such as “A ⊙ B = C”; the arithmetic pass rate is at least 0.8, but if no expression is parsed, the rate defaults to 1.0 (vacuous pass) (§3.2.2, p. 4). Logical-flow checking lowercases assignments and flags a change over 50% when separated by more than two steps; adjacent-step updates are allowed (Algorithm 1 and §3.2.3, p. 4). The paper explicitly notes missed renamed variables and pronouns (§3.2.3, p. 5). Constraints cover non-negative counts, integrality, and detectable conservation (§3.2.4, p. 5), so the approach is domain-specific. It adds about ten CPU minutes per round, but early rounds may over-filter; the fallback lowers the arithmetic threshold from 0.8 to 0.5 when fewer than 500 solutions pass (Limitations, p. 9).
 
-## technique 2: converting checks into DPO preferences
-
 ### what it is and steps
 Build preference pairs whenever a problem has both (a) a candidate passing all four VSI checks and (b) a candidate with the correct final answer but failed step verification. Mark the fully verified solution chosen and the lucky guess rejected, then train with Direct Preference Optimization (§3.3, p. 5). In the experiment, DPO used β=0.1, learning rate 5×10−6, and 4,426 pairs; reward accuracy increased from 46% to 63%, and round-5 GSM8K accuracy was 91.2% versus 91.0% for VSI SFT (§4 and §5.1, pp. 5, 7).
 
 ### Verus form (inference)
 Inference: A Verus-backed pipeline could generate a boolean proof result for each candidate and construct preference records only after the proof result is established. Verus could verify the record-construction function’s invariant that a chosen record has all required checks true and a rejected record has a failed check; model optimization remains unverified external code.
 
-### limits and product threat (inference)
-Inference: For agent-written verified Rust, the transferable idea is to reject training examples whose executable behavior passes only by coincidence while contracts or intermediate invariants fail. It does not prove that a natural-language requirement is complete, that the parser is sound, or that a Verus contract captures the intended behavior. The measured threat is indirect: a training pipeline that learns from invalid proof traces could amplify recurring specification mistakes, while a sound checker can reduce—but not eliminate—that risk.
-
 ## what is proved, measured, and trusted
 The paper measures accuracy, verification rates, parser coverage, and Self-BLEU, rather than proving a theorem about model convergence. Self-BLEU for VSI rises from 0.30 to 0.35 over five rounds, versus 0.32 to 0.64 with no verification (Table 5, p. 9). Table 3 reports, among correct-answer solutions, arithmetic pass 84.1%, logical-flow pass 87.2%, constraints pass 91.8%, parser coverage 78.3%, and all-checks pass 66.3% (p. 8). The table’s all-checks rate is on the correct-answer pool, whereas the 30,983/46,836 calculation uses the explicit round-1 counts; the denominators differ from the all-generated pool.
 
-Trusted components include SymPy evaluation, regex extraction, manually chosen thresholds, GSM8K ground-truth answers, LoRA and DPO implementations, GPU execution, and the correctness of the problem constraints. The authors state that “How long it stays stable is ultimately bounded by how good that check is” (Beyond math, p. 10). Inference: VL should treat every checker and parser as part of its trusted computing base and separately verify that generated proof obligations correspond to the intended Rust specification.
-
-## what VL should reuse and avoid repeating
-The reusable pattern is a staged acceptance policy: final-result check, local semantic checks, cross-step consistency, and domain invariants, followed by training only on accepted traces. The paper already supplies a reproducible GSM8K implementation and an explicit parser-coverage analysis; VL should not redo the same arithmetic-only experiment. A new VL study would need a Rust/Verus-specific checker and measurements on proof-trace soundness, rejected lucky proofs, and maintenance cost.
+Trusted components include SymPy evaluation, regex extraction, manually chosen thresholds, GSM8K ground-truth answers, LoRA and DPO implementations, GPU execution, and the correctness of the problem constraints. The authors state that “How long it stays stable is ultimately bounded by how good that check is” (Beyond math, p. 10).
 
 ## techniques for the catalog
 - verified self-improvement loop — sample multiple solutions, mechanically check each solution’s answer and reasoning, and fine-tune only on accepted traces
 - logical-flow verification — track named intermediate values and flag large unexplained changes across separated steps
 - constraint satisfaction filter — enforce domain properties such as non-negativity, integrality, and conservation
 - verifier-derived DPO — prefer fully checked traces over correct-answer traces that fail intermediate checks
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

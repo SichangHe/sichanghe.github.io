@@ -27,7 +27,7 @@ How to do it.
 5. Use `cases` with matching expressions to select goals requiring different treatment (Fig. 1, p. 3)
 6. Instantiate quantified variables with concrete terms, then run `auto` (Fig. 1, p. 3)
 
-Verus form. Inference: represent the same workflow with Rust/Verus contracts, loop `invariant` clauses, `requires` and `ensures`, and `proof fn` lemmas that supply the missing intermediate facts. Inference: a VL proof script can retain a textual sequence of lemma calls and solver settings, but each command must elaborate to valid Verus syntax and proof-only code must not be called at runtime. Inference: kps's selected-goal mutation model is a useful interface design for an agent that repairs one failed proof obligation at a time.
+Verus form.
 
 Evidence and limits. The paper demonstrates the script on the Quicksort split proof and explains that line 7's match binds quantified variables for lines 8–9 (Fig. 1, p. 3). It does not report proof length, time, or success rate. The paper says KeY's explicit proof object “enables a more fine-grained stepping functionality down to the level of single calculus rule applications.” (Introduction, p. 2)
 
@@ -64,7 +64,7 @@ How to do it.
 4. If the final proof state is wrong, use reverse stepping over the explicit proof object to inspect earlier states (§3, p. 5)
 5. Inspect the last proof state and ask whether it matches the mental model of the proof (§3, p. 4)
 
-Verus form. Inference: implement replay around each Verus proof block or lemma invocation, recording solver context, generated obligations, and source locations. Inference: Verus does not expose KeY's explicit proof tree, so reverse replay would require VL to retain obligation snapshots and solver inputs. Breakpoints should stop before a `proof fn` or lemma invocation; they should never turn proof code into executable runtime behavior.
+Verus form.
 
 Evidence and limits. Reverse inspection depends on the “(partial) explicit proof object provided by the underlying verification system.” (§3, p. 5) A prover without a replayable proof object would need a different trace mechanism. No debugging-time or diagnosis-accuracy measurements are reported.
 
@@ -100,14 +100,6 @@ Verus form. Inference: let an agent or user add a lemma call, `assert`, or proof
 
 Evidence and limits. The paper describes persistence but gives no count of recorded commands or repair success rate. The UI depends in part on KeY's point-and-click interaction style (§4, p. 6).
 
-## architecture, trusted boundary, and VL risk
-
-psdbg has three components: a user interface, execution control, and an interpreter built over a theorem prover (§4, p. 6). The interpreter executes scripts and calls goal mutators; execution control supplies stepping, state tracing, and breakpoints. Extension points handle mutators, prover settings, and matching evaluation (§4, p. 6). The paper says, “The debugging logic is separated from the interpreter core and the user interface.” (§4, p. 6)
-
-Inference: VL can adopt this separation by keeping Rust/Verus obligation generation, proof replay, and presentation as distinct layers. Inference: the main product threat is diagnosability rather than proof soundness: an agent that emits a failed proof without a replayable obligation trace forces a human to rediscover the failure. Inference: the paper already covers generic proof-script debugging patterns VL should not re-do as an unstructured chat feature: breakpoints, state snapshots, reverse replay, goal selection, and persistent interactive repair. Inference: a Verus adapter must replace KeY-specific sequent matching with Rust specification and solver-context matching.
-
-The paper states no soundness claim and does not discuss a trusted base. Inference: its trusted base includes KeY's calculus and explicit proof object, the script interpreter, matching implementation, Java-to-goal mapping, and user-written specifications. Inference: for VL, Verus, its solver, compiler, proof erasure, Rust libraries, and the replay trace format remain trusted. The paper's future work says “we will explore the usability of psdbg and kps on larger and more complex verification tasks” and plans to “better visualise relations between different views” (§5, p. 6). Inference: so the evidence does not establish scalability or user benefit.
-
 ## techniques for the catalog
 
 - proof-state scripting: describe non-automatic proof actions as replayable commands over selected goals
@@ -116,4 +108,3 @@ The paper states no soundness claim and does not discuss a trusted base. Inferen
 - synchronized proof visualization: inspect script, goal, source program, and explicit proof tree together
 - persistent interactive repair: manipulate open goals point-and-click and append the recorded commands to the script
 - layered debugger architecture: separate interface, execution control, interpreter, matcher, and prover integration
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our tool allows to make these user interactions persistent automatically by recording and appending them to the end of the proof script upon leaving the interactive mode."): read all 9 pages of the paper text, then checked every quotation, section and page reference, the Fig. 1 script lines, and each technique step against it; confirmed the tag, author, year and arXiv link (1804.04402v1). Changed: Fig. 1 page (p. 3, not pp. 2-3); the foreach step now cites both Fig. 1 and the p. 4 text; replaced the unsupported claim that the explicit proof object is "required" with the paper's wording; replaced the claim that bindings become available to later commands and the wording about appending equivalent commands with quotes; dropped the invented step about interacting until goals are discharged and the claim that the paper proves a program property; added "Inference:" to the unmarked "When to use it" lines and the trusted-base sentence. Not checked: the PDF figure images (Fig. 2, Fig. 3) beyond the text, the Quicksort appendix beyond a read-through, the cited related work, and the Verus mappings (own inferences).

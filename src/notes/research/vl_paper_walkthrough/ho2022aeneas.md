@@ -48,10 +48,6 @@ Aeneas does not support unsafe code or interior mutability (section 1, p. 3). Th
 
 Inference: The functional proofs establish the translated model’s properties; without the planned soundness proof, the paper does not establish that every verified term has the same behavior as compiled Rust. Trusted components include Rust/MIR lowering, Charon, Aeneas translation, F* and Z3, opaque external-module lemmas, and the user’s representation invariant. Inference: for agent-written verified Rust, Aeneas is strongest for safe, ownership-shaped code and weak for unsafe allocator or device code. Verus can cover broader proof-oriented systems code, but must pay memory and unsafe reasoning costs that Aeneas intentionally avoids.
 
-## what VL should reuse
-
-Inference: VL should reuse Aeneas’s value-level models, explicit borrow update relations, backward propagation at borrow termination, and extrinsic proofs over translated behavior. It should not assume that a functional translation removes the need for an end-to-end correspondence proof or for checking opaque dependencies. Existing Verus work that already models ownership and executable behavior should be integrated rather than reimplemented as a new translator unless a measured reduction in proof effort is shown.
-
 ## techniques for the catalog
 
 - ownership-centric semantics: model safe Rust with values and loans so borrow soundness is semantic and memory-free
@@ -59,4 +55,3 @@ Inference: VL should reuse Aeneas’s value-level models, explicit borrow update
 - backward functions: synthesize a reverse update function to propagate borrowed changes to the original owner when a region ends
 - pure translation: compile LLBC statements and control flow into executable lambda terms with result-style failure
 - extrinsic proof: prove representation invariants and functional contracts as lemmas over translated functions, keeping proof-only cases out of runtime code
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "An abstraction owns borrows and loans, but does so abstractly; that is, we have no aliasing information about values in an abstraction."): read the whole paper text; checked every quotation, number, section and page reference, and technique step. Changed: page and section references (most were off by several pages); the mutable- and shared-borrow loan mechanics; the forward function (returns only the return value); call and region-end steps per T-Call-Forward/T-Call-Backward; translation restrictions (terminal disjunctions, no loops, signature limits); the backend claim (F* only, Coq in the works); the second LoC figures (Aeneas 13.5 kLoC); hash-table comparison wording; marked comparisons-are-not-controlled and the other-lemmas claim as inference; added the quote that the implementation is trusted. Not checked: the figures (rules in Figures 1–9) beyond their text; the Verus-related inferences.

@@ -19,7 +19,7 @@ How to apply it:
 4. Minimize the sum of the two losses; the paper fine-tunes full parameters for one epoch. (Sec. 3.2, p. 4; Appendix C.1, p. 18)
 5. At inference, score a candidate formalization and threshold or rank it. (Sec. 3.3, p. 5)
 
-Verus form: Inference: this is a training/evaluation method, not a Verus proof construct. A VL model could train on pairs of natural-language requirements and Verus contracts, using token loss plus a contrastive loss on requirement/contract embeddings. The final acceptance still needs `verus` to check the contract and a human or independently audited alignment oracle to check meaning. Embedding similarity cannot replace `requires`/`ensures` semantics.
+Verus form:
 
 Evidence and limits: Appendix F reports autoformalization performance on FormL4-Basic/Random of 40.92%/35.88% for the baseline and 43.14%/36.02% for the combined model (Table 10, p. 21). Its prose calls the baseline cross-entropy-only, but its formula and table label it `L_CL`, which Sec. 3.2 defines as contrastive loss. Appendix C.1 reports 8 NVIDIA A100 GPUs with 40GB each and full-parameter fine-tuning. Its prose gives batch size 512 and prints learning rate `2e × 10−6`, while Table 7 gives global batch size 128 and learning rate `5 × 10−6` (p. 18). Inference: these conflicting descriptions prevent identifying the intended settings from this paper alone.
 
@@ -65,15 +65,7 @@ Evidence: Table 3 reports GPT-4 versus FormalAlign AS on FormL4-Basic as 88.91% 
 
 Verus form: Inference: report AS for candidate contract selection and precision/recall for semantic rejection, but report Verus proof success separately. A model may select the best candidate among bad contracts; AS does not imply that any selected contract is correct.
 
-## what is proved, trusted, and threat to VL
-
-Inference: FormalAlign provides empirical alignment evidence rather than a theorem about semantic equivalence. Its benchmark results depend on dataset labels, mutation correctness, model implementation, threshold, and pretrained data. Compiler acceptance establishes no correspondence with the informal input. Appendix G reports human agreement with the labels of 79.58% on average (Table 11, p. 22); this does not establish that either the labels or the human judgments are infallible.
-
-Inference: the threat to agent-written verified Rust is a provable but incomplete contract accepted because an alignment model confuses syntactic plausibility with intended behavior. VL should reuse controlled negative mutations, two-part scoring, explicit held-out denominators, and expert-audited calibration. It should not use FormalAlign score as a proof or replace Verus checking with an LLM judge. The paper's Appendix G result, 65.00% correct on 80 items (Table 11, p. 22), is an observed accuracy on that sample, not an upper bound on other uses.
-
 ## techniques for the catalog
-
-Inference: these are candidate adaptations for VL, not Verus results reported by the paper.
 
 - dual-loss alignment training: combine formal-sequence cross-entropy with in-batch contrastive representation loss
 - certainty/similarity score: average token confidence and hidden-state cosine similarity for candidate ranking
@@ -81,4 +73,3 @@ Inference: these are candidate adaptations for VL, not Verus results reported by
 - alignment selection: choose the highest-scoring formal candidate from a pool
 - threshold detection: classify pairs with a calibrated `V_align` threshold and report precision/recall
 - expert calibration: compare automated labels with a fixed, balanced human sample and publish denominators
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We investigate the necessity and effectiveness of our combined training loss, defined in Eq. equation 2, by conducting an ablation study with different loss configurations."): read the full paper, including references and appendices; checked all study quotations, numbers, techniques, section/page references, and the arXiv identifier; corrected the link, certainty definition, page references, expert count, imbalance description, and unsupported conclusions; recorded conflicting negative counts, training settings, baseline labels, and MiniF2F-Test scores; did not reproduce experiments, inspect code or datasets, or validate the proposed Verus adaptations.

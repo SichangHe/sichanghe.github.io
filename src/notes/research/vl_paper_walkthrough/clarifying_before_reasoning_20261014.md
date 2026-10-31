@@ -65,7 +65,7 @@ Index local Verus specifications and proven lemmas by fully qualified Rust names
 
 ## what is proved, measured, and trusted
 
-Coq checks candidate tactics, and search succeeds when no goals remain (Algorithm 1, pp. 12–13). The paper measures clarity scores, success rates, depth, tactic counts, and component ablations (§7, pp. 14–19). The clarity metric relies on DeepSeek-V3 as judge (§4.2, p. 8). Inference: retrieved text and generated explanations guide search but do not replace Coq’s proof checking; a checked proof establishes the formal statement, whose adequacy still needs review. For Verus, correctness additionally depends on its toolchain, SMT solving, external specifications, and the relationship between the formal contract and intended behavior. VL could adapt the paper’s mechanisms to Rust ownership, traits, and Verus contracts, but this paper supplies no Verus evaluation.
+Coq checks candidate tactics, and search succeeds when no goals remain (Algorithm 1, pp. 12–13). The paper measures clarity scores, success rates, depth, tactic counts, and component ablations (§7, pp. 14–19). The clarity metric relies on DeepSeek-V3 as judge (§4.2, p. 8).
 
 ## techniques for the catalog
 
@@ -74,4 +74,3 @@ Coq checks candidate tactics, and search succeeds when no goals remain (Algorith
 - bounded beam search — compile multiple candidates, retain the best fixed-width states, and stop at depth/retry limits
 - retrieval and error reflection — retrieve premises from the strategy and regenerate candidates using compiler errors
 - public proof notebook — retain a bounded cache of insights from successful steps; maintain tactic traces and proof summaries alongside it
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each structured prompt contains the components described in Section 5, including a list of global definitions referenced in the proof context."): checked all paper text, study quotations, numbers, section/page references, extraction steps, and search pseudocode; corrected the entity tuple, arithmetic, page references, retry description, and trust claims, and marked unsupported applications as inference; noted conflicting dataset counts and retry settings; did not reproduce experiments, inspect implementation code, validate the clarity judge, or test Verus adaptations.

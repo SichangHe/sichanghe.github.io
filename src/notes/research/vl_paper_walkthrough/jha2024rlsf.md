@@ -46,12 +46,6 @@ The authors modified the TRL library to accept dense rewards and used PPO with L
 
 The paper reports gains on five domain-specific tasks but explicitly limits its claim: “While we do not claim to improve general reasoning capabilities, RLSF leverages symbolic reasoning tools to improve downstream domain-specific tasks where syntax and semantics play a critical role.” (Section 7, p. 7). It identifies slow or resource-intensive symbolic tools as a limitation and suggests precomputed rewards or DPO-style alternatives (Section 7, p. 7). Inference: the environment, reasoner, certificate parser, reward mapping, and PPO implementation require validation; the reported experiments do not establish a formal guarantee of improvement after training.
 
-## evidence and VL implications
-
-Inference: a product-level risk is mislocalization: if diagnostics blame the wrong token, training reinforces a wrong correction. A second threat is treating a scalar pass result as a proof. VL should store the exact Verus command, source hash, verifier version, error spans, and proof status with every reward vector. The final Rust artifact must still pass Verus independently; RLSF should accelerate candidate generation rather than weaken the prerequisite check.
-
-Inference: the reusable interface pattern is that a sound checker emits structured, dense, local feedback, and reinforcement learning consumes it without differentiating through the checker. The paper evaluates code synthesis, three chemistry tasks, and Game of 24 (Sections 4–6), without Verus or Rust experiments. Inference: VL should adapt the certificate segmentation and reward design, then measure proof success per task and per verifier configuration.
-
 ## techniques for the catalog
 
 The first five entries summarize Sections 3–6 and Appendix A; the last combines reported parallelization with the future-work proposal in Section 7. Verus adaptations above are inferences.
@@ -62,5 +56,3 @@ The first five entries summarize Sections 3–6 and Appendix A; the last combine
 - formal-language segmentation — choose line, word, character, or parser-token boundaries for segment-wise feedback
 - non-differentiable verifier training — keep the symbolic tool external to gradients while using its sound diagnostics for RL
 - reward-cost engineering — parallelize symbolic queries with `Popen`; consider DPO-style training with precomputed symbolic rewards for slow tools (Section 3, p. 3; Section 7, p. 7)
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each element in the reward vector corresponds to a token in the response, where erroneous tokens are penalized with a value of 0 and correct ones are assigned 1."): checked all paper text including references and appendices, quotations, numbers, page and section references, technique steps, and the arXiv identifier; corrected a quotation, page references, metric definitions, reward localization, and unsupported catalog claims, and marked study conclusions as inferences; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

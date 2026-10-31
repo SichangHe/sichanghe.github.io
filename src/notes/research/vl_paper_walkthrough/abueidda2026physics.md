@@ -50,14 +50,6 @@ After an improving parent-child edge, split the code change into at most K edits
 
 Inference: in Verus, make each edit a separate verified function and prove metadata and score-record consistency. The numerical retraining experiment remains outside Verus's proof domain.
 
-## trust, limits, and product threat
-
-The paper reports sampled fixed-code checks and bounded input searches, not formal proofs. It states: “A pass is a conditional statement: the trained surrogate satisfied the hard physics checks that were specified for a particular verification setting.” (section 4.4, p. 22). Each example compares one audit-enabled run with one error-only run at a single seed and fixed budgets. The audit-enabled arm changes the verification layer, advisory probes, and feedback to later proposals together; the accuracy gains cannot be attributed to one component. Both baselines are from the authors’ group, and the transient baseline is an earlier error-only run (section 4.4, pp. 23–24).
-
-Inference: transferring this design to a proof workflow requires explicit assumptions about contract adequacy, reference data, numerical behavior, and external tools. The generated implementation and learned weights are objects under test, rather than evidence of physical validity. Finite-budget input search provides no completeness guarantee.
-
-Inference: for agent-written verified Rust, the strongest transferable idea is specification-first prerequisite checks: derive explicit contracts before generation, run fixed checks on outputs, and retain counterexample searches. The threat is that a Verus proof can establish a poorly chosen contract while an agent's unmodeled model or environment violates the intended requirement. For VL, separating score, runtime failure, contract evidence, and external assumptions is a possible application; the paper does not evaluate VL or Verus.
-
 ## techniques for the catalog
 
 - physics contract prerequisite check — fix typed hard/soft checks and select the lowest-score candidate whose sampled normalized violation is at most the threshold
@@ -67,5 +59,3 @@ Inference: for agent-written verified Rust, the strongest transferable idea is s
 - structure by construction — encode linearity, scaling, boundary, and causality in the surrogate architecture before training
 
 - isolated edit attribution — retrain one change at a time and save reusable method cards only after score and audit checks
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The physics checks test the predicted displacement fields directly for the linear-elastic structure stated above; they use no reference solutions."): checked the full text, quotations, numerical results, page and section references, workflow steps, and catalog; corrected the paper link, abstract quote, page references, LLM versus fixed-routine roles, live versus reference causality checks, verification limits, and inference labels; did not rerun experiments, inspect implementation code, or validate the proposed Verus applications.

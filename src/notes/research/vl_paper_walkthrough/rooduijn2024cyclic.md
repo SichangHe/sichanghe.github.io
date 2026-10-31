@@ -6,8 +6,6 @@ Tag: `rooduijn2024cyclic`, [paper](http://arxiv.org/abs/2405.07505v1)
 
 Rooduijn, Kozen, and Silva give a non-well-founded sequent calculus for Guarded Kleene Algebra with Tests (GKAT), a language for deterministic while-programs. A sequent carries antecedent and succedent expression lists plus a set of Boolean atoms. The calculus SGKAT∞ uses ordinary sequents, a fairness condition on while-left rules, and back-edge-compatible infinite proofs. The authors prove soundness and completeness for the guarded-language semantics, show every proof has finitely many distinct sequents and every provable sequent has a regular (cyclic) proof, and derive an NLOGSPACE upper bound for language inclusion. The abstract states: “The deterministic nature of GKAT allows for a non-well-founded sequent system whose set of regular proofs is complete with respect to the guarded language model.” (Abstract, p. 1). It also states: “Moreover, the decision procedure induced by proof search runs in NLOGSPACE, whereas that of Kleene Algebra is in PSPACE.” (Abstract, p. 1).
 
-Inference: this is a proof-theoretic foundation rather than a Rust verification workflow. Its useful lesson for VL is how to represent loop reasoning with finite state, fairness/progress, invertible rules, and explicit semantic annotations. Cyclic proof ideas could guide automation or proof-search diagnostics; this paper supplies no Verus encoding or evaluation.
-
 ## technique 1: atom-annotated sequents for guarded programs
 
 what it is
@@ -178,8 +176,6 @@ The paper proves semantic soundness and completeness of SGKAT∞ relative to the
 
 The paper’s complexity claims use the stated abstract model. The abstract says NLOGSPACE, while Proposition 2 explains that proof search runs in coNLOGSPACE and language inclusion is in NLOGSPACE (p. 16); this is a complement relationship, not an arithmetic contradiction. The regularity claim is quadratic in root syntax-tree sizes (Corollary 1, p. 13), while the finite proof-search branch bound additionally multiplies by atom count (Proposition 2, p. 16; full proof, p. 26).
 
-Inference: for agent-authored Verus code, the paper creates an indirect but concrete risk. A proof agent can loop on a recurring obligation or repeatedly unfold a loop without exposing a progress measure. VL can borrow finite-state obligation caching, explicit fairness/progress diagnostics, and priority-aware decomposition. It should not claim that cyclic SGKAT proofs directly verify Rust: Verus uses Rust contracts, `invariant`, and `decreases`, whereas this paper’s sequents and back edges are a separate proof calculus.
-
 ## techniques for the catalog
 
 - atom-annotated sequents — carry guard-state sets in judgments so Boolean reasoning is explicit and propositional rules can be omitted
@@ -187,4 +183,3 @@ Inference: for agent-authored Verus code, the paper creates an indirect but conc
 - fair cyclic reasoning — require infinitely repeated loop-left progress and prove soundness with finite unrolling plus a decreasing measure
 - syntax-tree regularity — represent leftmost cedents by unique syntax tails to obtain finite-state cyclic proofs
 - staged bounded proof search — search in left, right, loop-empty, and closure phases; the space procedure stores one sequent and counters
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The results of this section crucially depend on the fact that we are only applying rules to the leftmost expressions of cedents."): read the full paper including Appendix A; checked quotations, definitions, technique steps, bounds, section and page references, authors, year, and arXiv identifier; inspected the PDF for the finite-unrolling formula; corrected its missing complement, alphabet assumptions, modal-rule conditions, tail cases, proof-search details and references; marked application advice as inference; did not independently re-prove the theorems or test a Verus implementation.

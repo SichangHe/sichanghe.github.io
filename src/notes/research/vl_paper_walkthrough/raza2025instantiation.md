@@ -30,7 +30,7 @@ Steps. Keep the failing Ifail; supply the initial definitions code, the constrai
 
 Evidence. On AR-LSAT, the paper reports that semantic repair improves accuracy by 6.1% and temperature exploration by 10.0%; coverage gains 5.2% with repair and more than doubles with temperature exploration, rising 12.2% above an initial 10.9% (Section 3.1, p. 6). Repairs stop improving metrics beyond three attempts, while temperature gains continue to 0.6. These percentages are ablation changes on AR-LSAT, not universal improvements.
 
-Verus form. Inference: treat Ifail as a counterexample for a failed postcondition, edit the Rust function or proof lemma, and rerun Verus. A repair loop may regenerate specifications, so VL should freeze the intended contract and permit changes only when a reviewer accepts the changed requirement.
+Verus form.
 
 ## technique: independent candidate exploration and fallback
 
@@ -42,12 +42,9 @@ Verus form. Inference: parallel candidate generation can produce alternative Rus
 
 Z3 proves SAT/UNSAT for supplied concrete expressions; it does not prove that the expressions capture the natural-language problem. SSV’s strong GPT-4 results are empirical: Table 1 gives 100% corrected-label precision on every dataset, but the authors report GPT-3.5 incorrect verified cases (one PrOntoQA and four ProofWriter) and explain that both program and examples can share the same error (Section 4, p. 6). GPT-3.5 coverage is zero on AR-LSAT and LogicalDeduction, with 97% average precision on the three datasets where coverage exists (Table 2, p. 7; Section 3.1, p. 6). Dataset answer corrections affect reported precision; the paper reports original and corrected values separately.
 
-Inference: the product threat to agent-written verified Rust is a specification gap. SSV’s counterexample-guided loop can expose missing or conflated predicates, but finite examples and an LLM-generated formalization do not prove the statute or requirement. VL can adopt segmented contracts, independent positive/negative witnesses, semantic repair, and explicit coverage/precision reporting, then require Verus proofs over quantified behavior before code enters a trusted artifact.
-
 ## techniques for the catalog
 
 - segmented solver generation — emit initial definitions, separately annotated constraints, and options so each part can be checked and repaired
 - positive/negative instantiation checks — require SAT for a concrete positive case and UNSAT for a concrete negative case for every constraint
 - counterexample-guided semantic repair — feed the first failing instantiation back to the model and repeat bounded verification
 - temperature and solver parallelism — explore independent candidate programs and parallelize independent checks, caching unchanged obligations
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Three cases in the AR-LSAT dataset were verified correctly by our system, but were labelled with the wrong answers in the dataset."): read the whole paper including the appendix and checked every quotation, number, page and section reference, and the technique steps against the text; changed the SAT/UNSAT quotation (the old one omitted a word), the page references for the Pinit structure (p. 4), MaxRepairs and Temperatures (p. 5), Table 2 (p. 7), and Section 4 (p. 6), the repair-prompt inputs, the instantiation-generation inputs, and added the note on the repair condition; link kept from the paper text (arXiv:2501.16961). Did not check the cited works, the prompts line by line beyond what is quoted, or the Figure 2-4 code.

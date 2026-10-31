@@ -89,8 +89,6 @@ The paper also reports 200/200 accepted problems with zero language-model calls 
 
 Solo submits candidates interactively. Marathon instead appends candidate rows durably, and the runner checks the last complete candidate per identifier after process exit: “Marathon cannot make interactive judge calls.” (§6.4, p. 8.) Its output durability and scheduling therefore differ from Solo's acceptance loop.
 
-Inference: VL should not redo the generic idea of certificate-producing search with a verifier boundary, finite-model witnesses, ordered superposition, replayable derivation DAGs, or hash-bound evaluation ledgers. Those mechanisms already exist here. VL-specific work is adapting the boundary to Verus proof functions, Rust ownership, and solver diagnostics, then measuring acceptance on held-out verified-Rust tasks.
-
 Inference: the threat to agent-written verified Rust is moderate. Untrusted search can waste time, emit malformed proofs, or miss a proof, but a sound Verus checker should reject an invalid term. The remaining product risk is specification omission: this paper validates certificates for a fixed mathematical goal, not whether an agent selected the right Rust contract.
 
 ## techniques for the catalog
@@ -101,4 +99,3 @@ Inference: the threat to agent-written verified Rust is moderate. Untrusted sear
 - proof-producing ordered superposition — orient and saturate equations, retain derivation recipes, then replay positive equality chains in the kernel
 - tautology deletion — retire clauses simplified to `s = s` so they cannot starve useful saturation clauses
 - certificate provenance — bind solver bytes, judge revision, result files, and table rows to immutable hashes
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This keeps proof text close to the saturation trace while allowing Lean 4 to elaborate each local equality without reconstructing the global search."): checked all paper text, study quotations, numbers, section/page references, technique steps, and the arXiv link; corrected quote locations, cascade details, finite versus infinite certificate steps, demodulation indexing, the trusted boundary, and Solo versus Marathon checking; added the stress-test and research-set limits; did not rerun the solver, inspect result ledgers, or validate the inferred Verus adaptations.

@@ -33,7 +33,7 @@ Steps from the paper.
 
 Evidence: Table III (p. 6) reports Terraform VFR on 50 items per model/method: Opus verify-loop 92% (95% bootstrap CI 84–98%), Sonnet 68% (54–80%), and Maverick 70% (56–82%), versus 32–50% across single-shot methods. Table VI (p. 7) reports Kubernetes results on 20 items per cell: Opus and Sonnet reach 100% for all methods; Maverick rises from 45% plain to 95% structured and 100% verify-loop. The paper states, “Most fixes occur in attempts 1–2” (Figure 4 caption, p. 8). Section 7 clarifies, “Our convergence analysis shows that most verify-loop fixes occur on attempts 1–2, with a third attempt adding only 2 percentage points on average.” (p. 9.)
 
-The paper reports, “Three Terraform items are fixed by Sonnet’s plain prompting but not by its verify-loop.” It attributes this to overcorrection after failed first attempts (Section 6.6, p. 8). Inference: A VL repair system could keep independently verified alternatives when comparing repair strategies. This result does not show an earlier verified patch being discarded within the paper’s loop.
+The paper reports, “Three Terraform items are fixed by Sonnet’s plain prompting but not by its verify-loop.” It attributes this to overcorrection after failed first attempts (Section 6.6, p. 8).
 
 ## technique: benchmark and statistical protocol
 
@@ -45,14 +45,6 @@ Table VIII (p. 8) gives Terraform median diff ratios (changed/original lines): s
 
 Inference: A Verus benchmark could stratify by defect type, distinguish artifacts from attempts, and report confidence intervals. The evaluation pattern transfers; the Checkov-specific checks would need proof and regression checks appropriate to Verus.
 
-## limitations and relevance to VL
-
-Checkov is the sole scanner. The paper reports, “Two benchmark items (BM-0276, BM-0449) produce false negatives in V2 because Checkov reports the target rule as failed due to other resources in the same file, not the repaired resource.” A graph-based rule in BM-0040 is unresolved by every model (Section 8, p. 9). The benchmark comes from Checkov’s test suite rather than production repositories, and evaluation uses one prompt template per strategy and the model versions evaluated in April 2026 (Section 8, pp. 9–10). Inference: Acceptance establishes the defined Checkov checks, not deployment correctness or preservation of infrastructure intent.
-
-Structured prompting underperforms plain on Terraform (32–42% versus 44–50% VFR, Table III, p. 6) but improves Maverick on Kubernetes from 45% to 95% (Table VI, p. 7). The broad claim of 100% syntactic validity in the abstract does not hold across both technologies: Maverick structured Kubernetes has V1 = 95% (Table VI).
-
-Inference: For Verus, treating compilation or one proof obligation as sufficient could miss regressions in other contracts, changed APIs, or unsafe escape hatches. Explicit proof and regression prerequisites would address that risk, subject to the completeness of the specifications and checks. The paper proposes extending verification beyond Checkov: “Our framework currently relies on a single scanner (Checkov); extending to multi-scanner consensus verification is a natural next step that could further improve regression detection and reduce harness-specific false negatives.” (Section 7, p. 9.) Human evaluation of repair intent preservation remains future work (Section 8, p. 10).
-
 ## techniques for the catalog
 
 - verified-fix rate — require syntax, target resolution, and zero new failed rule IDs, with explicit denominator `N`
@@ -60,5 +52,3 @@ Inference: For Verus, treating compilation or one proof obligation as sufficient
 - baseline-difference regression check — compare repaired scanner findings against the original set and reject new IDs
 - patch minimality metric — report changed lines/original lines separately from the acceptance decision
 - stratified repair evaluation — select distinct scanner rules, fix settings, and report paired comparisons and confidence intervals
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The confidence intervals for verify-loop do not overlap with those of structured prompting for any model."): checked all study claims, quotations, numbers, section and PDF page references, and technique steps; corrected page references, convergence location, prerequisite terminology, extraction details, unsupported trust claims, and overbroad syntax claims; identified the paper’s statistical and patch-size inconsistencies; did not reproduce experiments, inspect the replication package, or verify cited works independently.

@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `hasan2026aiassisted`, [paper](http://arxiv.org/abs/2604.01572v1)
 
-
 ## workflow and survey findings
 
 The paper organizes AI/LLM-assisted hardware security work into an end-to-end pipeline: asset identification, threat modeling, test-plan generation, simulation and formal verification, and countermeasures. Its motivating observation is that “Simulation and formal verification remain at the core of trustworthy security verification.” (Section II-D, p.2) The same section says generated properties, monitors, and hypotheses “are useful only when they compile, execute correctly, and meaningfully constrain the design.” (Section II-D, p.2) Inference: generated text alone is therefore not evidence of security.
@@ -22,8 +21,6 @@ Apply it as follows.
 3. Map each asset and boundary condition to CWE and confidentiality, integrity, or availability objectives (Table I, p.3).
 4. Write the threat agent, attack vector, request format, scenario, STRIDE categories, and scope (Table II, p.4).
 5. Derive the directed tests from this explicit threat model; the paper says the threat framing “directly determines the directed tests” (Section IV-B, p.4). Inference: properties should be derived the same way.
-
-Inference: In VL, this prevents an agent from proving a local Rust function while silently assuming authorization performed by an absent caller. The model should become a Rust predicate over caller identity and request state, with the boundary assumption visible in the contract.
 
 ## technique 2: threat-to-test translation and executable evidence
 
@@ -47,16 +44,9 @@ Inference: How to apply the grounded approach, assembled by the study author fro
 
 Inference: In Verus, the corresponding grounding is supplying the agent with function signatures, state fields, and existing predicates; the generated artifact should be a contract plus proof function. A Verus verifier accepts only the encoded relation, so a human must audit that the relation names the right asset and attacker capability.
 
-## evidence, trust, and product threat
-
-The survey is primarily a synthesis; its quantitative case study reports 31 transactions, 30 decoded violations, one unmapped request, and zero observed back-pressure (Section IV-D, p.4). It does not report a formal proof of NVDLA security or a denominator for all possible requests. Inference: the trusted components are the chosen public `nvdlav1` RTL snapshot, the LLM-generated asset and threat tables, the SystemVerilog simulator and monitors, and the assumption that the module boundary represents the relevant security question. The authors recommend interconnect-level access control before the module, privilege or source-ID metadata, and making `core_req_prdy` depend on an authorization check (Table IV, p.4).
-
-Inference: Threat to agent-written verified Rust is high when an LLM invents assets, omits caller assumptions, or generates a property that compiles but is out of scope. The strongest reusable practice is to require a scoped threat model, executable adversarial evidence, and a proof obligation tied to each asset. VL should reuse this traceability and countermeasure loop, while avoiding claims that simulation counts as universal verification.
-
 ## techniques for the catalog
 
 - asset-to-threat modeling: enumerate protected assets, CWE mappings, attacker scenarios, objectives, and scope before writing properties
 - threat-to-test planning: turn each threat into directed transactions, coverage checks, monitors, and explicit denominators
 - grounded property generation: combine design structure, threat knowledge, and tool feedback before accepting formal assertions
 - countermeasure loop: use evidence and failed properties to propose and verify localized access-control repairs
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Across all valid requests, the ready signal never deasserted, indicating zero back-pressure in the exercised cases."): read all text of the paper (pages 1-4 plus reference list); checked every quotation, the numbers (31 transactions, 30 flagged, 29 writes and 1 read, 18-target scan, eight rapid-fire writes, Tables I-IV, CWE-1220), the section and page references, and the technique steps against the paper; changed page numbers (Section II-D quote and Table IV, Section V are on pages 2 and 4, Table I on page 3), removed the unsupported AST, counterexample-refinement and FPV claims and the human-refinement claim, replaced them with what the survey says about LISA, STELLAR, LASHED, BugWhisperer and MEIC, and marked the step lists and trust assessment as Inference; link kept from the fetch record (arXiv ID matches the paper header, arXiv:2604.01572v1); did not check the cited works themselves, and did not check the NVDLA RTL or the PDF figure beyond its text.

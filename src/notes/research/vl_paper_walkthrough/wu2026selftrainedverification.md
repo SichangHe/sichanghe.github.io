@@ -76,15 +76,9 @@ Evidence. On Hardest, ViL raises round-0 pass@1 from 10.7% to 14.7% (+37%); on H
 
 Verus form (Inference). Train a Rust generator on episodes where each proposed proof is compiled, diagnostics are fed back, and final reward is successful verification plus meaningful tests. Freeze the diagnostic verifier during generator updates. The reward must not be only “compiles”: it should include the intended postcondition and behavior checks, because a vacuous specification can compile. Inference: ViL can teach repair patterns that appear in first attempts, but it cannot remove the need to compile the final artifact.
 
-## what VL should reuse and avoid
-
-Inference: VL should reuse reference-conditioned verifier training, on-policy diagnostic distillation, multi-round verified-prefix repair, smaller-verifier deployment, and generator training inside the repair loop. The paper already tests SFT, verdict-only RL, meta-verifier proxies, scale-matched refinement, and resampling; VL should not repeat those generic baselines. Product threat is high if a learned verifier is treated as a proof authority: STV's own evidence depends on benchmark answer labels, oracle references, prompts, model checkpoints, and a correct final-answer evaluator. A Verus compile result and explicit specification review must remain outside the learned verifier's trust boundary.
-
 ## techniques for the catalog
 
 - self-trained verification: distill reference-conditioned verdict and feedback into an on-policy student that works without references
 - verifier-guided refinement: iterate generator and verifier for up to a fixed round budget, using actionable feedback
 - weak-to-strong verifier: train a smaller verifier on a larger generator's rollouts to reduce inference cost
 - verifier-in-the-loop training: train the generator inside frozen-verifier episodes so diagnostic feedback improves first attempts
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

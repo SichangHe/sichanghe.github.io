@@ -64,12 +64,6 @@ Inference: For Verus, protect the specification and dependency manifest, reject 
 
 Evidence and limits. The authors state, “No output reported by an agent or by its tools is trusted: every proof and project counted as a success was recompiled from scratch in a clean directory and audited with Print Assumptions.” (AI-use review, p. 10.) This establishes the experiment's success criterion, not that the compiler or standard-library axioms are philosophically assumption-free.
 
-## transfer to Lean and product threat
-
-The authors port the exact tool set to Lean as LEAN-MCP-EVOLVE and compare it with a compiler-only server and LEAN-LSP-MCP on 60 PutnamBench problems (20 per difficulty bucket, two runs each). LEAN-LSP-MCP has the highest accuracy; LEAN-MCP-EVOLVE and CONTROL tie in accuracy, while the evolved port has the best cost and wall time (Table 5, p. 8). The paper warns that Sonnet may have seen PutnamBench or LEAN-LSP-MCP in training, so this transfer result is contaminated-risk evidence rather than a clean generalization claim.
-
-Inference: Threat to VeruLaw is medium to high at the agent-interface layer. Evolution can discover which diagnostics, state controls, search tools, and automation wrappers make agents cheaper and more successful on verified Rust. It does not replace specification review or the Verus checker. The anti-cheating protocol and clean rebuild are directly valuable; the frontier-model mutation process is non-repeatable and can overfit validation tasks or optimize token budgets instead of proof quality.
-
 ## techniques for the catalog
 
 - evolutionary interface search — propose one prover-tool mutation at a time and retain it only under fixed accuracy, cost, and time validation rules
@@ -77,4 +71,3 @@ Inference: Threat to VeruLaw is medium to high at the agent-interface layer. Evo
 - budget-driven information density — use fixed time/call budgets and measure tokens and calls so useful diagnostics reduce interaction cost
 - anti-cheating proof harness — protect statements/imports, reject unsound commands, rebuild cleanly, and audit assumptions before counting success
 - cross-prover interface transfer — port an evolved tool set to another proof assistant and report accuracy, cost, and time with contamination caveats
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

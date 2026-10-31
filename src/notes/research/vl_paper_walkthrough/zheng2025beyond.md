@@ -5,7 +5,7 @@ Tag: `zheng2025beyond`, [paper](https://arxiv.org/abs/2512.23511)
 ## purpose and pipeline
 The paper introduces Multi-step Automatic Theorem Proving (MATP), a post-hoc evaluator for reasoning traces. It translates premises, candidate conclusions, and the retained LLM reasoning sentences into first-order logic (FOL), sends formulas to the Vampire automated theorem prover, verifies each step, checks whether the trace contains a valid proof path, and assigns a fine-grained chain category. The paper describes the goal as “A post-hoc evaluation framework for LLM-generated reasoning.” (Sec. 1, p.2)
 
-MATP evaluates a reasoning trace separately from generating it. The input is premises P, candidate conclusion C, ground-truth label L, reasoning steps S, and predicted answer A (Sec. 3.1 and Fig. 2, pp.3–4). Inference: this separation is relevant to VL because an agent's fluent proof explanation can be audited step by step after generation, but the paper's evaluator is for logical benchmark tasks rather than Rust programs or Verus proofs.
+MATP evaluates a reasoning trace separately from generating it. The input is premises P, candidate conclusion C, ground-truth label L, reasoning steps S, and predicted answer A (Sec. 3.1 and Fig. 2, pp.3–4).
 
 ## technique 1: constrained natural-language-to-FOL translation
 Use a controlled translation prompt when the source reasoning has no explicit formal structure. The paper's method is:
@@ -72,11 +72,8 @@ MATP measures translation execution rate, execution accuracy, FOL BLEU, logical 
 
 The benchmark contains 384 PrOntoQA-OOD, 344 ProofWriter, and 355 FOLIO tasks, with 10 target LLMs and 10,830 generated instances (Sec. 4.1, pp.6–7). GPT-4o creates NL2FOL translations; Vampire performs automated verification; experiments run on Ubuntu 22.04 with two 64-core AMD EPYC 7713 CPUs, 512 GB RAM, and two NVIDIA A100 GPUs (Sec. 4.1, p.7).
 
-Inference: threat to VL is medium to high at the explanation and specification boundary. MATP's step-level checks can expose an agent's unsupported proof claims, but the same translation errors can produce a formally valid proof of the wrong Rust property. MATP suggests a post-hoc trace audit using four-way step labels and proof-path extraction. VL should test these on generated Rust proofs rather than redo generic theorem-prover integration.
-
 ## techniques for the catalog
 - constrained NL-to-FOL translation: force indexed, quantified formulas with predicate-consistency and connective rules
 - bounded regeneration: retry translations after execution or label failure and record exhausted retries as errors
 - single-statement ATP checking: test both a statement and its negation to classify True, False, Unknown, or Error
 - proof-path chain classification: construct a dependency path from valid steps and distinguish sound, partial, lucky, and invalid reasoning
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While 100% classification accuracy can be guaranteed with perfect translation, we cannot ensure flawless NL2FOL translation in practice."): checked all study quotations, numbers, section and page references, and technique steps; corrected the paper link, citations, ProofWriter ER/EA, a malformed quotation, and evaluation-sample descriptions; added the separate chain-classification results and removed an unsupported claim about existing VL material; did not reproduce experiments, inspect implementation code, or verify the proposed Verus adaptations.

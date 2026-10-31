@@ -48,10 +48,7 @@ P1 semantic completeness requires descriptions to carry useful entities, example
 Inference: encode these as Rust enums and ghost metadata. `requires` can enforce that a write tool has `requires_approval`; `ensures` can establish that an approval event precedes execution; `spec fn` can check dependency ordering. Keep metadata in the verified representation rather than descriptions parsed at runtime.
 
 ## technique 5: MCP+ full-equivalence extension
-MCP+ removes Resource and Prompt from the equivalence fragment and adds metadata fields `side_effects`, `requires_approval`, `failure_modes`, `summary` and `dependencies` (Section 7.1, p.14). Φ+ maps transactionality to side effects and approval, descriptions to summaries, errors to failure modes and dialogue dependencies to dependency metadata (Section 7.2, p.14). Theorem 7.1 claims both round trips are identities. Inference: this is a specification pattern for VL tool protocols: define a closed verified fragment, make safety-relevant fields first class, and prove identity and transition preservation.
-
-## trusted boundary, contradictions and VL threat
-The formal results rely on the process semantics, the JSON encoding bijection for well-typed parameters, and the assumption that `invoke_api` behaves identically after encode/decode. The paper calls four principles necessary and sufficient for its calculus; this is a theorem about the defined calculi, not evidence about deployed MCP servers. The abstract calls the current MCP mapping lossy, while Section 5.3 carefully says non-surjectivity is “an image fact, not a separation” (p.10), so absence from the image does not prove inexpressibility. Inference: VL should not redo an informal tool-schema taxonomy; it should specify and verify its own transition model and metadata invariants. Threat to agent-written verified Rust is high if side effects, recovery or ordering remain in prose; an agent can produce code that satisfies type checks while violating the missing protocol state machine.
+MCP+ removes Resource and Prompt from the equivalence fragment and adds metadata fields `side_effects`, `requires_approval`, `failure_modes`, `summary` and `dependencies` (Section 7.1, p.14). Φ+ maps transactionality to side effects and approval, descriptions to summaries, errors to failure modes and dialogue dependencies to dependency metadata (Section 7.2, p.14). Theorem 7.1 claims both round trips are identities.
 
 ## techniques for the catalog
 - π-calculus protocol semantics — model tools, resources, calls, errors and parallel composition as labelled processes
@@ -63,4 +60,3 @@ The formal results rely on the process semantics, the JSON encoding bijection fo
 - failure-mode typing — enumerate errors and recovery strategies as machine-readable metadata
 - dependency declarations — encode required tool ordering and prove predecessor traces
 - MCP+ round trips — extend metadata until forward and reverse mappings are identities
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

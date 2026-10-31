@@ -30,15 +30,9 @@ Use the taxonomy to drive repair. Hard signals include K-K contradiction, derive
 
 Evidence: on 996 traces (276 CoT-Logic, 370 MMLU, 311 DebateLab, 39 handcrafted), Type-6 found derived contradiction in 409 traces (mean 5.28 events per triggered trace), reasoning avoidance in 548, and unresolved doubt at the sink in 495 (section 5.2, p.8). Only about 3% of propositions lie on the direct implication chain: median 0.025, IQR [0.016, 0.074] (same section). Annotation reliability was Fleiss κ=0.969 for proposition assignment and 0.929 for operator/proposition assignment; the LLM's operator assignment accuracy was 97.2% (section 4.2, p.6).
 
-## evidence, limits, and VL threat
-The verifier's average-case complexity is claimed to be linear/quasilinear under trace sparsity, but the graph path enumeration and loopback budget are practical assumptions. Comparison methods are not interchangeable: hard-fail κ values are −0.005 to 0.15; Type-6 correlates with PRMs at ρ=0.31 and LLM judges at ρ=0.25, while no scalar pair exceeds 0.4 (Table 3, p.7). LINC's median formalization coverage is only 0.006 and 74.9% of the corpus is marked unknown, limiting that comparison (section 5.2, p.8). The paper's own ethics warning means a high coherence score is not a correctness certificate.
-
-Inference: threat to a VeruLaw product is medium for orchestration and diagnostics, low for core soundness. Type-6 can expose unsupported proof steps, unresolved dependencies, and revision patterns before invoking Verus; it cannot prove generated Rust. VL should not redo generic chain-of-thought scoring. New work is a Verus-aware graph parser, checker-backed failure taxonomy, and experiments measuring repair yield on actual generated proof attempts.
-
 ## techniques for the catalog
 - epistemic update state — track truth, commitment strength, and doubt per proposition while reading a trace
 - Kleene constraint back-propagation — resolve, abstain, or log contradictions from IF–THEN constraints
 - licensed revision test — require a structural revisit plus a targeting constraint before accepting a changed claim
 - multigraph route analysis — enumerate bounded edge-simple derivation paths and compare terminal states
 - provenance failure taxonomy — report hard, soft, residual, and quality failures with statement locations
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

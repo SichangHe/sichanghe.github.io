@@ -6,8 +6,6 @@ Tag: `machiry2017drchecker`, [paper](https://www.usenix.org/conference/usenixsec
 
 DR. CHECKER is a modular LLVM-bitcode static analyzer for Linux drivers. It combines flow-, context-, and field-sensitive points-to and taint analyses with pluggable vulnerability detectors. The authors call it “soundy (i.e., mostly sound)” (abstract, p.1007): it sacrifices soundness under three explicit assumptions to keep analysis scalable and precise. The evaluation covers 437 drivers from nine mobile kernels, over 3.1 million lines of code, and reports 158 previously unknown bugs with 3,973 correct warnings (5,071 total; Table 4, p.1019), an overall precision of 78% (abstract, p.1007).
 
-Inference: the result is bug finding, not a proof that a driver satisfies a complete safety contract. A VL pipeline could use the same analysis to prioritize proof obligations, while Verus proofs would need explicit contracts and invariants for the reported paths.
-
 ## technique: soundy driver traversal
 
 What it is and when to use it. Instead of running each client to a global fixed point and then detecting bugs, DR. CHECKER performs one shared traversal of a driver CFG and invokes analysis clients as instructions are visited. The clients share global state, so taint and points-to information are available immediately. The authors argue that this avoids limiting every client to the precision of the least precise analysis. The paper says: “This also allows all of the analyses, or clients, to consume each other’s results whenever the results are needed, and without loss of precision.” (§3.2, p.1011).
@@ -66,8 +64,6 @@ The analyzer treats each entry point independently and misses state-dependent bu
 
 The No API configuration, which retained fixed-point loops, completed all 100 entry points and averaged 110.409 seconds, versus 35.320 seconds for DR. CHECKER on those 100 (Table 5).
 
-Inference: agent-written verified Rust faces a different threat: a warning-oriented, assumption-heavy analyzer cannot replace Verus contracts for safety-critical code, but its modular taint and points-to summaries can identify where contracts and `proof fn` lemmas are needed. Existing work already demonstrates pluggable flow/context/field-sensitive analyses and traceable warnings; VL should reuse the engineering pattern rather than claim the detector architecture as new.
-
 ## techniques for the catalog
 
 - soundy shared traversal — share state across analysis clients and bound loop traversals using reach-def analysis, accepting explicit sources of unsoundness
@@ -75,4 +71,3 @@ Inference: agent-written verified Rust faces a different threat: a warning-orien
 - taint trace propagation — seed user-controlled entry arguments and propagate instruction-level traces
 - pluggable vulnerability detectors — attach detector policies to abstract state and emit traceable warnings
 - driver extraction pipeline — identify vendor files and entry points, compile LLVM bitcode, then seed taint by operation type
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The maximum size of data read or written is limited to a single page in memory."): read the full paper, including references; checked quotations, numbers, section/page references, technique steps, assumptions, and limitations; corrected traversal order and detector timing, alias identities, taint sources and transfers, references, and inference labels; clarified the ambiguous comparison-tool bug counts; did not reproduce experiments, inspect the implementation, validate CVE records, or verify the proposed Verus adaptations.

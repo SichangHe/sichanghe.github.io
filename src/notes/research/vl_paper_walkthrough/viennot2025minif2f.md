@@ -89,10 +89,6 @@ The work checks statement syntax and typing, measures translation coverage, and 
 
 Inference: applying this method to verified Rust would require trusting the verifier, its model of the program, the source requirement, and the reviewers' interpretation. Proving a weak contract does not recover an omitted requirement. Translation acceptance, proof success, and requirement fidelity therefore need separate evidence.
 
-## what VL should reuse and avoid repeating
-
-Inference: reuse cascading retries, checker diagnostics, input ablations, and semantic audits with explicit denominators. A Rust/Verus evaluation should report statement acceptance, implementation proof success, semantic defects, and repair cost separately. Counting translated contracts alone would leave the specification problem unresolved.
-
 ## techniques for the catalog
 
 These are inferred adaptations of the paper's methods, not evaluated Verus techniques.
@@ -101,5 +97,3 @@ These are inferred adaptations of the paper's methods, not evaluated Verus techn
 - machine acceptance plus semantic audit — check syntax and typing, then compare the proposition with the intended requirement
 - source comparison and ablation — vary formal and informal inputs and investigate source omissions
 - LLM semantic-judge evaluation — measure agreement and missed errors against human review before assigning the judge a role
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Since the verification step aims to identify semantic errors, DeepSeek R1’s poor error identification performance indicates that human review remains necessary for this task."): checked all paper text, study quotations, numbers, page and section references, and technique steps; corrected coverage, retry wording, page references, audit distinctions, inference labels, and the paper link using its arXiv identifier; did not rerun experiments, inspect repository artifacts, or validate the proposed Verus adaptations.

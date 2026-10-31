@@ -35,17 +35,9 @@ What it is. A Translation Agent implements one mapped function at a time. An Imp
 
 How to apply it. Give the agent the C/Rust projects, target mapping, and explicit scope constraints; check implementation completeness; compile and retry; record only a successful unit; after all units, refactor unsafe code; run the full test suite and repair failed tests; independently re-run `cargo check` after the compiler agent claims success (Section 2.4, p. 5). Inference: replace the final test gate with Verus plus tests, and require a proof artifact for each function before marking its unit complete.
 
-## evidence, assumptions, and threat to VL
-On the 24-program CRUST-Bench set, ORBITExt and ORBITGen both reach 100% compilation and 100% test success except LTRE ORBITGen test failure; the abstract summarizes 91.7% overall test success. Average unsafe lines are 0.06% and 0.11% for the two interface modes versus 69.6% for C2Rust (Section 1, p. 2). On the 13 hardest TRACTOR programs, ORBIT passes about 70% (9/13) (Section 1, p. 2). These denominators are programs, not functions; “test success” means all available tests pass. The authors’ ablation defines functional coverage as fully translated C functions excluding stubs and missing functions, and test coverage as original C cases translated and executed by `cargo test` (Section 4.3, PDF p. 9). Removing all structure leaves LTRE with 64.4% functional and 3.0% test coverage; full ORBIT reaches 100% functional and test coverage there, but LTRE still has a semantic-gap test failure (Section 4.3.4, p. 10).
-
-The trusted base includes the C tests, agent prompts, parser, mapping validator, compiler, cargo, and Rust semantics. The paper admits that tests bound equivalence and that some C/Rust library contracts differ: `fputs` truncates at a null byte while `write_all` writes the full slice (Section 4.2, p. 8). Inference: for VL, compilation and tests are evidence of bounded behavior, not a universal proof. Inference: threat is high for untested paths and wrong interface contracts; VL should preserve a complete function-coverage report and use Verus contracts to cover properties absent from tests.
-
-What is already done. ORBIT already provides dependency-guided orchestration, interface scaffolding, mapping validation, iterative compile repair, and dual independent checks. Inference: VL should reuse these controls and add proof-contract review rather than reproduce a generic agent loop.
-
 ## techniques for the catalog
 - dependency-aware translation order — build intra- and inter-module graphs, topologically sort, and group cycles
 - iterative scaffolding — create typed Rust interfaces and repair compilation after each structural stage
 - two-tier mapping — exact static lookup first, semantic agent fallback second, with path validation
 - independent completion checks — reject stubs/TODOs and independently rerun toolchain checks
 - per-unit verified orchestration — translate, compile, refactor, and test each mapped unit before advancing
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

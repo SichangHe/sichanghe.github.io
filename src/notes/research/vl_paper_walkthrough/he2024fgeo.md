@@ -8,8 +8,6 @@ FGeo-TP combines a formal geometry solver (FGPS) with a language model that pred
 
 The underlying FormalGeo7k dataset has 6,981 SAT-level geometry problems, each with natural-language text, geometric shapes, formal-language conditions, and theorem-sequence annotations (Section 1, PDF p. 2). The authors state: “The FGPS employs both forward and backward search methods with various strategies for automated problem-solving.” (Section 1, PDF p. 2.) FGeo-TP predicts likely theorem identifiers, executes them, adds their conclusions to the condition set, and then continues search if needed (Section 3.2, PDF pp. 8–9). The authors summarize the design: “Before FGPS initiates theorem search, the theorem predictor guides FGPS, reducing the search complexity.” (Section 3.2, PDF p. 7.)
 
-Inference: for VL, the transferable pattern is a learned search guide around a symbolic solver. A Verus adaptation should validate proposed proof steps and retain a fallback search path. The paper does not discuss Rust or Verus.
-
 ## technique 1: formal representation and baseline search
 
 What it is. FormalGeo represents geometric conditions with predicates such as `Equal(LengthOfLine(AD),8)` and theorem applications with named sequences. FGPS has forward search from known conditions and backward search from the goal, combined with breadth-first, depth-first, random, or beam strategies (Sections 1 and 3.1, PDF pp. 2, 5–6).
@@ -89,10 +87,6 @@ Inference: theorem coverage is not proof correctness, because order and repeated
 
 Inference: the threat to agent-written verified Rust is limited but operationally relevant. A model can guide proof search toward irrelevant lemmas, inflate context, and cause timeout; it cannot make an invalid Verus proof pass if checking is enforced. The main product risk is resource exhaustion and search bias, plus any unsound external facts inserted outside the checker.
 
-## what VL should not redo
-
-Inference: VL should not redo formal predicate normalization, beam-guided search, or fallback search as unmeasured ideas. The open work is to adapt them to Verus proof contexts, define sound candidate filtering, and measure verification-time and maintenance gains on real Rust projects.
-
 ## techniques for the catalog
 
 - formal condition encoding — represent problem facts, goals, and theorem applications in a machine-readable predicate language
@@ -102,4 +96,3 @@ Inference: VL should not redo formal predicate normalization, beam-guided search
 - guided pruning — execute predicted theorems and add their conclusions before further symbolic search
 - fallback hybrid — switch to baseline search after guided search times out
 - difficulty stratification — measure solving rate, time, and steps by theorem-sequence length
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "According to the experimental results, we observed that, for the FormalGeo7k dataset, the BART-base pretrained model performs the best."): checked all quotations, numbers, section and PDF page references, technique steps, and the arXiv identifier against the complete paper including references and appendix; corrected page references, unsupported implementation details, evaluation-split claims, pretraining wording, coverage interpretation, fallback scope, and unlabeled conclusions; noted main-table/appendix discrepancies; did not inspect code, rerun experiments, or independently validate annotations or solver soundness.

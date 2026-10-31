@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `hickey2026ai`, [paper](https://arxiv.org/abs/2608.21356)
 
-Audit: audited 2026-10-13 against the paper; checked every number, percentage, page and section reference, quotation and the Verus sketches; changed the Figure 4 caption attribution, the page range of R6, a quotation with an ellipsis, the section that names the kernel fixtures, the overstated not verified at all and commonest, the abstract-vs-section source of the zero incorrect proofs wording, and marked six unmarked inferences; the Verus sketches were not run (no Verus here).
-
 source: Jason Hickey, arXiv:2608.21356v2 (25 Aug 2026), 17 pages, no appendix. Page numbers below are the PDF's printed page numbers.
 
 ## what the paper is
@@ -185,17 +183,6 @@ Where it fails. For the shipped revision the die-level join was not re-run, “s
 - Methods (p.14) is a list of topics. The Lean and mathlib version pins that §3 says are "in Methods" are not printed, and the model versions are "deferred to the pre-publication content freeze".
 - wording. The abstract says the processor was "taped out"; Limitations says no chip exists and the shuttle closes after the paper's date.
 - Inference: the retracted verification-cost ratio means the paper's main economic claim, that verification is "not only economical but essential to productivity" (Abstract, p.1), has no measured ratio behind it. The paper says so: it lists a dollar cost per theorem, model-hours and a generated-versus-authored split as things its records cannot give (§7, p.11).
-
-## not to redo in VL
-
-Inference, from the paper's content:
-- the role split of orchestrator, executors, independent witness and append-only ledger is described here and has been run for 37 days; VL gains nothing by reinventing it under new names, and can adopt R1 to R6 as a checklist
-- the certificate idea (prove S ⇒ S′ and show the human S′) is stated here; what is open is choosing S′ well and checking the other direction, which the paper does not attempt
-- the paper does not address Rust, SMT-based verifiers, proof repair, or specification quality metrics; those remain VL's own ground
-
-## threat to VL's product
-
-Inference: low as a competing product, moderate as a competing story. The author's repositories are public (Data availability, p.14) and the method is tool-agnostic at the required tier, so anyone can copy the process. But the artifact is Lean and hardware, built by one expert, with no evidence that a non-expert can run it, and the paper says exactly that: “The subject is one expert practitioner; nothing here estimates what other researchers, or teams, or other domains would achieve, and we make no labor-market claims.” (Limitations, p.14) The paper's weakest point is the same as VL's hardest problem: the human still has to judge statements, and the only aid offered is the certificate. A product that makes specification review measurably reliable for non-experts would be ahead of what this paper shows.
 
 ## techniques for the catalog
 

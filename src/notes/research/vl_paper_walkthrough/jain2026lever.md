@@ -52,9 +52,7 @@ The quality trade-off is explicit: increasing λ improves the selected metric bu
 
 The paper includes a Lean-verified theorem in Appendix D: with exact priors and nonnegative additive costs on a finite-branching acyclic AND/OR DAG, backed-up `V(n)` equals the minimum cost of a solution subgraph or infinity when none exists. Real value functions are noisy; their theoretical analysis is left for future work (Section 3.3, p. 4). Shared subgoals can make globally cheapest subgraph selection NP-hard, so LEVER charges a shared subgoal to one owner (Section 3.3, p. 4).
 
-What is proved: the exact-prior backup property in the formal model, and Lean kernel acceptance of final submitted proofs. What remains trusted: the LLM, value priors, stochastic expansion policy, cost accounting and cache-rate repricing, Mathlib, Lean's kernel and compiler, benchmark formalizations, and the mapping from a user's desired quality to λ and metric definitions. Inference: for VL, the threat is mainly resource waste and objective gaming rather than proof unsoundness when Verus checks every artifact. A model may optimize token count by hiding complexity in a broad lemma, or optimize verifier time by weakening a contract. Keep specification review and trust-boundary checks outside LEVER's objective.
-
-Inference: VL should reuse the graph, cost-to-go, prior calibration, and weighted-objective patterns, but should not claim that the paper's Lean results establish Verus performance. Existing Verus proof search and solver automation remain necessary; LEVER is an orchestration policy over them.
+What is proved: the exact-prior backup property in the formal model, and Lean kernel acceptance of final submitted proofs. What remains trusted: the LLM, value priors, stochastic expansion policy, cost accounting and cache-rate repricing, Mathlib, Lean's kernel and compiler, benchmark formalizations, and the mapping from a user's desired quality to λ and metric definitions.
 
 ## techniques for the catalog
 
@@ -64,5 +62,3 @@ Inference: VL should reuse the graph, cost-to-go, prior calibration, and weighte
 - weighted proof objective — combine remaining computation with additive length, purity, or repository-specific metrics
 - subgoal-local agents — run each obligation in a compact local context with compiler and library tools
 - quality-aware verification — enforce verifier correctness while optimizing measurable proof quality during construction
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

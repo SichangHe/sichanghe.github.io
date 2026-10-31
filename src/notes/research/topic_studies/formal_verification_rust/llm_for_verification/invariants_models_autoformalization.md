@@ -298,7 +298,6 @@ what I searched
   - "LLM autoformalization software requirements survey 2026"
   - "LLM TLA+ specification from code agent model checking 2026"
   - "LLM P language / PeasyAI"; "LLM formalize API documentation into formal specification 2026"
-- papers added to /hdd1/sichanghe/paper_collection: RFC2TLA+, RFCLLM, FlowFSM, Alloy formulas, LLM2Alloy, Validating Formal Specifications with LLM-generated Test Cases, Doc2Spec; author lists in file names are abbreviated, check before citing formally
 - not covered
   - Pei et al., ICML 2023 (LLM invariant prediction), Clause2Inv, LaM4Inv, AutoSpec, SpecGen full text: only seen as citations or search results
   - hardware assertion generation (AssertLLM and the SVA line)

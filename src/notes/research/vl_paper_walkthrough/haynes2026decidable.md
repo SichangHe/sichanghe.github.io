@@ -116,12 +116,6 @@ The paper proves or states mathematical propositions conditional on explicit dom
 
 Inference: the trusted base is broad: Clef's type and effect interpretation, each abstract-interpretation transfer function, decision procedures, Iris/Actris/Aneris or Rocq foundations, BAREWire contracts, target instruction and device semantics, and the compiler's proof-preserving lowering. Inference: a Verus implementation would additionally trust the Verus verifier, solver, proof erasure, Rust compiler, and specifications unless independently checked.
 
-## implications for VeruLaw
-
-Inference: the strongest reusable idea for VL is evidence binding: generated verified Rust should carry contracts tied to concrete buffers, states, protocol identities, and representations, so a proof cannot silently migrate to a different object after lowering or refactoring. Tiering also suggests separating cheap shape/range checks from reusable system lemmas and project-specific relational proofs.
-
-Inference: VL should not redo a generic claim that dimensional inference, ownership logic, or distributed reductions can compose; this paper already presents that architecture and its worked sum. A distinct VL contribution would need an implemented Verus artifact and measurements over a declared corpus, neither of which this paper supplies. Inference: the threat to agent-written verified Rust is high when generated code crosses device or network boundaries, because the paper's guarantees are conditional on unmeasured adapters and target semantics. For ordinary single-process Rust, the tiered evidence-binding pattern is useful but the paper supplies no direct empirical risk estimate.
-
 ## techniques for the catalog
 
 - principal dimensional inference: solve integer-exponent unit equations and reject inconsistent operations before richer analyses
@@ -129,4 +123,3 @@ Inference: VL should not redo a generic claim that dimensional inference, owners
 - four-tier verification: route structural, arithmetic, reusable-system, and relational obligations to progressively richer mechanisms
 - verified distributed reduction: compose capacity, ownership, partition freshness, boundary correspondence, and final rounding laws
 - explicit probabilistic budgets: combine worker, boundary, and output errors with a declared union bound and completion model
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

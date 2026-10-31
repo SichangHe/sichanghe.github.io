@@ -8,8 +8,6 @@ RustCompCert is ongoing work on an end-to-end verified compiler for a sequential
 
 Rustlight supports algebraic data types (`struct` and `enum`), Box automatic memory management, RAII and ownership, mutable and immutable references with region/lifetime annotations, and composition of safe and unsafe modules. Unsupported features include concurrency, polymorphism, traits, and higher-order functions such as closures (Sec. 1, p. 1). The frontend first lowers Rustlight to RustIR, then performs Drop Elaboration, Borrow Checking, and Clight Generation. Drop Elaboration determines which destructor/drop operations execute from variable initialization status (Sec. 2, p. 2). Borrow checking has move checking and a Polonius-based borrow-checking pass; Clight Generation translates enums to tagged unions and creates drop glue for types requiring destructors (Sec. 2, p. 2).
 
-Inference: this staged boundary is a useful VL architecture for code whose proof must survive compilation. Inference: keep the verified Rust/Verus source contract at RustIR or an equivalent intermediate representation, then require every lowering pass to carry a refinement relation. Inference: the parser remains a trust boundary unless it is verified or its output is independently checked.
-
 ## technique: refinement-based compiler correctness
 
 The compiler correctness theorem is a backward simulation. For Rustlight source `Ms` and assembly target `Mt`, the paper states: “RustCompCert(Ms) = Mt ⇒ ⟦Mt⟧ ⩽ ⟦Ms⟧.” (Sec. 2, p. 2). Here the target behavior is included in source behavior. This relation is the bridge that preserves properties proved at the source level through the backend.
@@ -42,8 +40,6 @@ Combining borrow-check soundness with compiler correctness yields the paper's en
 
 The work is a design/formalization report, not a completed product evaluation. It reports no benchmark task counts, proof lines, runtime measurements, or percentage success rates. It also relies on an unverified parser, a sequential subset, CompCert/CompCertO libraries, and the correctness of the chosen Rustlight semantics. The paper says the formalization is ongoing and points to a public repository (Sec. 1, p. 1).
 
-Inference: for agent-written verified Rust, RustCompCert identifies a high-severity supply-chain threat: source-level Verus proofs do not by themselves establish that an unverified parser or compiler preserves the verified behavior. A VL product can reduce this risk by pinning the compiler/toolchain, verifying translation/refinement boundaries, and separately proving functional contracts and non-borrow-related undefined behavior. Inference: VL should not redo this paper's broad compiler architecture as a generic benchmark; it should measure the exact trust boundary between Verus-checked source and generated executable, including parser and unsafe-code assumptions.
-
 ## techniques for the catalog
 
 - pass-by-pass refinement: prove each lowering pass preserves a source/target simulation and compose the theorems
@@ -51,5 +47,3 @@ Inference: for agent-written verified Rust, RustCompCert identifies a high-sever
 - union-find region equality: represent variance-induced equalities by canonical representatives in the loan map
 - borrow-check soundness refinement: relate abstract loans to concrete locations and show every operation is non-stuck
 - end-to-end safety composition: combine borrow-check refinement with verified backend semantics
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

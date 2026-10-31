@@ -9,8 +9,6 @@ The paper states: “Agents handle every task that requires semantic judgment, i
 
 The evaluation covers VibeOS (15,000 lines of LLM-generated ARM64 kernel C), five OSS-Fuzz-hardened libraries, an out-of-tree Realtek driver, and claudes-c-compiler (50,000 lines of LLM-generated Rust). The headline VibeOS run analyzed 675 functions in 37 modules and confirmed 34 realistic findings from 145 deduplicated reports: 16 dynamically reproduced, 14 reachable from system entries, and 4 formal model violations without entry tracing (Section 4, PDF pp. 14–15). The Rust compiler run confirmed 25 real bugs, including 24 panic-class public-API defects and one functional-correctness violation, and established bounded functional equivalence for selected helpers (Abstract and Contribution 6, PDF pp. 1–2).
 
-Inference: the directly reusable idea for VeruLaw is to let an agent propose Verus specifications and triage evidence while making every soundness-relevant decision pass through Verus/Kani-like deterministic checks.
-
 ## technique 1: top-down specification inference
 
 The specification agent traverses the call graph from caller context toward leaves. For each function it retrieves the body, callers, and a domain summary; drafts a pre/post pair in a restricted DSL; parses it deterministically; and retries malformed drafts up to a configured limit (Section 3.1, PDF p. 6). Top-down generation makes an implicit API contract explicit instead of merely restating implementation details. The DSL translates deterministically to `__CPROVER_assume`/`__CPROVER_assert` for C and `kani::assume`/`kani::assert` for Rust. The paper also supports dual-source generation: one prompt emphasizes caller intent and one implementation behavior; disagreements are flagged for human review.
@@ -51,17 +49,11 @@ Verus form. Inference: when a Verus harness exposes an infeasible state, propose
 
 The system stores accepted specifications, refinements, and witness patterns in a verification knowledge base, reusing them across runs (Sections 3.6–3.8, PDF pp. 9–10). Function harnesses and call-graph layers run in parallel; refined callee contracts become updated stubs in every caller. This gives compositional scaling while preserving a feedback loop.
 
-Inference: VL could persist verified Rust contract fragments, counterexample classes, and approved policy checks keyed by API and type shape. Persistence must include provenance and the exact model/backend assumptions because a specification inferred for one threat model may be unsafe in another.
-
 ## measured results and trust boundary
 
 The VibeOS run’s denominator is 675 analyzed functions and 145 deduplicated reports; 34 were confirmed realistic, comprising 16 dynamic, 14 system-entry, and 4 BMC-only findings. The paper says 85 reports were unrealistic and 26 uncertain, excluded from the headline count (Section 4.1, PDF p. 15). The Rust compiler corpus produced 25 real bugs, including one functional violation found only when behavioral specs were enabled (Contribution 6, PDF p. 2). These are bounded, configuration-specific results, not claims of complete program correctness.
 
 Trusted components include CBMC/Kani, their encodings and unwinding bounds, the DSL parser and backend adapters, concrete replay compiler/runtime, the soundness guard, and the inferred specifications themselves. Inference: a product using this pipeline must treat an incorrect contract, unsound adapter, or missing public entry point as a product risk even when every query passes.
-
-## threat to VeruLaw and what not to redo
-
-Inference: the paper shows that VL should not build an agent-only checker or report every symbolic witness as a confirmed bug. It already supplies a concrete pattern for specification inference, per-function proof decomposition, witness validation, and contract-level refinement. The remaining Verus-specific work is mapping Rust ownership and executable behavior into these stages, defining the product threat model, and making contract provenance auditable.
 
 ## techniques for the catalog
 
@@ -70,4 +62,3 @@ Inference: the paper shows that VL should not build an agent-only checker or rep
 - witness validation tiers — classify counterexamples by reachability, callee feasibility, dynamic replay, and realism before reporting
 - specification-level CEGAR — tighten contracts for spurious witnesses, guard the refinement, persist it, and recheck callers
 - persistent compositional knowledge — reuse approved contracts and witness patterns across parallel call-graph sweeps
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

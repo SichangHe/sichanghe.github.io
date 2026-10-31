@@ -62,7 +62,7 @@ The paper states: "If the SMT solver can prove the validity of every VC, then we
 
 Bolt was evaluated on four mappings across two accelerators: FlexASR pooling (add, max, mean), FlexASR linear-layer, HLSCNN 2D convolution, and HLSCNN convolution with an accumulation flag. The largest product program had 29 loops with nesting depth 7. Table 5 reports 4/11/12/8 layout-sketches and 11/31/10/5 data-layout invariants for FP/FLL/C2D/C2D+. Verification used Z3 on a 16-core Xeon with 256 GiB RAM and a six-hour timeout. Four mappings verified at actual hardware parameters; two verified only with downscaled parameters. FLL at `(8,4,8); (8,32,32)` took 18,351 seconds and timed out at `(16,4,16); (16,64,64)`. C2D timed out at one larger setting, while C2D+ took 20,579 seconds at its largest listed setting. Standard Z3/Spacer without invariants failed after one day even on the smallest case; bounded model checking failed due to loop unrolling.
 
-These are concrete-parameter proofs, not universal proofs over symbolic dimensions. The model's ILA semantics, rewrite correctness, user-provided invariants, no-race assumption, and Z3 soundness remain trusted. Inference: for VL, Bolt's align-relate-verify decomposition transfers to checking translated Rust against source behavior when both are expressed as loops over shared state. Inference: the dominant threat is missing layout or counter invariants and concrete-only coverage; a successful solver result does not cover dimensions or hardware behaviors outside the checked instance. Existing product-program equivalence and accelerator verification already address the core method, so VL should reuse their invariant templates.
+These are concrete-parameter proofs, not universal proofs over symbolic dimensions. The model's ILA semantics, rewrite correctness, user-provided invariants, no-race assumption, and Z3 soundness remain trusted.
 
 ## techniques for the catalog
 
@@ -74,5 +74,3 @@ These are concrete-parameter proofs, not universal proofs over symbolic dimensio
 - product-program equivalence: combine aligned programs and prove relational invariants at loop cut points
 - VC generation with Z3: discharge loop-free verification conditions over arrays, bitvectors, and uninterpreted functions
 - concrete-parameter verification: replace symbolic dimensions and flatten bounded quantifiers when SMT cannot solve nonlinear formulas
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

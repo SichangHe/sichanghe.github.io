@@ -6,15 +6,13 @@ Tag: `gladshtein2026velvet`, [paper](https://doi.org/10.1007/978-3-032-32526-6_1
 
 Velvet is a Lean library implementing a Dafny-style imperative verifier on top of the Loom framework. It combines SMT automation, interactive Lean proofs, executable extraction and property-based testing, and separate partial/total-correctness treatments. The authors describe the core claim: “Velvet seamlessly combines automated SMT-based proofs with the interactive proof mode of the Lean proof assistant, in which it is embedded, thus enabling multi-modal proofs.” (abstract, p. 228) Velvet is foundational in the paper's stated sense: “we have proven that any program verified in it satisfies its specification at runtime.” (Section 1, p. 229; page numbers in this study are the printed LNCS pages 228–242)
 
-Inference: for VL, the transferable design is a single workflow in which generated Rust proofs can fall back from automation to inspectable interactive lemmas and runtime testing. The system is Lean-based, not Verus; all Verus mappings below are inferences.
-
 ## technique 1: weakest-precondition automation with interactive fallback
 
 What it is. Velvet programs are Lean programs built from monadic effects. A VC generator computes a weakest-precondition formula; `loom_solve` generates goals and tries `grind`, then `loom_smt` invokes cvc5 by default or Z3. “The VCs produced by Velvet are just Lean theorems,” so a user can inspect and prove residual goals interactively (Sections 2.1–2.2, pp. 229–231). The VC generator implements "a version of the weakest-precondition calculus" (Section 2.1, p. 230).
 
 How to apply it. (1) Write a program with `requires`, `ensures`, assertions, and loop invariants. (2) Run `loom_solve` to derive VCs from the program and specification. (3) Let `grind` and then the SMT solver discharge supported goals. (4) Inspect any remaining Lean goal with its hypotheses. (5) Introduce variables, split cases, or use Lean automation such as `aesop`, or simplify the goal until an SMT-supported theory fits and call `auto` (Section 2.2, p. 230). (6) Optionally mark proved theorems with `@[solverHint]` so future SMT calls can use them (Sections 2.1–2.2, pp. 230–231). In the discrete-square-root example, the paper says one goal, `∀ j < i + 1, j * j ≤ x`, is discharged interactively "by first introducing the variable j and then performing case analysis on j = i" (Section 2.2, p. 230); the example needs an explicit loop invariant (Section 2.1, p. 230).
 
-Verus form. Inference: write executable Rust with `requires`, `ensures`, and loop `invariant` clauses; run Verus's SMT-backed checking, then expose the residual obligation as a `proof fn` or lemma and use `assert` to guide the solver. Verus does not provide Lean's arbitrary interactive tactic ecosystem, so a VL tool would need to generate proof lemmas and retain the failed obligation.
+Verus form.
 
 Evidence and trust. The paper states that current SMT results are trusted, while proof reconstruction through Lean-SMT is possible (Section 2.1, p. 230). Inference: foundational runtime soundness therefore does not make an external SMT result independently checked in the current configuration.
 
@@ -50,7 +48,7 @@ What it is. Velvet programs are Lean terms, not a separate AST, and effects are 
 
 How to apply it. (1) Encode state-changing code as monadic computations. (2) Use effect transformers for nondeterminism and divergence. (3) Thread mutable state explicitly through the computation. (4) Derive the effect-specific wp and split it into VCs. (5) Attach annotations through no-op invariant gadgets so they affect proofs without changing execution (Section 3.3, p. 234).
 
-Verus form. Inference: model state in ordinary Rust and ghost/spec values, with contracts relating pre-state and post-state. Use loop invariants rather than a custom monad when verifying direct Rust. If VL introduces an intermediate effect language, prove a refinement relation from that language to Rust before treating generated proofs as proofs of the executable.
+Verus form.
 
 ## technique 6: mathematical-library-backed specifications
 
@@ -68,14 +66,6 @@ For the six manual-proof case studies, Velvet required 3.3× fewer total lines t
 
 Inference: trusted components include Lean's kernel and libraries, the VC generator and monadic semantics, solver results in the current non-reconstructed configuration, extracted-code compiler behavior, and all imported mathematical theorems. Velvet's foundational claim covers programs accepted by its semantics and proofs; it does not prove that a specification captures a product requirement.
 
-## contradictions, reuse, and VL threat
-
-The paper's partial-correctness mode can prove a false postcondition for a nonterminating loop, while total correctness requires a measure (Section 2.4, p. 231). The paper also states a scope limit: Velvet "does not currently support global heap state or OOP-style classes" (Section 5, p. 238). Inference: a VL report must record whether termination was proved, or an agent could appear correct by exploiting divergence. The paper also says SMT results are trusted (Section 2.1, p. 230) while presenting the verifier as foundational. Inference: these are compatible only if “foundational” refers to the verified semantics and kernel path, not independently reconstructed external solver proofs.
-
-Inference: Velvet poses a medium threat and opportunity for agent-written verified Rust. The threat is specification and termination gaps: an agent can supply a vacuous postcondition or nonterminating code. The opportunity is a multi-modal workflow in which residual proof goals are exposed, property tests are generated from contracts, and rich mathematical lemmas are reused. Verus can implement the contract, invariant, and decreases pieces, but it lacks Velvet's Lean tactic ecosystem and does not automatically inherit mathlib.
-
-Inference: VL should not redo Velvet's Lean implementation or repeat its 27-program comparison as a novel contribution. A distinct result would require an integrated Verus/Rust workflow, measured proof repair under agent generation, and explicit evidence for trusted boundaries such as solver checking and imported mathematics.
-
 ## techniques for the catalog
 
 - weakest-precondition fallback — generate SMT-backed verification conditions, then inspect and prove residual goals interactively
@@ -84,4 +74,3 @@ Inference: VL should not redo Velvet's Lean implementation or repeat its 27-prog
 - angelic/demonic choice — quantify nondeterministic choices existentially for reachability or universally for guarantees
 - monadic effect embedding — derive effect-specific weakest preconditions for mutable state, divergence, and choice
 - mathematical library reuse — combine automated code VCs with interactive proofs over a rich formal mathematics library
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Unlike Dafny, when VCs cannot be discharged automatically, Velvet shows the proof goal context, allowing users to inspect available facts and guide the proof process."): I read the whole paper text (pp. 228–242) and the whole study, and checked every quotation, number, section and page reference, and technique step against it; I changed page references to printed LNCS pages, removed a misattributed and altered quotation from technique 4 and the unsupported "simp"/"rewrite" steps and the unsupported Verus-keyword instruction, corrected "3.67x slower", the Finset.range hint wording and the extraction wording, added missing RQ1 settings (grind/cvc5, 10 runs) and the stated scope limit, and labelled my own conclusions "Inference:"; I did not check the figures' per-benchmark values (Figs. 1-7 are images), the cited external works, or any Verus claim (those are inferences outside the paper).

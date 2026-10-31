@@ -16,8 +16,6 @@ How to apply. For each rejected function, ask three questions: what compiler err
 
 Evidence and assumptions. The formative sample has N=36 learners, recruited from the online Rust Book; the paper reports that learners usually identified the surface type error but struggled to explain counterfactual undefined behavior. Later, the baseline/intervention comparison used 177 pre and 165 post participants who completed the first 18 questions (section 5.2.2, pp. 22–23). Dropout and a temporal rather than randomized A/B design limit causal strength.
 
-Verus form (Inference). Use this as a VL evaluation instrument: present an agent with a rejected Verus function, ask for the missing safety counterexample, then ask for a minimal verified repair. Score compilation, proof success, and explanation separately. The Inventory does not itself prove code properties.
-
 ## technique 2: counterfactual dynamic semantics
 
 What it is. To explain why ownership rules exist, the authors “turn off” the borrow checker and execute/visualize programs that Rust would reject. This exposes the undefined behavior prevented by static checking. Their dynamic model is “basically ‘what Miri does’”, where Miri is an interpreter of Rust's MIR, with memory organized into a stack of function frames and a heap (sections 3.1.1 to 3.1.3, pp. 10–11; the paper says it can run rejected programs because the borrow checker “does not substantially influence the translation of a program into an Miri-interpretable CFG”).
@@ -38,13 +36,9 @@ Verus form (Inference). Express path properties as `spec fn` predicates and use 
 
 The authors use existing executable models of Rust's dynamic and static semantics to generate traces for a given program, then render those traces as diagrams. The paper says: “We visualize these traces to help learners ‘see’ the abstract conceptual model reified into concrete examples.” The dynamic traces come from Miri and the static diagrams from the authors' permissions model over MIR; the diagrams illustrate a revised web Rust Book chapter (sections 3.1.3, 3.2.3, 4). Separately, the study and the Inventory quiz snippets use an in-browser editor with Rust Analyzer built to WebAssembly (sections 2.3.2 and 5.1.2); the paper lists incorporating the permissions visualizer into the IDE as future work (section 4.1, p. 17).
 
-Inference: For VL, the analogous tool can render Verus proof states, inferred permissions, and failed obligations beside Rust code. It can explain why a proof obligation exists, but visualization is not evidence that the obligation is discharged.
-
 ## evaluation and limits
 
 The new pedagogy's comprehension questions had pooled accuracy 72%; individual items ranged from 44% (“How references can cause undefined behavior”, N=1281) to 95% (“How moves affect deallocation”, N=1683), Table 2 (p. 21). The temporal A/B test improved Inventory scores from 48% (N=177) to 57% (N=165), +9%, p<0.001, d=0.56 (section 5.2.2, pp. 22–23). The paper itself notes weaker statistical power than randomized assignment and substantial reader dropout. Inference: the evaluation depends on the Inventory being a valid measure (the paper's construct-validity caveat, section 5.4.1, p. 23), on Miri and the compiler for the diagrams, and on the textbook deployment.
-
-Inference: The paper's product relevance is pedagogical and diagnostic. It teaches an agent team to connect a rejected ownership or Verus proof state to the concrete safety invariant behind it. It does not provide a formal verification algorithm for Rust business logic. What VL should not redo is a generic ownership tutorial without measuring misconceptions; the Inventory gives a reusable test design. The threat is moderate: agents may satisfy syntax while misunderstanding aliasing, rely on cloning as a superficial fix, or overconstrain safe code. Counterfactual traces plus explicit Verus invariants can expose these failures.
 
 ## techniques for the catalog
 
@@ -53,4 +47,3 @@ Inference: The paper's product relevance is pedagogical and diagnostic. It teach
 - permissions abstraction: track flow-sensitive read/write permissions on memory paths
 - semantic visualization: render dynamic traces and static permission states beside source code
 - temporal A/B evaluation: compare baseline and intervention quiz scores with denominators and effect sizes
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "The quiz widget permits participants to take a quiz multiple times if they answer any question incorrectly."): I read the whole paper text (sections 1 to 7 and Appendix A) and checked every quotation, number, section and page reference against it; the abstract quote, N=36, top 50 and 27 StackOverflow questions, eight programs, Figure 2, Table 2 range and the 48% to 57% result were correct. I changed the page references for sections 3.1 and 3.2.1, replaced the unsupported claim that the visualization plugin is integrated into the in-browser IDE (the paper lists that as future work), moved the field-insensitivity claim to section 1 and added the paper's lifetime-error limitation, described the dynamic model as Miri-based, and marked the how-to-apply steps and the trusted-elements sentence as Inference. I did not check the cited prior work, the Appendix A.2 proofs in detail, or the Verus-form suggestions, which are my inferences and not in the paper.

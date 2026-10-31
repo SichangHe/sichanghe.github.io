@@ -33,12 +33,9 @@ The prototype extends SPADE. The attack evaluation uses CVE-2019-5736, CVE-2019-
 
 Inference: Soundness depends on trusted kernel and audit observations and on receiving the relevant events; the paper does not establish soundness after kernel compromise or event loss.
 
-Inference: For VeruLaw, CLARION's main value is a reusable pattern for verifying parsers and event-to-state transitions. The threat to agent-written verified Rust is moderate: a proof can establish consistency of its abstract graph while missing an unmodeled namespace, malformed audit event, kernel bug, or dropped event. Existing work already supplies the namespace analysis and prototype; VL should not redo that empirical taxonomy unless extending it to a proved event semantics.
-
 ## techniques for the catalog
 
 - namespace identity mapping: convert virtual IDs and paths into stable host identities with explicit namespace labels
 - transition modeling: encode clone, unshare, and setns as state transitions and preserve label invariants
 - provenance summarization: mark recognized container startup subgraphs; Inference: verify that any further graph reduction preserves security-relevant edges
 - trusted-observation boundary: state kernel, audit, and event-completeness assumptions explicitly
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "An artifact may relate to several containers and thus may be used to infer the relationship between specific containers."): checked all quotations, numbers, section and page references, technique steps, and the paper link; corrected the link, namespace-transition section references, initialization pages and marking behavior, and overhead attribution and scope; did not reproduce experiments, inspect implementation code, or verify the proposed Verus inferences.

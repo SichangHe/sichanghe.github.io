@@ -97,7 +97,7 @@ Verus form (Inference): after a failed Verus proof, feed a concrete counterexamp
 
 ## trusted boundary, contradictions, and product relevance
 
-The paper’s measurements establish performance on EvalPlus and FixEval under Llama 4 Scout, selected thresholds, finite tests, and finite mutants. They do not establish correctness for arbitrary inputs, complete bug detection, or generalization to Rust; the limitations explicitly say generalization to larger systems, languages, and specifications is not guaranteed (Section 6, p.10). Inference: for VL, Verus checking of the final `ensures` and proof obligations is the hard boundary; LLM exploration, feedback summaries, stopping, tests, and mutation scores are untrusted search signals. The strongest reusable idea is to separate exploration from commitment and to use concrete verifier feedback, while treating vacuous specifications and incomplete mutant sets as product risks.
+The paper’s measurements establish performance on EvalPlus and FixEval under Llama 4 Scout, selected thresholds, finite tests, and finite mutants. They do not establish correctness for arbitrary inputs, complete bug detection, or generalization to Rust; the limitations explicitly say generalization to larger systems, languages, and specifications is not guaranteed (Section 6, p.10).
 
 ## techniques for the catalog
 
@@ -106,5 +106,3 @@ The paper’s measurements establish performance on EvalPlus and FixEval under L
 - test/mutant completeness feedback — measure correctness on known executions and discriminative power on mutated implementations
 - autonomous best-so-far stopping — stop at a threshold or budget and return the strongest submitted candidate
 - enhanced hard-case feedback — provide an uncaught mutant and extra attempts when binary feedback stalls
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

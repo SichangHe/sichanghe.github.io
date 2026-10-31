@@ -4,8 +4,6 @@ Tag: `lyu2025assertgen`, [paper](http://arxiv.org/abs/2509.23674v1)
 
 AssertGen generates SystemVerilog assertions from specification documents and RTL by bridging information across hierarchy levels. The abstract states, “AssertGen first extracts verification objectives from specifications using a chain-of-thought (CoT) reasoning strategy, then bridges corresponding signals between these objectives and the RTL code to construct a cross-layer signal chain, and finally generates SVAs based on the LLM.” (Abstract, p. 1). Inference: the Verus mappings below adapt a hardware-assertion method to Rust.
 
-## techniques
-
 ### incremental contextual-entity extraction with retrieval
 
 What it is: specification text is preprocessed into chunks for retrieval from a vector database. Starting from a signal, retrieval-augmented generation (RAG) asks “What is the description of {signal}?” and extracts target entities plus external contextual entities. The method removes overlap using `E_final = E_context − (E_target ∩ E_context)` and iterates until no new entities remain (III-B, pp. 2–3).
@@ -50,7 +48,7 @@ Mutation testing evaluates bug detection. AssertGen reports 31.14% on I2C, 15.35
 
 ## evidence boundary and product implications
 
-Table I (p. 5) describes COI as “All logic driving a property” and proof core as “Minimal logic to prove property”; IV-E uses mutation testing to assess injected-error detection. Inference: formal checking of generated properties does not establish that they capture all intended requirements, especially when timed-out proofs count as passes. For VL, reuse incremental context gathering, requirement-to-code mappings, and mutation-style negative tests as aids to finding missing obligations. Adapt these ideas to Rust contracts and invariants rather than copying RTL signal chains. A passing Verus proof would establish a contract’s obligations under the verifier’s assumptions, not the completeness of the requirements.
+Table I (p. 5) describes COI as “All logic driving a property” and proof core as “Minimal logic to prove property”; IV-E uses mutation testing to assess injected-error detection.
 
 ## techniques for the catalog
 
@@ -59,4 +57,3 @@ Table I (p. 5) describes COI as “All logic driving a property” and proof cor
 - cross-layer signal chains — recursively trace semantic signal propagation through module hierarchy
 - objective-to-code bridging — map each objective and chain to relevant implementation segments
 - constrained property generation — bind names and enforce a fixed assertion format before formal checking
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This approach incrementally bridges each signal in a verification intent to its definition in the RTL hierarchy."): checked quotations, numerical results, section and page references, technique steps, tag, and arXiv identifier; corrected result-page references, completed quotations, removed an unsupported signal-chain stopping rule and unsupported risk rankings, and marked interpretations as inferences; did not reproduce experiments, inspect implementation code, or independently validate Verus adaptations.

@@ -54,5 +54,3 @@ Inference: a useful Verus experiment would compare fixed specifications versus m
 - verified-data continual training: train on statement/proof pairs with compiler-verified proofs
 - reflection and rewriting synthesis: pair failed code, diagnostics, and repaired code to train error analysis
 - group-relative verifier RL: sample proof groups, score complete compilation, normalize rewards, and optimize with GRPO
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We have also observed that selecting an appropriate prompt set is crucial for RL training."): checked the full text, quotations, numbers, section and page references, training steps, and reported results; corrected the paper link, reward quotation, RL selection wording and page reference, added omitted training settings and the Appendix B.2 specification issue, and labeled conclusions as inferences; did not reproduce experiments, run Lean or Verus, inspect released artifacts, or independently verify cited works.

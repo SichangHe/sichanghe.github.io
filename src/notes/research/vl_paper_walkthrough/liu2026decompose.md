@@ -22,7 +22,7 @@ How to apply it.
 
 Verus form. Inference: encode each tree node as a predicate or ghost proposition. A child-to-parent entailment becomes a `proof fn` with `requires` equal to child facts and `ensures` equal to the parent fact. Verified subtrees can be exposed as proved lemmas to parent functions. Verus checks the encoded relation; it does not infer a tree from prose or validate that the chosen predicates preserve natural-language meaning.
 
-Evidence and limits. The paper explicitly warns that its guarantee is conditional on the translation function Φ, target formalism, and theorem prover (Limitations, p. 8). A formally proved node can still be semantically wrong if Φ changes scope, polarity, or roles. Inference: VL must treat autoformalisation as a specification boundary and review the mapping before trusting a Verus proof.
+Evidence and limits. The paper explicitly warns that its guarantee is conditional on the translation function Φ, target formalism, and theorem prover (Limitations, p. 8). A formally proved node can still be semantically wrong if Φ changes scope, polarity, or roles.
 
 ## technique 2: entailment-preserving atomic decomposition
 
@@ -36,7 +36,7 @@ How to apply it.
 4. Translate only the retained, semantically focused atoms into logical forms.
 5. Keep the source-to-atom relation so a failed formalisation can be traced to the original sentence.
 
-Verus form. Inference: represent each atom as a separate `spec fn` predicate and prove a lemma that the source-level contract implies the atom-level contract. Use `assert` to expose each atom before invoking downstream lemmas. The 0.9 classifier threshold is not a Verus proof; in a VL pipeline it should be replaced or supplemented by a compile-checked implication where feasible.
+Verus form.
 
 Evidence and limits. The ablation without atomic decomposition increases average refinement iterations by 0.31–0.53 relative to full LLM-TP Tree (section 5, p. 6). Table 2's full system averages 2.88 iterations versus 3.31 without atomic decomposition, across four datasets (Table 2, p. 6). The classifier can miss commonsense or discourse entailments, and the paper's limitation says naturalistic NLI may require additional axioms or richer semantics (Limitations, p. 8).
 
@@ -76,12 +76,9 @@ Evidence and limits. The method's average 2.88 iterations beats Explanation-Refi
 
 The theorem prover checks induced Isabelle/HOL formulas and produces solver-checkable certificates. The experiments measure final verified explanation rates, iteration counts, runtime, and cosine faithfulness; they do not prove that Φ preserves every natural-language commitment. Trust includes LLM tree construction, atom generation, the 0.9 RoBERTa entailment filter, θ-substitution templates, event semantics, Isabelle/HOL, and the benchmark labels. The paper itself says a guarantee is conditional on “the chosen autoformalisation function Φ, the target formalism, and the capabilities of the underlying theorem prover” (Limitations, p. 8).
 
-Inference: the threat to agent-written verified Rust is medium to high. The tree, atomic obligations, and local diagnostic repair are directly useful for breaking a large Verus proof into lemmas and repairing one failed obligation. Semantic translation errors can still produce a provable but wrong contract, and background facts may be omitted or encoded as unproved axioms. VL should reuse the decomposition and repair architecture while requiring Verus-checked contracts and explicit trust records for every external lemma. The paper's NLI datasets and cosine metric are already sufficient for their domain; VL should not redo them as evidence of Rust correctness.
-
 ## techniques for the catalog
 
 - recursive entailment tree — represent multi-step reasoning as bottom-up local obligations and promote verified subtrees
 - entailment-preserving atoms — split sentences into atoms only when each is entailed by its source, using a 0.9 NLI filter
 - θ-substitution formalisation — instantiate entity, event, and semantic-role placeholders in separate, auditable steps
 - diagnostic-guided local repair — use failed prover goals to refine only implicated nodes and recheck the same subtree
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

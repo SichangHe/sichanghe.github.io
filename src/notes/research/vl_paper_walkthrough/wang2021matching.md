@@ -21,7 +21,7 @@ How to use it.
 5. Define `PAR1` and `PAR2` to take one step from either parallel component, and define `ENV` to model updates caused by another computation executing in parallel (Section 2, Fig. 2, pp. 4–5).
 6. Define concrete configurations and final configurations (Section 2, p. 5), and finite or infinite executions, called terminable when finite and ending in final configurations (Definitions 1–2, p. 5).
 
-Verus form. Inference: represent the executable Rust state with ordinary structs and arrays, and define a ghost state-machine or transition relation as a `spec fn`. Each allowed step can be a `proof fn` with `requires` for the current state and `ensures` for the next state; invariants belong in loop `invariant` declarations or transition lemmas. Inference: Verus does not inherit PIMP's rewrite theory automatically. A VL implementation must prove that each Rust operation refines the chosen ghost transition and must model scheduler and `await` behavior explicitly.
+Verus form.
 
 Evidence and limits. The paper proves propositions about its rewrite semantics, including that a terminable parallel execution can be decomposed into component executions (Proposition 3, statement p. 5, proof pp. 5–6). The paper treats the semantics as the trusted reference model; it does not measure interpreter speed or compare against a real language. Inference: its memory is a simple map from positive naturals to integers, so C/Rust layout, ownership, and pointer validity are outside the model unless added separately.
 
@@ -96,8 +96,6 @@ Evidence and limits. The example demonstrates the proof rules and verifier rules
 
 The paper proves operational-semantics propositions, soundness of matching logic for actual PIMP executions (Theorem 10), and soundness/completeness of the symbolic verifier relative to the matching-logic proof system (Theorem 12). It demonstrates one producer-consumer validation, and says it achieved the goal of a proof system sound to a trusted operational semantics “in theory” (Section 6, p. 40). It does not measure scalability, compare solver times, implement the verifier, or prove correctness of a Rust implementation. Inference: its model and proof obligations are precise, but the trusted base includes the rewrite theory, the initial algebra, formula implication checks, and assumptions such as variable-name separation.
 
-Inference: threat to agent-written verified Rust is substantial when a product treats a high-level concurrency proof as proof of the concrete scheduler, memory model, or liveness. The transferable idea is to make operational semantics and interference conditions explicit and to connect verifier steps to that semantics. VL should not redo a generic claim that symbolic rewriting is sound; it should test a concrete Rust/Verus state-machine encoding and measure which interference lemmas agents can generate and maintain.
-
 ## techniques for the catalog
 
 - rewriting-logic operational model: define executable language behavior as explicit configuration rewrite rules
@@ -105,4 +103,3 @@ Inference: threat to agent-written verified Rust is substantial when a product t
 - interference-free parallel rule: require mutual preservation of each process's assertions before composing proofs
 - symbolic assertion verifier: branch, loop, and parallel rewrite rules carry formulas and discharge assertions
 - producer-consumer outline: prove bounded-buffer safety with modular indices, await guards, and cross-process preservation
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "V-IF rule divides the current pattern into two patterns, corresponding to the two cases that the assumption about b is true or false."): read all 42 pages of text (Sections 1-6, proofs, Figs. 2-8) and compared every quotation, section, figure, definition and page reference, and the technique steps; changed the claim that a verifier is implemented (the paper says there is none), the abstract quote, the Definition 6-9, Proposition 3, Section 3-5 and figure page numbers, the Theorem 10 quote spacing, and the producer-consumer steps (the paper checks interference in detail for one direction only); marked unsupported claims as Inference. Not checked: the case-by-case proofs of Theorems 10 and 12 and Propositions 3 and 5 for logical correctness, the correctness of the Figure 6-8 assertions, and the Verus-form paragraphs, which are the study's own design ideas.

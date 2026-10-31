@@ -6,7 +6,7 @@ Tag: `xin2024deepseek`, [paper](http://arxiv.org/abs/2408.08152v1)
 
 DeepSeek-Prover-V1.5 is a 7-billion-parameter Lean 4 prover combining additional mathematical pre-training, supervised fine-tuning (SFT), reinforcement learning from proof-assistant feedback (RLPAF), and inference-time Monte-Carlo tree search (MCTS). The central engineering idea is to keep whole-proof generation, but expose the verifier's intermediate tactic state when a generated proof fails. The abstract states: “Further refinement is achieved through reinforcement learning from proof assistant feedback (RLPAF).” It also says: “Beyond the single-pass whole-proof generation approach of DeepSeek-Prover-V1, we propose RMaxTS, a variant of Monte-Carlo tree search that employs an intrinsic-reward-driven exploration strategy to generate diverse proof paths.” (Abstract, p. 1.)
 
-The evaluation verifies generated proofs with Lean 4, importing Mathlib4 and Aesop and allowing 300 seconds per verification (Section 2.4, p. 7). Inference: acceptance establishes the formal theorem under the checker and library assumptions; it does not establish that the statement captures the intended mathematics or a Rust implementation. VL could adapt the verifier loop to Verus, with contracts for the target program. The Verus adaptations below are proposals, not results evaluated in this paper.
+The evaluation verifies generated proofs with Lean 4, importing Mathlib4 and Aesop and allowing 300 seconds per verification (Section 2.4, p. 7).
 
 ## technique 1: whole-proof generation with compiler feedback
 
@@ -64,8 +64,6 @@ evidence and limits. The ablation attributes performance to both components: at 
 
 Inference: acceptance depends on the formal statement, checker, and imported library assumptions. Generation and search affect which candidates are found, while the verifier checks the final proof. The benchmark translations and timeout policy also affect the reported evaluation. The benchmark denominators are 244 miniF2F test problems and 186 ProofNet test problems (Section 2.4, p. 7); percentages are pass@K over those sets, with ± values reported as standard deviations where shown. The paper reports ProofNet “all” values but does not give a separate all-set denominator in the table; it defines 185 validation and 186 test problems. Inference: the combined set has 371 problems by addition (Section 2.4, p. 7; Table 2, p. 16). The headline abstract says 25.3% ProofNet while Table 2 gives 25.3% for RMaxTS all at 4 × 6400; the 25.4% validation and 25.3% test values are separate columns.
 
-Inference: VL could test these techniques for Rust/Verus proof generation and repair, while reviewing contracts and trusted assumptions separately. This paper already combines whole-proof generation, tactic-state search, expert iteration, RLPAF, and intrinsic-reward MCTS. A Verus-specific experiment could measure verification success under fixed contracts, repair time, timeout rate, and sensitivity to dependency changes.
-
 ## techniques for the catalog
 
 - whole-proof verifier loop — sample complete proof code, run the proof assistant, and retain only verified candidates under a stated budget
@@ -79,4 +77,3 @@ Inference: VL could test these techniques for Rust/Verus proof generation and re
 - RMaxTS intrinsic-reward MCTS — select tree nodes with UCB, reward newly discovered states, and use discounted UCB for non-stationary exploration
 
 - parallel proof search — combine root runners, tree workers, asynchronous verifier processes, and virtual loss to raise search throughput
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The discounting is applied to tree search iterations rather than to the action-step horizon within a single trajectory."): checked all paper text, study quotations, numbers, section and page references, and technique steps; corrected RMaxTS reward use, figure and table references, the failure example, annotation steps, and unsupported assertions; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

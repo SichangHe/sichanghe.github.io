@@ -46,7 +46,7 @@ How to do it.
 
 Example. In Example 1, the predicates `x + (1 + 1) = n ∧ y*(k*k) = k^n` and `x + 1 = n ∧ y*k = k^n` are embedded, producing `x + v = n ∧ y*w = k^n`; another iteration yields a renaming and identifies the putative invariant (§5.2, pp. 42–43).
 
-Verus form. Inference: run distillation and embedding on Verus specification syntax before emitting a loop invariant. Inference: the resulting generalized variables become ghost terms or quantified expressions, while Rust executable code remains unchanged. Inference: this method would belong in VL's candidate-invariant generator, and every candidate must pass Verus's own proof checker.
+Verus form.
 
 Evidence and limits. Example 2 uses a conditional exponentiation loop and derives `y * z^x = k^n` after generalized approximations (§6, pp. 44–46). The paper does not report a count of all programs attempted. The termination argument relies on finitely many functors, as shown in the proof of Lemma 5.2 (§5.3, p. 44).
 
@@ -64,7 +64,7 @@ How to do it.
 
 Example. For Example 1, Poitín finds `v0' := n`, `w0' := k^n`, `vi+1' := vi' − 1`, `wi+1' := wi'/k`, `vn' := 0`, and `wn' := 1`; the resulting invariant is equivalent to `x ≤ n ∧ y = k^x` (§5.2, p. 43).
 
-Verus form. Inference: represent the schema as a ghost `spec fn` or proof-state relation, and emit lemmas that establish initialization and preservation for concrete expressions. Inference: use `requires` and `ensures` on proof lemmas, not on a `spec fn`; use loop `invariant` for the executable loop. Inference: if solver search cannot infer a generalized variable, VL should expose the unsolved obligation rather than silently weaken the invariant.
+Verus form.
 
 Evidence and limits. A footnote says the variable-solving step “could also be done using a SAT solver” (footnote 1, §5.1, p. 42). Example 4 fails because generalization removes updated `y` from the invariant; the authors say the situation “can be avoided to a certain extent by making sure that such variables appear in the left operand of binary operations”, but “this may not always be possible if the operation is not commutative or if both operands contain variables that are updated in the loop body” (§6, p. 49). Inference: the variable-instantiation phase is therefore incomplete and sensitive to expression shape.
 
@@ -81,7 +81,7 @@ How to do it.
 
 Verus form. Inference: verify the inner Rust loop with its own `invariant` first, then expose that contract to the outer proof. Inference: this matches Verus's need for a proved loop invariant before reasoning about a caller's loop, but the exact contract must include ownership and bounds facts absent from the paper's scalar language.
 
-Evidence and limits. Example 3 is a single nested-loop exponentiation example; the paper says the technique could also be applied without the given inner postcondition, using the postcondition from the outer loop's WLP calculation, but “the invariant of the inner loop would have to be re-calculated for every weakest liberal precondition calculation of the outer loop body” (§6, p. 47). It notes that Xu et al. [31] extended the induction-iteration method to nested loops in a way “very similar” to its own (§7, p. 51). Inference: caching inner-loop summaries is necessary for a practical VL generator.
+Evidence and limits. Example 3 is a single nested-loop exponentiation example; the paper says the technique could also be applied without the given inner postcondition, using the postcondition from the outer loop's WLP calculation, but “the invariant of the inner loop would have to be re-calculated for every weakest liberal precondition calculation of the outer loop body” (§6, p. 47). It notes that Xu et al. [31] extended the induction-iteration method to nested loops in a way “very similar” to its own (§7, p. 51).
 
 ## termination proof and failure boundary
 
@@ -89,13 +89,11 @@ The paper proves the algorithm terminates by showing homeomorphic embedding is a
 
 Inference: the termination theorem concerns the generator, not the program being verified. The paper explicitly leaves program termination for future work, which would require a weakest precondition and a decreasing variant (§8, p. 52). Inference: a Verus implementation must add `decreases` measures or equivalent progress proofs for executable loops.
 
-The main failure is loss of information during generalization. In Example 4, swapped multiplication yields a putative invariant that omits updated `y`, and Poitín cannot prove any of the three requirements (§6, p. 49). Inference: VL should retain failed candidate schemas and report which updated variable disappeared, instead of claiming that no invariant exists. The paper also identifies arrays (needing universally quantified invariants, which it says Poitín can handle) and pointers (via separation logic) as future extensions (§8, p. 52).
+The main failure is loss of information during generalization. In Example 4, swapped multiplication yields a putative invariant that omits updated `y`, and Poitín cannot prove any of the three requirements (§6, p. 49).
 
 ## what is proved, measured, and trusted
 
 The paper proves termination of its invariant-generation algorithm under its finite-expression assumptions and demonstrates successful derivations for three examples plus one failure (§§5–6, pp. 41–49). It measures no aggregate success rate, time, memory, or denominator across programs. Inference: it trusts the WLP calculus, distillation implementation, embedding and generalization algorithms, Poitín theorem prover, and the supplied pre/postconditions. Inference: a Verus deployment additionally trusts the translation from Rust expressions to generator expressions, Verus's solver and compiler, proof erasure, and contracts for libraries or pointers.
-
-Inference: this paper is a moderate threat to a product that claims automatic loop-proof generation: it already supplies a principled backward candidate generator and a termination argument. Inference: VL should not re-do generic postcondition-to-invariant search without comparing against this distillation and embedding baseline. Inference: the product opportunity is Rust-aware extension, including ownership, arrays, pointers, quantified data invariants, and an explicit failure explanation when generalization drops a needed variable.
 
 ## techniques for the catalog
 
@@ -106,4 +104,3 @@ Inference: this paper is a moderate threat to a product that claims automatic lo
 - inside-out nested-loop analysis: derive inner-loop invariants before using them in outer-loop WLP calculations
 - well-quasi-order termination: prove generator termination from finite functors and homeomorphic embedding
 - failure characterization by shape: generalization can drop an updated variable, and operand order affects whether it does
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This is not an embedding, so the logical assertion which is true before execution of the loop body is now re-calculated as follows"): read the whole paper text (pp. 36-53) and checked every quotation, section and page reference, the invariant requirements, the algorithm steps, the worked examples' formulas, and the termination argument; changed page references (Example 1 is in §5.2, §5.3 is p. 44 only, Example 4 ends p. 49, variable-solving text is on p. 42, the §8 quote spans pp. 51-52), the Technique 3 step that wrongly said the simplified invariant is produced (footnote 3 says it is not), the claim that Poitín proves obligations (the paper reports satisfying assignments only), the nested-loop claim (the paper only says the inner invariant can be used for the outer loop), the attribution of blow-up avoidance (generalisation of conjuncts, §7), removed an unsupported claim about Verus, and marked the trust list as inference; link replaced with the DOI printed in the paper text. Did not check: the cited works, the Verus mapping (all marked Inference), or the correctness of the paper's derivations beyond reading them.

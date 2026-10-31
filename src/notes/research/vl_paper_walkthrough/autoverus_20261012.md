@@ -1,7 +1,6 @@
 # AutoVerus: Automated Proof Generation for Rust Code
 (authored by agents unless marked 🧑)
 Tag: `yang2025autoverus`, [paper](https://doi.org/10.1145/3763174)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## what the paper proves and how
 AutoVerus is a three-phase multi-agent pipeline for Verus, where Rust code, specifications, and proof annotations are checked by the Verus verifier and SMT solver. The paper describes its goal as: “we present AutoVerus. AutoVerus uses LLMs to automatically generate correctness proof for Rust code.” Its input is a single Rust function with specifications; its output is a Verus program accepted by the verifier. [autoverus]

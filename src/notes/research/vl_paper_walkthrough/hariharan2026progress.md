@@ -75,14 +75,9 @@ Steps from the paper:
 3. A compression and refactoring pass cut the development from 80 000 to 60 000 lines; the authors are continuing to clean the Gauss code to mathlib standards, paying attention to overly long proofs and reproved mathlib results (p. 7).
 4. Review whether generated proofs follow the intended argument; the paper says exact correspondence is still investigated (Section 4, p. 8).
 
-Verus form: Inference: VL can supply a verified-Rust blueprint, contracts, and helper lemmas to an agent, then require Verus verification after every generated change. Refactoring must preserve specifications and re-run proofs; model output is not trusted merely because it compiles.
+Verus form:
 
 Evidence and limits: Gauss completed the main theorem in five days, expanding about 20,000 lines to 80,000, then refactoring to 60,000 (Section 3, p. 7). The paper says: “Interestingly, it was easier to generate the proof than to clean up and golf the code from 80k lines to 60k.” (Section 3, p. 7). It also reports many tiny auxiliary definitions, repeated local patterns, very long proofs, and trivial or duplicate lemmas (p. 7). Inference: the final artifact is therefore evidence of kernel-checked completion, not evidence that generated code is maintainable by default.
-
-## trusted boundary, contradictions, and VL impact
-Inference: Lean’s kernel checks the formal statements and proof terms. Human definitions, the blueprint, mathlib, the Gauss model, generated code, and the interpretation that the formal theorem represents Viazovska’s intended result are outside that kernel check. The authors state: “the project was not strictly set up to verify Viazovska’s original argument in its entirety, but rather, the modified (if only slightly so) argument in the project blueprint” (Section 4, p. 8). Inference: this is a material scope limitation.
-
-Inference: the threat to agent-written verified Rust is high for code volume and maintenance cost, but the paper does not show that Gauss can invent specifications or verify arbitrary systems code. Its reusable lesson is specification-first design, library-aware mathematical reformulation, and mandatory refactoring after model completion. VL should not redo a general autoformalization demonstration; it should measure whether generated Verus proofs preserve contracts, compile time, and maintainability after cleanup.
 
 ## techniques for the catalog
 - specification-first structures — define domain objects, invariants, and the main theorem before filling analytic proofs
@@ -90,4 +85,3 @@ Inference: the threat to agent-written verified Rust is high for code volume and
 - restricted-domain wrapper — expose hard mathematics through helper functions with explicit behavior outside the intended domain
 - proof metaprogramming — automate recurring normalization and continuity transformations while retaining kernel checking
 - generate then refactor — let an agent complete a detailed blueprint, then compile, audit correspondence, and remove duplication
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The saving grace is that in this instance, the integrands vanish because the real line is approached vertically."): read the whole paper text (469 lines); checked every quotation, the PR numbers, line counts, page and section references, the contour, modular-form, tactic and Gauss steps, and the tag and arXiv link (arXiv:2604.23468v3 appears on the paper's first page). Changed: attributed the footnote 8 qualification by quoting it; fixed a section reference; narrowed the contour-step wording (Gauss proved the Figure 2 deformation; inequalities (2) were still to be proved in PR #331); restricted `tendsto_cont` and `norm_numI` descriptions to what the paper says; replaced the unsupported refactoring claims and the advice sentence with the paper's wording or marked them Inference. Not checked: the Lean code, the pull requests, and the cited works; the Verus translations are Inference and were not tested.

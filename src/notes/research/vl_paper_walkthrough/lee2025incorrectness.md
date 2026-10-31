@@ -6,8 +6,6 @@ Tag: `lee2025incorrectness`, [paper](http://arxiv.org/abs/2503.00809v1)
 
 The paper extends Incorrectness Separation Logic (ISL) so that under-approximate proofs can describe variable-length arrays and pointer arithmetic. Its target is a concrete C-style error: freeing `array + 1` rather than the head of an allocated block (Introduction, §1.2, pp. 3–4). The abstract states: “Incorrectness Separation Logic (ISL) is a proof system designed to automate verification and detect bugs in programs manipulating heap memories.” It adds array predicates and pointer arithmetic, then proves relative completeness by constructing weakest postconditions. The abstract defines the assumption: “Relative completeness means that all valid ISL triples are provable, assuming an oracle capable of checking entailment between formulas; this property ensures the reliability of the proof system.”
 
-Inference: For VL, the useful idea is an explicit under-approximate bug witness: a postcondition describes states that are definitely reachable through an erroneous exit, rather than every state that might result. This can complement ordinary safety contracts when an agent needs to prove that a bad state is reachable.
-
 ## technique 1: block-aware array and pointer model
 
 What it is. Assertions are disjunctions of existential symbolic heaps. Atoms include points-to `t 7→ u`, variable-length positive arrays `arr(t,t')`, negative arrays, written here as `negarr(t,t')`, for consecutive deallocated cells, and arithmetic equalities/inequalities. A state is `(s,h,B)`: store, finite heap, and a set of non-overlapping half-open allocation blocks. The semantics requires live heap addresses to lie in blocks and deallocated addresses to lie outside them (Definition 4, §2.1, pp. 6–8). `b(t)` and `e(t)` return the block's base and end; pointer arithmetic is ordinary term addition. Here `negarr` distinguishes the negative predicate from the positive `arr`; the supplied text extraction renders both identically. Assertions may have countably infinite disjunctions, but symbolic heaps contain no internal `∨`, `∧`, or `¬` (Definition 1, pp. 4–5).
@@ -40,7 +38,7 @@ Inference: In a verification tool, the reusable pattern is to expose the relevan
 
 Evidence. The paper states: “The canonicalization divides into the cases for each possible sequence of strict inequalities and equalities individually to the input symbolic heap.” (§2.3, p. 11). It proves `P ≡ cano(P,C)` (Lemma 2, p. 11), which is the soundness basis for splitting.
 
-Failure mode. Infinitely many disjuncts can arise for loops and infinitary assertions. The conclusion explicitly says this syntax is “not ideally suited for the developing a practical automatic theorem prover” (§6, p. 23). Inference: a VL implementation should bound or compress case generation rather than copy the infinitary presentation literally.
+Failure mode. Infinitely many disjuncts can arise for loops and infinitary assertions. The conclusion explicitly says this syntax is “not ideally suited for the developing a practical automatic theorem prover” (§6, p. 23).
 
 ## technique 3: specialized under-approximate heap rules
 
@@ -76,7 +74,7 @@ Evidence and trusted boundary. Theorem 1 states soundness and Theorem 2 states r
 
 ## what is proved, measured, and already done
 
-The paper proves semantic soundness, expressiveness of `wpo`, and relative completeness. It reports no implementation benchmark or denominator-based empirical measurement. Relative completeness assumes an entailment oracle; soundness is proved with respect to the defined state and command semantics. Inference: VL could reuse the distinction between normal and erroneous exits and the array-boundary case analysis. Applying the completeness theorem would require checking that the chosen assertion language and command semantics match its assumptions. Existing work already handled points-to and negative heaps; this paper adds variable-length arrays and arithmetic (Introduction, §1.2, pp. 3–4; Related Work, §5.2, pp. 22–23). Inference: the main product threat is specification mismatch and proof complexity, not an automated exploit demonstrated by this paper.
+The paper proves semantic soundness, expressiveness of `wpo`, and relative completeness. It reports no implementation benchmark or denominator-based empirical measurement. Relative completeness assumes an entailment oracle; soundness is proved with respect to the defined state and command semantics.
 
 ## techniques for the catalog
 
@@ -87,4 +85,3 @@ The paper proves semantic soundness, expressiveness of `wpo`, and relative compl
 - boundary-sensitive heap rules — handle alloc/free/load/store by splitting arrays and updating block endpoints
 
 - weakest-postcondition completeness — generate exact under-approximate postconditions and use entailment to derive all valid triples
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We acknowledge that this complexity is a trade-off made to achieve simpler proofs for relative completeness."): read the complete paper, including Appendices A–D; checked quotations, metadata, page and section references, semantics, rule steps, and theorem statements; corrected negative-array notation, free prerequisites, allocation overlap and substitution, load results, canonicalization, sequence/error generation, quotation punctuation, and page references; removed unsupported Verus claims; did not independently re-prove the theorems or validate a Rust implementation.

@@ -74,13 +74,9 @@ Inference: For Verus, ask a contract reviewer to identify a counterexample or mi
 
 The evaluation is empirical. Appendix B states: “We applied a three-level evaluation protocol: (i) code execution (verification); (ii) specification/visual compliance (match to Figure 1 references); and (iii) physical correctness (validation) for Tasks 3–4.” (PDF p. 21.) Inference: the reported statistics and dialogue observations do not constitute a formal proof of the orchestration protocol. Physical checks audit equations and parameters rather than experimental accuracy (§4, PDF p. 16).
 
-Inference: VL can reuse the measurement design for agent-written verified Rust: distinguish proof-check success, contract adequacy, and domain-model adequacy, with explicit denominators and model/tool settings. Treating a proof-check pass as the sole acceptance criterion leaves errors in the encoded contract or model unchecked. Independent contract and domain review are candidate remedies to evaluate.
-
 ## techniques for the catalog
 
 - complementary role ablation — compare distinct generation, execution, and review capabilities under equal tasks, turns, and repetitions
 - multi-level validation — measure execution, specification compliance, and physical correctness separately; inference: use analogous separate outcomes for proof checking and contract/model review
 - affirmation instrumentation — label agreement without new reasoning and compare it against incorrect diagnoses
 - redundancy measurement — compare duplicate-review token cost and task outcomes; inference: test caps or error-triggered review as proposed interventions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Conditional on execution success, Combo 3 achieved 6 task successes (15.8%), versus 4 (10%) for Combo 6."): checked the whole supplied paper text, quotations, numbers, techniques, and PDF page/section references; corrected page references, the abstract's physical-success overstatement, the boundary-error denominator description, and the distinction between observed sequences and proposed interventions; marked Verus transfers as inferences and identified the fetch-record link mismatch; did not rerun FEA trials, recompute statistics, independently derive the stress equations, inspect linked references, or validate Verus implementations.

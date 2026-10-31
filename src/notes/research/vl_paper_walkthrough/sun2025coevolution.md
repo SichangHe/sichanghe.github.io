@@ -75,8 +75,6 @@ how to do it:
 6. feed other raw errors back to the LLM until conflict-free or the threshold is reached (§3.5.2, p. 11)
 7. replace an unresolvable annotation with `Any` as a conservative final fallback (§3.5.2, p. 11)
 
-Verus form (Inference): this is the closest direct transfer to VL. Treat Verus verification output as the checker oracle and apply candidate contracts in a temporary worktree. Use a `requires`/`ensures` contract for each accepted annotation, preserve the repository snapshot identity, and use a loop invariant over the set of remaining candidates. A proof function can show that accepted candidates preserve a stated invariant; failed candidates must be discarded before the next candidate. `Any` has no direct Verus equivalent: use an explicit uninterpreted/external assumption only at a documented boundary, because marking the function `external_body` would trust the function being verified.
-
 evidence: PyTIR introduced 554 errors over all 12 repositories: 543 assignment, 6 var-annotated, and 5 other errors; it reported zero arg-type, attr-defined, return-value, call-arg, override, and name-defined errors (Table 2, p. 15). The authors explain that assignment and var-annotated categories were excluded during iterative refinement because they often reflect missing annotations (§4.3, p. 15). Inference: the zero counts do not mean all semantic errors disappeared; some classes were deliberately suppressed or treated as incomplete information.
 
 ## technique 5: component and model ablations
@@ -99,13 +97,7 @@ evidence: DeepSeek-R1 reduced introduced errors from 554 to 335 while TypeExact 
 
 The paper measures type similarity, exact identity, Mypy errors, iterations, and time against developer-authored annotations. It does not formally prove that the inferred annotation matches runtime semantics. Trusted inputs include ground-truth repository annotations, PyAnalyzer and Mypy, model outputs, AST extraction, and the decision to suppress selected Mypy error categories. The benchmark starts from sanitized repositories with `# type: ignore` inserted for pre-existing errors (§4.1.2, p. 12), so real repositories with legacy defects may behave differently (§5, pp. 17–18).
 
-The abstract’s 92.7% claim is not reconciled with the detailed 79.1% reduction against HiTyper. Table 2 also has an internal inconsistency: its TypeGen error rows sum to 8,577 and its Tiger rows sum to 5,202, while the total row assigns 5,202 to TypeGen and 8,577 to Tiger (p. 15). Inference: those two per-category columns or totals are mislabeled; their association cannot be resolved from the paper alone. Inference: VL should report every reduction with the exact baseline and denominator and should never present “error-free” as proof of semantic correctness when fallback `Any` or suppressed diagnostics remain.
-
-## what VL should not redo and threat assessment
-
-PyTIR already demonstrates repository dependency graphs, SCC context reduction, iterative dependency/type co-evolution, checker-in-the-loop rollback, targeted backtracking, and an `Any` fallback. Inference: VL should not claim these as new merely by swapping Python/Mypy for Rust/Verus. Inference: a possible extension is a Verus-specific candidate-contract loop that preserves executable behaviour, tracks trusted external bodies and libraries, and proves that a repair did not weaken specifications.
-
-Inference: threat to agent-written verified Rust is high at dependency and contract inference. The checker catches syntactic and logical conflicts but accepts whatever specification is supplied, and `Any`-like escape hatches can hide missing guarantees. The threat is lower for a product that verifies unchanged executable code, rejects untrusted external bodies, records every solver result, and treats unresolved dependencies as blockers rather than silently broadening types.
+The abstract’s 92.7% claim is not reconciled with the detailed 79.1% reduction against HiTyper. Table 2 also has an internal inconsistency: its TypeGen error rows sum to 8,577 and its Tiger rows sum to 5,202, while the total row assigns 5,202 to TypeGen and 8,577 to Tiger (p. 15).
 
 ## techniques for the catalog
 
@@ -114,4 +106,3 @@ Inference: threat to agent-written verified Rust is high at dependency and contr
 - co-evolutionary refinement — alternate missing-edge discovery and type generation until all annotation targets are processed
 - checker-in-the-loop backtracking — apply one annotation, run a static checker, revert conflicts, and re-infer with diagnostics
 - component ablation — separate dependency context, conflict repair, and model choice to measure each contribution
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The raw error messages from Mypy are fed back to the LLM, which is prompted to generate a reﬁned annotation."): checked all paper text, study quotations, numbers, section/page references, technique steps, and catalog entries; corrected the placeholder link to the paper’s arXiv identifier, implementation references, annotation scope, refinement order, unsupported progress guarantees, and error-count qualifications; identified the dependency-direction and Table 2 inconsistencies; did not run PyTIR, inspect its implementation or supplementary material, reproduce experiments, or verify the proposed Verus adaptations.

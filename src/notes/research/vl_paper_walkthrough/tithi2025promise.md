@@ -10,7 +10,7 @@ The study evaluates four LLMs on propositional-logic proof construction and sele
 
 what it is: prompt an LLM with premises and a conclusion, require a complete step-by-step proof and structured JSON, and vary the prompt strategy. Models are Llama-3-70B-Instruct, Gemini-Pro, GPT-4o, and DeepSeek-V3, all at temperature 0.1 (Section 3.1, p. 3).
 
-when to use it: Inference: use these prompts to propose proof steps or decompositions, then pass every step through a rule checker. For VL, an LLM may propose Verus annotations or lemma calls, but Verus must validate the resulting proof code; natural-language confidence is not a proof.
+when to use it:
 
 how to do it:
 1. provide the premises and target conclusion
@@ -69,9 +69,7 @@ Table 6 reports human–human Spearman correlations from 0.77 to 0.93 and quadra
 
 ## what stays trusted and what fails
 
-Inference: interpreting the reported results relies on the logic checker, dataset translations, prompt parsing, and human rubric ratings. A VL system should treat generated proof code as untrusted until Verus checks it and review explanations separately. The abstract states: “Our results demonstrate that LLMs may be used to augment tutoring systems with logic tutoring hints, but those hints require additional modifications to ensure accuracy and pedagogical appropriateness.” (p. 1).
-
-The paper’s proof task measures single-step accuracy (Section 6, p. 7). It reports difficulty with negation and implication (Section 5, p. 6). It excludes o1 and DeepSeek-Reasoner because they were considered impractical for classroom deployment (Section 3.1, p. 3). Inference: the setup does not establish robustness to long proofs, changing rule systems, adversarial inputs, or Rust/Verus specifications. Inference: what VL should not redo: generic zero-shot/few-shot prompt comparisons without a checker. Inference: the reusable lesson is structured candidate generation with rule checking, explicit dependency validation, and separate evaluation of correctness and explanation quality.
+The paper’s proof task measures single-step accuracy (Section 6, p. 7). It reports difficulty with negation and implication (Section 5, p. 6). It excludes o1 and DeepSeek-Reasoner because they were considered impractical for classroom deployment (Section 3.1, p. 3).
 
 ## techniques for the catalog
 
@@ -83,4 +81,3 @@ Inference: these are reusable adaptations of the paper’s methods.
 - tree-of-thought prompting — demonstrate multiple reasoning threads, their corrections, and abandoned paths in prompt examples
 - state-conditioned hinting — convert a current proof state into text and generate a dependency-valid next step
 - rubric explanation review — rate consistency, clarity, justification, and subgoaling separately from formal correctness
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each problem, we sampled 20 % from the set of unique solution states, using a fixed random seed (42) for reproducibility."): checked all paper text, quotations, numbers, section and page references, and technique steps, with PDF inspection of Figures 1–3 and Tables 1–5; corrected the duplicate-step rejection criterion, checker quotation, prompting descriptions, references, and inference labels, and specified rubric sampling and scores; did not reproduce experiments or inspect code, datasets, or cited works.

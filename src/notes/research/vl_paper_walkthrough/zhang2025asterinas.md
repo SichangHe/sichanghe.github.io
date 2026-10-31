@@ -40,16 +40,6 @@ KernMiri first interprets OSTD initialization to synchronize initial memory stat
 
 Inference: Interpreter findings provide bug evidence; coverage does not prove the absence of undefined behavior on all executions. A Verus adaptation could test unsafe boundaries under an explicit memory and hardware model alongside proofs of wrapper contracts.
 
-## measurement, assumptions, and VL risk
-
-The performance comparison uses single-core QEMU VMs, Linux 5.15 as the baseline, and Asterinas with IOMMU enabled. Linux CPU mitigations and huge pages were disabled because Asterinas lacked them. The normalized geometric means are 1.08 for LMbench, 1.17 for Nginx, 1.31 for Redis, and 0.85 for SQLite. Throughput uses Asterinas/Linux; latency uses Linux/Asterinas, so higher is better. The paper cautions that Asterinas lacks some Linux features: its TCP stack lacks congestion control, and its filename lookup lacks Linux's RCU-walk optimization (sections 6.1–6.1.2, pp. 9–10).
-
-API-level safety-check overhead was below 3% except frame allocation at 6.7% (section 6.1.3, Table 8, pp. 10–11). Separately, SQLite incurred IOMMU overhead of 8.3% in some cases, attributed primarily to incomplete pooling in the block driver (section 6.1.4, p. 11).
-
-Linked Code Size counts source lines with corresponding executable LLVM IR statements after link-time optimization. Crates containing unsafe code and their dependencies enter the run-time TCB; toolchain-provided crates such as `alloc` and `core` are trusted separately. Table 9 reports Asterinas's total of 75,285 linked lines and TCB of 10,571 lines (14.0%), compared with RedLeaf 66.1%, Theseus 62.4%, and Tock 43.8% (sections 6.2.1–6.2.2, pp. 11–12).
-
-Inference: For agent-written verified Rust, the useful lesson is to name the trusted base and specify safe abstractions across it. Unsafe wrappers, hardware assumptions, and dependencies need explicit treatment; a small verified client alone does not establish kernel memory safety.
-
 ## techniques for the catalog
 
 - resource-centric TCB split: keep sensitive CPU, memory, and device resources in a privileged framework
@@ -57,5 +47,3 @@ Inference: For agent-written verified Rust, the useful lesson is to name the tru
 - safe policy injection: enforce safety despite incorrect safe scheduler or allocator policies
 - KernMiri testing: interpret OS initialization and unit tests with physical-memory and paging support
 - linked code size: measure linked executable source lines after link-time optimization
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To evaluate the cost of safety mechanisms, we directly invoke the interfaces corresponding to these safety mechanisms at the API level, measuring the CPU cycles required with and without the safety checks."): checked the full text, quotations, numbers, section and page references, technique steps, trust assumptions, and catalog; corrected quotations and page references, distinguished untyped memory from MMIO, clarified policy checks and evaluation scope, and marked Verus conclusions as Inference; did not reproduce experiments, inspect implementation code, or verify cited external sources.

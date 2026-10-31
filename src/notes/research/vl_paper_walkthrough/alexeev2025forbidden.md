@@ -30,7 +30,7 @@ Verus form (Inference): state small independent `proof fn` lemmas for datatype e
 
 The supplementary file records Lean 4.24.0 and a specific Mathlib commit (Section 6, PDF p. 10). The generated proof has over 6,000 lines, 26 definitions, 169 lemmas, and four final counterexample theorems; an ordinary laptop verifies it in slightly under half a minute (Section 6, p. 11). The denominator is one formalization on that laptop and toolchain, not a benchmark average. A basic fixed-point-free involution claim consumed over 250 lines even though it is one informal sentence (Section 6, p. 11; Section 7, p. 12).
 
-The authors report about a week of full-time work with substantial overtime, or about a month of calendar time (Section 7, footnote 5, PDF p. 12). They report recurring difficulty with the multitude of cardinality notions in Mathlib (Section 7, p. 12) and with parity, which they guess comes from the model being trained heavily on the earlier mathlib3 (Section 7, p. 13). Inference: VL should pin the Verus and dependency versions, expose compiler diagnostics to the agent, and measure proof repair time and proof-to-specification size rather than assuming generated code is efficient.
+The authors report about a week of full-time work with substantial overtime, or about a month of calendar time (Section 7, footnote 5, PDF p. 12). They report recurring difficulty with the multitude of cardinality notions in Mathlib (Section 7, p. 12) and with parity, which they guess comes from the model being trained heavily on the earlier mathlib3 (Section 7, p. 13).
 
 ## technique: separate exploratory code from trusted proof
 
@@ -40,7 +40,7 @@ Inference: in agent-written verified Rust, a passing Verus run lowers implementa
 
 ## already done and product implications
 
-The paper already demonstrates human-assisted proof generation, consistency checks for formal statements, version-pinned compilation, and quantitative proof-size/time reporting. Inference: VL should reuse these patterns and avoid claiming novelty for an LLM-plus-proof-assistant loop alone. The unresolved opportunity is a controlled Verus study that measures contract errors, repair iterations, dependency drift, and independently reviewed specifications.
+The paper already demonstrates human-assisted proof generation, consistency checks for formal statements, version-pinned compilation, and quantitative proof-size/time reporting.
 
 ## techniques for the catalog
 
@@ -48,4 +48,3 @@ The paper already demonstrates human-assisted proof generation, consistency chec
 - consistency checks — prove independent small lemmas and reject degenerate formal statements before trusting the main theorem
 - version-pinned compilation — record toolchain and library versions and report proof size, definitions, lemmas, and verification time with denominators
 - trusted-boundary review — inspect the theorem statement, libraries, kernel or verifier, compiler, and external assumptions separately from generated code
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We mention all of this background because perfect difference sets correspond to cyclic projective planes."): read the paper text start to end and the whole study; checked every quotation, the Lean size, time and version figures, the Lean statement and v = 0 flaw, the paper's idealized loop steps, and section and page references; changed the page references for the 250-line involution (p. 12), the week of work (p. 12) and the cardinality and parity difficulties (pp. 12-13), replaced the unsupported claims that the result is independent of the LLM and that the model was useful for formalization-adjacent exploratory work with what the paper says, labelled the trust-boundary extension and the product recommendations as Inference; kept the arXiv link (matches arXiv:2510.19804v2 in the paper). Not checked: the mathematical proofs in Sections 3-5, the Lean supplementary file, and the cited references.

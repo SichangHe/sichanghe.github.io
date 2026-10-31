@@ -58,12 +58,9 @@ The case study runs 420 simulations across three network scales and two traffic 
 
 Section 7 (p. 3428) identifies limits: artificial packet loss is omitted beyond congestion drops; median-based relay selection may miss variation; combining users in one client process requires disabling guards and reduces location diversity.
 
-Inference: The trusted assumptions include correctness of Tor, Shadow/TGen, measured inputs, and the sampling model. The method does not by itself prove model unbiasedness or causal comparability. VL can verify accounting, denominator consistency, interval arithmetic, and metadata provenance, but a verified program can still support an unsupported operational claim if sampling or confidence assumptions fail. These Verus/VL applications are proposals in this study, not techniques implemented or evaluated by the paper.
-
 ## techniques for the catalog
 - representative network modeling — sample configurable-scale networks from measured relay and traffic distributions
 - repeated independent experiments — separate network-sampling error from simulator randomness with n networks and m simulations
 - quantile aggregation — estimate the true inverse CDF by averaging simulation and network quantiles
 - two-layer confidence intervals — combine measurement, within-network, and across-network errors with Student’s t values
 - uncertainty-aware conclusions — compare estimates and CIs across loads and network scales before drawing performance conclusions
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Although it is ideal to run multiple simulations in each of multiple sampled networks, our results indicate that it may be a better use of resources to run every simulation in an independently sampled network."): checked the entire paper including references and Appendix A, quotations, numbers, section/page references, and technique steps; corrected sampling steps, variance divisors, CI denominators, load notation, metric-specific results, and inference labels, and replaced the link with the publisher page printed in the paper; did not reproduce experiments, audit tool implementations, validate statistical coverage, or read the separate extended paper.

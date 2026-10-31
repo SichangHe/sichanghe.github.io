@@ -57,13 +57,9 @@ Inference: Manual data expose concrete failure modes: inconsistent units, unfami
 
 Inference: The threat to agent-written verified Rust is high for specification translation and numerical control: an LLM can produce a syntactically valid but semantically wrong STL or code, and a discretized proof may not imply continuous safety.  Verus can reduce implementation risk only after the discretization, contract, solver assumptions, and environment are modeled explicitly.
 
-## what VL should not redo
-Inference: PDE-Controller already combines STL autoformalization, paired synthetic data, separate Translator/Coder training, subgoal planning, and FEM/MILP execution with metrics for IoU, executability, and utility.  VL should not claim those pipeline components as new.  A distinct contribution would be a Verus-certified discretization and a measured proof gap between discrete contracts and continuous requirements.
-
 ## techniques for the catalog
 - STL specification — encode spatiotemporal PDE requirements with globally/eventually operators and composable constraints
 - paired formal-data synthesis — enumerate syntax templates, sample physical parameters, and generate matched natural language, logic, and solver code
 - staged translation and coding — train an NL-to-formal translator separately from a formal-to-executable coder and evaluate each stage
 - subgoal control reasoning — solve an improving intermediate constraint before the anchor problem and train on utility-ranked pairs
 - FEM/MILP control backend — discretize the PDE, encode STL constraints, and optimize a utility certificate with an external solver
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The careful design of our utility score, in Appendix A.2, can faithfully quantify whether the STLs (constraints) are fully met by the solution simulated by the Gurobi solver."): read the whole paper text, including appendices; checked every quotation, section and page reference, the table numbers cited (Tables 2, 4, 5, 6, 8, 9, 17), the technique steps, and the tag and arXiv link (arXiv:2502.00963v2, ICML 2025, matches); changed the Table 1 quote (it was a flattened table cell with an added period) to a §3.3 sentence, the §2.2 quote page (p. 2 to p. 3), the Appendix A.3 pages (25–27 to 13–14), the valid-subgoal percentages (GPT-4o is 2.55%, not 0.04%; 0.04% is GPT o1-mini), the DPO preference description and reasoning steps, the data-sampling list, and the heading that called the stages verified; added the 17+17 manual problems, the Table 5 heat RMSE caveat, and the Table 17 end-to-end results; did not check Appendix figures (Figs. 6-9, 11 are images), the cited external works, or the project website.

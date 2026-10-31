@@ -248,7 +248,6 @@ The first counts annotations in already finished Dafny proofs.
 The others discuss Verus users writing new quantifiers.
 I do not think they contradict, but I cannot test it from the studies.
 
-Audit status.
 All studies cited here are now audited.
 The audit corrected the SMT instability study heavily: its mitigation procedure was invented, and the paper only proposes optimizing query structure.
 I changed the page to match.

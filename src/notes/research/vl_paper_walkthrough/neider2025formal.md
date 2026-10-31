@@ -100,8 +100,6 @@ Inference: use a GNN only to propose a Verus predicate; require Verus to prove t
 
 Templates let a user constrain missing propositions, operators, or subformulas; examples include GR(1) templates `G F?` and `G(? → X?)` (Section 7.1, p. 10). Natural-language systems parse English, train on labeled text–formula pairs, or use large language models (Section 7.2, p. 10). Related work learns STL, CTL, ATL, MTL, and PSL formulas (Section 7.3, pp. 10–11).
 
-Inference: for VeruLaw, the reusable pattern is a staged pipeline: mine a candidate from traces or text, expose its exact formula and examples, then require Verus proofs for the Rust contract and monitor. The threat from agent-written verified Rust is specification error: a solver or model can produce a formula that is internally consistent yet captures the wrong requirement. The survey’s methods do not validate intent, library assumptions, hardware behavior, or proof erasure; those remain trusted in a Verus deployment. Existing work already covers SAT/MaxSAT, enumerative search, GPU pruning, neural extraction, templates, and natural-language translation, so VL should not redo these as undiscriminated formula-search projects. It should measure whether mined predicates reduce human contract effort while preserving independently checked Verus proofs.
-
 ## what is proved, measured, and trusted
 
 Table 1 reports soundness, completeness, minimality, and language minimality for specific methods and data settings (p. 3). The survey gives qualitative scalability comparisons in Sections 5–6 (pp. 8–9), without a common runtime or accuracy experiment. Inference: guarantees about consistency with examples do not prove that the examples express the real system requirement. Using a learned formula in Verus additionally requires justifying its translation and intended meaning.
@@ -115,5 +113,3 @@ Table 1 reports soundness, completeness, minimality, and language minimality for
 - GPU RUC divide-and-conquer: search sample partitions with RUCs and combine the resulting formulas with Boolean operations
 - neural LTL extraction: represent words as linear graphs, train a GNN, and extract an LTL formula from its learned weights
 - templates and sketches: constrain formula structure with domain placeholders before learning missing propositions or subformulas
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This iterative process continues until no formulas more specific than the current formula can be found, at which point the algorithm terminates."): checked the complete paper, quotations, numbers, section and page references, technique steps, tag, and arXiv link; corrected page references and enumeration guarantees, removed unsupported MaxSAT size-search and counterexample-generation details, and marked conclusions as inferences; did not check cited papers, implementations, or the proposed Verus adaptations.

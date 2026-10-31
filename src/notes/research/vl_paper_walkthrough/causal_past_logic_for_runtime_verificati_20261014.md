@@ -53,16 +53,9 @@ Lemma 1 is proved by structural induction over formulas; Lemma 2 is proved by in
 
 Generated-workflow tests had three runs per task. All three final remote-field workflows passed validation and returned the expected result for both coin outcomes. All three final temporal workflows passed validation and returned the expected result for all 27 three-update histories. In the third temporal run, the agent corrected a wrong operator name and a wrong placement of `S`. The paper states: “Episode identity is not tested.” (section 6, page 16). Inference: these small generated-workflow tests do not establish reliability on other workflows.
 
-## threat and reuse for VL
-
-Inference: VL could apply CPL guards to merge, deployment, or proof-publication decisions and use Verus to verify a monitor implementation. The paper’s Lean theorem alone does not establish correctness of that implementation, message encoding, or application payload handling. These would need separate justification. Causal visibility also permits a decision before a later failure arrives; Figure 2 explicitly illustrates this behavior (page 5).
-
-Inference: VL should preserve causal metadata with proof-review messages and require guards to compare artifact identity (candidate hash) before accepting test or proof results. Candidate equality can reject evidence for a different artifact; it cannot reveal an update still in transit.
-
 ## techniques for the catalog
 - MSC causal model — represent asynchronous executions with local order, message edges, valuations, and a partial causal order
 - CPL guards — combine previous/since history with latest causally visible remote formulas and fields
 - knowledge-vector monitor — propagate vector clocks, latest subformula values, and selected fields on every message
 - coherence invariant — relate each clock row and cached value to the exact latest visible event
 - structural monitor proof — prove evaluator correctness by formula induction and state invariants by causal-order induction
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The prefix processed before an event is therefore causally closed: if an event has been processed, all of its causal predecessors have been processed as well."): checked every quotation, number, section and page reference, technique step, title, author, year, and arXiv identifier; corrected quotations and page references, completed the owner-side evaluator case and episode-reset description, qualified implementation and reuse claims, and marked Verus proposals as inferences; did not inspect artifacts, rerun experiments, kernel-check Lean, or validate the proposed Verus mappings.

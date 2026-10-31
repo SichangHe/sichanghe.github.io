@@ -20,8 +20,6 @@ Steps from §4 (PDF pp.5–6).
 4. Filter using a third set of keywords, the key terms, which identify potentially relevant fields, methods, and classes; occurrences score each result by relevancy. For the example the key terms "could be url, uri, application, property, port, https, ftp, routing, callback, request and response" (§4, PDF p.6).
 5. The filter removes results that are trivial, overly complex, primarily test cases, or below a minimal relevancy. Finally, find references to external packages and identify required external libraries by searching the Maven repository (§4, PDF p.6).
 
-Verus form (inference). This can supply candidate Rust modules and dependency manifests for VL, but search relevance is not a proof. A Verus workflow would need to compile the candidate under the supported Rust subset and then add `requires`/`ensures`, loop `invariant`, and `proof fn` lemmas. Repository provenance and build success remain trusted inputs. This is an inference because ASCUS is Java-specific and does not discuss Verus.
-
 Evidence. For the http-server example, the paper states: "ASCUS found 110 possible subsystems in GitHub and returned 18 abstractions to the developer after filtering" (§5, PDF p.7). These are candidate counts, not verified components.
 
 ## technique 2: synthesize a developer-facing abstraction
@@ -84,8 +82,6 @@ The paper's ultimate goal is "to generate working versions or at least working s
 
 Inference: The trusted base is large: the informal description and edited abstraction, repository code and build metadata, matching heuristics, transformations, mined tests, test framework, and developer judgment. A test-based specification only checks the selected examples; it does not establish a universal contract, security property, or absence of undefined behavior.
 
-Inference: The threat to a product that asks agents to write verified Rust is high at the specification boundary and low at the proof boundary. ASCUS-like search can reduce the cost of finding API shapes and behavioral examples, but it can also import assumptions from unrelated repositories. VL should not redo repository search, abstraction matching, or test mining as a new formal-verification contribution. A useful integration would make mined examples explicit candidate contracts, require human approval of security-relevant meaning, and run Verus proofs after every adaptation. The paper does not establish that any generated specification is suitable for Verus or that any adapted implementation is secure.
-
 ## techniques for the catalog
 
 - repository subsystem extraction: search projects/files, expand compile dependencies, filter by relevance, and collect external libraries
@@ -93,4 +89,3 @@ Inference: The threat to a product that asks agents to write verified Rust is hi
 - abstraction-to-code mapping: compute maximal correspondences and apply recorded renaming, type, parameter, and structure transformations
 - test mining: find JUnit tests, transform and prune them against the edited abstraction, then deduplicate the suite
 - interactive checkable specification: combine the edited interface with mined tests, while treating tests as examples rather than universal proofs
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Then it prunes the result by removing any unneeded methods, removing any test methods that invoke methods not in the abstraction, and ensuring the remaining tests compile against the abstraction."): read the whole paper text (§1–§8 and references) and checked every quotation, number, section and page reference and technique step in the four techniques; changed the "110 possible subsystems" wording (found before filtering, 18 returned after), moved the human-in-the-loop quote from §6 p.7 to §3 p.5, corrected the JUnit search criterion to import or package statement, corrected the test-count page to p.8, the keyword examples and the stop/merge steps, recast the 5-minute claim as the author's experience report, and marked the 800-line observation and the trusted-base paragraph as inference; did not check the cited related work in the references or the PDF figures beyond Figures 1 and 2 as rendered in the text, and Verus-form paragraphs are inference with no support in the paper.

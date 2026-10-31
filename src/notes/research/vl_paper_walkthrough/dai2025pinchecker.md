@@ -74,14 +74,6 @@ how they evaluate it:
 
 Table 6 contains 15 self-referential-struct examples, nine async-primitive examples, and six pin-safe-data-structure examples. Respectively, 14, eight, and five were linearizable: 27/30, or 90%. All three unsuccessful cases involved closure-based APIs (Section 5.3, Table 6 and Figure 15, p.10).
 
-Inference: VL could use this procedure before synthesis to check whether its trace representation captures the APIs in scope. The reported 90% describes these 30 examples, not arbitrary Rust programs.
-
-## trust boundaries and implications for VL
-
-Inference: the counterexamples depend on MIR extraction, RPIL translation, the interpreter’s rules, and the selected functions accurately modeling the relevant Rust behavior. The evaluation cannot establish the prevalence of pinning defects across crates.io. The authors identify broader unsafe-feature coverage, procedural macro support, and analysis performance as future work (Section 5.4, p.11).
-
-Inference: PinChecker supplies an existing method for synthesizing API compositions that violate pin contracts. A VL extension could connect those traces to Verus proofs of wrapper repairs, including reference movement and destruction behavior. Closure and macro support would require additional modeling rather than assuming the current linear representation covers them.
-
 ## techniques for the catalog
 
 - MIR-to-RPIL extraction — linearize public function paths into pin-relevant atomic operations and reference-state transitions
@@ -89,5 +81,3 @@ Inference: PinChecker supplies an existing method for synthesizing API compositi
 - five-rule pin semantics — constrain typing, liveness, reference introduction/retraction, and pin-state transitions
 - lazy liveness checking — defer liveness checks until candidate violation programs are generated
 - linear expressiveness audit — compare rewritten call sequences with original MIR and manually inspect semantic equivalence
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Because multiple programs can satisfy the same constraints, backward interpretation may yield multiple solutions, as shown in the middle example."): checked the full paper, quotations, numbers, references, and technique steps; corrected section/page references, function selection and synthesis details, state transitions, and unsupported recommendations; noted the rio line-count and missing pinus result inconsistencies; did not run PinChecker, reproduce experiments, or independently verify vulnerability records or proposed Verus adaptations.

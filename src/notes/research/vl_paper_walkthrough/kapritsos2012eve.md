@@ -10,8 +10,6 @@ Eve is a replicated state-machine architecture for multi-core servers. Tradition
 
 The design deliberately allows nondeterministic interleavings and independent execution at replicas. Safety depends on agreement on a resulting state/output, not on an identical instruction schedule. The paper reports a TPC-W speedup of 6.5× over sequential execution and 4.7× over Remus primary-backup, while approaching the 7.5× speedup of an unreplicated server (section 1, p. 238). These are measurements for the authors' prototype and workload, not universal bounds.
 
-Inference: For VeruLaw, Eve is a useful pattern for verified concurrent services: run an optimistic fast path, compute a compact certificate of the resulting abstract state, and fall back to a deterministic path when agreement cannot be reached. The paper's replication protocol is not itself a Rust or Verus proof; translating it requires proving that the certificate commits exactly the state relevant to the service contract.
-
 ## technique: execute then verify with rollback
 
 What it is. The execution stage accepts a batch, partitions it into parallel groups, executes those groups independently at each replica, and computes a token containing a state/output hash. The verification stage runs an agreement protocol over tokens. Matching enough tokens commits; otherwise replicas roll back and re-execute sequentially. The paper summarizes the invariant: “at the end of the verification stage, all correct replicas that have executed the ith batch of requests are guaranteed to have reached the same final state and produced the same outputs.” (section 4.2, p. 240)
@@ -106,4 +104,3 @@ Inference: For a product that emits agent-written Verus Rust, Eve suggests verif
 - chained quorum tokens: require matching authenticated tokens whose previous-batch hash is committed before accepting a new state
 - sequential fallback: use deterministic re-execution for progress under the stated fault assumptions after a failed optimistic round
 - extra protection mode: after clean rounds, wait for all replica responses to mask additional concurrency faults during good intervals
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "When more than u correlated concurrency faults produce exactly the same state and output, Eve still provides the safety and liveness properties of state machine replication, but can no longer guarantee correctness."): checked all quotations, numbers, section/page references, and technique steps; corrected references, token and quorum steps, repair versus rollback, theorem scope, and evaluation denominators; did not check the extended report, code, experimental reproducibility, external link, or proposed Verus proofs.

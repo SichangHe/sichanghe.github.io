@@ -54,11 +54,6 @@ Use a practice phase when an agent must retry generated code after errors but un
 
 The steps are: generate a plan; execute it against mock state; feed errors into retries; stop when the mock run succeeds; generate final code; execute once against real state; and expose only labelled tool interfaces. Endorsement is allowed in generated code but is acknowledged as a security weakening. In Verus, inference: use separate ghost and concrete states, prove practice execution cannot affect the real state, and require a one-way transition from practice to real execution. The paper does not prove that an arbitrary external side effect is reversible.
 
-## evidence, limitations, and threat to VL
-The Lean mechanization proves the calculus theorems and interpreter correspondence under the stated model. AgentDojo results are empirical. Randori’s policy-enabled rows report, for example, 36/48 safe and 281/432 attacked utility for GPT-5.2, while security is 291/291 Cat. A and 139/141 Cat. B; confidence intervals are clustered over three repetitions (Table 1, pp. 22–23). The two failed attacks are repeated instances of one task-attack pair, and the authors do not claim complete attack coverage.
-
-The paper’s work already provides a machine-checked agent harness, label propagation, quarantine, controlled reclassification, and a probabilistic noninterference proof. VL should reuse these ideas rather than reimplementing an unverified prompt-history monitor. Inference: the main product threat is a gap between the verified abstract interpreter and Rust adapters, tool implementations, parser behavior, and deployment. A Verus port should preserve a pure verified core, make every external boundary explicit, prove snapshot/restore and label invariants, and test successor tool calls. Lean’s probability and deep embedding are substantial porting work; the paper does not show a direct Rust/Verus translation.
-
 ## techniques for the catalog
 - labelled agent calculus: make prompts, responses, generated code, and tool values carry provenance labels
 - dynamic flow enforcement: propagate labels and block sends or assertions whose flows violate policy
@@ -67,5 +62,3 @@ The paper’s work already provides a machine-checked agent harness, label propa
 - confined endorsement: reclassify only a bounded value while proving confidentiality-preserving insulated TIPNI
 - oracle interpreter: pass model nondeterminism as an oracle to connect executable evaluation with formal semantics
 - practice-mode retries: repair generated code on mock state before permitting real-world side effects
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

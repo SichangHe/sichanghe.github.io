@@ -11,7 +11,6 @@ This review covers the supplied missing-paper list and relevant missing work cit
 
 ## Specification synthesis and independent intent checks
 
-
 The five requested papers were located. Full main texts were read; existing collection PDFs were reused. For *Seeking Specifications*, the available collection text is arXiv v1 (2025), while the matching journal record is *Formal Aspects of Computing* (2026), DOI 10.1145/3785411. Results below refer to the read version. Protocol AutoSpec is a different tool from the C/ACSL AutoSpec covered by the benchmark slice in this second pass.
 
 ### Seeking Specifications: The Case for Neuro-Symbolic Specification Synthesis
@@ -61,7 +60,6 @@ Kuangxiangzi Liu, Dhiman Chakraborty, Alexander Liggesmeyer, Andreas Zeller. ICS
 **Numbers and exact evidence.** Table 2, client/server-message and independent/dependent-constraint recall: “Average 92.8% 80.2% 16.7% 0.0%”. Table 1, golden grammar lines/human construction time, respectively POP3, SMTP, IMAP, FTP, ManageSieve: “295 3.5h”; “373 9.5h”; “676 14h”; “576 5.5h”; “449 5h”. Table 4 reports per-protocol message acceptance, with abstract averaging to 81.5%.
 
 **Limit and relevance.** Dependent constraints are completely missed in this version. Execution-guided repair may make the spec agree with a buggy server (§7.6.2); several evaluation tables have inconsistent counts. **Inference:** source traceability helps audit repairs, but test acceptance should not replace requirements fidelity.
-
 
 **Concrete server cases.** Each row is an executable protocol grammar plus finite real-server tests, automated by AutoSpec/Fandango; the size and effort are the human golden grammar used as oracle, not generated code or verification effort. Table 1 numeric quotes above support these cells.
 
@@ -163,8 +161,6 @@ Web search was attempted first and failed with HTTP 404. Searches then used curl
 The following absent relevant references were identified, but full texts were not recovered/read in this slice, so no results are claimed: *Specify What? Enhancing Neural Specification Synthesis by Symbolic Methods* (Granberry–Ahrendt–Johansson, IFM 2024, DOI 10.1007/978-3-031-76554-4_19); *TriCo—Triple Co-piloting of Implementation, Specification and Tests* (Ahrendt–Gurov–Johansson–Rümmer, ISoLA 2022, DOI 10.1007/978-3-031-19849-6_11); *Interactive synthesis of temporal specifications from examples and natural language* / LTLTalk (Gavran–Darulova–Majumdar, OOPSLA 2020, DOI 10.1145/3428269); *PROSPER: Extracting Protocol Specifications Using Large Language Models* (Sharma–Yegneswaran, HotNets 2023, DOI 10.1145/3626111.3628205). Publisher download attempts yielded HTML; these remain explicit follow-up gaps, not findings.
 
 Other relevant absent references requiring follow-up: Mashkoor–Leuschel–Egyed’s *Validation obligations* (ICSE NIER 2021); Sullivan et al.’s AUnit and *Automated test generation and mutation testing for Alloy* (ICST 2018/2017); Greiner et al.’s *Automated generation of code contracts: Generative AI to the rescue?* (GPCE 2024); Zhao et al.’s NL2CTL (ICFEM 2024). These are identified from the read papers’ references, not independently assessed here.
-
-## Executable specifications and code-verification benchmarks
 
 ### CodeSpecBench: Benchmarking LLMs for Executable Behavioral Specification Generation
 
@@ -300,13 +296,9 @@ Additional classical mining references in Beyond Basic Specifications include *M
 
 ## Statement autoformalization and semantic evaluation
 
-
-
 **Specification-Guided Autoformalization with Source-Grounded Blueprints (2026): not found under that title.** Exact-title searches in OpenAlex, arXiv and DBLP, plus searches for the distinctive subtitle, did not identify a matching record; Google returned a JavaScript challenge. This is an unresolved identification gap, not evidence that the paper does not exist.
 
 ### SHADOWBENCH: Toward Reliable Automatic Evaluation of Semantic Alignment in Autoformalization
-
-Hojae Han, Jongyoon Kim, Sanghyeok Park, Dongwook Cheon, Yeachan Park, Myeong Jae Jeon, Sunjong Choe, Soonho Kong, Wonseok Hur, Seung-won Hwang, Donghoon Hyeon. arXiv, 2026, v3 dated 5 September. [Paper](https://arxiv.org/abs/2608.29270v3); [artifact](https://github.com/ldilab/shadowbench). Saved PDF: `/hdd1/sichanghe/paper_collection/SHADOWBENCH- Toward Reliable Automatic Evaluation of Semantic Alignment in Autoformalization, Hojae Han et al., arXiv, 2026/paper.pdf`.
 
 **Human input.** The task supplies an “informal theorem statement and proof” (§1). Five mathematicians curate source problems, repair reference Lean code, and check its meaning. Qwen3-235B drafts auxiliary statements, called shadows; people repair them. §4.1 quotes the initial-draft coverage as “85% of problems”; §4 reports construction effort as “about 10 minutes per problem”.
 
@@ -319,8 +311,6 @@ Hojae Han, Jongyoon Kim, Sanghyeok Park, Dongwook Cheon, Yeachan Park, Myeong Ja
 **Inference for this project.** Reusable human-reviewed consequence checks could test whether an agent preserved each intended guarantee. Their completeness still depends on a trusted interpretation of the user's request.
 
 ### Reliable Evaluation and Benchmarks for Statement Autoformalization
-
-Auguste Poiroux, Gail Weiss, Viktor Kunčak, Antoine Bosselut. EMNLP 2025, pp.17947–17969. [Publisher paper](https://aclanthology.org/2025.emnlp-main.907/); [PDF](https://aclanthology.org/2025.emnlp-main.907.pdf); [arXiv](https://arxiv.org/abs/2406.07222). Saved PDF: `/hdd1/sichanghe/paper_collection/Reliable Evaluation and Benchmarks for Statement Autoformalization, Auguste Poiroux, Gail Weiss, Viktor Kuncak, Antoine Bosselut, EMNLP, 2025/paper.pdf`.
 
 **Human input.** Natural-language mathematical statements; few-shot translation examples for ProofNet#, or preceding Lean file context for RLM25. Humans correct reference statements and label generated statements for semantic equivalence. ProofNetVerif has “3752” labeled pairs, “1142” correct (§3.1); RLM25 has “619” statement pairs from six existing mathematical projects (§4.1).
 
@@ -337,8 +327,6 @@ Auguste Poiroux, Gail Weiss, Viktor Kunčak, Antoine Bosselut. EMNLP 2025, pp.17
 `rg` searches across `01_*.md`–`09_*.md` found none of the following titles. These mathematical studies matter for semantic evaluation; they supply no verified distributed implementation.
 
 ### FormalAlign: Automated Alignment Evaluation for Autoformalization
-
-Jianqiao Lu, Yingjia Wan, Yinya Huang, Jing Xiong, Zhengying Liu, Zhijiang Guo. ICLR 2025 confirmed by the [conference page](https://iclr.cc/virtual/2025/poster/30594); the [final OpenReview paper](https://openreview.net/forum?id=B5RrIFMqbe) returned a 403 challenge. The latest arXiv PDF served by the unversioned URL is the 14 October 2024 v1 work-in-progress preprint, so the numbers below refer to that version. [Paper](https://arxiv.org/abs/2410.10135v1); [code](https://github.com/rookie-joe/FormalAlign). Saved PDF: `/hdd1/sichanghe/paper_collection/FormalAlign- Automated Alignment Evaluation for Autoformalization, Jianqiao Lu et al., ICLR, 2025/paper.pdf`.
 
 **Human input.** Existing aligned natural-language/Lean pairs and hand-designed mutation strategies: change constants, exponents, types, variables, equality, or pair an unrelated theorem (§4.1, Table 2).
 
@@ -374,8 +362,6 @@ Azim Ospanov, Farzan Farnia, Roozbeh Yousefzadeh. NeurIPS 2025; arXiv v1 5 Novem
 
 ### ASSESS: A Semantic and Structural Evaluation Framework for Statement Similarity
 
-Xiaoyang Liu, Tao Zhu, Zineng Dong, Yuntian Liu, Qingfeng Guo, Zhaoxuan Liu, Yu Chen, Tao Luo. ICLR 2026; arXiv v2, 9 February 2026. [Paper](https://arxiv.org/abs/2509.22246v2); [conference](https://iclr.cc/virtual/2026/poster/10008659); [code](https://github.com/XiaoyangLiu-sjtu/ASSESS). Saved PDF: `/hdd1/sichanghe/paper_collection/ASSESS- A Semantic and Structural Evaluation Framework for Statement Similarity, Xiaoyang Liu et al., ICLR, 2026/paper.pdf`.
-
 **Human input.** Existing natural-language mathematical problems and reference Lean statements. Seven experts label generated/reference pairs for equivalence and structural similarity; §4.1 says experts “annotated and cross-validated each pair”. Four LLMs generate candidate statements, then Lean filters compilation failures.
 
 **Checked/automatic.** Lean parses statement pairs into expression trees. CPU-only tactic search attempts to prove equality, while the number of remaining tree edits gives partial similarity when proof fails (§3). This scores mathematical statements, not running software or safety/liveness. §3.3.2 explicitly calls the implemented distance a “tractable upper bound”, rather than the exact theoretical distance.
@@ -391,8 +377,6 @@ The web-search tool returned HTTP 404, arXiv API returned 429, and OpenAlex work
 **Rethinking and Improving Autoformalization: Towards a Faithful Metric and a Dependency Retrieval-based Approach** (Qi Liu, Xinhao Zheng, Xudong Lu, Qinxiang Cao, Junchi Yan; ICLR 2025 spotlight): title/authors/venue confirmed by the [official artifact](https://github.com/Purewhite2019/rethinking_autoformalization), but its [full PDF](https://openreview.net/pdf?id=hUb2At2DsQ) and API returned 403 challenge pages; no open PDF recovered, so no full-text findings claimed. Crossref yielded unrelated papers; Semantic Scholar returned 429.
 
 Slice counts: two requested papers found/read, one requested title unresolved; four additional related papers assessed; one additional related paper identified but full text blocked; four new PDFs saved and two existing PDFs reused.
-
-## Requirements, traceability, and surveys
 
 ### Automated Trace Link Recovery Between Natural Language Requirements and Formal Specifications via LLMs
 
@@ -445,7 +429,6 @@ Giovanni Bernardi, Adrian Francalanza, Marco Peressotti, and Mohammad Reza Mousa
 **Relevant quantitative evidence, all secondary.** §6.1 (p. 33) reports “four-fold better quality” measured as defects per line and “three-fold increase in productivity” for ASD-generated Philips backend components; ASD translates tables to CSP and checks deadlock freedom/domain properties. §6.2 (p. 33) gives a projected 4SECURail benefit/cost ratio of “5.05”. §6.3 (p. 34) reports Frama-C handling “85%” of assertions on average “50 KLOC” blocks in a Dassault robustness pilot; the cited savings are a person-month per flight release. §6.4 (pp. 34–35) discusses eSpark service migration, AWS replication, Thales JavaCard C verification, and “six subtle bugs” found by binding CCF C++ traces to TLA+. These are summaries of heterogeneous primary reports, not a common benchmark or controlled estimate of labor saved by LLMs. Avoided failures are inherently hard to price (§1, p. 5).
 
 **Inference:** use this source to choose consequential problems and record labor baselines, not to score an intent-to-proof system. A trustworthy evaluation should separately count model-writing time, specification review, source instrumentation, proof effort, and bugs discovered.
-
 
 ## Relevant missing references followed from the surveys
 
@@ -523,8 +506,6 @@ The new AmbiEval dataset has “9,200 labeled instances” (§4.2, p. 13). Cruci
 
 - **VeriPlan: Integrating Formal Verification and LLMs into End-User Planning**, Christine P. Lee, David Porfirio, Xinyu Jessica Wang, Kevin Chenkai Zhao, and Bilge Mutlu, CHI 2025, [DOI](https://doi.org/10.1145/3706598.3714113): found, relevant human-facing planning/constraint interface; ACM PDF returns 403 and attempted author/arXiv access did not yield the correct full paper, so no full-text result is claimed
 - **AgentVerify: Compositional Formal Verification of AI Agent Safety Properties via LTL Model Checking**, Eric Fang, 2026, [DOI](https://doi.org/10.20944/preprints202604.1029.v1): found, relevant compositional agent-model safety checking; both Preprints landing page and download return 403, so the survey's claims remain unaudited
-
-## Kubernetes: observed behavior and the limits of a passing check
 
 ### Monitoring and Verification of Multitenant Kubernetes Clusters using TLA+ Trace Checking
 

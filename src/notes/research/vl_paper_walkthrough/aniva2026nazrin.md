@@ -5,8 +5,6 @@ Tag: `aniva2026nazrin`, [paper](https://arxiv.org/abs/2602.18767v3)
 ## scope and contribution
 Nazrin uses a finite set of atomic tactics, converts existing proofs into atomic traces, represents goals as symmetry-aware graphs, and learns tactic choices with a graph neural network. The authors claim that the tactic set is complete; their implemented atomizer does not convert every proof. The abstract states: “We first present a set of atomic tactics, a small finite set of tactics capable of proving any provable statement in Lean.” It then introduces “a transposing atomization algorithm which turns arbitrary proof expressions into a series of atomic tactics” and the `ExprGraph` representation (Abstract, p. 1).
 
-Inference: the product lesson for VL is to constrain agent actions to a finite, typed vocabulary of proof edits and to represent a Verus goal with ownership, contracts, and ghost-state relations rather than raw text alone.
-
 ## technique 1: atomic tactic design
 
 The authors define an atomic tactic set by finite actions, including finite parameter choices, and completeness for valid Lean theorems (Section IV-A, p. 4). The paper warns that ordinary `simp`, `conv`, and `use` can have unbounded arguments. It requires four properties: “Invariance: No tactic ever changes the value of an assigned metavariable, i.e., once a goal is assigned, its assignment never changes without backtracking.” “Completeness: If a tactic removes a goal, it must assign the goal.” “Progress: It is not possible for a tactic to make no progress, i.e., a tactic never produces a goal state containing only the goal it was applied to.” “Determinism: The atomic tactics yield the same result for the same input goal.” Here, the property called completeness concerns assigning removed goals; it differs from completeness of the entire tactic set (Section IV-A, p. 4).
@@ -45,8 +43,6 @@ The comparison sample includes theorems Nazrin proves that Aesop and Grind do no
 
 Limitations are explicit: atomization does not work for all theorems, some traces have high cross-sections, later tactic parameters are not conditioned on earlier parameters, and the GNN does not process numbers or strings. The authors work around the last limitation by assigning goals in passing through Lean's type unification (Section VII, p. 9). Inference: the Lean checker determines proof acceptance; atomizer heuristics, graph construction, premise selection, data slicing, and time limits also affect the reported search results. These experimental components should not all be treated as part of the logical trust boundary.
 
-Inference: threat to VL is high for proof-search latency and action-space design, especially for repeated invariant and lemma repair patterns. It does not remove the need for correct specifications, ownership reasoning, or trusted external APIs. Existing VL work should not redo finite-action proof search in the abstract; it should test a Verus-specific action grammar and graph that preserve Rust types, borrows, ghost resources, and contract boundaries.
-
 ## techniques for the catalog
 
 - atomic proof actions — use a finite, deterministic, progressing and complete tactic vocabulary
@@ -54,5 +50,3 @@ Inference: threat to VL is high for proof-search latency and action-space design
 - essentialized goal graphs — erase search-irrelevant detail while preserving loci, references, and subgraph structure
 - neural probabilistic automaton — generate parameterized finite tactics through graph-conditioned categorical states
 - rainbow guidance — prioritize successor goals and use abandon to signal futility or a need for predecessor progress
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The first problem we address is how to represent Lean expressions and goals in a format which is suitable for consumption for a machine learning agent, a GNN in our case."): checked all paper text, quotations, numbers, section/page references, technique descriptions, and limits; corrected page references, constructor mappings, atomization/defer semantics, solution-closure invariant, training details, and experimental interpretation, and replaced the paper link with its arXiv identifier; did not reproduce experiments, inspect source code, or validate the proposed Verus adaptations.

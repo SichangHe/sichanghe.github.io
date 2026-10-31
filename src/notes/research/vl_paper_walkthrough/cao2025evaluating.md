@@ -52,17 +52,9 @@ how to do it:
 2. report question counts and model outcome counts per chapter (Table 1, p. 2)
 3. distinguish this chapter breakdown from the qualitative style observations in §4.4, p. 9. The latter states: “GPT-5-Thinking and Grok-4 tend to produce proofs primarily in natural English, focusing on high-level reasoning.” The paper does not present a separate quantified breakdown by proof technique
 
-Inference: VL could group tasks by specification or proof feature and report reconciled denominators for each group. This would be an adaptation, not a result demonstrated by this paper.
-
-## what is trusted and threat to VL
-
-Inference: the benchmark depends on statement preparation, researcher review, model APIs, AI verdicts, and the sampled human audit. Its reported accuracies are not measurements of verified Rust success. The concrete risk for VL is accepting plausible proof text without checking the actual code and its specification. The paper's audit procedure and inconsistent outcome totals also limit how precisely its scores can support comparisons.
-
 ## techniques for the catalog
 
 - statement preparation — separate transcription, dependency resolution, and human review from proof generation
 - sampled verifier audit — assess binary AI proof judgments using a random human-reviewed subset
 - chapter reporting — retain question counts and outcome counts by chapter
 - Inference: checker boundary — use Verus results and explicit trusted assumptions when adapting this design to verified Rust
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The key observation is that we can compute the maximum acceptance probability over all possible prover strategies using a recursive algorithm that explores the game tree of the interactive proof."): checked all study quotations, numbers, section and page references, and technique steps against the full paper, including its appendices; corrected the grading workflow, denominator explanation, failure categories, section references, and unsupported problem-type claims, and noted inconsistent table totals; did not rerun the benchmark, inspect the linked repository, compare every exercise with the textbook, or independently validate every generated mathematical proof.

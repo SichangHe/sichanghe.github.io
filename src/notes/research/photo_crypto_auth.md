@@ -24,8 +24,6 @@ steps:
         probably the only platform, because of Microsoft
 1. Extract info from posts' text
 
-## literature
-
 ### *P3: Toward Privacy-Preserving Photo Sharing*, Moo-Ryong Ra, Ramesh Govindan, Antonio Ortega, NSDI 13
 
 split photo into public and private part, encrypt private part

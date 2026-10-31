@@ -51,15 +51,8 @@ Results. Table 2 reports CombiBench (`N=100`) theorem-complete@64 of 13/100 for 
 
 Inference: a Verus evaluation should report verified-contract coverage, semantic-equivalence audit rates, solver time, and downstream proof completion under a fixed attempt budget. It should separate what Verus checks from what the semantic judge and Rust libraries are trusted to establish.
 
-## trusted scope, failures, and product threat
-
-The paper explicitly limits semantic certification: “Semantic consistency remains difficult to certify automatically.” Its judge is an LLM, and the authors calibrate it manually. Proof success is only for the encoded Lean statement under the fixed prover protocol; it does not prove that an informal requirement was formalized correctly. The benchmarks are ProofNet test (`N=186`) and CombiBench (`N=100`), and the stronger-base supplementary run changes models, so its 0.86→0.88 SH@100 comparison is not a general model-independent result.
-
-Inference: the threat to agent-written verified Rust is moderate for specification generation and proof search: an archive could find solver-friendly variants and reduce repeated repair, but it cannot decide whether a Verus contract captures the product requirement, and failed or misleading semantic judgments remain possible. Existing VL work should not redo the basic idea of verifier-gated candidate search with fixed budgets; a new contribution would need Verus-specific semantics, trusted-boundary accounting, and maintenance evidence.
-
 ## techniques for the catalog
 
 - compilation-gated archive: retain unique verifier-passing candidates and reuse them as parents and context under a fixed call budget
 - bounded repair and AST fallback: use compiler/judge feedback for capped edits, then apply call-free structural rewrites when mutation stalls
 - repertoire evaluation: measure semantic coverage and concentration, then test deduplicated candidates under a fixed downstream prover-attempt budget
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

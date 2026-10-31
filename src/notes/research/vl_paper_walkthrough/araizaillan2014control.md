@@ -6,8 +6,6 @@ Tag: `araizaillan2014control`, [paper](http://arxiv.org/abs/1405.7615v2)
 
 Araiza-Illan, Eder, and Richards describe a Simulink-to-Why3 pipeline for proving high-level control properties. The abstract states: “This paper presents the deductive formal verification of high-level properties of control systems with theorem proving, using the Why3 tool.” (abstract, PDF page 1). The workflow places assertion blocks in a Simulink model, translates the block graph to Why3 theories and goals, and invokes SMT/theorem provers. The case study is a scalar first-order discrete system with a quadratic Lyapunov function.
 
-Inference: The reusable idea for VL is an annotation-to-verifier compiler: let domain users place structured assertions near the model, then generate proof obligations from an intermediate representation rather than hand-writing every obligation.
-
 ## technique: express requirements as assertion blocks and Hoare triples
 
 What it is. The authors add a library of Simulink blocks that represent logical assertions over signals. A `Require` block has preconditions and postconditions in Hoare-triple form, and the translator turns connected assertion blocks into Why3 goals. They write: “The ‘Require’ block denotes a requirement in a Hoare triple form [3]”, followed by the formula {preconditions} → [model]{postconditions} (section 2, PDF page 2). The `Require` block is an enabled subsystem with an `Assert` block inside (section 2, PDF page 3).
@@ -24,7 +22,7 @@ How to do it.
 
 Verus form. Inference: represent each requirement as a `spec fn` predicate over signal sequences and expose a proof function whose `requires` is the precondition and `ensures` is the postcondition. Keep runtime checks as ordinary Rust assertions or tests; Verus proof predicates do not become runtime checks automatically. A hierarchical proof can be a chain of lemma functions, each proving one subsystem contract.
 
-Evidence and limits. The paper’s blocks are a subset under development; continuous-time signals and richer block libraries are future work (section 4, PDF page 5, and the closing paragraph of section 5, PDF page 8). Inference: a VL annotation compiler must define the supported subset explicitly, or generated proof goals may silently omit model behavior.
+Evidence and limits. The paper’s blocks are a subset under development; continuous-time signals and richer block libraries are future work (section 4, PDF page 5, and the closing paragraph of section 5, PDF page 8).
 
 ## technique: library of modular Why3 theories
 
@@ -41,7 +39,7 @@ How to do it.
 
 Verus form. Inference: encode each block contract as a `spec fn` or lemma over typed sequences, and instantiate it for concrete signals. Use `ensures` for behavior and separate lemmas for algebraic facts; avoid axioms unless they correspond to trusted external facts, because Verus axioms enlarge the trusted base. A Rust trait can organize block implementations, but proofs should refer to concrete specs.
 
-Evidence and limits. The paper’s theory example uses axioms for multiplication and comparison. Inference: axiomatizing a block can prove an inconsistent or over-strong model if the axioms do not match Simulink semantics, so a VL translator needs validation tests for each block theory.
+Evidence and limits. The paper’s theory example uses axioms for multiplication and comparison.
 
 ## technique: automatic AST translation from block diagrams
 
@@ -70,8 +68,6 @@ Verus form. Inference: keep simulation tests as empirical checks and prove the s
 
 The paper proves the encoded Why3 goals for a discrete scalar model and measures agreement with simulation for ten gains under one CVC3 timeout. It does not prove all Simulink blocks, continuous-time dynamics, or physical plant behavior. The model’s block theories and their axioms are trusted inputs; the paper notes that “The main disadvantage of Why3 is the lack of feedback about the failure in the proof, compared to the production of counterexamples in model checking tools.” (closing paragraph of section 5, PDF page 8). Inference: the block theories and their axioms are trusted inputs; the paper does not validate them against Simulink semantics.
 
-Inference: what VL should not redo is what the paper already supplies: the annotation-block pattern, modular theory library, AST translation sequence, and simulation/proof cross-check. Inference: VL should concentrate on a Verus-compatible intermediate representation, audited contracts for common Rust components, and diagnostics that explain failed obligations.
-
 Inference: threat to agent-written verified Rust is medium. The pipeline can automate translation and discharge simple arithmetic properties, but unsupported blocks, over-strong axioms, solver `Unknown` results, and the gap between a model and its physical implementation remain substantial risks.
 
 ## techniques for the catalog
@@ -80,4 +76,3 @@ Inference: threat to agent-written verified Rust is medium. The pipeline can aut
 - modular theory library — give each block a typed input-output theory that can be cloned and parameterized
 - AST-based model translation — traverse block connections and generate verifier declarations and goals automatically
 - simulation/proof cross-check — compare runtime assertion outcomes with theorem-prover results over the same parameter set
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Then, the theories of the integer, real and Boolean numbers are imported. Functions corresponding to the signals that come out of the blocks are added to the theory"): read the whole paper text (8 pages plus references); checked every quotation, the figure and table contents and numbers (ten gains, Tables 1 and 2, 150-second limit), section and PDF page references, and each technique step against sections 2 to 5; changed page citations (Lyapunov requirements and hierarchical proofs are on page 3, not 2; Tables 1 and 2 are on page 8, not 7; theory list on page 4; section 5 starts on page 7), the Hoare-triple quotation (restored the citation marker [3]), the theory import step (Boolean is not in the section 3 list), the "sign-preservation" description, the gain-interval wording, and labeled several unmarked conclusions as Inference; kept the tag and the arXiv link (the paper text shows arXiv:1405.7615v2); did not check the cited works in the references, the Verus-form and product-implication paragraphs beyond their Inference labels, or the PDF figures beyond the extracted text.

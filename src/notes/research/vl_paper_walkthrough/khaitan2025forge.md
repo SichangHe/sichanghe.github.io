@@ -8,8 +8,6 @@ O-Forge couples a frontier language model to Mathematica’s `Resolve` computer-
 
 The abstract says: “We present a framework, called LLM+CAS, and an associated tool, O-Forge, that couples frontier LLMs with a computer algebra systems (CAS) in an In-Context Symbolic Feedback loop to produce proofs that are both creative and symbolically verified.” It then specifies: “we use an LLM to suggest domain decomposition, and a CAS (such as Mathematica) that provides a verification of each piece axiomatically.” (Abstract, p. 1.)
 
-Inference: For VL, the transferable pattern is propose–machine-check: an LLM suggests proof decompositions or lemmas, while Verus checks each obligation. The paper does not produce Lean or Verus proof objects, so the security and trust claims do not transfer automatically.
-
 ## technique 1: LLM-proposed domain decomposition
 
 What it is. O-Forge accepts a conjectured estimate in LaTeX or natural language, parses it, asks the LLM for a finite cover D=⋃Di (or breakpoints for a series), and then verifies each subdomain. Section 3 lists the pipeline: “Step 1: LATEX or natural language input”; “Step 2: Decomposition proposal”; “Step 3: Regime-wise simplification”; and “Step 4: Symbolic verification via Resolve.” (Section 3, pp. 3–4.)
@@ -56,8 +54,6 @@ Reproducibility and evaluation. The repository requires Python 3.9+, local Mathe
 
 Inference: The CAS symbolically verifies each branch under its own implementation and returns `True`; the LLM supplies decomposition heuristics; Mathematica, its quantifier-elimination algorithms, the closed-source implementation, input parser, and any assumptions about real functions remain trusted. The paper’s limitation section recognizes this trust: “there is still an element of trust involved; that a closed-source company like Wolfram is indeed performing the correct manipulations ‘under the hood’.” (Section 8, p. 9.)
 
-Inference: The threat to VL is moderate and specific. Agent-written verified Rust can benefit from decomposing difficult contracts into solver-friendly regimes, but O-Forge does not establish soundness for executable code, memory safety, concurrency, or external libraries. Existing VL work should not claim a new verified-prover architecture from this paper; it should test whether one-shot decomposition followed by Verus checking lowers proof effort while preserving a fully replayable proof artifact.
-
 ## techniques for the catalog
 
 Inference: the following are transferable technique summaries.
@@ -66,5 +62,3 @@ Inference: the following are transferable technique summaries.
 - regime-wise leading terms: derive and prove separate dominant-term bounds in each regime before summing or composing them
 - branch-wise symbolic checking: run a quantifier-capable checker on every branch and accept the global claim only when all return true
 - one-shot propose then verify: limit the model to a decomposition proposal and let machine checks handle the remaining proof work
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We use a frontier LLM to “guess” the correct decomposition, and use elaborate Mathematica code to find the correct simplification of the summand in each regime."): checked all quotations, numbers, section and page references, and technique steps; corrected two series approximations, the evaluation quotation, and a quotation’s section reference; removed unsupported interval endpoint assignments and marked proposed adaptations and conclusions as Inference; did not run O-Forge, inspect its code, or independently verify its mathematical and solver claims.

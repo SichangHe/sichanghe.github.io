@@ -4,7 +4,6 @@
 
 This is a map, not a full survey. Sources consulted: local notes
 `research/static_analysis.md` and `research/browser_agent.md`, the local paper
-collection `/hdd1/sichanghe/paper_collection`, and web search results available
 to this agent session. Treat 2026 arXiv items as volatile until checked on
 Google Scholar / Semantic Scholar.
 
@@ -23,8 +22,6 @@ Google Scholar / Semantic Scholar.
 - A common theme across all three directions: the interesting research object is
   the interface between a large model and a structured environment, not the model
   alone.
-
-## Direction 1: generated verified Rust / verified systems code
 
 ### Core papers and projects
 
@@ -152,8 +149,6 @@ Google Scholar / Semantic Scholar.
   signatures, declared deps, or boundary assumptions change?
 - Can static analysis rank proof obligations and retrieve only the context that
   materially changes verifier success?
-
-## Direction 2: browser / web automation / UI-grounded agents
 
 ### Core papers and projects
 
@@ -470,7 +465,6 @@ avoidance, verifier-call cost, and proof maintainability under small code edits.
 Paper repository status: verified existing PDFs include `VeruSAGE` and `KVerus`.
 The agent attempted to add high-value PDFs for RagVerus/RVBench, BrowserGym,
 WorkArena, VisualWebArena, Slipstream, Cat, Acon, ContextBudget, SWE-Pruner, and
-BrowseComp, but `/hdd1/sichanghe/paper_collection` is not writable by this agent
 (`Permission denied` on root and per-paper directory write tests from the
 agent account). The repository has an OCR convention via `ocr_all.py` / `marker_single`, but running it was not
 practical because new PDFs could not be written and existing unrelated OCR state

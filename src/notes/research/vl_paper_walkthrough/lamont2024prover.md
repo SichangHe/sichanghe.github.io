@@ -8,8 +8,6 @@ Tag: `lamont2024prover`, [paper](https://arxiv.org/abs/2410.11133)
 
 The method augments an existing tactic generator. The reviewed paper is arXiv:2410.11133v2, dated 28 October 2025 (PDF p. 1). It evaluates ReProver (about 300M parameters) and InternLM2.5-Step-Prover (7B) on miniF2F, and ReProver additionally on LeanDojo. The paper's abstract claims “an increase in the overall proof rate, as well as a significant improvement in the tactic success rate, execution time and diversity.” (Abstract, PDF p. 1.) It also says, “3D-Prover allows for a direct tradeoff between search objectives, with hyperparameters controlling the weighting of error, time and diversity in the filtering process.” (Section 1, PDF p. 2.)
 
-Inference: the direct VeruLaw analogue is a pre-execution filter for generated Verus edits or proof hints. Verus candidates still need an actual Verus run; a learned transition model can prioritize and diversify attempts but cannot establish correctness.
-
 ## technique 1: learn transition-aware tactic representations from synthetic traces
 
 What it is. A proof attempt yields transitions `(g, t, s, τ, o)`: goal, tactic, success status, execution time, and prover output. The output is new subgoals, an error message, or proof success; status is 1 for successful tactic execution and 0 for failure (Section 2.1, PDF p. 3). A transition model consists of an encoder `E(g,t)=e`, a predictor `P(e)=(ŝ, τ̂)` for status and time, and a decoder `D(e,g)=ô` for environment output. The authors define `ξ(g,t)=(P(E(g,t)),D(E(g,t),g))` (Equation 1, Section 2.1, PDF p. 3).
@@ -90,8 +88,6 @@ Evidence. On miniF2F-valid, the autoencoder gives pass@1 23.0%, 27.9%, and 27.0%
 
 Lean executes each selected tactic and supplies the resulting state or error (Section 3.1 and Appendix A). The paper measures prediction metrics, proof pass rates, tactic success, unique-subgoal frequency, and execution time (Tables 1–7). Inference: these experiments do not establish that the embeddings represent every semantic distinction or that selected tactics are globally optimal.
 
-Inference: in VeruLaw, the trusted acceptance boundary must remain Verus verification of the final source. A 3D-Prover-style filter can reduce wasted solver calls and increase diversity, but model-predicted success, elapsed time, or semantic distance cannot certify Rust safety or functional correctness. The specification and external-library assumptions remain part of the trusted boundary.
-
 ## threat to a product of agent-written verified Rust
 
 Inference: the method could increase throughput and proof coverage by preventing the agent from spending its budget on duplicate or predictably failing edits. It also raises an operational risk: a filter that favors fast candidates may suppress a slow but necessary lemma, while a diversity objective may select many novel but irrelevant edits. Product evaluation should therefore report verified pass rate, solver time, duplicate-obligation rate, and missed-proof cases under fixed budgets. The paper's Lean-only, limited-run results do not establish how the tradeoff behaves for Verus or production Rust.
@@ -106,4 +102,3 @@ Inference: the method could increase throughput and proof coverage by preventing
 - temperature diversity control — flatten model scores to favor diverse proof paths
 - syntax-only ablation — compare semantic transition embeddings with a tactic-reconstruction autoencoder
 - proof-search evaluation — compare pass@k against no-filtering, Top-K, and random baselines with stated runs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We observe 3D-Prover gives more unique subgoals per successful tactic, which is noteworthy given the higher rate of successful tactics from 3D-Prover overall (Table 5)."): checked every study quotation, number, section/page reference, and technique step against the full paper including appendices; corrected scoring formulas, page references, per-node metric definitions, run summaries, model/data scope, and unsupported conclusions; did not reproduce experiments or inspect implementation code or external sources.

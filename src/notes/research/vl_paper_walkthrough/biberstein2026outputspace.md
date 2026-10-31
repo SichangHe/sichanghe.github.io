@@ -66,16 +66,6 @@ Inference: a deductive proof could use the same mathematical relation between an
 
 Dirigo pre-processes PTX idioms for `exp`, `log`, `log1p`, `tanh`, `erf`, and `pow` into mathematical pseudo-instructions, and uses axioms for permitted approximation equivalences such as GELU's `erf` and `tanh` forms (secs.4.1–4.2, pp.7–8). Sound mathematical identities are always enabled; optional approximation equivalences identify the GELU forms and fast-math variants, and both are enabled by default in the evaluation (sec.4.2, p.8). The search heuristic checks, in order, corner locations, locations covering distinct path conditions, tensor boundaries, then a random permutation (sec.4.3, pp.8–9). Inference: for Verus, approximation axioms must be explicit assumptions or separately proved lemmas; marking two floating-point implementations equivalent without a bound would weaken the specification.
 
-## evidence, limits, and VL threat
-
-The experiment ran on two Intel Xeon Gold 6248 CPUs, 754 GB DRAM, RTX 2080 Ti GPUs, CUDA 12.5, and driver 555.42.02; Execute had a two-minute timeout and Check a four-minute timeout (sec.5.1, p.9). Dirigo found 93.2% of 600 bugs within one minute and 97.3% within two minutes; median Trace cost was 18 seconds, while median search time after Trace was 1.9 seconds (sec.5.4, pp.10–11). Among programs with no bugs found, full verification was projected under one hour for 58% using 40 workers, with estimates as high as 61,440 hours (7.0 years), and the median predicted-to-actual ratio was 1.03 (sec.5.5, p.11). The bug-finding percentages concern the 600 buggy programs. Figure 10 defines the full-check population as programs with no bugs found; the text does not give its exact count.
-
-The paper's limitations are explicit: “Dirigo models floating point values as reals” and therefore “cannot find bugs that manifest through insufficient precision.” (sec.4.5, p.9). It models only a subset of PTX instructions, and 1,872 corpus programs were unsupported (sec.5.2, p.10). It also reports 221 unverifiable inequivalence results over 32 tasks (sec.5.2, p.10). Inference: for VL, the threat is high for agent-written GPU or tensor code whose differential tests cover only ordinary inputs; output-location checking can expose masked reduction and fusion bugs. Inference: the residual threat is specification mismatch, unsupported operations, floating-point behavior, and timeout; a proof about actual floating-point behavior would require a model beyond Dirigo's real-number abstraction.
-
-## what VL should not redo
-
-The paper already supplies a concrete, scalable pattern for enumerating output locations, lowering mixed high-level and low-level tensor code, checking each location with SMT, and replaying witnesses. Inference: a VL project should reuse these ideas or compare against Dirigo before claiming that random differential testing, generic symbolic execution, or per-kernel equivalence checking is novel. The paper itself contrasts Dirigo with Volta, which requires CUDA baselines, identical grids, and no kernel fusion (sec.5.6, p.11), and with proof-producing approaches that require kernels or proofs in an assistant (sec.6, pp.11–12).
-
 ## techniques for the catalog
 
 - output-space quantifier flip — fix an output location and solve equivalence for all inputs, then enumerate locations
@@ -86,5 +76,3 @@ The paper already supplies a concrete, scalable pattern for enumerating output l
 - approximation axioms — normalize compiler transcendental idioms and declare permitted approximation identities
 - heuristic location search — prioritize corners, path-condition coverage, and tensor boundaries before random locations
 - witness replay — constrain SMT queries for large differences and replay concrete inputs on the original programs
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Ideally we would generate one formula per program capturing its full behavior and ask the solver whether the two agree over entire output tensors."): checked all study quotations, numbers, section/page references, technique steps, and scope claims; corrected the unknown threshold, shuffle semantics, timeout stage, projection population, page references, and paper link, and removed unsupported Verus details; did not reproduce experiments or inspect the implementation or cited works.

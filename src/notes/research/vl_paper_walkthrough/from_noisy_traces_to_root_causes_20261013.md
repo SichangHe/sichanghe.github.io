@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `chang2026noisy`, [paper](https://arxiv.org/abs/2607.07702)
 
-Audit: audited 2026-10-13 against the paper (text, and PDF pages 18-22 for Figures 5-9); checked Tables 1-7 numbers, the denominator inferences (every printed percentage re-derived), Figure 5 counts, Figures 6-9 steps and rules, Appendix D rules, quotations and page references, and the Verus forms; changed: single run per setting was not stated by the paper; cascade ranking and router-attribution list reworded to the figures' words; unmarked inferences marked; Appendix D rules no longer called usable as written by any agent; NRKernel GPT-5 tie and IronKV claim corrected against Table 7; IronKV 41.6% rounding misfit added; Sonnet 4 comparison made within one point. Not checked: the 41, 39, 39 runs cited from the VeruSAGE study (read only that study's text), the identity of Figure 3's benchmark.
-
 source: Ying Chang, Jiahang Xu, Xuan Feng, Chenyuan Yang, Peng Cheng, Yuqing Yang (University of Chinese Academy of Sciences; Microsoft Research), arXiv:2607.07702v1, 8 Jul 2026, 22 pages: 9 of text, references, Appendices A-D (pp.12-17), and Figures 5-9 (pp.18-22). Figures 5-9 are images; their content is absent from the PDF's extracted text, so what is taken from them below is transcribed from the page images and is not placed in quotation marks. Code: https://github.com/moomight/STRACE (abstract, p.1).
 
 ## the subject is the agent, not the proof
@@ -170,16 +168,6 @@ The paper prints percentages only. The following counts are inferred by finding 
 - The case study is in a “200-case setting” (Section 4.4, p.8), a third size, neither 453 nor 50.
 - Section 4.1 says the benchmark consists of five projects. The walkthrough's VeruSAGE study (`verusage_20261012.md`) records 849 tasks over more projects in the original benchmark, and for that same o4-mini agent three independent runs on 100 tasks scoring 41%, 39% and 39% with 56% solved by at least one of the three. Inference: run-to-run spread for this agent is thus a few points, and repeated attempts alone lift the solved share by about 15 points; a single before/after pair on 106 tasks, 16 points apart, is suggestive but needs repeated runs to separate prompt effect from sampling.
 - “Statistical Bottleneck Diagnosis module” (Section 4.3, p.7) is a name used once; it appears to be Phase 2.
-
-## what VL can take as done
-
-- Inference: the pipeline (edge list, parser-made summary, at most 25 traces, state-change slicing, router-first attribution, rules injected at one module) is fully specified by the paper plus its four instruction figures, and the repository is said to hold the full templates and a packaged skill (Appendix B.4, p.14). Rebuilding it is unnecessary.
-- Inference: the Appendix D rules are already distilled from Verus proof-repair traces and can be put into a Verus agent's prompt today.
-- Not done here: any check that learned rules transfer across projects, any repeated-run statistics, and any use of the diagnosis to change code or tools instead of prompts; the conclusion only asserts that the diagnoses could guide updates to skills and tool-use policies (Section 5, pp.8-9).
-
-## what it means for a product built on agents writing Verus-verified Rust
-
-Inference: low as competition, real as a sign of pace. This is not a verifier or a product; it is a method from Microsoft Research, the group that also produced the Verus agents and benchmark it tunes, and it shows that a small model's Verus repair rate can be raised from 45 to 62 of 106 tasks for about three dollars of optimizer calls, within one point of the 59.4% reported for Claude Sonnet 4 without a designed controller. The implication for VL is that prompt-level tuning of a Verus agent from its own traces is cheap and available to anyone with traces, so a lasting advantage has to rest on something else (specifications, coverage of real Rust, the trust story), and that VL should run this kind of loop on its own agent.
 
 ## techniques for the catalog
 

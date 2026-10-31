@@ -44,7 +44,7 @@ The K9 Mars Rover Executive experiment directly composing the two modules search
 
 ## what is proved, measured, and trusted
 
-The paper relies on the compositional rule and proves, as Theorem 1, that the algorithm terminates and returns the correct true/false result (Section 5.1, p. 341). It measures one rover case and gives the Input/Output trace example; it does not report a broad benchmark denominator. Trusted parts are the LTS semantics, model checker, teacher's counterexample projection/interleaving, and the implementation of L*. Inference: VL should reuse incremental assumption learning for modular Rust proofs and should record each learned assumption as a reviewable contract; it should not redo L* theory. The product risk is concentrated in interface projection, counterexample interpretation, and assumptions that are stronger than the real environment.
+The paper relies on the compositional rule and proves, as Theorem 1, that the algorithm terminates and returns the correct true/false result (Section 5.1, p. 341). It measures one rover case and gives the Input/Output trace example; it does not report a broad benchmark denominator. Trusted parts are the LTS semantics, model checker, teacher's counterexample projection/interleaving, and the implementation of L*.
 
 ## techniques for the catalog
 
@@ -52,4 +52,3 @@ The paper relies on the compositional rule and proves, as Theorem 1, that the al
 - observation-table DFA learning — close an `S,E,T` table, build a candidate DFA, and refine it with distinguishing counterexample suffixes
 - two-oracle refinement — strengthen assumptions after component failures and weaken them after environment failures
 - prefix-closed safety conversion — turn a complete prefix-closed DFA into a safety LTS by removing its sole rejecting state
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Counterexample analysis is performed by the Teacher in a way similar to that used for answering membership queries."): read the whole paper text and checked every quotation, number, section and page reference, and the technique steps (L* table, two oracles, projection, interleaving) against it; changed the capitalization of the abstract quote, removed "empty observation table", the unsupported Verus run-time remark and the "memory reduction" claim (only states explored and time were measured), corrected a page range (example is on p. 341), and attributed Theorem 1 correctly; the DOI link is from the fetch record because the paper text gives none; I did not check the Verus-form paragraphs (marked Inference) against Verus documentation, the cited prior work, or the PDF figures beyond the text.

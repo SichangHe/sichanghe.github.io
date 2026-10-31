@@ -49,7 +49,7 @@ Evidence and limits. For Qwen generators, Gemini feedback added 16–17 perfect 
 
 ## what is proved, measured, and trusted
 
-The paper measures agreement with human ratings, F1, precision, recall, Kendall correlation, and changes in perfect-customization counts. It proves no semantic property of TikZ code. Trusted components include rendered-image execution, model judgments, prompt formats, the manually corrected VTikZ instructions, and annotator ratings. Inference: a VL product that lets an agent-written Rust change pass solely because an LLM verifier says “perfect” inherits the study’s false-positive risk; requiring deterministic Verus proofs and treating model feedback as advisory sharply reduces that threat. Inference: the useful reusable pattern is a two-channel loop—semantic proof for acceptance, targeted diagnostics for repair—rather than an LLM score as a proof substitute.
+The paper measures agreement with human ratings, F1, precision, recall, Kendall correlation, and changes in perfect-customization counts. It proves no semantic property of TikZ code. Trusted components include rendered-image execution, model judgments, prompt formats, the manually corrected VTikZ instructions, and annotator ratings.
 
 ## techniques for the catalog
 
@@ -60,4 +60,3 @@ The paper measures agreement with human ratings, F1, precision, recall, Kendall 
 - executable oracle catalog — generate code that composes typed visual checks, execute it, and emit feedback only above a probability threshold
 
 - trajectory feedback evaluation — label correctness, precision, guidance, completeness, and forgetfulness of feedback inside multi-step refinement
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

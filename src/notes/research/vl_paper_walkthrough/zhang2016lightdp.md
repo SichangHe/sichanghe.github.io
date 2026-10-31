@@ -58,7 +58,7 @@ how to do it
 4. Ask µZ MaxSMT for a satisfying assignment minimizing that expression.
 5. Verify the resulting transformed program with the supplied loop invariant and postcondition.
 
-The solver infers α=1, β=2, γ=0 for Sparse Vector, matching the alignment used in the proof of Dwork and Roth (2014) (Sections 2.5 and 5.2, PDF pp. 4 and 10). The paper notes that α=0, β=2, γ=−2 and α=2, β=3, γ=0 are also valid annotations (Section 2.5, PDF p. 4). Inference: a VL workflow could generate candidate Verus ghost distances and lemmas, but a human still needs to review the generated contract because optimization only minimizes the encoded bound.
+The solver infers α=1, β=2, γ=0 for Sparse Vector, matching the alignment used in the proof of Dwork and Roth (2014) (Sections 2.5 and 5.2, PDF pp. 4 and 10). The paper notes that α=0, β=2, γ=−2 and α=2, β=3, γ=0 are also valid annotations (Section 2.5, PDF p. 4).
 
 ## technique 4: case-study patterns
 
@@ -68,13 +68,9 @@ The numerical Sparse Vector variant adds fresh Laplace noise before returning a 
 
 The proved claims are type-system soundness, faithfulness of the transformation, and privacy bounds for the listed algorithms under their preconditions. The paper relies on external tools: Z3 for the T-ODOT constraints, µZ for MaxSMT, and Dafny for target-program proofs; its case-study cost bounds are verified with Dafny for Sparse Vector and SmartSum (Sections 4 and 6.2), while for PrivBernoulli it states the cost is “provably bounded by the transformed cost formula” (Section 6.3, PDF p. 13). Inference: those solvers, the probabilistic semantics, the correctness of the supplied adjacency relation, and the statement that the code implements the modeled algorithm remain trusted. The paper has no benchmark table or timing results; its evidence is the worked examples: Sparse Vector, Numerical Sparse Vector, SmartSum and PrivBernoulli, with one annotation or invariant for the first three. It also notes an incorrect Sparse Vector variant whose transformed cost is unbounded, so the method can expose a privacy failure rather than merely certify successful code (Section 6.1, PDF p. 11).
 
-For VL, the threat is substantial for agent-written privacy-sensitive Rust if an agent supplies a false adjacency assumption or an incorrect cost model. Inference: LightDP's separation suggests a product feature—generate relational ghost facts and a deterministic budget invariant before invoking Verus—but this paper does not establish that LLMs can generate those facts reliably. Existing LightDP already covers Sparse Vector, SmartSum, and categorical Bernoulli alignment; VL should avoid redoing those algorithms and instead test whether generated Rust contracts preserve the same assumptions.
-
 ## techniques for the catalog
 
 - relational distance types — assign each value a distance between adjacent executions, including state-dependent distances for branch-sensitive randomness
 - type-directed cost transformation — replace random draws with `havoc` plus explicit privacy-budget increments and prove a deterministic bound
 - dependent inference with MaxSMT — infer distance annotations from typing constraints and minimize the resulting privacy-cost expression
 - alignment for categorical randomness — map uniform samples across executions and charge `−log(d+1)` while proving branch agreement
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "However, writing down types (especially those dependent types) for variables is still a non-trivial task."): read the whole paper text (main text and appendix) and checked every quotation, section and PDF page reference, the Sparse Vector cost formulas and invariant, and the technique steps against it; changed one misquoted phrase ("original one"), moved the “ready for off-the-shelf formal verification methods” quote to Section 1 p. 2, corrected page references (T-ODOT and T-LAPLACE p. 6, Section 2.5 p. 4, Dafny proof in Section 4 p. 8, Section 5.1 pp. 8-9), and added what the paper says about limits (cost bound and MaxSMT translation are not automated, injectivity and immutability assumptions, the uniform source is not covered by inference, PrivBernoulli is not Dafny-verified); did not check the Verus and Rust inference remarks (marked Inference), the appendix proofs in detail, or the cited external works.

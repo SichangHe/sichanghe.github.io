@@ -6,8 +6,6 @@ Tag: `chaabani2025verified`, [paper](https://doi.org/10.1007/978-3-031-99984-0_1
 
 The paper formalizes path indexing in Isabelle/HOL. Its abstract says: “This paper presents the ﬁrst veriﬁed implementation of a term indexing data structure, namely a formalization of path indexing in the proof assistant Isabelle/HOL.” (Abstract, p. 249). It defines the structure, maintenance, and four retrieval operations, and states that “We prove that maintenance operations preserve the invariants of the structure, and that retrieval operations are sound and complete.” (Abstract, p. 249). The implementation is functional Isabelle/HOL; the conclusion explicitly says that efficient mutable implementations remain future work.
 
-Inference: For VeruLaw, this is a model of verifying an indexing structure together with the mathematical relation it implements. A direct Rust/Verus port would require replacing Isabelle datatypes, finite maps, inductive predicates, and lifted typedefs with Rust data and Verus specifications; the invariant-and-operation decomposition carries over, while Isabelle syntax and its code extraction do not.
-
 ## technique 1: model terms and retrieval relations before the index
 
 What it is. Terms are an inductive datatype, `Var v | Fun f (f,v) term list` (Sect. 3, p. 251). A term index stores a set of terms and retrieves terms satisfying a relation. The paper defines exact relations for unification, instantiation, generalization, and variants using substitutions. For example, `term-unification t1 t2 = (∃ σ. t1 · σ = t2 · σ)` (Sect. 3, p. 252).
@@ -50,12 +48,6 @@ Verus form. Inference: implement retrieval with a recursive function and a `decr
 
 Evidence and limits. The paper states the exact theorem: `index-retrieve-unifications tr t1 = {t2. t2 ∈ index-to-set tr ∧ linear-unification t1 t2}` (Sect. 4.3, p. 258). It also says the same ideas are used for generalizations, instances, and variants (Sect. 4.3, p. 258), but gives no separate theorem text or measurements for those three operations. Inference: those operations should be treated as the same proof pattern with relation-specific recursion, not as independently evaluated implementations.
 
-## trust, reuse, and product threat
-
-The proved facts are the four trie invariants, insertion and deletion preservation, extensional set behavior, and soundness/completeness of retrieval for linear relations (Sects. 4.1–4.3, pp. 255–259). The paper does not provide an explicit inventory of trusted components or a correctness proof of the residual exact unification filter. Inference: relying on the formalization requires trusting Isabelle/HOL’s proof checking; deploying extracted code additionally requires assessing extraction and execution. A Verus port needs its own proofs and an assessment of its verifier, compiler, and external implementations.
-
-Inference: this paper is a moderate threat to agent-written verified Rust because it demonstrates a complete proof pattern for a nontrivial, recursive index, but it does not provide a Rust implementation, mutable refinement, or performance data. VL should reuse the invariant decomposition, position-indexed induction, and two-stage candidate-then-filter API. VL should not redo a basic path-indexing design without adding a Verus-specific implementation, refinement, or measured engineering result.
-
 ## techniques for the catalog
 
 - path-index filter — store every term at symbol/argument paths and retrieve a superset characterized by linear unification, then run exact unification
@@ -65,4 +57,3 @@ Inference: this paper is a moderate threat to agent-written verified Rust becaus
 - verified maintenance — prove insertion and deletion preserve well-structured, sound, complete, and minimal storage and specify their abstract set effect
 
 - retrieval soundness/completeness — prove recursive path retrieval returns exactly the stored terms satisfying the chosen linear relation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While not needed for functional correctness, this is a desirable property that should be preserved by maintenance operations, in particular term removal."): checked all paper text, quotations, numbers, section/page references, and technique steps; corrected quotation boundaries, retrieval intersection and theorem page, clarified paths, added the termination measure, and removed unsupported trust and Verus claims; did not check the linked Isabelle artifacts, re-run proofs, or validate the proposed Verus port.

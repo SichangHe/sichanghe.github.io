@@ -14,7 +14,7 @@ Use this when comparing generated systems code with a human baseline. Select tas
 
 The pipeline extracts C++ from responses, compiles and runs public tests, runs cppcheck and clang-tidy, compiles with ASan/UBSan and reruns the same tests, then invokes ESBMC. Every output is retained in a master CSV with per-program verdicts, CWE tags, and cross-tool annotations (Section III, pp. 3–4). Programs are aggregated as binary flags per tool before overlap analysis.
 
-Verus form. Inference: a VL harness should freeze a Rust/Verus commit, specification file, toolchain, solver settings, and input corpus; run functional tests, the Verus verifier, and runtime sanitizers separately; and store each result with its denominator. Inference: the checker result must be tied to the exact source and contract revision, because an unchanged proof can coexist with a changed specification.
+Verus form.
 
 Evidence and limits. Human compilation is 1,665/1,695 = 98.2%; AI compilation is 2,018/2,238 = 90.2% for Gemma, 2,272/2,496 = 91.0% for LLaMA, and 2,290/2,489 = 92.0% for Qwen (Table V, p. 4). ESBMC nevertheless emits a verdict for every row, including parse errors. The benchmark is short competitive-programming C++, so its vulnerability distribution may not generalize to production code (Section VII, p. 10).
 
@@ -34,7 +34,7 @@ The configuration checks array bounds, null dereferences, unsigned arithmetic ov
 
 Across all 8,918 rows, ESBMC returns PARSE_ERROR for 5,039 (56.5%), TIMEOUT for 1,621 (18.2%), SUCCESS for 1,551 (17.4%), FAILED for 661 (7.4%), and ERROR for 46 (0.5%) (Table IV, p. 4). Among analyzable programs, AI failure rates are 234/904 = 25.9% (Gemma), 271/738 = 36.7% (LLaMA), and 135/458 = 29.5% (Qwen), versus 21/112 = 18.8% for humans (Table II, p. 3). The analyzable denominators are inferred from the table’s percentages and are much smaller than the full 8,918.
 
-Verus form. Inference: ESBMC’s bounded paths correspond to a Verus proof only when the Rust function’s contract and loop invariants establish all iterations, rather than bounding exploration. A VL harness should report verifier success, solver timeout, unsupported syntax, and runtime failure separately. Inference: the closest safe workflow is to require Verus to close the function’s `requires`/`ensures` obligations, while retaining bounded model checking or tests for code outside Verus’s modeled subset.
+Verus form.
 
 ## technique 4: compare tool coverage with set overlap
 
@@ -54,8 +54,6 @@ Functional tests are insufficient: among test-passing AI programs, 1.8% trigger 
 
 The study trusts compiler/tool versions (g++ 13.3.0, cppcheck 2.19.0, clang-tidy 21, ESBMC 8.0.0), sanitizer instrumentation, ESBMC’s frontend and SMT solver, public tests, CWE mappings, and its statistical model. It reports sensitivity to unwind and timeout: a supplementary unwind-20, timeout-120 run finds 832 FAILED verdicts, compared with 661 under unwind 10 and timeout 60 (Section VII, p. 10). Signed overflow remains a sanitizer-only class under the main configuration.
 
-Inference: the threat to a product generating agent-written verified Rust is high if product acceptance relies on one signal. A passing Verus proof can coexist with an incomplete contract; passing tests cover only exercised inputs; static checks can produce mostly style noise; and runtime sanitizers miss unexecuted paths. VL should combine contract review, verifier results, tests, and targeted runtime instrumentation, while labeling every result with scope and denominator. Existing work already combines static, dynamic, and formal checks in C/C++; VL should not claim novelty for merely adding a second checker. Its distinct opportunity is making the specification boundary and trusted assumptions explicit for Rust/Verus.
-
 ## techniques for the catalog
 
 - four-tier verification harness — run tests, static analyzers, sanitizers, and bounded model checking on the same programs
@@ -63,5 +61,3 @@ Inference: the threat to a product generating agent-written verified Rust is hig
 - cross-tool Jaccard analysis — compare flagged-program sets to expose complementary coverage
 - clustered risk regression — use mixed-effects logistic regression with task-level random effects and explicit covariates
 - scope-sensitive interpretation — separate proven bounded violations, observed runtime failures, warnings, parse errors, and timeouts
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

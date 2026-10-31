@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `qian2026selfspec`, [paper](https://arxiv.org/abs/2609.39568)
 
-Audit: audited 2026-10-13 against the paper; checked every number in Tables 3 to 5 and the quoted sums (recomputed all 16 cells per configuration), page and section references, the quotations, the CEF and VGCR steps against Section 3 and Appendices A, B, D, E, and the Verus snippets; changed an over-general enforcement step (C relies on the prompt), CEF step 6 (only exceptional constructs), one unsound Verus index (a@[..] for a Vec), Python problem 57 wrongly listed as a split, and marked four statements as inference; the table sums that disagree with the text (44.1%, 12.4 points, a printed gain of 25) were already noted in the study and are the paper's own.
-
 source: Qian, Dong, Li, Zhu, Gu, Li; arXiv:2609.39568v1, 30 Sep 2026; 21 pages with appendices A to E. Page numbers below are the PDF's.
 
 ## what the paper is and what it measures
@@ -144,7 +142,7 @@ What the plan is not, Appendix B.2, p.14: “These subgoals are LLM interpretati
 
 The Rust repair prompt (Appendix E.3, p.21) allows: “Change only body, helper proof code, and loop annotations; use safe Rust and preserve the verus! wrapper and main.”
 
-Verus form: as in the paper. A candidate may change the body, loop `invariant` and `decreases` clauses, and `proof { }` blocks; `requires`/`ensures` are rebuilt from the store (technique 1). Inference: step 7 carries forward the last candidate, not the one with the fewest errors, so a round can end on a worse program than it started with; a VL loop could keep the candidate with the fewest Verus errors, but the paper did not test that.
+Verus form: as in the paper. A candidate may change the body, loop `invariant` and `decreases` clauses, and `proof { }` blocks; `requires`/`ensures` are rebuilt from the store (technique 1).
 
 Evidence (Table 3, p.8, sums over 16 settings of 100 problems):
 - on Direct specifications: valid 1136 to 1284 of 1600 (71.0% to 80.3%); joint 703 to 749 of 1600 (43.9% to 46.8%). These two VGCR sums are computed here from the table; the paper states no VGCR aggregate.
@@ -186,12 +184,6 @@ Verus form: unchanged; both are harness design.
 - Table 4, DeepSeek V3.2, C, Direct: self 34, oracle 69, printed gain 25; 69 − 34 is 35.
 - Appendix D.1's Rust problem 36 shows a mutable-vector postcondition written with `v.len()` and `old(v)` and says it kept verifier acceptance; Appendix D.4 says Verus rejects a mutable-reference postcondition that does not use old/final. Inference: either problem 36's parameter is not a mutable reference in the way problem 42's is, or the printed clause is abbreviated; the paper does not say.
 - pass@k (Appendix C, p.15) was run on a fifth model, DeepSeek V4.1 Flash (§4.1, p.7), and is reported only as curves in Figure 2 (p.9) with no table, so no pass@k number can be cited.
-
-## what is already done, so VL need not redo it
-
-- a 100-problem Rust/Verus set with hidden curated targets, reference solutions and a deterministic coverage scorer exists; the code link is in the abstract (p.1). Its families: scalar arithmetic, Option/Result, immutable vectors, vector mutation, ownership/slice (§3.2.3, p.6).
-- the measurement that verifier acceptance overstates end-to-end success on Rust: Direct, Claude-Sonnet-5, 96 valid against 68 joint of 100; Kimi-K2.7-Code 91 against 57 (Table 3, p.8).
-- the finding that a self-review loop for specifications raises coverage and can lower provability, with repair needed to win it back (§4.2, p.8; Appendix D.5, p.18).
 
 ## threat to a product of agent-written verified Rust
 

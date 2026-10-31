@@ -54,14 +54,6 @@ Verus form. Inference: replace generated test oracles with Verus postconditions 
 
 Evidence and limits. Feedback helps S4 (0 to 25.0%), S6 (0 to 53.3%), and S7 (0 to 43.6%) but regresses S2 (75.8% to 12.1%) and S8 (28.9% to 0.0%) (Table III, p. 6; §VI-B, p. 8). S3 is 0.0% for all four GPT-4o-mini configurations. The authors explain: “generated code implements individual validators but fails to wire multi-step orchestration” (§V-F, p. 8). Inference: retaining the best tested iteration and rerunning regression tests could reduce these regressions. The paper proposes retaining the best iteration; it does not implement that policy (§VI-B, p. 8).
 
-## what is proved, trusted, and relevant to VL
-
-Nothing in the paper is a formal proof of equivalence; the authors explicitly disclaim formal guarantees (§II-D, p. 3). Trusted elements include synthetic scenario design, single-annotator gold rules, LLM-generated tests, the test-generation prompt, and the assumption that tested paths represent behavior. The benchmark has eight scenarios and three trials per scenario. The authors state: “Of 32 scenario-method cells, 20 yield σ = 0.0; the largest σ is 48.1 (AM-NoFB on S5).” (§VI-D, p. 9). However, Table III’s caption lists only nine cells with nonzero standard deviation, implying 23 zero cells. Inference: the reported zero-variance count is internally inconsistent.
-
-Model sensitivity limits the result: “For both GPT-4o and codex, SP-LLM alone outperforms AM (19.6% vs. 15.3% and 16.0% vs. 7.8%).” (§V-H, p. 8). The paper also states: “A missing baseline is “LLM + feedback without BSG”” (§VI-E, p. 9). Inference: the evaluation does not isolate the BSG’s contribution from decomposition and feedback.
-
-Inference: VL can adopt the BSG's trust boundary, source-traceable rule inventory, contract-directed generation, and targeted regression loop. The result does not measure Verus or agent-written Rust, so it does not establish a competitive threat magnitude. Inference: VL should evaluate source-traceable specifications and independent checks for its own workloads.
-
 ## techniques for the catalog
 
 - business rule inventory — extract explicit and implicit rules with source locations, effects, categories, and confidence
@@ -69,4 +61,3 @@ Inference: VL can adopt the BSG's trust boundary, source-traceable rule inventor
 - contract-directed transformation — generate endpoints, data models, validation, and orchestration from BSG contracts
 - BSG-derived validation — test contracts and boundaries, compare differential traces, and report per-node causes
 - targeted feedback loop — send failed cases to the transformer for a configurable maximum number of correction iterations, default three; retaining the best iteration is proposed future work
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The feedback loop is not universally beneficial: on S2, feedback degrades BER from 75.8% (no feedback) to 12.1%, and on S8 from 28.9% to 0.0%."): checked all paper text, study quotations, numbers, section/page references, technique steps, tag and arXiv identifier; corrected page references, operation-to-rule mapping, the no-feedback discrepancy, validation scope and feedback policy; flagged inconsistent rule/test and zero-variance counts and removed the unsupported competitive threat rating; did not reproduce experiments, inspect unavailable artifacts, or validate the proposed Verus adaptations.

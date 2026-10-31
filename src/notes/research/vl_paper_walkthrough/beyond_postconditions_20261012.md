@@ -1,13 +1,10 @@
 # Beyond Postconditions: Can Large Language Models infer Formal Contracts for Automatic Software Verification?
 (authored by agents unless marked 🧑)
 Tag: `richter2025postconditions`, [paper](https://arxiv.org/abs/2510.12702v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## paper and purpose
 
 Richter and Wehrheim introduce NL2Contract: ask an LLM to translate the natural-language intent already present in code into a functional contract containing both input preconditions and output postconditions. The motivating failure is postcondition-only inference: a postcondition may pass the benchmark tests yet permit invalid inputs, so a verifier reports a counterexample that is a false alarm. Their central claim is empirical: on HumanEval+ and Python-by-Contract, generated contracts are often verification-sound, discriminate many mutants, and produce fewer false alarms than `nl2postcond` postconditions. The paper states the goal directly: “Can LLMs translate informal constraints into function contracts useful for software verification?” (Introduction, p. 3).
-
-The paper's semantic model is explicit. A program maps states, `f_P : Σ → Σ`; valid inputs are `Σ_gt`; and the reference implementation realizes `f_gt`. A contract is `(Pre, Post)`, where `Pre : Σ → B` selects inputs and `Post : Σ × Σ → B` constrains output given input. Soundness requires every `Pre` input to be valid and the reference output to satisfy `Post`; sufficient completeness requires every buggy mutant to violate at least one contract. This separation matters for VL: a contract can be true but too weak to expose a defect.
 
 ## technique 1: infer a contract rather than a postcondition
 
@@ -87,12 +84,6 @@ Verus form (inference). Use `requires` as the generator's input domain and `ensu
 Proved or checked operationally: CrossHair proves or searches assertions on reference and mutant Python programs; a no-violation result within 60 seconds is labeled sound. Measured: accept@k test correctness, sound@k verification soundness, bug completeness, verification completeness, mutant kill percentage, CrossHair/Pynguin detection and false-alarm rates. Trusted inputs include HumanEval+ reference implementations and asserts, Python-by-Contract reference contracts, generated mutant sets, model outputs, CrossHair's soundness when it returns a result, and the benchmark's intended behavior. The LLM is not trusted as a proof source; its contract is filtered by verification.
 
 The paper reports a documentation inconsistency: the approximate-square-root docstring says `abs(t*t-c) < eps`, while the reference implementation guarantees `<= eps`; CrossHair finds `c=2, eps=0.25`. This is a real mismatch between documentation and code, but deciding whether documentation or implementation is authoritative remains human work. The paper's “2018” ACM reference metadata conflicts with arXiv identifier 2510.12702 and 2025 dates; this appears to be a template artifact, not an experimental result.
-
-## what VL should reuse and what it should not redo
-
-VL should reuse the distinction between precondition soundness and postcondition soundness, verifier-guided checking on reference code, mutation-based discriminative evaluation, and explicit false-alarm accounting. The study's source-context extraction and executable contract wrapper are practical interfaces for an LLM-to-verifier pipeline. VL should avoid claiming that test-set correctness establishes universal soundness, treating timeout/no-result as proof, or evaluating only implementation-matching specifications: AutoSpec and SpecGen are described as refining contracts to buggy implementations, which prevents bug detection.
-
-Threat to a product of agent-written verified Rust (inference). The threat is moderate for small, documented functions: inferred `requires`/`ensures` can accelerate specification drafting and mutation tests. It is high for undocumented stateful code, ownership-heavy APIs, external effects, and unsafe blocks, which are outside these single-file Python benchmarks. A product must review inferred domains and keep the verifier as the acceptance gate; otherwise an overly weak precondition can hide bugs and an overly strong one can reject legitimate callers.
 
 ## techniques for the catalog
 

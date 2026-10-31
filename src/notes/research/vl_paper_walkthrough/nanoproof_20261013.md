@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `kripner2026nanoproof`, [paper](https://arxiv.org/abs/2610.11605)
 
-Audit: audited 2026-10-13 against the paper; checked every number, page and section reference, quotation, the steps of techniques 1 to 10 and the compute arithmetic (Appendix F products recomputed, Appendix C counts 30 and 22 verified); changed one wrong claim (three of four search-level techniques have a usage statistic and no effect size; it is two, augmentation has none) and marked two unmarked inferences; Verus forms are labelled inference, unchanged and unchecked against the Verus reference.
-
 source: Matěj Kripner and Milan Straka (Charles University), arXiv:2610.11605v1 (8 Oct 2026), 18 pages with appendices A to H; code https://github.com/kripner/nanoproof, extraction tool https://github.com/kripner/leantree
 
 ## what kind of paper this is
@@ -195,16 +193,6 @@ Appendix F (pp.15-17) converts reported hardware time to TFLOPs with fixed per-d
 - the DeepSeek-Prover-V2 point in Figure 5 is a guess: its budget is undisclosed and is set at about 10^13 TFLOPs from its architecture (Appendix F, p.16)
 - §3.5 refers to the pruning procedure as Listing 1 while it is printed as Algorithm 1 (p.6), and §4.2 uses Listing 1 for a different display
 - of the four search-level techniques, pruning (59%) and cycle detection (18%) have a usage statistic and no effect size, and augmentation has neither; only diverse sampling (32% usage, +2.0 points) has an effect size; the percentages come from a run the paper calls representative without saying which
-
-## already built, so not for VL to rebuild
-
-- an open pipeline for this prover class in Lean 4, with data and weights
-- LeanTree: the extraction tool, the 92,927-tree dataset, and a Lean interface with a pool of environments served over HTTP for distributed search (§3.4, p.4)
-- the fix for unsound step checking in the Lean REPL setting
-
-## threat to VL
-
-Inference, all of it. Small. The system proves competition mathematics at about half of MiniF2F while large-model provers the paper cites report 88.1% and 99.6% (§2, p.2); it does not touch program verification; its method needs a step-level proof state that Verus does not offer. Its use to VL is as a source of four inexpensive loop disciplines (pruning, cycle rejection, candidate variety, task scheduling) and one warning with a number attached: a search-driven prover found 12 ways through an unsound checker on one small benchmark split.
 
 ## techniques for the catalog
 

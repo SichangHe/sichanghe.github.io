@@ -64,8 +64,6 @@ Inference: the same loss can train retrieval over Verus proof states and lemmas,
 
 Train the tactic generator independently of the retriever. Section 3.3 (PDF p. 5) states: “As a substitution of the retrieval model, we randomly select the positive and negative premises from the library and prepend them to the state, thereby creating premise-augmented state-tactic pairs.” This is the paper’s generator-training procedure. Add up to ten premises per tactic: choose the positive count randomly from one to min(available positives, ten); fill the remaining entries with negatives, half from the positive premises’ module and half from other modules. Fine-tune ByT5 with cross-entropy on these pairs. At evaluation, supply retrieved premises to the generator (sections 3.3 and 4.5, PDF pp. 5 and 8).
 
-Inference: VL can prepend retrieved Verus lemmas to a generation prompt or internal context, but should keep retrieval training and proof generation evaluation separate to avoid leakage. The final Rust proof must compile and verify; retrieval-augmented generation is a search aid, not evidence.
-
 ## evaluation design and evidence
 
 The authors evaluate on four splits: random (RD), reference-isolated (RI, validation and test premises absent from training), proof-length weighted (PL), and premise-frequency weighted (PF). Each split has 65,567 training theorems, 2,000 validation theorems, and 2,000 test theorems (section 4.1, PDF p. 6). Metrics are Precision, Recall, F1, and nDCG with relevance scores 1 for a premise used by the tactic, 0.3 for another premise from the same module, and 0 otherwise (Table 1, PDF p. 6).
@@ -76,8 +74,6 @@ Robustness tests perturb a subset of test queries by shuffling context or, for s
 
 Section 4.5 (PDF p. 9) qualifies the proving results: “However, on the RD test sets, our model performs slightly worse than ReProver, despite the improvement in retrieval accuracy.” The authors suggest that longer contexts can burden smaller generators; this is an explanation they propose, not a demonstrated cause. The conclusion calls for evaluation with stronger provers (section 5, PDF p. 9). Inference: evaluating retrieval against recorded tactic usage assumes those traces adequately represent relevance; a useful but unused premise can be missed by such labels. These experiments do not establish transfer to Verus.
 
-Inference: threat to VeruLaw is moderate. Lemma retrieval is a high-value component for agent-written Verus proofs, especially for large local libraries, but ranking quality cannot replace contract checking or prove completeness. VL should adapt the three-stage corpus/CFR/CAR pipeline, formal tokenizer, hard-negative training, and isolated evaluation split. It must add Rust ownership and trait context, Verus trigger/quantifier information, and exact applicability checks.
-
 ## techniques for the catalog
 
 - formal-corpus extraction — build premise/state pairs from declarations, proof steps, and tactic usage
@@ -87,5 +83,3 @@ Inference: threat to VeruLaw is moderate. Lemma retrieval is a high-value compon
 - in-batch contrastive learning — train one positive against sampled and batch negatives with temperature-scaled loss
 - retrieval-augmented proving — append selected premises to a tactic generator while keeping retrieval independently trained
 - isolated evaluation — test on premises absent from training to measure generalization rather than memorization
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Proof Length reflects the complexity of the proof, while the Premise Frequency indicates the degree of reliance on external theorems during the proof process."): checked the full text through Appendix A, quotations, numerical results, section and page references, and technique steps; corrected the paper link, before/after-state pairing, ablation comparison, negative count, generator training, retrieval-metric denominator, robustness description, and references; did not reproduce experiments, inspect source code, or test Verus adaptations.

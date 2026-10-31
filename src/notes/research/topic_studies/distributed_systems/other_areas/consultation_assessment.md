@@ -3,7 +3,6 @@ Extra High consultation assessment, 8 Oct 2026
 
 consultation evidence
 
-- [ChatGPT, distributed systems research critique](https://chatgpt.com/c/6ac7be0f-2d44-832a-b8c9-48dcc39b294f)
   - one submission; final answer recovered at 10:30 PDT
   - support record identifies GPT-6.1 Sol, effort xhigh, final channel, successful completion
   - model opinion: “Neither surviving proposal has a demonstrated gap yet”

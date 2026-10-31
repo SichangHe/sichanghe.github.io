@@ -57,5 +57,3 @@ Inference: a proof about Rust's functional behavior alone would not establish ha
 - assumption and flush annotations — state equal initial state, persistent equalities, and usage conditions explicitly
 - relational concurrent verification — compare synchronized executions even when control paths diverge
 - translation and SMT checking — compile annotated Verilog to Horn constraints, infer invariants, and check sink liveness equality
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "To find a more precise solution, the user can supply additional hints in the form of a set of predicates which we describe later."): read the complete paper, including references and appendices; checked quotations, benchmark numbers, section and page references, definitions, verification steps, assumptions, and limitations; corrected influence-set updates, liveness injection, solver steps, references, and unsupported claims; marked proposed Verus applications as Inference; did not run IODINE, reproduce benchmarks, verify a Verus encoding, or check cited external works.

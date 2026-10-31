@@ -26,9 +26,6 @@ After six rounds, 205,079 translations compile and 57,231 pass NLI. Sampling 5�
 
 Table 1 cautions: “It is worth noting that some tags are incorrect due to the mistake of the tagging model, and we will choose another sample with this tag if we consider the current one unsuitable.” (p. 7). Table 2 rates integer division, min/max, and digits as “Half Correct” (p. 7). The limitations state: “We find our proposed dataset has some similar problems which is hard to apply deduplication.” They add: “Furthermore, our model is focused on contest-level problems during active learning which may not be appropriate to formalize other level math problems.” (p. 9). Inference: the sampled accuracy does not establish correctness of every released pair. Statement compilation with `sorry` does not establish a proof; separately searched proofs are checked by the authors’ correctness checker. Inference: the transferable risk for agent-written verified Rust is a specification that passes mechanical checks while expressing the wrong requirement. The paper does not evaluate Rust or Verus.
 
-## what VL should reuse and avoid
-Inference: reuse iterative error-driven labeling, persistent verifier workers, bidirectional translation checks, and explicit error taxonomies. Avoid using compile success or NLI alone as proof evidence; keep statement data separate from verified proof data. Adapt these methods to Rust ownership, mutation, and quantified invariants before claiming applicability to VL.
-
 ## techniques for the catalog
 - active-learning autoformalization — add corrected translation examples to subsequent fine-tuning
 - parallel compile filtering — use a Lean REPL and multiple processes to check statements
@@ -36,4 +33,3 @@ Inference: reuse iterative error-driven labeling, persistent verifier workers, b
 - error-pattern diagnosis — turn recurring compilation and semantic errors into training examples
 - sampled semantic audit — estimate correctness among NLI-passing samples by tag
 - proof/data separation — distinguish placeholder statements from separately searched and checked proofs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The model can further enhance its pass number by adding Lean Workbook data for translation, we will also open-source this dataset (named Lean Workbook Plus)."): checked all study quotations, numbers, page and section references, technique steps, and catalog entries against the full paper; corrected page references, training-stage attribution, diagnostic sampling, proof-search scope, and the Table 4 baseline discrepancy, and marked Verus recommendations as inferences; did not rerun experiments, inspect released code or datasets, or verify the reported formal proofs.

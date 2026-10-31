@@ -55,7 +55,6 @@ paper notes
 
 archive
 
-- PDFs saved locally under `/hdd1/sichanghe/paper_collection`
 - collection repository ignores PDFs
     - source records and extracted text committed and pushed
     - 54 PDFs retained locally in the first archive pass

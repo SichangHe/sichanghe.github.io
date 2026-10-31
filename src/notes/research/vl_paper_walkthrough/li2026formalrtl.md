@@ -64,12 +64,6 @@ The paper also compares quality of result (QoR) after Yosys synthesis with Nanga
 
 Verus form (Inference): report first-pass verification, repaired-pass verification, proof/verification time, and failed-run penalties separately. For a Rust product, add independent tests for performance or resource bounds because a functional `ensures` clause does not imply latency, memory, or throughput goals. Preserve the denominator and timeout in every report; a 95% rate over 20 runs is not evidence of all-input correctness unless the verifier itself proves the property universally.
 
-## trust, limitations, and VL relevance
-
-The trusted core in this paper is the C reference model, the authored specification, Clang's dependency extraction, hw-cbmc's C-RTL EC, and the generated harness. The LLMs are not trusted to be correct; their outputs must pass EC. The paper does not prove that the C model or specification captures the intended hardware requirement, and its benchmark construction includes manually cleaned C files and manually authored specifications (§3.4). The benchmark focuses on datapath modules, while the conclusion says a gap remains to full industrial-scale designs and that maintained open-source C-RTL EC tools are scarce (§5).
-
-Inference: the direct lesson for VL is a staged verifier architecture. Partition generated Rust around stable specification dependencies, verify small units first, and feed precise verifier failures back to a repair agent. The product threat is specification error and dependency trust: a perfectly checked Rust implementation can still satisfy the wrong model. The paper's FSR numbers show repair can make generated artifacts pass a chosen check, but they do not measure semantic faithfulness to an external requirement.
-
 ## techniques for the catalog
 
 - static-analysis decomposition: use an AST dependency graph to partition a large implementation and verify leaves before parents
@@ -77,4 +71,3 @@ Inference: the direct lesson for VL is a staged verifier architecture. Partition
 - temporal equivalence checking: encode clock latency explicitly when verifying sequential or pipelined behavior
 - counterexample-guided repair: localize syntax errors and simplify mismatching signals before asking an LLM for a patch
 - denominator-aware metrics: report first-pass success, bounded repair success, adjusted iterations, and QoR separately
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

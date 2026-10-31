@@ -54,8 +54,6 @@ Inference: in Verus, use module-level specs and proof lemmas for contracts, then
 
 For code translation, the specification is source-target functional equivalence plus absence of specified classes of vulnerabilities; the world model is input preconditions and attacker capabilities; the AI system is an LLM for code generation. C-to-Rust translation is an example, and the general translation problem remains unsolved (Example 4.1, pp. 13–14). For autonomous vehicles, a rulebook consists of rules with an associated pre-order; each rule maps behaviors or sets of behaviors to values. A backup system maintains a smaller core specification outside specified scenarios, with runtime monitoring of world-model assumptions (Example 4.2, p. 14).
 
-Inference: VL can adopt the three-artifact interface—explicit world assumptions, explicit Rust/Verus safety specs, and a machine-checkable certificate. The main threat is specification or model incompleteness: a valid Verus proof only establishes properties relative to stated assumptions. Existing formal methods, compositional verification, and autoformalization already cover parts of this architecture; VL should integrate those techniques rather than claim the architecture as new.
-
 ## what is trusted and measured
 
 The paper proves no theorem about a concrete AI and reports no benchmark denominator or success percentage. Trust remains in the world model, specification semantics, verifier implementation, probability assumptions, and deployment correspondence. Empirical tests are treated as insufficient alone because red teams can miss failures and adversaries can seek unseen inputs. Inference: a product should expose these assumptions and certificate scope to users instead of presenting a proof as an unconditional safety guarantee.
@@ -69,5 +67,3 @@ The paper proves no theorem about a concrete AI and reports no benchmark denomin
 - compositional verification: infer contracts and prove component obligations before composing the system
 - autoformalization loop: retrieve, formalize, prove, and train on verified statements
 - verified code translation: specify source-target equivalence and security properties under explicit input and threat assumptions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "A GS AI system should therefore have a trustworthy backup system, appropriate for its domain of use, that can safely transition the system to a safe state if the main AI controller is disabled."): checked all quotations, numbers, section and page references, technique descriptions, and paper identity; corrected the paper link, quotation, definition page, specification-level count, verifier details, autoformalization criterion, and example descriptions, and marked suggested workflows and Verus applications as Inference; did not independently validate cited works or implement the proposed techniques.

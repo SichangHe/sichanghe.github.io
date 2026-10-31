@@ -20,8 +20,6 @@ The development model was Claude Haiku 4.5: baseline 50.20% (123/245), with 49 s
 
 The guide is organized into three tiers. Syntax structure covers function shape, conditionals, map access, operators, and namespaces. Semantic domain patterns cover PTE formulas, shadow state, refcounts, flushes, pointers, and names. Completeness patterns cover helper expansion, helper inventory, and IPC state machines. The authors say the guide contains only general translation rules and illustrative patterns derived from the oracle specifications, with no task-specific code or complete solutions (PDF p. 4). They acknowledge the overfitting concern that Haiku 4.5 was both the development model and an evaluated model, and that the patterns came from oracle specifications (section VI-A, PDF p. 10). They also say the guide took analysis of 49 oracle specifications and does not generalize to new domains without similar analysis (section VI-B).
 
-Inference: For VL, mine failed Verus generations by error class and turn recurring solver or API mistakes into a versioned reference guide. This is a transfer of method, not a claim that Python/Z3 patterns map directly to Verus.
-
 ## technique 2: separate preconditions from state updates
 
 A C system call interleaves error checks and mutations. BODHI instructs the model to collect the negation of each error check into a `z3.And` guard, then copy the old state and apply only successful-path mutations. The paper's `sys_set_runnable` example has checks for valid PID, ownership, and embryonic state, then assigns `new.procs[pid].state = PROC_RUNNABLE` and returns `cond, util.If(cond, new, old)` (Fig. 4, PDF p. 6; the guide's Category 2, Fig. 3, PDF p. 5).
@@ -52,12 +50,6 @@ The paper reports total consumption of approximately 126M tokens across 18 confi
 
 The paper defines a specification as correct if and only if the Z3 verifier produces results consistent with the oracle specification across all kernel implementation variants (section II-A, PDF p. 2). Inference: the oracle and programming model are therefore trusted, and the guide itself provides no correctness guarantee. The paper notes Pass@1 does not capture partial correctness (section VI-A, PDF p. 10). The paper states external validity is limited to a single benchmark (OSV-Bench) on a single codebase (Hyperkernel, one x86 microkernel) and one specification language (section VI-A).
 
-Inference: VL can use this as an LLM front-end to generate candidate Verus contracts, but must run Verus proofs and independent contract-strength audits. The product threat is substantial for domain-heavy code: agents may produce syntactically valid but semantically wrong formulas, especially for pointer ownership, architecture state, and conditional error paths. BODHI reduces this threat only when humans have first mined a domain guide from trusted specifications and failures.
-
-## what VL should not redo
-
-The paper says BODHI builds on OSV-Bench, Hyperkernel, and ideas from structured chain-of-thought prompting, and adapts SCoT by decomposing the input (guide) rather than the output (section II-C, PDF p. 3). Inference: VL should not claim that a 519-line guide or single-call prompting alone establishes formal correctness. Inference: the reusable contribution is failure-driven guide construction, concern separation, and controlled per-task evaluation with verifier feedback.
-
 ## techniques for the catalog
 
 - failure-derived guide construction: classify baseline specification errors and encode recurring oracle patterns into a reusable domain reference
@@ -65,4 +57,3 @@ The paper says BODHI builds on OSV-Bench, Hyperkernel, and ideas from structured
 - domain-pattern injection: teach architecture, ownership, pointer, helper, and IPC formulas as explicit prompt categories
 - recency-placed prompting: insert the guide immediately before the target task in a long prompt and hold all other prompt components constant
 - isolated verifier evaluation: run each task in a fresh API call and submit generated specifications to symbolic LLVM/Z3 equivalence checking
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This isolation is critical because multiple tasks share the same system call (with different bug injections) and leakage could inflate performance."): read all 11 PDF pages of text (sections I-VII and references) and checked the quotations, Table I, Table II numbers, Haiku development figures, token counts, tier structure, qualitative cases, and section and page references; changed the link from the DOI of reference [17] (Neurosymbolic programming, not this paper) to the arXiv page 2605.23931 given in the paper text, fixed page references (single-call quote and construction steps are on PDF p. 3, qualitative cases on p. 9), removed the unsupported claim that the separation of concerns "prevents" errors, the unsupported 'trusted verifier' wording, and the placement claim stated as fact, and marked own conclusions as Inference; did not check cited works, the PDF figures beyond their captions, or the OSV-Bench baselines in [1].

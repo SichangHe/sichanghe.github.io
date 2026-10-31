@@ -5,8 +5,6 @@ Tag: `zhu2025best`, [paper](https://arxiv.org/abs/2507.02825)
 ## scope and contribution
 This paper develops the Agentic Benchmark Checklist (ABC) for judging whether agent benchmarks measure what they claim. It separates task validity (the task is solvable if and only if the target capability is present), outcome validity (the score indicates actual success), and reporting quality. The abstract reports that “SWE-bench-Verified uses insufficient test cases” and that applying ABC to CVE-Bench reduced performance overestimation by 33%. (abstract, p. 1)
 
-Inference: VL should treat every benchmark result as a claim whose validity must be audited. A Verus benchmark needs executable specifications, adversarial tests, reproducible environments, and explicit accounting for trusted components.
-
 ## technique 1: separate task validity from outcome validity
 
 What it is. Task validity asks whether only the target capability can solve the task. Outcome validity asks whether the evaluator’s positive result means the task was actually solved. The authors state: “Outcome validity: the evaluation result (e.g., tests or checks) truly indicates task success.” (Section 1, p. 2)
@@ -23,13 +21,11 @@ Evidence and limits. The authors found that evaluation issues can change reporte
 
 What it is. ABC’s task-validity checklist checks versions, API availability, failure handling, state cleanup, isolation, reproducibility, labels, solvability, oracle solutions, and exploitable implementation flaws. The checklist explicitly includes “Residual data or state are fully cleared between runs” (Figure 2, p. 5) and “Agent is completely isolated from any ground truth information” (Figure 2, p. 5).
 
-When to use it. Use it before releasing a VL benchmark and after changing its verifier, container, dependencies, or corpus.
-
 How it is done. Record tool and package versions; make required APIs consistently available; terminate or flag runs when APIs fail; clear residual files and memory; isolate answers; freeze the environment; verify labels and solvability; provide an oracle solver; and inspect outliers for shortcuts (Section 4.1, pp. 4–5). The paper gives a concrete failure: KernelBench left ground truth in GPU memory, permitting out-of-bounds recovery (Section 4.1, p. 5).
 
 Verus form. Inference: Pin Verus and Rust versions, solver versions, and command-line options. Run each candidate in a clean container with no access to reference proofs. Clear build artifacts between tasks. Include a trusted oracle that verifies known-good solutions and a negative suite that must fail. Treat timeouts and solver crashes as explicit infrastructure failures, not successful proofs.
 
-Evidence and limits. The authors assessed ten benchmarks and found seven with task-validity issues (Section 1, p. 2; Figure 5, p. 8). They state that “it is possible that we have not presented an exhaustive checklist for ensuring evaluation rigor” (Appendix A, p. 16), so the checklist is a set of inspection criteria, not a proof that no side channel remains. Inference: VL should publish the harness and a threat model, then test likely shortcuts rather than relying on review alone.
+Evidence and limits. The authors assessed ten benchmarks and found seven with task-validity issues (Section 1, p. 2; Figure 5, p. 8). They state that “it is possible that we have not presented an exhaustive checklist for ensuring evaluation rigor” (Appendix A, p. 16), so the checklist is a set of inspection criteria, not a proof that no side channel remains.
 
 ## technique 3: validate code outcomes with layered tests
 
@@ -41,7 +37,7 @@ How it is done. Manually verify test correctness and measure objective quality s
 
 Verus form. Inference: Use Verus postconditions and invariants as the primary semantic oracle, then add runtime tests for executable behavior and fuzz tests for panic, parsing, and integration surfaces. Verify that each test input reaches the intended branch; a test that never exercises a precondition is weak evidence. Keep test-generated assumptions separate from theorem statements.
 
-Evidence and limits. The checklist lists 20 outcome-validity checks (O.a.1 to O.i.1), grouped by information acquisition, code generation, state modification, and multistep reasoning (Figure 3, p. 6). It names coverage and cyclomatic complexity as objective quality measures (O.d.2) next to manual verification of test cases (O.d.1) (Section 4.2, p. 6). Inference: High coverage can still omit a critical invariant, so VL should report both proof obligations and test properties.
+Evidence and limits. The checklist lists 20 outcome-validity checks (O.a.1 to O.i.1), grouped by information acquisition, code generation, state modification, and multistep reasoning (Figure 3, p. 6). It names coverage and cyclomatic complexity as objective quality measures (O.d.2) next to manual verification of test cases (O.d.1) (Section 4.2, p. 6).
 
 ## technique 4: make fuzz inputs sensitive and state checks complete
 
@@ -53,7 +49,7 @@ How it is done. Enumerate successful state variants; include unchanged and out-o
 
 Verus form. Inference: Specify frame conditions with `ensures` so unrelated state remains unchanged, and prove collection bounds and ownership invariants. Use `old(...)` in postconditions when comparing pre-state values. Add adversarial tests for aliasing, empty collections, and boundary arithmetic.
 
-Evidence and limits. The paper’s examples are benchmark-level rather than Verus-specific. The authors caution that state checks must include irrelevant state to detect whether agents affect the environment outside the target scope (Section 4.2, p. 6). Inference: This directly maps to a VL requirement that generated code preserve security-relevant state not mentioned in the natural-language task.
+Evidence and limits. The paper’s examples are benchmark-level rather than Verus-specific. The authors caution that state checks must include irrelevant state to detect whether agents affect the environment outside the target scope (Section 4.2, p. 6).
 
 ## technique 5: audit answer parsers, judges, and reward metrics
 
@@ -65,23 +61,17 @@ How it is done. Enumerate equivalent outputs and negation forms; test whether an
 
 Verus form. Inference: Prefer verifier success based on machine-checkable proof artifacts and exact specifications rather than a language model’s judgment. If natural-language explanations are scored, separate them from proof acceptance and test parser robustness. Report human, oracle, no-op, and random baselines.
 
-Evidence and limits. The paper reports that all ten assessed benchmarks had reporting limitations and that ABC identified issues causing up to 100% relative estimation errors (Section 1, p. 2). The authors write that completely avoiding evaluation issues “can be challenging, and is sometimes not feasible, especially when using LLM-as-a-Judge or testing-based techniques” (Section 4.3, p. 7). Inference: VL should never let an LLM judge overrule a failed Verus proof.
+Evidence and limits. The paper reports that all ten assessed benchmarks had reporting limitations and that ABC identified issues causing up to 100% relative estimation errors (Section 1, p. 2). The authors write that completely avoiding evaluation issues “can be challenging, and is sometimes not feasible, especially when using LLM-as-a-Judge or testing-based techniques” (Section 4.3, p. 7).
 
 ## technique 6: report flaws and quantify their impact
 
 What it is. ABC’s reporting section asks for open data and harnesses, contamination controls, updates, construct validity, mitigation steps, qualitative and quantitative impact analyses, confidence intervals, and trivial baselines (Figure 4, p. 7).
 
-When to use it. Apply it in every benchmark paper, dashboard, and VL release so readers can interpret scores rather than treating them as absolute capability.
-
 How it is done. Release the dataset and evaluator; hold out contamination-resistant tasks; explain the capability-to-outcome mapping; document known flaws; estimate their effect with sampling or uncertainty quantification; report statistical significance and non-AI (e.g., human) and trivial-agent results (Section 4.3, p. 7; the BIRD reporting example is Appendix F, pp. 30–31).
 
 Verus form. Inference: Publish verifier version, solver configuration, axioms, admitted specifications, timeout policy, and per-obligation logs. Include confidence intervals over tasks and a breakdown by specification difficulty. A proof accepted with `external_body` or an untrusted axiom must be counted as trusted code, not as fully verified behavior.
 
-Evidence and limits. In the CVE-Bench case study, ABC reduced performance overestimation by 33% (abstract, p. 1). The authors state: “First, our analysis covered only 17 agentic benchmarks that are used by top AI providers between January 2024 and March 2025.” (Appendix A, p. 16), so generalization beyond that sample is uncertain. Inference: VL should re-run the checklist as its corpus and verifier evolve.
-
-## what is proved, trusted, and threat to VL
-
-The paper proves no program property; it empirically diagnoses benchmark validity. Inference: the trusted inputs of any benchmark built this way include human labels, test quality, environment isolation, parser implementation, oracle correctness, and metric design, which are the items the ABC checks examine. It reports 7 of 10 assessed benchmarks with outcome-validity flaws, 7 with task-validity flaws, and all with reporting limitations (Section 1, p. 2). Inference: The threat to VL is high if weak tests or scoring proxies are presented as proof progress. The threat becomes manageable when Verus acceptance is the semantic boundary and ABC-style audits expose shortcuts.
+Evidence and limits. In the CVE-Bench case study, ABC reduced performance overestimation by 33% (abstract, p. 1). The authors state: “First, our analysis covered only 17 agentic benchmarks that are used by top AI providers between January 2024 and March 2025.” (Appendix A, p. 16), so generalization beyond that sample is uncertain.
 
 ## techniques for the catalog
 
@@ -91,4 +81,3 @@ The paper proves no program property; it empirically diagnoses benchmark validit
 - complete state checking: include all valid final states and relevant unchanged state to catch unintended modifications
 - evaluator audit: test parsers, judges, negation, equivalent answers, guessing, and reward hacking
 - transparent reporting: publish harnesses, contamination controls, baselines, uncertainty, and quantified flaw impact
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "First, our analysis covered only 17 agentic benchmarks that are used by top AI providers between January 2024 and March 2025."): read the whole paper text (main text, appendices A to G) and the whole study; checked every quotation, number, section and page reference, and the ABC item references against it; changed the outcome-validity check count (11 to 20), the page of Figure 4 (8 to 7), the wrong "Section 5, p. 18" and "Section 8, p. 40" references (now Figure 5, p. 8 and Appendix A, p. 16), several page ranges, and removed an unsupported claim about coverage and an unsupported "project's Verus guidance" clause; marked the trusted-inputs sentence as Inference; did not check the cited external papers, the released code or website, or the Verus mappings beyond confirming they are labelled Inference.

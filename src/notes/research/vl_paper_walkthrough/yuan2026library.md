@@ -51,15 +51,8 @@ The paper distinguishes annotated reference methods from semantic applicability.
 
 With GPT-5.6 Luna on 120 Putnam 2015–2025 problems, self-advertisement reaches hit@5 .950 (114/120) and the strongest reranker .842 (101/120); the table caption gives `n=120` (Table 1, p.7). On 60 IMO ProofBench problems it reaches .917 (55/60) without runoff and .933 (56/60) with runoff in the Luna block (Table 1, p.7). These percentages are fractions of problems, not proof-completion rates. The downstream experiment gives ten Lean compilations per problem: adding the top contract raises Putnam proving from 5.8% to 12.5% and IMO from 10.0% to 15.0% (Table 2, p.8; denominators are the 120 and 60 problems). The comparison supplies the whole contract, so the paper explicitly does not isolate selection from execution guidance.
 
-## trusted boundary, limits, contradictions, and VL threat
-Lean and Mathlib compilation check each scaffold and worked instance. Inference: the LLM’s applicability proposal, contract extraction, labels, and gate implementation are untrusted selection machinery; the final Lean checker is the proof boundary for the scaffold. A checked scaffold proves its target only when its listed prerequisites and residual obligations are proved. The paper warns that “shortlist coverage does not guarantee a completed proof” (Conclusion, p.9).
-
-In Verus, the analogous boundary is a checked Rust function or `proof fn` under explicit `requires`/`ensures`; selection scores and retrieved text are suggestions. Inference: a product using agent-written verified Rust faces specification and applicability threats: a syntactically valid contract may omit a needed environmental assumption, and a model can nominate a true lemma that does not advance the current obligation. The gate can expose unsupported proposals but cannot prove intent. The paper already studies contract-based method representation, commitment filtering, and selection metrics; VL should not redo generic similarity retrieval without measuring applicability and residual obligations.
-
 ## techniques for the catalog
 - method contracts — store a method’s prerequisites, target, action, checked scaffold, and residual obligations as reusable selection and execution records
 - self-advertisement with commitment gate — ask every method how it applies, then demote proposals lacking concrete targets, actions, or evidence
 - pairwise runoff — compare the leading proposals directly when rank one matters more than shortlist coverage
 - applicability metrics — evaluate retrieval with hit@k and recall@k against fixed, human-checked method labels and separate this from proof completion
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

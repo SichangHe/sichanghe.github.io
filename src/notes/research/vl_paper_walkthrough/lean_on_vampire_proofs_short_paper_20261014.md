@@ -44,12 +44,6 @@ AVATAR splits a clause into variable-disjoint subclauses, gives each a propositi
 
 Verus form (Inference). A Verus proof can encode each unifier instance as a lemma over algebraic terms and use `assert`/`assert ... by` to let the solver close ground consequences. AVATAR's Boolean refutation maps naturally to bit-vector or Boolean specifications, but the paper's `bv_decide` is Lean-specific; the Verus proof must use a supported Boolean assertion and solver proof. The certificate must retain substitutions and clause ordering facts.
 
-## evidence, trust boundary, and implications for VL
-
-Lean proves each reconstructed inference and the final theorem; the experiments measure reconstruction success and runtime. Vampire's search, the generated parser, the custom tactics, Lean's kernel, mathlib, and the trusted SAT checker remain part of the trusted or operational base. The paper itself warns that proof reconstruction is incomplete and plans specialized tactics and more efficient CNF handling (Conclusion, p. 7). Inference: for VL, the most reusable idea is a certificate-producing interface in which an untrusted high-performance search process emits small proof obligations that Verus checks. It could reduce reliance on opaque solver success, but translating hundreds of inference rules, quantifiers, AC rewriting and SAT certificates is substantial engineering. VL should not redo generic saturation or AVATAR; it should reuse the certificate boundary where a Verus contract needs solver evidence. Inference: agent-written verified Rust faces a moderate product risk: a bad suggestion cannot pass the final Verus proof, but an incorrectly specified certificate or trusted external parser can still validate the wrong claim.
-
-The paper reports no arithmetic contradiction in its tables, but the rounded 98% and 85% labels are summaries of the explicit row fractions above. It does not report the denominator for its Figure 3 scatter subsets beyond saying that only baseline-proved CNF and FOF problems are included (caption, p. 6). No claim should infer general speedups from that plot.
-
 ## techniques for the catalog
 
 - saturation trace: negate and clausify a conjecture, saturate with superposition, and emit a replayable empty-clause trace
@@ -57,5 +51,3 @@ The paper reports no arithmetic contradiction in its tables, but the rounded 98%
 - preprocessing replay: reproduce rectification through CNF and justify Skolem functions with explicit equivalence lemmas
 - unifier-guided inference: instantiate each rule with the prover's most-general unifier and check the ground consequence
 - avatar certificate: split clauses into Boolean-labelled components and check the final SAT refutation in the proof assistant
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

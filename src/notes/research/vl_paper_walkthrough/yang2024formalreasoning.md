@@ -6,8 +6,6 @@ Tag: `yang2024formalreasoning`, [paper](https://arxiv.org/abs/2412.16075)
 
 Yang, Poesia, He, Li, Lauter, Chaudhuri, and Song survey AI for formal mathematical reasoning and argue for combining language models with proof assistants and other formal systems. They define the subject as reasoning grounded in systems with syntax and explicit inference rules, and write: “A formal environment can guarantee the soundness of reasoning, provide automatic feedback, and check if the goal has been achieved.” (Section 2.2, p. 5). The authors describe it as a position paper and explicitly say it is not intended as a comprehensive survey (Section 1, p. 3). It introduces neither a new verifier nor a single controlled experiment. The performance and dataset numbers discussed below are reported from cited work and retain those settings. The numbered workflows are proposed applications of the paper’s ideas, labeled Inference:.
 
-Inference: the paper's direct relevance to VL is architectural: agent-written Rust/Verus should be generated inside a feedback loop whose final artifact is checked by Verus. The survey does not establish that LLMs can reliably write Verus proofs or that formal checking validates an inadequate specification.
-
 ## technique 1: formalize requirements and check code against them
 
 what it is: translate an informal requirement into formal assertions, then prove that a system satisfies them or find bugs. Under Curry–Howard in Lean, statements are types and proofs are expressions; proof checking checks that an expression has the specified type (Section 2.2, p. 6). In software verification, the assertions specify correctness and security requirements (Section 3.4, p. 11).
@@ -86,7 +84,7 @@ how to do it: Inference:
 4. generate and check a proof; record newly useful lemmas
 5. evaluate on a “new premises” split in which test theorems require at least one premise unseen during training (Section 3.2, p. 10)
 
-Verus form. Inference: index VL's verified lemmas by names, predicates, types, and dependency versions; retrieve contracts and `proof fn` lemmas before generation. Require exact source and toolchain hashes, because a lemma that moved or changed assumptions can invalidate an agent's proof. Measure both proof success and unwanted context growth.
+Verus form.
 
 evidence and limits: LeanDojo/ReProver and COPRA are cited examples, and the paper describes the “new premises” split as closer to real use cases involving recently proved lemmas (Section 3.2, p. 10). No single accuracy number is reported here. Retrieval cannot repair a missing or wrong specification.
 
@@ -118,17 +116,9 @@ how to do it: Inference:
 4. if transpiling, prove source-target equivalence and retain the source as the specification; testing alone does not establish equivalence
 5. release only checked artifacts with their trusted assumptions and tool versions
 
-Verus form. Inference: this is VL's direct pattern: agent writes Rust plus Verus contracts and proof functions; `verus` checks the result; CI reruns it after dependency/toolchain changes. Keep external libraries, unsafe code, compiler, solver, and specification adequacy in the trusted boundary. The paper's argument supports coupling generation to verification but does not measure Verus agents.
+Verus form.
 
 evidence and limits: the survey reports that LLM-generated code can be buggy and insecure and cites work finding more vulnerabilities than human-written code (Section 3.4, p. 11), but gives no common denominator. Inference: the guarantee applies to the properties encoded by the specification and the system model, subject to the verification tool’s assumptions.
-
-## what should and should not be redone for VL
-
-The paper offers no new benchmark of agent-written Rust or universal accuracy or speed claim. Its capability framework separates proof checking, theorem proving, formalization projects, and mathematical discovery (Section 5.1, pp. 19–21). For verified generation, it distinguishes small programs, entire projects, proof maintenance, and specification assistance (Section 5.5, pp. 25–26). These are proposed milestones, not demonstrated capabilities of one system.
-
-Inference: useful workflows for VL include formalizing requirements, retrieving premises, generating proofs with checker feedback, and learning from checked proofs and failed attempts. Reproducible artifacts would help evaluate those workflows. Their guarantees depend on the specification, system model, verifier, and any assumed behavior of external code or translation tools.
-
-Inference: compiling code or plausible prose does not establish a Verus proof. Verus acceptance plus review of the contract provides stronger evidence for the specified properties. VL should not redo the survey's general history or cited theorem-prover benchmarks. A concrete gap is a Verus-specific evaluation with contract-quality review, new-premise splits, pinned toolchains, and counts for accepted proofs, false specifications, repair effort, and missed unsafe behavior.
 
 ## techniques for the catalog
 
@@ -139,4 +129,3 @@ Inference: compiling code or plausible prose does not establish a Verus proof. V
 - premise retrieval — retrieve definitions and lemmas, including unseen premises at test time
 - synthetic formal data — generate and retain checker-accepted conjecture/proof pairs
 - verified code generation — generate code with contracts and proofs, then check the artifact
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "However, a key challenge is ensuring the trustworthiness of the generated specifications—that they are neither too strong nor too weak and accurately reflect developers’ intent."): read the full paper including references; checked quotations, numbers, technique descriptions, section/page references, author/year tag, and arXiv link; corrected Curry–Howard terminology and page references, labeled proposed workflows as inferences, and distinguished proof acceptance from specification fidelity; did not independently verify cited papers, reproduce experiments, or test the proposed VL workflows. Mid-paper quote: Section 4.4, p. 19.

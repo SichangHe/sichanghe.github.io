@@ -40,13 +40,9 @@ Inference: a Verus benchmark should record direct and transitive dependency coun
 
 Lean's compiler checks candidate proofs; the benchmark does not prove that an LLM's generated explanation is sound without compilation. The repository's Lean kernel and imported libraries remain trusted. The curated condition uses ground-truth dependencies, so it is a diagnostic oracle rather than a deployable retrieval system. The authors caution that they do not isolate why Goedel transfers poorly and cannot fully rule out training-data contamination (Sec. 6, p. 10).
 
-Inference: for a product of agent-written verified Rust, the results indicate a substantial retrieval and composition threat. Even oracle dependency selection leaves 59% of the 500 tasks unsolved for the best reported model, and full context lowers success. This threat concerns automation reliability, not the soundness of Verus when verification succeeds. Existing work already supplies a repository-scale Lean benchmark and should not be recreated as a generic mathematics benchmark; VL should instead measure Rust/Verus dependencies and compiled verification.
-
 ## techniques for the catalog
 
 - dependency-closed benchmark packaging: preserve definitions, imports, and transitive project dependencies while hiding proof bodies
 - curated-versus-full context diagnostic: compare oracle dependency context with noisy repository context under compilation checking
 - generation-check-repair loop: sample proof candidates, compile each, and feed compiler/proof-state errors into bounded repairs
 - dependency-depth analysis: correlate transitive graph depth and counts with verified-proof success
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

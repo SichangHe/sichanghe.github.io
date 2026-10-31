@@ -4,8 +4,6 @@ Tag: `ambati2025proofnet`, [paper](https://arxiv.org/abs/2505.24230v1)
 
 ProofNet++ combines a language model with a symbolic proof-tree interface, a machine checker, verifier-guided reinforcement learning, curriculum training, and repair of rejected subtrees. The paper states its motivation plainly: “Current LLM-based systems suffer from hallucinated logical steps and unverifiable reasoning.” (Abstract, p. 1). The implementation is described for Lean 4 and HOL Light, so the Verus mapping below is an inference, not an evaluated result.
 
-## techniques
-
 ### symbolic proof-tree representation and checker loop
 
 What it is: model output is parsed into a structured tree; nodes are statements or lemmas and edges are dependencies. A symbolic interface turns generated steps into tactics, and Lean 4 or HOL Light checks each step. The paper says, “The overall system forms a feedback loop where each generated proof step is formally validated before reinforcement or continuation.” (III-A, p. 2).
@@ -52,10 +50,6 @@ Inference: Lean/HOL kernel acceptance establishes correctness relative to the su
 
 The abstract claims, “We provide theoretical analysis of the convergence and stability of the verifier-guided RL framework and release our datasets and codebase for future research.” (Abstract, p. 1). Inference: the supplied six-page paper contains no convergence derivation or linked code/data release, so those claims are not independently established here. It also does not give a comparative baseline table or a detailed ablation table supporting its state-of-the-art claim. Its current integration is explicitly limited: “Our architecture currently parses LLM outputs into symbolic trees post-hoc, resulting in a loosely coupled relationship between neural and symbolic components.” (VI-C, p. 5). Joint embeddings, a backward planner, and differentiable verifiers are proposed future directions; they are not the current correction algorithm. A preliminary contrastive-loss experiment on 50,000 proof trees is reported to improve logical coherence scores by 9.8% (VI-C, p. 5).
 
-## what VL should reuse and threat
-
-Inference: VL could reuse the checker feedback loop, explicit failure traces, local subtree repair, and curriculum over proof complexity. These overlap with the workflow needed for agent-written verified Rust, but the paper does not evaluate Verus or production Rust. A compile-and-verify prerequisite check can reject candidates that fail their stated obligations; it cannot establish that those obligations capture the intended product requirement. The results therefore support considering these workflow ideas, not a measured claim about their effectiveness for VL.
-
 ## techniques for the catalog
 
 - symbolic proof-tree checking — parse generated steps into dependency trees and validate every step before continuation
@@ -63,5 +57,3 @@ Inference: VL could reuse the checker feedback loop, explicit failure traces, lo
 - verifier-guided RL — use checker acceptance as binary reward and propagate it with n-step returns
 - rejected-subtree repair — use diagnostics to propose, verify, and commit local tree substitutions
 - verification cost reduction — batch similar trees, cache subtree results, prune RL branches with a learned approximation, and schedule subtree evaluations asynchronously
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The second dataset, mathlib-extract, is derived from Lean’s extensive mathlib library and includes more than 6,000 curated theorem-proof pairs."): checked the entire paper, quotations, numbers, section/page references, technique steps, and arXiv identifier; removed unsupported repair ordering and downstream regeneration, corrected conclusion page references, distinguished the two uses of 94.7%, added verification cost methods, and marked adaptations and conclusions as inferences; did not reproduce experiments, inspect implementation artifacts, or verify external references.

@@ -6,7 +6,7 @@ Tag: `protzenko2017verified`, [paper](https://doi.org/10.48550/arxiv.1703.00053)
 
 Protzenko et al. introduce Low*, a low-level subset embedded in F* and compiled to C by KreMLin. The paper defines a structured memory model, dependent specifications, erasure of proofs, a formal translation to CompCert Clight, and verified cryptographic case studies. Its abstract says: “Low∗ is a shallow embedding of a small, sequential, well-behaved subset of C in F∗, a dependently-typed variant of ML aimed at program verification.” (§abstract, p.1) The design targets code that needs C-like layout and performance while retaining F* proofs of memory safety, functional correctness, and side-channel properties.
 
-The key architectural choice is to write the low-level code in a restricted language and prove a translation theorem, rather than verify arbitrary existing C. The paper says: “we give up on verifying existing C code and embrace the idea of writing low-level code in a subset of C shallowly embedded in F∗.” (§6, p.25) Inference: this is directly relevant to VL because a generator can constrain Rust/Verus code to a proof-friendly subset and then make the emitted artifact the object of verification.
+The key architectural choice is to write the low-level code in a restricted language and prove a translation theorem, rather than verify arbitrary existing C. The paper says: “we give up on verifying existing C code and embrace the idea of writing low-level code in a subset of C shallowly embedded in F∗.” (§6, p.25)
 
 ## technique: a structured region memory model
 
@@ -53,7 +53,7 @@ How to apply it (reconstructed from the paper; it gives no numbered procedure).
 4. Translate λow* to C* and then CompCert Clight, preserving traces and functional behavior (§3, pp.13–18).
 5. Use KreMLin's inlining, reachability, hoisting, and readable pretty-printing to produce C11 (§4.1, pp.19–20).
 
-Verus form. Inference: put executable Rust, `spec fn` definitions, and `proof fn` lemmas in one crate, then compile the executable after verification. The Verus verifier's erasure of proof code plays a similar role, but no theorem in this paper transfers to Rust's compiler. A VL pipeline should treat code generation and any `unsafe` or FFI boundary as separate proof obligations.
+Verus form.
 
 Evidence and limits. The formal pipeline proves semantics preservation to Clight and trace properties through Clight, but the transcription from emf* to λow* is “not backed by a specific proof” (§3, p.14). KreMLin is unverified OCaml and is trusted, as are F*'s typechecker, Z3, the metatheory proofs, and the downstream C compiler (§1, p.4). The authors explicitly leave verified assembly compilation for future work (§3.3, p.19).
 
@@ -98,14 +98,6 @@ How to apply it (reconstructed from the paper; it gives no numbered procedure).
 
 Verus form. Inference: use a ghost event sequence and prove each Rust transformation preserves it, but treat this as a separate model of the compiler or code generator. Verus proofs about source Rust do not imply that LLVM or machine-code optimization preserves the event sequence.
 
-## evidence, trust, and product threat
-
-Table 1 reports 8,936 lines for the Low* standard library, 6,050 lines for HACL* with 28% annotations, and 13,743 lines for miTLS AEAD with 56.5% annotations; verification times are 8 minutes, 12 hours, and 1 hour 10 minutes respectively, on an Intel Core E5 1620v3 CPU (Table 1, p.21). HACL* measurements average 1,000 runs over random 16-KB blocks on an Intel Xeon E5-1630; Curve25519 uses 1,000 random key pairs (Table 2 caption, p.22). For example, HACL* ChaCha20 is 6.17 cycles/byte versus Sodium's 6.97, while the fastest eBACS assembly is 1.23 cycles/byte (Table 2, p.22). These numbers compare the named CPU, compiler, input size, and denominators; they do not establish universal performance.
-
-The paper's trust boundary includes F*'s typechecker and Z3, manual metatheory proofs, unverified KreMLin, and the C compiler (§1, p.4). The Table 2 numbers were obtained with GCC-6 and -march=native, with auto-vectorization and link-time optimization turned off; CompCert 3.0 (with -O3) causes a 3x slowdown for Salsa20/ChaCha20 and 30–60x for Poly1305/Curve25519 (§5.1, p.24). The miTLS integration leaves a small unverified C adapter (§5.2, p.25).
-
-Inference: VL's product threat is high at compiler, FFI, unsafe-code, and specification boundaries. Low* extracts 20,000+ lines of Low* code to C (§1, p.4), with the translation proved by hand on a formal model (§1, p.4; appendix). The paper lists the typechecker, Z3, the hand proofs, unverified KreMLin, the C compiler, and the miTLS adapter as remaining trust assumptions; the claim that these dominate residual risk is my own judgment, not something the paper measures. VL should reuse the pure-model plus stateful-implementation pattern, explicit memory contracts, and trace-aware translation checks. VL should not claim end-to-end guarantees from a Verus source proof without checking generated code, linked libraries, and machine-level side channels.
-
 ## techniques for the catalog
 
 - region-indexed state monad — model stack and heap ownership with liveness preconditions and postconditions
@@ -116,4 +108,3 @@ Inference: VL's product threat is high at compiler, FFI, unsafe-code, and specif
 - idealization flags — verify real and ideal cryptographic paths together, then erase ideal code
 - trace reinterpretation — preserve side-channel traces across memory-layout transformations
 - proof erasure and verified lowering — erase ghost code and prove a sequence of semantics-preserving translations
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Just like C, there are two ways to evaluate Clight expressions: in lvalue position or in rvalue position."): I read the whole paper text (main text pp.1-26, appendix A-F pp.27-84, references) and the whole study; checked every quotation, page and section reference, number, and technique step against it; changed the §6 quotation to the paper's lowercase "we give up", corrected page references for Table 1 (p.21) and the CompCert slowdown (p.24), the Fig. 3 reference, narrowed the HACL* functional-correctness claim to what §5 and §5.1 state, clarified that only heap region creation is a no-op, added the GCC flags and CompCert version, replaced an unsupported claim that trusted components "dominate residual risk" with the paper's list of trust assumptions plus my labeled judgment, and relabeled the "paper procedure" step lists as reconstructed because the paper gives no numbered procedures; not checked: the Verus-form paragraphs (my own inference, not checkable against the paper), the proofs in the appendix beyond reading them, the cited external works, and the arXiv link was kept as the existing DOI-form link (arXiv:1703.00053 appears in the paper header) without a network fetch.

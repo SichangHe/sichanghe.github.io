@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `lin2026codelogician`, [paper](http://arxiv.org/abs/2601.11840v2)
 
-Inference: CodeLogician combines an LLM that translates source into an explicit formal model with ImandraX, which proves properties and decomposes state spaces. The paper states, “CodeLogician uses LLMs to help construct explicit formal models (“mental models”) of software systems” (Abstract, p. 1). The useful lesson for VL is to make model construction and proof checking separate artifacts.
-
 ## technique: verification goals with counterexamples
 
 Inference: Use a boolean-valued predicate over the model to state a property, ask the prover to establish it for all inputs, and treat a counterexample as a model-refinement input. The paper defines VGs as “boolean-valued IML functions that encode properties of the system being analyzed” (Sec. 3.2, p. 8). Its example is an order-ranking transitivity lemma:
@@ -49,8 +47,6 @@ Inference: For financial arithmetic, state invariants over all input combination
 
 Inference: ImandraX proves stated VGs and computes symbolic regions under the admitted model; it does not prove that an LLM’s model matches source semantics. Axioms, opaque functions, approximations, and abstraction boundaries remain trusted assumptions. The paper explicitly says, “The resulting model is functionally equivalent to the source program at the chosen level of abstraction” (Sec. 5.1, p. 14), which is a design objective rather than an independently established theorem.
 
-Inference: For VL, the strongest reusable ideas are counterexample-driven specification repair, region witnesses as systematic tests, and dependency-aware incremental proof state. The product threat is medium: an agent can produce a plausible but semantically wrong model, and a proof of that model will not detect the mismatch. Verus contracts and executable Rust tests should therefore be paired with an explicit model-to-code correspondence review.
-
 ## techniques for the catalog
 
 - Inference: verification goals and counterexamples — state universal properties, prove or refute them, and refine assumptions from concrete witnesses
@@ -58,4 +54,3 @@ Inference: For VL, the strongest reusable ideas are counterexample-driven specif
 - Inference: pure-functional autoformalization — expose state, recursion, abstraction levels, and unknown behavior in a checkable model
 - Inference: interaction counterexamples and numeric invariants — verify feature interactions and exact conservation, then repair assumptions exposed by witnesses
 - Inference: dependency-aware incremental formalization — formalize in import order and recompute only affected modules
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

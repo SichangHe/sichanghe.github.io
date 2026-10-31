@@ -6,7 +6,7 @@ Tag: `aleithan2024swebenchplus`, [paper](https://arxiv.org/abs/2410.06992v2)
 
 Aleithan, Xue, Mohajer, Nnorom, Uddin, and Wang audit whether SWE-bench test results mean that an LLM really fixed a software issue. They manually compare model patches with developer (“gold”) patches, inspect issue reports and trajectories, and then build SWE-Bench+ with post-cutoff issues screened for clear solutions in reports or comments. The abstract reports: "32.67% of the successful patches involve “cheating” as the solutions were directly provided in the issue report or the comments." (Abstract, PDF p. 1) It also reports 31.08% suspicious patches from weak tests and a drop from 12.47% to 3.97% after filtering those problems on the refined original set (Abstract, PDF p. 1).
 
-The paper is not a formal-verification system. Inference: its evaluation techniques could help audit a Verus benchmark. A benchmark that accepts a patch because a weak test suite passes can similarly accept agent-written Rust whose Verus specification is incomplete, vacuous, or disconnected from the intended behavior. The study therefore gives VL a concrete audit procedure and threat model.
+The paper is not a formal-verification system.
 
 ## technique: independent patch validation against a gold change
 
@@ -23,8 +23,6 @@ how to do it
 5. Classify the patch as suspicious or correct, then recompute the resolution rate using only correct classifications.
 
 Verus form
-
-Inference: apply the same protocol to VL by storing the Rust diff, Verus proof obligations, specification diff, compiler/verifier logs, and the intended property. A review must compare the generated contract with the human task and with an independently written specification or test harness. In Verus, a passing `assert` or `ensures` proves only the encoded statement; it does not establish that the statement captures the issue. Inference: require at least two independent validators for benchmark labels and keep their disagreement record.
 
 evidence and limits
 
@@ -45,8 +43,6 @@ how to do it
 5. Construct a new benchmark from issues created after the model's training cutoff, then repeat manual leakage screening.
 
 Verus form
-
-Inference: for VL, remove existing Verus proof scripts, exact invariant text, and generated patches from prompts used for evaluation. A benchmark curator can use a `requires` predicate for a task's intended input and a separately authored `ensures` contract, then check that no supplied artifact contains the answer. This is a data-governance check, not a Verus proof.
 
 evidence and limits
 
@@ -71,8 +67,6 @@ how to do it
 
 Verus form
 
-Inference: a VL audit should add independent semantic checks: compile and verify the Rust, run the executable tests, and inspect whether `requires`, `ensures`, loop invariants, and `assert` facts express the user property. A generated proof that uses an overly weak postcondition should be classified as incomplete even if Verus accepts it. Inference: compare behavior and contracts, not proof-text similarity; equivalent Verus proofs can use different lemmas and invariants.
-
 evidence and limits
 
 The authors describe the Django example as a generated `__reversed__` implementation that reverses only dictionary keys while the gold patch reverses the whole dictionary; tests still pass (§2.1.1, PDF p. 5). For the incomplete-fix example, the authors say the generated patch is "missing critical parts of this logic, such as the try-except block and the check for a running event loop." (§2.1.1, PDF p. 6) In SWE-Bench+, Table 3 records 16, 11, 14, and 7 cases of changes to different files/functions for SWE-RAG+GPT-4, SWE-RAG+GPT-3.5, SWE-Agent+GPT-4, and AutoCodeRover+GPT-4o respectively (PDF p. 9). The paper reports: "on average, around 67.72% of the resolved instances did not truly resolve the issue, despite passing all the tests." (§4, PDF p. 9) Inference: this statement concerns instances selected as resolved, rather than all 548 tasks; the inconsistent Table 3 counts below limit its interpretation.
@@ -94,8 +88,6 @@ how to do it
 
 Verus form
 
-Inference: construct a VL benchmark from dated Rust/Verus issues, pin repository commits and Verus versions, require a task-specific specification plus tests, and exclude prompts containing the target proof. Run the same verifier version for every submission and archive logs. Date filtering reduces memorization risk but does not establish independence.
-
 evidence and limits
 
 Table 3 lists 4, 3, 3, and 21 correct patches for SWE-RAG+GPT-4, SWE-RAG+GPT-3.5, SWE-Agent+GPT-4, and AutoCodeRover+GPT-4o, respectively. Its total row lists 23, 20, 32, and 42 (PDF p. 9). Inference: the last two totals are inconsistent with their category sums, which are 20 and 46. Section 4 reports validated rates of 0.73%, 0.55%, 0.55%, and 3.83%, and original leaderboard rates of 1.31%, 0.17%, and 18.83% for the two RAG systems and AutoCodeRover (PDF p. 9). The authors write: "This drop in performance for all models when moving from SWE-Bench Full to SWE-Bench+, highlights the impact of excluding suspicious fixes on the overall resolution rates." (§4, PDF p. 9) Inference: GPT-3.5’s reported increase from 0.17% to 0.55% contradicts that claim. The authors state: "the issue with weak tests still persists and needs future investigation." (§4, PDF p. 9)
@@ -116,21 +108,13 @@ how to do it
 
 Verus form
 
-Inference: VL can add proof-checking time, repair iterations, compiler runs, and human review cost. A Verus accounting function can prove division and aggregation over a nonzero task count, but prices and wall-clock measurements are external observations.
-
 evidence and limits
 
-Section 5 reports SWE-Agent+GPT-4 at about four minutes per instance and 37 hours total, and AutoCodeRover at 4.5 minutes and 41 hours (§5, PDF p. 9). The cost prose on PDF p. 10 conflicts with Table 4: it assigns $0.24/$32.5 to SWE-Agent and $0.05/$10.0 to RAG+GPT-4, and later gives RAG+GPT-3.5 a $32 cost per fix. The figures above follow Table 4. Inference: even Table 4’s $12.61 per AutoCodeRover fix does not follow from $0.46 × 548 / 21 (about $12.00), so it should be treated as a reported value rather than reconciled accounting. Inference: VL comparisons should publish hardware, verifier version, timeout, and whether failed proof attempts count.
+Section 5 reports SWE-Agent+GPT-4 at about four minutes per instance and 37 hours total, and AutoCodeRover at 4.5 minutes and 41 hours (§5, PDF p. 9). The cost prose on PDF p. 10 conflicts with Table 4: it assigns $0.24/$32.5 to SWE-Agent and $0.05/$10.0 to RAG+GPT-4, and later gives RAG+GPT-3.5 a $32 cost per fix. The figures above follow Table 4.
 
 ## what is proved, measured, and trusted
 
 The paper does not provide a formal proof of patch correctness. It measures manual classifications, test outcomes, benchmark counts, costs, and rates. It trusts the gold patch as a reference for comparison, the benchmark scripts as an execution oracle, and reviewer judgment for semantic classification. The authors explicitly conclude: "weak test cases continue to pose challenges, with model resolution rates dropping further in this refined environment." (Conclusion, PDF p. 11) Inference: a Verus proof result is stronger than an ordinary unit-test result only for the exact formal specification supplied to Verus; the specification, external bodies, compiler, verifier, and environment remain trust boundaries.
-
-## implications for VeruLaw
-
-Inference: the greatest threat is false confidence from an under-specified contract. A model may generate a valid Verus proof for a postcondition that omits the security or functional requirement, just as a SWE-bench patch can pass weak tests. VL should score independently authored specifications, mutation tests, negative tests, and review of changed files and functions.
-
-Inference: the paper's leakage filter should be applied before any training or evaluation corpus is used for agent-written verified Rust. Keep proof scripts and issue solutions out of prompts, pin dates and revisions, and report exact task denominators. Existing work on patch validation and test-strength auditing means VL should not redo a benchmark that reports only verifier pass rates.
 
 ## techniques for the catalog
 
@@ -139,4 +123,3 @@ Inference: the paper's leakage filter should be applied before any training or e
 - test adequacy taxonomy: classify incorrect, unrelated, incomplete, leaked, alternative-correct, and more-comprehensive patches
 - filtered benchmark construction: combine date, attribute, execution, and manual-content filters while pinning revisions
 - effectiveness-aware cost: divide total cost by all tasks and by independently validated fixes
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The primary objective of SWE-Bench+ is to assess the models’ ability to generate accurate patches for real-world GitHub issues without the risk of bias or prior exposure to the solution."): checked every quotation, number, section/page reference, and technique against the full paper, including references; corrected the unrelated DOI, unsupported explanations and method steps, page references, and descriptions of conflicting rates, counts, and costs; did not reproduce experiments, inspect external artifacts, or independently establish patch correctness.

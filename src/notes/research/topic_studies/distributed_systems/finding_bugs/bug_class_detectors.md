@@ -17,8 +17,6 @@ Every entry below follows the same three steps, so I state them once.
 
 The payoff the authors keep reporting is the same: a targeted tool finds tens of new confirmed bugs in mature systems in hours, where random injection drowns in combinations. The cost is also the same: each tool covers one class and its rule can miss bugs outside the studied pattern.
 
-## the main papers and systems
-
 ### crash recovery bugs
 
 A crash recovery bug: a node crashes, a recovery mechanism such as a write ahead log or a hinted handoff runs, and the system ends up wrong anyway, usually because the crash hit at a specific moment.

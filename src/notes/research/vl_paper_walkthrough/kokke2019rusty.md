@@ -77,12 +77,6 @@ RV uses crossbeam one-shot channels. Every `send` allocates the continuation ses
 
 The authors unit-test EGV use cases, but say it is “hard (if not impossible) to obtain a set of tests which cover all use-cases of a library” (Section 4.2, p. 58). They plan a formal concurrent lambda calculus, “formal RV,” and intend to prove preservation, progress, termination, confluence, the diamond property, and deadlock/livelock freedom, then establish operational correspondence with EGV and property-based correspondence with Rust (Section 4.2, pp. 58–59). These are plans, not results. The library also extends beyond EGV with recursion and selection; formal verification would require extending EGV accordingly (Section 4.3, p. 59).
 
-## implications for VeruLaw
-
-Inference: RV shows a useful product pattern for verified Rust agents: put protocol state in types, make each communication step return a typed continuation, and model cancellation as an explicit protocol state. This can complement Verus proofs of payload invariants. It does not replace Verus proofs of implementation correctness, liveness under arbitrary scheduling, or behavior after leaks and panics.
-
-Inference: the threat to a product of agent-written verified Rust is concentrated at unsafe boundaries around channel backends, destructor behavior, `std::mem::forget`, reference cycles, exposed endpoint constructors, and nontermination. Existing work already supplies a Rust API and concrete examples for typed sessions; VL should not redo the interface design. The unfinished part is the formal correspondence between Rust implementation and EGV, exactly the work the authors list as future.
-
 ## techniques for the catalog
 
 - dual session types: encode message direction, payload, and continuation in nested `Send`, `Recv`, and `End` types with an involutive `Dual`
@@ -90,4 +84,3 @@ Inference: the threat to a product of agent-written verified Rust is concentrate
 - typed branching: encode choices as enum-labelled continuation sessions and cancel the leftover `End` continuation after sending the choice
 - homogeneous selection: select among same-typed receiving endpoints while removing the chosen continuation from the vector
 - one-shot channel implementation: send each continuation endpoint with its payload and emulate synchronous close with two unit channels
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The select_mut and select functions are homogeneous: they only select over vectors of endpoints with the same type."): read the whole paper text and compared every quotation, section and page reference, the API signatures, and each technique step against it; changed the link to the paper's DOI, corrected the claim that `new` is hidden (it stays available, Section 2.7), the "linearly" wording, the reason `choose_left` cancels instead of closes, the claim that selection is homogeneous-only outside EGV (the paper says all selection is outside EGV), the crossbeam "one-shot" attribution, and one page reference, and added the paper's livelock caveat; did not check the Verus-form paragraphs and the VeruLaw implications beyond marking them as inference, the cited external works, or the arXiv version.

@@ -54,8 +54,6 @@ how it is done (Algorithm 3, p.316):
 
 The paper’s example first blocks calls at L1 and L2, then inlines `bar`; later it inlines `foo`, `bar1`, `bar2`, `foo1` and `foo2`, and reaches a core with no blocked callsite at step 4 (Table 2, pp.316–317). The authors explain that a SAT trace from the underapproximation “is sure to be present in the original program as well” (p.317).
 
-Inference: Verus can represent the semantic goal with a function contract and use `assert` plus `proof fn` lemmas to expose facts, but, to my knowledge (not checked against any Verus documentation here), it has no construct for requesting a minimal SMT unsat core or dynamically inlining Rust functions. Implementing UnderWidenSI for VL would therefore be an outer BMC/proof-orchestration tool that feeds verified Rust fragments to a solver; it is not a direct Verus annotation pattern. The proof artifact remains trusted only for the encoded bound and contracts.
-
 limits: the method currently uses only callsite predicates from the core; the conclusion proposes extracting richer core information as future work (p.322). Minimal cores may be non-unique, although preliminary experiments found little average runtime impact (p.313). The safety claim is bounded and assumes faithful passification and solver encoding.
 
 ## technique 4: complementary portfolio verification
@@ -70,23 +68,9 @@ how it is done:
 
 Evidence: on 727 hard benchmarks (each took Corral over 200 seconds or timed out), Legion solved 351, Corral 262, and either solved 397 (p.319). At one hour per tool, Legion+ solved 369/727 (51%); on the 213 instances solved by all three, it was 2.9× faster than Corral and 1.9× faster than Legion (p.320). Table 3 reports 109 hours for Corral’s 262 solved instances, 112 hours for Legion’s 351, and 71 hours for Legion+’s 369 (p.319; repeated in text on p.320). The paper also says roughly 14,000 easy cases were excluded (p.320), so these percentages are not an all-benchmark estimate.
 
-Inference: VL could run independent proof-search strategies in parallel and preserve Verus as the final checker. The portfolio evidence does not show that either strategy improves specification quality or unbounded correctness.
-
-## trusted boundary, contradictions and threat to VL
-
-Inference: the trusted elements are the passifier, VC encoding, loop bound, SMT solver, and the property supplied to the checker. Legion’s UNSAT core guides search; it is not itself a Verus proof of the unbounded Rust program. The abstract’s “12% more instances” (p.304) is not explained further in the paper; Inference: it matches (351 − 262)/727 ≈ 12.2%, a difference taken over all 727 instances, which is about 34% more than Corral’s 262 solved. Likewise the abstract’s “15% more” matches (369 − 262)/727 ≈ 14.7%. Readers should use the denominators above. The 51% Legion+ result uses one hour per component, whereas the 55% virtual-best result uses two hours (p.320).
-
-Inference: the threat to an agent-written verified-Rust product is moderate and specific. Proof-guided search could reduce timeout failures in bounded harnesses, but it can also create false confidence if users mistake bounded UNSAT for full functional correctness. VL should report the bound, model, solver and trusted translation boundary, and independently run Verus contracts on the final Rust artifact.
-
-## what VL should not redo
-
-Inference: VL should not reimplement a generic CEGAR baseline merely to claim novelty; this paper already establishes the complementary baseline and portfolio pattern. New work would need Rust/Verus-specific evidence, such as whether an external underapproximation portfolio reduces proof time on real VL workloads without weakening contracts.
-
 ## techniques for the catalog
 
 - bounded VC generation — encode finite unrolled executions and a negated property as an SMT verification condition
 - stratified CEGAR inlining — refine an entry-procedure abstraction by inlining callsites appearing on spurious counterexamples
 - unsat-core widening — block open calls, then inline only blocked callsites named by an UNSAT core
 - parallel verifier portfolio — run overapproximation and underapproximation verifiers concurrently and return the first result
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The underapproximated program represents a subset of the paths in the original program, therefore, any counterexample trace present in the underapproximated program is sure to be present in the original program as well."): I read the whole paper text and checked every quotation, number, page reference, Algorithm 1–3 and Table 1–3 step against it, and the DOI link against the paper's first page. I changed the page reference for the solved counts and Table 3 (p.319), the loop-unrolling page range, the Table 1 step description (six inlining steps plus an UNSAT step, not seven refinement steps), and the "12% more" explanation, which the paper does not give (now marked Inference with the arithmetic); I deleted an unsupported claim about CEGAR and spurious counterexamples, and marked my own conclusions "Inference:". I did not check the references, the figures' graphical content beyond the numbers printed on them, or any Verus claim (those are Inference, not from the paper).

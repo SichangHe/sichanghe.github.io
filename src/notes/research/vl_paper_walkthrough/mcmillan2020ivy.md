@@ -66,11 +66,6 @@ For distributed extraction, each action and state variable in a parameterized mo
 
 Inference: assumption-respecting tests could help debug a Rust implementation before verification, but passing tests would not prove its contracts. Applying Ivy's distributed extraction argument to Rust would require a separate concurrency and refinement proof.
 
-## what is proved, trusted, and risky for VL
-This tool paper describes mechanisms for proving safety and liveness and gives small examples; it does not present a soundness proof of the compiler. It reports no overall experiment count, runtime table, or success percentage. Compared with proof assistants, the authors acknowledge: “On the other hand, Ivy relies on a vastly larger trusted computing base than typical proof assistants.” (section 1.1, p. 191).
-
-Inference: relying on the described workflow requires trust in the VC generator, fragment checker, solver/model checker, proof tactics, compiler, and runtime. Specification assumptions also limit what a proof establishes. For VL, potentially reusable ideas are invariant strengthening from counterexamples, explicit quantifier instantiation, and liveness-to-safety reduction. Their applicability to Verus requires separate validation; this paper does not evaluate Verus or agent-written Rust.
-
 ## techniques for the catalog
 - modular isolate specifications — hide implementation state behind ghost interface contracts and refine abstract models into implementations
 - decidable inductive invariants — audit VCs for a decidable fragment, prove initialization/preservation, and use finite counterexamples to strengthen invariants
@@ -78,4 +73,3 @@ Inference: relying on the described workflow requires trust in the VC generator,
 - liveness-to-safety — encode fair-cycle exclusion with saved state and dynamic abstraction, then prove a safety invariant
 - explicit quantifier instantiation — remove problematic alternation by manually specializing an explicit axiom
 - compositional specification testing — generate assumption-respecting randomized tests and check guarantees before proof
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This can be shown by an inductive invariant, and Ivy contains special syntax for writing the invariant of the cycle detection system (e.g., to access the saved copy of state variables)."): read all 628 lines, including references and license; checked quotations, examples, technique steps, numbers, section/page references, authors/year, and DOI; corrected ghost-code termination, liveness prerequisites, checking modes, extraction conditions, and unsupported proof claims; marked proposed Verus adaptations and trust conclusions as inferences; did not run Ivy, reproduce cited experiments, inspect cited works, or validate Verus adaptations.

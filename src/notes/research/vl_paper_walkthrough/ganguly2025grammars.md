@@ -24,8 +24,6 @@ how the paper does it
 
 Verus form
 
-Inference: Keep the LLM's output as a separate candidate specification or proof input, and make the executable Rust behavior the object verified by Verus. A direct SMT-LIB-to-Verus translation is not supplied by the paper. Inference: The analogous boundary is a generated `requires`/`ensures` contract verified against the executable Rust, with supporting proof functions where needed. Inference: Z3 acceptance of an SMT-LIB answer does not prove that a generated Verus contract states the intended product behavior, so VL needs a semantic review or independent specification evidence.
-
 evidence and limits
 
 The paper reports that SMT generation “required significantly less effort (more syntactically valid programs in fewer attempts) and used dramatically fewer tokens per prompt” than an earlier approach, while retaining multi-solver interoperability (section 3, PDF p. 5). It also reports that SMT changes the error profile, often trading precision for recall, and that formalization can introduce false positives or miss correct answers (section 3, PDF p. 6). Inference: syntax validity and correct solver use are prerequisite checks; neither establishes that the formalization matches the intended meaning. A correct answer may require unsatisfiability rather than satisfiability.
@@ -75,7 +73,7 @@ evidence from the experiments
 
 For ground-truth correctness, one of the tied strongest individual AUROC results in Table 3 is grammar entropy on o3-mini/ProofWriter: AUROC 0.9301 and AURC 0.0008, measured on the paper's selected model-task setting with 100 SMT samples per question (Table 3, PDF p. 7; supplementary section D, PDF p. 29). On StrategyQA/o3-mini, grammar entropy has AUROC 0.7448 and AURC 0.1113 in the corresponding table cell. For SMT-text consistency, rule-distribution kurtosis reaches AUROC 0.8695, AURC 0.4448, and relative error reduction 0.3056 for Gemini Flash 2.0 Lite on StrategyQA (Table 16, supplementary PDF p. 28). For o3-mini on ProofWriter, ensemble weighted and ensemble ML each report AUROC 1.0000, with 0.05 optimal abstention and 1.00 relative error reduction; the table defines error at threshold as 0.00 in that setting (Table 17, supplementary PDF p. 28). These scores concern selected question sets, with 100 SMT samples used to construct each question’s PCFG (appendix D, PDF p. 29). Inference: they do not establish universal model error rates.
 
-The paper also reports poor calibration despite strong discrimination: grammar entropy on o3-mini/ProofWriter has AUROC 0.9301 but ECE 0.4419 (Table 3, PDF p. 7). It concludes that anomaly magnitude does not linearly predict error probability and that calibration-aware fusion is needed (discussion, PDF p. 8). Inference: a VL prerequisite check should not map one metric directly to “safe”; it should calibrate a score on held-out Verus-generation tasks and preserve an abstain state.
+The paper also reports poor calibration despite strong discrimination: grammar entropy on o3-mini/ProofWriter has AUROC 0.9301 but ECE 0.4419 (Table 3, PDF p. 7). It concludes that anomaly magnitude does not linearly predict error probability and that calibration-aware fusion is needed (discussion, PDF p. 8).
 
 ## technique 4: fuse metrics and perform selective verification
 
@@ -92,8 +90,6 @@ how to do it
 5. Retain answers below the chosen uncertainty cutoff and abstain on the rest; report error among retained answers. Inference: route abstentions to human review if the deployment requires an answer.
 
 Verus form
-
-Inference: The final prerequisite check can be represented as a pure decision function over recorded metric values, with a contract that an accepted candidate has passed the configured threshold and a proof that abstention is explicit. Inference: Verus can prove deterministic threshold logic and accounting properties such as retained count plus abstained count equals total count; it cannot prove the learned logistic model's statistical calibration without a separately formalized dataset and arithmetic model. Inference: VL should attach the model version, calibration set, threshold, and verifier output to the attestation because the paper's evidence is empirical.
 
 evidence and limits
 
@@ -113,8 +109,6 @@ The paper gives a concrete semantic-divergence example: “one SMT sample might 
 
 Verus form
 
-Inference: For VL, map this diagnostic to candidate-contract review: compare generated `requires` and `ensures` clauses, classify syntactic rearrangements that preserve meaning, and flag changed predicates, quantifier domains, or missing facts. Inference: Verus can prove equivalence lemmas for selected contract rewrites and can check proposed implications between contracts, but the paper's PCFG does not itself prove logical equivalence. Inference: retain the original Rust, tests, and user-visible intent as evidence for choosing among contracts.
-
 ## temperature and sampling evidence
 
 The temperature findings conflict within the paper. The main ablation discussion says the spectral radius “consistently decreases with sampling temperature” (section 3.1, PDF p. 8), whereas appendix B says: “Notably, the PCFG spectral radius generally trended upwards with increasing temperature.” (PDF p. 18). The main text describes smooth, monotonic grammatical changes, but appendix B reports that NSUI fluctuates without a clear monotonic direction (PDF p. 19). Appendix A.2 discusses Gaussian and exponential schedules and favors a systematic uniform schedule (PDF p. 18); appendix D says the primary UQ samples used default temperature, distinct from the ablation (PDF p. 29). Inference: the study cannot support one universal spectral-radius trend. Record temperature and remeasure uncertainty features for the intended generation setting.
@@ -122,16 +116,6 @@ The temperature findings conflict within the paper. The main ablation discussion
 ## what is proved, measured, and trusted
 
 Theorem 1 claims a mathematical coverage bound under entropy, measurability, sufficiently-large-N, and i.i.d.-sampling assumptions (section 2, PDF p. 4). Its proof is given in appendix A.1 (PDF p. 17); the proof’s validity was not independently established in this check. The PCFG formulas, metric definitions, and threshold metrics are specified mathematically. The empirical AUROC, AURC, ECE, Brier, accuracy, and error-reduction values are measurements on selected datasets, models, samples, parser outputs, and thresholds. The supplementary setup says each selected question has 100 SMT samples, parses them with an ANTLR-based parser, uses Laplace smoothing with beta_s=1, uses ten ECE bins, and trains logistic regression with balanced class weights (supplementary section D, PDF p. 29).
-
-Inference: The trusted base for a VL deployment includes the LLM, prompt, sampler, parser, SMT solver or Verus verifier, PCFG implementation, metric arithmetic, calibration data, and the semantic adequacy of the generated contract. Inference: a successful Verus proof can certify the chosen contract over the modeled Rust code, but it cannot by itself certify that the PCFG prerequisite check selected the right contract or that the contract matches product intent. The paper does not evaluate Verus, Rust, or agent-written executable systems.
-
-## contradictions, scope, and implications for VL
-
-Most Table 1 delta cells follow Text minus SMT, so a negative value for an improvement is consistent with that convention. The DeepSeek-R1/FOLIO cell instead gives -0.4052 despite Text 0.9252 and SMT 0.5200, reversing that convention. For o3-mini/ProofWriter, the displayed values differ by 0.0525 while the delta magnitude is 0.0524 (Table 1, PDF p. 6). Inference: use the adjacent accuracies and disclose rounding or sign discrepancies rather than treating every negative delta as an error. The abstract’s 14–100% error-reduction claim spans settings, rather than one pooled estimate (PDF p. 1). For ground-truth prediction, Ensemble ML gives 14.61% relative reduction at 5% abstention for Gemini Flash Lite/ProofWriter, and 100% at 5% abstention for o3-mini/ProofWriter (Tables 12–13, PDF p. 25). These are empirical results at selected thresholds.
-
-The authors' method already covers SMT-LIB intermediate representation, per-question PCFG induction, MLE plus smoothing, a broad metric family, ensemble fusion, selective abstention, and qualitative inspection. Inference: VL should not claim these as new techniques. Inference: A product contribution could instead test whether PCFG features predict failures in Verus contract generation, whether calibration survives repository and model changes, and whether a human-review prerequisite check catches semantic contract errors that Verus alone cannot detect.
-
-Inference: The threat to an agent-written verified-Rust product is material at the specification boundary. The paper shows that a solver can receive a formally valid artifact whose semantics vary across samples and that task and model determine whether formalization helps. Inference: VL should preserve multiple candidate contracts, run the Verus verifier on each accepted candidate, compare them against tests and callers, and abstain when structural uncertainty or cross-modal disagreement is high. This is a deployment recommendation derived from the paper's measured failure modes, not a result claimed by the authors.
 
 ## techniques for the catalog
 
@@ -141,4 +125,3 @@ Inference: The threat to an agent-written verified-Rust product is material at t
 - selective verification by fusion: combine uncertainty signals, calibrate a predictor, and abstain at a threshold chosen for error reduction
 - qualitative formalization diagnostics: inspect low-probability parse structures for aliasing, decomposition variance, semantic drift, and unstable facts
 - temperature-aware sampling analysis: measure how sampling temperature changes recursive structure and uncertainty before setting a generation policy
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Conversely, sampling at lower temperatures sharpens the distribution, concentrating probability mass on the model’s highest-confidence predictions and yielding lower-entropy (more conservative) samples."): read all 31 pages of extracted text, including references and appendices; checked quotations, numeric values, section/page references, technique steps, tag, and the arXiv identifier on page 1; corrected the coverage formula, page references, accuracy arithmetic, partial-run caveat, model-version labels, temperature contradictions, and unsupported evaluation steps; did not reproduce experiments, inspect source code, independently validate the theorem proof, or test the Verus inferences.

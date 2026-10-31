@@ -42,23 +42,19 @@ Every final family passes 17 jobs: three RTL-equivalence jobs, four gold-propert
 
 The released flow uses Yosys and SymbiYosys infrastructure, SMT back ends including Bitwuzla, and ABC/PDR for some multi-register equivalence checks (Section 5, p. 4). Validation assumes reset first and then unconstrained inputs; equivalence therefore means equality under the encoded synchronous clock/reset harness (Section 5, p. 4).
 
-Inference: VL can copy the separation between equivalence, contract proofs, reachability, and mutant checks when evaluating agent-written Verus. The trusted base remains the Verus toolchain, solver, harness, and specification; the paper's RTL tools do not establish Rust soundness.
-
 ## technique: family-safe splits and robustness metrics
 
 All four variants of a family stay in one split, preventing leakage of an implementation into training while an equivalent implementation appears in test (Section 6, p. 5). Each category contributes six train, two development, and two test families: 72/120 train, 24/120 development, and 24/120 test families (Table 4, p. 5). The public release includes manifests, generators, validation scripts, task export, inference and evaluator code, and case-study results (Section 6, p. 5).
 
 The Qwen2.5-Coder-7B case study uses the 24-family, 96-RTL test split with greedy decoding and interface-only prompts. Of 371 extracted assertions, 357 were supported by lowering and 293 were interface-only; 93/293 (31.7%) were formally sound. Syntax-valid tasks were 68/96 (70.8%), tasks with at least one sound property 45/96 (46.9%), families sound on all four RTLs 8/24 (33.3%), and variant-sensitive families 14/24 (58.3%) (Table 5 and Section 7, p. 6). Mutation detection found 16/279 property-mutant checks (5.7%) covering 11/72 unique test mutants (15.3%). Raw prompt-format compliance was 0/96, so syntax validity was measured after extraction and normalization (Section 7, p. 6).
 
-The paper defines soundness as `|Ppass|/|Pint|` and family sensitivity as an indicator that the four per-variant sound counts are not all equal (Section 7, p. 6). Inference: these denominators should be mandatory in VL evaluations; reporting only a percentage would hide whether it is per proof, task, family, or mutant.
+The paper defines soundness as `|Ppass|/|Pint|` and family sensitivity as an indicator that the four per-variant sound counts are not all equal (Section 7, p. 6).
 
 ## what is proved, trusted, and limited
 
 Formal validation proves the generated RTL variants agree under the harness, gold properties hold on each reference, covers are reachable, and mutants violate at least one property. It does not prove that the machine-readable specification captures all desired behavior, that generated variants represent industrial code, or that controlled mutants represent real defect distributions. The authors state, “Formal equivalence establishes behavioral agreement under the harness assumptions, but generated variants can still share stylistic regularities not representative of independently authored RTL” (Section 10, p. 7).
 
 The corpus emphasizes small control logic and next-cycle implications/invariants: 131 invariants and 783 next-cycle implications among 914 properties (Section 3.3, p. 3). It omits comprehensive large datapaths, caches, coherency, deeply pipelined arithmetic, full protocol stacks, and richer liveness. The Qwen study is a single-model demonstration, not a leaderboard (Sections 8.2 and 10, pp. 6–7).
-
-Inference: The main threat to a Verus product is evaluation leakage and implementation overfitting: an agent can produce a contract that proves one Rust representation while failing on an equivalent representation or a small semantic mutation. EquivSVA's family grouping, fixed split, and mutant harness directly expose that risk. VL should reuse these controls before claiming that generated proofs capture behavior. VL should not redo a one-implementation benchmark or report soundness without denominators.
 
 ## techniques for the catalog
 
@@ -67,4 +63,3 @@ Inference: The main threat to a Verus product is evaluation leakage and implemen
 - controlled mutation testing — inject localized semantic changes and measure counterexample detection
 - family-safe evaluation splits — keep all equivalent implementations of a behavior in one train, development, or test split
 - implementation-robustness metrics — compare sound-property counts across variants with explicit task, family, and mutant denominators
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

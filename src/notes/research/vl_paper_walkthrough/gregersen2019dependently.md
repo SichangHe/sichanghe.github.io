@@ -5,8 +5,6 @@ Tag: `gregersen2019dependently`, [paper](https://arxiv.org/abs/1902.06590)
 ## result
 DepSec is an Idris library that uses dependent types and a security monad to enforce information-flow policies statically. “We present DepSec, a MAC inspired statically enforced dependently typed information-flow control library for Idris.” (Section 1, PDF p. 2) The paper shows progress-insensitive noninterference for the core library in a sequential setting (Section 6, Appendix B). It also presents policy-parameterized functions (Section 4) and statically enforced declassification policies (Section 5). The noninterference result does not cover declassification: “Notice that this work does not consider any declassification mechanisms and neither do we; we leave this as future work.” (Section 6, PDF p. 16)
 
-Inference: the transferable method for VL is to put security or authority state in types and make unsafe transitions require proof objects. Idris's dependent type checker is different from Verus's SMT-backed contracts, so the mapping below is an inference.
-
 ## technique 1: indexed labeled values and secure computations
 Define `Labeled ℓ a` as an abstract data type indexed by a security label ℓ and parameterized by payload type a. Define `DIO ℓ a` as a secure computation that handles values with sensitivity level ℓ; it wraps Idris's `IO`. The data constructors `MkLabeled` and `MkDIO` are marked TCB and are not available to untrusted code. The paper says: “Abstract data type Labeled ℓ a denotes a value of type a with sensitivity level ℓ.” (Section 2, PDF p. 4)
 
@@ -45,9 +43,6 @@ The core API contains trusted constructors for `Labeled` and `DIO`, and `run` an
 
 Inference: noninterference depends on those constructors, Idris totality, the semantics model and the compiler. The model has references but not files (Appendix A.1), so the file API's guarantee is not covered by the proof as written. Idris's elaboration of implicit and `auto` arguments is modeled as explicit arguments (Section 6).
 
-## VL implications and threat
-Inference: VL should reuse indexed authority patterns and capability-based declassification when an agent writes security-sensitive Rust. It should not claim that a Rust struct index alone enforces a policy; Verus must prove constructors and transition invariants. Inference: threat to agent-written verified Rust is high for confidentiality policies if the agent treats a runtime Boolean check as equivalent to a type-level proof. The paper's explicit TCB and sequential theorem show where a product must keep trust visible.
-
 ## techniques for the catalog
 - indexed labeled values: index protected payloads by a security level and expose only checked operations
 - secure computation monad: thread sensitivity through an abstract monadic computation
@@ -55,4 +50,3 @@ Inference: VL should reuse indexed authority patterns and capability-based decla
 - predicate hatch builders: require a proved predicate before declassification
 - token hatch builders: require possession of an unforgeable capability before release
 - noninterference proof: relate two executions after erasure of secrets and prove low-observable results agree
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The intuition of why this is sensible comes from the observation that indexed dependent types considered as terms may contain values that will have to be erased."): read the whole text including appendices A to C and checked every quotation, section and page reference, and the technique steps against Sections 1 to 8, Figures 1, 2, 5, 6 and the appendices; changed the truncated link to the arXiv page (the paper text has no DOI), corrected four quotations (two were not word for word) and several page and section references, fixed that the hatch is built by trusted code and the proof is demanded at use, moved the decidable-order "No" case to Section 4, corrected the case-study and expressiveness references, and added that the noninterference result excludes declassification; did not check the proof lemmas in Appendix B in detail, the GitHub code, or any cited work, and the Verus mappings are unchecked inferences.

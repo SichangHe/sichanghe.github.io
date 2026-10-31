@@ -6,8 +6,6 @@ Tag: `decastro2024verisimplepir`, [paper](https://www.usenix.org/conference/usen
 
 VeriSimplePIR adds malicious-server verifiability to the stateful SimplePIR private-information-retrieval protocol. The server first commits to a fixed database; the client checks that commitment and runs a proof-preprocessing protocol with the server. The client then verifies any number of query responses with a reusable proof; a rejection forces fresh preprocessing. The abstract states, “VeriSimplePIR is a stateful verifiable PIR scheme guaranteeing that all queries are consistent with a fixed, well-formed database.” The key property is extractability: “any digest, even one produced by a malicious server, is sufficient to commit to some database.” (Abstract, p. 5931.)
 
-Inference: this is a cryptographic protocol, not a proof that arbitrary server code is correct. For VeruLaw, its reusable pattern is a database commitment plus verification that later responses use that same database. A Verus implementation could verify data structures and protocol-state transitions while treating SIS/LWE hardness and random-oracle modeling as assumptions; this paper provides no Verus proof of its C/C++ implementation.
-
 ## technique 1: strict stateful verifiable-PIR API
 
 What it is and when to use it. The API separates a one-time digest check and proof preprocessing from ordinary queries. Inference: use it when honest servers should have near-SimplePIR cost, but a malicious server must not answer different queries using different databases.
@@ -78,12 +76,6 @@ Inference: these denominators and settings matter; the percentages describe the 
 
 The paper proves statistical extraction independently of SIS, uses SIS for binding and response uniqueness, and uses LWE for privacy; its noninteractive commitments use the random-oracle Fiat–Shamir transform (Sections 2–5 and Appendices A–C). It measures C/C++ implementation overhead (Section 6). Inference: these results do not establish that the code matches the algorithms, that the database is current, or that a server remains available. Deployment would also depend on correct arithmetic, parameter choices, hash implementation, protection of client secrets, compiler and hardware, and the honest-digest assumption when that optimization is enabled.
 
-Inference: agent-written verified Rust could reduce risk in matrix packing, index mapping, state invalidation and malformed-proof handling. The principal product threat is a server or client implementation that passes a local contract while using a different database layout, modulus or serialization than the cryptographic transcript. VL should make those representations part of one explicit specification and test upgrades against it.
-
-## what VL should not redo
-
-The paper already gives a reusable proof-token pattern, an extractable commitment, a linearly homomorphic proof, a full PIR construction and performance denominators. Inference: a new VL system should not claim novelty merely for attaching a digest to a stateful API. A useful engineering study would verify a Rust implementation of the exact `PreVerify` state machine and measure proof invalidation and repair under dependency changes.
-
 ## techniques for the catalog
 
 - strict stateful verifiable-PIR API: preprocess one proof, reuse it for accepted responses, and restart after any rejection
@@ -91,4 +83,3 @@ The paper already gives a reusable proof-token pattern, an extractable commitmen
 - verifiable linearly homomorphic encryption: prove that a ciphertext response is the committed linear function's unique output
 - reusable proof preprocessing: hide a random challenge in encrypted form, compute its proof once, and check every later response algebraically
 - matrix-packed PIR instantiation: encode database columns as one-hot linear queries and apply the reusable VLHE proof
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "These optimizations are designed to maximize the performance for the honest server, who will essentially never have to run the proof preprocessing more than once for each client."): checked the full paper, quotations, numerical claims, section and page references, and technique steps; corrected commitment roles, extraction columns and call bound, encryption and query details, quotation wording, application page and implementation status, and inference labels; replaced the link with the publisher page printed in the paper; did not audit code, reproduce experiments, or independently validate cryptographic proofs.

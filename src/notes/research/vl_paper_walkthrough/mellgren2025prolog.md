@@ -16,7 +16,7 @@ The subset experiments use 1,750 training examples, 375 validation examples, and
 
 The correctness reward is graded: exact numeric matches receive 2.0, incorrect numeric outputs 1.0, and executable attempts with unbound variables or failures 0.5 (Appendix B.1, p. 13). Thus, positive reward alone does not mean the answer is correct. On the 375-example validation set, SP-Struct/Rwd1 reaches 89.87% accuracy with Multiple-Try. The best supervised fine-tuning (SFT) entry reaches 79.20% with Agentic Internal; GRPO reaches 84.27% under that same protocol (Table 4, p. 8).
 
-Verus form. Inference: an analogous verified Rust (VL) loop could generate Rust/Verus candidates, run Verus, and use its results as training feedback. A successful Verus check should be a prerequisite check for accepting a candidate. A reward score cannot replace the candidate’s specifications and proof obligations. Inference: preserve the verifier’s diagnostics so training can distinguish failed obligations from malformed candidates.
+Verus form.
 
 ## technique 2: shape symbolic behavior with prompts and rewards
 
@@ -66,8 +66,6 @@ Verus form. Inference: evaluate verifier success, specification coverage, and pr
 
 The paper reports empirical training and evaluation results. Its limitations are elementary arithmetic training tasks, one tool (SWI-Prolog), one reinforcement method (GRPO), and a fixed reward curriculum; richer domains and multiple tools remain unexplored (Section 8, p. 10). Prior work already includes Prolog prompting, LoRA training, and zero-shot multiple-try pipelines (Section 2, pp. 2–3).
 
-Inference: the reported results depend on the interpreter, parser/reward implementations, labels, model checkpoints, and chosen metrics. They provide no soundness proof for translating a question into a Prolog program. Inference: the relevant VL lesson is to check intended specifications as well as verifier outcomes, and to measure whether reward incentives encourage shortcuts. The paper supplies evidence about Prolog training, not empirical evidence about verified Rust.
-
 ## techniques for the catalog
 
 - verifiable GRPO tool training — generate grouped responses and reward executed numeric outcomes
@@ -75,5 +73,3 @@ Inference: the reported results depend on the interpreter, parser/reward impleme
 - bounded retry and interactive repair — compare up to 20 independent completions with feedback and conversation-reset policies
 - executable-reference cleaning — execute references and reconcile answer discrepancies before training
 - separate correctness and auditability metrics — report numeric accuracy, structural validity, and reference-program similarity
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Our MMLU evaluation primarily tests the model’s ability to emit well-formed Prolog for encoding answer indices."): checked the entire paper, quotations, numbers, technique steps, and section/page references; corrected the paper link, reward details, table references, structural-score comparisons, inference stopping conditions, and unsupported conclusions; identified prose/table inconsistencies; did not inspect source code, external references, or reproduce experiments.

@@ -410,4 +410,3 @@ what I searched
   - automatic design of agent teams beyond AFlow; debate methods beyond one position paper
   - human teams and organization research
   - industry systems other than the two Anthropic posts
-  - the paper collection at /hdd1/sichanghe/paper_collection was not consulted for this file

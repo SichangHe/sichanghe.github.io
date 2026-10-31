@@ -8,8 +8,6 @@ Why3 is a deductive-verification platform with WhyML as both a programming/speci
 
 The specification language is deliberately shared across back ends. The authors write: "The specification language of Why3 does not depend on any features of the programming language, and can serve as a rich common format for theorem proving problems, readily suitable (via Why3) for multiple automated and interactive provers, such as Alt-Ergo, CVC3, Z3, E, SPASS, Vampire, Coq, or PVS." (Section 1, p.1) When a prover lacks a feature, Why3 applies encoding transformations such as eliminating pattern matching or polymorphism (Section 1, p.1).
 
-Inference: VL can adopt a prover-neutral intermediate specification layer, but Verus's Rust and SMT pipeline is a different implementation. The paper does not describe Verus constructs, so any mapping below is an inference.
-
 ## technique: alias control instead of a memory model
 
 When to use it: use static alias control when mutable state can be named finitely and first-order verification conditions are preferable to a general heap model.
@@ -70,16 +68,6 @@ How to apply it:
 
 Inference: In Verus, model the abstract state with a ghost/spec type and expose an external or separately verified function contract; keep the implementation boundary explicit. This is an inference.
 
-## trust, scope, and VL threat
-
-Inference: a Why3 proof depends on the external prover results, Why3's verification-condition generation and encoding transformations, the standard logical theories, and user-supplied axioms or abstract declarations. The paper does not discuss soundness or trust and presents no theorem about these components. Because WhyML extraction produces OCaml, the OCaml compiler/runtime and any custom type mapping also lie outside what the paper describes as proved.
-
-The strongest measured claim is a gallery count, not a benchmark accuracy rate: "Our gallery (http://proval.lri.fr/gallery/why3.en.html) currently contains 67 case studies." (Section 3, p.2) The paper illustrates three kinds of verification (an algorithm, a data structure, a specification of a data structure) rather than giving results for all gallery programs.
-
-What VL should not redo: the paper, a four-page tool description, outlines a prover-neutral VC generator, an alias-controlled mutable language, ghost code, type invariants, and abstract interfaces, but gives no evaluation of them. Inference: VL should focus on Verus-specific Rust ownership, solver control, and extraction trust rather than rebuilding this general architecture.
-
-Threat to agent-written verified Rust: Inference: medium. The paper's three examples suggest that contracts plus a disciplined alias model can handle algorithms and clients of abstract structures, but its unsupported mutable pointer graphs and first-order restriction leave important systems patterns outside scope. A Verus agent still needs correct specifications, trusted external APIs, and compiler/runtime assumptions.
-
 ## techniques for the catalog
 
 - prover-neutral verification conditions — generate a shared first-order specification and encode it for multiple automated or interactive provers
@@ -87,5 +75,3 @@ Threat to agent-written verified Rust: Inference: medium. The paper's three exam
 - type invariants and ghost code — maintain record invariants and keep verification-only computations in ghost code that can be removed without changing the result
 - contract-and-variant verification — combine pre/postconditions, loop invariants, assertions, and decreasing variants
 - abstract data-structure interfaces — specify an unimplemented mutable structure through a pure snapshot and verify clients modularly
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "In the process, uninterpreted WhyML types are either mapped to existing OCaml types or left as abstract data types."): read all four pages (LNCS pp.125-128) and checked every quotation, the figure 67, the KMP and union-find details, section and page references, and each technique step; link from the fetch record (the paper text gives no DOI). Changed: page references for the hash-table, mutable-tree and union-find passages (the paper has them on p.3, with union-find continuing on p.4); the exceptional-termination wording; the claim that ghost code is erased at extraction (the paper only says it can be removed without affecting the result); the trust paragraph, now marked Inference since the paper has no trust discussion; an overstated claim of what the paper establishes. Not checked: the Verus-related inferences, the threat rating, and the semanticscholar link target.

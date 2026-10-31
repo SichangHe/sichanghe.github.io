@@ -42,16 +42,9 @@ Inference: For attention, the reference and three FlashAttention variants all pa
 
 Inference: Volta also caught five real race-fix cases from OpenMM and Megatron-LM (Table 8), and its race results matched FaialAA on programs where FaialAA successfully detected races. During convolution verification, the authors found that out-of-bounds shared-memory reads may evade Compute Sanitizer. Their illustrative 64-thread code reads a 48-element array before checking the thread index; it returned zeros without exceptions on tested Ampere, Hopper, and Blackwell GPUs, while Volta raised exceptions (Sec. 6.2, pp. 20–21). Inference: empirical tests can pass despite invalid memory accesses.
 
-## what remains trusted and threat to VL
-
-Inference: The strongest guarantee is conditional equivalence under structured-CTA, real-number, supported-operation, and static-control assumptions. The PTX-to-model translation and implementation correctness are trusted; the Agda confluence proof covers the formal semantics, not every Rust or CUDA parser bug. The paper reports no aggregate pass denominator beyond the per-table kernel counts, so runtimes should not be interpreted as a benchmark-wide success rate.
-
-Inference: Volta’s workflow suggests a companion checker for generated tensor code: model execution explicitly, detect races while constructing symbolic outputs, compare those outputs against a reference, and reject unsupported dynamic behavior. A proof about reference-level algebra alone would not establish GPU schedule and barrier guarantees.
-
 ## techniques for the catalog
 
 - Inference: structured-CTA prerequisite check — require static shapes, branch targets, and addresses; compare corresponding CTAs
 - Inference: symbolic race/deadlock execution — schedule threads symbolically, track accesses, and use barriers to detect races and stuck states
 - Inference: canonical symbolic equivalence — normalize output expressions and decide equality element by element
 - Inference: formal guarantees — verify confluence in Agda; prove race true positives and equivalence soundness/completeness under explicit assumptions
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Threads are scheduled in a round-robin fashion, with each selected thread being run until it blocks at a barrier or exits."): checked the full paper, quotations, numerical results, section/page references, technique steps, and scope; corrected the real-number quotation, execution-time prerequisite checks, barrier return handling, memory-event tracking, completeness limits, reduction workload scope, and Agda coverage; removed unsupported earlier-note comparisons, Verus capability claims, and threat ratings; did not check implementation code, proof artifacts, external sources, or reproduce experiments.

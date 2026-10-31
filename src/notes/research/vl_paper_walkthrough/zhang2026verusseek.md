@@ -16,7 +16,7 @@ how to apply it. Parse each verified program and emit one retrieval unit per sem
 
 why. The motivating `prime_num` loop needs a quantified non-divisibility invariant and a short proof block; a whole verified file contains distracting material. The paper says, "the useful evidence is not another complete implementation, but a quantified non-divisibility invariant and a short proof block, supplemented with bounds and a termination measure derived from the loop structure." (Section 1, p. 2).
 
-Verus form. Inference: this technique is directly usable for VL: index actual Verus `requires`, `ensures`, `assert`, loop `invariant`, `decreases`, `proof fn`, and `proof { ... }` constructs. Retrieval metadata is external tooling; it does not alter the Verus program. Preserve source and enclosing-contract context so a retrieved fragment is not treated as a universal template.
+Verus form.
 
 ## technique 2: synthesize structural loop hints
 
@@ -24,7 +24,7 @@ what it is and when to use it. Retrieval may provide semantic patterns but omit 
 
 how to apply it. The paper says the analyzer derives "candidate bounds from loop guards and array accesses, frame conditions for unmodified inputs, and termination measures from progress variables." These hints are combined with retrieved examples. For Figure 1, the paper says VerusSeek "can derive the bounds on index and the decreasing expression n - index from the loop structure," while retrieval supplies "examples of quantified non-divisibility invariants and proof assertions that construct a counterexample when a divisor is found" (Sections 1–2, pp. 2–3). The paper does not give the analyzer's rules beyond this description. Inference: the concrete steps are to inspect the loop guard and index uses for bounds, find inputs the body does not write for frame facts, and pick a progress variable for the `decreases` measure.
 
-Verus form. Inference: emit hints as Verus `invariant` and `decreases` clauses only after checking types and loop semantics. A hint is a candidate proof annotation, not evidence that the property is true; Verus must discharge it. VL should keep the verifier check as the acceptance criterion.
+Verus form.
 
 ## technique 3: verifier-guided generate–repair loop
 
@@ -42,16 +42,9 @@ Ablation under gpt-4o changes Basic RAG from 78/150 to Chunked RAG 95/150, then 
 
 The reported 1.19 synthesis attempts per successful task is 122 successes over 104 first-attempt, 13 second-attempt, and 5 third-attempt outcomes: `(104 + 2*13 + 3*5) / 122 = 1.19` (Section 4, p. 5). This is an arithmetic check of the paper's counts, not a new measurement.
 
-## limits, trust, and product threat
-
-The paper says performance depends on the coverage and quality of the verified-code knowledge base; unfamiliar proof structures may still require several repairs or remain unresolved (Section 4, Limitations, p. 5). It focuses primarily on function-local synthesis, so extensive cross-function or multi-component reasoning is challenging. Structural hints can constrain proof search: the paper says "structural loop-invariant hints are not beneficial for every task: in some cases, the generated hints may constrain the proof search unnecessarily or distract the LLM from a more suitable retrieved invariant" on Diffy (Section 4, Ablation, p. 4). Inference: retrieval can amplify a wrong or overly weak specification if the corpus contains one; every generated patch must therefore pass Verus and a separate review of whether the contract matches product intent.
-
-The paper reports benchmark acceptance by Verus, attempt counts, and cost. I found no measurement of whether the specifications capture unstated requirements, of long-term proof maintenance, or of dependency upgrades. Stage 5 says the LLM patch may add or modify "strengthened contracts", and I found no statement of how patches are kept from weakening the user-provided contract. Inference: the paper implicitly relies on the Verus verdict, the benchmark specifications, and the corpus's recorded verification status. Inference: for VeruLaw, this is an immediate automation opportunity and a product threat: a higher pass rate can accelerate agent-written verified Rust while making specification drift cheaper to produce. Inference: the paper's contribution is construct-level retrieval plus structural hints and verifier repair, so VL should not redo those components without a stronger comparison. A useful new test is whether retrieved proof patterns remain valid and semantically appropriate after API or library changes.
-
 ## techniques for the catalog
 
 - construct-level proof retrieval: index contracts, invariants, assertions, lemmas, and proof blocks with type-aware metadata and bounded context
 - structural loop-hint synthesis: derive bounds, frame facts, and termination measures from loop syntax to complement retrieved semantic patterns
 - verifier-guided patch repair: generate a Verus annotation patch, run Verus, feed diagnostics back into retrieval, and retry within a fixed budget
 - benchmark and ablation accounting: report task counts with suite denominators, attempt rounds, backend, and cost setting
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This additional improvement shows that structural information such as bounds, frame conditions, and termination measures complements the semantic proof patterns obtained through retrieval."): read all 5 pages; checked every quotation, the Table 2, 3 and 4 numbers, the 1.19 arithmetic, the algorithm steps, and the tag and DOI link (the DOI is printed in the paper). Changed: many page references (the paper's pages are 1 to 5, so Figure 1 is on p. 2, Table 3 and the Diffy text on p. 4, and cost, repair and limitations on p. 5); the retrieval step now says Table 1 lists a second preferred type per query, not one type only; the loop-hint steps now quote the paper and mark the rest as inference; the claim that the paper trusts the verifier and corpus is now marked as inference; removed the unsupported claims about a textual similarity score and a same-source-file input model; added the strengthened-contracts note and the MBPP and Diffy suite effects. Not checked: the cited works, the figures (Figures 2 to 4) beyond their captions and text, and the demonstration video and artifact.

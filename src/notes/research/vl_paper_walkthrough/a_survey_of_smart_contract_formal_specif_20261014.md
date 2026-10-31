@@ -7,8 +7,6 @@ This is a taxonomy and literature survey, rather than one new verifier. It studi
 
 The survey separates contract-level models, which abstract a contract as a state-transition or interaction system, from program-level models, which preserve implementation details. It then classifies specifications and five verification families. Table 1 counts 18 model-checking applications, 20 theorem-proving applications, 42 program-verification applications, and 22 symbolic/concolic-execution applications; runtime verification/testing is listed as 26 applications (Table 1, p. 24). These are counts in the authors’ 202-paper corpus, not success rates.
 
-Inference: for VL, the survey is useful as a coverage map. Its central warning is that a proof at one abstraction layer may omit important lower-level behavior. Verus operates at a program-verification layer, so a product still needs explicit models for external calls, state-machine interactions, and environment assumptions.
-
 ## technique family: model checking of contract transition systems
 
 what it is and when to use it
@@ -77,7 +75,6 @@ how to apply it (Inference: the numbered steps are this study's reconstruction f
 The survey reports a central risk: “The issues associated with program verification (especially static analysis) include the need to precisely abstract components of smart contract execution and memory model [22, 102, 182], while the abstraction is often unsound [182].” (Section 4.4, p. 26.) It also reports that Nehai et al. [156] note that translation to WhyML facilitates evaluation in “a more realistic setting compared to model checking” but, unlike model checking, “does not allow specification of liveness properties” (Section 4.4, p. 27). Schneidewind et al. [182] show sources of unsoundness in earlier analyses and propose a provably sound Horn-clause abstraction for EVM bytecode for reachability analysis of security and functional Hoare-style properties (Section 4.4, p. 27). Inference: this shows that a soundness argument for the abstraction is itself necessary.
 
 Verus form
-Inference: this is the closest family to VL. Write executable Rust directly in Verus, use `requires`, `ensures`, and `invariant` for contracts and loops, and use `proof fn`/`lemma` for intermediate facts. If a product has an external bytecode or FFI boundary, model it with a specification and prove a refinement relation; do not attach `external_body` to the function being verified. Translation soundness and the memory model must be included in the trusted boundary. Verus supports a Rust subset and does not automatically cover Ethereum’s storage, gas, or reentrancy semantics.
 
 ## technique family: runtime verification, monitoring, and testing
 
@@ -119,12 +116,6 @@ The authors repeatedly identify abstraction gaps. Contract-level models capture 
 
 Inference: the survey trusts each cited tool’s semantics, compiler or bytecode translation, solver, environment model, and property statement. A reported “verified” contract therefore proves the cited abstraction and formal property; it does not automatically establish deployed-code correctness.
 
-Inference: the threat to a product that emits agent-written verified Rust is high at the specification boundary and moderate at the proof-engine boundary. Existing literature already covers temporal models, Hoare verification, symbolic counterexamples, runtime monitors, and soundness arguments for abstractions. The unresolved product risks are choosing the right property, linking a Verus proof to external state and dependencies, and maintaining proofs as code changes. VL should combine Verus proofs with explicit state-machine models and runtime checks where the environment is outside the proof.
-
-## what VL should not redo
-
-Inference: VL should not claim the basic taxonomy, LTL/CTL safety and liveness distinctions, Hoare-style contracts, symbolic path exploration, model checking of finite contract models, or runtime invariant instrumentation as new techniques. A novel VL result would need a verified refinement between Rust/Verus code and a contract-level model, measured proof maintenance under changes, or a sound treatment of external calls and environment state.
-
 ## techniques for the catalog
 
 - finite-state temporal model checking: abstract contract interactions as transitions and check LTL, CTL, timed, or probabilistic properties
@@ -133,4 +124,3 @@ Inference: VL should not claim the basic taxonomy, LTL/CTL safety and liveness d
 - intermediate-language program verification: translate source or bytecode to Boogie, F*, Why3, K, LLVM, or Datalog and discharge contracts
 - runtime trace monitoring: instrument clients or contracts to detect invariant and legal-property violations on observed executions
 - specification-layer taxonomy: combine contract-level temporal/deontic models with program-level Hoare and path-pattern properties
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "An encouraged way to ensure the correctness of financial operations is by specification of invariants over a smart contract balance and an aggregation of user balances"): read the whole paper text (Sections 1-6, Tables 1-2) and checked every quotation, count, section and page reference, tool list and technique step against it; changed a few quotes and wordings (symbolic-execution quotation, Yices2 claim, EVM* and Datalog table placement, the Nehai/Why3 attributions, removed the unsupported name eThor), corrected page numbers for Hoare triples (p. 14) and the balance-sum invariant (p. 20), replaced the property-class list by the survey's five domains, replaced the claim that technique counts overlap with the Table 1 arithmetic, and labeled the numbered how-to steps as the study's own reconstruction; did not check the cited external tools or papers, did not read the online repository, and did not verify Verus claims against Verus documentation; tag link changed from the DOI to the arXiv page because the paper text shows arXiv:2008.02712v3 and no DOI; the arXiv link was not opened.

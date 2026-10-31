@@ -8,8 +8,6 @@ This paper proposes a process for using coding agents in software, firmware, and
 
 The central claim is a separation of discovery, implementation, and acceptance: “Conversation is useful for discovering intent; structured artifacts are required for implementation; evidence is required for acceptance.” (Abstract, PDF p. 1.) The framework combines an Agile-V lifecycle with a task loop called SCOPE-V: Specify, Constrain, Orchestrate, Prove, Evolve, Verify (Abstract, PDF p. 1; Section V, PDF p. 4).
 
-Inference: for VeruLaw (VL), the useful object is an evidence-gated task contract around agent-written Rust and Verus proofs. The paper does not discuss Rust or Verus, so the mapping below is an inference.
-
 ## technique 1: the conversation-to-contract gate
 
 What it is. The paper treats conversation as an exploration phase and requires a reviewed execution brief before implementation. It identifies long-chat failure modes: “they contain superseded assumptions; constraints are often implicit; acceptance criteria are rarely executable; agents may overfit to recent turns; reviewers cannot easily audit which instruction governed a change.” (Section IV-A, PDF p. 4.) Its operational rule is explicit: “Do not let an agent implement from a long chat. Let it implement from a reviewed brief.” (Section VII-C, PDF p. 6.)
@@ -25,7 +23,7 @@ How to apply it.
 
 Verus form. Inference: put the brief's objective and acceptance criteria into Rust function contracts (`requires`, `ensures`) and datatype invariants where appropriate. Keep non-goals and affected modules in the task document. A Verus proof should be required evidence, alongside tests and review; the paper's brief does not specify Verus syntax. The conversation-to-contract gate does not itself prove that a specification matches the real requirement.
 
-Evidence and limits. The paper provides a process rationale and cites mixed evidence about repository instruction files: relevant instructions can help efficiency, while unnecessary or mismatched instructions can harm success (Section VII-C, PDF p. 6). It does not report a controlled experiment of this gate. Inference: effectiveness for VL remains to be measured.
+Evidence and limits. The paper provides a process rationale and cites mixed evidence about repository instruction files: relevant instructions can help efficiency, while unnecessary or mismatched instructions can harm success (Section VII-C, PDF p. 6). It does not report a controlled experiment of this gate.
 
 ## technique 2: SCOPE-V task loop
 
@@ -42,7 +40,7 @@ How to apply it.
 
 Verus form. Inference: Specify becomes a Verus specification and proof obligation; Constrain becomes module boundaries, ownership discipline, and explicit preconditions; Orchestrate becomes a plan to inspect code, state invariants, implement a small slice, and run `cargo verus`; Prove becomes discharged `ensures`/invariant obligations plus executable tests; Evolve becomes maintenance of shared proof lemmas and task templates; Verify becomes repeated proof and regression runs at each lifecycle gate. Verus proof functions and specifications are erased from runtime, so runtime tests remain necessary for behavior outside the modeled specification.
 
-Evidence and limits. The paper gives the six-step procedure, but no per-step success rate. It warns that verification debt grows when output volume exceeds verification capacity, producing “weak tests, hidden regressions, broad patches, unvalidated dependencies, undocumented behavior, and increased reviewer burden.” (Section IV-B, PDF p. 4.) Inference: a VL deployment should record proof failures, repair time, escaped defects, and review load rather than counting generated code.
+Evidence and limits. The paper gives the six-step procedure, but no per-step success rate. It warns that verification debt grows when output volume exceeds verification capacity, producing “weak tests, hidden regressions, broad patches, unvalidated dependencies, undocumented behavior, and increased reviewer burden.” (Section IV-B, PDF p. 4.)
 
 ## technique 3: risk-adaptive acceptance gates and evidence bundles
 
@@ -58,7 +56,7 @@ How to apply it.
 
 Verus form. Inference: classify a public API, safety property, or production storage change as at least R2 and require a passing Verus verification run, relevant Rust tests, and a review record. For R3, require independent review or an independently authored proof/test where feasible, plus a trace from each requirement to a Verus contract or lemma and to test evidence. Keep solver output, tool versions, and the exact source revision in the bundle.
 
-Evidence and limits. These gates are proposed controls, not experimentally validated thresholds. The paper says, “This paper is a synthesis and process proposal, not a new benchmark.” (Section X-D, PDF p. 8.) Inference: the risk levels should be calibrated against VL's actual defect and proof-repair data rather than treated as universal.
+Evidence and limits. These gates are proposed controls, not experimentally validated thresholds. The paper says, “This paper is a synthesis and process proposal, not a new benchmark.” (Section X-D, PDF p. 8.)
 
 ## technique 4: feature, bug-fix, testing, and hardware workflows
 
@@ -80,10 +78,6 @@ The framework trusts the correctness of its requirements, evidence tools, tests,
 
 The paper's threats to validity are explicit: the field changes quickly; productivity studies vary by task, developer, codebase, tool, and culture; and hardware benchmarks differ in complexity and rigor (Section X-D, PDF p. 8). Inference: the threat to a product that uses agent-written verified Rust is process-level: agents can still receive an incomplete contract, misuse dependencies, or satisfy a weak specification. The proposed gates reduce these risks only when teams actually collect and review the stated evidence.
 
-## what VL should not redo
-
-Inference: VL should not re-invent the paper's separation of exploratory dialogue from reviewed briefs, the six SCOPE-V phases, or risk-based evidence bundles. The open work is to test these controls on Verus projects, measure proof-repair and review cost, and define which Rust/Verus artifacts satisfy each risk level.
-
 ## techniques for the catalog
 
 - conversation-to-contract gate — turn exploratory dialogue into a reviewed brief with executable acceptance criteria before edits
@@ -93,4 +87,3 @@ Inference: VL should not re-invent the paper's separation of exploratory dialogu
 - feature workflow — implement the smallest planned slice, test alongside it, and record evidence before review
 - bug-fix workflow — diagnose causally, reproduce, add a regression test, patch minimally, and explain residual scope
 - hardware/firmware gate — require simulation, formal properties where applicable, HIL, timing/protocol evidence, and traceability
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

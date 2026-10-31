@@ -36,8 +36,6 @@ Verus form (Inference). Treat each generated proof/code candidate as a rollout, 
 ## what remains trusted and limitations
 The unit tests, Ruff rules and severity map, execution harness, base model, and reward implementation are trusted. Correctness is measured on short MBPP tasks (374 train, 500 test, 90 validation, 10 prompt; 974 total) and selected EvalPlus hidden tests. The authors state that benchmarks are “short, mostly self-contained Python programming tasks with relatively small test suites,” so longer-horizon transfer is unknown. The abstract says “up to 13 percentage points,” while Table 1 shows Qwen3-0.6B combined GSPO improving from 0.273 to 0.417, a 14.4-point difference; the paper does not reconcile this discrepancy.
 
-What VL should not redo: unit-test-only, Ruff-only, combined rewards, and GRPO versus GSPO have already been compared on MBPP; VL should focus on Verus-specific reward validity and longer-horizon tasks.
-
 Inference: reward hacking remains a direct threat to agent-written verified Rust if linter or partial-proof rewards are allowed to outweigh complete Verus verification; the combined gate is a mitigation, not a proof of specification completeness.
 
 ## techniques for the catalog
@@ -45,4 +43,3 @@ Inference: reward hacking remains a direct threat to agent-written verified Rust
 - normalized static-analysis shaping — sum severity penalties, divide by line count, and clip to a bounded range
 - pass-gated reward combination — weight style penalties more after functional success and add an anti-empty penalty
 - group-relative GRPO/GSPO — optimize token-level or sequence-level clipped objectives from within-prompt reward advantages
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

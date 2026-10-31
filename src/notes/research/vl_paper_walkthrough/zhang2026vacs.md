@@ -6,8 +6,6 @@ Tag: `zhang2026vacs`, [paper](http://arxiv.org/abs/2609.26135v1)
 
 VACS is a four-layer systems design for multi-agent reasoning: infer latent value weights, compile value constraints into runtime shields, resolve disagreement with cooperative optimization, and generate explanations tied to verifier records. The paper explicitly limits its formal claim: “Our contribution is primarily a unified systems design with formalized interfaces and operational guarantees at the verifier-constrained decision level, rather than a complete end-to-end formal proof of all language-model internals.” (abstract, p. 1)
 
-Inference: the formal-verification content is a guarded transition interface around agent actions, not a proof of neural-network behavior or of the natural-language answer. This distinction matters to VeruLaw: VACS can provide a useful action-gating architecture, but its Lean-inspired DSL and assumed verifier must be replaced or connected to actual Verus specifications.
-
 ## technique: infer value dimensions and agent profiles
 
 VACS fixes five reward dimensions: logical completeness, conciseness, generalisability, logical soundness, and safety/constraint satisfaction. Each dimension has a reward function over a trajectory. For each dimension k, collect pairwise trajectory labels `(ξi, ξj, yij)` and fit a Bradley–Terry preference model. The model estimates `P(ξi ≻k ξj)` from exponentiated rewards, then maximizes the pairwise log-likelihood (equations 2–3, Section 4.1, p. 4). The reward is a neural network optimized by stochastic gradient descent.
@@ -64,12 +62,6 @@ The MathInstruct ablation has 200 tasks and shows removing Layer 2 raises LIR to
 
 Inference: these are proof-of-concept measurements under engineered roles, finite candidates, fixed panels, and a verifier assumed correct. They do not establish end-to-end correctness of agent-written Rust, natural-language explanations, or neural model internals. The paper itself says: “VACS is a systems-design and proof-of-concept contribution; we state its limitations explicitly.” (Section 6, p. 8)
 
-## threat to VeruLaw and what to reuse
-
-Inference: VACS directly threatens a product that lets agents emit unverified actions or proof steps into a shared workflow. Its strongest reusable idea is a typed action boundary: every proposed step is checked against a local contract before execution, and global safety follows only after explicit interface assumptions are proved. Its weak points are equally relevant: value profiles are learned and can drift, the candidate pool may omit the correct action, asynchronous communication is outside the guarantee, and consensus optimization is not itself a machine-checked theorem.
-
-The paper says Layer 1 profiles are cached and assume stable priorities, while online drift detection remains open (Section 6, p. 8). It also states that Lean-DSL encoding requires domain expertise and that nucleolus computation is `O(n^3)` with approximation required for large panels (Section 6, p. 8). Inference: VL should reuse the shield/assume-guarantee decomposition only with Verus contracts, ghost-state refinement, and an explicit scheduler model; it should not copy the claim that verifier-approved text is correct.
-
 ## techniques for the catalog
 
 - Bradley–Terry plus MaxEnt IRL — infer per-dimension reward functions and per-agent value weights from pairwise preferences and trajectories
@@ -79,5 +71,3 @@ The paper says Layer 1 profiles are cached and assume stable priorities, while o
 - nucleolus/Hamiltonian consensus — allocate coalition-fair influence and optimize a constrained consensus with co-state updates
 - verifier-grounded explanations — rank sensitive steps and render certificates containing each action's verified constraint and pre/postconditions
 - finite-candidate evidence boundary — treat no-new-error as conditional on the generated candidate set and verifier assumptions
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

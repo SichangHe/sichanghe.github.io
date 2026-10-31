@@ -105,10 +105,6 @@ On a 20-core 2.8 GHz server with 128 GB RAM, NetSMC verifies server-to-host isol
 
 Theorem 3 proves the checking algorithm relative to the one-packet semantics; Corollary 2 proves equivalence for selected policies on order-preserving networks. The prototype is implemented in Python (Section 7, printed p. 189). For model fidelity, the evaluation uses Alembic and manually translates programs not supported by Alembic (Section 7, printed p. 190). Inference: these formal results do not themselves verify the Python implementation, model extraction, manual translations, or deployed packet ordering. Section 8 (printed p. 192) explicitly limits interleaving coverage, NF operations, policy syntax, and failure handling.
 
-Inference: NetSMC is directly relevant to VL whenever a Rust system can be abstracted as a finite transition system. Its EFO clauses resemble ghost-state predicates; its pre-image and containment routines suggest reusable proof libraries for state-transition reachability. The threat is that a generated Verus proof can be valid for a one-event abstraction while the deployed system permits concurrent interleavings. VL would need an explicit refinement proof from Rust execution to the abstract state machine and a separate argument that the chosen sequentialization is sound.
-
-Inference: VL should not redo the one-packet abstraction, restricted LTL-to-CTL strategy, EFO pre-image algorithm, or query-homomorphism containment as if they were new techniques. A useful new contribution would be a verified certificate checker for these transformations, or measured refinement checking between real Rust middleboxes and their EFO models.
-
 ## techniques for the catalog
 
 - one-packet stateful semantics: sequentialize packet processing and prove equivalence to interleavings only for order-preserving networks
@@ -117,4 +113,3 @@ Inference: VL should not redo the one-packet abstraction, restricted LTL-to-CTL 
 - EFO symbolic states: encode sets of packet-and-table states as existential first-order disjunctive formulas
 - pre-image fixpoint checking: compute predecessor formulas for NF, link, and packet-ingress transitions until containment
 - query-homomorphism containment: decide symbolic-state inclusion by equality/domain splitting, emptiness checks, and conjunctive-query homomorphisms
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Each concrete network state can be viewed as a database instance with the schema defined by packet fields and state tables."): checked the entire paper including appendices, quotations, numbers, printed-page and section references, and technique steps; corrected the publisher link, page references, interleaving example, matching-rule semantics, packet-scoped eventuality, pre-image rules, fixpoint claims, containment splitting, and measurement scope; marked proposed Verus applications and other conclusions as Inference; did not reproduce experiments, inspect tool implementations, or independently prove the theorems.

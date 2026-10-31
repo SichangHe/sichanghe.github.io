@@ -68,12 +68,6 @@ Inference: When seeking formulas that generalize, show the system less data rath
 
 Inference: A related technique is to train on correlated problem families: solve several dimensions or parameter pairs together so a heuristic transfers across instances (Section 4, p. 8). For Verus, this suggests training a proof agent on a carefully chosen family of small specifications before asking for a universal invariant, but this is an inference beyond the paper.
 
-## what was already done and what VL should not redo
-
-Inference: The paper already demonstrates an end-to-end discovery-to-Lean example, evaluator-hardening lessons, search/generalizer modes, and measured compute tradeoffs. VL should not repeat a generic LLM evolutionary-search benchmark. A useful new experiment would instead measure whether Verus contracts prevent the paper's reported cheating modes, and whether proof traces remain valid under Rust dependency or API changes.
-
-Inference: the paper provides no Verus evaluation or measured risk rating for agent-written Rust. Its finite-field experiments distinguish numerical formula checks, manual proof checking, and Lean formalization (Problem 6.1 discussion, pp. 12–13). For VL, this suggests checking the intended specification and its correspondence to the Rust program, in addition to obtaining a successful Verus result.
-
 ## techniques for the catalog
 
 - Inference: evolutionary search with evaluator checks — mutate programs with an LLM and retain candidates only after deterministic scoring
@@ -83,4 +77,3 @@ Inference: the paper provides no Verus evaluation or measured risk rating for ag
 - Inference: verifier hardening — use exact arithmetic or robust constraints to block trivial and leaky solutions
 - Inference: cost and parallelism accounting — report discovery latency, calls, threads, model, and total evaluator cost
 - Inference: constrained-input generalization — expose selected small cases to encourage interpretable formulas
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The lower bound here was directly inspired by the AlphaEvolve constructions; the upper bound was then guessed to be true, and proven using existing methods in the literature (based on the Shannon entropy inequalities)."): read the entire paper text, including references; checked every study quotation, number, technique step, section and page reference, author/year tag, and arXiv link; corrected quotations and references, narrowed the formalization claim, and removed unsupported risk ratings; did not reproduce experiments, inspect external code or references, or independently validate mathematical proofs or the proposed Verus adaptations.

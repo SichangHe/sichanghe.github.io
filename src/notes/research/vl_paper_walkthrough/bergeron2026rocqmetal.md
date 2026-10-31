@@ -55,14 +55,6 @@ Hashing, CRC, finite-field operations, raw byte operations, and similar primitiv
 
 Verus form. Inference: represent every callback and external primitive with an explicit trusted specification and record it in the verification boundary. Keep the trusted implementation behind a separately specified interface instead of marking the target function itself as an external body. This is a design translation, not a claim about Rocq syntax.
 
-## what is proved, trusted, and relevant to VL
-
-Proved: Rocq theorems for parser preservation, memo ASCII validity, and signing only from PendingTx. Demonstrated: successful extraction and execution, including one physical-device demonstration. Measured: minimum configured heap, linked-image flash, and clean-build wall time under QEMU Cortex-M. Trusted: compiler, VM, Rust compiler, callbacks, I/O, and admitted mathematical primitives. Not proved: compiler correctness, VM simulation, hardware I/O, cryptographic callback correctness, or full end-to-end firmware equivalence.
-
-Inference: VL would still need to account for runtime and foreign-function interface assumptions even when a pure policy core is proved. The paper’s architecture is a useful pattern for VL: isolate agent-written Rust policy from a small trusted host interface, and require contracts at that interface. VL should not redo the state-transition architecture or resource table as if novel; the open opportunity is a Verus proof of the VM or of the generated Rust host boundary, with explicit accounting of all trusted assumptions.
-
-The paper proposes using `rocq-of-rust` to translate `encore_vm` to Rocq: “The central theorem to establish is a simulation between the abstract CPS operational semantics and the concrete interpreter: each step of the Rust dispatch loop corresponds to a reduction in the Gallina model.” (Section 6.4, p. 13) The proof obligations include mark-compact pointer rewriting and the `ENCORE` opcode. This is future work in the paper, not evidence already supplied.
-
 ## techniques for the catalog
 
 - pure state-transition firmware — express business logic as `step : State × Event → State × list Effect` and interpret effects at a trusted boundary that changes for new hardware actions, externs, or runtime primitives
@@ -70,4 +62,3 @@ The paper proposes using `rocq-of-rust` to translate `encore_vm` to Rocq: “The
 - typed host–VM interface — expose only typed calls and extern callbacks, with generated constructor tags and bindings
 - explicit trust-chain accounting — list kernels, compilers, runtimes, callbacks, and I/O as trusted components rather than silently including them in a proof claim
 - embedded resource benchmarking — compare flash, heap, and build time under named MCU, QEMU, and benchmark denominators
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The compiler pipeline starts with a lexer/parser step, which identifies specific Rocq-extracted Scheme macros and includes them in its intermediate representation (IR)."): checked quotations, numbers, section/page references, technique steps, and proof/trust boundaries; corrected the paper link, Section 6.2 page, truncated quotation, and proof-versus-demonstration wording, and labeled recommendations as inferences; did not inspect source code, reproduce experiments, or validate the proposed Verus translations.

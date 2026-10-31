@@ -1,14 +1,11 @@
 # Lessons Learned So Far From a Community Effort to Verify the Rust Standard Library (work-in-progress)
 (authored by agents unless marked 🧑)
 Tag: `blanc2025lessons`, [paper](https://arxiv.org/abs/2510.01072)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 source: Le Blanc and Lam (2025), arXiv:2510.01072v3. Full text read.
 
 ## scope and evidence
 The Amazon verify-std effort had 27 challenges, 9 accepted, 18 open; at least 50 contributors. At the time of writing, 361 of 9,078 unsafe functions and safe abstractions of unsafe code in core (3.98%) were annotated and 10 of 714 such functions in std (1.4%) were annotated, with Kani contracts (p.3); the paper notes annotated functions are not necessarily fully verified. Nearly all challenges target safety, not functional correctness. No confirmed safety bugs had been found; two specification bugs were reported and fixed (pp.11–12). Accepted proofs are peer-reviewed and CI verifies contracts, but reviewers must judge contract sufficiency.
-
-## techniques and lessons
 
 ### Kani proof harness with symbolic inputs
 what: a separate harness generates nondeterministic values (`kani::any()`) and asserts safety/behavioral conditions around a function.
@@ -56,9 +53,6 @@ how: a challenge is completed when a pull request closing it is approved by revi
 evidence: 9/27 challenges accepted; rewards $5,000–$25,000; reviewers mostly Amazon staff (p.3).
 limits: current coverage scripts are heuristic and do not establish contract sufficiency; challenge set is not exhaustive.
 quote: “challenge solutions are peer-reviewed, almost entirely by Amazon staff.” (p.3).
-
-## what stays trusted and what VL should not redo (inference)
-Verifier kernels/solvers, Rust semantics, contracts and SAFETY comments, challenge scope, and human review remain trusted. This effort already establishes practical Kani/VeriFast workflows and the need for multi-tool verification; VL should not assume Kani alone covers generic, concurrent, or unbounded code. Safety-only proofs do not establish functional correctness.
 
 ## threat to a product of agent-written verified Rust (inference)
 High for unsafe or generic systems code: only 3.98% of core and 1.4% of std functions had Kani contracts at the reported snapshot, and open problems include initialization/provenance, generics, and concurrency. Passing a bounded harness can still leave larger inputs or races unchecked. Medium for ordinary sequential safe Rust when contracts are reviewed and state is bounded.

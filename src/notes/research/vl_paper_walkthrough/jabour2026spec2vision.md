@@ -30,7 +30,7 @@ Inference: encode the contract as Rust structs and enums with `spec fn` predicat
 
 evidence, limits, and assumptions
 
-The evaluator inspects delivered files, runtime behavior, outputs, and metrics, while excluding architect plans, role traces, context manifests, and critic artifacts (Table 1, p. 4). The authors also note it is “not an external third-party benchmark” and “may appear favorable to a contract-carrying system” (section 6, p. 7). This supports comparison but means the benchmark measures task-contract preservation, not scientific CV quality. Inference: VL can reuse the separation between internal evidence and externally checked deliverables, but must specify which proof artifacts are themselves required for release.
+The evaluator inspects delivered files, runtime behavior, outputs, and metrics, while excluding architect plans, role traces, context manifests, and critic artifacts (Table 1, p. 4). The authors also note it is “not an external third-party benchmark” and “may appear favorable to a contract-carrying system” (section 6, p. 7). This supports comparison but means the benchmark measures task-contract preservation, not scientific CV quality.
 
 ## technique: deterministic generator preflight
 
@@ -92,17 +92,13 @@ Evidence: removing compatibility scaffolding yields 58/85 evaluator-test passes 
 
 Verus form
 
-Inference: make handoff artifacts typed Rust values and prove that generator input conforms to the contract. A compatibility layer can expose verified constructors for canonical paths and output records. The external CV runtime and model outputs remain trusted; proof should focus on the transformations and interface checks under VL's supported Rust subset.
-
 ## what is proved, trusted, and unresolved
 
-Spec2Vision contains no formal proof of generated CV correctness. It measures evaluator outcomes under one model configuration, 17 fixed tasks, five repeats, two comparable reruns, and one specification-grounded evaluator. The paper states that “the benchmark still measures preservation of the provided task contract rather than independent CV model quality” (section 6, p. 7). Inference: trusted elements include the evaluator implementation, task specifications, local datasets, model serving, and the dominant-class failure taxonomy. Inference: the product threat to agent-written verified Rust is moderate. The paper demonstrates that explicit contracts plus deterministic checks and bounded repair catch delivery failures that test-running alone misses, within its benchmark; VL should adapt this as a contract-and-proof pipeline, not redo its benchmark. Inference: a Verus proof of a contract checker would still leave the contract's adequacy, external dependencies, generated model behavior, and evaluator completeness as assumptions.
+Spec2Vision contains no formal proof of generated CV correctness. It measures evaluator outcomes under one model configuration, 17 fixed tasks, five repeats, two comparable reruns, and one specification-grounded evaluator. The paper states that “the benchmark still measures preservation of the provided task contract rather than independent CV model quality” (section 6, p. 7).
 
 ## techniques for the catalog
 
 - contract-carrying staged generation: persist task requirements as handoff artifacts (plan, module graph, interface contract, generator contract) through planning, generation, checking, testing, and repair
 - deterministic generator preflight: check syntax, imports, dependencies, entry points, dry-run evidence, and task drift before downstream tests
 - bounded structural repair: allow at most two targeted repair passes, then proceed with the repaired bundle or record failure
-- compatibility scaffolding: a named mechanism whose removal costs 23 evaluator passes of 85 (81 to 58); the paper text does not detail its contents
 - staged versus collapsed evaluation: compare explicit role handoffs with a full-context single agent under the same task grid and evaluator
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The three executable single-agent baselines share the same bounded runner: 3 synthesis attempts, 2 repair attempts, and 16 generated files, together with the same fixed file/runtime envelope."): read the whole paper text and checked every quotation, number, Table 1-4 value, section and page reference (page numbers are PDF page indices) and technique step against it; changed the link (the old DOI 10.1145/3105906 is reference [17], Monperrus, not this paper; the paper gives no DOI or arXiv id, so the link is the artifact repository named in its Artifact Availability section), page references (Table 3 and 4 are on p. 6, section 7 on p. 8, section 3 starts on p. 3), a misquoted sentence (section 6), the repair steps (the paper does not say the repair role receives contract and diagnostics, nor that checks rerun after each pass), the preflight steps, and the compatibility-scaffolding description (the paper does not define it), and marked own conclusions "Inference:"; did not check the cited external papers, the artifact repository, or the PDF figures beyond the text of Figure 1.

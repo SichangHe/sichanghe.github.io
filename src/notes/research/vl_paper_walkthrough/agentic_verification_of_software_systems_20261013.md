@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `tu2026agentic`, [paper](https://doi.org/10.1145/3808164)
 
-Audit: audited 2026-10-13 against the paper; checked every number, fraction and section reference against the text and Tables 1, 3, 4; corrected the cost figure (it is in dollars, and the paper does state what it averages over), the certificate description (a replayable tactic script whose proof term the kernel checks), the section reference for the four subgoals and for Search being preferred, and an invented history-reuse step; marked the study's own advice and limits as inference; the assert_by remark in the Verus form is unchecked.
-
 ## scope and contribution
 
 The paper introduces AutoRocq, an LLM agent that constructs Rocq proofs while interacting with the theorem prover. The abstract states: “The iterative improvement of the proof is achieved by the proof agent communicating with the Rocq (formerly Coq) theorem prover to get additional context and feedback.” The output is a tactic sequence accepted by Rocq's trusted kernel. The authors evaluate mathematical lemmas, verification conditions extracted from C programs, and 60 Linux-kernel lemmas.
@@ -136,12 +134,6 @@ Inference: history can contain misleading tactics from a different context; the 
 The claimed certificate is a tactic script that Rocq replays (Section 4); the proof term it builds is type-checked by the Rocq kernel (Section 2.1). The paper explicitly states: “the certificate essentially comes from the trusted kernel of Rocq, which ensures that only derivations conforming to the formal rules of the proof assistant are accepted” (Section 6.5). Inference: the LLM, prompts, retrieval policy, Frama-C invariant candidates, and benchmark extraction are outside that kernel. Inference: a Verus deployment should treat Verus's checker and its trusted compilation/erasure path as the acceptance boundary, while treating generated specifications, external-library contracts, and model suggestions as assumptions requiring separate review.
 
 The benchmark construction first used Frama-C RTE to add ACSL contracts, LLM-generated loop-invariant candidates, and Eva property testing, then WP to emit Rocq obligations (Section 5.1.3). The authors caution that property testing “cannot formally prove the correctness of an invariant.” Thus the 641-lemma benchmark includes 203 non-overflow (31.7%), 153 functional-correctness (23.9%), and 285 loop-invariant (44.5%) lemmas; the percentages sum to 100.1% by rounding. AutoRocq proved 824/1,717 CoqGym lemmas (48.0%) and 198/641 SV-COMP lemmas (30.9%), with 140 and 28 uniquely solved, respectively (Sections 6.1–6.2). For Linux kernel modules it proved 12/60 (20%); AutoRocq-w/H proved 18/60 (30%) (Section 7). Average successful SV-COMP proof time was 21.3 seconds for AutoRocq versus 105.5 for Rango, 45.4 for PALM, and 49.1 for Copra (Section 6.2). The paper reports $1.22 on average to prove a single lemma without token caching, throughout its experiments (Section 6.5); it does not break the figure down by benchmark.
-
-Inference: what remains trusted includes the Rocq kernel and the semantic assumptions in extracted contracts. The authors note possible public-data leakage on CoqGym and that the study covers only unreachability/overflow examples and sequential deterministic C (Section 5.1.2); they plan broader properties and multithreading (Section 6.5). Inference: the threat to VL is substantial for proof-orchestration design because an agent can retrieve missing context, repair diagnostics, and learn within a campaign; it is smaller for end-to-end Verus correctness because this paper does not address Rust ownership, unsafe code, dependency contracts, or Verus's solver behavior.
-
-## what VL should not redo
-
-The paper already supplies an agentic loop combining context queries, hierarchical proof state, verifier feedback, and proof-history reuse, with ablations and real-code evaluation. Reimplementing that exact Rocq architecture would repeat its contribution. Inference: VL should instead test which parts survive Verus-specific diagnostics, Rust ownership and borrowing, specification design, and crate-scale dependency changes. The paper's own open boundary is broader program classes and properties, including memory safety and multithreading (Section 6.5).
 
 ## techniques for the catalog
 

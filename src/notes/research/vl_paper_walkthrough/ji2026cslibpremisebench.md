@@ -50,14 +50,8 @@ Evidence. CSG@10 has coverage 0.5215 and 6.3979 gold links/1k tokens versus BM25
 
 Verus form. Inference: evaluate the exact lemma bundle given to a Verus agent, counting contract/proof facts covered per token and compiling held-out generated proofs. A packet should exclude original proof text and gold names, then require Verus compilation; these isolation and compilation steps are the paper's proposed future protocol (section 11, p. 10), not results.
 
-## what is proved, trusted, and useful to VL
-The paper proves benchmark reproducibility and retrieval comparisons, not Lean proof repair. It trusts source extraction, proxy-label resolution, Lean environment probes, metric scripts, and the pinned CSLib/Lean toolchain. The expression audit's 48.2% observation rate shows that proxy links are not complete dependencies. No reported number adds a proof-success denominator.
-
-Inference: for VL, the practical threat is moderate: a structure-biased retriever could supply local but incomplete Verus lemmas, causing missed obligations or misleading confidence. The work VL should not redo is a generic BM25-versus-graph retrieval comparison without a Verus-specific, compiler-checked downstream task. The reusable lesson is to publish candidate-scope metadata, label audits, packet utility, bootstrap intervals, and negative results together.
-
 ## techniques for the catalog
 - auditable candidate policies: define strict import/source-order and wider fallback scopes, recording candidate counts and exclusions
 - proxy-label audits: compare source-visible references with a stronger elaborated-expression probe and report the denominator
 - structure-guided reranking: combine BM25, symbol overlap, namespace/import/source-order and module-graph features with fixed weights
 - context-packet utility: evaluate finite top-k premise packets by coverage, token cost, density, and locality before claiming proof-assistance benefit
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

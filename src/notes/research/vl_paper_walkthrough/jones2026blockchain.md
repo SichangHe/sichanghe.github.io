@@ -52,7 +52,7 @@ The paper classifies build feedback before retrying. A `sorry` marks an incomple
 
 Inference: for Verus, classify diagnostics into syntax/type errors, failed postconditions, invariant failures, trigger/SMT timeouts, and unsupported features. Ask the model to modify only the failing proof region, then rerun Verus. Keep a per-obligation history and stop after a fixed budget; this mirrors the paper's maximum-iteration control.
 
-The paper observed that “IsabeLLM was most successful when the LLM broke the proof step down into more manageable parts, which Sledgehammer could then solve itself.” (Sec. 6, p. 11) Inference: prompting for smaller intermediate lemmas is a practical tactic for VL's generated Rust proofs.
+The paper observed that “IsabeLLM was most successful when the LLM broke the proof step down into more manageable parts, which Sledgehammer could then solve itself.” (Sec. 6, p. 11)
 
 ## measured evidence
 
@@ -66,12 +66,6 @@ The experiment attempted each of 16 lemmas 10 times, with at most 5 iterations p
 
 The table's success counts sum to 135 successful attempts out of 160, or 84.375%; that percentage is an arithmetic inference from Table 4, not a percentage reported by the paper. The table mixes Isabelle2022 runs with two rows marked as solved using Isabelle2025 Sledgehammer; those rows are not a uniform-version denominator. The model used DeepSeek R1 through the free OpenRouter API (Secs. 5.1 and 6, pp. 8, 10).
 
-## trust, gaps, and VL relevance
-
-The proof assistant checks the final Isabelle theory; the LLM and Sledgehammer propose proof text. The consensus theorem is only as strong as the formal model and its majority/synchronization assumptions. The paper does not report a trusted-code base, proof-checking time, token cost, or memory denominator. Sledgehammer sometimes exhausted memory, and remote calls did not produce counterexamples for impossible proofs (Sec. 7, p. 12).
-
-Inference: the reusable contribution for VL is the closed feedback loop: generate a local proof attempt, compile, classify exact verifier diagnostics, invoke a bounded secondary solver, and retry with a narrowed proof state. Existing work already demonstrates this architecture for Isabelle consensus lemmas; VL should avoid redoing a generic LLM-to-verifier demo. The unresolved work is Rust/Verus-specific statement synthesis, ownership-aware repair, counterexample handling, and robust stopping criteria. Inference: threat to a product from agent-written verified Rust remains high for wrong specifications and unmodeled assumptions, while syntax and routine lemma failures are amenable to this loop because the Verus verifier can reject them.
-
 ## techniques for the catalog
 
 - model-first consensus proof: define protocol states, environmental assumptions, helper lemmas, and a final common-prefix theorem
@@ -79,5 +73,3 @@ Inference: the reusable contribution for VL is the closed feedback loop: generat
 - diagnostic classification: map syntax, hallucinated facts, failed tactics, and timeouts to targeted repair actions
 - staged prompting: give full theory context initially, then only the current proof state and error
 - bounded proof search: cap iterations, persist per-lemma history, and stop instead of looping on a repeated failed step
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

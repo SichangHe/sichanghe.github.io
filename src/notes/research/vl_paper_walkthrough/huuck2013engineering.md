@@ -52,17 +52,11 @@ how to use it:
 4. generate summaries that management can understand, including quality trends and standards compliance (p.3)
 5. provide clear licensing, documentation and reliability in ordinary cases (p.4)
 
-Inference: VL should expose verification as an existing Rust workflow command, retain source locations and counterexamples, and provide reports for both developers and managers. This is a product-design inference, not a result measured by Huuck.
-
 evidence and limits: the paper argues that managers and developers have different motivations and that time-to-market dominates many decisions (p.3). It reports no adoption count, revenue, user study or controlled comparison. Thus the business-value argument is qualitative.
 
 ## what is proved, measured and trusted
 
-The paper proves no theorem about Goanna and reports no reproducible benchmark protocol. It reports architecture, check categories, an order-of-magnitude implementation comparison without denominator, and qualitative lessons from deployment. The paper does not provide a formal trusted-computing-base analysis. Inference: the checker, abstractions, heuristics, SMT solver, compiler interpretation and specifications are all trusted or assumed within the product story. Inference: for agent-written verified Rust, the main threat is not only solver failure but a workflow that hides weak specifications, emits noisy warnings, or cannot scale to repeated builds. A VL product should keep the Verus proof result visible and separately communicate assumptions and unverified code.
-
-## what VL should not redo
-
-Inference: VL should not redo a generic “one button” wrapper around verification without measuring workflow latency, report usefulness and false-alarm behavior; these adoption lessons are already explicit in this paper. VL still needs Rust/Verus-specific contract inference, proof repair and evidence about its own workloads. The paper’s techniques are complementary to functional proof: bug-finding approximations can triage code before expensive proofs, while Verus contracts can establish stronger properties when specifications exist.
+The paper proves no theorem about Goanna and reports no reproducible benchmark protocol. It reports architecture, check categories, an order-of-magnitude implementation comparison without denominator, and qualitative lessons from deployment. The paper does not provide a formal trusted-computing-base analysis.
 
 ## techniques for the catalog
 
@@ -70,4 +64,3 @@ Inference: VL should not redo a generic “one button” wrapper around verifica
 - SMT refinement loop — recheck abstract warnings with SMT constraints to separate spurious from feasible reports
 - engineering-scale caching — use incremental analysis, inter-function summaries and databases to handle hundreds of millions of model-checking specifications
 - workflow-integrated reporting — run at compile time and present severity, traces, trends and standards reports in existing tools
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This is typically contrary to an academic environment, where one is often interested in a few complex verification tasks only."): read the whole 4-page paper (text file, 177 lines) and checked every quotation, page reference, the 200-check count, the hundreds-of-millions task figure, the technique steps and the claims of absent evidence; changed the link to the DOI printed in the paper, removed an unsupported step about constructing the analysis representation, marked ordering and use-case statements as Inference, corrected "millions" to "hundreds of millions" in the catalog line, and corrected two page references; did not check the Figure 1 image itself (only the text describing it), cited works, or the Verus inferences beyond that they are labelled as inference. The paper itself says 2012 (FTSCS 2012, EPTCS 105, 2012), while the tag says 2013; the tag was kept because it is the existing key.

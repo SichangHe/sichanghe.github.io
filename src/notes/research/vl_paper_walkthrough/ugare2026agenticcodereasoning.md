@@ -42,14 +42,8 @@ For code QA, require a function trace table with function, file:line, parameter 
 
 Inference: for Verus code review, use the same table with specification signatures, `requires`/`ensures`, ownership-relevant mutations, and cited lemmas; then compile the claimed contract. Evidence is mixed by model: Opus rises from 78.3% standard agentic to 87.0% semi-formal, while Sonnet is 84.2% versus 84.8% (Table 6, p. 9). The template can fail through elaborate but incomplete chains (section 4.3, p. 9).
 
-## trusted boundary and VL implications
-The method is a reasoning protocol, not a formal verifier. Ground truth for patch equivalence is execution; QA uses two LLM graders; fault localization uses known patch hunks. The model, repository exploration tools, test oracle, grader rubric, and all unmodeled dependencies remain trusted. The paper itself cautions that structured reasoning lacks traditional formal guarantees (section 6, p. 10).
-
-Inference: threat to VL is medium. A certificate-shaped prompt could make agent-written Verus proof plans auditable and expose missing cases, but an LLM can still write a persuasive false trace. VL should not redo generic prompt-format comparisons; it should test whether certificates reduce Verus compile failures and specification mistakes on held-out Rust repositories.
-
 ## techniques for the catalog
 - patch-equivalence certificates: state premises, trace every test under both patches, compare outcomes, and conclude from an explicit definition
 - premise-to-claim fault localization: connect test premises through traced calls and divergence claims to ranked suspicious regions
 - function-trace QA: require signatures, data flow, semantic evidence, and alternative-hypothesis checks before answering
 - structured exploration: record hypothesis, evidence, and confidence for each file request and observation
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -94,8 +94,6 @@ Appendices F and G describe the reflective checker. The checker computes `subTyA
 
 The paper proves Hoare-rule soundness in Lean 4, extracts a self-certifying checker by proof reflection, and reports roughly 78,400 lines of Lean, with no `sorry` or `admit` (Sec. 7, p. 21). It says the meta-theory depends on `{propext, Classical.choice, Quot.sound}`; some ground examples additionally use a compiler-reduction axiom, while symbolic certificates are axiom-clean (Sec. 7, p. 21). Evaluation covers eight higher-order list/option functions, polymorphic examples, red-black insertion for every height, a packed queue, sized lists/trees, and sorted insertion; the paper gives no aggregate time denominator in the cited evaluation prose (Evaluation, pp. 22–23). Inference: the trusted base is Lean's kernel and listed classical axioms plus the mechanized semantics; the reflective checker does not make the Rust/Verus toolchain trusted automatically.
 
-Inference: for VL, the most reusable ideas are explicit ownership predicates for strong updates, branch-complete specifications, stable recursive invariants, and a separate treatment of recoverable versus fatal failures. The paper already covers these at the type-logic level; VL should avoid redoing a generic case-split or ownership calculus and instead focus on translating Rust/Verus programs, concurrency, and engineering-scale libraries. Inference: product risk from agent-written verified Rust is high where agents invent ownership or mutation invariants, moderate where they translate routine branch postconditions, and reduced when every generated claim is checked by Verus and failures are represented as explicit `Result` cases.
-
 ## techniques for the catalog
 
 - case specifications: use pairwise-disjoint guarded pre/post branches, with an otherwise branch exposing uncovered inputs as `Abrt`
@@ -103,5 +101,3 @@ Inference: for VL, the most reusable ideas are explicit ownership predicates for
 - stable type predicates: define recursive indexed invariants for lists, trees, bounds, and owned mutable footprints
 - explicit error hierarchy: distinguish tolerated `Err`, tracked exceptions, and unreachable compile-time `Abrt`
 - reflective soundness: prove Hoare rules once in Lean and derive a checker whose verdicts are certified by the proof
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

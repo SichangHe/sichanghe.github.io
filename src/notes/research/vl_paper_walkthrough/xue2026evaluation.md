@@ -62,12 +62,6 @@ The benchmark includes 172 Circom and 164 Noir questions across four categories 
 
 Ablate each component separately: no RAG, no sketch, no compile repair, no execute repair, similarity RAG, and repair only (Section 5.3, pp. 15–16). “Only Repair” reaches 43.31% Circom and 59.80% Noir, versus 65.66% and 76.87% for the full system (p. 16). Inference: this is evidence that a repair loop cannot replace an explicit specification and grounded implementation templates.
 
-## trusted parts, contradictions, and product threat
-
-The measured result is empirical Pass@1 under fixed budgets, models, datasets, and hidden tests. It is not a formal proof of circuit equivalence. The authors identify test coverage, prompt choice, and natural-language ambiguity as limitations (Section 7, pp. 18–19). They state: “While integration with auditing tools [34, 46] could further enhance assurance, code generation from natural language specifications may face inherent ambiguity and underspecification.” (Section 7, p. 19) They also leave circuit-efficiency optimization to future work (Section 7, p. 18).
-
-Inference: the strongest lesson for agent-written verified Rust is to keep a typed specification between intent and code, retrieve only type-checked proof patterns, and require a machine-checkable proof after every repair. The threat is high when an agent emits unchecked text or when tests stand in for a proof. ZK-Coder has already explored the sketch, retrieval, and repair pattern; VL should adapt it to Verus predicates and proof obligations rather than redo a generic generate-and-test loop.
-
 ## techniques for the catalog
 
 - intermediate constraint sketch: formalize the relation in a typed DSL before target-language code
@@ -75,4 +69,3 @@ Inference: the strongest lesson for agent-written verified Rust is to keep a typ
 - two-phase repair: compile first, then test acceptance and rejection behavior with bounded retries
 - hidden-case evaluation: score sketch and program correctness on withheld cases, reporting conditional denominators
 - component ablation: remove sketch, retrieval, and each repair phase to identify which reliability mechanisms matter
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While this is not a formal proof of logical equivalence, it provides strong empirical assurance of correctness."): read the complete paper, including references and supplementary sections; checked quotations, reported numbers, section/page references, technique steps, authorship/year, and the arXiv link against the paper; corrected shortened quotations and page references, clarified baseline settings and conditional denominators, and marked interpretations as inferences; did not reproduce experiments, inspect the replication package, or validate the proposed Verus adaptations.

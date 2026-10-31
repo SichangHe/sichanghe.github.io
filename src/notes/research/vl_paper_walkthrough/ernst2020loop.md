@@ -193,12 +193,6 @@ Inference: an annotation-proposing agent could use generalized procedure postcon
 - binary search listing (p.14): the loop test is `while(i < n)` and the precondition is `0 <= i <= n && !r`, but the program has no variable `i`; its variables are `l`, `u`, `m`, `r`. Inference: both lines were carried over from the linear search listing
 - bubble sort (p.17): the outer loop is `for(int i = n; i > 1; i--)`, and its precondition is printed as `0 <= i < n`, which is false at entry where `i = n`. The outer invariant is printed as `max(a[0..i]) <= max(a[i..n])`. Inference: this does not express that every prefix element is at most every suffix element; replacing the second `max` by a minimum would express that stronger ordering when both ranges are nonempty. The author's intended correction is not established
 
-## already done, which VL should not redo
-
-- the theory: the paper reports soundness, completeness, constructive translations and an Isabelle/HOL mechanization of Sections 4 and 5; this recheck did not inspect or rerun that artifact
-- contract-style loop specification exists in tools: the paper names VeriFast (Section 1, p.1) and credits Hehner, Hehner and Gravel, and Tuerk for the idea (Sections 1, 6 and 9)
-- limits stated in the paper: synthesis of summaries from procedure postconditions is future work (p.23); a comprehensive treatment of framing is beyond scope (p.16); `return` inside loops is not formalized (p.13); many array tasks need quantified invariants that the solvers struggle to infer (pp.19,21). The evaluation nevertheless includes 129 array tasks
-
 ## threat to agent-written verified Rust
 
 Inference: the useful transfer to agent-written verified Rust is a way to propose annotations: start with a summary of the remaining work and translate it into an invariant. The paper evaluates C verification, not Rust or language models. Its array results (at most 7 of 129 for either Korn backend/configuration, Table 1) limit what this experiment demonstrates about automatic array verification; they do not measure agent-written annotations.
@@ -214,4 +208,3 @@ Inference: the useful transfer to agent-written verified Rust is a way to propos
 - frame equations in summaries: for loops that write, add to the summary that the remaining iterations leave the already written region unchanged.
 - break obligations: prove the postcondition or summary at each break; a loop with breaks does not establish the negated test by default; model early return as flag plus break.
 - Horn-clause inference of contracts: encode both styles as constrained Horn clauses and let Eldarica or Z3 find the predicates; contracts solved 232 against 237 (Eldarica) and 201 against 234 (Z3) of 459 tasks.
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The examples are chosen not for their difficulty, but because they highlight specific aspects, advantages, and limitations of the respective approaches."): read all 27 pages; checked quotations, formulas, technique steps, counts, section/page references and scope of the claims; corrected the reference-page range, example count, incomplete KIV lemma, mechanization scope and unsupported Verus claims; did not inspect the linked mechanization or Korn implementation, reproduce experiments, or verify code in Verus.

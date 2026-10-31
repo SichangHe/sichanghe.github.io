@@ -62,8 +62,6 @@ The evidence is the survey's correspondence between the table's modality pattern
 
 Inference: a new application still needs its own soundness argument and engineering assessment. The paper does not prove that every systems property has a useful context decomposition, nor that strong nominalization is always more precise. Existing projects cited in the taxonomy have their own proofs and assumptions; this survey does not re-prove them.
 
-Inference: for agent-written verified Rust, the main threat is context confusion: a proof can establish a local points-to fact while silently using the wrong address space, snapshot, actor, or memory view. VL should adopt explicit context parameters or state-machine fields for such resources. The survey's modal vocabulary is useful for architecture and specifications, but implementing a new modal logic is outside a normal Verus application and should not be mistaken for a missing Rust annotation.
-
 ## techniques for the catalog
 
 - transition modalities — encode a command or system transition as a relation between worlds and place the postcondition under that relation
@@ -71,4 +69,3 @@ Inference: for agent-written verified Rust, the main threat is context confusion
 - nominalization choice — explicitly name contexts for cross-context proofs or inherit them implicitly for concise single-context proofs
 - context-indexed taxonomy — map virtualization, fences, actors, reference counts, and crashes to dedicated context modalities and steps
 - shallow modal embedding — lift separation-logic predicates pointwise so modal assertions can compose ownership and interactive proof rules
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Program logics which would like to enjoy modal propositions need to have an underlying model that allows encoding of the propositions."): read the full paper text, including references, and inspected PDF pages 5–7; checked quotations, numbers, section and page references, definitions, taxonomy, and technique descriptions; corrected the author/year tag, source link, quote location and page references, crash-resource description, unsupported embedding steps and Verus claims, and marked proposed workflows as inferences; recorded the paper's conflicting weak-memory classification; did not check cited papers, mechanizations, or the proposed Verus adaptations.

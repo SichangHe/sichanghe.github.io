@@ -64,10 +64,6 @@ The executable library offers `f_plain` functions with default values for malfor
 
 The calendar specification intentionally wraps the maximum date to the minimum when taking successors (§2.3.1, p.4). Its lower endpoint needs attention: p.3 motivates natural years by saying a year before 0 cannot be expressed, while p.4 describes wraparound by setting the year to 1. Inference: an API adaptation should settle its lower endpoint explicitly rather than infer it from prose. The paper’s guarantees remain those of its formal definitions and bounded theorems.
 
-## what is proved, trusted, and relevant to VL
-
-The theorems prove correspondence for valid bounded inputs and stated leap-second assumptions. Coq extraction is not fully formalized, and the authors warn that extraction errors can cause discrepancies (Section 5, p. 8). Inference: agent-written verified Rust faces the analogous boundary between verified source and compilation, libraries, and clock hardware. Existing work already supplies a concrete pattern for separating specifications, implementations, refinement lemmas, finite-domain automation, and interface error handling; VL should reuse these patterns rather than invent another time model.
-
 ## techniques for the catalog
 
 - valid dependent data: pair raw calendar fields with proofs of existence
@@ -78,5 +74,3 @@ The theorems prove correspondence for valid bounded inputs and stated leap-secon
 - finite-range checking: discharge decidable bounded goals by exhaustive computation
 - clean extraction: redefine extraction code in a standalone file and prove correspondence
 - explicit partiality: represent invalid executable inputs with errors or documented defaults
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Even if at first sight the refinement phase may appear much easier than the previous one, in truth the difficulty in our case was comparable and arguably higher, for two different reasons."): read the entire supplied 13-page paper text, including references, and the entire study; compared quotations, numeric examples, theorem conditions, page references, and procedures; corrected tag formatting and surname, bounds and leap-second assumptions, the 400-line proof description, and extraction quotation scope, added locked conversions and boundary/error-handling details, and marked adaptations as inference; did not run Coq, inspect library or CLI code, reproduce timings, validate cited work, or visually inspect PDF figures.

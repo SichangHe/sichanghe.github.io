@@ -79,8 +79,6 @@ Evidence and limits. SafeFFI’s 45 systematic FFI tests (35 vulnerable, 10 beni
 
 The paper measures detection on known CVEs/RustSec cases, check-elision rates, runtime and compile-time overhead, and FFI robustness. SafeFFI uses Rust nightly-2021-02-22 (rustc 1.52.0, LLVM 12) with HWASan on an ARM MacStudio and compares RustSan/ERASan on x86_64 (§6, p.9). The comparison has different architectures and toolchains; the authors could not benchmark RustSan runtime because its harness crashed (§6.2, p.11).
 
-Inference: For VeruLaw, SafeFFI identifies a practical boundary strategy: concentrate validation at unsafe/FFI ingress, then rely on proved safe abstractions. VL must still specify aliasing, lifetime, and foreign-function behavior; sanitizer success cannot establish those specifications. Existing SafeFFI work means VL should not claim novelty for merely moving checks to boundaries. A product threat remains whenever unsafe code, external libraries, or sanitizer assumptions are trusted without a Verus model.
-
 ## techniques for the catalog
 
 - boundary check hoisting: validate raw-to-safe casts once and elide later safe dereference checks
@@ -88,5 +86,3 @@ Inference: For VeruLaw, SafeFFI identifies a practical boundary strategy: concen
 - temporal deallocation checks: insert optional checks at dereferences reachable from potential heap deallocation and check safe pointer arguments and returns across calls
 - compositional nofree analysis: compute potentially deallocating functions with bottom-up SCC analysis and conservative unknown-callee handling
 - mixed-language validation: test allocation, deallocation, invalidation, and control-flow combinations across Rust and C
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Since the Rust compiler does not track all LLVM instructions generated for a MIR value, SafeFFI annotates only the final LLVM value representing the loaded MIR operand, lacking pointer type annotations for intermediate LLVM pointer values."): checked the full paper text, quotations, reported numbers, section and page references, and technique steps; corrected references, reachability direction, external-function handling, and temporal-safety qualifications, and added pointer-classification limits; did not reproduce experiments, inspect implementation artifacts, or verify the Verus inferences.

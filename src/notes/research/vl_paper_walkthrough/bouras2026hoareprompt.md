@@ -71,13 +71,11 @@ Evidence and limits. On a 140-entry pilot set using Llama3.1-70B, `k=3` achieved
 
 After annotation, HoarePrompt asks an LLM to classify the program as Correct or Incorrect (Section 4.3). Baselines are Vanilla, Zero-shot-CoT, and Tester; Tester generates tests, executes the program, and accepts it iff all generated tests pass. The authors also replace AgentCoder's test feedback with HoarePrompt judgments during iterative generation. On 100 randomly sampled CoCoClaNeL problems, excluding problems with multiple valid outputs, Llama3.1-70B achieved 33% fully correct with HoarePrompt versus 29% Testing and 30% Baseline; GPT-4.1 achieved 47%, 42%, and 37%, respectively (Table 5, Section 5.6). The denominator is 100 problems per model; fully correct means passing all hidden tests.
 
-Inference: a VL pipeline could use HoarePrompt annotations to propose Verus contracts and proof obligations, then require Verus to accept generated Rust before release. The paper's token cost is substantial: averaged over models, full HoarePrompt used 85.9× Vanilla tokens and 64.1× Zero-shot-CoT tokens (Section 5.5), while no-unroll used 90% fewer tokens than full unrolling. Inference: this cost and the absence of formal guarantees are direct product risks for agent-written verified Rust.
-
 ## what is proved, trusted, and already done
 
 The paper provides no formal correctness guarantee. It measures MCC, balanced accuracy, true positive rate (TPR), false negative rate (FNR), false positive rate (FPR), token use, and generated-code pass rates. Inference: its judgments depend on the LLM, prompts and few-shot examples, Python semantics and iterator model, and final classifier; evaluation also depends on Codeforces labels. Verus could check implementation correctness against translated contracts, but the correspondence between those contracts and the prose requirements would remain a separate obligation.
 
-The paper already covers natural-language state decomposition, branch/loop summaries, and test-free correctness classification. Inference: VL should not redo those as an unqualified novelty claim; a useful extension would measure whether these summaries reduce Verus proof repair on a fixed Rust benchmark, with proof acceptance as the outcome.
+The paper already covers natural-language state decomposition, branch/loop summaries, and test-free correctness classification.
 
 ## techniques for the catalog
 - natural precondition extraction — prompt an LLM to turn requirements and a signature into a valid-input state predicate
@@ -85,4 +83,3 @@ The paper already covers natural-language state decomposition, branch/loop summa
 - branch and exception merging — compute path-specific postconditions and merge them at control-flow joins
 - few-shot-driven k-induction — unroll loops, use iteration triples as examples, and infer a whole-loop summary
 - state-annotation classification — classify or refine code after annotating key points with reachable states
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In this section of the Appendix, we include all prompts provided to the LLMs during the evaluation and experiments in our study."): read all 43 pages of extracted text, including appendices; checked quotations, numbers, references, technique steps, and the paper link; completed the DOI and truncated quotation, corrected Verus interpretations, and clarified pilot and code-generation scope; did not reproduce experiments, inspect the implementation, or validate Verus translations.

@@ -3,7 +3,7 @@
 Tag: `zhou2025language`, [paper](https://arxiv.org/abs/2512.09758v2)
 ## scope and contribution
 
-This paper presents LMGPA, a prompt-only system that asks an LLM to decompose a TLA+ obligation, while TLAPS checks each decomposition and supplies proofs for simple leaves. The paper states: “We present a prompt-based approach that leverages LLMs to guide hierarchical decomposition of complex proof obligations into simpler sub-claims, while relying on symbolic provers for verification.” (abstract, p.1) The target is hierarchical TLA+ proofs, whose intermediate claims are explicit. Inference: this proposal-and-verification split is relevant to VL, although the evaluated system uses TLA+/TLAPS rather than Rust/Verus.
+This paper presents LMGPA, a prompt-only system that asks an LLM to decompose a TLA+ obligation, while TLAPS checks each decomposition and supplies proofs for simple leaves. The paper states: “We present a prompt-based approach that leverages LLMs to guide hierarchical decomposition of complex proof obligations into simpler sub-claims, while relying on symbolic provers for verification.” (abstract, p.1) The target is hierarchical TLA+ proofs, whose intermediate claims are explicit.
 
 The benchmark has 93 mathematical theorems and 26 distributed-protocol inductiveness proofs (119 total; §4.2, p.11). The authors manually translated selected mathematical theorems into TLA+: “As these collections lack TLA+ formalizations, we manually translated a curated subset of these theorems into TLA+” (§4.2, p.11; excerpt). Inference: the measured task depends on those translation choices. They warn: “We acknowledge the potential for data leakage in our benchmark.” (§4.2, p.11) This warning covers miniF2F, ProofNet and public protocol proofs.
 
@@ -43,16 +43,9 @@ The baseline establishes that this heuristic matters: SAPG proves 38.5% of distr
 
 On failed verification, the system feeds TLAPS output back into the next LLM request: “When TLAPS verification fails, our system feeds back the verifier’s output to the LLM, allowing it to generate improved sub-claims in subsequent attempts.” (§3.4, p.10) Appendix D.1 requests a complete module and necessary `DEF` references for direct proof generation (pp.27–28). Appendix D.2 requests normalized subclaims and asks the model to check their validity for LMGPA (pp.28–30). Inference: a Verus adaptation could pass verifier errors into later lemma requests and verify each revision.
 
-## what is proved, trusted, and relevant to VL
-
-The paper defines completion as follows: “A proof achieves the status of a complete proof precisely when its root goal is proved according to the recursive definition above.” (§2, p.6) That definition requires verified auto proofs or proved children whose sufficiency TLAPS verifies (§2, p.5). Inference: the LLM proposes candidates; confidence in accepted proofs depends on TLAPS and its backend provers, while confidence that they address the intended problem also depends on the supplied specifications. Benchmark selection and possible training leakage limit generalization. For timing, the authors caution: “The timing differences are heavily influenced by factors unrelated to the models’ capabilities.” (§4.4, p.12)
-
-Inference: for agent-written verified Rust, the threat is medium. The architecture directly supports candidate lemma generation and mechanical rejection, but its measured domain is TLA+ and its decompositions can fail to simplify the goal or exceed backend timeouts. VL should reuse the separation and verifier feedback, while requiring Verus to prove every generated `proof fn` and checking that contracts express the intended Rust behavior. Existing LMGPA already covers the basic proposal-validation-recursion pattern; VL should not claim that pattern as new.
-
 ## techniques for the catalog
 
 - recursive hierarchical decomposition — recursively split a failed obligation into normalized children, verify the implication with TLAPS, and prove every child
 - symbolic auto-proof synthesis — inspect definitions and emit `OBVIOUS` or `BY ... DEF ...` before asking an LLM
 - normalized claim prompting — constrain LLM output to assumptions plus one goal and translate it into `ASSUME-PROVE`
 - verifier-feedback retries — pass TLAPS errors to later candidate generations under bounded retries
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We hypothesize that it is because the full context is already relatively small in our benchmark suite."): read the entire paper, including appendices, and checked the study’s quotations, numbers, references and technique steps; corrected the opening quotation, distributed-protocol success range, retry wording, failure example and retrieval citation, clarified prompting, and marked adaptations and conclusions as inferences; did not rerun experiments, inspect the artifact, or independently validate the proposed Verus adaptation.

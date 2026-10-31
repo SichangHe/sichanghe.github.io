@@ -86,5 +86,3 @@ Inference: the transferable ideas are staged vulnerability diagnosis and explici
 - domain types and explicit absence — use constrained constructors and option results; check that construction cannot bypass validation
 - edge-case security matrices — inspect ordinary behavior and named vulnerabilities separately across models
 - verification prerequisite checks — Inference: require compilation and proofs when transferring the workflow to Verus
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In general, we see that none of the models is capable of consistently generating Stainless code that correctly compiles."): checked the complete supplied paper text, quotations, task/model lists, numbers, section/page references, workflow steps, and DOI; corrected task scope and page references, separated recommendations from reported methods, and qualified the incomplete average-age example; did not rerun experiments, inspect the external repository, or check appendices B–D, which are absent from the supplied paper.

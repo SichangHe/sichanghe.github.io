@@ -390,7 +390,6 @@ what was searched and opened
   - direct arXiv abstract, HTML, and PDF requests succeeded
 - new collection entries
   - RagVerus v1, VeriCoder v2, and VeruSyn v3 PDFs, extracted text, and arXiv metadata
-  - collection root: `/hdd1/sichanghe/paper_collection`
 - limits
   - reported results are author claims, not reproduced experiments
   - later publication records are not comprehensively refreshed

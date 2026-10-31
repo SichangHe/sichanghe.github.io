@@ -59,14 +59,9 @@ Use ghost maps keyed by `(rule, slot, variable, value)` and prove that each buck
 
 The implementation delays insertion until a hypothesis can complete a preceding slot (lazy insertion), and queues hypotheses by Aesop phase (normalization, safe, unsafe) so irrelevant updates are skipped. It stores maps persistently, uses discrimination trees to avoid many definitional-equality checks, and treats matches equivalent when future substitutions and conclusion types agree, even if their hypotheses differ. These optimizations preserve the state invariant but can trade completeness or memory for speed.
 
-## what is proved, trusted, and relevant to VL
-
-The paper proves the data-structure invariant that states correspond to all partial matches derivable from a context, and evaluates runtime speed. It does not prove Aesop’s logic, Lean kernel, reducible matcher, or hardware. Inference: for agent-written Verus, the reusable lesson is a ghost incremental index with explicit context-delta contracts; it could reduce repeated solver-side search but adds proof obligations for map persistence, deletion, duplicate suppression, and matcher soundness. The measured gains are from Aesop’s workload and do not establish gains for Verus verification.
-
 ## techniques for the catalog
 
 - persistent forward state — cache partial rule applications per goal and update by deletions then additions
 - shared-variable indices — intersect hypothesis and match buckets keyed by slot substitutions
 - lazy and phased insertion — defer index work until a preceding match or search phase makes it relevant
 - semantic match equivalence — retain one prefix when substitutions relevant to future slots and conclusions agree
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

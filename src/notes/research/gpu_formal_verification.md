@@ -124,6 +124,3 @@ research direction. It is public-evidence only.
   verification hiring effort.
 - cuda-oxide is moving quickly; pin exact versions before using it as a proof
   substrate.
-- the current VeruLaw/Verus-agent work is evidence about agents writing Verus
-  specs and proofs for ordinary Rust surfaces. It is not evidence that those
-  agents can already supply SIMT/PTX semantics or validate GPU lowering.

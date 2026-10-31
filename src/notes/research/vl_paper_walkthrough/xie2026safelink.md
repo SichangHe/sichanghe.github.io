@@ -28,7 +28,7 @@ Inference: encode profile metadata and replay summaries in Rust structs, with a 
 
 evidence and limits
 
-The method is evaluated on the paper's trace inventory and profile table, not on live deployment. Its trigger thresholds are chosen by the authors, and the paper does not establish that 1% and 10 seconds transfer to another video service. Inference: the profile abstraction is useful for VL because it turns environmental evidence into a repeatable verification input, but it can miss rare failures outside the retained profile and memory.
+The method is evaluated on the paper's trace inventory and profile table, not on live deployment. Its trigger thresholds are chosen by the authors, and the paper does not establish that 1% and 10 seconds transfer to another video service.
 
 ## technique: bounded structured patch proposal and schema validation
 
@@ -52,7 +52,7 @@ Inference: represent a patch as a Rust enum with bounded fields and prove a `spe
 
 evidence and limits
 
-The structured schema makes rejection mechanically visible, but the paper reports no count of schema-invalid proposals. The proposer remains a source of untrusted input. Inference: VL should treat generated proof annotations or policy changes as data checked against a schema before verification, rather than allowing an agent to alter trusted verifier code.
+The structured schema makes rejection mechanically visible, but the paper reports no count of schema-invalid proposals. The proposer remains a source of untrusted input.
 
 ## technique: target replay plus regression-memory replay
 
@@ -97,7 +97,7 @@ Inference: express an auditor as a pure policy function with a proof of a local 
 
 ## what is proved, trusted, and unresolved
 
-The paper concludes: “This turns newly observed Starlink failures into verifiable maintenance actions that keep ABR controllers robust as the access environment changes.” (section VI, p. 14) The paper proves no formal theorem. It reports replay evidence on 3,221 valid traces, rolling maintenance, ablations, and sensitivity thresholds. The central results are RobustMPC severe-session ratio 2.60% to 0.40% and cumulative severe sessions 45 to 7, plus learned average ratio 39.01% to 9.79% (abstract and section VI, pp. 1, 14). The experiments support this implementation and trace corpus; they do not establish safety for arbitrary networks, controllers, LLMs, or live traffic. Inference: the product threat to agent-written verified Rust is moderate. SafeLink-Agent shows a parallel propose-then-verify workflow, but Verus can prove Rust-level contracts only after VL authors define a faithful model of replay, QoE, patch admissibility, and regression memory. Existing work already covers generic patch-and-test patterns; VL should focus on machine-checked contracts for the maintenance policy and its evidence record.
+The paper concludes: “This turns newly observed Starlink failures into verifiable maintenance actions that keep ABR controllers robust as the access environment changes.” (section VI, p. 14) The paper proves no formal theorem. It reports replay evidence on 3,221 valid traces, rolling maintenance, ablations, and sensitivity thresholds. The central results are RobustMPC severe-session ratio 2.60% to 0.40% and cumulative severe sessions 45 to 7, plus learned average ratio 39.01% to 9.79% (abstract and section VI, pp. 1, 14). The experiments support this implementation and trace corpus; they do not establish safety for arbitrary networks, controllers, LLMs, or live traffic.
 
 ## techniques for the catalog
 
@@ -105,4 +105,3 @@ The paper concludes: “This turns newly observed Starlink failures into verifia
 - bounded structured patching: generate controller-specific records with allowed operations, activation conditions, and parameter ranges
 - target and regression replay: require improvements on new failures and bounded changes on validated memory before commit
 - verified runtime auditing: add a constrained safety layer around learned decisions and evaluate its QoE, risk, and intervention tradeoff
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "memory profile is selected from comparatively stable traces and is used only to check whether a patch damages previously safe operating conditions."): read the whole paper text including the supplement, and checked every quotation, number, table value, section and page reference, and technique step against it; changed page references (bitrate ladder and probe on p. 7, Algorithm 1 on p. 8, schema validation on p. 6), corrected the rule-based regression-memory severe-risk bound (at most 0.5 percentage points, not zero), clarified that the Table IX comparison is adaptive versus static auditor on one session, replaced an unsupported denominator remark with what Tables III, V and VI show, and fixed a garbled word ("aggrecheck"); did not check the cited references, the figures' content, or the source code.

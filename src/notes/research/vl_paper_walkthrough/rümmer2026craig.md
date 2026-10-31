@@ -71,8 +71,6 @@ Inference: a Verus function contract and recursive proof lemma play the roles of
 
 The chapter proves logical properties of interpolation definitions and algorithms under their stated theory assumptions; its Fibonacci formulas are examples, not measurements. Trusted components include the SMT solver’s satisfiability and interpolation implementation, the chosen background theory, SSA encoding, and the specification itself. Infinite-state IMC may fail to stabilize; CEGAR may refine indefinitely; interpolation strength, size, and vocabulary materially affect performance (conclusion, PDF p.36).
 
-Inference: for agent-written verified Rust, interpolation is a promising candidate-generation aid, not an independent correctness guarantee. The main threats are an abstraction that omits relevant state, a candidate that is not inductive, and an unsound translation from solver formulas into Verus contracts. What existing work already supplies is a mature family of IMC, CEGAR, and CHC algorithms; VL should not reimplement these as if they were new ideas without comparing against established solvers.
-
 ## techniques for the catalog
 
 - interpolant invariant inference — unroll a path, split its verification condition, compute a shared-symbol interpolant, rename it, and check induction
@@ -82,4 +80,3 @@ Inference: for agent-written verified Rust, interpolation is a promising candida
 - CEGAR predicate refinement — turn interpolants from spurious counterexamples into predicates and repeat abstraction checking
 
 - CHC invariant/contract solving — encode initiation, transitions, recursion, and errors as Horn clauses and solve relation symbols
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

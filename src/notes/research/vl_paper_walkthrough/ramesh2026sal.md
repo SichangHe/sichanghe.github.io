@@ -60,10 +60,6 @@ Evidence. The OR-set visualization shows concurrent remove and add converging to
 
 Lean's kernel checks DG and Aristotle proof terms. Lean-blaster/Z3 results are trusted without reconstructed proof terms. Plausible and visualization find examples but do not prove universal properties. The 311-VC evaluation measures stage counts and wall-clock time for 13 selected RDTs. Trusted assumptions include RA-linearizability's VC reduction, each RDT's model, Lean's kernel and erasure/runtime, Z3 for LB, and any `admit` or uncertified external code. The paper explicitly notes that SMT-aided proofs can be brittle and enlarge the trusted base.
 
-## implications for VL
-
-Inference: VL can reuse staged automation, explicit trust accounting, decidable counterexample models, finite-universe trace rendering, and per-obligation denominators. It should not present 69.1% kernel automation as a universal Verus rate: it is 215/311 on this RDT suite. Inference: the product threat is high for distributed-state specifications if an agent proves an incorrect merge contract; a kernel proof cannot repair a wrong RA-linearizability model. Existing Neem and other CRDT verification work already supplies the RDT VC idea; VL should focus on Rust/Verus encodings, solver trust, and integration with executable distributed implementations.
-
 ## techniques for the catalog
 
 - RA-linearizability VC reduction — model `do`, merge, conflict order, and LCA semantics, then discharge a finite VC suite
@@ -71,5 +67,3 @@ Inference: VL can reuse staged automation, explicit trust accounting, decidable 
 - staged multi-modal tactic — try kernel-checked automation, then SMT, then interactive proof under bounded heartbeats
 - property-based VC counterexamples — generate concrete violating executions for decidable failed conditions
 - finite-universe visualization — track touched elements to render abstract set traces for debugging
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

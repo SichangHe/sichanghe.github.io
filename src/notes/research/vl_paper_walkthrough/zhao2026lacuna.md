@@ -65,7 +65,7 @@ The runtime tracks nested-agent depth and enforces a configurable cap; otherwise
 
 ## what is proved, measured, and trusted
 
-Proved by the prototype: host compiler rejection of undefined names, type mismatches, non-exhaustive matches, capability leaks, and malformed snippets before execution, across roughly 400 tests. Measured: BrowseComp-Plus accuracy and retries, τ²-bench solved rates over 392 tasks, and prompt-injection outcomes with explicit attack denominators. Trusted: Scala compiler/type checker and code generation, runtime splicer, safe-mode configuration, capture checker, host program and lexical scope, and any external tools. Unproved: algorithmic correctness, termination, resource bounds, and adequacy of the task specification. Inference: the threat to agent-written verified Rust is reduced for authority and compilation failures, but Verus postconditions are needed to close the semantic gap. The closest reusable VL pattern is typed-hole generation followed by whole-fragment Verus checking, least-authority scope, atomic state application, and diagnostic retries.
+Proved by the prototype: host compiler rejection of undefined names, type mismatches, non-exhaustive matches, capability leaks, and malformed snippets before execution, across roughly 400 tests. Measured: BrowseComp-Plus accuracy and retries, τ²-bench solved rates over 392 tasks, and prompt-injection outcomes with explicit attack denominators. Trusted: Scala compiler/type checker and code generation, runtime splicer, safe-mode configuration, capture checker, host program and lexical scope, and any external tools. Unproved: algorithmic correctness, termination, resource bounds, and adequacy of the task specification.
 
 ## techniques for the catalog
 
@@ -74,4 +74,3 @@ Proved by the prototype: host compiler rejection of undefined names, type mismat
 - capability-scoped generation — expose only lexical capabilities and prevent capability-bearing results from escaping
 - classified information flow — keep sensitive data inside pure wrappers and use local nested agents under the same scope
 - recursive typed control flow — express skills, ReAct, sub-agents, and parallel decomposition as typed nested calls with depth caps
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

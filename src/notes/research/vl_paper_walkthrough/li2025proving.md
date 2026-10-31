@@ -34,15 +34,9 @@ For efficiency, on MO-INT LIPS improves scaling-pruning ratio over AIPS in 13 of
 
 The authors report that the generated proofs “have been successfully verified by the Lean theorem prover” (Section 5.2, p. 8). Inference: this relies on Lean proof checking and on the Lean statements faithfully representing the intended problems. CAD/SMT solvers, optimization, and prompts guide the search; a missed counterexample does not establish a theorem. Inference: applicability to agent-written verified Rust is plausible for arithmetic proof search with reusable lemmas, but the paper does not evaluate Rust, pointers, concurrency, or systems invariants.
 
-## what VL should reuse
-
-Inference: VL should reuse finite tactic libraries, counterexample caching, a cheap symbolic filter before LLM ranking, and strict verifier acceptance. It should track denominators and distinguish “solver says true” from a readable proof. Inference: VL should not redo a generic claim that symbolic or neural methods alone suffice: this paper's evidence supports the hybrid on 161 inequality instances and its particular Lean implementation.
-
 ## techniques for the catalog
 
 - scaling enumeration and counterexample pruning — instantiate finite inequality lemmas and reject candidates with cached, CAD, or optimization counterexamples
 - LLM rewriting — generate equivalent algebraic transformations with format-specific prompts, then verify each in Lean
 - symbolic goal filtering — rank candidate obligations by homogeneity and variable decoupling scores
 - neural goal ranking — ask an off-the-shelf LLM to order the filtered obligations before the next proof iteration
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Our framework currently relies on a set of manually crafted tactics for scaling and rewriting inequalities, such as various forms of AM-GM inequality."): checked all paper text, study quotations, numbers, references, and technique steps; corrected the AM-GM substitution, rewriting and figure references, formalization description, proof-checking assumptions, and duplicated inference labels; replaced the fetch-record link with the paper’s arXiv identifier; did not rerun experiments or independently check the code or Lean proofs.

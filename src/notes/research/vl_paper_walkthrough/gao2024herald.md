@@ -6,8 +6,6 @@ Tag: `gao2024herald`, [paper](http://arxiv.org/abs/2410.10878v2)
 
 Herald is a dataset and autoformalization pipeline built from Mathlib4. It uses Lean-Jixia to extract theorem structure, generates natural-language/formal-language (NL-FL) pairs with retrieval-augmented prompts, augments them with tactic states and paraphrases, and fine-tunes a translator. The authors describe the contribution as “a structural-information-aware pipeline for augmenting NL-FL datasets from any Lean project.” (introduction, p. 2). The pipeline validates generated Lean statements with the compiler and checks meaning with back-translation and natural-language inference (NLI).
 
-Inference: the direct lesson for VL is a specification-data pipeline: mine structured context from a codebase, generate candidate Rust/Verus contracts, and reject candidates that do not verify. Herald does not verify Rust, memory safety, concurrency, or product behavior.
-
 ## technique 1: dependency-aware NL-FL generation
 
 What it is. Lean-Jixia parses Lean files for theorem declarations, proof structures, and dependency relationships. The pipeline supplies the model with five context components: head statements, kind, docstrings, neighboring statements, and dependent theorems (section 3.1.1, p. 4). It builds a dependency DAG, stratifies statements by distance from roots, and translates lower levels before dependent targets. The paper says: “By translating statements in the level order, we ensure that the natural language translations of dependent theorems are available during the translation process, thereby providing missing dependent information that does not exist in the formal statements.” (section 3.1.1, p. 4).
@@ -64,10 +62,6 @@ The Stacks Project case translated the Normal Extensions section, Tag 09HL, theo
 
 Inference: compiler acceptance checks Lean validity, but statements using `sorry` have no completed proof, and an empty mathematical output can pass compilation. The semantic conclusions depend on Lean-Jixia extraction, the generated NL text, retrieval examples, back-translation/NLI models, and human judgments of meaning. Appendix D's false positives and Appendix F.2's corrections show why compilation and semantic review must be distinguished.
 
-Inference: this creates a moderate threat to agent-written verified Rust. Herald’s structural context and local-goal decomposition could reduce hallucinated contracts, but the “any of 128 passes” metric and imperfect NLI can select a formally valid statement that narrows or changes the intended requirement. VL should preserve the original requirement, compile and prove the Verus contract, and require semantic review for omitted conditions.
-
-Inference: Already done that VL should not redo: dependency-aware retrieval, tactic-state decomposition, paraphrase augmentation, compiler filtering, back-translation/NLI checks, and section-level translation. A new VL result should add Rust/Verus contracts, executable semantics, or measured detection of contract drift.
-
 ## techniques for the catalog
 
 - dependency-aware context: translate formal declarations in DAG order with dependent statements and retrieved analogues
@@ -75,4 +69,3 @@ Inference: Already done that VL should not redo: dependency-aware retrieval, tac
 - semantic paraphrase augmentation: generate equivalent, abstract, implicit-condition, and multilingual NL variants
 - compiler plus NLI validation: require Lean compilation and back-translation agreement for at least one sampled candidate
 - section-level autoformalization: translate a project section, then use a theorem prover and human checks to repair remaining errors
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Please note that in the Herald dataset, the stepwise natural language proof is generated first and then summarized into a natural language whole proof."): checked all paper text, quotations, counts, page and section references, technique steps, and validation evidence; corrected the truncated dependency quote, augmentation page reference, unsupported replay description, Stacks Project corrections, evaluation subsets, and inference labels; added proof translation and human-evaluation details; did not reproduce experiments, inspect released code or data, or validate Rust/Verus proposals. Not checked: the image-only prompt figures in the PDF (correction 2026-10-19: the earlier claim that they were inspected was wrong; the tool returned base64 text, not images).

@@ -105,20 +105,9 @@ Verus form
 
 Inference: A Verus implementation could use a procedural macro or AST pass that turns annotations into `requires`, `ensures`, `assert`, and invariant clauses before invoking Verus. Generated predicates should remain `spec fn` or be inlined only when necessary for solver performance. Error mapping must preserve the source annotation, because VerCors currently transforms predicates away and reports can lose the subtype location (section 7, p. 66).
 
-## what is proved, trusted, and threatening to VL
-
-The verifier proves the generated contracts and arithmetic assertions through Viper. The subtype parser, rewrite rules, Viper translation, solver, and the programmer’s predicates remain trusted components. The paper provides examples and a prototype, but no empirical denominator for successful programs, proof time, or false alarms.
-
-Inference: For agent-written verified Rust, predicate subtypes are a practical way to make range, nonzero, nonnull, and index conditions systematic. The threat is that generated contracts can be wrong, incomplete, or too expensive, while still producing accepted proofs. Strict checking is valuable for overflow-sensitive code, but it can increase obligations and does not establish that a chosen range matches the product requirement.
-
-what VL should not redo
-
-VL should not claim predicate-to-contract rewriting or strict intermediate range checks as new ideas. A useful Verus study would measure the cost and diagnostic quality of a Rust macro that generates these obligations, including nested predicates, casts, loops, and actual `u32`/`i32` behavior.
-
 ## techniques for the catalog
 
 - predicate-to-contract rewriting: turn subtype annotations into parameter preconditions, result postconditions, and assignment assertions
 - composable subtype logic: combine reusable predicates with conjunction, disjunction, implication, and negation
 - strict arithmetic subtypes: require every intermediate expression to remain within machine bounds
 - verifier rewrite pipeline: parse subtype AST nodes, normalize nested predicates, generate checks, and send ordinary contracts to the backend
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

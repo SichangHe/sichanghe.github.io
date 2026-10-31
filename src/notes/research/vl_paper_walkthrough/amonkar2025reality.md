@@ -48,12 +48,6 @@ The authors report that fewer than 75% of Qwen3 chains and fewer than 50% of Dee
 
 Verus form. Inference: reject generated Rust that hard-codes benchmark outputs or omits the required `spec fn` predicates and proof obligations. Inference: require a generated function to expose contracts and prove them for symbolic inputs, then test held-out inputs separately. A Verus proof of a literal answer for one concrete input does not establish a general algorithm.
 
-## what is proved, trusted, and relevant to VL
-
-The paper proves no theorem about LLM formalization; its O(n + d) versus O(d^n) comparison in Section 5.4 is an informal argument. It evaluates finite annotated CSP samples and uses constraint checking as the correctness oracle. Inference: trusted components include the manual constraint annotations, the Python and Z3 runtimes, prompts, model behavior, and the assumption that the annotations capture the intended problem. The paper's own semantic-error examples show that a solver can accept a wrong constraint encoding.
-
-Inference: the threat to a product that asks an agent to write verified Rust is high for specification generation and medium for proof repair. Verus can reject an inconsistent proof, but it can accept an overpermissive or incomplete `ensures`; an agent can also encode the wrong requirement consistently. VL should reuse the paper's separation of syntax/runtime failures from semantic requirement errors, bounded revision from checker diagnostics, and independent evaluation of every constraint. VL should not redo this paper's broad comparison of Python and SMT formalizers; its useful open problem is faithful requirement extraction and coverage checks for Verus contracts.
-
 ## techniques for the catalog
 
 - CSP decomposition — represent natural-language requirements as variables, finite domains, and Boolean constraints before solving
@@ -63,4 +57,3 @@ Inference: the threat to a product that asks an agent to write verified Rust is 
 - constraint-complete evaluation — accept a plan only when it satisfies every manually annotated constraint
 - complexity-stratified evaluation — compare correctness across constraint-count percentiles or dataset strata
 - hard-code detection — inspect generated reasoning and code for solver-like search or literal answers that bypass formal constraints
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Despite those shortcomings, one of the built-in advantages of LLM-as-formalizer is its improved interpretability, verifiability, and faithfulness, as previously discussed."): I read the whole paper text (pp. 1-17) and checked every quotation, number, section and page reference, and technique step against it. I changed: the link (the old DOI was the DeepSeek-R1 Nature paper, now the arXiv page from the paper's header); the abstract quotation ("underperforms"); page numbers for Section 5.1 (p. 4), the error-type list (p. 6) and the spurious-reasoning quote and 90% figure (p. 9); the count of formalizer variants (four, not three); the 9:16/9:18 example wording; the "Python with revision" complexity claim; and I labeled steps (1)-(3) and the trust list as Inference and added the paper's own internal inconsistencies. I did not check the Figure 2, 3 and 6 values (bar charts and pie charts are not legible in the text), the cited prior work, or the linked code repository.

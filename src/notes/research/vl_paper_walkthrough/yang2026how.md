@@ -86,12 +86,9 @@ Inference: use recursive `spec fn` definitions when they simplify a mathematical
 
 Rocq proves concrete acceptance or rejection obligations. It does not prove universal specification equivalence. Trusted inputs include manually authored specifications, HumanEval+ positive cases, mutation-generated negatives, Rocq, and the proof model’s interaction protocol. The paper reports six models and more than 100,000 proof attempts, 620 mutants, and 123,952 positive test cases over the benchmark (Limitations, p. 9). It is limited to Rocq and 164 HumanEval tasks.
 
-Inference: for agent-written verified Rust, C OINS-like test instantiation is a useful specification triage layer before universal Verus proofs. It lowers the threat of silently permissive contracts when negative mutations are available, but cannot establish absence of untested behaviors. VL should reuse the staged evidence accounting and verifier calibration; it should not treat a concrete-case pass rate as product safety.
-
 ## techniques for the catalog
 - concrete specification instantiation — substitute test input-output pairs into a formal predicate and prove the resulting obligations
 - mutation-generated negatives — derive incorrect behaviors from implementation mutations and require the predicate to reject them
 - staged filtering — filter syntax, first positive, all positive, and negative rejection in sequence
 - verifier calibration — anchor prover choice on fixed human-written specifications and track evaluation duality
 - executable recursive specifications — use Fixpoint-like ghost recursion when it reduces specification and proof complexity
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

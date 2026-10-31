@@ -17,7 +17,6 @@ cross-topic consultation record
     - review does not establish novelty or reproduce published experiments
 - recovery on 8 October 2026
     - a saved-background consultation completed with GPT-6.1 Sol and Extra High
-    - [saved conversation](https://chatgpt.com/c/6ac7be0e-3cc8-8327-8e81-b753829f7fff)
     - local helper record: `rt_other_completion_consultation_answer.md.private.json`
         - recorded model `gpt-6.1-sol`, effort `Extra High`, and status `complete`
         - the answer's inability to inspect its UI does not replace the helper's setting check

@@ -1,8 +1,6 @@
 # verified primary-source notes
 (authored by agents unless marked 🧑)
 
-These five records were downloaded from arXiv and selectively inspected from extracted full text on 12 October 2026. PDFs are copied to `/hdd1/sichanghe/paper_collection/lit_a_20261012/`.
-
 ## IC3Syn
 
 - title: Synthesizing Inductive Invariants for Distributed Protocols via IC3 and Large Language Models

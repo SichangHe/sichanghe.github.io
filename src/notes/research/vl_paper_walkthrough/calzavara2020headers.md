@@ -37,8 +37,6 @@ The inconsistent policies comprised 590 security-oriented (33%), 795 compatibili
 
 The authors also tested Referer sniffing, in which a server selects an XFO value from the request's Referer. They requested pages using a CSP-whitelisted host, synthesizing a matching host for wildcard expressions, and checked whether the Referer was reflected in XFO. Only 11 of 2,198 tested pages used this mechanism, limiting this potential source of false positives (§5.2, p. 690).
 
-Inference: The central engineering lesson is to report both security and compatibility orderings, because “inconsistent” alone hides whether a mismatch is conservative or dangerous. VL's policy-verification tooling should preserve denominators, browser versions, and crawler selection as part of evidence.
-
 ## retrofit a consistent policy at the server
 
 The paper's proxy (~800 lines of Python) rewrites response headers (§6.3, p. 694). For responses with XFO but no CSP frame-ancestors directive, it folds multiple XFO headers into one comma-separated value, simplifies the directives to their conjunction using Table 8, and adds an equivalent CSP header. For responses with CSP frame-ancestors, it strips XFO and, as described in the paper, computes the union of source expressions from all frame-ancestors directives. It adds `DENY` when CSP denies framing, `SAMEORIGIN` when CSP allows only same-origin framing, and otherwise `ALLOW-FROM` set to the Referer's origin when that URL matches a collected expression. An absent or nonmatching Referer yields `DENY` (§6.3, p. 694).
@@ -54,14 +52,6 @@ The reported consistency guarantee is for the tested browser set and excludes do
 
 Inference: A Verus proof would need to model Referer handling, browser precedence, and multiple CSP headers before establishing a rewriting guarantee. The paper says multiple CSP headers enforce their conjunction (§6.3, p. 694), whereas its proxy description takes a union of source expressions. These operations differ for multiple frame-ancestors directives; the prose alone does not establish equivalence in that case.
 
-## assumptions, limitations, and product threat
-
-The framework models selected browser versions (10 browsers in Table 2, p. 687), not every implementation or future version. Header collection can miss user-agent-dependent responses; the authors filtered pages where one user agent lacked headers and acknowledge this may lose inconsistencies (§5.1, p. 689). Firefox dropped ALLOW-FROM in version 70; excluding Internet Explorer and Opera Mini reduced inconsistencies from 1,800 to 289 (§5.4, p. 692). The proxy prioritizes CSP and can relax XFO when CSP is less restrictive, based on an assumption that administrators intended the modern-browser behavior (§6.3, pp. 694–695).
-
-The paper explicitly does not establish practical exploitability: “we cannot show that even policies that do not provide any form of framing control in some browsers lead to exploitable vulnerabilities in practice.” Its top-10,000-site sample also limits generalization (§5.5, p. 692). The authors leave systematic compatibility evaluation of countermeasures to future work (§8, p. 696).
-
-Inference: Agent-written verified Rust faces the same specification-drift threat: a proof of an abstract policy does not establish that every client enforces it. The paper already supplies a reusable formal classification, differential testing workflow, and fail-closed rewriting strategy. VL should not redo generic header consistency analysis; it should apply these ideas to its own protocol and browser boundaries, with explicit model-version and denominator records.
-
 ## techniques for the catalog
 
 - denotational policy model — map each implementation's headers to an allowed-origin set
@@ -70,4 +60,3 @@ Inference: Agent-written verified Rust faces the same specification-drift threat
 - adversarial header test suite — probe unsupported directives, repeated headers, commas, and nested framing
 - wild-policy measurement — crawl, deduplicate, and report vulnerability fractions with class denominators
 - fail-closed policy proxy — synthesize conservative legacy headers from modern policy semantics
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The first analysis we perform aims at understanding how much security legacy browsers sacrifice for such policies."): read the complete paper text; checked quotations, counts, section/page references, definitions, analyzer, collection method, proxy steps, and limitations; corrected the link to the publisher page printed in the paper, references, class conditions, and finite-set inference; added the double-framing exclusion, collection details, exploitability limitation, and a labeled inference about union versus conjunction; did not inspect artifact code, reproduce experiments, verify browser implementations, or validate the proposed Verus applications.

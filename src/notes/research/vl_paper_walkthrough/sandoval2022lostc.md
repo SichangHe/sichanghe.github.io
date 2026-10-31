@@ -16,7 +16,7 @@ How to do it. (1) Give both groups identical video instructions, source template
 
 When to use it. Use this design when the question is how a human-plus-agent workflow changes code, rather than what an autonomous model emits. Random assignment gives a baseline for function and security outcomes, while logging allows suggestions and edits to be attributed.
 
-Verus form. Inference: compare VL users or agents with and without lemma-generation assistance on the same pinned Verus tasks. Randomize task order and assistance condition, but keep the Verus binary, solver, dependencies, and specification frozen. Outcomes should include verified obligations, time, edits, specification changes, and independent recheck results. A human study is evidence about workflow behavior, not proof that generated Rust is secure.
+Verus form.
 
 Evidence and limits. The analyzed denominator is 58 completers, not the 105 sign-ups. The authors recruited students as proxies, citing prior work that students are reasonable proxies for developers (§3.2, p. 4), and caution that the assignment's unusual API and the C language may limit generalization (§5.2, p. 13). The study was run on participants' own computers rather than in a lab, which the authors chose for realism at the expense of control (§3.2, p. 4). Inference: a Verus study needs experienced Rust users or a separate expertise analysis; C pointer bugs and Verus proof failures are different phenomena.
 
@@ -40,7 +40,7 @@ How to do it. (1) Review each function independently, one function at a time. (2
 
 Verus form. Inference: make the equivalent audit a layered check: Verus contracts and invariants for memory safety and functional properties, Rust compiler checks, targeted tests, and manual review of `assume`, external specifications, unsafe code, and FFI. Record each finding using a stable taxonomy and source span. Verus proofs can establish only the stated predicates; they do not automatically prove that a contract captures the security requirement. A sanitizer or fuzzing run remains useful for executable paths outside the proved model; the paper itself did not use either for its counts.
 
-Evidence and limits. “Manual analysis, while thorough, does not scale well” (§4.3.1, p. 9). The paper's metric counts CWE instances, and Table 6 (p. 17) lists downstream severe CWEs for some non-severe ones (for example CWE-401 leading to CWE-400); §4.3.5 also notes that missing NULL checks cause many CWE-758 instances (pp. 11–12). Inference: VL should preserve both root cause and downstream effects and report the audit cost; a proof pass cannot be equated with zero CWE incidence without a checked mapping from the property to the vulnerability taxonomy.
+Evidence and limits. “Manual analysis, while thorough, does not scale well” (§4.3.1, p. 9). The paper's metric counts CWE instances, and Table 6 (p. 17) lists downstream severe CWEs for some non-severe ones (for example CWE-401 leading to CWE-400); §4.3.5 also notes that missing NULL checks cause many CWE-758 instances (pp. 11–12).
 
 ## technique 4: non-inferiority security metric with explicit tolerance
 
@@ -68,13 +68,9 @@ Verus form. Inference: log every generated lemma, contract edit, invariant, and 
 
 The study measures functionality, CWE incidence, and provenance under one two-week C assignment, with 58 completers and five manually audited autopilot answers. It does not prove the absence of vulnerabilities. Trusted elements include participant self-reporting, randomization, the cloud IDE logs and snapshots, test/reference code, manual CWE judgments, statistical tests, and the chosen 10% threshold. The authors caution that the task's unusual linked-list API and C language may affect results (§5.2, p. 13), and that snapshots every 60 seconds limit “the kind of fine-grained analysis that might have been possible” (§5.2, p. 13).
 
-Inference: VL should not redo a generic claim that LLMs can emit vulnerable code. The new product evidence needed is a Verus-specific study of specification quality, unsupported assumptions, proof maintenance, and independent replay. The threat to agent-written verified Rust is medium for implementation bugs when Verus checks memory and functional contracts, but high for wrong or weak specifications, external-body assumptions, FFI, and provenance that is not reviewed. The paper's own conclusion is deliberately narrow: “This is somewhat surprising given the existing published studies on how vulnerable code can be suggested by the LLMs” (§6, p. 13).
-
 ## techniques for the catalog
 - randomized assistant study — compare human or agent workflows with and without suggestions on the same frozen programming task
 - split-function testing — isolate each API unit with known-good replacements and report compile and test denominators
 - layered security audit — combine manual CWE review, static checks, runtime tests, and fuzzing while resolving tool errors
 - non-inferiority metric — preselect a tolerance and test bug incidence per line or function with explicit denominators
 - provenance matching — align final code with timestamped suggestions to classify how defects entered and spread
-
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Since most users submitted valid implementations for a subset of the 11 functions they were tasked with implementing, we compute CWEs/LoC over those functions."): the whole paper text was read; quotations, numbers, section and page references, and the technique steps were checked against it; changed the link to the arXiv page, replaced page numbers (they referred to a 20-page layout; the arXiv PDF has 18 pages), corrected section references (non-inferiority test is §3.7, not §3.5), removed an unsupported claim that splitting overestimates functionality and the claim that the authors ran static analysis and sanitizers, fixed the Table 3 description (severe CWEs), the 22% figure, and the Table 4 rounding statement, and added the paper's own inconsistencies (30/28 vs 29/29, 11 vs 12 basic tests, p = 0.06); did not check the appendix tables line by line, the cited references, or the Verus-form inferences beyond labeling them as inference.

@@ -72,17 +72,9 @@ how to do it:
 
 Evidence: Example 9 chooses `Q={xk²−w}` and derives `p−(xk²−w)=ψ+Σj≠k xj²`, an SOS expression (Section 6, p. 14). Inference: this is a principled way to turn one automatically generated invariant into several Verus loop-invariant conjuncts, but every added conjunct still needs an exact proof.
 
-## trusted boundary, contradictions, and product threat
-
-The paper proves Lemma 1, Proposition 1 and Proposition 2 for real-valued polynomial systems. It does not discuss SDP solver tolerances or floating-point rounding of the computed certificates; it mentions floating-point arithmetic only as a possible cause of wrongly evaluated branch conditions in Example 8 (p. 13). Inference: numerical optimization, floating-point SDP tolerances, solver implementations, and the abstraction from Rust to polynomial real state therefore lie outside what the paper proves, and an agent-written verified Rust product must treat the optimizer as an untrusted invariant synthesizer and ask Verus to check the final invariant against executable code.
-
-The paper reports timing and concrete bounds, not a corpus-wide percentage. Table 1 (p. 12) prints, for d=4 at degree 8, “Nb. vars” 18480 and “Mat. size” 373057, while the degree-6 column has 65306 and 6622. Inference: the two degree-8 values look swapped, since the matrix size would not exceed the variable count in the neighboring columns; both displayed values are retained. Inference: VL should reuse SOS as a search method for numeric loop invariants and should not redo generic interval-only invariant generation for polynomial controllers. The threat to a product is high for floating-point control code if numerical certificates are accepted without exact checking; it is lower for ordinary ownership proofs because this technique does not model memory or Rust lifetimes.
-
 ## techniques for the catalog
 
 - piecewise-polynomial loop abstraction — encode SSA loops as guarded polynomial transitions and use `F(P)⊆P` for inductiveness
 - property-driven polynomial invariant — optimize `w` so `R⊆{p≤0}⊆{κ≤w}⊆{κ≤α}`
 - SOS semidefinite hierarchy — replace global polynomial inequalities with SOS identities and solve degree-bounded SDP relaxations
 - SOS template completion — add `q≤0` when `p−q` is SOS to obtain a richer inductive template basis
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Thus, one expects tractable approximations when the number d of variables (resp. the degree 2m of the template p) is small."): read the whole paper text (arXiv 1503.07025v1, 17 PDF pages) and checked the quotations, the formulations of Problems (11) and (13), Lemma 1, Propositions 1 and 2, Examples 3, 4, 7 and 9, the Table 1 timings, the Table 2 bounds, the benchmark setup, and every page reference (page numbers here are PDF pages, which I recomputed because many earlier ones were wrong); I changed the page and section references throughout, removed the unsupported claims that Problem (11) is nonconvex, that the hierarchy is complete only in special conditions, and that the paper's soundness assumes exact SDP certificates, replaced the Example 2 pointer for the negative bound with Example 7, corrected the Table 1 description (column, not row), labelled my own readings as Inference, and kept the tag and the arXiv link (which is in the paper text); I did not check the Verus adaptations, which are the study's own inferences, the references, the plotted figures 2 and 3, the Example 5 and 6 formulas, or the cited external works.

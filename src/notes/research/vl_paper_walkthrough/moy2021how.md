@@ -6,8 +6,6 @@ Tag: `moy2021how`, [paper](https://doi.org/10.4204/EPTCS.338.12)
 
 Moy describes interaction patterns in SPARK/GNATprove for the cases where automatic proof stops. The analyzer progressively exposes (1) the immediate failing property, (2) a likely root cause, (3) a suggested repair, and (4) the underlying verification condition when expert investigation is needed. The paper's core claim is practical rather than a benchmark theorem: “The SPARK proof tool tries to help the user by providing the right information, so that the user can help the tool complete the proof.” (Abstract, p. 97). Evidence is a worked `Erase` procedure whose diagnostics lead from an array-index counterexample, through a missing loop invariant and a recursive `All_Blanks` that cannot be used as an axiom, to a suggestion to give `All_Blanks` a postcondition or make it an expression function, and finally to an initialization invariant (`'Initialized`) found by inspecting the verification condition.
 
-Inference: this feedback design transfers directly to VL because Verus diagnostics also identify failed assertions and missing proof facts. The transfer requires preserving Rust source names, ownership context, and exact verifier assumptions.
-
 ## technique: first-aid diagnostics
 
 When to use it: use precise local diagnostics when a runtime-safety or contract check fails and the user needs to understand the immediate violation before changing the proof. The analyzer should display the severity, source location, failed property, a minimal sub-property, and a concrete counterexample when available.
@@ -22,7 +20,7 @@ Steps from Section 2 (pp. 97–98):
 
 The paper's example reports “array index check might fail,” then explains that assigning into an array requires a valid index (Section 2, p. 98). It notes that this is especially useful for beginners who may assume strings start at index one. The paper also says the smallest unproved sub-property is useful for preconditions and loop invariants that are conjunctions.
 
-Verus form: Inference: a VL interface should attach each failed `assert`, `requires`, `ensures`, or loop `invariant` to the exact Rust span and show the relevant locals, types, and ownership facts. A counterexample must be labelled as a model trace, because an SMT model can be spurious. Inference: when Verus emits several obligations, prioritize the smallest failed obligation while retaining a link to the parent contract.
+Verus form:
 
 ## technique: probable-cause tracing through proof frames
 
@@ -61,12 +59,6 @@ Verus form: Inference: expose the failed obligation, normalized assumptions, tri
 
 Moy warns that counterexamples can be spurious when they reflect solver limits, such as nonlinear arithmetic, or a frame abstraction rather than an executable path (Section 6, p. 103). SPARK therefore enables them by default only at higher proof-effort levels and is working on symbolic execution to validate traces. The paper's evidence for usefulness is anecdotal: “We have lots of anecdotal evidence that this helps users, in the form of positive feedback to our message improvements.” (Section 1, p. 97). Inference: it reports no controlled user study and no success rates. It concludes that “Program proof is intrinsically an interactive effort between a human and a machine, as complete automation is not achievable.” (Section 7, p. 103).
 
-Inference: the threat to VL is high for usability and repair latency, not for the soundness boundary. A model that receives the exact failing obligation, probable cause, and candidate invariant should need fewer blind edits. The diagnostic itself remains advisory; Verus's final check, Rust's type system, solver soundness, imported specifications, and correctness of the user's contract remain trusted boundaries.
-
-## what VL should not redo
-
-The paper already covers local counterexample messages, minimal-property splitting, backward probable-cause analysis, pattern-based fix suggestions, proof-VC inspection, and explicit initialization invariants. VL should reuse these interaction patterns and measure them on Verus diagnostics rather than repeat a generic claim that better messages help. A new study should quantify repair time, accepted versus rejected suggestions, spurious counterexample rate, and performance across novice and expert users.
-
 ## techniques for the catalog
 
 - first-aid diagnostics: show exact location, failed property, minimal sub-property, reason, and a concrete trace
@@ -75,4 +67,3 @@ The paper already covers local counterexample messages, minimal-property splitti
 - proof-frame disclosure: explain unrolling, contract abstraction, and unavailable recursive definitions when they affect proof
 - VC inspection: expose a proof tree, source-mapped goal, and commands for searching the logical encoding
 - initialization invariants: state and prove that every progressively written element is initialized before it is read
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Indeed, GNATprove handles differently regular functions, which may themselves contain imperative constructs like loops, and so-called expression functions, which can be readily interpreted in logical terms."): read the whole paper (pp. 97-104) and checked every quotation, section and page reference, the Erase example steps, the switches (--info, --proof-warnings), the command names and the claims about counterexamples and evidence; changed the link to the DOI printed in the paper (doi:10.4204/EPTCS.338.12), expanded the Erase evidence summary, restored the full wording of the "possible fix" message, fixed `__attr__init`, added the Relaxed_Initialization step, quoted the anecdotal-evidence and conclusion sentences and corrected the conclusion page (103, not 104), marked the no-user-study remark as Inference; did not check the Verus/VL inferences against any Verus documentation, nor the cited references beyond the paper text.

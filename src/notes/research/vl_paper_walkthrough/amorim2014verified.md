@@ -86,18 +86,9 @@ Inference: a possible Verus adaptation would encode matching relations for memor
 
 Evidence: Theorems 9.8 and 9.9 establish both trace directions; Theorem 10.8 (PDF p. 28) states TINI for the concrete IFC machine. TINI is termination-insensitive and therefore leaves progress leaks outside the proved property.
 
-## limits, trust, and product threat
-
-Section 11 extends the Coq formalization and proofs to dynamic allocation, system calls, and labels represented as arrays of principals. Allocation is built in: “It would be interesting to describe an implementation of the memory manager in a still-lower-level concrete machine with no built-in Alloc instruction, but we leave this as future work.” (Section 11.1, footnote 6, PDF p. 31). Label representations use a memory-dependent relation rather than the basic Tag/Lab functions. The handler preserves existing tag arrays: “each execution of the fault handler only allocates new frames, and never modifies the contents of existing ones, except for the cache frame (which tags never point into).” (Section 11.3, PDF p. 33).
-
-The model omits concurrency, process scheduling, and interprocess communication: “the whole machine has a single, deterministic thread of control.” (Section 2, PDF p. 6). Its property excludes timing and termination leaks: “Our TINI property ignores both termination and timing: a program that diverges, fails, or takes varying amounts of time to run based on a sensitive input is considered secure.” (Section 12, PDF p. 35). External communication is idealized: “In the real SAFE machine, atoms being sent to the outside world need to be protected cryptographically; we are abstracting this away.” (Section 3, footnote 2, PDF p. 8). Inference: applying the verified model to a deployed system requires trust in Coq’s logic and proof checker and evidence that the implementation matches the modeled semantics.
-
-Inference: for agent-written verified Rust, this architecture is relevant prior work for a product promising dynamic information-flow enforcement with generic policy interpretation; the paper does not establish the degree of product overlap. It gives VL a reusable decomposition: abstract policy, rule DSL, compiled monitor, refinement, and noninterference. It does not establish that ordinary Rust libraries, hardware, or OS behavior satisfy the abstract machine, and TINI does not cover termination or all side channels. VL should not redo a generic IFC monitor without addressing these stated boundaries.
-
 ## techniques for the catalog
 
 - abstract dynamic IFC machine — label values, control flow, stores, and outputs with a lattice and enforce no-sensitive-upgrade
 - symbolic rule DSL — separate policy expressions from instruction semantics and prove the selected table implements the abstract machine
 - cached software monitor — compile rules into a verified fault handler while hardware caches common decisions
 - bidirectional refinement — prove concrete and abstract traces match in both directions before transferring TINI
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This guarantees that traces of the abstract machine are also emitted by the concrete machine."): checked every quotation, number, section/page reference, technique step, and stated limitation against the complete supplied paper, including its bibliography; corrected three quotations and the Add quotation’s page, clarified cache faults and TINI transfer, marked adaptation advice as inference, and added model limits; did not check the Coq repository, actual hardware, or feasibility of the proposed Verus adaptations.

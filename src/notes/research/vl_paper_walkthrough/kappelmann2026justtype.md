@@ -54,19 +54,9 @@ The workflow gives an engineering pattern for using an LLM on formal verificatio
 
 For autoformalization, connect the coding agent to Isabelle through Isabelle/Q, provide an interaction guide, and require a formalization plan before editing theories (section 6.1, page 16). Human review checks alignment of theorem statements and definitions; Isabelle checks proof correctness. A remaining mismatch in the AI formalization fixed a concrete post-order enumeration while claiming order abstraction (section 6.2, pages 16–17), showing that solver-checked proofs do not validate the intended abstraction automatically.
 
-Verus form (inference)
-The analogous VL workflow would generate Rust/Verus specifications and proofs, run `verus` continuously, and require a separate reviewer to compare contracts with the intended behavior. Isabelle’s locale and inductive-predicate structure would correspond to Verus spec datatypes, `requires`/`ensures`, and proof lemmas. Human review remains necessary for specification alignment and model assumptions.
-
-## threat and reuse for VL
-
-Inference: The paper demonstrates that an agent can produce substantial verified metatheory, but its documented errors show a direct threat if VL accepts agent-written contracts without independent review. Isabelle found proof-valid artifacts whose statements were misaligned with the paper; analogous Verus proofs could establish an unintended Rust contract. The transferable practice is a three-part gate: executable artifact, mechanically checked proofs, and human or independent-agent audit of definitions, assumptions, and correspondence to the product requirement.
-
-Inference: VL should reuse the coverage-test pattern for annotation or proof-obligation minimization only after defining the semantic preservation property. The paper’s own result depends on explicit assumptions, most-general completions, and a finite decreasing measure; none transfers automatically to Rust memory or concurrency semantics.
-
 ## techniques for the catalog
 - maybe-type completion model — represent partial annotations with `⊥`, define well-typed completions, and specify printing by unique most-general completion
 - coverage-test reverse greedy — repeatedly erase an annotation only when every type variable at its position remains covered elsewhere
 - sandwich uniqueness proof — prove a completion is unique by bounding it between current annotations and a fixed most-general completion
 - Isabelle agent workflow — iterate LLM-generated specifications through human review, Isabelle proof checking, and statement-alignment audits
 - human-hinted autogeneralization — reduce an ad hoc algorithm to an independence-system greedy theorem and mechanize the reduction
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

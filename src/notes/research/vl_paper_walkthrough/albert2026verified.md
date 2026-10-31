@@ -101,10 +101,6 @@ Verus form: Inference: use a Rust harness to parse the same JSON and invoke a Ve
 
 Evidence and limits: 100% of the 1,550 included contracts pass, with 3 omitted unsupported contracts. The experiment measures step-4 OCaml checking time after representation generation; it does not include solc compilation or JSON translation. The paper reports this scope explicitly (Section 5, pp. 270–271).
 
-## what remains trusted and threat to VeruLaw
-
-Inference: applying FORYU's theorem to deployed code requires trust in the Rocq kernel and extraction/compiler chain, faithful translation from solc's CFG-SSA JSON to Rocq, and correspondence between the instantiated dialect and EVM behavior. The paper establishes liveness-checker correctness relative to its semantics, rather than correctness of the whole compiler. For VeruLaw, the reusable proposal is a verified validator for untrusted analysis results; a Verus port would still need a semantic model, a proof relating its liveness representation to that model, and a justified compiler-to-model translation.
-
 ## techniques for the catalog
 
 - parameterized CFG-SSA semantics — model dialect-independent YUL control flow and EVM-specific operations in Rocq modules
@@ -113,5 +109,3 @@ Inference: applying FORYU's theorem to deployed code requires trust in the Rocq 
 - coinductive liveness — encode cyclic live-in/live-out equations with mutually coinductive predicates
 - verified analysis checker — for valid contracts, prove a Boolean checker equivalent to the coinductive liveness predicates
 - translation-validation pipeline — translate solc output, run the extracted checker, and validate a 1,550-contract corpus
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The next proposition states that the top stack frames of states st1 and st2 agree on the values of all variables that are immediately accessed."): checked every quotation, number, section/page reference, and technique step against the full paper; corrected printed page references, quotation punctuation, theorem prerequisites, deadness and checker descriptions, and unsupported claims; did not inspect the implementation or artifact, reproduce proofs or experiments, or validate the proposed Verus adaptations.

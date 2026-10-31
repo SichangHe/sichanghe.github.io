@@ -101,8 +101,6 @@ Count every stub you add as a new assumption.
 ([Verifying the Rust standard library](../vl_paper_walkthrough/verifying_the_rust_standard_library_20261012.md),
 [Verus systems](../vl_paper_walkthrough/verus_practical_20261012.md).)
 
-## variants by paper
-
 ### choosing what to verify
 
 [Toward practical deductive verification](../vl_paper_walkthrough/toward_practical_deductive_verification_20261012.md)

@@ -20,7 +20,7 @@ how to do it
 4. Publish benchmark problems, outputs, metadata, code, costs and per-problem traces through the public interface, except Project Euler answers (sections 3.2 and 4.1, PDF pp. 4–5).
 5. Report confidence intervals and expected cost alongside performance (appendix A.1, PDF pp. 19–20). Models are normally run four times per benchmark and scores are averaged. Expected cost averages per-problem costs over non-deprecated, non-Euler competitions, weighting benchmarks by problem count; missing costs are predicted with a fitted log-additive model.
 
-The paper's newly introduced inventory has 12 benchmarks: for example, ArXivLean has 41 formal-proof problems and uses “Formal verification in Lean,” while BrokenArXiv has 87 reliability problems and uses an LLM judge (Table 1, PDF p. 5). Inference: a VL evaluation service should version its Verus task pool, retire tasks when agents memorize them, and preserve old versions for longitudinal comparison.
+The paper's newly introduced inventory has 12 benchmarks: for example, ArXivLean has 41 formal-proof problems and uses “Formal verification in Lean,” while BrokenArXiv has 87 reliability problems and uses an LLM judge (Table 1, PDF p. 5).
 
 Verus form
 
@@ -28,7 +28,7 @@ Inference: represent each task with a versioned Rust/Verus specification, input 
 
 evidence and limits
 
-The paper also warns that construct validity can conflict with reliability, scalability and openness: “For example, open benchmarks rule out unrestricted web search, even though such tools are frequently used in practice.” (section 3.2, PDF p. 4). Inference: VL results should state whether network access, retrieval and repair tools are enabled, because a pass rate without that setting is not reproducible.
+The paper also warns that construct validity can conflict with reliability, scalability and openness: “For example, open benchmarks rule out unrestricted web search, even though such tools are frequently used in practice.” (section 3.2, PDF p. 4).
 
 ## technique 2: reliability testing by perturbing true research claims
 
@@ -66,15 +66,11 @@ The detailed procedure is in appendix A.6.4 (PDF pp. 24–25):
 
 Inference: the Verus analogue should freeze a reviewed Rust/Verus contract before generation, compile and verify candidate code, and separately compare the generated contract's semantics with the source statement. Use Verus `ensures` and `invariant` constructs only where they are part of the reviewed contract; do not treat a successful proof as evidence that the translation was faithful.
 
-GPT-5.5 scores 17.1% on ArXivLean in Table 2, with 41 tasks in Table 1. The paper explains that “a single problem potentially demanding thousands of lines of Lean code” makes this a high bar (section 5.2, PDF p. 9). ArXivLean is updated every three months, unlike monthly ArXivMath and BrokenArXiv (appendix A.6.1, PDF p. 23). Inference: a VL study should report proof completion rate, contract-review failures and timeout counts separately.
+GPT-5.5 scores 17.1% on ArXivLean in Table 2, with 41 tasks in Table 1. The paper explains that “a single problem potentially demanding thousands of lines of Lean code” makes this a high bar (section 5.2, PDF p. 9). ArXivLean is updated every three months, unlike monthly ArXivMath and BrokenArXiv (appendix A.6.1, PDF p. 23).
 
 ## technique 4: human and semi-automatic proof grading
 
 For proof competitions, MathArena uses three protocols. Organizers officially grade Miklós Schweitzer and Putnam submissions; internal experts manually grade IMC using per-problem schemes; USAMO uses an LLM jury followed by manual review (section 4.3, PDF p. 6). For USAMO, the authors generated rubrics with Gemini 3.1 Pro Preview and substantially revised them manually; standardized proof formatting while preserving mathematical content; enabled code execution; and used GPT-5.4, Gemini 3.1 Pro Preview and Claude Opus 4.6 as judges. If their scores differed by more than the agreement threshold, they received all initial judgments for a second round; the minimum final score was used. Although the main description recommends agreement within one point, the footnote says, “Due to a bug in our pipeline, the minimum was already taken when graders agreed within two points, but we recommend a one-point threshold for future evaluations.” (appendix A.5, PDF p. 22). Human review covered every solution, but for the two geometry problems reviewers assumed the jury had identified all relevant issues and mainly checked consistent scoring. Inference: this limits the independence of that human reference. The paper reports that automated grades are close to reviewed grades for most USAMO solutions, but individual judges over-score some models (Table 3, PDF p. 9). Inference: Verus product evaluation can use verifier pass/fail as the primary signal and a sampled expert audit for specification adequacy, with disagreements retained rather than hidden.
-
-## evidence, trust and product threat
-
-MathArena's headline numbers include GPT-5.5 at 92.3% final-answer, 94.9% visual math, 98.2% USAMO, 17.1% ArXivLean, 71.7% BrokenArXiv and 74.1% ArXivMath, with expected cost $1.26 per problem (Table 2, PDF p. 8). These denominators differ by benchmark, and missing entries mean a model was not evaluated. The paper explicitly lists missing interactive problem-solving, broader mathematical work and broader tool use as limitations (section 6, PDF p. 9). ArXivMath and BrokenArXiv evaluations do not enable tools; appendix D reports that initial code-execution experiments gave only small improvements, “(< 5%)” (PDF p. 30). ArXivLean does enable tools. Inference: the evaluation depends on the quality of human review, generated questions, LLM grading, statement translation and the formal proof-checking environment. Inference: the threat to agent-written verified Rust is high if VL reports only verifier success, because a benchmark can fail to detect vacuous contracts, false claims or mismatched formalizations. Inference: VL should reuse independent statement checking, false-claim tasks, cost tracking and public traces, and review whether each Verus contract faithfully represents the intended task.
 
 ## techniques for the catalog
 
@@ -83,4 +79,3 @@ MathArena's headline numbers include GPT-5.5 at 92.3% final-answer, 94.9% visual
 - formalization plus independent checker: manually validate generated Lean statements and block syntax-level cheating
 - multi-protocol proof grading: combine official grading, expert rubrics, jury scoring and manual review
 - cost and trace reporting: publish per-model scores, expected cost, outputs and benchmark context together
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each evaluated model is given both a natural-language description of the problem and the exact formal Lean statement to prove."): checked every study quotation, number, section/page reference and technique against the full text, including appendices; corrected the paper link, page references, aggregate-score interpretation, BrokenArXiv partial-credit scoring, ArXivLean checking order and safeguards, USAMO jury threshold bug and review limits, update schedules and tool settings; did not reproduce experiments, inspect implementation code, independently validate mathematical claims, or test the proposed Verus adaptations.

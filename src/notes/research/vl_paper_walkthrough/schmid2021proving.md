@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `schmid2021proving`, [paper](http://arxiv.org/abs/2103.07699v1)
 
-
 ## problem and result
 
 Schmid and Kuncak present a verifier for deterministic Scala programs with shared mutable references. Its distinctive choice is to encode heap mutation into recursive pure functions and express frame conditions with quantifier-free formulas over Z3's extended array theory. The abstract states: “This quantifier-free encoding enables SMT solvers to prove safety or report counterexamples relative to the semantics of procedure specifications” (Abstract, p. 1).
@@ -65,4 +64,3 @@ Inference: the threat to agent-written verified Rust is high for APIs that manip
 - quantifier-free heap encoding — translate mutable references to pure heap maps and Z3 array combinators
 - modular frame checking — use wrappers and map-merge equations to enforce caller/callee footprint inclusion
 - disjoint-task specification — require cross-read/write disjointness before replacing sequential fork-join models with parallel execution
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our encoding achieves modular verification of heap contracts (reads and modifies) by injecting some additional assertions and assumptions."): read all 12 pages of the arXiv v1 text (sections 1-4 and the references); checked the quotations, Figure 1/2/4/5 contents, section and page references, and the technique steps against the text. Changed: removed "finite" (the paper does not say it), narrowed the array-combinator quotation to the exact sentence, corrected pages (downcast note is p. 7, not p. 8; frame-condition translation ends p. 8), fixed the `parallel` precondition (write set of each task disjoint from the other's read set, with unions as reads/modifies), restricted the linked-list claims to what Section 4 states (append, and queue functional correctness), reworded the evaluation and trust paragraphs, and marked my own conclusions "Inference:". Not checked: the Verus-form paragraphs and the final threat/opportunity paragraph are my inferences, not claims from the paper; I did not check the Stainless or Z3 sources or the paper's cited works.

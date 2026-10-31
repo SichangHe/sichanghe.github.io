@@ -6,7 +6,7 @@ Tag: `barthe2019tracelogic`, [paper](http://arxiv.org/abs/1906.09899v3)
 
 Barthe and coauthors introduce trace logic, a first-order logic whose functions explicitly take program timepoints and execution traces. The method encodes a while-language program's semantics and a relational property into one first-order validity problem. A theorem prover then checks partial correctness. The representation is designed for hyperproperties such as non-interference and sensitivity, where one must compare two executions.
 
-The abstract says: “Our framework reduces verification of relational properties of imperative programs to a validity problem in trace logic” (p. 1). The paper's key implementation is R APID, which emits SMT-LIB and invokes VAMPIRE's resolution and superposition (Section VI-A, p. 7). Inference: VL can use the same two-trace specification pattern for information-flow properties of Rust functions, but Verus proofs would encode relations as ghost sequences and state-machine invariants rather than invoke R APID directly.
+The abstract says: “Our framework reduces verification of relational properties of imperative programs to a validity problem in trace logic” (p. 1). The paper's key implementation is R APID, which emits SMT-LIB and invokes VAMPIRE's resolution and superposition (Section VI-A, p. 7).
 
 ## technique 1: encode variables by timepoint-and-trace functions
 
@@ -87,15 +87,9 @@ Failure and assumptions. The experiments use small W programs and security prope
 
 The paper states W-soundness of the statement semantics for terminating programs (Theorem 1, proof in the Appendix); benchmark properties are proved when VAMPIRE finds a refutation. Measured results are 27 benchmark encodings, under-one-second encoding generation, and solver counts 25/27 (VAMPIRE), 13/27 (Z3), and 14/27 (CVC4) (Section VI-B, pp. 7–8). Inference: trusted components include the W-to-trace encoding, generated trace lemmas, the SMT-LIB translator, arithmetic and array theories, and VAMPIRE's implementation. Inference: for agent-written verified Rust, the approach threatens only the relational-verification gap; it does not replace Verus's source semantics or establish that low/high labels match product policy.
 
-## what VL should not redo
-
-VL should not redo the trace-logic definitions, generic loop lemmas, or the 27-problem R APID comparison. A useful extension would test a generated relational-contract layer on real Verus APIs, with explicit measurements of proof repair after code and dependency changes.
-
 ## techniques for the catalog
 
 - trace-indexed variables: model every variable as a function of program timepoint and execution trace
 - sound statement encoding: translate assignments, branches, and loops into first-order trace axioms
 - generated trace induction: add proved loop and array lemmas for synchronized iterations and preservation
 - hyperproperty contracts: encode non-interference and sensitivity as first-order relations over two traces
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Property (17) is essential to prove that the loops in both traces have the same last iteration, and therefore terminate after the same number of iterations."): read all 816 lines of the paper text, including related work and appendix; checked every quotation, number, equation/section/page reference (page numbers are PDF pages), the benchmark counts and Table I totals; changed the page references for Equations (8)-(12), (15), (18), Theorem 1, Section VI and Table I, which were off by one or two pages, fixed Equation (7) (skip, not assignment), the sensitivity description, the claim about future work, the Section VI-A reference for lemma generation, and marked unsupported own conclusions as Inference; I did not check the Verus adaptation advice against Verus, and did not re-derive the appendix proof of Theorem 3 or run RAPID.

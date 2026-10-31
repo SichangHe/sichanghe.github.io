@@ -36,12 +36,8 @@ The paper calls this an end-to-end translator but still says “expert validatio
 ## what was measured and what remains trusted
 The only numeric outcomes are up to 30% document-discovery time gain and up to 20% prover-selection gain; neither has a supplied denominator or uncertainty in this four-page abstract. The perception and relay activities are proof-of-concept demonstrations without reported sample counts, false-negative rates, or complete proof obligations. Trusted artifacts are the B specifications, refinement proofs, safety controller implementation, expert validation, local deployment configuration, and domain assumptions. ML models, LLM summaries, generated proof scripts, and generated propositional formulas are proposers.
 
-Inference: VeruLaw should reuse the certified-controller boundary and checker-only acceptance pattern. The paper's industrial lesson is already done work VL should not repeat as a generic claim that LLMs can summarize documents or suggest proofs; VL should instead measure checker acceptance, counterexample handling, and fallback behavior on its Rust/Verus workloads. Inference: direct use of an LLM as a certifying proof authority would threaten the product because this paper documents partial, inaccurate, and speculative outputs. A staged proposer–reviewer–Verus-checker pipeline limits that threat.
-
 ## techniques for the catalog
 - local specification assistant: run document summarization and cross-section question answering locally, then validate every answer
 - prover selection aid: use ML to rank automatic B provers while retaining the formal checker and traceability
 - certified safety controller: let ML propose perception outputs and let a formally verified controller accept or reject them
 - diagram-to-logic translation: convert relay diagrams to propositional specifications with multimodal prompting and expert validation
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

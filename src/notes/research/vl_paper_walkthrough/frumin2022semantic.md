@@ -77,14 +77,6 @@ Inference: Verus can mirror this with recursive ghost predicates for context dec
 
 Evidence: The authors report minor, systematic modifications for both extension families (Abstract, p. 1; Section 1, p. 2: “the modifications that we do have to make are, in a way, systematic”). No quantitative success rate is given; the evidence is formal proof completion.
 
-## trust, omissions, and VL relevance
-
-The paper’s own statement of the base: the algebra development is “a slightly modified formalization of BI algebras from the Iris Coq library”, and the Iris formalization “makes heavy use of setoids” (Section 9, p. 12). The paper does not measure proof time, runtime, or defect rates, and I found no lines-of-code figure. It does not prove a compiler or a heap implementation; it proves a metatheorem about BI derivations. The conclusion lists first-order BI and other BI extensions as future work, noting that formalizing variable binders was forgone (Section 11, p. 14). The paper does not discuss its trusted base further.
-
-Inference: Coq’s kernel checks the proof terms, so the assurance rests on Coq’s foundational logic, on the Iris-derived BI-algebra definitions, and on the formalized sequent calculus being the intended one.
-
-Inference: The threat to VL is indirect. The paper demonstrates a reusable pattern for verified systems logic: make syntax/context decomposition explicit, isolate algebraic soundness, and use a universal model to avoid fragile reduction proofs. The authors single out the inversion lemmas and reasoning about “what appears where in bunched contexts” as the hard parts to formalize (Section 9, pp. 12–13), a risk for agent-written verified Rust specifications. VL should treat semantic-model lemmas and their trusted libraries as part of the assurance boundary.
-
 ## techniques for the catalog
 
 - cut-free syntax: encode bunched contexts, deep rules, atomic-only axioms, and strengthened derivation-height induction
@@ -92,4 +84,3 @@ Inference: The threat to VL is indirect. The paper demonstrates a reusable patte
 - Moore closure BI model: lift powerset resource operations through a strong closure operator
 - principal provability sets: generate the universal model from sets of contexts proving each formula cut-free
 - extension parameterization: reuse closure and decomposition proofs for structural rules and an S4-like modality
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Unfortunately, this definition is impredicative (we define an element of C by quantifying over elements of C), which, when formalized in type theory, increases the universe level."): read all 15 pages (text and PDF reading order) and checked quotations, theorem and lemma numbers, section and page references, and each technique step against the paper; changed wrong page and section references (Sections 6.2, 6.3, 7, 8 and 9 and the failed-induction example), completed the truncated “first published formalization” quote, corrected the wand formula `cl(X -• Y)`, removed the unsupported claim that no termination measure is needed and the unsupported “kernel-checked”, “dominate proof effort” and Iris trust-base claims, replaced the motivation for the Moore-closure model with the paper’s own, and added the cut-admissibility argument, the finite-L caveat, repository details, and the atomic-axiom point; the DOI link is the one printed in the paper and the tag is correct; I did not check the Coq repository, the proofs’ algebraic details beyond what each cited step states, the related-work section or the references.

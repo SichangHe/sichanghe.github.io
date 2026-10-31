@@ -40,8 +40,6 @@ Inference: A Verus controller could model active and standby keys, published bin
 
 The paper reports measurements, a survey of 39 operators, and an automatic-rollover implementation. It presents no formal verification of that implementation. The authors state: “we publicly release all of our code, datasets and survey answers to the research community at” https://dane-study.github.io (Section 1, p. 2).
 
-Inference: A new VL contribution could verify a DANE validator or rollover controller and compare its decisions with released traces. A verified Rust implementation would need explicit assumptions about DNS caches, certificate issuance, network observations, and cryptographic libraries. Omitting TTLs or trust-anchor semantics would weaken what its proof establishes.
-
 ## techniques for the catalog
 
 Inference: The reusable techniques are:
@@ -50,5 +48,3 @@ Inference: The reusable techniques are:
 - longitudinal checking: compare DNS, TLSA, and STARTTLS snapshots while preserving observation limits
 - rollover state machine: enforce publication lead time and retirement ordering
 - denominator discipline: keep SMTP-server, domain, and filtered-rollover populations distinct
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Thus, SMTP servers must publish the new TLSA records in advance, at least two TTLs before moving on to the new certificate [18]."): checked all study quotations, numbers, section and printed-page references, technique steps, and the publisher link; corrected page references, rollover category labels, DNSSEC failure behavior, and unsupported rollover-model requirements, and added the Double TLSA implementation and the paper’s inconsistent rollover counts; did not check external references, released code or datasets, or execute the proposed Verus models.

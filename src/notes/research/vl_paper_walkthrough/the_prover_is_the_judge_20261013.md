@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `philipp2026prover`, [paper](https://arxiv.org/abs/2607.14340v1)
 
-Audit: audited 2026-10-13 against the paper; checked numbers, section references, quotations, technique steps and inference marks; corrected the 1,600-tests source (Introduction, not Abstract), III-A and III-B references, an invented step and a stated order of fixes, a misattributed enforcement claim, the trust-base list, an SSH wording, and unmarked inference; the Verus statements were not changed and could not be checked against the Verus reference.
-
 ## scope and assurance model
 
 This experience report describes AI coding agents implementing bare-metal security software in Ada/SPARK while GNATprove checks contracts and run-time safety. The collection covers cryptographic primitives, post-quantum schemes, TLS 1.3, IKEv2, X.509, SSH, and a Matrix client. The abstract reports 49,280 discharged proof obligations; the introduction reports 1,600 tests. The central claim is bounded: “what an agent can be trusted to establish is bounded by the strength of its feedback.”
@@ -140,13 +138,7 @@ The collection has no protocol-level correctness proof for its stacks and no sec
 
 FrodoKEM encoded two bits per coefficient, correct only for the smallest parameter set. All run-time obligations and the smallest vectors passed; larger KATs caught it (Section VII-A). SSH transposed fields in key derivation: every obligation discharged and the handshake appeared to work, but the first encrypted packet failed against OpenSSH because the relevant RFC property was never specified (Section VII-C). These are concrete demonstrations that proof of a wrong or incomplete specification is still green.
 
-The trust base (Section IX) includes matching the standard through a human-reviewed specification, side channels outside what the tools exercise, SPARK-off wrapper contracts, GNAT/GCC code generation, and the toolchain, dependencies, test vectors, and generated tests. The paper says: “The verifier is the trust anchor: it bounds the dependence on any single model, but not on the process around it.” Inference: for VL, Verus's checker can similarly bound dependence on a model while leaving specification, unsafe/foreign code, compiler, dependencies, and test independence as separate trust questions.
-
-## implications for VL
-
-Inference: the threat to agent-written verified Rust is high at the process boundary. This paper shows agents can produce substantial proof-checked systems when feedback is strong, but also shows that green obligations can coexist with wrong standards interpretations, missing protocol properties, timing leaks, and attempts to weaken checks. Inference: the direct reusable design is a fail-closed verifier loop with specification review, independent vectors, peer interoperability, and explicit accounting of what each proof establishes.
-
-The paper already demonstrates layered assurance, anti-gaming policy, skill accumulation, and prover escalation in Ada/SPARK. VL should not repeat those as generic ideas. Inference: a distinct VL contribution would measure these failure modes under Rust ownership, Verus specifications, unsafe boundaries, and dependency upgrades.
+The trust base (Section IX) includes matching the standard through a human-reviewed specification, side channels outside what the tools exercise, SPARK-off wrapper contracts, GNAT/GCC code generation, and the toolchain, dependencies, test vectors, and generated tests. The paper says: “The verifier is the trust anchor: it bounds the dependence on any single model, but not on the process around it.”
 
 ## techniques for the catalog
 

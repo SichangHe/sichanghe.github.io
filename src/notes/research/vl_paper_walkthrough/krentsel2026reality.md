@@ -6,8 +6,6 @@ Tag: `krentsel2026reality`, [paper](https://www.semanticscholar.org/paper/786584
 
 The paper models agentic development as an inner implementation-verification loop. A developer or agent starts with requirements R and an environment model M, then changes implementation P until evaluator E accepts it: “E(P, R, M) = pass” (Section 2.1, p. 2). R approximates stakeholder intent I; M approximates the real deployment world W. A formal proof can establish P against R under M, but the paper states that “even a formal proof that P satisfies R under M cannot guarantee stakeholders will accept the deployed behavior” (Introduction, p. 1). It names the mismatch between I and R the requirement gap, and the mismatch between W and M the model gap.
 
-Inference: this framework applies directly to VeruLaw (VL), whose Verus proof is an evaluator for a formal R under an encoded M. It does not show that a Verus proof is defective; it identifies claims outside that proof's boundary.
-
 ## technique 1: two-gap diagnosis before trusting a proof
 
 Diagnosis. Before treating a passing proof as deployment assurance, separately inspect whether requirements capture intent and whether the model captures deployment conditions. The paper says the gaps “are external to the inner loop: they concern how faithfully the loop’s inputs represent intent and the world, not how the loop executes” (Section 2.1, p. 3).
@@ -16,7 +14,7 @@ How to do it. (1) Write R as explicit behavior and assumptions, including persis
 
 Verus form. Inference: encode R as Verus `requires` and `ensures`, loop invariants, and state-machine invariants; make each M assumption an explicit precondition or trusted external contract. A review artifact should list each assumption and its deployment evidence. The Verus proof establishes only the encoded contract; it cannot prove that a requirement matches I or that an external-library, hardware, or operating-environment assumption matches W.
 
-Evidence and limits. The paper gives no new controlled benchmark; it synthesizes prior incidents and formal-methods literature. Its key-value example describes a sixfold throughput gain that passed correctness tests by regenerating predictable benchmark values instead of storing arbitrary client values (Introduction, p. 1). The denominator is one reported incident, not a prevalence estimate. Inference: this is a threat model for VL, not evidence that VL frequently produces this failure.
+Evidence and limits. The paper gives no new controlled benchmark; it synthesizes prior incidents and formal-methods literature. Its key-value example describes a sixfold throughput gain that passed correctness tests by regenerating predictable benchmark values instead of storing arbitrary client values (Introduction, p. 1). The denominator is one reported incident, not a prevalence estimate.
 
 ## technique 2: an outer assurance-revision loop
 
@@ -36,16 +34,10 @@ How to do it. (1) Reserve human review for ambiguity, authority boundaries, surp
 
 Verus form. Inference: use fast Verus checking for local contracts, then targeted integration proofs and runtime checks for trusted boundaries. Rank escalation by consequence and model uncertainty, not by proof status alone.
 
-Limits and product implications. The paper says formal methods “shift the gaps but do not close them” (Section 6, p. 12). Its Appendix A narrows the gaps when intent is authoritative, the world is bounded by a stable formal interface, or an existing implementation is a behavioral reference, but says formal proofs still cannot establish that R captures I or M captures W (Appendix A, pp. 18–19). Inference: VL should not redo generic claims that proofs guarantee deployed behavior; it should measure which assumptions and requirement changes survive real dependency and deployment changes. The threat to agent-written verified Rust is high for open-world behavior and lower for closed interfaces with explicit contracts.
-
-## what is proved, trusted, and already done
-
-The paper proves a conceptual decomposition, not a theorem about Verus or a statistical failure rate. Its examples and cited studies are evidence for possible gaps, while all claims about VL are inferences. Existing work already covers testing, contracts, static analysis, model checking, formal proofs, runtime monitoring, staged deployment, and assurance cases (Sections 7–8, pp. 15–17). VL should reuse these outer-loop controls and focus new work on connecting Verus assumptions to deployment evidence and stakeholder-approved requirements.
+Limits and product implications. The paper says formal methods “shift the gaps but do not close them” (Section 6, p. 12). Its Appendix A narrows the gaps when intent is authoritative, the world is bounded by a stable formal interface, or an existing implementation is a behavioral reference, but says formal proofs still cannot establish that R captures I or M captures W (Appendix A, pp. 18–19).
 
 ## techniques for the catalog
 
 - two-gap diagnosis — compare formal requirements with stakeholder intent and environment models with real deployment conditions before trusting a proof
 - assurance-revision loop — use deployment evidence and authorized human decisions to revise requirements, models, evaluators, and then rerun verification
 - risk-calibrated evaluation — allocate human review and evaluator fidelity by consequence and uncertainty, using cascaded checks and exposure controls
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

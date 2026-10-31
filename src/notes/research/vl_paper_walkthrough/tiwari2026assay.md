@@ -84,12 +84,6 @@ How to do it (paper Sections V.A–V.B and VI.B–VI.C, PDF pp. 6–8).
 
 Evidence. Table I reports brief sizes 592–635 tokens on five external repositories, 14×–114× less than an exploration proxy and 216×–1225× less than a full dump; denominators are token counts measured with `tiktoken/cl100k_base` (Table I, PDF p. 8). FastAPI's cold build is 508 ms and one-file rebuild 106 ms; the paper says warm rebuilds are 2×–5× faster than cold builds (Section VI.C, PDF p. 8). These measurements are tool/repository-specific and do not measure agent task success.
 
-## evidence, trust, and VL implications
-
-What is proved: hash-binding soundness/minimality propositions up to collision resistance and exact dependency edges; the implementation's scripted gate behavior. What is measured: orientation token counts, index rebuild time, invalidation fractions, adversarial scenarios, and radius distributions under the stated repositories and scripts. What remains trusted: hash collision resistance, import extraction, filesystem and Git behavior, HMAC key custody, test-runner plausibility, human review, and the sufficiency of evidence. Inference: for VL, cone binding gives a concrete way to make a Verus proof claim decay when code or dependencies change. It does not prove that a Verus proof specification is adequate, and a model-free gate cannot detect a wrong but successfully verified contract.
-
-Already done that VL should not redo. The paper already supplies dependency-cone invalidation, append-only signed evidence, risk levels, review transitions, monotonicity checks, and a compact repository brief. VL should adapt these ideas to Verus proof artifacts and proof-dependency extraction, then measure false freshness and missed invalidations on Rust workspaces. The main product threat is stale or forged evidence around agent-written verified code; the paper's own parser and key-custody limitations show where that threat remains.
-
 ## techniques for the catalog
 
 - dependency-cone Merkle binding — hash each subject's transitive dependency cone so freshness and blast radius are the same graph computation
@@ -97,4 +91,3 @@ Already done that VL should not redo. The paper already supplies dependency-cone
 - signed append-only evidence ledger — record claims, failures, signatures, and review transitions without mutable history
 - model-free merge gate — require fresh, independently reviewed, plausible evidence and mechanically reject stale or forged claims
 - compact indexed orientation brief — summarize repository structure, changed radius, and evidence state in a bounded token artifact
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

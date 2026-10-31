@@ -104,20 +104,6 @@ Ranger runs on a bespoke SSA IR rather than directly on the source AST. The impl
 
 The arithmetic rule performs interval abstract interpretation: for example, `[a..b] + [c..d]` becomes `[a+c..b+d]` (Section 4.3, p. 11). E-graphs propagate typing information among variables equal at a program point to avoid redundant judgments (Section 4.4, p. 13). The paper states: “In all, the type checking algorithm ensures soundness, so that type inference only provides best effort suggestions.” (Section 4.3, p. 12.)
 
-## evaluation, trust, and implications for VL
-
-The evaluation contains 14 programs in five groups: ranger-written examples, an array map, merge sort, Index Checker examples, and LiquidJava examples. Ranger uses no auxiliary in-body annotations, while Scala uses five across the subjects (Section 5.2, pp. 14–15). Section 5.2 reports 100% expressiveness for ranger and 92% for the Checker Framework; LiquidJava reaches 100% on examples it can handle (p. 15). Table 2 totals 68 units, including 17 buggy units: ranger has 17 true positives, 51 true negatives, and no false positives or false negatives; the Checker Framework has 12 true positives, 53 true negatives, two false positives, and one false negative (p. 15). Section 5.2 reports precision of 100% for ranger, 86% for the Checker Framework, and 100% for LiquidJava on handled examples (p. 16).
-
-The LiquidJava results contain an internal discrepancy. The prose states: “LiquidJava, in contrast, presented 7 false negatives, which gives a soundness of 76%.” (Section 5.2, p. 16.) Table 2 instead totals eight false negatives and 24 true negatives (p. 15). Its stated soundness formula, `tn/(tn + fn)`, gives 75% from those table totals. Inference: the reported 76% should not be presented as consistent with Table 2, and the paper's empirical metric should not be mistaken for a proof of type-system soundness. LiquidJava crashes on several subjects, and two more complex subjects were omitted from its comparison (Section 5.1, p. 14).
-
-Ranger's annotation conciseness is 0.68 annotations per expressed constraint, versus 0.83 for the Checker Framework and 0.51 for LiquidJava; the LiquidJava figure excludes examples where it crashes (Section 5.2, p. 15). Ranger typechecked all 14 examples in 16 seconds, while Scala 3 took 34 seconds for translated examples; this is a basic performance sample, not a scalability benchmark (Section 5.2, p. 16).
-
-Inference: the design relies on the compiler's translation, implementation of the typing and purity rules, external solver, and runtime checks for hybrid casts. The paper presents typing rules and experimental results; it does not provide a machine-checked soundness proof. The absence of observed false negatives in these examples does not establish soundness for all programs.
-
-Inference: range inference could reduce annotation burden for a verified-Rust product, while hybrid casts would require accounting for runtime failure. The experiments do not measure this benefit for Rust or Verus. A Verus integration should preserve explicit loop invariants and contracts at the trust boundary, use executable checks only when the product accepts runtime failure, and require Verus to validate every inferred candidate.
-
-Inference: VL should reuse backward candidate generation, monotonicity detection, and path-sensitive range predicates as front-end ideas, while translating each candidate into valid Verus specifications. It should not redo ranger's language-level implementation as if it were a Verus result. Such an adaptation would need to account for Rust ownership, slices, iterators, and panic behavior; the paper does not study these issues.
-
 ## techniques for the catalog
 
 - range refinement predicates — express integer bounds and value-dependent constraints as subtypes
@@ -128,4 +114,3 @@ Inference: VL should reuse backward candidate generation, monotonicity detection
 - hybrid runtime casts — defer an unprovable refinement to a runtime check while preserving the base type
 - SSA and e-graph implementation — analyze explicit control flow and propagate equal-variable facts efficiently
 - solver-backed range checking — discharge refinement implications and interval arithmetic with Z3
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The rules consist of typing judgments ⊢ using an environment Γ that is a sequence of pairs 𝑣 : 𝑇—denoting that variable 𝑣 has type 𝑇."): checked the complete paper, quotations, technique steps, numerical results, page references, authors, year, and arXiv identifier; corrected references and an inexact quotation, clarified candidate validation, marked adaptation and trust conclusions as Inference, removed unsupported recommendations and the risk rating, and recorded the LiquidJava prose/table discrepancy; did not run the implementation, reproduce experiments, or validate proposed Verus adaptations.

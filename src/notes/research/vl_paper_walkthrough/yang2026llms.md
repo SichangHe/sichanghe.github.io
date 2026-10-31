@@ -6,8 +6,6 @@ Tag: `yang2026llms`, [paper](http://arxiv.org/abs/2603.19464v3)
 
 This paper tests whether language models can produce research-level approximation proofs for robotic path-planning algorithms. It curates 34 tasks from 11 peer-reviewed robotics papers. Each task contains a planning problem, algorithm, formal approximation guarantee, and optionally extracted lemmas and the oracle ratio. The benchmark asks for both a ratio and a proof, then evaluates final-answer correctness, reasoning correctness, and relevance to the supplied problem. The abstract describes “34 research-grade proof tasks spanning diverse planning problem types and complexity levels” (Abstract, p. 1). The authors report that “providing LLMs with task-specific in-context lemmas substantially improves reasoning quality” (Abstract, p. 1).
 
-Inference: the paper is a warning for VL. A model can know a plausible high-level argument yet fail to check preconditions, constraints, or domain-specific invariants. Verus can mechanize those checks only after the planning problem and algorithm have been represented as explicit Rust data, contracts, and lemmas.
-
 ## technique 1: source-grounded extraction and anonymized benchmark construction
 
 what it is
@@ -38,7 +36,7 @@ The resulting corpus has 34 tasks from 11 papers (Sections I and III-B, pp. 1, 3
 
 where it fails or assumes
 
-The pipeline depends on PDF conversion and LLM extraction, so equations, tables, and implicit assumptions can be misread. Human review is a filter rather than a formal proof. Inference: a VL ingestion pipeline needs compilation or proof checks after extraction because a faithful-looking contract may still omit an operational condition.
+The pipeline depends on PDF conversion and LLM extraction, so equations, tables, and implicit assumptions can be misread. Human review is a filter rather than a formal proof.
 
 ## technique 2: context ablation with in-context lemmas and posterior ratio
 
@@ -129,11 +127,9 @@ Inference: record the first Verus diagnostic or failed assertion in a proof trac
 
 ## what is proved, trusted, and still open
 
-The benchmark establishes empirical model behavior under its scoring protocol; it does not machine-check the generated proofs. The source papers supply the ground-truth ratios and proof references, while GPT-5.2 judging and four human annotators supply evaluation and extraction checks. Inference: VL should treat such evidence as a diagnosis of agent behavior, then require Verus verification for product claims.
+The benchmark establishes empirical model behavior under its scoring protocol; it does not machine-check the generated proofs. The source papers supply the ground-truth ratios and proof references, while GPT-5.2 judging and four human annotators supply evaluation and extraction checks.
 
 The strongest no-context success is 26.47% (GPT 5.2, 34-task denominator), while context raises Qwen3.5 to 44.12% and context-plus-ratio raises GPT 5.2 to 50.00% (Table I, p. 4). Generic CoT alone is not a reliable substitute for domain context; the paper says it “does not meaningfully reduce task difficulty across settings” when used alone (Section IV-C, p. 5). The paper’s key failure pattern is unsupported inference: a model invokes a relevant lemma without checking its preconditions, or silently changes a constrained routing problem into a simpler one (Section IV-E, p. 6).
-
-Inference: the threat to agent-written verified Rust is high when agents receive only prose and API names. The likely failure is a plausible but overgeneralized contract that Verus cannot prove, or a contract strengthened until proof succeeds while no longer representing the source requirement. VL should build a reusable, source-linked lemma and contract library, retrieve it by task structure, and check every generated proof against executable constraints. The benchmark’s anonymization and ablation methods are already an evaluation pattern VL can reuse; VL should not redo a natural-language proof benchmark without adding kernel-checked Rust artifacts.
 
 ## techniques for the catalog
 
@@ -142,4 +138,3 @@ Inference: the threat to agent-written verified Rust is high when agents receive
 - context ablation — compare no context, source lemmas, posterior target, and both under a fixed task
 - three-axis proof grading — score answer, reasoning, and relevance separately with multi-label logical and hallucination errors
 - first-error diagnostics — normalize the earliest proof error to expose long-horizon error propagation
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

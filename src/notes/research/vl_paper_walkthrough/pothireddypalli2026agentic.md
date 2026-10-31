@@ -74,10 +74,6 @@ Table I reports the following examples, each with its own generated-property den
 
 The paper's trusted components include the RTL and specification, the formal tool's coverage report and proof engine, static extraction, LLM-generated properties, and human judgments about intent. Coverage is conditioned on environmental assumptions; the paper defines line coverage as RTL statements “mathematically proven reachable and subsequently exercised by a specified property set within the formal verification environment.” (§II.B, p. 3.) Over-constraint can make a property vacuously true or hide a path. Generated properties can also be incorrect or duplicated; the authors say HIL review is needed to retain only valid and verifiable properties (§IV, p. 7).
 
-Inference: for VeruLaw, the transferable technique is a traceable gap-to-proof loop that limits generation to a diagnostic location and rechecks the whole program. The product threat is specification drift: a new proof obligation can increase measured coverage while encoding the wrong behavior, especially when assumptions exclude the failing path. Verus proves the written contracts and invariants; it does not decide whether they represent the user's intended Rust behavior.
-
-Inference: VL should not redo the paper's role-based RTL coverage architecture as a product feature. A distinct study would be needed to measure whether analogous diagnostics (failed assertions, unverifiable invariants, or uncovered branches) can drive local Rust proof generation without weakening contracts.
-
 ## techniques for the catalog
 
 - role-based verification agents: divide planning, generation, criticism, execution, and CEX analysis among specialized agents
@@ -85,4 +81,3 @@ Inference: VL should not redo the paper's role-based RTL coverage architecture a
 - context JSON extraction: encode exact code, signals, timing, preconditions, reset logic, and a logic signature
 - targeted SVA generation: emit one timing-matched assertion or cover per location using only available signals
 - iterative closure loop: merge properties, rerun formal analysis, and escalate unresolved intent to human review
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -86,10 +86,6 @@ Verus form. Inference: specify the adversary set and fixed group values, then pr
 
 Evidence and trusted parts. The checked theorem is a Coq theorem over abstract functions, not a compiled Rust implementation. Section 2.4, p. 6 lists the lower bound for all inclusive neighbors, whereas Appendix D, pp. 24–25 constructs positive uniform weights only for retained neighbors and zero elsewhere. The retained-neighbor formulation above follows that construction and the discussion on p. 8. The paper also alters the scope of the source weight condition: it applies weight well-formedness to all nodes so maliciousness is defined, while adversarial update values remain unconstrained (Section 3.3, pp. 14–15). Classical reasoning uses the stated axiom `proposition_degeneracy` and excluded middle (Section 3.2, p. 10; Section 3.4, p. 16). The paper states, “We introduce the following axiom in Coq to support reasoning by contradiction.” (Section 3.2, p. 9) Inference: a translation must account for this classical reasoning and preserve the real-number semantics or prove a replacement theorem.
 
-## what VL should take from this paper
-
-Inference: the reusable parts for agent-written verified Rust are filtered-average bounds, sorted-list partitions, robustness witnesses, finite-set counting, and explicit counterexamples. A useful VL implementation study would connect these mathematical obligations to actual filtering and arithmetic code. The authors leave implementation verification and finite precision open: “A possible future direction of work is to verify the implementation of the algorithm.” (Conclusion, p. 17) Inference: the paper alone therefore does not establish correctness of a Rust implementation or its floating-point behavior.
-
 ## techniques for the catalog
 
 Inference: the following are candidate reusable techniques.
@@ -99,4 +95,3 @@ Inference: the following are candidate reusable techniques.
 - shrinking threshold-set convergence: combine robustness, epsilon recurrences, and a finite cardinality variant to prove asymptotic consensus
 - counterexample necessity: violate robustness by fixing two groups at distinct values and constructing bounded adversaries and weights
 - quantifier and trust audit: formalize quantifier scope explicitly and record classical axioms, real arithmetic, and implementation gaps
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Another thing that was not explicit in the original paper [30] was the right placement of quantifiers."): checked the whole paper including appendices and references against the study, quotations, numerical claims, section and page references, model assumptions, and technique steps; corrected quantifier scope, filtering details, proof references, and unsupported Verus claims, recorded conflicting recurrence signs and weight domains, and replaced the link with the paper’s arXiv identifier; did not inspect or rerun the Coq artifact, validate a Verus implementation, or independently reprove the mathematics.

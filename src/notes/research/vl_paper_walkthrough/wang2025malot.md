@@ -79,12 +79,6 @@ Table 4 compares Godel-Prover-SFT at pass@32 with MA-LoT-Godel at 16 + 2 × 8. A
 
 Verus form. Inference: report proof success against both equal-sample and equal-compute baselines, disclosing CPU/GPU time, verifier calls, tokens, and rounds. Inference: optimize allocation by measuring marginal gain per correction round, not by assuming that more rounds always help.
 
-## trust, limits, and threat to VL
-
-The main benchmark is MiniF2F. Appendix D also reports a small ProofNet comparison: MA-LoT(Goedel) reaches 15.47% under the stated 16+16 metric, versus 12.15% for Goedel-Prover at pass@32 (p. 14). Inference: these Lean results do not establish performance on Rust, unsafe memory, concurrency, or system specifications; verifier acceptance also does not establish that the theorem statement expresses the intended requirement.
-
-Inference: threat to VL is high for verifier-feedback integration and moderate for transfer-learning claims. MA-LoT gives VL a concrete correction-data schema and role-separated loop. It does not eliminate specification errors or prove that an agent's Rust contract reflects the user's intent. VL should not redo a generic “generate and retry” system without preserving wrong proof, verifier message, corrected proof, and compute denominator. A useful extension is to build Verus correction data with contract-preservation checks and dependency-version replay.
-
 ## techniques for the catalog
 
 - paired correction data — store accepted and rejected proofs together with exact Lean diagnostics and theorem context
@@ -92,5 +86,3 @@ Inference: threat to VL is high for verifier-feedback integration and moderate f
 - prover-corrector collaboration — separate whole-proof planning from verifier-guided repair and rerun the checker after each patch
 - correction-round budgeting — express prover samples and repair rounds explicitly and compare both equal-sample and equal-compute settings
 - role-specialization ablation — compare a dedicated corrector with a prover reused as corrector to measure diagnostic-repair specialization
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "By coordinating a prover and a corrector model through Long CoT, MA-LoT produces more structured, coherent, and insightful proofs."): read the full paper including appendices; checked quotations, numbers, page and section references, training and correction steps, and budgets; corrected training-format distinctions, references, the RL ablation description, and relative versus percentage-point gains; marked extrapolations as Inference; did not reproduce experiments, execute Lean proofs, inspect code or datasets, or validate Verus adaptations.

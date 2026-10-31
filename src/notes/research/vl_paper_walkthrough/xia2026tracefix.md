@@ -42,7 +42,7 @@ Verus form (Inference): implement a runtime wrapper whose operation constructors
 
 On 48 tasks from 16 scenario families, 30/48 (62.5%) passed TLC initially and all 48/48 (100%) after at most four repairs (section 4.1, page 5). The 29 repair attempts comprised 20/29 (69.0%) deadlocks, 5/29 (17.2%) TLC timeouts, 3/29 (10.3%) PlusCal syntax errors, and 1/29 (3.4%) undrained channel (Figure 2, page 6). TLC explored 30 to 7.7 million states; median verification time was under one second and all tasks under 60 seconds (section 4.2, page 7). The runtime comparison used 48 tasks, four architectures, two model tiers, three fault levels, and three repetitions: 48×4×3×3×2 = 3,456 runs (section 3.3, page 5). For gpt-5-mini, topology monitoring achieved 89.4% average and 81.5% full completion across 432 runs per architecture; prompt-only achieved 86.2%/69.7%, mediator-enforced 78.4%/44.7%, and chat-only 75.0%/29.3% (Table 3, page 8). A 15-task paired ablation (270 runs) reduced deadlock/livelock from 31.1% to 14.1% and raised average completion from 72.6% to 82.1% (section 4.4, page 10).
 
-These are bounded-model and benchmark results, not a general proof of task correctness. TLC’s guarantee is exhaustive only within finite agents, bounded counters, bounded queues, and selected properties. Runtime step-order deviations remain possible; timeout-driven simplification can introduce semantic drift, and the repaired model may cover less of the intended task (section 6, page 13). Inference: for VL, the transferable technique is a counterexample-driven repair loop over Verus proof failures and concurrency traces. The threat is that a passing bounded model or proof may omit semantic behavior; VL should preserve explicit bounds, assumptions, and runtime monitor limits rather than treating “verified” as total product correctness.
+These are bounded-model and benchmark results, not a general proof of task correctness. TLC’s guarantee is exhaustive only within finite agents, bounded counters, bounded queues, and selected properties. Runtime step-order deviations remain possible; timeout-driven simplification can introduce semantic drift, and the repaired model may cover less of the intended task (section 6, page 13).
 
 ## techniques for the catalog
 
@@ -51,5 +51,3 @@ These are bounded-model and benchmark results, not a general proof of task corre
 - bounded exhaustive checking — enumerate all interleavings under stated queue and counter bounds
 - counterexample repair — feed concrete TLC traces to targeted PlusCal edits and rerun verification
 - runtime topology enforcement — reject undeclared coordination events while preserving domain-tool autonomy
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

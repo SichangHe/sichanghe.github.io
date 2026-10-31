@@ -24,8 +24,6 @@ The paper's framework names seven artifact kinds (section 4.1, pp.10–11): prog
 
 The component types make composition explicit. A verifier has type `P × Φb → R × Ω`; a conditional verifier has `P × Φb × Ψ → R × Ω × Ψ`; a validator has `P × Φb × Ω → R × Ω`; a reducer has `P × Ψ → P`; a test extractor has `P × Φb × Ω → T`; and a test executor presents `P × T → {}` (section 4.2, pp.11–12). A conditional verifier can be built as `ver(red(p, ϕb), ϕb)`, and execution validation as `exec(p, wit2test(p, ϕb, ver(p, ϕb).ω))` (pp.12–13). The paper also notes that “Transformers are largely lacking today, only a few exist already [13, 23]” (p.12).
 
-Inference: this typed composition is directly useful for VL architecture. A Verus analyzer could emit a proof result plus a machine-readable witness; a reducer could turn a condition into a smaller Rust verification target; a presenter could turn diagnostics into source-level explanations. These are design proposals, not components reported in the paper.
-
 ## technique: give artifacts formal semantics
 
 The paper argues that tools need agreed artifact semantics before cooperating; otherwise a combination may incorrectly claim `true` after leaving parts of the state space unchecked. The paper models a program as a control-flow automaton `Ap = (L, ℓ0, G)` with locations, an initial location, and operation-labelled edges (section 4.3, pp.13–14). A concrete path records states and edges under assignments, assumptions, and nondeterministic inputs.
@@ -38,12 +36,6 @@ The semantics are set intersections. A program satisfies a property when `paths(
 
 Inference: a Verus artifact format should define exactly which Rust executions, assumptions, invariants, and proof obligations a witness covers, and a validator should check those semantics. A JSON label saying “verified” without coverage semantics is insufficient.
 
-## evidence, trust, and VL implications
-
-This is a survey and framework, not a benchmark report; it gives no aggregate success rate, run count, or performance denominator. Its evidence is the formal definitions, component types, worked automata for a small loop example, and references to existing tools. The paper states definitions and gives no theorem or proof; the definitions fix the meaning of artifact acceptance and validity under the stated automata model, and the actor types and compositions are given as examples. Inference: trust remains in each analyzer, transformer, parser, artifact serializer, and the semantic assumptions mapping a real Rust program to the model.
-
-Inference: the threat to agent-written verified Rust is architectural. Independent witnesses and validators can reduce reliance on one solver, but an unsound transformer or incomplete condition can make a composed `true` result misleading. VL should reuse witness exchange, residual-program reduction, explicit result states, and formal coverage checks; it should avoid inventing a new monolithic verifier for every tool combination. The paper's warning is concrete: without agreed artifact meaning, “cooperation might easily get unsound, e.g., returning a result true for a program and specification although the combined usage of tools has failed to inspect the whole state space of the program.” (section 4.3, p.13).
-
 ## techniques for the catalog
 
 - conditional verification — serialize covered-state conditions, reduce to a residual program, and verify the remainder
@@ -52,5 +44,3 @@ Inference: the threat to agent-written verified Rust is architectural. Independe
 - artifact actors — compose analyzers, transformers, validators, reducers, test extractors, and presenters through typed interfaces
 - formal artifact semantics — define automata matching, acceptance, coverage, and set-based validity before combining tools
 - execution validation — extract tests from violation witnesses and run them to confirm an observable failure
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Transformers are, however, key to cooperation: only if a transformer can bring the artifact into a form understandable by the next tool without implementing an extension of this tool, cooperation can be put into practice."): read the whole paper text (PDF pages 1–22, references included) and the whole study; checked every quotation, the seven artifact kinds, actor types, the component types and compositions, Definitions 1 and 2, the six automaton specializations, the five validity conditions, and the "no experiments" claim; changed all page references to PDF page numbers (the old ones did not match), added section and page pointers and verbatim quotes for the conditional-model-checking, witness, precision, certificate and path-program passages, fixed "uncovered behavior" in the parallelization claim, replaced "what is proved" (the paper states no theorem), flagged the five-step conditional-verification procedure and the trust list as this study's inferences, and noted the `ver(red(p, ϕb), ϕb)` typo in the paper; did not check the cited external works, the figures' graphics beyond their text labels, or the Verus-specific inferences against any Verus source. Link kept: the arXiv link matches the arXiv ID 1905.08505v1 printed on the paper.

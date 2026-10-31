@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `king2025neurosymbolic`, [paper](https://arxiv.org/abs/2512.15816)
 
-Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 to 4 and Figures 3 to 5 (Figure 5 bars read from the rendered page), page and listing references, Algorithms 2 and 3 step by step, the quotations and the Verus forms; changed a swapped pair of counts (run 4 is 51 preservation and 53 exit), the ordinal of a stated difference (third, not fourth), an ablation credit (the neural module as a whole, not chaining alone), an unsupported statement about JML integers, a claim that the authors wrote the hard set, a typed split that has two fix lists and not three, and marked three statements as inference; one Verus claim about unmodified values was checked against the AutoVerus paper's description of loop isolation and reworded.
-
 source: King, Koutavas, Kovács; arXiv:2512.15816v1, 17 Dec 2025; 24 pages; Appendix A (p.18 to 24) holds all nine prompts. Page numbers are the paper's own, which equal the PDF's.
 
 ## the claim in one paragraph
@@ -140,10 +138,6 @@ Where it fails: the paper calls what OpenJML returns counterexamples, but the pr
 Done here, so not worth redoing: a prompt set for WP-guided invariant derivation (Appendix A, complete), and a measurement that an LLM checking its own implications, with no tool, ends with a verifying result in 84.7% of evaluations on small programs and 40% on the hard ones.
 
 Left open by the paper's own account (§4.2, p.14 to 15): checking each link with a verifier as it is produced, and backtracking when the precondition check fails. p.15: “Alleviating the fragility of these links by incorporating a verifier earlier in the invariant generation process will allow for potential errors to become localised; we leave this intervention to future work.”
-
-## threat to a product of agent-written verified Rust
-
-Inference: small. This is a method for one sub-task (invariants for given contracts) on single Java methods of at most 152 lines (Table 3), with one model and no cost figures. It does not write code or contracts. Its value to VL is as a recipe: a fixed order for attacking a multi-loop function (last loop first), a typed failure split (preservation, exit) with a different fix list for each, plus an entry check at the end, and the reminder that a repair loop must be barred from touching the contract, since the baseline that was not barred changed it in about two thirds of programs.
 
 ## techniques for the catalog
 

@@ -55,12 +55,6 @@ The five soundness theorems are abstract: 2PL derives order from lock conflicts;
 
 The model intentionally excludes abort behavior and scheduling power. The paper warns that all five protocols are equivalent only at the version-function level and that performance depends on commit rate and workload, which are not modeled (section 3.5, page 9). These are material assumptions, not evidence of implementation correctness.
 
-## threat and reuse for VL
-
-Inference: CV-Rules offer VL a reusable proof architecture for concurrent verified Rust components: identify an explicit abstract order, then prove local obligations that connect each read or state observation to that order. Verus state machines can represent the abstract order while executable Rust maintains locks, timestamps, or queues.
-
-Inference: the main product threat is specification mismatch. A proof can pass for the version-function abstraction while omitting aborts, operation order, memory ownership, or network failures. VL should state these omissions explicitly and connect each abstract relation to executable transitions with refinement lemmas.
-
 ## techniques for the catalog
 - explicit transaction order — verify serializability by constructing a protocol order and checking C-rule and V-rule
 - V-rule decomposition — split competing-writer reasoning into endpoint comparability and no interposition
@@ -68,4 +62,3 @@ Inference: the main product threat is specification mismatch. A proof can pass f
 - bounded-width search — decide serializability by exploring chain-progress vectors when C-rule width is fixed
 - view-chain design — enforce V-rule structurally with per-item writer/reader slots
 - Lean mechanization pattern — separate core definitions, generic order lemmas, protocol-specific constructions, and audited theorem instantiations
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

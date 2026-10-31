@@ -35,14 +35,9 @@ StatWhy 1.4 supplies specifications for Fisher, Stouffer, and Mantel–Haenszel 
 
 Verus form (Inference): encode each method's admissibility conditions as reusable proof predicates and require them at the aggregation function boundary. Prove that a result is only interpreted under those predicates; this addresses specification misuse, while numerical algorithm correctness requires a separate proof.
 
-## what is proved, trusted, and relevant to VL
-The proved claim is contract consistency: if annotated assumptions hold, the code's statistical interpretation follows. Trusted parts include population assumptions, logical contracts for external libraries, Why3/SMT soundness, and the translation pipeline. The paper does not measure defect recall against a corpus; it reports constructed examples and timing measurements. Inference: for agent-written Verus Rust, the threat is specification omission and misuse of trusted APIs more than Python dynamism. VL should reuse the explicit-assumption pattern and library contracts, while treating every unverified numerical primitive and solver boundary as a stated trust assumption. Existing StatWhy already covers the BHL/statistical-contract core, so VL should avoid rebuilding that logic and focus on Rust contract generation, checking, and audit of assumptions.
-
 ## techniques for the catalog
 - BHL statistical contracts: express data and interpretation assumptions as preconditions and statistical beliefs as postconditions
 - typed mixed-language verification: run static typing, parse embedded specifications, and translate the typed AST to WhyML
 - library contract abstraction: verify calls against logical contracts while trusting separately implemented numerical libraries
 - misuse detection for meta-analysis: use method-specific specifications to expose missing publication-bias and p-hacking requirements
 - scalability measurement: report solver, hardware, program size, group/study denominator, and verification times
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

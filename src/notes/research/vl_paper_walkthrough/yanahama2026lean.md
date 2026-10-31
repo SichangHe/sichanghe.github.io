@@ -4,8 +4,6 @@ Tag: `yanahama2026lean`, [paper](https://arxiv.org/abs/2604.16347)
 
 Lean Atlas addresses a gap that remains after a proof assistant accepts code: logical validity of a proof term does not establish that the proposition or definitions express the intended mathematics. The paper calls a formalization “semantic hallucination” when it type-checks (and may have a completed proof) but is not semantically equivalent to the intended statement (Definition 1, p.4). Lean Atlas extracts project dependency graphs, classifies dependencies, visualizes them, and uses Lean Compass to identify the declarations a human should semantically inspect. The authors define “aligned Lean code” as code whose propositions and definitions have undergone human semantic verification (Abstract, p.1).
 
-## semantic review techniques
-
 ### identify semantic hallucination before trusting proof success
 
 What it is: inspect the meaning of propositions and definitions separately from checking proof terms. The paper gives the concrete failure that omitting a type annotation in “3/2 = 1.5” makes Lean infer `Nat`, yielding `3 / 2 = 1`, which type-checks but changes the mathematics (§1, p.2).
@@ -52,7 +50,7 @@ The evaluation uses six Lean 4 projects and reports node reduction, defined as `
 
 Trusted elements are the human interpretation of intended mathematics, Lean standard library and Mathlib, axiom declarations, graph extraction correctness, and the selected target set. The soundness claim is a conditional proof sketch, not a reported machine-checked theorem: if every node in `R ∪ A` and the trusted base is semantically correct, target propositions are semantically correct (§5.3, p.6). The selected main theorems must cover all intended claims; the paper says project-level coverage depends on that choice (Limitations, pp.9–10). Actual human review-time reduction was not measured, and confidence metadata remains manually annotated (Limitations, pp.9–10).
 
-The work demonstrated here is dependency visualization and reduction of candidate semantic-review nodes in Lean. Inference: VL should separately review whether Verus contracts express the intended Rust behavior; a model can verify an underspecified or wrongly typed contract. A Compass-like graph and explicit review of roots, definitions, and trusted code could help prioritize that review, but this paper does not establish their effectiveness for VL. It does not evaluate Rust, Verus, or automated semantic equivalence.
+The work demonstrated here is dependency visualization and reduction of candidate semantic-review nodes in Lean.
 
 ## techniques for the catalog
 
@@ -61,5 +59,3 @@ The work demonstrated here is dependency visualization and reduction of candidat
 - Compass pruning — remove theorem proof-value edges, retain all type and definition-value edges, then BFS from target theorems and include axioms
 - interactive review cone — visualize and filter transitive project dependencies while recording human semantic status
 - aligned-code standard — label declarations aligned only after human semantic verification plus proof-assistant checking
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "For each constant, its type and value are recursively traversed; dependencies appearing in the type are type dependencies and those appearing only in the value are value dependencies."): read the entire supplied 12-page paper text, including references, and the entire study; compared quotations, reported numbers, section/page references, and technique steps; corrected page references, the paper link and tag, metadata-editing scope, and proof-sketch wording, and marked the derived checklist and VL recommendations as inference; did not inspect the implementation, rerun the evaluation, independently validate cited work, or visually inspect PDF figures.

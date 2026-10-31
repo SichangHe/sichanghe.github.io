@@ -71,11 +71,6 @@ The study analyzes observed scenario actions and interview accounts of threat mo
 
 The paper recommends removing auxiliary visual cues and separating certificate presentation from the holder's data-inspection interface (Section 6.1, p. 3575). It also recommends consistent threat education, employer-provided verification devices and software, and legally supported guidelines for difficult cases (Sections 6.2–6.3, p. 3576). These are recommendations, not evaluated interventions.
 
-## contradictions, assumptions, and work VL should not redo
-The 599-person study in related work concerns certificate-holder preferences, not verifier prevalence (Section 3.2, p. 3568). Participants' worries about legitimately signed certificates obtained through fraudulent vaccination records illustrate a limit of signature verification: most who mentioned this threat understood that their checks could not detect it (Section 5.3.1, pp. 3573–3574).
-
-Inference: VL can reuse the distinction between signature verification, identity matching, and admission policy. Its additional work would be to verify the implementation and state which interface and operator assumptions remain. This paper supplies empirical reasons to examine those assumptions; it does not prove that any proposed interface prevents shortcuts.
-
 ## threat to a product of agent-written verified Rust
 Inference: the relevant risk is accepting a certificate through a path that bypasses the verified component, or feeding that component unauthenticated display text or inaccurate identity observations. Verus could prove relevant software properties if modeled and implemented; this paper provides no basis for assigning a numerical or categorical risk level to a particular product.
 
@@ -83,5 +78,3 @@ Inference: the relevant risk is accepting a certificate through a path that bypa
 - explicit verification procedure — distinguish scanning, authenticated field extraction, photo-ID matching, and admission policy
 - contrasting scenarios — vary interface familiarity and presentation while observing verification actions
 - separate thematic analyses — classify observed behavior independently from analysis of technical understanding
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Users demonstrating this behavior will judge certificates primarily on the basis of a visual verification, while occasionally also relying on an assessment of the certificate holder."): checked the full paper including references and appendices, all study quotations, numbers, section and printed-page references, and technique steps; corrected behavior-type names and descriptions, separated the two coding procedures and added their agreement figures, clarified scenarios and limits, marked extrapolations as Inference, removed the unsupported risk rating, and used the publisher URL printed in the paper; did not check cited external works, app implementations, or any Verus implementation.

@@ -62,12 +62,6 @@ Verus form. Inference: place component proofs behind stable `proof fn` contracts
 
 Evidence and limits. The capstone has one theorem and approximately 260 lines, and its proof term is exactly the triple of prior theorem facts (Sections 5.6, 6.2, p. 12). The observed cross-protocol stress test is N=1 and both live protocols are lending-family systems; the authors call broader portability conjectural (Section 4.4, p. 8). Inference: no-retrofit makes composition evidence more credible, but it cannot turn one successful composition into a universal theorem.
 
-## what has already been done and threat to VL
-
-This paper already demonstrates production-source state-machine modeling, three-direction negative/positive/boundary verification, minimal-diff mutation, no-retrofit composition, axiom-record CI, and tagged-commit reproduction. VL should not present these patterns as new. Inference: a Verus/Rust contribution would need measurements and artifacts specific to ownership, unsafe boundaries, concurrency, compiler/library assumptions, and proof repair.
-
-Threat is limited but concrete. The work shows that a carefully scoped formal model can prove a security pattern over real protocol variants and can detect a one-line-style regression. It does not verify arbitrary Rust, EVM bytecode, protocol upgrades, economic attacks, or the correspondence between a deployed artifact and its source-level model. Inference: agent-written verified Rust remains threatened by specification drift and abstraction mismatch; a passing Verus proof is meaningful only when its contracts describe the intended product behavior and trusted dependencies are audited.
-
 ## techniques for the catalog
 
 - explicit source-level security predicates — define call-stack, storage-update, callback, and guard semantics before protocol proofs
@@ -76,4 +70,3 @@ Threat is limited but concrete. The work shows that a carefully scoped formal mo
 - minimal-diff mutation boundary — distinguish a production-safe function from a structurally adjacent mutant under one predicate
 - no-retrofit theorem composition — seal component proofs before direct-conjunction capstone composition
 - axiom-record CI gating — recheck theorem types, dependencies, and expected axiom footprints on every push
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

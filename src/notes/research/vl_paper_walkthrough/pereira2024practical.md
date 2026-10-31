@@ -19,7 +19,7 @@ How to do it.
 
 Verus form. Inference: model fields map to ghost/spec state or a mathematical view function over owned Rust data. Use Verus `requires` and `ensures`; use `old(...)` in postconditions where the Verus construct is available, and state frame effects through the function’s tracked ownership and `ensures` rather than importing GOSPEL’s `modifies` syntax. Keep executable fields and ghost views synchronized with an invariant. This is an inference because the paper targets OCaml/Cameleer.
 
-Evidence and limits. GOSPEL’s formal semantics are defined by translation into Separation Logic (section 2, p. 2), but the tutorial does not provide a separate soundness proof of Cameleer. Its model abstraction is independent of representation, which supports linked lists or ring buffers (section 2, p. 3). Inference: a Verus model view similarly lets VL verify an API without fixing a concrete representation, provided representation invariants are proved.
+Evidence and limits. GOSPEL’s formal semantics are defined by translation into Separation Logic (section 2, p. 2), but the tutorial does not provide a separate soundness proof of Cameleer. Its model abstraction is independent of representation, which supports linked lists or ring buffers (section 2, p. 3).
 
 ## technique 2: Cameleer-to-Why3 VC generation and task splitting
 
@@ -33,7 +33,7 @@ How to do it.
 5. Split a large VC into conjunctive tasks, then focus on precondition, variant-decrease, or postcondition tasks (section 3.1, pp. 8–9).
 6. Read the WhyML task’s assumptions and goal when automation fails.
 
-Verus form. Inference: Verus users already receive SMT obligations, but VL can imitate the task browser: group obligations by function and split conjunctions into named subgoals while preserving the original proof. Use `assert`, `assert forall`, `requires`, `ensures`, and loop `invariant`; do not write a Verus `invariant(...)` call. Solver timing and proof steps are diagnostic evidence, not proof claims.
+Verus form.
 
 Evidence. For the array `find` example, “Cameleer generates 6 VCs, after splitting the formula generated for the find function. All are immediately discharged by Alt-Ergo.” (section 3.2, p. 11): denominator six VCs, setting the `find` function, solver Alt-Ergo. For the Boyer–Moore majority function, “The Cameleer-Why3 pipeline generates a total of 25 VCs for function mjrty.” (section 5.1, p. 21); they are discharged using Alt-Ergo, Z3, and CVC5. For merge, all three solvers timed out after one second on every split condition except the variant decrease (section 3.1, p. 9), demonstrating that splitting alone does not guarantee automation.
 
@@ -93,11 +93,9 @@ The same pipeline verifies immutable tree and list algorithms by specifying math
 Inference: Verus can represent immutable structures with `Seq` and recursive `spec fn`s, then prove extensional properties independently of the executable representation. This is useful for agent-written Rust libraries whose core algorithms are functional even when storage is mutable.
 
 ## what is proved, trusted, and left open
-The tutorial demonstrates mechanically checked contracts for merge, array search, same-fringe comparison, and Boyer–Moore majority, with the stated VC counts above. Inference: trust remains in OCaml parsing/typechecking, Cameleer’s OCaml-to-WhyML translation, Why3 transformations, solver implementations, library specifications, and axioms. In the merge example, preorder laws supplied as axioms are assumptions, while the sortedness lemmas are proved; confusing the two changes what is trusted. Inference: VL must label axiomatized facts and `assume` statements as trusted inputs and keep them separate from proved Verus lemmas.
+The tutorial demonstrates mechanically checked contracts for merge, array search, same-fringe comparison, and Boyer–Moore majority, with the stated VC counts above.
 
 The paper does not establish that every OCaml program can be verified automatically: merge requires auxiliary induction lemmas, and solver timeouts occur at a one-second limit. It also does not measure user effort, total development time, or bug-finding rates. Inference: for agent-written verified Rust, the main threat is incomplete specifications and incorrect invariants that produce a green proof of the wrong property. The highest-value product behavior is therefore displaying the exact task, model view, invariant initialization/preservation obligations, and trusted assumptions.
-
-Inference: VL should reuse the approaches to contracts, VC splitting, solver orchestration, recursive variants, and induction demonstrated by GOSPEL/Cameleer/Why3, and concentrate on Rust ownership-aware model views, precise result contracts, and source-level explanations that preserve Verus semantics.
 
 ## techniques for the catalog
 - model-state contracts — specify mutable APIs through abstract views, preconditions, postconditions, and pre-state values
@@ -106,4 +104,3 @@ Inference: VL should reuse the approaches to contracts, VC splitting, solver orc
 - exceptional postconditions — specify normal and exceptional outcomes separately and verify both
 - prefix loop invariants — reason about scanned array prefixes with exact strict bounds
 - counting-function invariants — use recursive range counts, arithmetic-friendly inequalities, and decomposition lemmas for majority proofs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The specification of mk_zipper states that this is a terminating function, with argument t structurally decreasing at each recursive call."): read the entire paper, including both appendices; checked all quotations, numbers, section and PDF page references, and technique steps; corrected page references, the translation pipeline, the majority algorithm’s zero-counter exit and second-pass reset, the counting-lemma proof methods, and the scope of the same-fringe VC count; marked trust and product recommendations as inferences; did not run Cameleer, reproduce proofs or timings, inspect the companion artifact, or validate the Verus recommendations.

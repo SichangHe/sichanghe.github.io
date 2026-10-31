@@ -41,17 +41,13 @@ Results and denominators. On tldr’s test set with BM25 top-10 documents, CodeT
 
 Failure case. For an unseen `df.to_csv`, retrieval also returns `df.read_csv`; the generator copies `skiprows=1` instead of the correct `header=False` argument (Section 6.3, p. 8). Inference: this single example shows that documentation can help function selection while still introducing a wrong parameter.
 
-Verus form. Inference: evaluate VL with disjoint APIs and project versions, report verifier acceptance over every generated candidate, and separately report retrieval recall and executable tests. A pass@k proof metric should state the number of goals and completions in its denominator. Add a negative test set where near-neighbor APIs have incompatible contracts.
+Verus form.
 
 ## what is proved, measured, and trusted
 The paper measures generation and retrieval, not formal correctness. The authors report: “Models that use DocPrompting consistently outperform their base models that generate code solely based on the NL intents.” (Section 1, p. 2) Inference: the results rest on trust in the generators, datasets, oracle-document construction (string-matching heuristics, Appendices A and B), unit tests (written by two of the authors, one annotator per example, Appendix B), and documentation quality. Inference: for agent-written verified Rust, documentation retrieval threatens products through stale or neighboring contracts and through plausible but invalid proof code; Verus checking sharply reduces the latter only after the generated code reaches the verifier.
-
-## what VL should reuse
-Inference: reuse documentation pools, top-k retrieval, mixed supervised/weak contrastive training, and disjoint unseen-API evaluation. Do not redo generic retrieval-only work. Inference: VL’s product-specific contribution would be retrieval grounded in verifier diagnostics and accepted proof artifacts, plus measurements of proof success, repair effort, and dependency-version drift.
 
 ## techniques for the catalog
 - retrieve then generate — select top-k API or proof documents for an intent and condition generation on them
 - mixed sparse/dense retrieval — compare BM25 with contrastive language encoders and add weak sentence supervision
 - fusion-aware prompting — encode long retrieved chunks separately when the generator context is short
 - unseen-API evaluation — split by commands/functions and measure retrieval, surface quality, execution, and verifier acceptance separately
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Thus, NL intents in CoNaLa require a better semantic alignment with the documents, and thus benefit from dense retrievers."): read the whole paper text including appendices A to I; checked every quotation, number, table and figure value, and section and page reference in the study against it. Changed: the link (the old DOI link was broken; now the arXiv page from the paper text), the page references for the tldr and CoNaLa dataset statistics (pp. 4 and 5), the CoNaLa split description, the fifth retriever step (joint training is only future work), the pass@k sentence (now separates Section 5.2 text from Figure 3 values and notes that the 4.45% pass@5 figure has no point in Figure 3), added the Codex code-davinci-002 and pool-coverage limits, and marked own conclusions "Inference:". Did not check: the PDF layout of figures beyond the extracted text, the cited external works, or whether the released code and data match the paper.

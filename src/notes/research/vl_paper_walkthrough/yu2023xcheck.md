@@ -51,12 +51,6 @@ The experiment detected 37 of 39 malicious cases (section 6.1, p. 2825). There w
 
 Theorem 1 claims detection of geometric attacks with voxel change greater than 2ε, assuming an accurately CT-reconstructed printed device at resolution ε (section 7, p. 2826). Appendix A.1 presents a contradiction argument based on voxel coverage and the triangle inequality (p. 2831). Inference: this is an author-stated bound, not a machine-checked result; this study does not independently establish the proof's validity. The stated theorem excludes sub-2ε changes, inaccurate reconstruction, and material attacks. The authors warn that “XCheck likely cannot prevent all types of lethal toxins using only CT scans.” (section 7, p. 2827).
 
-## what is proved, trusted, and relevant to VL
-
-The paper presents a geometric detection theorem under explicit voxel and CT assumptions. The empirical results are finite: four model domains, one printer, one scanner, 39 malicious cases, and thresholds chosen with medical experts. Inference: a verified implementation would still need assumptions about scanner resolution, printing defects, registration, HU calibration, material references, ray sampling, and clinical thresholds. Detecting these discrepancies does not establish medical safety.
-
-Inference: VL can reuse XCheck's layered pattern for verified Rust systems that compare an observed artifact to a specification: prove complete traversal and bounded metrics in a small core, isolate numeric and sensor assumptions, and expose explainable evidence. For agent-written verified Rust, the threat is specification-to-reality mismatch: Verus can verify a correct gamma calculation while the input scan, registration, or clinical thresholds omit a harmful physical property.
-
 ## techniques for the catalog
 
 - rigid and landmark registration — align reconstructed and design point clouds with scale, rotation, translation, and optional clinical landmarks
@@ -65,4 +59,3 @@ Inference: VL can reuse XCheck's layered pattern for verified Rust systems that 
 - ray-based volumetric analysis — aggregate sub-resolution intersection differences into alpha-shape volumes
 - gamma risk aggregation — normalize scale, voxel, volume, and material deviations and combine them into one clinical score
 - adjustable evidence visualization — map voxel discrepancies to thresholds, colors, opacity, and point size for human review
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "While users may be able to visualize internal discrepancies in voxel analysis by adjusting opacity, many modifications on complex internal geometries can be difficult to visualize using this method, as shown in Figure 11(a), 11(c)."): checked all paper text, study claims, quotations, numbers, technique steps, section/page references, tag, and publisher link; corrected page references, ray-origin choices, affected-region terminology, runtime scope, theorem wording, and implementation inferences; noted material-count, attack-extent, and gamma-decision inconsistencies; did not reproduce experiments, inspect source code, independently validate the proof, or establish clinical safety.

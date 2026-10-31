@@ -27,7 +27,6 @@ The paper's theory section also says the specification may be partial: “Φ is 
 Inference: the appendix shows that LLM-written constraints need review. In the put-down code (App. B, p. 18), `ForAll([x], And(x != block, ...))` cannot hold for x equal to the block. The paper does not say whether the authors checked the generated constraints.
 
 Verus form
-Inference: For VL, an analogous front end can translate an English contract into Rust/Verus `requires`, `ensures`, and state predicates, but this is a high-risk step. The generated specification must be reviewed or independently checked; Verus verifies the supplied contract, not whether it faithfully captures the user's intent. A candidate function and its proof obligations then go through `verus`.
 
 ## technique 2: counterexample-guided LLM refinement
 
@@ -60,12 +59,10 @@ Inference: Verus diagnostics can serve as local counterexamples to a candidate p
 ## evidence, assumptions, and limits
 The reported counts decline with size but not monotonically: GPT-4 goes 19, 11, 11, 9, 2 for 3, 4, 5, 6, 10 blocks, and GPT-3.5 Turbo goes 12, 4, 6, 1 for 3, 4, 5, 6 blocks. The text says GPT-4 was analyzed “with 3, 4, 5 and 6 blocks”, yet Fig. 3 also has 10 blocks; no 10-block run for GPT-3.5 Turbo is reported. The paper does not report confidence intervals, an iteration limit, solver timeouts, or a comparison with LLM-only generation using the same prompts. Its conclusion calls the results “initial experiments” that are “encouraging”. Inference: the generated formalization is a trusted-input risk. If the LLM mistranslates the natural-language requirement, Z3 can certify the wrong problem. The block-world domain also has small, deterministic action semantics unlike systems Rust.
 
-The abstract claims the combination “can produce provably correct solutions”. Inference: that conclusion is relative to the encoded specification and solver model. VL gains a reusable architecture (natural-language or code generation, machine counterexample, iterative repair, final proof), but should treat specification translation and counterexample interpretation as separate threat surfaces. CEGIS and SMT-based synthesis already provide the verifier loop; the paper's new part is the LLM learner. It should be tested whether Verus counterexamples can guide proof repair without allowing the agent to weaken contracts.
+The abstract claims the combination “can produce provably correct solutions”.
 
 ## techniques for the catalog
 - natural-language-to-formal query: have the LLM emit Z3 constraints for the domain's action semantics from informal text, then review them
 - counterexample-guided synthesis: append verifier-produced infeasible prefixes or models to the next prompt and regenerate
 - concept-class exclusion: represent candidates as concepts and use oracle counterexamples to rule out classes of invalid completions
 - final solver certification: accept an artifact only when the formal verifier finds it consistent with the supplied specification
-
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "We study how LLMs are improved by adding verification in the loop and report the number of iterations taken by our approach to produce the correct result."): read the whole text (sections 1 to 5 and App. A and B), and viewed pages 7 and 8 as images to read the bar values; checked every quotation, figure value, section and page reference, and the technique steps. Changed: Davinci 5 to 2 (Fig. 2); GPT-3.5 Turbo values 11, 9, 6, 1 to 12, 4, 6, 1 (Fig. 4, p. 8) with the matching evidence sentence; Figure 4 and 5 pages; the arXiv link replacing the Semantic Scholar link; the claim that successes are Z3-accepted, which the paper does not state for Figs. 2 to 4, now marked Inference; the Z3-query step, the resource limit, and the step of encoding counterexamples as constraints on generation, which the paper does not describe, now reworded or marked Inference; added the two in-context examples, the appendix predicates, Figs. 6 and 7, the unlabeled-denominator and non-monotone-results notes, and the put-down code problem as Inference. Not checked: the cited works, the unlabeled panels of Fig. 5 (3 versus 4 blocks) bar by bar, and the full Z3 code of the stack and unstack appendices beyond a read-through.

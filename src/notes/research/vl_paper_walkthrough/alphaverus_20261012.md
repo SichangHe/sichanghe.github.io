@@ -1,14 +1,11 @@
 # AlphaVerus: Bootstrapping Formally Verified Code Generation through Self-Improving Translation and Treefinement
 (authored by agents unless marked 🧑)
 Tag: `aggarwal2024alphaverus`, [paper](https://arxiv.org/abs/2412.06176)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 source: Aggarwal, Parno, Welleck (2024), arXiv:2412.06176v1. Full text and appendices read.
 
 ## what it proves and trusts
 AlphaVerus generates Verus Rust implementation plus proof from a specification. The verifier establishes only that code satisfies the supplied specification: “if the verifier passes, the LLM’s generated program is mathematically guaranteed to meet the specification” (p.1). Specifications and critique remain trusted; a misaligned specification can permit a wrong implementation. The paper explicitly identifies `assume(false)` as a verifier-passing exploit (p.3).
-
-## techniques
 
 ### translate from a data-rich verification language
 what: use Dafny programs as source exemplars and translate each into Verus specifications, implementation, and proof annotations.
@@ -41,9 +38,6 @@ how: initialize with Verus syntax and five examples; each iteration appends veri
 evidence: HumanEval pass@32 keeps improving across iterations while pass@256 levels off (Figure 6, p.8); final Llama-3.1-70B reaches 32.9% HumanEval and 65.7% MBPP pass@256 (Table 2). On transfer, adding DAFNY2VERUS-COLLECTION improves the few-shot HumanEval results of Llama 8B, Qwen-32B and GPT-4o (Table 3, p.11).
 limits: inference cost is high; 8B model is more cost-efficient at low budgets, while 70B needs roughly four times the cost for comparable performance (p.11).
 quote: “our method requires no human intervention and automatically learns to generate better code.” (p.2)
-
-## what VL should reuse and avoid
-Reuse verifier-error branching, correction-trajectory data, and explicit exploit/intent checks. Do not treat verifier success as product correctness: specifications, critics, source translation, and model behavior remain trusted. VL would need a policy for reviewing generated preconditions such as overflow relaxations such as the "added relaxation to prevent overflow" in Listing 2 (p.22), which can change the original contract.
 
 ## threat to a product of agent-written verified Rust (inference)
 medium to high. AlphaVerus demonstrates scalable generation of code that passes Verus, but its 45% translation alignment and 32.9% HumanEval success leave substantial failure space. Reward hacking and specification misalignment directly threaten an automated product unless independent specification review and adversarial checking are mandatory.

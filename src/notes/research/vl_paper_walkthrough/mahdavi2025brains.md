@@ -6,8 +6,6 @@ Tag: `mahdavi2025brains`, [paper](http://arxiv.org/abs/2504.01995v2)
 
 This paper evaluates whether frontier LLMs produce logically sound Olympiad proofs and whether LLMs can verify other LLM-generated proofs. It combines human annotation of 455 International Mathematical Olympiad shortlist problems (2009–2023) with automatic model-as-judge experiments. The abstract reports: “Our study reveals that current LLMs fall significantly short of solving challenging Olympiad-level problems and frequently fail to distinguish correct mathematical reasoning from clearly flawed solutions.” (Abstract, p. 1.)
 
-Inference: for VeruLaw, the key lesson is that plausible text and a correct final answer are weak evidence of a valid proof. A deterministic proof checker such as Verus can reject many omissions that an LLM judge accepts, but this paper does not test Rust, Verus, or machine-checked proofs.
-
 ## technique 1: human proof-quality evaluation beyond final answers
 
 What it is. Seven evaluators classify generated solutions as correct, partially correct, or incorrect and record fallacy types. Their qualifications are described as “each either a former national-level Olympiad medalist or holding or doing a relevant Ph.D. in fields like mathematics or computer science” (Section 3, p. 5). The dataset contains 108 algebra, 117 combinatorics, 116 geometry, and 114 number-theory problems, totaling 455 (Section 4, p. 7).
@@ -60,7 +58,7 @@ Steps from the paper.
 3. Among instances with a correct final answer, count those whose complete solution is correct (Section 4, p. 8).
 4. Compare the two percentages and inspect fallacy labels (Section 4, pp. 8–9).
 
-Verus form. Inference: require both a functional postcondition and a proof of the reasoning invariant; a runtime output passing a test is not a substitute for a verified `ensures`. Inference: for VL, report the denominator for proof success separately from compile success and test success, so a model cannot hide invalid proofs behind correct outputs.
+Verus form.
 
 Evidence. The authors conclude: “Hence, we argue that evaluating the performance of LLMs on mathematical reasoning tasks based solely on the correctness of the final answer without checking the soundness of the rationale used to justify the answer is fundamentally flawed.” (Section 4, p. 8.) The conditional percentages in Table 2 are explicitly conditioned on correct final answers, not all 455 problems.
 
@@ -87,16 +85,9 @@ Assumptions and failure. The pair task guarantees one solution is correct and on
 
 The paper measures human-rated proof correctness, fallacy frequencies, final-answer/proof gaps, and model judging accuracy. It does not provide machine-checkable proof certificates, formal semantics, or evidence that any model can verify arbitrary proofs. Inference: the results depend on evaluator expertise, AoPS reference solutions, prompt design, randomization, and human labels. The authors conclude: “In light of the fact that identifying the presence of fallacies in reasoning is a simpler task compared to full verification of the solution, we conclude that LLMs are incapable of verifying the correctness of LLM-generated solutions.” (Section 1, p. 3.)
 
-Inference: the threat to VeruLaw is high if an agent or reviewer treats a plausible proof explanation, a correct test output, or an LLM judge as evidence of Verus correctness. The threat is reduced by requiring Verus to check the actual Rust specification and proof. The taxonomy is useful for triage, but only executable checking establishes the proof obligation's status.
-
-## what VL should not redo
-
-The paper already provides a human evaluation of 455 IMO shortlist problems, a six-category fallacy taxonomy, conditional final-answer analysis, human adjudication procedures, and two LLM-verifier experiments. Inference: VL should reuse the separation between output correctness and reasoning correctness, then measure compile/proof success and trusted assumptions directly rather than reproduce another textual judge study.
-
 ## techniques for the catalog
 
 - human proof-quality evaluation: classify complete arguments separately from final-answer correctness
 - explicit fallacy taxonomy: label example overreach, unsupported proposals, invented facts, circularity, trial-and-error, and arithmetic errors
 - conditional final-answer analysis: compare correct outputs with fully correct derivations using explicit denominators
 - LLM-as-verifier challenge: test judges on single-solution labels and randomized correct-versus-wrong pairs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "First, there is a clear need to develop more sophisticated benchmarks and evaluation methods to assess the correctness of reasoning and not merely the correctness of final answers."): checked every quotation, reported number, section/page reference, and technique step after reading the full paper; corrected quotations, page references, evaluator qualifications, and annotation scope, and marked recommendations as inferences; did not reproduce experiments, independently validate the mathematical examples, or test the Verus recommendations. The paper identifier arXiv:2504.01995v2 appears on p. 1.

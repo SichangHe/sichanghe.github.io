@@ -25,8 +25,6 @@ The paper says: “SFT provides a solver prior: it places executable schemes wit
 
 Verus form
 
-Inference: for VL, teacher examples could be Rust functions with Verus-checked `requires`, `ensures`, and loop `invariant` clauses. SFT could teach syntax and proof patterns; each generated candidate would still need verification against its specification. Applying this to numerical PDE accuracy would require a mathematical model and explicit error or invariant specifications. The paper does not test Verus or Rust.
-
 ## technique 2: hybrid continuous verifier
 
 For generated solver y on hidden instance c, multiply indicators of error-free execution, correct output shape, and finite values into V. The paper states: “Invalid programs receive zero reward.” (§3.5, p. 5.) For valid programs, Equation (1) defines the normalized function-space trajectory error:
@@ -63,10 +61,6 @@ The 7B ablation compares validity-only reward V with V·Rtraj, rather than isola
 
 The authors describe the scope directly: “Our study covers eight structured PDE families, leaving broader scientific settings such as complex geometries, richer boundary conditions, adaptive meshes, stochastic PDEs, and multiphysics systems to future work.” (§5, p. 10.)
 
-## what is proved and what stays trusted
-
-Inference: the reported execution tests, numerical errors, and residual checks establish performance on evaluated cases, not correctness for all inputs. Their interpretation depends on the reference solutions, residual implementations, discretizations, sandbox, case generation, and metric definitions. High reward measures agreement with that setup; it is not a formal proof of physical accuracy. For VL, the transferable idea is to retain a mandatory proof requirement while using graded feedback to guide learning. Any guarantee would depend on the specifications and verification system, rather than the empirical score alone.
-
 ## techniques for the catalog
 
 - solver-bank SFT: warm-start training with executable schemes checked by numerical diagnostics
@@ -74,5 +68,3 @@ Inference: the reported execution tests, numerical errors, and residual checks e
 - stochastic-tolerance reward: interpret continuous diagnostic scores as expected binary pass probabilities
 - GRPO with hidden cases: update from grouped verifier rewards across varied numerical instances
 - selective transfer evaluation: test held-out PDE families and report improvements and regressions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The selected solvers in the bank are designed to cover a representative set of standard numerical idioms associated with each problem class rather than variants of a single template."): checked all paper text, study quotations, numbers, section/page references, technique steps, and the arXiv identifier; corrected Python language, SFT page, transfer quotation, metric aggregation and normalization, residual description, and unsupported assertions; added transfer regressions and the ablation discrepancy; did not reproduce experiments, audit implementation code, or independently verify the proposed Verus applications.

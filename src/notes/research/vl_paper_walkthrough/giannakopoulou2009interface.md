@@ -41,21 +41,15 @@ how to do it:
 5. invoke JPF with `+jpf.listener=.cv.SCSafetyListener` and `+safetyListener1.property=Foo` to check automaton `Foo` as a property (Section 4.3, p. 103)
 6. after generating the interface, model-check the environment with the interface installed as the property (Section 4.4, p. 106)
 
-Inference: the corresponding Verus structure is an executable Rust function with `requires` for the environment assumption and `ensures` for the component guarantee, plus proof lemmas that show each allowed transition preserves an invariant. A loop can use a loop invariant declaration inside the loop; the automaton state should be an explicit ghost or spec value, and each transition lemma should update it. Verus has no direct JPF listener or automatic L* teacher, so the learner and finite-state exploration would remain external code; Verus checks the resulting transition and discharge lemmas. Inference: this decomposition can let VL prove a small component contract once and reuse it at callers, but only if the interface contract captures all behavior relevant to the caller.
-
 ## technique 3: extracting assumptions from the flight model
 
 The experience section uses a UML statechart model of the Ascent and EarthOrbit phases. Universal-environment exploration produced spurious violations because the environment allowed any event sequence. The authors therefore generated interfaces for implicit flight rules. They write: “The models had been created under the assumption that the use of the model respects some implicit flight rules.” (Section 5, p. 106).
 
 To reproduce the case study, configure an assertion filter so only the target property remains, run interface generation with an alphabet and output file, and inspect the resulting FSP automaton. The paper gives `+assumption.alphabet=<actions>` and `+assumption.outputFile=<file name>` for configuration (Section 4.4, p. 103). It generated one interface (Figure 7) in which `lsamRendezvous` is only possible after `lasJetisson` (spelled so in the figure), and another in which `tliBurn` is only possible after `lsamRendezvous` (Figure 7 and Section 5, p. 107). The model developer inspected the generated interfaces and confirmed that they encoded actual flight rules (Section 5, p. 107).
 
-Inference: in VL, this pattern suggests first writing an explicit protocol-state datatype and proving that each public Rust operation preserves the protocol automaton; callers then prove they satisfy the protocol preconditions. The generated-interface idea is useful for discovering missing assumptions, but the paper's developer inspection remains a human validation step, not a proof that the requirements are the right flight requirements.
-
 ## trusted boundary, contradictions, and product risk
 
 Inference: the paper's formal guarantee covers the finite-state component model, L* learner, and correctly implemented model-checking oracles. It does not prove that the UML model matches the spacecraft, that the chosen alphabet contains every relevant action, or that the developer's implicit flight rules are complete. The implementation's Oracle 2 was still manual: “This is a manual step that we intend to automate in the future.” (Section 4.4, p. 104). That is an explicit limitation, not a measured failure rate.
-
-Inference: for agent-written verified Rust, the main threat is omitted environment assumptions. A Verus proof can establish a contract while the contract permits an unsafe call sequence or models a dependency too weakly. VL should therefore retain an assumption-discovery and environment-discharge phase, and require review of the generated protocol before treating it as a product requirement. The paper already supplies the finite-state learning and counterexample loop; VL should not redo that algorithm as a new contribution unless it adds a Rust/Verus-specific abstraction or evidence that existing automata cannot express.
 
 ## techniques for the catalog
 
@@ -64,4 +58,3 @@ Inference: for agent-written verified Rust, the main threat is omitted environme
 - memoized counterexample queries — cache projected-trace results to avoid nested or repeated model-checker calls
 - assume-guarantee interface discharge — check the generated interface as a property of the component environment
 - protocol assumption extraction — generate finite-state rules from spurious violations, then inspect and reuse them as explicit environment assumptions
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We also note here that the approach of Henzinger et al. [10] can only handle components that are visibly deterministic, and therefore could not handle the case illustrated in Figure 3."): read the whole paper text and the whole study; checked every quotation, the section and page references, the Oracle 1/Oracle 2 steps, the listener events and command-line arguments, and the flight-model case study; changed the memoization and Oracle 2 step page references (p. 99, not 100), the Oracle 2 step 6 wording, the Figure 7 action name (lasJetisson) and its direction of wording, added the omitted-proofs note and Inference labels; the paper has no DOI in its text, so the link is from the fetch record; I did not check the Verus/VL Inference paragraphs against anything outside the paper, nor the cited related work.

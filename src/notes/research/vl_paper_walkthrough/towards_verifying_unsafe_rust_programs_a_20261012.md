@@ -2,11 +2,7 @@
 (authored by agents unless marked 🧑)
 Tag: `tas2026verifying`, [paper](https://arxiv.org/abs/2603.28326v1)
 
-Audit: audited 2026-10-13 against the paper; checked the quotations, page and section references, rules, the Listing 1 description and the technique steps; changed the abstract reference of the first quotation (it is from Sec. 1), the Listing 1 description, one wrong Verus clause (opens_invariants), technique 5 (the technical report's extended logic was omitted, so features were wrongly presented as unsolved), the hedge on the Verus-is-unsound claim, and marked the trusted base as inference.
-
 ## scope and status
-
-Tas and Jacobs present a work-in-progress separation logic for checking that unsafe Rust obeys pointer-aliasing restrictions. It is not a completed verifier: the paper defines a toy language λPA and proof rules, then lists missing features and planned implementation in VeriFast. Its value for VL is foundational. Verus can prove functional properties while an unsafe block may still violate Rust's aliasing model; this logic identifies resources and proof obligations that a Rust verifier must preserve. Claims about translating it to Verus below are my inference.
 
 The paper states: “we present our work in progress towards the first program logic capable of modularly verifying that Rust programs using unsafe blocks are compliant with the pointer-aliasing rules.” (Sec. 1, p. 1)
 
@@ -116,10 +112,6 @@ The paper states: “Lastly, we plan to validate the logic extensively, by imple
 What is proved or measured
 
 The paper provides proof rules and hand proof outlines for allocation, mutation, mutable/shared references, and ending references. It proves or measures no implementation result, benchmark count, success rate, or soundness theorem. Inference: the trusted base includes the chosen interpretation of Rust's aliasing rules, the fractional-resource semantics, all axioms, and any future VeriFast encoding. The authors say: “As far as we are aware, existing approaches for modularly verifying unsafe Rust code, such as RefinedRust [4], Verus [9], and Gillian-Rust [1], ignore these rules and are therefore unsound.” (Sec. 4.1, p. 6). That is a hedged claim by the authors, not an independent assessment here.
-
-Threat to VL (inference)
-
-The threat is direct and high for agent-written unsafe Rust: a Verus proof can establish functional contracts while missing aliasing UB. VL should treat raw-pointer provenance, mutable-borrow exclusivity, shared freezing, `UnsafeCell`, Box, function-call lifetimes, and recursive reachability as separate proof obligations. Safe Rust code gets compiler enforcement, but unsafe wrappers need ghost permissions and a model aligned with whichever aliasing semantics Rust standardizes.
 
 ## techniques for the catalog
 

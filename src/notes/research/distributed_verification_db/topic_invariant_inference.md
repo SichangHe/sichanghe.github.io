@@ -12,7 +12,7 @@
     - number: rIC3-CtgDown solves 629
     - limits: The study targets Boolean hardware transition systems and rIC3's existing strategies. Results use a 914-instance HWMCC suite, one-thread runs, a 3600-second timeout, and fixed reward hyperparameters. Bandit gains are empirical and do not establish better proofs for unseen designs; future work includes other verification phases and reinforcement learning.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2604.21688.txt`
+    -
     - record id: `a-ic3-2026`
 - Agentic-IC3: Enabling Semantic Proof Search in IC3 Model Checking (2026)
     - what: Integrates a language-model agent into a persistent word-level IC3 model checker so RTL semantics and solver feedback guide lemma generalization, derived observations and backtracking. Specifies an agent-oriented interface over Pono/Bitwuzla proof state, with SAT and UNSAT batches, solver-checked lemma admission, observation definitions and revision of earlier proposals. Detailed trajectories show semantic equalities for multiplier completion, occupancy observations relating shift-register and ring FIFOs, and state-guarded backtracking for floating-point adders. The evaluation and ablations separate proof success from interaction cost and demonstrate where semantic actions help or fail.
@@ -22,7 +22,7 @@
     - number: batching reduces lemma-proposal generalizations 515 to 137 (73%) and solves all ten
     - limits: The backend remains the soundness boundary: proposed lemmas are admitted only after SAT/SMT checks. Experiments use Codex CLI GPT-5.6-Sol, one CPU core, 16 GiB, one-hour timeout, 14 selected RTL benchmarks and fresh conversations, so stochastic repeatability and model dependence are unresolved. Current observations are stateless; quantified lemmas and stateful history require future backend extensions. Agent waiting dominates runtime.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2609.27162.txt`
+    -
     - record id: `agentic-ic3-enabling-semantic-2026`
 - Autogram (2026)
     - title: Invariant Discovery for Networked Systems
@@ -33,7 +33,7 @@
     - number: full recall on Abilene and GÉANT vs NetNomos 19.8% and 15.1%
     - limits: The relations are approximate. They are not inductive invariants (facts that hold initially and are preserved by every step). The paper states no safety or liveness contract, program proof or measure of human effort. It admits false acceptances but gives no rate. Proofs are left to future work.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2607.22944); [notes: Invariant Discovery for Networked Systems](../distributed_verification_review_b/deep_18_invariant_agents.md); [notes: Invariant Discovery for Networked Systems](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`
+    - [source](https://arxiv.org/abs/2607.22944); [notes: Invariant Discovery for Networked Systems](../distributed_verification_review_b/deep_18_invariant_agents.md); [notes: Invariant Discovery for Networked Systems](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md)
     - record id: `autogram-2026`
 - Beyond Basic Specifications? A Systematic Study of Logical Constructs in LLM-based Specification Generation (2026)
     - what: Compares LLM-generated ACSL annotations for 49 C programs, checked with Frama-C, under four settings of allowed constructs: basic, proved lemmas, axioms, and all. Failing annotations are fixed by deleting or modifying them.
@@ -43,7 +43,7 @@
     - number: modification raises runtime generally over 100%
     - limits: The annotations come from the code, not from requirements. Axioms are assumed true and can make the proof unsound, and nothing audits them. NVP counts a program as solved if any run solved it, not pass@1 (success on the first try).
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2602.00715); [notes: Beyond Basic Specifications? A Systematic Study of Logical Constructs ](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - [source](https://arxiv.org/abs/2602.00715); [notes: Beyond Basic Specifications? A Systematic Study of Logical Constructs ](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `beyond-basic-specifications-a-2026`
 - BII bit-vector synthesis (2026)
     - title: A Fresh Look at Best Inductive Loop Invariant Synthesis for Bit-Vector Relations
@@ -54,7 +54,7 @@
     - number: bit-width sensitivity examples increase runtime 25.71→139.91 s and 2.29→35.74 s
     - limits: Benchmarks use unsigned fixed-width bit-vectors where overflow is intentional and retain instances with non-trivial invariant components. Results depend on solver/template domains and timeouts; the method targets canonical bound templates and does not claim all invariant forms.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2607.26386.txt`
+    -
     - record id: `bii-bit-vector-synthesis-2026`
 - CIll (2026)
     - title: CIll: CTI-Guided Invariant Generation via LLMs for Model Checking
@@ -65,7 +65,7 @@
     - number: picorv32 add 5,344 s; div-altops 10,458 s; ALTOPS mul 54 min
     - limits: Baselines only select checks unsolved for five hours; LLM edits may not modify DUT or insert assume. Bit-level IC3 cannot solve original 32-bit M-extension; long serv latencies defeat short counterexamples. LLM inference dominates runtime.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2602.23389); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2602.23389.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; [notes: Adjacent 2026 LLM result that is not a protocol benchmark](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - [source](https://arxiv.org/abs/2602.23389); [notes: Adjacent 2026 LLM result that is not a protocol benchmark](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `cill-2026`
 - DissProve (2026)
     - title: DissProve: Automated Verification of Asynchronous Distributed Protocols with Affine Communication
@@ -76,7 +76,7 @@
     - number: Disabling causality left 1,258 states queued for Two-Phase Commit and 1,451 for Atomic Broadcast at the same cap
     - limits: There is no artifact URL, and the notes did not locate the source archive. These are P actor programs. They are not interchangeable with Ivy or TLA+ models of the same name.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2606.24003); [notes: DissProve: start at a forbidden outcome and work backward](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2606.24003.txt`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
+    - [source](https://arxiv.org/abs/2606.24003); [notes: DissProve: start at a forbidden outcome and work backward](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
     - record id: `dissprove-2026`
 - IC3Syn (2026)
     - title: Synthesizing Inductive Invariants for Distributed Protocols via IC3 and Large Language Models
@@ -108,7 +108,7 @@
     - number: GPT-5.5 ablation full 140 vs no OGI 117 and no WP 110
     - limits: Uses ACSL/Frama-C WP and SMT solvers; dynamic allocation and separation logic are unsupported, making pointer structures difficult. Benchmarks are small and may leak into LLM training; GPT/Qwen/DeepSeek results depend on model and timeouts.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2607.05478.txt`
+    -
     - record id: `invweaver-2026`
 - LemmaNet (2026)
     - title: Automated Lemma Discovery in Agentic Program Verification
@@ -119,7 +119,7 @@
     - number: 78 unique successes; 61/69 helper-lemma proofs use BRIDGE strategy
     - limits: The Linux scheduler/memory, Contiki and X.509 items are single verification conditions, not whole kernels.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2603.22114); [notes: Dafny, C verification, and the specification-intent gap](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2603.22114.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2603.22114); [notes: Dafny, C verification, and the specification-intent gap](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `lemmanet-2026`
 - LORIS loop invariant synthesis (2026)
     - title: Guiding LLM-based Loop Invariant Synthesis via Feedback on Local Reasoning Errors
@@ -130,13 +130,13 @@
     - number: successful GPT-4.1 run costs about $0.038 on average; sampled auto-formalization evaluates 108 proof steps
     - limits: Results use single-loop, single-function C programs filtered from established suites; floating-point cases unsupported by the chosen Frama-C version were removed. Each method receives five independent runs, a 600-second limit, and 150,000 tokens per run; success means the verifier accepts the generated invariant. Feedback quality depends on LLM formalization of reasoning steps and solver-supported first-order implications, so it does not establish correctness of arbitrary natural-language reasoning outside the checked obligations.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2605.17914); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2605.17914.txt`; [notes: LORIS, loop invariants from local-reasoning feedback (2026)](claude_readings.md)
+    - [source](https://arxiv.org/abs/2605.17914); [notes: LORIS, loop invariants from local-reasoning feedback (2026)](claude_readings.md)
     - record id: `loris-loop-invariant-synthesis-2026`
 - MALICE: Memory-aware Loop Invariants Generation on Symbolic Execution Traces (2026)
     - what: A proposal-and-check framework generates separation-logic loop invariants for C memory-manipulating programs from bounded symbolic execution traces. Three prediction stages choose heap predicates, abstract spatial memory regions and infer pure constraints; a two-step explanation/correction refinement loop uses QCP feedback. Authors report82.69% ICL and86.15% SFT pass@8 on260 LIG-MM+ programs. Separates read/write-permission and region planning from heap abstraction and scalar constraints. Two alternative spatial strategies either fold one deeper unrolled assertion or align multiple states to infer a common predicate shape; the reported solved set is their union. QCP supplies detailed pre-failure states, error locations and symbolic histories. A postorder loop-dependency traversal resolves sequential loops in order and inner loops before outer ones. Successful refinement trajectories yield9698 explanation/correction examples for an8B LoRA refiner with program-grouped fivefold cross-validation. A long array_max example reveals the exact memory-safety specification and both useful trace information and limits of automated diagnosis.
     - limits: Correctness relies on QCP semantics, symbolic execution, entailment checking and supplied predicate/specification definitions. The paper invokes standard partial-correctness Hoare rules; no new soundness/completeness theorem, termination proof or successful-generation guarantee is supplied. Unrolling depth4 provides examples for proposing invariants, not a proof of induction over unbounded executions. Pure properties retained after all observed branch-specific states must still pass full QCP initialization, preservation and exit obligations. The method assumes annotated C tasks, pre/postconditions and a supplied library of separation-logic predicates such as data_at,listrep,lseg,array shapes. It selects/folds these predicates; it does not generally synthesize arbitrary recursive predicate definitions or discover intended requirements. LIG-MM+ has133 doubly-linked-list,96 singly-linked-list,8 array and23 other(tree/hash-table) programs,260 total,reported average35 lines. At least one loop and data structure per task; authors mention several two-loop cases but give no count or broad nested-loop stress test. Main pass@8 result takes the union of solved sets from two spatial strategies, with three prediction interactions and up to10 refinement iterations per run. The relationship between strategy union and the stated call budget is not fully specified; token/cost/latency equivalence across methods is not established. SFT changes the refiner to Llama3.1-8B but retains DeepSeek-V3.2 for prediction. Full-8B uses Qwen3-8B prediction plus distilled Llama refiner; inference uses only8B models, while training-data generation still used the large teacher. Fivefold splitting groups all trajectories from each program, preventing direct trajectory sharing across train/test folds. The paper does not establish project/family-level disjointness, deduplication of near-identical programs or absence of base-model contamination. AutoSpec is a numerical tool and obtains0 here; LIG-SE/SLING lack array support. The comparison measures tool applicability plus invariant generation on this benchmark; it does not isolate framework effects under identical models/predicate coverage. Same-backbone Vanilla and Full-8B/budget comparisons add narrower controls. No repeated-run confidence intervals, significance tests, total API costs, full per-category results or independent artifact replay are supplied. Broad deployment to larger C systems, concurrency, distributed protocols, Verus/Rust and temporal liveness is untested.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal316/malice.reading.txt`
+    -
     - record id: `malice-memory-aware-loop-2026`
 - NetNomos (2026)
     - title: Making Logic a First-Class Citizen in Generative ML for Networking
@@ -158,7 +158,7 @@
     - number: runs use Apple M3 Pro with 18 GB RAM; core synthesis only
     - limits: Template enumeration is theoretically exhaustive only if a rational invariant exists at finite degree; positivity checking uses sufficient heuristics because general rational FPS nonnegativity is difficult. Benchmarks are small to mid-sized, and two cases fail due to template/positivity limitations; reported times exclude preprocessing.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2601.13991.txt`
+    -
     - record id: `occupation-invariants-probabilistic-loops-2026`
 - Quokka (2026)
     - title: Quokka: Accelerating Program Verification with LLMs via Invariant Synthesis
@@ -169,7 +169,7 @@
     - number: 50 timeout cases: 14% incorrect, 38% assertion duplicates, 18% trivial, 10% strong but timed out
     - limits: Correctness is defined by solver acceptance within 1.2× baseline timeout; acceleration is solver/tool dependent. Most failures are timeouts, and generated invariants may be tautological or too weak. Benchmark programs are SV-COMP C tasks; results may not transfer to other languages or verifiers.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2509.21629.txt`
+    -
     - record id: `quokka-2026`
 - Scimitar proof decomposition (2026)
     - title: Interactive Safety Verification of Distributed Protocols by Inductive Proof Decomposition
@@ -180,7 +180,7 @@
     - number: Other reported proof-development burdens: 1–2 human-months for smaller invariants
     - limits: TLC/Apalache counterexamples use finite parameter bounds and do not themselves prove arbitrary-size invariants; TLAPS validation is required for the final proof. Human guidance remains necessary to add lemmas and edges. Evaluation is on five TLA+ specifications and one implementation; generality to other formalisms is untested. AsyncRaft development took human effort despite automation.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-032-28079-4_1); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2404.18048.txt`; [notes: Scimitar: distinguish the final interactive paper from an older automa](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Full live Scimitar configuration inventory (not an evaluated success l](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - [source](https://doi.org/10.1007/978-3-032-28079-4_1); [notes: Scimitar: distinguish the final interactive paper from an older automa](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Full live Scimitar configuration inventory (not an evaluated success l](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `scimitar-proof-decomposition-2026`
 - Simplifying Safety Proofs with Forward-Backward Reasoning and Prophecy (2026)
     - what: Proves consensus safety of first-order Paxos-family models and an abstract Raft model. Combines forward reasoning, backward reasoning and prophecy (a recorded guess about the future). Checked with mypyvy and Z3. All proofs were written by hand.
@@ -190,7 +190,7 @@
     - number: Raft: Q=7, A=2, B=9, 3.7 s to 2.8 s
     - limits: Safety only, on abstract models. No implementation or progress result. Human effort and lines of code are not reported. No measured rate of successful proof generation.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3808341); [notes: Simplifying Safety Proofs with Forward-Backward Reasoning and Prophecy](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - [source](https://doi.org/10.1145/3808341); [notes: Simplifying Safety Proofs with Forward-Backward Reasoning and Prophecy](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `simplifying-safety-proofs-with-2026`
 - Specy (2026)
     - title: Specy: Automatically Learning Specifications for Distributed Systems from Event Traces
@@ -201,7 +201,7 @@
     - number: pruning speeds up by geometric mean 14.8
     - limits: The only guarantee is consistency with the supplied traces. Hard properties need predicates, event choices or ghost state. The deductive results cover selected safety properties of P models. There is no refinement to production code.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3798209); [notes: Specy: Learning Specifications for Distributed Systems from Event Trac](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Specy: Learning Specifications for Distributed Systems from Event Trac](../distributed_verification_review_b/deep_18_invariant_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - [source](https://doi.org/10.1145/3798209); [notes: Specy: Learning Specifications for Distributed Systems from Event Trac](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Specy: Learning Specifications for Distributed Systems from Event Trac](../distributed_verification_review_b/deep_18_invariant_agents.md)
     - record id: `specy-2026`
 - Timers (2026)
     - title: Verifying First-Order Temporal Properties of Infinite-State Systems via Timers and Rankings
@@ -212,7 +212,7 @@
     - number: runtime is Z3 validation on Apple M1 Pro, Z3 4.13.3
     - limits: The guarantees cover first-order transition-system models, not deployed code. Rankings and invariants are not discovered automatically. Sizes count proof tokens, not human effort.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-032-22749-2_18); [notes: Verifying First-Order Temporal Properties of Infinite-State Systems vi](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_tables.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://doi.org/10.1007/978-3-032-22749-2_18); [notes: Verifying First-Order Temporal Properties of Infinite-State Systems vi](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `timers-2026`
 - Transitive Relation Learning (TRL) (2026)
     - title: Infinite State Model Checking by Learning Transitive Relations
@@ -220,14 +220,14 @@
     - number: On 626 distinct LIA-Lin CHC problems with 300-second timeout and about 11GB memory, LoAT TRL solved 386 (267 safe, 119 unsafe), including 16 unique safe and 1 unique unsafe proofs (19 and 9 when ABMC is disregarded). Z3 GSpacer solved 373; LoAT ABMC solved 272. TRL was strongest overall and competitive in runtime, while GSpacer led safe instances and ABMC led unsafe instances.
     - limits: The theory assumes a complete first-order theory with effective quantifier elimination; implementation is restricted to linear integer arithmetic. TRL may diverge because learned-relations generation/trace search is not guaranteed to terminate, and learned over-approximations cannot prove unsafety without acceleration. BMC unrolling can bottleneck large systems, although backtracking on loops mitigates this. Future work targets reals, bitvectors, arrays and temporal verification.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/Sections 1–7; Algorithms 1–2; Theorems 22 and 28`
+    -
     - record id: `transitive-relation-learning-trl-2026`
 - WONDA invariant curation (2026)
     - title: Not All Invariants Are Equal: Curating Training Data to Accelerate Program Verification with SLMs
     - what: Introduces WONDA, a verifier-filtered training-data pipeline: AST normalization removes semantic-preserving syntactic clutter, then an LLM proposes compact generalizations that are checked for inductiveness, sufficiency and speedup. Proposition 4.1 proves normalization equivalence and Proposition 4.3 proves pipeline outputs are correct and sufficient. Fine-tuning Qwen3, Llama-3.1 and Mistral SLMs on curated invariants improves correctness and virtual-best verification time versus raw or normalized data.
     - limits: Raw invariants come from UAutomizer and are correct by construction but may be verbose or not useful. LLM simplification is not semantics-preserving by assumption; every candidate is re-verified. Cast stripping can be unsound under overflow, so final verifier checks are essential. Evaluation is C programs/InvBench (219 programs expanded to 362 loops), with 123 hard instances selected by >15 s baseline and 20 hard timeouts; results measure verifier outcomes, not proof certificates. 80/20 training/validation split is by curated samples; the paper does not state program-group splitting, although multiple candidates may derive from one program. Evaluation contains multiple loop instances per program, so 123 instances are 72 unique hard programs (mean 63.9 LOC, 8.1 variables; 28 with nonlinear arithmetic). Claims of matching frontier models concern virtual-best end-to-end time, not equal correctness: Qwen3-14B-V2 correctness 43.4% versus GPT-5.2 72.4%. Training is one-shot supervised invariant generation; no intermediate reasoning or iterative verifier feedback is used.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal259/Not_All_Invariants_Are_Equal.flow.txt`
+    -
     - record id: `wonda-invariant-curation-2026`
 - ATLAS (2025)
     - title: Constrained LTL Specification Learning from Examples.
@@ -235,7 +235,7 @@
     - number: Table I: 30/30 tasks mean 43.65 s (Peterson); 10/10, 3.08 s (voting); 20/20, 37.25 s (robot arm); 53/78, 66.75 s (invariant weakening)
     - limits: It finds the best formula only within the formula-size bound. A formula that fits the traces may not capture what the user meant. The benchmarks were built around the authors' use cases. Using it needs formal-methods expertise.
     - how much was read: most of it read
-    - [source](https://eskang.github.io/assets/papers/icse25-atlas.pdf); [notes: Constrained LTL Specification Learning from Examples (ATLAS)](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://eskang.github.io/assets/papers/icse25-atlas.pdf); [notes: Constrained LTL Specification Learning from Examples (ATLAS)](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `atlas-2025`
 - b-invariant regular model checking (2025)
     - title: Regular Model Checking Upside-Down: An Invariant-Based Approach
@@ -246,7 +246,7 @@
     - number: dining philosophers with fork ownership needs b=1; unlabelled forks require b=3
     - limits: Only length-preserving finite-state transducer transitions and regular initial/unsafe sets are covered; safety problem for RTS is generally undecidable. EXPSPACE result is an upper bound and authors conjecture EXPSPACE-completeness for b≥2. IndInv_1 can be too coarse (e.g., some mutual exclusion/cache properties), while manual reasoning shows b=2 or b=3 can suffice.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2205.03060); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2205.03060.txt`; [notes: Regular Model Checking Upside-Down (2025)](claude_readings.md)
+    - [source](https://arxiv.org/abs/2205.03060); [notes: Regular Model Checking Upside-Down (2025)](claude_readings.md)
     - record id: `b-invariant-regular-model-checking-2025`
 - Basilisk (2025)
     - title: Basilisk: Using Provenance Invariants to Automate Proofs of Undecidable Protocols
@@ -257,7 +257,7 @@
     - number: Paxos row: 418 model lines, no user invariant clauses, five monotonicity annotations, no provenance hints, 444 safety-lemma lines, 486 total proof lines, 24.6 verification seconds
     - limits: §§3,5.2: Model has arbitrary host counts, nondeterministic single-host atomic steps, history of all Hosts snapshots and a monotonically growing set of sent messages. Receive selects an addressed message already sent; repeat selection and nondelivery overapproximate duplication, delay, reordering and loss. Messages carry sender identities; arbitrary Byzantine forgery or compromised hosts are not modeled. History is proof state, not a measured runtime logging cost. §3: Network provenance links a sent message to an adjacent pair of historical sender states and a matching send step. Host provenance for witness q requires q now, no initial state satisfying q, and a historical crossing from not-q to q through a candidate modifying step. These statements concern well-formed initialized protocol executions, not arbitrary malformed history sequences. §§3.3,5.3: Provenance alone identifies a past producing event. Monotonicity/non-equivocation invariants are needed to move from past sender conditions to present facts. Ownership invariants/labels are inherited from Kondo; generated invariants are individually/local mechanically checked, not assertions trusted merely because the generator produced them. §4.1: An atomic shard is a subset of local variables always modified together. If the current tuple is not an admissible initial tuple, it was established in one candidate update step. Maximal shards retain shared-message correlations lost by independent singleton witnesses. This does not mean every member of a collection remains correlated with the latest scalar value. §4.2: Static footprints overapproximate variables a step may update; excess candidates weaken the resulting provenance disjunction. Underestimating footprints would produce incorrect invariants. Prototype rejects a step updating different variables under different conditions, e.g. if c then x:=5 else y:=6. User must split this into separately guarded steps. §§4.2,5.3: Collection fields also receive refined singleton shards, allowing each noninitial set/map entry to be traced to its insertion step. Prototype supports explicit Dafny record-update syntax only, rather than general relational updates. A step can receive and send together; multiple sends/broadcasts in one step are described as an easy extension but not implemented or evaluated. §5.4 reader qualification: Formal obligations are Init⇒I∧φ and I∧φ∧Next⇒I′∧φ′. Thus the actual method proves safety with induction on I∧φ and may use current φ in the step proof. Figure 5/prose describing a proof that I implies safety must not be read as requiring or establishing the stronger standalone I⇒φ in every example. The final safety proof remains user-written. §§5.4,6.4: Failure may reflect a too-weak generated invariant or an unsafe model; the verifier points to the failing host-step obligation, but does not automatically decide which explanation is true. Reader qualification: SMT proof failure can also arise from solver incompleteness. Additional provenance witnesses or manually written invariant clauses may be needed; Basilisk is explicitly incomplete for undecidable logics. §6: First six protocols were used to develop/refine provenance and atomic sharding; the remaining ten were applied later. All sixteen models/invariants are reported outside EPR. This is an author-built benchmark suite, not a blinded independent user study or proof of completeness for all protocols outside EPR. §§6.1–6.2: Zero manually supplied invariant clauses across 16 does not mean zero user reasoning. Six of 64 host-provenance invariants need explicit witness hints, across Paxos-Dynamic, Raft election and Multi-Paxos; monotonicity annotations, ownership labels and safety lemmas remain. Distributed Lock and both ShardedKV variants already had fully automatic Kondo ownership proofs. §6.2: Kondo comparisons cover only ten protocols and modify models to split receive/send; Kondo also needs synchronous protocol definitions. Final proof LOC excludes failed/revised proof attempts and does not measure person-time, cognitive difficulty or novice success. Basilisk uses more proof LOC for some simple cases and is not faster for every ownership example. §6.3: Timings check final history-preserving asynchronous proofs including generated/user invariants and lemmas; Kondo synchronous-proof verification is excluded. Invariant generation is under two seconds in every case. Table 1 reports Multi-Paxos 61.5 seconds; the prose phrase in a minute is approximate, not a strict sub-60-second bound. No repetitions/variance or controlled proof-authoring experiment is reported. §6.4: Epoch resets create implicit multi-step relations that sharding cannot infer. Adding an event at current year and clearing events on year increment requires a witness relating every current entry to current year; merely finding its historic insertion year is too weak. All three hinted benchmark protocols have collection resets at epoch changes. Footprint imprecision is another possible weakness, not observed by authors in these protocols. §6.4: Safety specification is trusted. The user must trust the model describes actual code or separately prove correspondence; this work does not verify production implementations. Dafny, dependencies and hardware are trusted. Crash-fault safety is the scope; no liveness or Byzantine correctness proof is provided. §§6–8,Appendix A: No runtime throughput, production bug-finding or LLM-agent experiment is evaluated. Artifact developed/tested on M3 MacBook Pro with MacOS Sequoia; this appendix statement is not an explicit platform declaration for every published timing. Artifact and external proof bodies were not executed in this reading.
     - how much was read: most of it read
-    - [source](https://www.usenix.org/conference/osdi25/presentation/zhang-tony); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal502/basilisk.reading.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - [source](https://www.usenix.org/conference/osdi25/presentation/zhang-tony)
     - record id: `basilisk-2025`
 - Compositional Inductive Invariant Inference via Assume-Guarantee Reasoning (2025)
     - what: This work splits a TLA+ protocol into components with assume-guarantee contracts (each component assumes something of the others and guarantees something in return). It uses Endive to search for local inductive invariants. It then proves safety with TLAPS for arbitrary instances.
@@ -267,7 +267,7 @@
     - number: Mongo Static Raft: global search fails; manual 17-conjunct invariant, 1686 proof steps; components total 372 proof steps but only one of three searches succeeds automatically
     - limits: Humans split up the spec and write all the contracts. It proves safety only. It uses abstract TLA+, not the MongoDB code. The authors did not measure effort.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2509.06250); [notes: Compositional Inductive Invariant Inference via Assume-Guarantee Reaso](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Compositional Inductive Invariant Inference via Assume-Guarantee Reaso](../distributed_verification_review_b/deep_18_invariant_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://arxiv.org/abs/2509.06250); [notes: Compositional Inductive Invariant Inference via Assume-Guarantee Reaso](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Compositional Inductive Invariant Inference via Assume-Guarantee Reaso](../distributed_verification_review_b/deep_18_invariant_agents.md)
     - record id: `compositional-inductive-invariant-inference-2025`
 - DAISY (2025)
     - title: Inferring multiple helper Dafny assertions with LLMs
@@ -283,7 +283,7 @@
     - what: T2C transforms existing distributed-system tests into runtime semantic checkers. It slices assertions into parameterized functions, obtains symbolic triggering histories and constraints from instrumented test execution, mutates these histories, then filters candidates by compilation, JVM verification, self-validation and cross-validation. A production monitor matches traces and invokes checkers. The paper measures checker generation, detection after known failures are triggered, false alarms and performance; it does not prove transformation or checker soundness. Records exact extraction/precondition/mutation mechanisms, observational filtering and unsoundness, four validation levels, trace matching and distributed adapters, all study and generation counts, all twenty failure outcomes/times and issue identities, manual integration effort, false alarm denominators/counts, full cost tables, missed cases and newly added HB2 test, and a distinct newly reported ZooKeeper defect.
     - limits: §§2–3,8: Existing assertions encode useful intended semantics, and test-derived checks generalize beyond their original inputs/configurations. This is an explicit empirical assumption, not established for every test. The study randomly samples 35 tests per system, 210 total; subsequent percentages use only 183 assertion-bearing tests. Equal per-system sampling does not estimate the pooled distribution of all tests by test-count weight. §4.1: Backward data/control slicing preserves relevant branches, explicit aliases, local computations and assertion dependencies. It stops at operations classified as side-effecting by purity analysis plus manually supplied exclusions. No soundness guarantee; missed effects can survive. Section 4.1 says validation exposes missed operations, whereas §8 expressly denies a full guarantee of freedom from side effects. No formal refinement between a test and generated checker is established. §§4.2–4.3: Trigger preconditions are observed server-side call sequences before assertions, excluding operations performed by the checker itself. They are not Hoare-logic weakest preconditions. Analysis depends on chosen instrumentation, recorded execution, API wrappers and manual parsing/adapters. Unobserved paths and system configurations may affect applicability. Enum arguments remain concrete by default. §4.2.2: Equality of observed constants yields shared symbols; accidental equality can over-constrain and suppress checker activation. Simple less-than/contains constraints supported, arbitrary semantic relationships not inferred. Missing complex constraints or broad mutation can over-generalize and cause false alarms. Reduce/insert-wildcard/duplicate/reorder mutations are bounded enumeration; bounds, completeness and global coverage are not established. §4.4: The paper calls 672 outputs verified, meaning they passed empirical/syntactic filters: compilation, JVM sanity checks, rerunning source tests with the checker, then other passing-test workloads. Neither JVM verification nor passing tests proves semantic validity, absence of false positives, complete detection or freedom from side effects. Cross-validation assumes passing-test executions are suitable nonfailure examples; unexpected alerts could also expose real defects, a reader inference not systematically studied here. §5: Circular-buffer trace expiry bounds memory but can discard needed history; precise buffer capacity and complete-coverage guarantee are not given. Reversed precondition trie matches current trace suffix. Configuration requirements checked at startup, with no general claim of adaptation to later configuration changes. Instrumentation, runtime matcher, target methods queried, assertions, adapters, Java/Soot/Javassist and trace transport are trusted operational components. §5: Multiple clients may collectively supply a trigger sequence; cluster mode forwards traces and invokes assertions on respective nodes via RPC. No theorem establishing causal ordering, globally consistent observation, race-free semantic checking across arbitrary interleavings or distributed snapshot correctness. The runtime architecture avoids worker/evaluator buffer races according to authors; that claim is narrower than distributed checker soundness. Special concurrency properties still need carefully designed checks. §§6–7: Implementation is Java only; C/C++ port through LLVM is proposed, not evaluated. Setup includes core classes, about six unsafe operations and about three utility-adapter classes per system, beyond 42-line average configuration. HBase integration one person-week. Claims of little manual effort concern this measured support, not zero domain knowledge. §7.2: Tests selected by system-test package groups, excluding low-level data structure tests and assertion-free performance/stress tests. Target-test denominator 2172, generated functions for 2019, healthy 1933 and final 672. Final outputs cover available test semantics only. Section 4.1 describes one checker per assertion while §7.2 reports 4.3 assertions per checker; paper does not reconcile granularity, so both statements retained. §7.3: Benchmark construction starts with keyword-filtered issues, then 56 randomly inspected, 24 qualifying silent failures and 20 reproducible cases; four lack reproduction information. Reported 15/20 detection is conditional on failures already triggered, not a bug-triggering success rate or representative prevalence estimate. Reproduction takes about one week per case. Generation excludes tests reproducing benchmark failures, but baseline event checkers use historical failure examples; no universal equivalence of training information is claimed. §7.3: Missed five cases include absent semantic coverage and poor/non-generalizable assertions. HB2 only becomes detected after authors add a new test; this does not change original 15/20 result. New ZooKeeper 3.9.2 bug is a separate fault-injection finding, not an additional benchmark hit. Source calls version latest at publication; no current-version claim. §7.4: False alarm ratios use checker invocations in failure-free scenarios over 30 minutes, with Jepsen network faults every 10s. They are not alarms per hour or precision among alerts, and do not estimate arbitrary production workloads. 56% average checker activation leaves many checkers unexercised. No repetitions, confidence intervals or broad deployment duration reported. No noticeable harmful checker effects observed is empirical, not a safety theorem. §7.5: Four benchmark workloads give throughput losses 1.4/9.1/3.8/1.5%, mean 3.95% rounded 4.0. Low activation contributes to low overhead and also limits exercised semantics. No universal cost bound or worst-case under high checker activation. CPU percentages sum across cores; increases must not be read as fractions of a single total CPU. Offline build/validation take hours despite slicing taking minutes. Tables1–2: Same-version study/generation test counts differ (ZooKeeper 434 vs428, Cassandra 4118 vs3283, HDFS 3265 vs4304), without reconciliation. Table1 prints CephFS 1.11.0 and Mesos 18.2.0; preserved as printed rather than silently correcting versions. These are source discrepancies/labels, not independently checked software inventories. §8: LLM-assisted analysis, sandboxing and formal verification of generated checkers are future work. Paper evaluates no Verus, verified Rust, TLA+ or LLM-written proof system, and establishes no universal distributed-system correctness theorem.
     - how much was read: most of it read
-    - [source](https://www.usenix.org/conference/osdi25/presentation/lou); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal524/t2c.reading.txt`
+    - [source](https://www.usenix.org/conference/osdi25/presentation/lou)
     - record id: `deriving-semantic-checkers-from-2025`
 - FORCE (2025)
     - title: Inductive First-Order Formula Synthesis by ASP: A Case Study in Invariant Inference
@@ -302,7 +302,7 @@
     - number: The mechanized functional-invariant proof uses 1,003 lines of Isabelle code versus 2,634 lines for the transformation-based proof (counts exclude empty/comment/presentation lines). CVM's stated space complexity is O(ε^{-2} b ln(δ^{-1} l)) mutable-state bits when each element uses b bits; no proof-runtime numbers are given.
     - limits: The CVM algorithm receives a finite stream a1,…,al and accuracy parameters ε,δ; the buffer size n is chosen from these parameters and the analysis assumes element equality. The extracted text analyzes Algorithm 1 with the failure check (Line 11) removed; the original proof bounds total-variation distance between this modified algorithm and the failing version by 2δ, so transfer requires that correction. Functional invariants are shown on the presented algorithm and rely on Isabelle probability/expectation libraries; no runtime or memory measurements of the mechanization are reported. The available extraction ends in §3.1, so later theorem statements and full evaluation details are not present.
     - how much was read: most of it read
-    - [source](https://doi.org/10.4230/LIPIcs.ITP.2025.34); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/lipics_text/Verification_of_the_CVM_Algorithm_with_a_Functional_Probabilistic_Invariant_.txt`
+    - [source](https://doi.org/10.4230/LIPIcs.ITP.2025.34)
     - record id: `functional-probabilistic-invariant-for-cvm-2025`
 - HornStr (2025)
     - title: HornStr: Invariant Synthesis for Regular Model Checking as Constrained Horn Clauses
@@ -324,7 +324,7 @@
     - number: membership query pool contains 30,902 benchmarks
     - limits: The learner represents invariants as regular constraints over strings and the active learner uses a bounded exploration heuristic for negative membership answers. Solver performance is sensitive to regex equivalence queries and a 30-second per-query timeout; some active-learning protocols hit a 60-second overall timeout. The paper covers safety-style invariant synthesis and leaves general CHCs, liveness and bisimulation for future work.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2505.15959.txt`
+    -
     - record id: `hornstr-invariant-synthesis-2025`
 - Implicit rankings (2025)
     - title: Implicit Rankings for Verifying Liveness Properties in First-Order Logic.
@@ -335,7 +335,7 @@
     - number: toy stabilization bound n^2
     - limits: The user supplies how the ranking is composed, the other proof-rule formulas, and sometimes hints for existential witnesses. Domains are finite but unbounded. It does not cover unrestricted infinite domains in full. The review notes found no person-month figures.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2412.13996); [notes: LVR and implicit ranking functions](../distributed_verification_review_b/deep_2_liveness.md); [notes: Ivy, ranking, Coq, and Iris case index](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2412.13996.txt`
+    - [source](https://arxiv.org/abs/2412.13996); [notes: LVR and implicit ranking functions](../distributed_verification_review_b/deep_2_liveness.md); [notes: Ivy, ranking, Coq, and Iris case index](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `implicit-rankings-2025`
 - LMGPA (2025)
     - title: Towards Language Model Guided TLA+ Proof Automation
@@ -346,7 +346,7 @@
     - number: Four decomposition attempts per claim; TLAPS timeouts Z3 5 s, Zenon 10 s, Isabelle 30 s
     - limits: It tests proving a supplied invariant. It does not test finding one or reading vague requirements. Training leakage is possible from public protocol proofs (Section 4.2). The suite leaves out both learning switches, chord and hybrid broadcast.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2512.09758); [notes: LMGPA: prove supplied invariants rather than discover them](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: TLAPS proof generation grew beyond the January 2025 toy study](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2512.09758); [notes: LMGPA: prove supplied invariants rather than discover them](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: TLAPS proof generation grew beyond the January 2025 toy study](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `lmgpa-2025`
 - Neural model checking with invariants (2025)
     - title: Let a Neural Network Be Your Invariant
@@ -379,7 +379,7 @@
     - number: 6000 s/run
     - limits: That the formula is a true reachability invariant for every size is still a conjecture. Ordered protocols such as Paxos and Bakery are future work.
     - how much was read: most of it read
-    - [source](https://link.springer.com/content/pdf/10.1007/978-3-031-98682-6_14.pdf); [notes: QSM-Cutoff: a full 19-model 2025 set](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal255/QSM_Cutoff_Systematic_Derivation_of_Quantified_Cutoff_Formulas_for_Distributed_Protocols_.txt`
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-031-98682-6_14.pdf); [notes: QSM-Cutoff: a full 19-model 2025 set](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `qsm-cutoff-2025`
 - rlive (2025)
     - title: Infinite-State Liveness Checking with rlive.
@@ -390,7 +390,7 @@
     - number: average speedup 6.47x on instances solved by both
     - limits: It handles Boolean and linear arithmetic constraints. It is model checking. It does not prove that software implements the model. It does not terminate on systems whose only counterexamples are not lasso-shaped (a prefix followed by a repeating loop).
     - how much was read: most of it read
-    - [source](https://link.springer.com/content/pdf/10.1007/978-3-031-98668-0_11.pdf); [notes: Infinite-State Liveness Checking with rlive](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-031-98668-0_11.pdf); [notes: Infinite-State Liveness Checking with rlive](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `rlive-2025`
 - SLD-Spec (2025)
     - title: SLD-Spec: Enhancing LLM-based Specification Generation via Program Slicing and Logical Deletion
@@ -412,7 +412,7 @@
     - number: TAPIS-Bench: 49 iterative, 37 recursive, 8 mutually recursive
     - limits: Programs are C-like, with finite parametric arrays, integer/boolean variables, loops and recursive procedures; specifications are first-order array formulas with universal index quantifiers and linear scalar constraints. The method requires fixed-size array values in counterexamples, so CHC-COMP unbounded-array benchmarks are excluded. Learner success depends on generated attributes, increasing quantifier count, sample consistency and Z3's array-logic heuristics; quantifier alternation remains future work. Results are benchmark-specific and use manual translations to each competitor's input language.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-031-98685-7_16); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/DataDriven.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_batch_text/Data_Driven_Verification_of_Procedural_Programs_with_Integer_Arrays_.txt`; notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/978-3-031-98685-7_16)
     - record id: `tapis-horn-ice-array-invariant-learning-2025`
 - Veil (2025)
     - title: Veil: A Framework for Automated and Interactive Verification of Transition Systems.
@@ -423,7 +423,7 @@
     - number: Veil verifies 16/16; 14/16 under 15 s and 12/16 under 10 s
     - limits: It evaluates checking supplied invariants, not finding them. It is not an LLM agent. All its guarantees are safety. The notes record no agent success rate.
     - how much was read: most of it read
-    - [source](https://verse-lab.org/papers/veil-cav25.pdf); [notes: Veil: proofs in Lean with automatic first-order checks](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Veil: a promising proof interface, with no agent rate established here](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://verse-lab.org/papers/veil-cav25.pdf); [notes: Veil: proofs in Lean with automatic first-order checks](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Veil: a promising proof interface, with no agent rate established here](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `veil-2025`
 - AutoSpec (C/ACSL) (2024)
     - title: Enchanting Program Specification Synthesis by Large Language Models using Static Analysis and Program Verification (AutoSpec)
@@ -445,7 +445,7 @@
     - number: Resource setup: 15-minute/15-GB task limits and 2.5-minute invariant generation (§6.3)
     - limits: Benefits require non-trivial inductive auxiliary invariants; trivial invariants add no information and generator time can erase gains. Evaluation uses bounded resource limits, selected domains and CPAchecker/MathSAT5 configurations. Augmented methods can lose tasks solved by plain IMC because of invariant-generation overhead.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2403.07821.txt`
+    -
     - record id: `invariant-augmented-interpolation-model-checking-2024`
 - LLMLIFT verified lifting (2024)
     - title: Verified Code Transpilation with LLMs
@@ -456,7 +456,7 @@
     - number: TensIR 23/23; 95.89 s versus Tenspiler 115.14 s
     - limits: Source programs are side-effect-free and the supported subset excludes pointers and objects. Correctness is relative to the encoded IR semantics, rewrite rules and theorem-prover model; code performance is inherited from target DSLs rather than optimized by LLMLIFT. The verifier supplies Boolean feedback, and the authors identify semantic filtering/counterexamples as future improvements.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/neurips_text/Verified_Code_Transpilation_with_LLMs.txt`
+    -
     - record id: `llmlift-verified-lifting-2024`
 - LVR (2024)
     - title: LVR: Mostly Automated Verification of Liveness Properties for Distributed Protocols with Ranking Functions
@@ -467,7 +467,7 @@
     - number: all eight protocols succeed: ticket lock, hybrid reliable broadcast, alternating bit, TLB shootdown, Paxos, Multi-Paxos, Stoppable Paxos, sliding window
     - limits: By default, scheduling assumes a globally bounded interval. This is a slightly stronger fairness than "infinitely often". For example, scheduling at times 1, 2, 4, 8 satisfies "infinitely often" but not any fixed bound. Prophecy variables and a three-tier ranking keep the original fairness. LVR's multi-Paxos leaves out the local scheduler and the I/O queue. So fewer lines than IronFleet does not mean equally less effort. A cheap solver query is not the whole cost.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3632877); [notes: LVR and implicit ranking functions](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md`
+    - [source](https://doi.org/10.1145/3632877); [notes: LVR and implicit ranking functions](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `lvr-2024`
 - mypyvy repository (2024)
     - title: mypyvy: A Research Platform for Verification of Transition Systems in First-Order Logic.
@@ -476,7 +476,7 @@
     - number: examples/misc/pd at the inspected checkout has 39 .pyv files covering cache, consensus, lock service, ring election, sharded KV, TLB and Paxos variants
     - limits: The README gives setup and examples, not benchmark results.
     - how much was read: most of it read
-    - [source](https://github.com/wilcoxjay/mypyvy); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - [source](https://github.com/wilcoxjay/mypyvy)
     - record id: `mypyvy-repository-2024`
 - neuralmc (2024)
     - title: Neural Model Checking
@@ -487,7 +487,7 @@
     - number: 194 tasks over 10 designs
     - limits: It covers finite hardware models. Training failures and timeouts are separate from proved violations.
     - how much was read: most of it read
-    - [source](https://papers.nips.cc/paper_files/paper/2024/file/9d0947107ea92d6ce369dce7749180dd-Paper-Conference.pdf); [notes: Related work absent from the first pass: Neural Model Checking](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal416/neural.reading.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2410.23790.txt`
+    - [source](https://papers.nips.cc/paper_files/paper/2024/file/9d0947107ea92d6ce369dce7749180dd-Paper-Conference.pdf); [notes: Related work absent from the first pass: Neural Model Checking](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `neuralmc-2024`
 - Akshay et al. affine MDP invariants (2023)
     - title: MDPs as Distribution Transformers: Affine Invariant Synthesis for Safety Objectives.
@@ -498,7 +498,7 @@
     - number: Chain 10s, 69 vars, 82 constraints
     - limits: Safety sets are finite conjunctions of affine inequalities over finite-state MDP distributions; initialized safety is Positivity-hard even for Markov chains. AlgMemLess is complete only relative to affine invariants and memoryless strategies; AlgDist's Handelman translation is incomplete, parameterized by product bound K, and assumes compact antecedent sets for the theorem motivation. Existential nonlinear real arithmetic is decidable but solver performance varies by orders of magnitude and can take hours. Experiments are unoptimized and small; no claim of scalability or complete decision procedure for general distribution safety is made.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-031-37709-9_5); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2305.16796.txt`; notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://doi.org/10.1007/978-3-031-37709-9_5)
     - record id: `akshay-et-al-affine-mdp-invariants-2023`
 - ByMC (2023)
     - title: ByMC: Byzantine Model Checker, and Survey on Parameterized Verification with Threshold Automata
@@ -513,7 +513,7 @@
     - number: {'model_parameters': ['430M', '1B', '5B'], 'train_examples': 1600158, 'validation_examples': 86346, 'test_examples': 24509, 'traces_per_program': 200, 'invariant_types': 18, 'daikon_f1_1_trace': 0.721, 'daikon_f1_5_traces': 0.857, 'daikon_f1_200_traces': 1.0, 'best_reported_precision_recall': 'about 0.86 each', 'training_steps': 20000, 'tpu_cores': 64, 'backward_train_examples': 1284492, 'backward_validation_examples': 61431, 'backward_test_examples': 21576}
     - limits: An invariant is a Boolean predicate true whenever execution reaches a specified program point; the task is undecidable in general. Ground truth is the set Daikon emits from 200 inputs; the authors explicitly note this can miss invariants and overfit finite traces. The dataset consists of Java competitive-programming submissions with available inputs, not distributed protocols, Rust/Verus code or TLA+ specifications. Direct and scratchpad inference is static with respect to the target program and uses greedy decoding, but training labels come from dynamic traces. Oracle inference receives intermediate Daikon target invariants as additional dynamic information and is not a purely static comparator. The paper reports offline experiments and does not establish semantic correctness of model outputs beyond comparison with Daikon/manual inspection.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal272/Can_Large_Language_Models_Reason_about_Program_Invariants_.reading.txt`
+    -
     - record id: `can-large-language-models-2023`
 - Loopy (2023)
     - title: Finding Inductive Loop Invariants using Large Language Models
@@ -544,7 +544,7 @@
     - number: 2-node sharded-key-value cutoff
     - limits: RML domains are finite per instance but may have infinitely many valid interpretations; safety properties are assumed universally quantified. The result is for safety, not liveness. Cutoff correctness depends on a simulation relation for every valid larger interpretation and on a safe finite cutoff. Automatic synthesis can fail when universal guards or side effects conflict, as in two-phase commit, and the basic key-value store needs an added precondition.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2211.15175); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2211.15175.txt`; [notes: Cutoff automation with seven concrete protocols](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - [source](https://arxiv.org/abs/2211.15175); [notes: Cutoff automation with seven concrete protocols](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `automating-cutoff-proofs-2022`
 - Counterexample-Guided Prophecy (2022)
     - title: Counterexample-Guided Prophecy for Model Checking Modulo the Theory of Arrays
@@ -555,7 +555,7 @@
     - number: CHC-COMP-2020: 501 benchmarks, 42 Q / 159 QF / 56 US
     - limits: Termination is not guaranteed when no finite Prophecize calls capture all relevant indices. Array axiom enumeration assumes an infinite index domain. Performance is sensitive to transition-system encoding; SeaHorn translations solved 6 quic3 benchmarks versus 41 with direct Kratos2 translation. The method's existential power is weak because history variables only retain finite delays, and it is not expected to work well for parameterized protocols without improvement.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2101.06825.txt`
+    -
     - record id: `counterexample-guided-prophecy-2022`
 - DuoAI (2022)
     - title: DuoAI: Fast, Automated Inference of Inductive Invariants for Verifying Distributed Protocols
@@ -566,7 +566,7 @@
     - number: evaluation permits a week per tool and protocol
     - limits: Inputs are an Ivy protocol transition model and safety property, not arbitrary executable distributed code. Trusted Ivy/Z3 checks initialization and transition preservation of the conjunction and safety implication for all modeled instances, rather than bounded simulation being the certificate. Scope is safety; no liveness, crash-recovery implementation refinement, verified Rust/Verus proof or LLM-agent evaluation. Sampled states are assumed genuinely reachable; incorrect simulation could discard needed true invariants and compromise completeness, though final sound SMT checks still guard returned results. Finite formula search space uses prenex DNF, relational predicates/equality; extension to uninterpreted functions referred to DistAI. Bounds are quantified variables per sort, max_exists, max_literal, max_and and max_or. Tautologies/contradictions excluded. Nonempty sorts are implicit in universal-to-existential implication. Quantifier alternation must follow a fixed sort order, inferred partly from axioms or supplied by user; absent user choice multiple orders are tried in parallel. The actual full verification condition, including protocol axioms/transitions, must remain in the intended decidable fragment. Exact graph is transitive reduction of strict implication over finite formulas; syntactic implementation instead uses five sound weakening shapes and may connect equivalent formulas. Lemmas1–5 establish claimed acyclicity, implication and coverage of nontrivial formulas from selected roots. No theorem says every semantic implication is an edge/path in the approximate graph; coverage plus sound directed weakening is what enumeration/refinement need. Enumeration checks original variable-length states at multiple finite instance sizes, rather than DistAI incomplete fixed-length subsamples. A candidate is retained if it holds on all sampled states; descendants can be skipped if dominated by an existing candidate. Theorem1 says every true invariant in S is either itself retained or has a stronger retained ancestor. Retained candidates can still be false on unseen reachable states; simulation removes candidates, not proof obligations. Top-down refinement checks conjunction plus safety, replaces a failed candidate by noninvalidated immediate successors not already dominated by a reachable ancestor, and returns NotProvable if safety fails. Reachable ancestor here means a graph path avoiding invalidated nodes, not a reachable protocol state. Theorem2 maintains domination of every member of an adequate inductive solution; finite formulas each invalidated at most once give finite refinement assuming every solver check terminates. Bottom-up first weakens all universal candidates until inductive, explicitly ignoring safety, to obtain universal core. noncore includes existential candidates AND universal candidates not in the core whose inductiveness may require existential support. Enumerates subsets by size, calls top-down on core plus subset, and skips subsets holding on an already returned negative prestate. A failed safety-induction counterexample is a possibly unreachable state that invariants must exclude; strengthening can remove it. Theorem3 eventually tries all noncore, reducing to full top-down, conditional on correct pruning and finite solver decisions. Relative completeness is not a guarantee to prove every correct distributed protocol. Needed inductive solution must be expressible in chosen finite S and decidable fragment, samples/graph/optimizations must preserve it, solver calls must terminate, and resources must suffice. NotProvable means this search space cannot prove the property, not the protocol unsafe. Increasing size in round-robin has no practical resource bound; vertical Paxos memout is concrete failure despite expert invariants existing. Defaults max_literal4,max_or3,max_and3,max_exists1 unless safety already has>=2existentials; quantified variables per sort initially maximum arity occurrence in any relation. On failure increments literal/OR/AND/existential/per-sort-variable bounds round-robin. Runs a third max_exists0top-down worker along with general top-down/bottom-up; benchmark walltimes benefit from parallel simulation/refinement and possible sort-order searches, with no separate CPU-time/worker-count-normalized comparison. Mutual implication optimization suppresses Q if retained P1...Pk jointly imply Q, then reintroduces Q if a supporting candidate invalidated. Equivalence decomposition suppresses a formula permanently only when conjunction of smaller formulas is truly equivalent. Examples separate two independent existential witnesses, same witness, and distinct witnesses: existential dependency matters to logical validity, not just speed. Decomposition can require representation of each component within allowed search space. Reader counterexample to Lemma6 claimed arbitrary-alternation/skolemization extension: sorts A,X each{0,1}, fixed order A before X. Let p(x) iff x=0, q(x) iff x=1, r(a,x) iff a=x. F=exists a forall x.((p(x) AND q(x)) OR r(a,x)) is false. The selected conjunction p(x) AND q(x) has two components sharing no existential variable. Claimed components exists a forall x.(p(x) OR r(a,x)) and exists a forall x.(q(x) OR r(a,x)) are both true, choosing a=1 and a=0 respectively. A globally chosen existential witness in the other disjunct cannot be chosen separately. Proof for forall-X exists-YZ is valid under its independence conditions; extending it to arbitrary alternation is unsupported and false as stated. Restrict prefix/dependency structure or preserve shared Skolem choices. This challenges printed optimization/completeness scope, not observed artifact behavior; final independent sound SMT checking can still reject unsafe outputs. Printed Lemma6 proof also calls f/g disjunctions of component literals although components of original conjunction must remain conjunctions for Eq19. This is a terminology/algebra transcription issue for multi-literal components, separate from the arbitrary-alternation counterexample. Lemma5 existential-root argument omits stated no-OR root condition; treat as proof detail needing completion rather than infer a specific artifact failure. Printed Algorithm2 loops only while candidates nonempty, then returns NotProvable; it omits explicit check for already-inductive safety when no strengthening candidates exist. For an unchanged Boolean b initiallyfalse and safety notb, an empty candidate set suffices but displayed procedure returns NotProvable without checking. Algorithm3 likewise needs defined empty universal core when Procedure1 returns no candidates. These are boundary/pseudocode qualifications; do not treat them as reproduced implementation failures. This empty-input example concerns the displayed procedure: default enumeration may retain not-b, and Theorem1 prevents an empty candidate set when a nonempty sufficient II-star is represented. It is not an end-to-end failure of default search. The O(m^2) discussion counts a possible pairwise invariant-dependency workload, not a formal polynomial bound on quantified SMT runtime. Solver cost can dominate even with few formulas. Paper compares14needed Paxos invariants verified in<1s, +10correctunnecessaryalternating invariants5min,+20over3h;149universal Chordinvariants8s. This motivates existential sparsity but is not repeated statistical scaling evidence. Evaluation27small Ivy models (21–123LOC,2–13relations),15universal-sufficient and12requiring existential solution in their presentations. Tools SWISS,IC3PO,FOL-IC3,DistAI,UPDR,I4, week cutoff. Fail,toolerror,Z3error,memout,timeout distinguished; no common success criterion should collapse these. Walltimes single reported numbers, no repeated-run distributions/seed sensitivity/memory measurements or solver-query-count ablations reported. Hardware paper reports DellPrecision5829,4.3GHz28-coreXeonW2175,62GBRAM,512GBSSDPro600p,Ubuntu18.04; reported core description preserved without independent hardware validation. Baselines configured with their documented settings: SWISS uses own published formula bounds per protocol; I4/IC3PO need finite-instance sizes, I4 starts minimum and increases on failure; FOL-IC3 runs universal/default modes and reports first success. Tablefootnotes attribute FOL-IC3Chord difference to threebugs in a competitor file and IC3PO successes to retrofitted protocols/manually supplied alternating clauses. These are DuoAI authors claims, not independently audited competitor defects or controlled equal-input performance results. Concurrent PFOLIC3 excluded from main comparison; its failure rates cited from other work, not own experiments. DuoAI solves26/27,15/15universal and11/12existential, fastest outright on15; SWISS19,IC3PO18,FOLIC318,DistAI14,UPDR14,I412. No competitor solves verticalPaxos here. Not every row is a speedup: Chord200.9s vsIC3PO17.1/DistAI58; locks/tablecontain subsecond differences and learning-ring alternatives. Paxos60.4s vsSWISS16665s(~275.91x),flexible78.7vs28337(~360.06x); comparison is measured selected tool/model configuration, not universal algorithmic superiority. Universal-only worker wins all15universal cases; top-down winsfive simpler existential cases and bottom-up wins hybridreliablebroadcast plusfivePaxosvariants. MultiPaxos615candidates/581alternating butonly2needed noncore; Paxos/flexible/multi/stoppable require subsetsize2,fastsize6. Vertical expert invariant8literals reduced7,60predicates/120signed gives search order120^7≈3.58e14; fast38predicates/5literals gives76^5≈2.54e9. These coarse powers are magnitude estimates ignoring syntax/equivalence, not measured exhaustive candidate counts. Implementation6.1KC++LOC(gcc7.5.0),2.3KPythonLOC(3.8.10) simulator. No machine-checked metatheory or independently executed artifact. Proof soundness/trust distinct from search completeness and practical automation; returned inductive safety certificates do not connect protocol abstraction to concurrent network code. Table1 has four IC3PO successes, three failures and five memory failures among the12existential rows. The §8,p.496 prose instead says six memory failures; the table, not that narrative count, is preserved in structured results. This discrepancy does not change IC3PO total18successes.
     - how much was read: most of it read
-    - [source](https://www.usenix.org/conference/osdi22/presentation/yao); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal490/duoai.reading.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
+    - [source](https://www.usenix.org/conference/osdi22/presentation/yao); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
     - record id: `duoai-2022`
 - Endive (2022)
     - title: Plain and Simple Inductive Invariant Inference for Distributed Protocols in TLA+
@@ -588,7 +588,7 @@
     - number: k=1 universal and k=3 non-universal pDNF settings
     - limits: Benchmarks are safe transition systems with known human invariants; inference success is not a refutation method for unsafe systems. EPR requires a user-provided acyclic set of allowed sort/function edges, and prenex separation may need a special push-down mode. Full FOL search can be intractable; the method failed vertical-paxos-epr and several hardest cases, and stochastic parallelism yields variable success. Experiments use fixed 6-hour timeouts and 16 threads/20 GiB; performance and learned lemmas depend on solver behavior, random seeds and prefix restrictions.
     - how much was read: most of it read
-    - [source](https://link.springer.com/content/pdf/10.1007/978-3-030-99524-9_18.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Inferring_Invariants_with_Quantifier_Alternations_Taming_the_Search_Space_Explosion_.txt`; [notes: P-FOL-IC3: full 30-model experiment recovered](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-030-99524-9_18.pdf); [notes: P-FOL-IC3: full 30-model experiment recovered](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `invariant-inference-with-quantifier-alternations-2022`
 - NIS data-driven invariant synthesis (2022)
     - title: Data-driven Numerical Invariant Synthesis with Automatic Generation of Attributes.
@@ -599,7 +599,7 @@
     - number: three abstract domains: intervals, octagons, polyhedra
     - limits: The method targets linear integer arithmetic and predicates expressible through the selected numerical abstract domain; quantifier-heavy cases are unsupported. ICE learning is not guaranteed to terminate, and performance depends on SMT counterexample choices. Polyhedra joins can be expensive, while intervals/octagons are less expressive; benchmark programs exclude boolean encodings and useless-variable cases. Results are bounded by the 1,800-second timeout and SyGuS-Comp sample, with no proof that generated invariants are complete for arbitrary programs.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-031-13185-1_14); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2205.14943.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Data_driven_Numerical_Invariant_Synthesis_with_Automatic_Generation_of_Attributes_.txt`; notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-031-13185-1_14)
     - record id: `nis-data-driven-invariant-synthesis-2022`
 - SpecFuzzer (2022)
     - title: Fuzzing Class Specifications (SpecFuzzer)
@@ -620,13 +620,13 @@
     - number: MacBook Pro 2 GHz Intel Core i5, 8 GB RAM
     - limits: Objects are modeled syntactically as predicates obtained from symbolic execution; loop effects must already be expressed as quantified formulas. Programs are deterministic and each enabled precondition has a successor/output. The approach targets finite sets of operations and list-shaped ADTs; it assumes suitable classifications/recipes and SMT quantifier-elimination/array reasoning. CHC solving is undecidable in general, proof search can dominate runtime, and the evaluation is textbook data structures rather than large real software. The method requires monotonic/structural-induction support in AdtInd and may need user lemmas for harder cases.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-030-72013-1_2); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Bridging_Arrays_and_ADTs_in_Recursive_Proofs_.txt`; notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1007/978-3-030-72013-1_2)
     - record id: `bridging-arrays-and-adts-in-recursive-proofs-2021`
 - Diffy: Inductive Reasoning of Array Programs Using Difference Invariants (2021)
     - what: Diffy verifies selected parameterized array programs by induction on positive array-size parameter N. It splits PN into QN-1 plus a peeled suffix, relates QN-1 to PN-1 through product-program difference invariants, transfers the smaller-program postcondition, and verifies the peel with iterative strengthening or recursively reduced loop nesting. At60seconds it proves151/157 safe cases and detects142/146 unsafe cases on an enhanced303-program suite. Distinguishes QN-1 (only loop bounds truncated, with data-dependency repairs) from PN-1 (all N replaced), explains required precondition splitting and cross-program coverage, records conditional peel simplification and failed loop propagation, and retains the strengthen-transfer obligation rather than treating arbitrary quantifier elimination as sufficient. Complete category results, timeout sensitivity, baseline wins and source formula/indexing gaps qualify headline superiority.
     - limits: §3: program grammar has scalar/array assignments, conditions, sequential composition and well-nested for loops, each with a unique counter initialized0 and incremented1, never assigned by the body. Upper bounds use N, constants and enclosing counters, not arbitrary mutable data. N is a positive integer size parameter. It does not cover arbitrary C pointers, concurrency, recursion or distributed failures. §3: properties are universal arithmetic-index guards implying quantifier-free array/integer arithmetic predicates, or quantifier-free formulas. Scalars and arrays undergo SSA renaming, including separate array versions per loop and distinct writes. The mathematical domain is integers/arrays; the paper does not establish C overflow, pointer aliasing, division edge cases or machine memory-safety semantics end to end. §§2,4.1: PN-1 replaces all occurrences of N by N-1; QN-1 truncates loop-bound N while preserving data-expression N, then repairs uses affected by moving peels. Correct construction must establish PN semantically equivalent to QN-1;peel(PN). It is not enough to append last iterations without propagating all data/control dependencies. §4.1: nested-loop exposition assumes inner-body writes are not used later in outer fragments, and outer writes used by the inner body are not overwritten again. Relaxations are delegated to extended[13]. Algorithm1 aborts a needed substitution from a peel that is still a loop; implementation sometimes uses closed-form summaries, unused-write reasoning or conservative overapproximation. Thus it does not automatically transform every grammar-accepted nested array program. §4.1/Lemma1: strictly smaller maximum nesting depth is proved for linear upper bounds in N/enclosing counters, whose difference on replacing N by N-1 is constant. Corollary that a nonnested program has loop-free peel inherits conditions; general nonlinear bounds need not yield constant many peeled iterations. Missed-iteration construction also needs sensible nonnegative ordered bounds; grammar alone does not state all monotonicity/boundary conditions. The theorem should not be generalized to arbitrary decreasing/negative bounds without additional validation. §4.2: phi(N) must imply phi-prime(N-1) and delta-phi-prime(N), with split remainder facts not modified by PN-1/QN-1 as needed. For conjunction over indices0..N-1, restrict only index range for phi-prime and retain N inside each conjunct; remainder is last-index conjunct if untouched. If no iterated conjunction, proposed default is phi-prime=phi(N),delta=True. Correct input coupling between the two program runs is essential. §4.3: product graph has synchronized loop iteration structure; corresponding branches synchronize only after establishing equivalent guards, otherwise all four branch pairs are considered. Dataflow tracks equalities and disjunctions of equalities between corresponding variables/array elements at loop heads/exits/branches. At-most-quadratic N expressions are an experimental observation, not a theorem for arbitrary programs. Interval inequalities and template guess/check are possible extensions, not evaluated implemented capabilities. §§2,4.4: transferred postcondition is exists VP: psi(N-1) and D(VQ,VP,N-1). Equality substitution can eliminate VP, or SMT quantifier elimination is used. Stronger peel preconditions need corresponding original-program strengthenings satisfying xi(N) and D implies xi-prime(N). The paper explicitly notes this can require logical abduction; arbitrary existential projection over VQ does not by itself establish that universal transfer implication for nondeterministic/nonfunctional D. §4.4/Theorem2: soundness is conditional on valid original strengthened bases1..M, valid xi-and-D transfer for allN, sound program/precondition transformation and valid strengthened peel Hoare triple. Paper states Theorem1/equivalence and Theorem2/soundness without full proofs here; only nesting lemma has an explicit proof. No mechanized proof of transformation/dataflow/LLVM implementation or independently checked proof certificate is reported. §4.4/Algorithm2: initial base N1 failure reports counterexample; later inability to strengthen, invalid strengthening base or timeout returns False meaning unable to prove. A failed induction step or spurious strengthening is not evidence of an original-program counterexample. Text allows checking small fixed N values; unsafe detection is incomplete for bugs appearing only beyond checked sizes. Parameter induction proves safety obligations, not a stated total-correctness/termination theorem. §§2,4.4: strengthening iteration need not converge, and tool uses timeout. If weakest precondition cannot be obtained and peel has a loop, recursion invokes Diffy on the peel; the nesting argument is conditional as above. Difference invariants are postcondition independent and reusable, but strengthening is property dependent. Printed source issues, visually confirmed: Algorithm1 line4 ranges loop indices throughN though line1 givesm loops; line16 usesLi in helper parameterizedL. Algorithm2 shifts D argumentsN-1/N and line22 references chi-prime(N) while line16 computed chi-prime(N-1); prose points to line6 for elimination actually at22. These are schematic/indexing gaps, not verified implementation bugs. Printed example issues: §4.3 calls forall i in0..N-1:a-prime[i]-a[i]=1 a first-loop-head invariant, omitting the processed-prefix restriction or entry relation that would make it valid before all writes. §4.4 p927 prints peel precondition x-prime=(N-1)^3; for Fig2 peel x:=x+N^2 and final b[N-1]=x+N-1, required pre-peel x is N^3-N^2=(N-1)N^2. Thus displayed primed formula cannot be accepted literally with the shown update; this does not establish unsoundness of the tool source, which was not audited. §5: C++ prototype,LLVM6.0.0,Z3 4.8.7; benchmarks on i7-6500U2.5GHz,16GB,Ubuntu18.04.5. ComparatorsVajra1.0,VIAP1.1,VeriAbs1.4.1-12. Main timeout60s. No repeated-run variability, independent proof replay, random sampling or broad production-corpus evaluation supplied. §5:303 benchmarks combine entire prior Vajra suite with added challenging cases;157safe/146unsafe. C1 has no N-dependent branches,modulo or nesting; C2 has N-dependent branches/modulo without nesting; C3 has nesting. Success on this designed suite is not superiority on all SV-COMP submissions or arbitrary C array programs. Unsafe cases are described as unsafe versions of safe examples, not an independent production bug sample. §5/Table1:Diffy151safe with3inconclusive/3timeouts,142unsafe with4inconclusive;Vajra110safe/115unsafe;VeriAbs110safe/125unsafe;VIAP20safe/120unsafe. Diffy proves all safe benchmarks proved by Vajra/VIAP within 60 seconds but not VeriAbs: VeriAbs proves2C2+3C3 safe cases Diffy misses. These paired wins support portfolio use; totals alone hide complementarity. §5:3Diffy safe timeouts arise in modulus induction SMT queries;3safe inconclusive cases lack predicates. At100seconds Diffy/Vajra/VeriAbs outcomes remain unchanged, VIAP additionally proves89safe C1/C2 cases (reader total109), unsafe counts unchanged. The earlier claim VIAP takes70seconds more on average is not compatible with a straightforward60second completed-run comparison; aggregation/set/budget is unspecified. Do not present it as a verified common-instance speedup. §§6–7: existential-property generalizations and relaxed nested restrictions are delegated to extended arXiv paper, not read here. Synthesis of difference invariants remains future work. No Rust/Verus/TLA+ result, protocol/network model or LLM use/evaluation is reported. Artifact DOI10.6084/m9.figshare.14509467 not run.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-030-81688-9_42); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal396/diffy.reading.txt`
+    - [source](https://doi.org/10.1007/978-3-030-81688-9_42)
     - record id: `diffy-inductive-reasoning-of-2021`
 - DistAI repository (2021)
     - title: DistAI: Data-Driven Automated Invariant Learning for Distributed Protocols
@@ -637,7 +637,7 @@
     - number: Suite: 14 distributed protocols written in Ivy (e.g. Paxos, two-phase commit, Chord, Ricart-Agrawala)
     - limits: The README warns that its parser does not support the full Ivy 1.7 grammar; repository instructions and reported outputs were not rerun.
     - how much was read: most of it read
-    - [source](https://github.com/VeriGu/DistAI); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal507/distai.reading.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`
+    - [source](https://github.com/VeriGu/DistAI)
     - record id: `distai-repository-2021`
 - Invariant barrier certificates via DCP (2021)
     - title: Synthesizing Invariant Barrier Certificates via Difference-of-Convex Programming.
@@ -648,7 +648,7 @@
     - number: B(x)=−0.00363421x2 worked certificate
     - limits: Systems are autonomous polynomial ODEs with unique maximal trajectories; templates, multiplier degrees, and SOS degrees are fixed. DCP alone reaches only local optima, while branch-and-bound can be exponentially large and needs a strict-validity neighborhood for weak completeness. Numerical roundoff requires posterior validity checking; several high-dimensional examples were inconclusive, and the CAV version omits proof and benchmark details delegated to an extended version.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-030-81685-8_21); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Synthesizing_Invariant_Barrier_Certificates_via_Difference_of_Convex_Programming_.txt`; notes outside this site: `lit_snowball/notes_coci7.md`
+    - [source](https://doi.org/10.1007/978-3-030-81685-8_21)
     - record id: `invariant-barrier-certificates-via-dcp-2021`
 - MongoRaftReconfig TLA+ verification (2021)
     - title: Formal Verification of a Distributed Dynamic Reconfiguration Protocol
@@ -659,7 +659,7 @@
     - number: 20 invariant conjuncts
     - limits: Specification deliberately abstracts lower-level implementation details; finite TLC invariant search is probabilistic and not itself a proof. Safety only; liveness left future work. TLAPS backend solver can fail without distinguishing false from hard obligations; no verified runnable implementation. Full TLA+ and proof code supplied as supplementary material.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3497775.3503688); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal265/2109.11987.txt`; notes outside this site: `lit_snowball/notes_allrel_deep.md`
+    - [source](https://doi.org/10.1145/3497775.3503688)
     - record id: `mongoraftreconfig-tla-verification-2021`
 - Neural barrier certificate synthesis (2021)
     - title: Automated and Formal Synthesis of Neural Barrier Certificates for Dynamical Models.
@@ -670,7 +670,7 @@
     - number: 50 randomized runs
     - limits: Models are continuous ODEs or a specified hybrid partition with continuous vector fields; the certificate must be differentiable and satisfy strict inequalities. SMT dReal uses δ=10^-6 and Z3 handles polynomial cases; timeout and architecture choices affect success. CEGIS may not terminate or find a certificate, random initialization causes high variance (8% success on the polynomial model and 12% on 8-D over 50 runs), and SOS comparisons are unsound unless separately verified.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-030-72016-2_20); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Automated_and_Formal_Synthesis_of_Neural_Barrier_Certificates_for_Dynamical_Models_.txt`; notes outside this site: `lit_snowball/notes_coci7.md`
+    - [source](https://doi.org/10.1007/978-3-030-72016-2_20)
     - record id: `neural-barrier-certificate-synthesis-2021`
 - NRA Model Interpolation (2021)
     - title: Interpolation and Model Checking for Nonlinear Arithmetic
@@ -681,7 +681,7 @@
     - number: Cauchy–Schwarz property proved valid by pdkind in 1 s
     - limits: Completeness is limited to theories supported by MCSAT. Termination depends on finite convergence of model interpolation. CAD-derived interpolants can be large clausal formulas; unlike interval methods, the procedure does not cover arbitrary functions/ODEs. Experimental comparison uses one-hour CPU timeouts and only the selected benchmark suite.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2106.04340.txt`
+    -
     - record id: `nra-model-interpolation-2021`
 - Porous invariants (2021)
     - what: Defines porous invariants for branching integer affine loops: structured semilinear sets that may have infinitely many holes. The paper computes strongest real-linear and integer-linear invariants, gives reachability and separator results for several target/system classes, proves undecidability in high-dimensional nondeterministic systems, and implements a complete one-dimensional affine procedure.
@@ -691,7 +691,7 @@
     - number: all unreachable proofs; 5,828/6,968 reachable direct proofs within ~30 s
     - limits: The systems are integer LDSs with finitely many linear matrices, or one-dimensional affine maps. N-semilinear sets are Presburger-definable, so multiplication is unavailable in the invariant language. Full-dimensional Z-linear target reachability is decidable, but non-full-dimensional targets can be Skolem-hard or undecidable; N-semilinear invariant synthesis is undecidable for nondeterministic systems with two 91-dimensional matrices. The one-dimensional procedure is polynomial only with unary encoding; binary reachability is NP-hard and generated intervals can be exponentially large. Applicability to nested loops and richer specifications remains open.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Porous_Invariants_.txt`
+    -
     - record id: `porous-invariants-2021`
 - AVR (2020)
     - title: AVR: Abstractly Verifying Reachability.
@@ -701,7 +701,7 @@
     - number: HWMCC 2019 single-bit-vector track
     - limits: Targets primarily safety properties over quantifier-free bit-vectors, arrays, uninterpreted functions and linear integer arithmetic. Word-level abstraction can be ineffective when bit-precise data dominates; current support is limited for nonlinear arithmetic, floating point, quantifiers, liveness and fairness. Distributed-protocol generalization is preliminary and requires human/generalization reasoning beyond finite AVR runs. Certificates rely on an external SMT checker and traces on a witness simulator.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-030-45190-5_23); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/AVR_Abstractly_Verifying_Reachability_.txt`; notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-030-45190-5_23)
     - record id: `avr-2020`
 - CLN2INV (2020)
     - title: CLN2INV: Learning Loop Invariants with Continuous Logic Networks
@@ -723,13 +723,13 @@
     - number: 90% of solved C cases within two hours, rest up to twelve
     - limits: It excludes programs with multiple loops, calls or recursion. It needs a predefined grammar and a long search budget.
     - how much was read: most of it read
-    - [source](https://www.cis.upenn.edu/~mhnaik/papers/cav20.pdf); [notes: Code2Inv: A Deep Learning Framework for Program Verification](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal251/Code2Inv_A_Deep_Learning_Framework_for_Program_Verification_.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_batch_text/Code2Inv_A_Deep_Learning_Framework_for_Program_Verification_.txt`
+    - [source](https://www.cis.upenn.edu/~mhnaik/papers/cav20.pdf); [notes: Code2Inv: A Deep Learning Framework for Program Verification](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `code2inv-2020`
 - Config2Spec: Mining Network Specifications from Network Configurations (2020)
     - what: Config2Spec mines every policy in a chosen finite policy language that holds for all link-failure environments allowed by a model. It intersects policies inferred from sampled forwarding states with a candidate set, then uses grouped symbolic control-plane queries to verify remaining policies or produce counterexamples. Two runtime predictors choose between sampling and verification; policy-aware sampling, topology cuts and prefix grouping reduce work. A handwritten argument establishes exactness and termination conditional on exact terminating component tools and correct environment enumeration. Evaluation measures runtime, query reduction and specification size. Records the candidate/specification/verified invariant, universal failure semantics and finite policy-language boundary, complete predictor equations/initialization/smoothing, randomized unseen-environment requirement, dominator/shortest-path inference, SMT query polarity, fixed-link topology reduction, full algorithm/correctness argument, qualified forced-down environment-count concern, all table cells, parser/model edits to Internet2, and numeric discrepancies in summary claims.
     - limits: §§1/2: The mined specification describes behavior already enforced by the configuration, including mistakes or unintended restrictions. It does not discover operator intent or certify that existing behavior is desirable. An independent intended policy remains necessary to identify bugs; mined policies can support regression checking or refactoring only within the chosen semantics and failure scope. §2: Policy language includes reachability(r,p), isolation(r,p), waypoint(r,w,p), loadbalancing(r,p) on at least two paths. All policies means all instantiations of these supported templates, not arbitrary temporal/security/performance specifications. No convergence, transient update, quantitative bandwidth, timing or distributed liveness property is mined. §2: Failure model partitions links into forced-up, forced-down, symbolic; k bounds total down links including forced-down ones. Each concrete environment fixes all links and must satisfy that partition and count. Policy holds only if true in every admissible environment. Need consistent inputs k≥|Ldown|; empty-environment/vacuity handling not developed. Link-failure scope does not imply arbitrary router/software/Byzantine failures. §§3.2/Appendix A: Maintain verified⊆true specification⊆cands. Exact data-plane inference on a genuine admissible sample removes only false universal policies; sound complete control-plane query adds true policies or removes those violated by witness. Equality yields exact result; exhausting all genuine environments permits verified=cands. Proof assumes both tools model same configuration/policy semantics and their own results are correct. Appendix A: Termination relies on finite policy/environment spaces, PickCE always returning a previously unseen admissible environment, and every nonempty verifier query either proving policies or returning a real witness violating at least one. All component calls must terminate. No handling of solver unknown, timeout, parser errors or conflicting tool models is included in this theorem. Random sampling alone does not prove finite bounded runtime. Appendix A Algorithm1 line5 candidate listing error: totalEnvs=Σj=0..k binom(|Lsymbolic|,j), but §2 defines k as total failures including forced-down links. Correct admissible count uses k−|Ldown|. Example one forced-down link, one symbolic link, k1: one admissible environment, listing counts2; exhaustion branch may never trigger and PickCE can be asked for nonexistent unseen environment. Source §7 correctly subtracts forced-down count for topology trimming. This is a printed algorithm concern, not an executed artifact failure; experiments use empty forced sets. Appendix A Algorithm1: No explicit TopoTrim call or moving-average history appears despite §§3/4 implementation description; line25 divides by a set rather than its cardinality in print. Initialization calls verifier ten times and can classify policies before first data-plane sample, even though performance discussion says k1 only DPA. Read listing as schematic; exact code correspondence not proved. §4: Time-per-policy estimator=last runtime/newly classified policies, with infinity on zero DPA progress; remaining-time estimator=per-call time×unseen environments or unclassified policies. DPA selected when either estimator prefers it. Initial DPA times0, ten verifier policy sets initialize verifier averages, last ten calls smooth times. Heuristic choice affects cost, not exactness if underlying invariants/progress hold; no optimal scheduling bound. §5.1: Policy graph edge weight counts unclassified policies using a previous forwarding graph. Weighted random failed-link choice prioritizes many dependencies but rerouting can preserve them. Deterministic heaviest-link selection observed to oscillate; random fallback returns an unseen environment. Need legal fixed-link/count enforcement and finite unseen selection; no guarantee weighted sampler always needs fewer samples. §5.2: Batfish computes forwarding states, one graph per equivalence class of destination prefixes sharing forwarding. Dominator tree includes routers with at least one destination path, yields reachability and mandatory waypoint policies; isolation is inferred when reachability absent. Precise path quantification and treatment of ECMP branches/loops/drops must match verifier. Paper does not prove Batfish/Minesweeper correspondence for all supported policies. §5.2: Load balancing inferred from multiple equal-cost shortest paths. This is path multiplicity, not balanced byte counts, per-flow hashing fairness, disjoint paths or guaranteed throughput. Text says shortest paths in the network after describing forwarding graphs; ACL/route-policy-aware interpretation must be supplied by implementation, not assumed from raw physical connectivity alone. §6: Query formula φnet∧φfailure∧¬(∧policypredicates). UNSAT certifies whole group; SAT witnesses at least one failed policy, not all. Remove only actually violated policies; remaining ones unclassified. Group maximal same-prefix policies, arbitrary prefix choice. Claimed always at least as good follows query-count classification argument, not a wall-clock guarantee because larger conjunction can cost more or time out. §7: TopoTrim removes forced-down links, reduces residual budget k, replaces each forced-up edge with k extra parallel copies, then computes(k+1)-edge-connected components. Lack of required reachability/connectivity prunes reachability/load balancing and waypoint endpoints. This is necessary topology feasibility, not sufficient routing correctness. Requires compatible undirected link-failure model, prefix attachment and nonvacuous waypoint semantics; isolation is not trimmed. §8: Implementation5KPython/Java uses Batfish and Minesweeper extended with waypoint/load-balancing. Feature limits/parser bugs/SMT encoding become trusted boundaries. No mechanically checked framework proof, verified parser or proof of executable implementation. Tool-specific precision is assumed by mathematical argument rather than independently established through differential correctness evaluation. §8: Evaluated NetComplete-synthesized OSPF/BGP configs on three topologies and2/4/8/16prefix path-ordering specs, five config sets/type/topology. Large-network waypoints supplied by operator, simulated with random20%routers. Output completeness therefore relative to selected waypoint domain, not all possible waypoint devices. Not a benchmark of recovering independently authored human requirements. §8/Table2/3: Reported values are averages across generated configurations; fractional policies are averaged counts, not actual fractional policies. Candidates count after first all-symbolic-up sample, not entire template space. Increasing k shrinks true-policy set for same config; the paper does not explain why first-sample candidate averages differ across k. §8.1/Table2 discrepancy: source repeatedly claims OSPF completion within2.7hours, but USCarrier k2 OSPF cell10528.4s≈2.925h. BGP49151s≈13.653h agrees13.7. Source trend k1→2→3 describes averaged rows; time can decrease at more permissive failure bound because trimming eliminates nearly all policies. No monotone-runtime guarantee. §8.2: Baseline comparison only OSPF grids20/25/30routers because baselines do not scale to large topologies; five config sets, k1–3. At k2/3 DPA speedup mean10.2/max41, CPV mean3.8/max8.3. At k1 plain DPA wins by mean24/max37seconds due verifier initialization. Large-topology runtime is not direct large-topology measured baseline speedup. §8.3/Table4: Sampler comparison ten OSPF/BGP config runs per topology,k3; weighted policy-aware generally prunes more, but random transitions earlier in6/30runs due stalled pruning, not necessarily better results. More expensive sampling22.1–358.2ms versus random.5–1.4ms; overall DPA1.4–57.8s. AddedSamples>500 is censored, not precise mean. Candidate percentages use first sample as denominator. §8.3: Query reductions measured against one-query-per-policy baseline at first transition, not runtime speedups. BICS k2 text51.1%trim/41.5%group yields7.4%remaining arithmetically, whereas text/plot give9.6%; 90.3%overall reduction versus9.6%remaining differs rounding/definitions. USCarrier text1.15%trimremaining differs from the plotted trimming result; the text and plot relationship is unexplained. The final0.04%groupremaining is retained as a source claim. §8.4: Internet2 real May2015 configs modified before analysis: remove parsing/logging/anonymization/BFD lines and unsupported community/empty-prefix-list route-map matches. Authors say internal-prefix-only/noexternalpeers makes latter irrelevant, but no independent semantic equivalence proof. >90Klines,10routers/18links is small topology with large config text, not158routerproductiondeployment. §8: VMs32GBRAM/12vcores@2.3GHz. No exact CPUmodel, sourceversions/commits, solverlimit/unknownpolicy, seeds, standarderrors/confidenceintervals or per-run maxruntime provided. Timings and simulation/SMT outcomes measure performance under component assumptions, not tool code correctness. §§1/9: Operator anecdotes motivate need but no controlled user study of usability/specification review, bug detection accuracy or deployment benefit. CEGIS analogy concerns enumerating all valid finite policies with examples/oracles, not a learned or LLM-generated intent specification. No Verus/Rust/TLA+ or LLM agent result.
     - how much was read: most of it read
-    - [source](https://www.usenix.org/conference/nsdi20/presentation/birkner); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal534/config2spec.reading.txt`
+    - [source](https://www.usenix.org/conference/nsdi20/presentation/birkner)
     - record id: `config2spec-mining-network-specifications-2020`
 - GSPACER (2020)
     - title: Global Guidance for Local Generalization in Model Checking
@@ -740,7 +740,7 @@
     - number: On PLDI18, GS PACER solved 284 safe/68 unsafe versus SPACER 216/68 and Linear Arbitrary 270/65
     - limits: Main implementation targets LIA; LRA and non-linear CHC support are described as extensions, with details deferred. Results depend on CHC-COMP and artifact benchmark distributions and a 10-minute timeout on one CPU/memory setup. Authors note SMT runtime nondeterminism and leave theories lacking interpolation (e.g., bit-vectors) as future work.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2005.13301.txt`
+    -
     - record id: `gspacer-2020`
 - MORA (2020)
     - title: MORA - Automatic Generation of Moment-Based Invariants
@@ -751,7 +751,7 @@
     - number: SQUARE 8.70→1.67 seconds at moment 3
     - limits: Only grammar-conforming Prob-solvable loops are accepted; invalid input stops. The method depends on C-finite constant-coefficient recurrences and therefore does not cover arbitrary guards, distributions, or non-polynomial updates. This is a tool demonstration referring theoretical foundations to prior work, with a small benchmark subset rather than a broad probabilistic-program evaluation.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-030-45190-5_28); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Mora_Automatic_Generation_of_Moment_Based_Invariants_.txt`
+    - [source](https://doi.org/10.1007/978-3-030-45190-5_28)
     - record id: `mora-2020`
 - I4 (2019)
     - title: I4: Incremental Inference of Inductive Invariants for Verification of Distributed Protocols
@@ -760,13 +760,13 @@
     - number: Seven-model suite: chord_ring_maintenance, database_chain_replication, distributed_lock, leader_election_in_ring, learning_switch, lock_server, two_phase_commit
     - limits: README workflow requires legacy Python/Ivy/Averroes dependencies and does not report reproduced timings here.
     - how much was read: most of it read
-    - [source](https://github.com/GLaDOS-Michigan/I4); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: I4](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - [source](https://github.com/GLaDOS-Michigan/I4); [notes: I4](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `i4-2019`
 - Learning dynamic polynomial proofs (2019)
     - what: DQN selects elementary polynomial inference steps, building a small set of nonnegative lemmas. A linear program combines those lemmas into an upper-bound certificate. A permutation-invariant polynomial embedding supports transfer across graph sizes. On dense random maximum-stable-set instances, reports tighter bounds with much smaller final LPs than tested static hierarchy levels. Learned search proposes steps; algebraic rules and final identities justify the certificates. Explains the distinction between a feasible stable set (existential lower bound) and a nonnegativity proof (universal upper bound). Gives strict-positivity completeness for hypercube certificates, a complete-graph dynamic degree-two derivation, and a supplementary n/l lower bound for the specified static LP. Constructs trilinear monomial-orbit features invariant to variable renaming plus max pooling over memories/equalities. Supplies dense LP-based rewards, cached action scoring, full DQN settings, a symmetry ablation and explicit rational graph certificates.
     - limits: Inference rules multiply an established nonnegative polynomial by x_i or 1−x_i and take nonnegative linear combinations. Their soundness requires x in [0,1]^n and correct initial axioms. Stable-set experiments also reduce modulo x_i^2=x_i and x_ix_j=0 for graph edges. Polynomial simplification and coefficient equality must preserve that quotient semantics. The main completeness theorem is quoted from Krivine: strictly positive polynomials on the compact hypercube have a finite nonnegative sum of x^alpha(1−x)^beta generators. The footnote restricts the completeness claim to strict positivity/refutation. It does not prove every merely nonnegative polynomial has such a certificate, nor that bounded-degree learned search is complete. Training uses random graphs with25 vertices and edge probability p in[0.5,1]. Generated memories start with2n inequality axioms and graph/Boolean equalities. Search is capped at100 additions and degree2 intermediate lemmas. Results do not establish performance on arbitrary polynomial optimization, sparse graphs, distributed programs or natural-language statements. No human proofs or optimal α(G) labels train the agent, but the dense reward depends on solving a mathematical LP after each addition. “Unsupervised” here means absence of supplied target proofs/optimum labels; it does not mean learning without an exact optimization environment. The orbit-based embedding and symmetric pooling establish architectural invariance under set enumeration and joint variable relabeling. Invariance is not injectivity or a proof of successful generalization. Fixed degree bounds the orbit feature dimension independently of sufficiently large n, while enumerating polynomials/actions still grows with n. Bounds are certified only if nonnegative coefficients and polynomial identities are checked accurately. Printed rational examples admit exact arithmetic; the paper does not provide a verified LP implementation or a systematic numerical-to-rational certificate-reconstruction/error protocol for every aggregate experiment. Supplementary theorem γ_l≥n/l concerns the precise product-generator hierarchy in Eq.10 with only Boolean and edge equalities. It is not a lower bound for every static method or for formulations strengthened by extra valid inequalities. Dynamic advantage is demonstrated against tested levels2–5 and random legal actions, not every proof search strategy. Only one training seed(0) and one NVIDIA V100 are specified. Test means cover100 random graph instances for each reported size. No intervals, multi-seed variability, end-to-end wall-clock comparison, total GPU training time or ground-truth optimality-gap table is supplied.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal320/dynamic.all.reading.txt`
+    -
     - record id: `learning-dynamic-polynomial-proofs-2019`
 - Peuter Sofronie-Stokkermans invariant synthesis (2019)
     - title: On Invariant Synthesis for Parametric Systems
@@ -777,7 +777,7 @@
     - number: H-PILoT and Redlog toolchain
     - limits: Soundness depends on local theory-extension chains, decidable ground satisfiability, quantifier elimination or equality-defined updates, flat/linear clauses, and locality of all generated candidates. The algorithm is only partially correct if it terminates and may not terminate even for linear integer programs; formulas can grow exponentially or worse under Fourier–Motzkin elimination. The method targets universal invariants and selected function signatures, and the array examples rely on APF/locality assumptions rather than arbitrary programs.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1905.12524.txt`
+    -
     - record id: `peuter-sofronie-stokkermans-invariant-synthesis-2019`
 - Code2Inv (2018)
     - title: Learning Loop Invariants for Program Verification (Code2Inv)
@@ -799,7 +799,7 @@
     - number: 106 solved vs 100/77/74 baselines
     - limits: Humans supply the precondition and postcondition. It shows partial correctness only: it does not show that the program terminates. The benchmark is invalid for 9 tasks. Invariants are constrained to conjunctive normal form. It has no wall-clock advantage over competing solvers.
     - how much was read: most of it read
-    - [source](https://proceedings.neurips.cc/paper_files/paper/2018/file/65b1e92c585fd4c2159d5f33b5030ff2-Paper.pdf); [notes: Learning Loop Invariants for Program Verification (Code2Inv), Si et al](../distributed_verification_review_b/deep_21_program_agents_baselines.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal255/Learning_Loop_Invariants_for_Program_Verification.txt`
+    - [source](https://proceedings.neurips.cc/paper_files/paper/2018/file/65b1e92c585fd4c2159d5f33b5030ff2-Paper.pdf); [notes: Learning Loop Invariants for Program Verification (Code2Inv), Si et al](../distributed_verification_review_b/deep_21_program_agents_baselines.md)
     - record id: `code2inv-2018-2`
 - Dinv (2018)
     - title: Inferring and Asserting Distributed System Invariants
@@ -821,7 +821,7 @@
     - number: 114 solved from merged seeds and proofs
     - limits: The target is a transition system encoded as linear or nonlinear constrained Horn clauses, with a conjunction of lemmas as a safe inductive invariant checked by SMT. Bounded interpolation is limited to LIA, so 17 NIA benchmarks skip it; sampling remains nondeterministic and grammar construction may miss useful constants or large disjunctions. If BMC finds a counterexample below the configured bound N, no invariant exists and the algorithm reports a bug. Experiments are on 171 safe programs and unsafe instances only for testing, with 60-second timeout comparisons and three timing runs; no completeness guarantee for mutant search is given.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Accelerating_Syntax_Guided_Invariant_Synthesis_.txt`
+    -
     - record id: `freqhorn-2-syntax-guided-invariants-2018`
 - ICE refinement types (2018)
     - title: ICE-Based Refinement Type Discovery for Higher-Order Functional Programs
@@ -832,7 +832,7 @@
     - number: HoIce solved 162 benchmarks
     - limits: Target language has integers (booleans encoded as 0/nonzero), no algebraic data types, and requires simple typing; type soundness is stated but the refinement system is incomplete. Benchmarks include only safe programs because RType is not refutation-sound. Qualifier mining misses forms such as x+y≥z unless explicit; nine cases are refinement-untypable. 100-second timeout and solver-dependent learning limit scalability; unsatisfiable Horn clauses are a poor fit.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/ICE_Based_Refinement_Type_Discovery_for_Higher_Order_Functional_Programs_.txt`
+    -
     - record id: `ice-refinement-types-2018`
 - Invariant Synthesis for Incomplete Verification Engines. (2018)
     - what: Presents CD-NPI, a CEGIS framework that synthesizes inductive invariants for sound but incomplete verification engines. Non-provability models from a decidable reduction become ICE learning constraints over Boolean combinations of predicates. Formalizes conservative reductions from undecidable U to decidable D, strengthening/weakening/implication constraints and their ICE translation. Prototype integrations target Dryad separation-logic heaps and Boogie/Z3 quantified verification. Full evaluation covers 82 dynamic-data-structure routines and 12 quantified programs, with candidate-predicate generation and detailed iteration/time tables.
@@ -841,7 +841,7 @@
     - number: tables report candidate predicates, iterations and invariant sizes
     - limits: D-validity must imply U-validity; failed D-validity yields usable non-provability models. Learning uses a finite fixed hypothesis class and succeeds only when a provable invariant exists there. Predicate templates and annotations are supplied. It is invariant synthesis, not an end-to-end proof of program semantics or distributed protocol correctness.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-319-89960-2_13); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal257/1712.05581.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1712.05581.txt`; notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-319-89960-2_13)
     - record id: `invariant-synthesis-for-incomplete-2018`
 - Ivy liveness-to-safety (2018)
     - title: Reducing liveness to safety in first-order logic
@@ -852,7 +852,7 @@
     - number: liveness needs two to four times as many invariant conjectures as safety (§7.2)
     - limits: The user still supplies the inductive invariants (facts preserved by every step). Humans applied the reduction by hand. Paxos assumes that the actions of a chosen leader or quorum are fair, that messages are eventually delivered, and that competing proposals eventually stop. Multi-Paxos and Stoppable Paxos cover one incarnation with fixed membership. The comparison counts invariants, not person-time.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3158114); [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_tables.md`
+    - [source](https://doi.org/10.1145/3158114); [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `ivy-liveness-to-safety-2018`
 - Paxos Made EPR (2017)
     - title: Paxos Made EPR: Decidable Reasoning about Distributed Protocols
@@ -863,7 +863,7 @@
     - number: EPR verification conditions solved in a few seconds with no timeouts; semi-bounded runtimes grew with rounds; unbounded Z3 diverged
     - limits: Z3 did not terminate on unbounded checks of the original models. The URL of the original artifact returns 404, and the review notes found no verified copy.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/1710.07191); [notes: Paxos Made EPR](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1710.07191.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`
+    - [source](https://arxiv.org/abs/1710.07191); [notes: Paxos Made EPR](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `paxos-made-epr-2017`
 - alpha-L2S (2016)
     - title: Infinite-State Liveness-to-Safety via Implicit Abstraction and Well-Founded Relations
@@ -874,7 +874,7 @@
     - number: 835 total LTL instances
     - limits: It checks liveness on a model. Its benchmarks come from programs, so they test translated program semantics, not the programs themselves.
     - how much was read: most of it read
-    - [source](https://link.springer.com/content/pdf/10.1007/978-3-319-41528-4_15.pdf); [notes: Related work absent from the first pass: αL2S](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Infinite_State_Liveness_to_Safety_via_Implicit_Abstraction_and_Well_Founded_Relations_.txt`
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-319-41528-4_15.pdf); [notes: Related work absent from the first pass: αL2S](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `alpha-l2s-2016`
 - Automatic Abstraction in SMT-Based  (2016)
     - title: Automatic Abstraction in SMT-Based Unbounded Software Model Checking
@@ -882,7 +882,7 @@
     - number: 1990 initial; 608 evaluated; 369 unsafe solved by both; 42/55 hard safe solved within 15m
     - limits: No bit-vector/heap support; abstraction may hurt easy cases; results solver/time bounded.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1306.1945.txt`
+    -
     - record id: `automatic-abstraction-in-smt-based-2016`
 - Automaton learning for infinite safety games (2016)
     - title: An Automaton Learning Approach to Solving Safety Games over Infinite Graphs.
@@ -893,7 +893,7 @@
     - number: 300 s timeout and 16 GiB memory
     - limits: Winner determination for rational safety games is undecidable, so the method is a semi-algorithm and assumes a winning set exists for the termination theorem. The SAT learner's passive DFA identification is NP-complete in general; RPNI cannot guarantee minimality or completeness and handles only finite implication languages. Experiments use regular-language/transducer encodings and finite-state safety objectives; results do not establish liveness synthesis or arbitrary infinite-state game classes.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-662-49674-9_12); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/An_Automaton_Learning_Approach_to_Solving_Safety_Games_over_Infinite_Graphs_.txt`; notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://doi.org/10.1007/978-3-662-49674-9_12)
     - record id: `automaton-learning-for-infinite-safety-games-2016`
 - generalized homogeneous invariant synthesis (2016)
     - title: Generalized Homogeneous Polynomials for Efficient Template-Based Nonlinear Invariant Synthesis
@@ -903,7 +903,7 @@
     - number: sumpower5 solver total 89.6 ms vs Fastind 670 ms
     - limits: Programs use polynomial assignments and single-polynomial guards; consistency requires all expressions GH under Γ. Remainder operation must preserve GH form. Constants normally infer degree 1, requiring an implementation workaround treating occurrences as variables. Choice of target g-degree τ is left to the user; semialgebraic extension is conjectural.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1604.07201.txt`
+    -
     - record id: `generalized-homogeneous-invariant-synthesis-2016`
 - Ivy repository (2016)
     - title: Ivy: Safety Verification by Interactive Generalization
@@ -912,7 +912,7 @@
     - number: Pages 614-630
     - limits: README is brief and points to the website for details.
     - how much was read: most of it read
-    - [source](https://github.com/kenmcmil/ivy); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md)
+    - [source](https://github.com/kenmcmil/ivy); [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md)
     - record id: `ivy-repository-2016`
 - Model Checking C Programs with Loop (2016)
     - title: Model Checking C Programs with Loops via k-Induction and Invariants
@@ -920,7 +920,7 @@
     - number: Polyhedral variant solves more tasks (abstract); exact table unavailable
     - limits: Affine domains omit nonlinear, heap and bit-vector invariants; bounded/solver limits can return unknown.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1502.02327.txt`
+    -
     - record id: `model-checking-c-programs-with-loop-2016`
 - RAHFT Horn-clause verification tool (2016)
     - title: RAHFT: A Tool for Verifying Horn Clauses Using Abstract Interpretation and Finite Tree Automata
@@ -931,7 +931,7 @@
     - number: uses Yices SMT, Parma Polyhedra Library and optimized FTA determinization
     - limits: The current implementation targets CLP constrained Horn clauses over linear arithmetic; arrays, maps, sets and richer theories are unsupported. Convex polyhedra can bottleneck large programs; library arity limits and interpolant generation do not scale well. Counterexample/model reconstruction in the original program is difficult after transformations and external-library use. The paper reports comparative evaluation by reference to prior studies rather than a full new benchmark table.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/CAV 2016 tool paper §§1–3`
+    -
     - record id: `rahft-horn-clause-verification-tool-2016`
 - Commutativity learning (2015)
     - title: Learning Commutativity Specifications
@@ -942,14 +942,14 @@
     - number: reported learning time: seconds
     - limits: Inference is restricted to a chosen logical fragment and finite samples; relations may themselves be quantified but the searched formulas are quantifier-free. Soundness is empirical relative to sampled positive/negative behavior and can miss unseen states; smallest consistent formulas mitigate overfitting but do not prove semantic completeness. Type-aware sampling assumes the selected relation vocabulary captures relevant distinctions. The available extraction ends during background, so detailed evaluation counts are unavailable.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-319-21690-4_18); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_batch_text/Learning_Commutativity_Specifications_.txt`
+    - [source](https://doi.org/10.1007/978-3-319-21690-4_18)
     - record id: `commutativity-learning-2015`
 - DepthK (2015)
     - title: Model Checking Embedded C Software using k-Induction and Invariants (extended version)
     - number: Intel Xeon E5-2670, 115 GB RAM; 15-minute CPU and 15 GB memory limits. DepthK versus ESBMC k-induction, CPAchecker variants and CBMC. On SV-COMP loops DepthK scored 140 versus ESBMC 105, CPAchecker no-inv 101, CBMC 53; 94 correct, 1 false-incorrect, 0 true-incorrect, 47 unknown/timeout. On embedded tests DepthK had 17 correct and 17 unknown/timeout; inductive-step proofs exceeded ESBMC by 25.35% (loops) and 29.41% (embedded).
     - limits: Affine/polyhedral invariants may be weak or non-convex; invariant over-approximation requires BMC rechecking. Global unwinding bound and max iterations (100) are configured; tool can return UNKNOWN on timeout, resource exhaustion, invariant-generation or implementation failures. Evaluation is limited to ANSI-C benchmarks and safe embedded programs.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/1509.02471); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1509.02471.txt`
+    - [source](https://arxiv.org/abs/1509.02471)
     - record id: `depthk-2015`
 - PDR∀ universal invariants (2015)
     - title: Property-Directed Inference of Universal Invariants or Proving Their Absence
@@ -960,7 +960,7 @@
     - number: no universal invariant: shared-tail 3.6 s, 2 frames, 42 Z3 calls; comb 2 s, 3 frames, 52 calls
     - limits: No termination guarantee. Init, transition and Bad must be representable in the chosen first-order logic; satisfiable queries need finite models. The presentation assumes SAT/model procedures; implementation uses decidable EAR (relational ∃*∀* with restricted deterministic transitive closure, no function symbols), reduced to EPR. More complex control flow is encoded via a program counter. Absence result is limited to universal inductive invariants over the fixed vocabulary, not program incorrectness or impossibility of richer proofs. Auxiliary predicates are used despite no user-supplied abstraction templates. EAR has limited ability to express list segments not pointed to by variables. Benchmarks are small list/data-structure algorithms; four bugs are deliberate. No liveness, distributed-protocol, Verus/Rust, TLA+, or LLM evaluation. Timing comparisons to [32] concern memory safety; that baseline’s functional specifications are stated to be weaker, so full-correctness columns are not directly like-for-like.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-319-21690-4_40); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal261/Property_Directed_Inference_of_Universal_Invariants_or_Proving_Their_Absence_.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/unreachable_C.md`
+    - [source](https://doi.org/10.1007/978-3-319-21690-4_40)
     - record id: `pdr-universal-invariants-2015`
 - Differential radical invariants (2014)
     - title: Characterizing Algebraic Invariants by Differential Radical Invariants
@@ -971,7 +971,7 @@
     - number: one-hour Mathematica run on 1.7 GHz Core i5 / 4 GB
     - limits: Systems are autonomous polynomial ODEs with explicit vector fields and unique local maximal solutions; nonautonomous polynomial time can be encoded by a clock. Zariski closure abstracts away time direction and can be uninformative when the vanishing ideal is zero (e.g., generic one-dimensional evolving fields). Generation is at least NP-hard and PSPACE under stated no-parameter assumptions; de-homogenization may fail for projective candidates. Results target algebraic equalities, not general semialgebraic safety regions; upper bounds on differential-radical order and hybrid-system use remain future work.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-642-54862-8_19); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Characterizing_Algebraic_Invariants_by_Differential_Radical_Invariants_.txt`
+    - [source](https://doi.org/10.1007/978-3-642-54862-8_19)
     - record id: `differential-radical-invariants-2014`
 - ICE (2014)
     - title: ICE: A Robust Framework for Learning Invariants
@@ -982,7 +982,7 @@
     - number: Theorem 1 scalar strong convergence; Theorem 3 EQDA strong convergence
     - limits: Scalar learning is complete only relative to the enumerated template class and bounded constants, though dovetailing eventually explores all finite templates. The teacher must soundly generate examples, counterexamples, and inductiveness implications using verification conditions. EQDA strong convergence relies on a fixed finite set of pointer and quantified variables; no polynomial-time iterative learner exists for unbounded alphabets. Array experiments use decidable array-property-fragment translations; list support is described but not evaluated because no Strand decision procedure was available. Learners synthesize invariants expressible in their concept classes and do not remove underlying theorem-proving costs.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-319-08867-9_5); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/ICE_A_Robust_Framework_for_Learning_Invariants_.txt`
+    - [source](https://doi.org/10.1007/978-3-319-08867-9_5)
     - record id: `ice-2014`
 - QDA quantified invariant learning (2013)
     - title: Learning Universally Quantified Invariants of Linear Data Structures
@@ -993,7 +993,7 @@
     - number: list-partition 16395 tests, 11807 membership queries, 11.40s teacher time
     - limits: Fixed finite pointer/universal-variable sets and formula lattice; quantifier-free data theory must be decidable. Universal variables occupy distinct positions in the word encoding. General QDA emptiness is undecidable; EQDA restrictions exclude bounded-distance tests. Sample-based membership rejects unseen words and can produce a nonminimal invariant; passive runtime is polynomial in the learned automaton, not the smallest true invariant. APF translation can over-approximate semantics. Black-box inference discards program-code information and empirical adequacy still needs SMT checking.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal246/Learning_Universally_Quantified_Invariants_of_Linear_Data_Structures_.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_batch_text/Learning_Universally_Quantified_Invariants_of_Linear_Data_Structures_.txt`
+    -
     - record id: `qda-quantified-invariant-learning-2013`
 - Splitter predicates (2011)
     - title: Simplifying Loop Invariant Generation Using Splitter Predicates
@@ -1004,7 +1004,7 @@
     - number: 90 ms maximum splitter computation
     - limits: The formal language is integer-valued and restricts holes from occurring inside nested loops; weakest-precondition approximations for nested loops rely on an invariant generator. The method targets conditionals with a fixed number of phase transitions and can miss loops alternating behavior. SMT quantifier elimination and path constraints may be expensive; mergesort demonstrates incomparable/non-improving widening results.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-642-22110-1_57); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Simplifying_Loop_Invariant_Generation_Using_Splitter_Predicates_.txt`
+    - [source](https://doi.org/10.1007/978-3-642-22110-1_57)
     - record id: `splitter-predicates-2011`
 - Array-Based Backward Reachability SMT (2010)
     - title: Backward Reachability of Array-Based Systems by SMT Solving: Termination and Invariant Synthesis
@@ -1015,7 +1015,7 @@
     - number: Max in Array: timeout default, 0.03s best with five invariants
     - limits: Termination and completeness require theory-specific local-finiteness, quantifier-elimination/instantiation and well-quasi-order hypotheses; unrestricted safety and satisfiability are undecidable. Quantified SMT is difficult, and mcmt uses Yices plus heuristic instantiation. Invariant synthesis is theoretically complete but can have a huge finite search space; experiments are on selected translated benchmarks and old hardware, with tuned settings potentially non-global best.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1010.1872.txt`
+    -
     - record id: `array-based-backward-reachability-smt-2010`
 - Dsolve (2010)
     - title: Dsolve: Safety Verification via Liquid Types
@@ -1026,7 +1026,7 @@
     - number: inferred original vec balance factor ≤4 exposed faulty paths and test inputs
     - limits: Inference is restricted to conjunctions of predicates from a finite, user-provided qualifier set, so failure may mean an unsafe program, missing qualifiers or an inexpressible invariant. Dsolve verifies OCaml modules and relies on Z3; whole-program checking uses driver calls unless contracts are supplied. Experiments report runtimes and annotation reductions but no error bars or soundness proof in this short tool paper; abstract modules require user-supplied axioms.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/§§1–4, Figure 1`
+    -
     - record id: `dsolve-2010`
 - Daikon (2007)
     - title: The Daikon system for dynamic detection of likely invariants
@@ -1047,7 +1047,7 @@
     - number: Group sizes: distai 2, ex 14, i4 7, multisig 4, mypyv 16, paxos 10, tla 5
     - limits: The README lists benchmark membership, not pass rates or independently reproduced results.
     - how much was read: most of it read
-    - [source](https://github.com/aman-goel/ivybench); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; [notes: IC3PO and its shared ivybench collection](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - [source](https://github.com/aman-goel/ivybench); [notes: IC3PO and its shared ivybench collection](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `ivybench`
 - I3DP (2026)
     - title: I3DP: Neuro-Symbolic Inductive Invariant Inference for Distributed Protocols
@@ -1067,7 +1067,7 @@
     - number: After removing unfaithful behaviors true accuracy drops about 20%
     - limits: One notes file says the full claims await deeper reading. Another read the faithfulness section.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2605.01394); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`
+    - [source](https://arxiv.org/abs/2605.01394)
     - record id: `livefmbench-2026`
 - Veil blog (Sergey) (2026)
     - title: Verifying Distributed Protocols in Veil
@@ -1082,7 +1082,7 @@
     - number: 8 Promela systems: Peterson, Bakery, Alternating Bit, Leader Election, UPPAAL Train/Gate, Distributed Lock Server, Producer Consumer, Smart Contract
     - limits: The target is probably invariants for monitoring, not proofs.
     - how much was read: parts read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    -
     - record id: `psyn-2025`
 - Scimitar (2025)
     - title: Interpretable Safety Verification of Distributed Protocols by Inductive Proof Decomposition
@@ -1093,7 +1093,7 @@
     - number: 173 grammar predicates
     - limits: The draft the notes inspected has a different title from earlier and later records, and a placeholder conference header. One property of an edited model is not a complete verification of Raft.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2404.18048); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - [source](https://arxiv.org/abs/2404.18048); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
     - record id: `scimitar-2025`
 - Kondo (2024)
     - title: Inductive Invariants That Spark Joy: Using Invariant Taxonomies to Streamline Distributed Protocol Proofs
@@ -1104,7 +1104,7 @@
     - number: Table 1 p. 848: 10 systems (Echo Server, Ring Leader Election, Simplified Leader Election, Two-Phase Commit, Paxos, Flexible Paxos, Distributed Lock, ShardedKV, ShardedKV-Batched, Lock Server)
     - limits: Liveness proofs are beyond its scope. Line counts are not measured human hours.
     - how much was read: parts read
-    - [source](https://www.usenix.org/conference/osdi24/presentation/zhang-tony); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
+    - [source](https://www.usenix.org/conference/osdi24/presentation/zhang-tony); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
     - record id: `kondo-2024`
 - Updria / Lambda (2024)
     - title: Invariant Checking for SMT-Based Systems with Quantifiers
@@ -1126,7 +1126,7 @@
     - number: DuoAI covers 27 protocols and solves Paxos more than two orders of magnitude faster than any alternative
     - limits: It handles only "eventually" properties, not bounded time. Ranking functions are polynomials only. It works on protocol-level models, not code. It assumes fair scheduling, minimum packet delivery and a contention-free Paxos round. Part of the line-count gap is Dafny versus mypyvy. The notes' author read about 20% of the 137 pages.
     - how much was read: parts read
-    - [source](https://academiccommons.columbia.edu/doi/10.7916/fexf-nt82/download); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://academiccommons.columbia.edu/doi/10.7916/fexf-nt82/download)
     - record id: `yao-thesis-distai-duoai-lvr-2024`
 - Sift (2022)
     - title: Sift: Using Refinement-guided Automation to Verify Complex Distributed Systems
@@ -1137,7 +1137,7 @@
     - number: MultiPaxos effort 3 person-weeks
     - limits: The top-level abstraction proofs for Raft and Multi-Paxos are manual or reused. Imperative optimizations may need loop invariants written by hand. It targets C++, not Rust.
     - how much was read: parts read
-    - [source](https://www.usenix.org/system/files/atc22-ma.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: Sift: refinement from protocol down to executable systems](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - [source](https://www.usenix.org/system/files/atc22-ma.pdf); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: Sift: refinement from protocol down to executable systems](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `sift-2022`
 - IC3PO (2021)
     - title: On Symmetry and Quantification: A New Approach to Verify Distributed Protocols
@@ -1147,7 +1147,7 @@
     - number: Pages 131-150
     - limits: It has no formal proof that it converges. A run on a finite instance alone must not count as verified. DuoAI contests some of the comparison encodings. The domains are mostly unordered and symmetric.
     - how much was read: parts read
-    - [source](https://arxiv.org/pdf/2103.14831); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: IC3PO and its shared ivybench collection](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - [source](https://arxiv.org/pdf/2103.14831); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: IC3PO and its shared ivybench collection](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `ic3po-2021`
 - Paxos with IC3PO (2021)
     - title: Towards an Automatic Proof of Lamport’s Paxos
@@ -1155,7 +1155,7 @@
     - number: Pages 112-122
     - limits: The hierarchy of abstractions, and its link to the intended system, are separate human work.
     - how much was read: parts read
-    - [source](https://arxiv.org/pdf/2108.08796); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: IC3PO and its shared ivybench collection](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - [source](https://arxiv.org/pdf/2108.08796); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: IC3PO and its shared ivybench collection](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `paxos-with-ic3po-2021`
 - SWISS (2021)
     - title: Finding Invariants of Distributed Systems: It’s a Small (Enough) World After All
@@ -1166,7 +1166,7 @@
     - number: Paxos: around 4 hours on an 8-core machine; with guidance 20 minutes
     - limits: Formula size makes the search grow exponentially. The templates the user chooses matter a lot.
     - how much was read: parts read
-    - [source](https://www.usenix.org/system/files/nsdi21-hance.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md`; [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: concrete reusable cases](../distributed_verification_review_b/review_b_invariants_20261007.md)
+    - [source](https://www.usenix.org/system/files/nsdi21-hance.pdf); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); [notes: concrete reusable cases](../distributed_verification_review_b/review_b_invariants_20261007.md)
     - record id: `swiss-2021`
 - Temporal prophecy (2021)
     - title: Temporal prophecy for proving temporal properties of infinite-state systems
@@ -1177,14 +1177,14 @@
     - number: Figure 3 (model lines; conjectures; checker seconds): ticket with task queues 90; 60; 7; alternating bit 143; 70; 25; hybrid reliable broadcast 166; 58; 25; TLB shootdown 468; 102; 240 (checking time, not authoring time)
     - limits: Prophecy formulas are extracted automatically only from an invariant the user supplies. Choosing the witness is manual. No claim of completeness.
     - how much was read: parts read
-    - [source](https://doi.org/10.1007/s10703-021-00377-1); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md`; [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md); [notes: additional temporal methods](../distributed_verification_review_b/review_b_liveness_20261007.md)
+    - [source](https://doi.org/10.1007/s10703-021-00377-1); [notes: Ivy: dynamic abstraction and temporal prophecy](../distributed_verification_review_b/deep_2_liveness.md); [notes: additional temporal methods](../distributed_verification_review_b/review_b_liveness_20261007.md)
     - record id: `temporal-prophecy-2021`
 - Apalache (2019)
     - title: Apalache: temporal properties tutorial, feature table and TLA+ model checking made symbolic
     - what: Apalache is a model checker for TLA+ that works on symbols instead of listing states, using an SMT solver. It checks state, action and trace invariants, inductive invariants (a property that holds at the start and is preserved by every step) and temporal properties.
     - limits: Apalache parses ASSUME but does not pass it to the solver. It does not use THEOREM. Its bounded checks do not prove properties for unbounded runs. The authors did not read the original paper.
     - how much was read: parts read
-    - [source](https://github.com/apalache-mc/apalache); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md); [notes: Model checking: what a successful run means](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://github.com/apalache-mc/apalache); [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md); [notes: Model checking: what a successful run means](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `apalache-2019`
 - Bounded quantifier instantiation (2017)
     - title: Bounded Quantifier Instantiation for Checking Inductive Invariants
@@ -1201,7 +1201,7 @@
     - number: found a linked-list deletion in Fomitchev and Yahav that is not obstruction-free
     - limits: It is not about distributed systems. The review notes read about 25% of the paper.
     - how much was read: parts read
-    - [source](https://www.mpi-sws.org/~viktor/papers/popl2009-nonblocking.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://www.mpi-sws.org/~viktor/papers/popl2009-nonblocking.pdf)
     - record id: `proving-that-non-blocking-2009`
 - PVerifier
     - title: PVerifier (P language verification extensions)
@@ -1218,20 +1218,20 @@
     - number: ten 20-core machines
     - limits: It covers safety only. For Paxos and Raft it finds only the last annotation.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2609.28535); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`
+    - [source](https://arxiv.org/abs/2609.28535)
     - record id: `proofsax-2026`
 - Towards Quantifier-Free Interpolation in Array Languages with Unbounded Data Specifications (2026)
     - what: The paper proves quantifier-free interpolation for combinatory array logic with iterated diffs. It also proves uniform interpolation for a flat array fragment.
     - limits: It has no distributed case study and no LLM component.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2607.05126); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://arxiv.org/abs/2607.05126)
     - record id: `towards-quantifier-free-interpolation-2026`
 - Super-V (2025)
     - title: Bolt-On Strong Consistency: Specification, Implementation, and Verification
     - what: It verifies a Raft-like replicated store built on a weak replicated store. SMT checks local, stable preconditions on updates.
     - limits: Only the abstract was read. The PDF was not obtained.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1145/3720502); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/openalex_leads_20261012.md`
+    - [source](https://doi.org/10.1145/3720502)
     - record id: `super-v-2025`
 - Bakery IC3PO (2023)
     - title: Towards an Automatic Proof of the Bakery Algorithm
@@ -1245,7 +1245,7 @@
     - what: . Ivy is a multi-modal veriﬁcation tool for correct design and implementation of distributed protocols and algorithms, supporting modular speciﬁcation, implementation and proof. Ivy supports proving safety and liveness properties of parameterized and inﬁnite-state systems via three modes: deductive veriﬁcation using an SMT solver, abstraction and model checking, and manual proofs using natural deduction.
     - limits: Not read; claims unverified.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-53291-8_12); notes outside this site: `lit_snowball/notes_coci5.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/openalex_leads_20261012.md`
+    - [source](https://doi.org/10.1007/978-3-030-53291-8_12)
     - record id: `ivy-a-multi-modal-2020`
 - Threshold decomposition (2019)
     - title: Verification of Threshold-Based Distributed Algorithms by Decomposition to Decidable Logics
@@ -1256,7 +1256,7 @@
     - number: Verified protocols include fast-learning Byzantine consensus; threshold inference takes minutes
     - limits: The user supplies an inductive invariant and models the protocol in EPR; the method targets restricted threshold use and relies on liveness-to-safety reduction where needed.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-25543-5_15); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://doi.org/10.1007/978-3-030-25543-5_15)
     - record id: `threshold-decomposition-2019`
 - Termite (2015)
     - title: Synthesis of Ranking Functions Using Extremal Counterexamples
@@ -1266,7 +1266,7 @@
     - number: Termite solved 33% more examples than Loopus, in twice the time
     - limits: The method targets termination of programs whose transition relations include disjunctions and existential conditions; benchmark comparisons include front-end and invariant-generator limitations.
     - how much was read: only abstract or first pages read
-    - [source](https://hal.science/hal-01144622); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://hal.science/hal-01144622)
     - record id: `termite-2015`
 - Colón-Sipma termination (2002)
     - title: Practical Methods for Proving Program Termination
@@ -1275,93 +1275,93 @@
     - number: The first method handles subtle linear combinations but is limited to few variables
     - limits: The algorithms target imperative programs and loop termination; the second method is heuristic and assumes structured programs.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/3-540-45657-0_36); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_snowball/notes_C.md`
+    - [source](https://doi.org/10.1007/3-540-45657-0_36)
     - record id: `colo-n-sipma-termination-2002`
 - A Learner-Verifier Framework for Neural Network Controllers and Certificates of Stochastic Systems.
     - what: . Reinforcement learning has received much attention for learn- ing controllers of deterministic systems. We consider a learner-verifier framework for stochastic control systems and survey recent methods that formally guarantee a conjunction of reachability and safety properties.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-30823-9_1); notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://doi.org/10.1007/978-3-031-30823-9_1)
     - record id: `a-learner-verifier-framework`
 - A Learning-Based Approach to Synthesizing Invariants for Incomplete Verification Engines
     - what: We propose a framework for synthesizing inductive invariants for incomplete verification engines, which soundly reduce logical problems in undecidable theories to decidable theories. Our framework is based on the counterexample guided inductive synthesis principle and allows verification engines to communicate non-provability information to guide invariant synthesis. We show precisely how the verification engine can compute such non-provability information and how to build effective learning algorithms when invariants are expressed as Boolean combinations of a fixed set of predicates.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/s10817-020-09570-z); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/s10817-020-09570-z)
     - record id: `a-learning-based-approach`
 - Array Abstractions from Proofs
     - what: . We present a technique for using infeasible program paths to automatically infer Range Predicates that describe properties of un- bounded array segments. First, we build proofs showing the infeasibility of the paths, using axioms that precisely encode the high-level (but in- formal) rules with which programmers reason about arrays.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-540-73368-3_23); notes outside this site: `lit_snowball/notes_coci3.md`
+    - [source](https://doi.org/10.1007/978-3-540-73368-3_23)
     - record id: `array-abstractions-from-proofs`
 - ESBMC v6.0: Verifying C Programs Using k-Induction and Invariant Inference
     - what: ESBMC v6.0: Verifying C Programs Using k -Induction and Invariant Inference (Competition Contribution) Mikhail R. Gadelha1(B) , Felipe Monteiro2 , Lucas Cordeiro3 , and Denis Nicole4 1 SIDIA Instituto de Ciência e Tecnologia, Manaus, Brazil m.gadelha@samsung.com 2 Federal University of Amazonas, Manaus, Brazil felipemonteiro@ufam.edu.br 3 University of Manchester, Manchester, UK lucas.cordeiro@manchester.ac.uk 4 University of Southampton, Southampton, UK dan@ecs.soton.ac.uk Abstract. ESBMC v6.0 employs a k-induction algorithm to both fal- sify and prove safety properties in C programs.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-17502-3_15); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/978-3-030-17502-3_15)
     - record id: `esbmc-v6-0-verifying`
 - Full-program induction: verifying array programs sans loop invariants
     - what: Arrays are commonly used in a variety of software to store and process data in loops. Automati- cally proving safety properties of such programs that manipulate arrays is challenging. We present a novel verification technique, called full-program induction, for proving (a sub-class of) quanti- fied as well as quantifier-free properties of programs manipulating arrays of parametric size N .
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/s10009-022-00676-w); notes outside this site: `lit_snowball/notes_coci2.md`
+    - [source](https://doi.org/10.1007/s10009-022-00676-w)
     - record id: `full-program-induction-verifying`
 - GACAL: Conjecture-Based Verification - (Competition Contribution).
     - what: GACAL: Conjecture-based Verification (Competition Contribution) TACAS Artifact Benjamin Quiring ⋆ and Panagiotis Manolios SV-COMP 2020 Northeastern University, Boston MA, USA Accepted Abstract. GACAL verifies C programs by searching over the space of possible invariants, using traces of the input program to identify poten- tial invariants. GACAL uses the ACL2s theorem prover to verify these potential invariants, using an interface provided by ACL2s for connecting with external tools.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-45237-7_26); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1007/978-3-030-45237-7_26)
     - record id: `gacal-conjecture-based-verification`
 - Learning Assumptions for Compositional Verification of Timed Automata.
     - what: . Compositional veriﬁcation, such as the technique of assume- guarantee reasoning (AGR), is to verify a property of a system from the properties of its components. It is essential to address the state explosion problem associated with model checking.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-37706-8_3); notes outside this site: `lit_snowball/notes_coci9.md`
+    - [source](https://doi.org/10.1007/978-3-031-37706-8_3)
     - record id: `learning-assumptions-for-compositional`
 - Probabilistic Program Verification via Inductive Synthesis of Inductive Invariants.
     - what: . Essential tasks for the verification of probabilistic programs include bounding expected outcomes and proving termination in finite expected runtime. We contribute a simple yet effective inductive synthesis approach for proving such quantitative reachability properties by generat- ing inductive invariants on source-code level.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-30820-8_25); notes outside this site: `lit_snowball/notes_coci7.md`
+    - [source](https://doi.org/10.1007/978-3-031-30820-8_25)
     - record id: `probabilistic-program-verification-via`
 - Quantified Invariants via Syntax-Guided Synthesis
     - what: . Programs with arrays are ubiquitous. Automated reasoning about arrays necessitates discovering properties about ranges of elements at certain program points.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-25540-4_14); notes outside this site: `lit_snowball/notes_coci3.md`
+    - [source](https://doi.org/10.1007/978-3-030-25540-4_14)
     - record id: `quantified-invariants-via-syntax`
 - Ranking LLM-Generated Loop Invariants for Program Verification
     - what: foundational AI models that have revolutionized Language Processing applications. Though LLMs Synthesizing inductive loop invariants is fun- damental to automating program verification. were originally proposed for natural languages, In this work, we observe that Large Language they have exhibited great success in formal lan- Models (such as gpt-3.5 or gpt-4) are capa- guages such as programming languages (Chen ble of synthesizing loop invariants for a class of et al., 2021).
     - limits: Abstract-level reading from openly available PDF; detailed limitations require full paper review.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.18653/v1/2023.findings-emnlp.614); notes outside this site: `lit_snowball/notes_allrel_deep.md`
+    - [source](https://doi.org/10.18653/v1/2023.findings-emnlp.614)
     - record id: `ranking-llm-generated-loop`
 - sfHornStr: Invariant Synthesis for Regular Model Checking as Constrained Horn Clauses.
     - what: . We present HornStr, the ﬁrst solver for invariant synthe- sis for Regular Model Checking (RMC) with the speciﬁcation provided in the SMT-LIB 2.6 theory of strings. It is well-known that invariant synthesis for RMC subsumes various important veriﬁcation problems, including safety veriﬁcation for parameterized systems.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-98668-0_10); notes outside this site: `lit_snowball/notes_coci10.md`
+    - [source](https://doi.org/10.1007/978-3-031-98668-0_10)
     - record id: `sfhornstr-invariant-synthesis-for`
 - Software Verification with PDR: An Implementation of the State of the Art.
     - what: . Property-directed reachability (PDR) is a SAT/SMT-based reachability algorithm that incrementally constructs inductive invariants. After it was successfully applied to hardware model checking, several adaptations to software model checking have been proposed.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-45190-5_1); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-030-45190-5_1)
     - record id: `software-verification-with-pdr`
 - Synthesizing Probabilistic Invariants via Doob's Decomposition.
     - what: . When analyzing probabilistic computations, a powerful ap- proach is to first find a martingale—an expression on the program vari- ables whose expectation remains invariant—and then apply the optional stopping theorem in order to infer properties at termination time. One of the main challenges, then, is to systematically find martingales.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-319-41528-4_3); notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://doi.org/10.1007/978-3-319-41528-4_3)
     - record id: `synthesizing-probabilistic-invariants-via`
 - Termination and non-termination specification inference.
     - what: To capture the termination and non-termination behaviors of Techniques for proving termination and non-termination of imper- each program, Le et al. [32] has recently proposed an integrated ative programs are usually considered as orthogonal mechanisms. specification logic with three temporal predicates Term M, Loop In this paper, we propose a novel mechanism that analyzes and and MayLoop, which denote, respectively, the scenarios for definite proves both program termination and non-termination at the same program termination (with a lexicographic ranking measure M made time.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1145/2737924.2737993); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1145/2737924.2737993)
     - record id: `termination-and-non-termination`
 - Unbounded Scalable Verification Based on Approximate Property-Directed Reachability and Datapath Abstraction.
     - what: . This paper introduces the Averroes formal veriﬁcation sys- tem which exploits the power of two complementary approaches: counter- example-guided abstraction and reﬁnement (CEGAR) of the design’s datapath and the recently-introduced IC3 and PDR approximate reach- ability algorithms. Averroes is particularly suited to the class of hardware designs consisting of wide datapaths and complex control logic, a class that covers a wide spectrum of design styles that range from general- purpose microprocessors to special-purpose embedded controllers and accelerators.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-319-08867-9_56); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1007/978-3-319-08867-9_56)
     - record id: `unbounded-scalable-verification-based`
 - Verification-Aided Learning of Neural Network Barrier Functions with Termination Guarantees.
     - what: Verification-Aided Learning of Neural Network Barrier Functions with Termination Guarantees Shaoru Chen1 , Lekan Molu1 , Mahyar Fazlyab2 Abstract— Barrier functions are a general framework for establishing a safety guarantee for a system. However, there is no general method for finding these functions. To address this shortcoming, recent approaches use self-supervised learning techniques to learn these functions using training data that are arXiv:2403.07308v1 [cs.LG] 12 Mar 2024 periodically gen
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.23919/acc60939.2024.10645043); notes outside this site: `lit_snowball/notes_coci18.md`
+    - [source](https://doi.org/10.23919/acc60939.2024.10645043)
     - record id: `verification-aided-learning-of`
 - Verifying Array Manipulating Programs by Tiling
     - what: . Formally verifying properties of programs that manipulate arrays in loops is computationally challenging. In this paper, we focus on a useful class of such programs, and present a novel property-driven verification method that first infers array access patterns in loops using simple heuristics, and then uses this information to compositionally prove universally quantified assertions about arrays.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-319-66706-5_21); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/978-3-319-66706-5_21)
     - record id: `verifying-array-manipulating-programs`
 - Lemur (2024)
     - title: Lemur: Integrating Large Language Models in Automated Program Verification
@@ -1430,12 +1430,12 @@
     - what: The lead title identifies a University of Michigan thesis on automating distributed-system verification. Deep Blue returned Cloudflare challenges for the handle and guessed bitstream and API/OAI retrievals did not expose the thesis, so its contents were not read.
     - limits: Metadata only. The repository was inaccessible in this pass; the title and repository URL are the only source facts recorded.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.7302/6877); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://doi.org/10.7302/6877)
     - record id: `mao-michigan-thesis`
 - Schultz Stanford thesis
     - title: Automated and interpretable verification of distributed protocols
     - what: Crossref identifies this as William Schultz's dissertation on automated and interpretable verification of distributed protocols. The repository landing page redirected to a 403 response during this pass, so the dissertation's methods and cases were not read.
     - limits: Metadata only. The DOI repository response was HTTP 403, so no abstract or full text was available in this pass.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.17760/d20698934); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://doi.org/10.17760/d20698934)
     - record id: `schultz-stanford-thesis`

@@ -1,7 +1,6 @@
 # Unfolding Iterators: Specification and Verification of Higher-Order Iterators in OCaml
 (authored by agents unless marked 🧑)
 Tag: `chirica2025unfolding`, [paper](https://doi.org/10.1007/978-3-032-10794-7_1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
 
@@ -162,14 +161,6 @@ The paper verifies Sequences, OCamlGraph operations, and binary-tree traversals.
 
 Inference (the paper does not list a trusted base): it includes Gospel/Cameleer translation, Why3, Alt-Ergo, logical models of data structures and library operations, and any axiomatized behavior. Side effects and exceptions are abstracted through consumer specifications. The authors explicitly leave verifying existing higher-order iterator implementations against these specifications for future work. Thus a passing client proof assumes the iterator contract.
 
-## relevance and threat to VL
-
-Inference: for VL, this is a reusable contract pattern for Rust iterators: ghost `visited`, `permitted`, `complete`, convergence variants, and client invariants. It can let an agent verify code using `map`, `filter`, `fold`, and graph traversals without unfolding iterator internals each time. The threat is contract mismatch: if a standard-library iterator or closure violates the assumed permitted/complete behavior, client proofs remain unsound. Rust closure ownership and mutable aliasing also make the translation more involved than the OCaml presentation. This threat assessment is my inference.
-
-## what VL should not redo
-
-The paper's related work says Creusot (Denis and Jourdan) and Prusti (Bily et al.) already apply permitted/complete to Rust iterators, so the idea is not new for Rust. Inference: VL should not write separate ad hoc specifications for every iterator client. The paper already provides a generic cursor schema, nested-history propagation, and a fold basis for map/filter/iter. New work should verify the Verus iterator implementation contracts and ownership effects, which this paper leaves outside its proof.
-
 ## techniques for the catalog
 
 - permitted/complete iterator contracts — specify visited values and termination independently of implementation
@@ -178,5 +169,3 @@ The paper's related work says Creusot (Denis and Jourdan) and Prusti (Bily et al
 - nested-history propagation — carry outer accumulator/visited state into inner iterator invariants
 - graph-set iteration contracts — use subset, distinctness, and cardinality for vertex/successor traversals
 - fold basis for adapters — express iter, map, and filter as degenerate folds with one translation schema
-
-Audited 2026-10-12 against the paper: checked every number (VC counts, times, LoC and LoS, machine, replay method), the Gospel and WhyML steps of the fold, iter, nested and graph techniques, the section and page references, and the Verus forms (all marked inference, none checked as code since none is given). Changed: removed a leftover drafting sentence about earlier studies; first quotation now keeps the paper's (1) outside the quoted words so it is verbatim; page of two quotations corrected from 10 to 9; noted the 3.01 s table value against under 3 seconds in the text; complement slowest claim qualified against check_path; trusted base, VL relevance and not-redo sentences marked as inference; added the paper's own note that Creusot and Prusti cover Rust iterators. Not checked: the cited prior work and the online artifact.

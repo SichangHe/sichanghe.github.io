@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `li2026modular`, [paper](https://arxiv.org/abs/2610.09198)
 
-Audit: audited 2026-10-13 against the paper; checked the definitions, transfer functions, verification conditions, theorem statements, Tables 1 and 2 with their averages, page references and quotations; changed one claim about seeded bugs, one wrong Verus claim about tracked tokens, and two unmarked inferences.
-
 source: Li, Beschastnikh, Summers (University of British Columbia), arXiv:2610.09198v1, 6 Oct 2026; 36 pages; appendix A (well-formedness) and appendix B (full semantics) included.
 
 The paper verifies Rust code but not with Verus: it uses its own static analysis, Jackdaw. Each Verus form below is an inference. The notes already describe Lion, the Verus-verified async runtime this paper compares itself with, in `distributed_verification_db/liveness_cases.md` and `topic_liveness.md`; what is added here is the Jackdaw technique and its own account of how the two differ.
@@ -209,8 +207,6 @@ where it fails (§6.1, pp.26–27; §7, pp.27–28):
 
 ## how the paper places itself against Verus work
 
-Two sentences matter for VL because they describe Verus projects.
-
 On Lion (§8, p.30): “Lion obtains verifiability by rebuilding the runtime, at roughly 40k lines of specification and proof for 3.4k lines of code, whereas Jackdaw checks components of existing production runtimes as written, with lightweight annotations and automatic analyses.” And the two are complementary in scope: “Lion does not verify the pollables that user code awaits.” Lion's proof assumes a task returning `Pending` has registered a wake source; P1–P3 here are meant to discharge that assumption, while Lion verifies the executor that this paper trusts.
 
 On Anvil (§8, p.29): “Anvil requires users to encode their system logic manually in TLA and to prove ESR interactively within Verus.”
@@ -225,16 +221,6 @@ Inference: the ratio the paper quotes for Lion is about 12 lines of specificatio
 - the conclusion says the evaluation is on “smol and tokio” (p.31); the introduction (p.2) and Tables 1 and 2 include futures-rs as a third
 - §4.3 (p.15) says the soundness theorem for Theorem 1 “and its proof are in Section 5.4”; §5.4 has proof sketches for Theorems 2 to 5 and none labelled for Theorem 1
 - Theorem 1 uses only P3 of the pollable conditions. Inference: Definition 1 speaks of the task being resumed, which P3 with R1 and R2 gives; that the resumed poll then returns `Ready` needs P2, which enters only at Theorem 5
-
-## what VL should not redo
-
-Inference:
-
-- the decomposition itself: P1–P3 and R1–R2 are a ready-made specification for any waker-based component. A Verus proof of an async primitive can take them as its `ensures` clauses without re-deriving them
-- verifying a from-scratch async executor in Verus: Lion did, at 40k proof lines
-- looking for a lighter way to state the lost-wakeup condition: tf_r ≺ p is that statement
-
-What is open and fits Verus: checking the annotations against real memory. Jackdaw trusts them; a Verus proof of even one of the 15- to 59-line pollables in Table 1 with ghost state tied to the actual atomics would close the gap the authors name first in their limitations, for that component.
 
 ## Jackdaw as a competitor to Verus proofs
 

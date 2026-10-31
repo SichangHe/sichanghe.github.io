@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `zhang2026humanize`, [paper](https://arxiv.org/abs/2610.13632)
 
-Audit: audited 2026-10-13 against the paper; checked every number in Tables 1-3 and Figures 3-4 with the printed gains, all quotations and page references, the technique steps against Sections 3.2-3.5 and Appendix A; changed human spot-checking, the appendix and prompts remark, the reviewer-rule label, the math-only reviewer verifier run, the Lean-Eval attribution of the G2 example and the store-seeding inference; Verus statements checked only for consistency with the Verus paper where it covers them.
-
 source: Zhengyang Zhang, Jing Xiong, Hongzhou Lin, Juihui Chung, Zijian Zhang, Song Han, Sihao Liu, Ligeng Zhu, arXiv:2610.13632v1 (9 Oct 2026), a preprint of 15 pages; the appendix is one page of placeholders. The system is called HOA. Page numbers are PDF pages.
 
 ## what is claimed, what is measured, what is trusted
@@ -175,16 +173,6 @@ Not reported: tokens, money, number of rounds, number of sessions, the resource 
 - the abstract and Table 1 name the model “GPT-5.6 Sol”, the setup “GPT-5.6”; whether these are one snapshot is not stated.
 - the reproducibility statement (p.10) says the supplement contains prompts, per-run logs and proof artifacts; Appendix A.1 and A.3 (p.15) say the per-problem inventory and additional results will be in “The camera-ready version” and “The final appendix”. In the preprint itself none of it can be checked.
 - contamination: the contributions (p.3) say of the 2026 competitions that “there is no leakage”, while the limitations (p.10) say “possible benchmark contamination therefore cannot be ruled out” (both are parts of sentences). Inference: the PutnamBench problems, which the paper dates from 1963 to 2023, predate every model used, so that benchmark is not leak-free.
-
-## what is already done, so VL should not redo it
-
-Inference: the protocol itself (blind reviewer over a frozen artifact, findings with location and evidence, a runner-held machine verdict, statement matching and axiom restriction, a lemma store fed only by accepted work) is published here with an open implementation, and the review loop comes from an earlier system the paper builds on (Humanize, Liu et al., 2026b). VL has no need to invent an acceptance protocol; it needs the Verus version of Comparator's steps 2 and 3, which this paper does not provide and which is harder for Verus because meaning can be changed through `spec fn`s under an unchanged contract.
-
-Not done here (Inference): any measurement of how often the reviewer is wrong; any formal check of a specification written by the system itself (technique 5 is described, not measured); any program verification.
-
-## threat to VL's product
-
-Inference: moderate, and indirect. The paper does not verify software. It does show, with a tie for the best published PutnamBench result and the top Lean-Eval result, that a general model inside an open workflow now matches closed specialized provers at Lean proof search, and that the workflow lifts an open-weight model from 4/50 to 47/50 on a PutnamBench subset. The same recipe pointed at Verus would be a direct competitor on the proof-writing half of the product, and everything needed is public except the Verus-side checker. The half it does not touch is where a product can differ: specifications for real code, where the paper's own limitation applies, since its guarantee “depends on the correctness and fidelity of those formalizations”.
 
 ## techniques for the catalog
 

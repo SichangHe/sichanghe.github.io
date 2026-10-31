@@ -8,8 +8,6 @@ Inference: Forge is a closed loop for generating ordinary Java from natural-lang
 
 > “The LLM is the draft generator, the MDE chain is the discriminator, and the developer never has to read the formal models.” (Abstract, p. 1)
 
-Inference: The transfer to VL is architectural: keep the agent in a language and code shape it can reliably emit, then derive proof artifacts and corrections mechanically. The paper does not verify Rust or Verus, so every Verus mapping below is an inference.
-
 ## seven-phase workflow
 
 Inference: Apply the pipeline in seven phases grouped into generation, extraction, and verification/refinement:
@@ -78,16 +76,6 @@ Inference: The cold baseline uses K=10 independent runs per study, 30 total, wit
 
 Inference: The compile-only ablation runs five times per study (15 total), exposes only Phases 2a–5, and hides verifier outputs while computing them. All 15 stop-point artifacts fail at least one verifier: Dafny fails at 11 stop points, Isabelle at 5, and FDR4 at 7. Dafny is the sole failing verifier at six stop points and Isabelle the sole failing verifier at two, showing both are individually necessary in this experiment; FDR4 never fails in isolation. The paper correctly describes this as evidence for feedback's contribution, not universal model-independent proof.
 
-## trust, assumptions, and implications for VL
-
-Inference: The strongest unproved assumption is semantic faithfulness of T2M, M2M, and M2T. The authors provide byte-identical regression checks, traceability, and vacuity audits, but explicitly lack a semantic-preservation argument and tool qualification under DO-178C or IEC 61508. Requirements validation, process evidence, independence, configuration management, and assurance-case review remain outside the experiment.
-
-> “The honest claim is that Forge produces evidence a human assurance engineer can review and trace, not evidence to be trusted unexamined.” (Section 5.5, p. 19)
-
-Inference: The evaluation is limited to reactive controllers in the RoboStar/RoboChart ecosystem, Claude Opus 4.8, Java, and three studies. It does not cover hybrid automata, probabilistic systems, arbitrary concurrency, other LLM families, or Rust. The authors state that coverage and requirement mapping do not establish correctness of the mapped behavior.
-
-Inference: VL should reuse the closed-loop discriminator, trace records, complementary proof scopes, structural preflight, and vacuity checks. VL should not redo generic arguments that “iteration helps”; the decisive controls are the 0/30 cold baseline and 15/15 compile-only verification failures. The product threat is moderate to high if agents can generate proof-shaped Rust that satisfies vacuous or incomplete specifications; the paper's audits and traceability are directly relevant mitigations. This threat rating is an inference.
-
 ## techniques for the catalog
 
 - extraction-tractable code profile — constrain generated source to patterns that a deterministic source-to-model transformation can faithfully recognize
@@ -96,4 +84,3 @@ Inference: VL should reuse the closed-loop discriminator, trace records, complem
 - structured correction loop — preserve raw diagnostics, trace them to requirements and source lines, and feed actionable fix directives to the next iteration
 - vacuity and coverage audits — reject obligations that prove `true` without behavior and require bidirectional requirement-to-code attribution
 - cold and compile-only controls — measure verifier feedback's causal contribution by withholding it while holding generation and extraction fixed
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

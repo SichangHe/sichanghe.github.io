@@ -8,8 +8,6 @@ SLING infers separation-logic heap invariants from debugger traces. It targets a
 
 The tool is dynamic. The authors say dynamic analysis “is generally efficient and can infer expressive invariants because it only analyzes a finite, typically small, set of traces”, but it gives no correctness guarantee for unobserved executions. The authors state this boundary directly: “dynamic analysis focuses on program traces observed from running the program on small sample inputs, and thus provides no correctness guarantee on generated invariants.” (Section 1, p. 1.) The checker validates candidate formulas against observed stack-heap models; it does not prove the C program for all inputs.
 
-## technique: collect stack-heap traces at target locations
-
 ### what it is and when to use it
 
 Give SLING a program, target locations, predefined heap predicates, and test inputs. LLDB stops at each location and records stack variables, reachable heap cells, addresses, field values, and a ghost return value at function exits. Inference: Use this when a program manipulates pointer-shaped structures and the user wants candidate preconditions, postconditions, loop invariants, or documentation before writing a static proof.
@@ -30,8 +28,6 @@ Inference: Run a verified Rust program under tests and record concrete values at
 
 The evaluation runs 157 C programs, with 4,649 lines of code across 22 data-structure categories (Section 5.1, p. 8). Five buggy programs crash before traces, 15 fail to reach some locations with random inputs, and three time out in loop inference (Section 5.3, p. 10; footnote 5 on that page attributes the three to Z3 time-outs). Inputs in the reported setup are empty and randomly generated data structures of a fixed size of 10 (Section 5.2, p. 9). Inference: trace coverage, not merely program count, controls what can be inferred, and the fixed-size random inputs are a major assumption.
 
-## technique: partition each heap by pointer reachability and boundary variables
-
 ### what it is
 
 For a stack pointer `v`, SLING computes the sub-heap reachable from `v` but not also pointed to by another stack pointer. The boundary includes `v`, `nil` when reachable, and stack variables reachable from `v` or aliases. It computes the intersection of the boundary sets over all traces to obtain the variables used to compute predicate arguments (Section 2.3, p. 4). The paper's example analyzes `x`, `tmp`, `y`, and `res` in that order and writes the final location invariant as a separating conjunction of their separate regions.
@@ -47,8 +43,6 @@ For a stack pointer `v`, SLING computes the sub-heap reachable from `v` but not 
 ### Verus form
 
 Inference: The closest Verus representation is a ghost view of a collection's reachable nodes, with disjointness facts expressed through ownership and `Set`/sequence abstractions. For `Vec`, tree, or linked-node APIs, define a `spec fn` footprint and prove that separately owned regions are disjoint. Verus does not use SL's `*` connective as a direct syntax in the material consulted here; Rust ownership and explicit footprint predicates replace it. Raw pointer addresses from a debugger are not a sound Verus invariant.
-
-## technique: enumerate predicate instances and check them with an SMT model checker
 
 ### what it is
 
@@ -85,8 +79,6 @@ Heap predicates alone describe shape, but not all aliasing or return-value relat
 
 Inference: In Verus, this corresponds to proving equalities such as `result == old(input)` or alias-free footprint relations as part of `ensures`. The equality must be proved for all executions; matching addresses in test traces is only a candidate. Use Verus's ghost state and `old(...)` in contracts where the required before-state relation is expressible.
 
-## technique: validate inferred specifications with the frame rule
-
 ### what it is
 
 When a function has several exits, SLING combines entry and exit formulas into a specification. It validates each pair using the separation-logic frame rule: if `{P} C {Q}` holds, then `{R * P} C {R * Q}` holds for untouched memory `R`. Operationally, it checks that the residual heap not modeled by the entry formula is unchanged in the corresponding exit model. If the residuals differ, the inferred pair is spurious (Section 4.4, p. 8).
@@ -113,14 +105,6 @@ SLING can expose bugs when traces reach them. For `AFWP/dll_fix.c`, the inferred
 
 The method is exponential in the number of predicates and parameters, and general heap model checking is EXPTIME (Section 4.5, p. 8). It does not consider general disjunctive invariants or numerical relations (Section 5.3, p. 10), and it does not support concurrency, which is why 2 of the 6 programs from [7] were excluded (Section 5.1, footnote 4, p. 8). The paper reports that missing traces (unreachable branches, bugs) and invalid traces after `free` led to missing or spurious invariants (Section 5.3, p. 10). Inference: sparse traces and freed memory therefore threaten validity or completeness. For future work the authors name an automatic SL verifier to check SLING's invariants and test-input generation for hard-to-reach paths (Section 5.3, p. 10); until then their manual validation is the only correctness check reported.
 
-## what stays trusted and product threat
-
-Inference: the C compiler/runtime, debugger's trace fidelity, user-supplied predicates, test-input generator, Z3 encoding, manual review, and the correctness of documented invariants remain trusted or assumed in this design. Dynamic candidates are not universal proofs. Inference: A Verus product can use this pipeline as a specification and invariant proposal stage, but only Verus's symbolic proof should count as verification evidence.
-
-Inference: VL should not redo dynamic heap-trace mining, predicate-argument enumeration, residual-heap checking, or frame validation as if these were new. The Verus-specific opportunity is to mine failing proof obligations and execution traces into candidate `invariant` clauses for owned Rust collections, then prove or reject them with Verus. The paper's shape-only focus leaves arithmetic, concurrency, unsafe aliasing, and specification intent open.
-
-Inference: The threat to an agent-written verified-Rust product is medium. Candidate loop invariants could reduce manual effort for pointer-like structures, and residual checks could expose inconsistent ownership assumptions. But unsoundly promoting a trace-derived clause would be dangerous, and the paper's C/LLDB results do not establish usefulness for Rust ownership or Verus solver behavior. Product claims should count only candidates that pass independent Verus proofs and should report trace coverage and rejected candidates.
-
 ## techniques for the catalog
 
 - debugger trace collection — capture stack, heap, and return-value snapshots at entries, exits, and loop locations
@@ -129,5 +113,3 @@ Inference: The threat to an agent-written verified-Rust product is medium. Candi
 - residual and witness propagation — retain residual heaps and existential address mappings to refine later variables and infer aliases
 - pure-equality inference — derive universally observed equalities and combine them with disjoint shape formulas
 - frame-rule validation — compare framed residual heaps across entry and exit models before accepting a specification
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "To improve performance, SLING uses a type-checker (Algorithm 2, line 8) to eliminate variable combinations having inconsistent types to observed traces."): read the whole paper text, pages 1-14 (the PDF page count), and checked the quotations, the numbers in sections 5.1-5.5 and Tables 1 and 2, the Algorithm 1 and 2 steps, the Section 4 and 2.3 steps, and the section, page, and algorithm-line references; changed the paper link to the DOI printed in the paper, corrected about 20 page and section references (e.g. Section 4.4 is on p. 8, Section 5.2 on p. 9, Section 5.3 and Table 2 on pp. 10 and 11), replaced a wrong source for the variable-order heuristic, added the Table 2 count of 37 properties found by neither tool, made the dll_fix bug wording follow the paper ('potentially seeded'), marked own conclusions as Inference, and removed the unsupported claim about overly expressive predicates and the misplaced concurrency citation; not checked: the Verus-form paragraphs, the product-threat paragraphs and the catalog bullets, which are the study's own inference rather than paper claims, and the benchmark names listed in Table 1 and the Table 2 per-category rows beyond the totals.

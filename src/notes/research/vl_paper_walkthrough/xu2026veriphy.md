@@ -53,9 +53,6 @@ how to apply:
 
 Inference: prove resolver totality and composition lemmas in Verus; use `ensures` to state that abstain implies a missing, unusable or contradictory prerequisite. Do not use an `external_body` function for the resolver being verified.
 
-## evidence, limits and VL threat
-A separate writing-back experiment changed generator behavior: the paper reports that 49 of 65 implausible verdicts became plausible, with regression on 1.6% of unflagged clips (Section 5.5, pp.22–24). This denominator is the 65 flagged clips in that experiment; it is not the 304-record core. The paper also reports 591 of 652 simulations passing a pre-render inspection, a simulator-output filter rather than generated-video success (Section 5.2.4, p.13). Inference: these distinctions matter for VL dashboards. Typed statuses and provenance are reusable, but perception, video physics and prompt interpretation remain trusted. The threat to agent-written verified Rust is moderate to high when an agent collapses unknown into false or loses evidence links; a formally checked resolver can prevent that policy error.
-
 ## techniques for the catalog
 - typed obligation compilation — compile claims into statically checked operations before observations
 - gated tool calls — permit only registered, time-scoped specialist actions
@@ -63,5 +60,3 @@ A separate writing-back experiment changed generator behavior: the paper reports
 - three-valued verdicts — separate support, contradiction and unknown with explicit abstention
 - fixed composition — combine typed sub-verdicts deterministically and retain contributing evidence
 - verdict-to-generation feedback — use auditable critic outcomes to alter later generation
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

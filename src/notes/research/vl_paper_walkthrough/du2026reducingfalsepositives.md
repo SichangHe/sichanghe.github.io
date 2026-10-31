@@ -16,7 +16,7 @@ How to do it. (1) Run BkCheck over all AMS projects (section 3.1, p. 3). (2) In 
 
 Evidence. Table 1 gives category denominators: NPD 107 false and 29 real (136 total), DBZ 139 false and 19 real (158), OOB 82 false and 57 real (139), totaling 328 false and 105 real (433). The paper says, “The final outcomes from both rounds were consolidated into specialized bug report forms, which recorded the code snippet, bug category, and final review decision” (section 3.1, p. 4).
 
-Verus form. Inference: VL can retain each Verus diagnostic, source span, path conditions, and reviewer disposition as an immutable triage record. A Rust wrapper can serialize this record; a `spec fn` can classify a disposition, and a proof function can establish bookkeeping properties such as one final label per alarm. Human labels remain trusted evidence, not a proof that the alarm is false. The study assumes reviewers are correct and representative of Tencent; the proprietary corpus cannot be released, limiting replication.
+Verus form.
 
 ## technique 2: prompt-only LLM triage
 
@@ -24,7 +24,7 @@ What it is. Give an LLM a warning and source context and ask whether it is a fal
 
 How to do it. (1) Extract the warning, sink, and surrounding code. (2) Use a basic binary classification prompt. (3) Record label, explanation, and latency/cost. (4) Compute accuracy, precision, recall, F1, false-positive recall (FPR_P), and real-bug recall (FPR_R) against the two-round labels. (5) Keep the denominator explicit: all metrics in Table 2 are over the 433 alarms, with class-specific recalls over their corresponding 328 or 105 examples.
 
-Evidence. Basic prompts produce accuracy from 0.40 to 0.55 and real-bug recall from 0.26 to 0.84 across the four models (Table 2, p. 7). This spread shows why accuracy alone is unsafe under class imbalance. Inference: For VL, an LLM should suggest which Verus alarm to inspect, while the verifier and a conservative policy decide whether a proof obligation is discharged.
+Evidence. Basic prompts produce accuracy from 0.40 to 0.55 and real-bug recall from 0.26 to 0.84 across the four models (Table 2, p. 7). This spread shows why accuracy alone is unsafe under class imbalance.
 
 ## technique 3: domain prompting (CoT, few-shot, bug-type augmentation)
 
@@ -32,7 +32,7 @@ What it is. CoT requests step-by-step reasoning; few-shot supplies labeled false
 
 How to do it. (1) Keep warning and code context fixed. (2) For CoT, append an instruction to reason through path feasibility. (3) For few-shot, prepend representative examples of both classes. (4) For bug-type augmentation, prepend a concise semantic description and common patterns for the warning category. (5) Evaluate each prompt/model pair on the same 433 alarms and report all confusion-matrix metrics.
 
-Evidence. The paper states, “Both few-shot learning and bug-type augmentation can be regarded as forms of domain knowledge enhancement.” (section 3.2, p. 5). Table 2 shows few-shot accuracy of 0.72 (Claude), 0.71 (Qwen), and 0.69 (DeepSeek), while CoT reaches at most 0.49; the denominator is all 433 alarms. The authors caution that CoT “delivers the weakest performance, even underperforming basic prompts in some cases” (section 4.3.1, p. 8). Inference: Few-shot examples could teach VL an organization’s recurring invariant patterns, but examples must be checked for specification correctness; Verus can check the resulting proof, not the model’s explanation.
+Evidence. The paper states, “Both few-shot learning and bug-type augmentation can be regarded as forms of domain knowledge enhancement.” (section 3.2, p. 5). Table 2 shows few-shot accuracy of 0.72 (Claude), 0.71 (Qwen), and 0.69 (DeepSeek), while CoT reaches at most 0.49; the denominator is all 433 alarms. The authors caution that CoT “delivers the weakest performance, even underperforming basic prompts in some cases” (section 4.3.1, p. 8).
 
 ## technique 4: hybrid LLM4SA and LLM4PFA
 
@@ -48,12 +48,6 @@ Verus form. Inference: Replace “path constraints” with Verus proof-state fac
 
 The authors measure average per-alarm latency and API price. Table 4 reports 2.1–109.5 seconds and $0.0011–$0.12 per alarm, versus roughly 10–20 minutes of manual inspection. For example, LLM4PFA costs 12.6 s/$0.020 (GPT-4o), 16.7 s/$0.120 (Claude), 16.1 s/$0.0056 (Qwen), and 58.3 s/$0.0025 (DeepSeek). Category breakdown finds DBZ easiest and NPD hardest because NPD false positives often contain intricate conditional constraints. The paper reports, “In contrast, Null Pointer Dereference (NPD) bugs exhibit more complex and diverse patterns.”
 
-## trust, limitations, and VL threat
-
-The checker, human labels, source extraction, model APIs, and scoring code are trusted. The study does not prove that an alarm is absent; it measures agreement with reviewers. Confidentiality prevents releasing code, and five interviewees (two developers, three reviewers) are a narrow sample. LineVul illustrates class-imbalance danger: its 0.76 accuracy came from labeling all warnings false, with precision and recall for real bugs both 0.00 (Table 3, denominator 433).
-
-Inference: For a product that emits agent-written verified Rust, the operational risk is moderate: LLM triage can reduce review load, but an incorrect or omitted Verus specification remains outside the theorem prover’s guarantee. Existing hybrid static-analysis/LLM methods already address alarm triage; VL should reuse their separation of machine facts, model explanation, and final checked evidence rather than build a prompt-only judge.
-
 ## techniques for the catalog
 
 - reviewed industrial alarm corpus: collect analyzer warnings, double-review labels, filter unreliable records, and preserve context
@@ -61,5 +55,3 @@ Inference: For a product that emits agent-written verified Rust, the operational
 - domain prompting: add chain-of-thought, few-shot examples, or structured bug-type knowledge
 - static-analysis hybrid triage: feed sink context or path constraints to an LLM for reachability decisions
 - cost/category evaluation: report per-alarm latency and price, then stratify performance by bug category
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

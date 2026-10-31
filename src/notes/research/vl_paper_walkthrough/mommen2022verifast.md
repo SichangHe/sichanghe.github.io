@@ -48,7 +48,7 @@ The paper's evidence is the before/after listings and the stated check; there ar
 
 ## what is proved, measured, and trusted
 
-Proved: the paper states no soundness theorem. Inference: the implemented rules accept programs whose field, lifetime, inheritance, dynamic-type, and contract obligations discharge in VeriFast. Measured: no experimental totals, success fractions, or run-time denominators appear in the paper. Trusted (Inference; the paper does not list a trusted base): Clang's type checking/AST, VeriFast's symbolic executor and separation-logic encoding, solver behavior, C++ compiler/object-model assumptions, and every user-supplied contract. Inference: for VL, agent-written verified Rust remains threatened by specification errors, unsupported unsafe/FFI behavior, and dynamic dispatch/lifetime modeling; this paper offers reusable ghost-state patterns but does not show that those patterns scale to product code.
+Proved: the paper states no soundness theorem.
 
 ## techniques for the catalog
 
@@ -56,5 +56,3 @@ Proved: the paper states no soundness theorem. Inference: the implemented rules 
 - lifecycle-order verification — verify construction and destruction in declaration, derivation, and reverse orders with construction-state resources
 - dynamic-type capabilities — restrict virtual calls with run-time-type predicates that change during construction and destruction
 - instance-predicate subtyping — parameterize an invariant by dynamic type so overrides retain one modular contract while refining representation
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "In order to reason about virtual member functions and polymorphic classes, VeriFast first introduces a typeid construct that can be used in ghost code."): I read all 19 pages of the paper text and the whole study, and checked every quotation, section and page reference, rule listing, limitation, and the claim that the paper has no experiments or soundness theorem. I changed: the Section 1 quote now includes its citation marker [2]; the Section 4.3 quotes now cite p. 7 and their step positions; the Section 5.2 quote was replaced with one that states the rule (p. 10); the `thisType` description was corrected to match Section 6; the "assumes overriding" claim was replaced by the check the paper states; the "Proved" and "Trusted" lines are now marked Inference where the paper says nothing; two uses of a banned word were reworded. I did not check: the Verus analogies (marked Inference), claims about Rust, the VeriFast implementation or Zenodo artifact, or the cited works.

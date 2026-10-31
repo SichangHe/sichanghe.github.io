@@ -77,13 +77,9 @@ Inference: link each observation to a Verus proof obligation, source revision, a
 
 The paper validates a PHP/Java implementation on one real military-aircraft cockpit-display project configured for DO-178B DAL-B. It reports the observation counts above and says the tool managed two standards, DO-178B and DO-278 (conclusion, p. 14). The paper reports no controlled comparison, denominator, defect-detection rate, or independent audit of the counts, and it shows one project although the abstract says “real projects”. Inference: the status algorithm is deterministic, but checklist inputs, role permissions, norm interpretation, database integrity, and evidence authenticity are trusted. Inference: the paper's process cannot establish that a Rust implementation is functionally correct.
 
-Inference: for VeruLaw, this is a low direct threat to proof generation and a useful product pattern for compliance tracking. The method addresses the operational question of which proof and review obligations remain open around a verified Rust project. It should not be presented as replacing Verus: a `Completed` dashboard state is only as strong as its recorded proof artifact and the specification it claims to satisfy.
-
 ## techniques for the catalog
 
 - cross-norm verification framework — parameterize standards, assurance levels, processes, documents, roles, and observations
 - consistency-and-completeness status — aggregate checklist and observation results into pending or completed process/project states
 - role-based evidence workflow — control who records, reviews, changes, and reads verification status
 - multi-level monitoring views — connect project, process, configuration-item, and non-conformity evidence for certification
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The practical use case over the tool allows to check the methodology utility and the management of the life cycle process of the software for a given norm."): read all of the paper text (arXiv v1, 17 pages) and checked every quotation, number (113, 112, 290, 3003, 60, 28; DAL-B; Table 2), page and section reference, the role descriptions and the seven-step C&C algorithm against it; changed page references for levels, roles and counts, removed the unsupported claims about status history, responsible-person fields and automated evidence export (now marked Inference or quoted), noted the Algorithm 1 inconsistency as Inference, and fixed one garbled sentence; the link is the arXiv id printed on the paper's first page; I did not check the Verus-form paragraphs beyond their Inference labels, the reference list or the PDF figures beyond their captions.

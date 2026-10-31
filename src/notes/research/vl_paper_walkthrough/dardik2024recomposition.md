@@ -12,8 +12,6 @@ The abstract also states: “We therefore propose heuristics to find a small por
 
 The running example is a TLA+ model of Two Phase Commit (TP). A monolithic TLC run proves safety for nine resource managers after generating over 10 million states in nearly ten minutes, but for ten resource managers it fails to terminate in an hour after checking over 48 million states (Section II.3, p. 2). The property is `Consistent`: no two resource managers may disagree between aborted and committed states (Section II.2, p. 2).
 
-Inference: the transferable lesson for VL is to treat proof-obligation grouping as an explicit search problem. Verus proofs are deductive rather than finite-state model checks, so the exact TLA+ operators do not carry over; the same idea could group modules, lemmas, or state-machine components and try several proof decompositions.
-
 ## technique 1: decomposition with a property-containing component
 
 What it is: split a specification (S) into components (C_1,\ldots,C_n) while preserving (S=C_1//\cdots//C_n), and ensure that (C_1) contains every state variable occurring in safety property (P). These are properties (P1) and (P2) required of Algorithm 2 (Sections V-A and V-B, pp. 5–6). Section V-A states: “the first component, C1, contains all state variables that occur syntactically in P.” (p. 5).
@@ -85,14 +83,6 @@ The reported state count is TLC's unique-state count, or for Recomp-Verify the m
 
 The winning strategy varies by benchmark. For S2's poor performance, the authors offer a tentative explanation: “Most likely, this is because the second component in this strategy is too large, and therefore misses opportunities for short-circuiting.” They observe that Recomp-Verify1 is faster than TLC1 whenever decomposition yields at least four components, and Recomp-Verify4 is faster than TLC4 in all but one such case (Section VII-C, p. 9). Inference: this observation supports testing more granular decomposition; it does not establish a general performance guarantee.
 
-## what is proved, trusted, and relevant to VL
-
-The paper gives proofs for semantic preservation of parallel composition (Theorem 1), decomposition properties (Lemma 1), static-reduction correctness (Lemma 2), and convergence of reduction (Theorem 3). Its main correctness result is conditional: “If Alg 1 terminates, then it returns true (model checking succeeds) if and only if S |= P.” (Theorem 2, p. 8). A component can be infinite-state even when S is finite-state, preventing LTS construction from terminating; the portfolio addresses this with S4 (Sections V-E and VI-B, p. 8).
-
-The evaluation measures model-checking time and state counts, rather than Verus proof costs (Section VII). Section IX proposes more granular decomposition, property decomposition, sharing intermediate work across threads, and combining recomposition with SMT solvers or inductive invariants as future work (p. 10). Inference: applying this idea to VL would require separately validating the dependency extraction, contracts, composition argument, and scheduler.
-
-Inference: VL could test whether proof partition portfolios reduce Verus solver time and repair effort on real crates, using a monolithic proof for comparison. The paper provides a component-selection method to adapt, but no measurements establish its benefit for agent-written verified Rust.
-
 ## techniques for the catalog
 
 - property-aware decomposition: split a specification while keeping all property variables in one component
@@ -101,4 +91,3 @@ Inference: VL could test whether proof partition portfolios reduce Verus solver 
 - static reduction: remove components outside the transitive action-dependency closure of the property
 - data-flow ordering: rank candidate components by dependency distance and variable-use counts
 - strategy portfolio: run identity, top-heavy, bottom-heavy, and monolithic maps in parallel
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Since we use a CRA-style verification algorithm, we design our heuristic to find component orderings that can take advantage of short-circuiting."): read the full paper including appendices and the full study; checked quotations, numbers, page and section references, technique steps, tag, and arXiv identifier; corrected references, specified portfolio maps and compositional checking, qualified S2's explanation, recorded the P2 inclusion and state-count inconsistencies, and removed unsupported Verus completeness and trust claims; did not reproduce experiments, inspect implementation code, independently validate proofs, or test the proposed Verus adaptations.

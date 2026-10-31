@@ -52,10 +52,6 @@ Table 2 reports mean success across the five task denominators. Qwen2.5 CORE rea
 
 Ablations in Table 3 use Qwen2.5-7B-Instruct. Removing core memory lowers mean success from 75.9% to 73.8% and raises calls from 10.9 to 12.7; removing backjumping gives 72.9% and 15.4 calls; full-prefix conflicts give 71.8% and 16.1 calls; soft heuristic cores give 74.9% and 14.3 calls. The authors caution that verifier calls do not capture wall-clock cost because generation and core replay add work (Section 6.2, p. 7).
 
-## trust and relevance to VL
-
-The formal result trusts sound conflict certification, complete candidate enumeration, bounded search, and exact final scoring. The empirical result additionally trusts the proposer, prompts, task parsers, benchmark answer keys, and hardware/software setup. Inference: threat to agent-written verified Rust is substantial when failed Verus runs are converted into pruning rules without certified dependency analysis; an unsound “core” can delete the only valid proof path. Inference: a safe VL integration should begin with exact parser/type-checker constraints and replay-certified proof obligations, retain unknown failures as soft feedback, and log every jump with the source revision and Verus version. Existing conflict-directed backjumping and clause learning already cover the search principle; VL should adapt the interface and certify the mapping to proof decisions rather than claim the algorithm itself as new.
-
 ## techniques for the catalog
 
 - certified conflict cores — ask a verifier for a subset of decisions absent from every valid completion and cache it as a semantic nogood
@@ -64,4 +60,3 @@ The formal result trusts sound conflict certification, complete candidate enumer
 - core minimization — delete core members and replay certification, retaining only reductions that remain sound
 - exhaustion cores — combine certified explanations for every legal alternative before declaring a decision level exhausted
 - tiered verifier interface — separate exact, replay-certified, and heuristic explanations so only sound cores receive hard pruning
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

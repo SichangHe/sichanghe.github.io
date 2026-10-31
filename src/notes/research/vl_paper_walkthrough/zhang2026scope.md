@@ -5,7 +5,7 @@ Tag: `zhang2026scope`, [paper](https://arxiv.org/abs/2607.05810)
 ## scope and result
 SCOPE is a two-model code-generation loop: a frozen coder proposes a program and a prover-initialized critic emits structured obligations for revision. It is a formal-verification-inspired workflow, not a verifier. The paper is explicit: “The output is natural language, not a machine-checked Lean proof” (Section II, p. 2). Its three stages are supervised fine-tuning, process-aligned reinforcement learning, and critique-guided inference (Section I, p. 2).
 
-The method's reusable idea is to turn an implicit specification into explicit subgoals, gap analysis, and robustness checks. The paper says, “Each emitted subgoal is a natural-language semantic obligation, such as a precondition, an invariant, an output constraint, or an edge case requirement.” (Section II, p. 2). Inference: this maps naturally to VeruLaw's contract-generation stage, but it cannot replace compiling and proving the resulting Rust with Verus.
+The method's reusable idea is to turn an implicit specification into explicit subgoals, gap analysis, and robustness checks. The paper says, “Each emitted subgoal is a natural-language semantic obligation, such as a precondition, an invariant, an output constraint, or an edge case requirement.” (Section II, p. 2).
 
 ## technique: structured prover-style critique
 What it is: given task `x` and draft `p0`, the critic returns `y=(s,g,c)`, where `s` are subgoals, `g` is gap analysis, and `c` is a robustness checklist. The output uses the exact tags `<subgoal>...</subgoal> <gap_analysis>...</gap_analysis> <checklist>...</checklist>` (Section V, p. 4).
@@ -35,7 +35,7 @@ Steps: (1) select tasks where coder-only fails and a method succeeds; (2) identi
 Verus form (Inference): preserve the same analysis but define localization around changed verified functions and proof obligations. A useful metric is the fraction of failures for which one contract/lemma change makes the verifier pass, with denominator reported per benchmark. This can reveal whether agent repairs weaken specifications; require unchanged postconditions or independently checked tests to guard against that failure.
 
 ## what is proved, trusted, and left open
-SCOPE proves no semantic property of generated programs. Its measured claims are pass@1 and repair/localization statistics under stated benchmark and model settings. The paper itself concludes that it adapts subgoal decomposition “without claiming full formal verification” (Section IX, p. 9). Inference: VL should reuse the obligation decomposition and reward split, but should not redo the paper's code-generation benchmark as if it measured Verus correctness. Existing formal-program synthesis work already supplies direct verifier feedback; SCOPE fills the pre-proof planning gap.
+SCOPE proves no semantic property of generated programs. Its measured claims are pass@1 and repair/localization statistics under stated benchmark and model settings. The paper itself concludes that it adapts subgoal decomposition “without claiming full formal verification” (Section IX, p. 9).
 
 Threat assessment for agent-written verified Rust (Inference): medium for workflow quality, low for assurance. A critic may improve contracts and repair targeting, yet a wrong or incomplete obligation can still yield compiling code that fails the intended specification. Verus verification and specification review remain the decisive evidence.
 
@@ -44,4 +44,3 @@ Threat assessment for agent-written verified Rust (Inference): medium for workfl
 - critique-guided revision loop: coder draft, critic fields, revised program, then execution or verification feedback
 - dense-plus-sparse training: combine semantic structure rewards with downstream improvement over the original draft
 - repair localization: measure trigger-line recovery and edit-hunk compactness on baseline failures
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

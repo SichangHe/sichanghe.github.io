@@ -84,12 +84,6 @@ evidence: approximately 20,000 physical lines include extensive documentation; A
 
 Verus form: Inference: Rust structs/enums and total `spec fn`s can replace ACL2 records and predicates; `requires` provides event guards and `ensures` state updates. Use typed specifications and prove helper properties for maps, sets and stake sums. The ACL2 model itself is not a verified Rust implementation.
 
-## trusted boundary, contradictions, and VL implications
-
-The paper proves a safety property of an abstract model under weighted Byzantine bounds. It does not prove liveness, cryptographic security, parser correctness or implementation refinement. The one-minute figure is a verification time for ACL2 on the stated machine, not a runtime guarantee for an implementation. The paper’s model intentionally includes deadlocking executions, yet nonforking remains meaningful because it is a safety invariant.
-
-Inference: the paper supplies a reusable recipe for transition-system invariants with circular dependencies, quorum-intersection proofs and dynamic membership. A VL consensus component can borrow these proof obligations instead of relying on tests or a single top-level lemma. Inference: omitting a dependency invariant or misstating the fault bound could invalidate a distributed-safety argument; an adaptation to verified Rust should make the model and its correspondence to the implementation explicit.
-
 ## techniques for the catalog
 
 - lookback dynamic committees — delay membership changes by a fixed round distance so each decision uses a well-defined weighted committee
@@ -97,4 +91,3 @@ Inference: the paper supplies a reusable recipe for transition-system invariants
 - simultaneous invariant induction — prove interdependent nonforking, committee-agreement and nonequivocation invariants together
 - quorum-intersection reasoning — turn weighted stake overlap into a correct signer and then into certificate uniqueness
 - ACL2 executable formalization — encode typed records, total transitions and quantified invariants with machine-checked reachable-state theorems
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The no self-endorsement invariant in Figure 7 says that each validator’s set of endorsed pairs does not contain any pair with the validator as author."): checked the entire paper, quotations, numbers, section and page references, assumptions and technique steps; corrected page references, the empty-committee bound, transition-function guard wording and the trusted boundary; added the redundancy and transition-preservation steps; removed unsupported Verus claims and used the paper’s arXiv identifier for the link; did not rerun ACL2, inspect the external formalization, validate a deployed implementation or test the proposed Verus adaptations.

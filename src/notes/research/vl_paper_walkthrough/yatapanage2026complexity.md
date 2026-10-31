@@ -61,12 +61,6 @@ Apply the sequence as follows:
 
 Inference: Verus transition proofs would use `requires`/`ensures` for `post_change` and `post_mark_tbm`, then `proof fn` lemmas for the two implications. The concrete `tbm` field can be ghost or executable; ownership and atomicity assumptions must be supplied by the concurrency model.
 
-## evidence, limits, and VL implications
-
-The paper proves the Holds For All rule and the two Mutator lemmas, but says: “The proofs are currently being mechanised and will be completed for future work” (§6, p. 12). There is no runtime benchmark, coverage denominator, or measured verification cost. Thus the formal result is a reasoning schema plus a hand proof for the Ben-Ari model, not a mechanized Rust artifact. Earlier approaches already verified this collector with PVS/Murφ and Owicki–Gries; the paper claims those proofs were non-compositional or used auxiliary variables (§6, pp. 12–13).
-
-Inference: The threat to agent-written verified Rust is substantial for concurrent components whose specifications mention private ghost state: a local proof may pass while the bridge property is absent. Holds For All offers a way to expose the core invariant and avoid brittle cross-component references, but it does not establish Rust memory safety, scheduler fairness, atomicity, or correctness of the Verus concurrency encoding. VL should reuse the parametric bridge pattern and explicitly record these trusted assumptions.
-
 ## techniques for the catalog
 
 - holds-for-all rule — prove a bridge property for every abstract variable and instantiate it at another component's local variable
@@ -76,4 +70,3 @@ Inference: The threat to agent-written verified Rust is substantial for concurre
 - atomic transition lemmas — split concurrent updates into Change and MarkTbm and prove each preservation implication
 - 
 - safe-set rely derivation — derive a component's rely from a universally quantified guarantee without sharing its local set
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

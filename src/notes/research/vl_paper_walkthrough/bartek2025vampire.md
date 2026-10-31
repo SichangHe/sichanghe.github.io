@@ -19,7 +19,7 @@ how to do it:
 4. inspect SZS status and the proof or counter-satisfiable result
 5. rerun with output or resource options when debugging
 
-Vampire reports `Theorem` when a conjecture’s negation is unsatisfiable and `CounterSatisfiable` when it is satisfiable (Section 2, p. 3). Inference: a VL pipeline could try Vampire on translated logical obligations, provided the translation preserves their meaning and the result is independently checked; this paper supplies no Verus integration.
+Vampire reports `Theorem` when a conjecture’s negation is unsatisfiable and `CounterSatisfiable` when it is satisfiable (Section 2, p. 3).
 
 evidence and limits: the paper gives no aggregate success denominator for portfolio schedules. Resource limits are time (`-t`), memory (`-m`), and retired instructions (`-i`) (Section 2, p. 4). Inference: reaching a resource limit without a result leaves the obligation undecided.
 
@@ -36,7 +36,7 @@ how to do it:
 4. inspect reductions and passive/active sets
 5. inspect the result, including whether a resource limit stopped the search
 
-The paper’s motivating list theorem has a proof ending in “□” (Figure 3, p. 6). Inference: inspecting intermediate logical representations could help debug a future VL translation; the paper does not demonstrate such a translation.
+The paper’s motivating list theorem has a proof ending in “□” (Figure 3, p. 6).
 
 ## technique 3: ALASCA quantified arithmetic
 
@@ -88,9 +88,7 @@ The paper notes that “all sorts in non-variable terms must be explicitly given
 
 ## trusted boundary, evidence, and product risk
 
-Vampire uses external MiniSat, CaDiCaL, optional Z3, VIRAS quantifier elimination, and mini-gmp (Section 2, p. 3). Inference: a VL integration that accepts Vampire’s answer without independent checking would rely on the relevant solver components and the correctness of its translation. Vampire’s output is a proof or model status, but the paper does not claim a formally verified Vampire implementation. The paper provides a worked list-sum proof and qualitative tool capabilities; it gives no benchmark denominator, runtime table, or failure rate. It also reports: “in CASC-J12, the most recent world championship in theorem proving, Vampire proved more problems than any other system in every competition division [64].” (Section 1, p. 2). That competition result is cited, not reproduced as an evaluation here. Inference: a future integration should check that the translated obligation matches the intended Rust specification; a solver result alone cannot establish that correspondence.
-
-Inference: before implementing a saturation prover, ALASCA, or automated induction engine for VL, evaluate Vampire’s existing capabilities. A possible integration would also need a sound translation, result checking, and specification review. The paper’s warning that one direct strategy is “usually undesirable” supports portfolio-style helper search, but not treating portfolio success as proof of complete coverage.
+Vampire uses external MiniSat, CaDiCaL, optional Z3, VIRAS quantifier elimination, and mini-gmp (Section 2, p. 3).
 
 ## techniques for the catalog
 
@@ -99,4 +97,3 @@ Inference: before implementing a saturation prover, ALASCA, or automated inducti
 - ALASCA arithmetic — combine arithmetic-aware superposition, quantifier elimination, and optional Z3 handoff
 - automated induction — instantiate structural, bounded, or well-founded induction and resolve base/step clauses
 - polymorphic, Fool, and higher-order modeling — supply explicit sorts, encode loop-free next-state relations, and use the HOL branch for higher-order reasoning
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Theory instantiation uses an SMT solver to find possible instantiations of clauses based on their purely arithmetical literals."): checked all study quotations, numbers, section and page references, technique steps, and capability claims against the full paper; corrected the portfolio page, quotations, VIRAS spelling, conjecture handling, induction steps, and branch limits, and removed unsupported Verus claims; did not run Vampire, reproduce the proof or competition results, inspect implementation code, or verify a Verus integration.

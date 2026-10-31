@@ -102,15 +102,9 @@ what shows it works and limits
 
 The Queue CFML proof uses four theorems/lemmas and 19 implementation lines plus 72 specification/script lines; Hashtbl uses 89 and 186/1397 (Table 1, p. 14). Hashtbl’s implementation proof was reused from prior work, so this paper does not establish it anew (section 4.4). Inference: these examples show that specification/script size can exceed implementation size substantially. They do not isolate the cause of that difference.
 
-## what VL should retain and threat assessment
-
-Inference: VL should treat this workflow as prior work: Gospel specifications connect testing, automated proof, and separation-logic proof, with tool-specific adaptations and the least interactive check first. Inference: for agent-written verified Rust, the strongest transferable ideas are executable contract subsets for fast feedback, a shared abstract model, explicit loop invariants for correctness/completeness, and a fallback ownership proof for pointer-heavy code. Inference: threat to VL is moderate as a workflow precedent and low as direct product competition; this paper evaluates OCaml examples, with no Rust, Verus, or production-concurrency evaluation.
-
 ## techniques for the catalog
 
 - shared behavioral model: reuse a typed contract and logical model across runtime and deductive analyses, adapting specifications to tool restrictions
 - runtime contract testing: generate state-machine traces against executable contracts before proof effort
 - automated VC discharge: translate contracts to WhyML and solve routine verification conditions with SMT
 - separation-logic fallback: define heap representation predicates and prove mutable pointer structures interactively
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Finally, the specification of successor function states it returns the complete list of successors of node source."): checked all paper text, quotations, numbers, section/page references, and technique steps; corrected contract-sharing scope, measurement attribution, an omitted citation inside a quotation, and unsupported conclusions; distinguished the 40-VC example from the 47-VC table entry; did not run the artifact, audit tool soundness, or validate the proposed Verus adaptations.

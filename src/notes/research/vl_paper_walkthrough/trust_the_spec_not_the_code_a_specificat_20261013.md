@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `farchi2026trust`, [paper](https://arxiv.org/abs/2609.07365)
 
-Audit: audited 2026-10-13 against the paper and its Appendix A; checked every number, page reference and quotation, the technique steps against Sections 3 to 7 and Appendix A.2 to A.4, and the Verus forms; corrected claims that the author read every proof and that a transcript backs the dropped-sections remark, the trusted list, the incomplete list of first-attempt defects, the scheduling-schema note, a disagreement bullet the paper does not support, and an overclaim that a mechanical checker would have rejected all four defects.
-
 source: Eitan Farchi (IBM Research), arXiv:2609.07365v1 (7 Sep 2026), 34 pages; pages 12 to 34 are Appendix A, the working document with every prompt and reply; http://arxiv.org/abs/2609.07365v1
 
 ## the claim, and its size
@@ -167,10 +165,6 @@ Inference: four of these (the self-transfer, the execution schema, the schedulin
 
 - the prompts, verbatim, for prose to mathematics, for proof-or-objection, for a coverage model of an invariant, and for interface extraction (Appendix A)
 - the observation, reported without a count, that a long specification makes the model drop parts: “On the negative side, as specifications grew past a few pages the AI sometimes silently dropped tasks or sections—so abstraction, modularity, and decomposition still matter.” (§8, p.9)
-
-## threat to VL
-
-Inference, all of it. As a rival approach, small: the argument is that with a reviewed specification and a hand-read proof about it one may stop reading the code, and the paper's own appendix shows contract defects passing that process on a problem of two operations. As a description of what buyers may accept, larger: it shows an industrial researcher content with specification-level assurance plus run-time assertions, at a cost of a few prompts, and a product that asks for machine-checked proofs must show what that extra cost buys. The self-transfer case is a ready example of what it buys; the unconstrained schemas show what a proof of one invariant does not.
 
 ## techniques for the catalog
 

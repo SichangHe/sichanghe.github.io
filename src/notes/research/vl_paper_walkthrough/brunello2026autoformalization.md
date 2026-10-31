@@ -64,7 +64,7 @@ How to apply it.
 4. Build a knowledge base of NL–FOL pairs, enrich it with instances where the model failed, retrieve nearest examples by sentence embeddings, and include them as demonstrations (Section 4.2.2, p. 8).
 5. Use grammar-constrained decoding to restrict tokens to syntactically valid continuations (Section 4.3.1, p. 8).
 
-Verus form. Inference: prompt decomposition should produce an intermediate ontology artifact that VL can inspect before generating Rust specs. Inference: retrieval examples are evidence only if their formulas and labels have been independently validated; otherwise they propagate annotation errors.
+Verus form.
 
 ## technique 5: verify and refine outputs with formal tools
 
@@ -82,14 +82,6 @@ Verus form. Inference: map syntax checks to Rust parser/type checks, semantic ch
 
 Evidence and limits. The paper says, “While syntactic verification represents a robust enhancement across model families, semantic verification addresses a genuinely different and harder problem, making it essential for reliable autoformalization in practice.” (Section 4.3, discussion, p. 9) SAT/SMT feedback is rigorous but partial; LLM-based semantic verification has broader coverage but lacks formal guarantees and depends on model capability (Section 4.3, discussion, p. 9). The survey states, “End-to-end pipelines that reliably formalize corpora of NL specifications are almost entirely absent.” (Section 5, p. 9)
 
-## implications for VL
-
-The paper defines an ontology-aware task and surveys metrics and methods; it does not empirically compare enhancement strategies or LLMs (Section 2, pp. 2–4; Limitations, p. 9). Inference: for VL, the assumptions needing review include ontology labels, theory axioms, parser/solver correctness, and the interpretation of the natural-language requirement.
-
-Inference: VL can use the OE/LT split as a front end: require an explicit labelled vocabulary and theory, generate Verus specs only after that artifact is reviewed, then run syntax and semantic verification loops. Inference: a proof that code satisfies a generated contract still leaves the mapping from prose to that contract to be checked.
-
-The survey states, “Virtually all methods in the FOL-autoformalization literature implicitly target raw translation” (Section 4, p. 7). Inference: VL should avoid treating translation scores as evidence that a Rust implementation satisfies the original prose and should retain the source of every generated predicate and axiom.
-
 ## techniques for the catalog
 
 - ontology extraction plus logical translation: separate symbol meanings and theory from formula generation
@@ -97,5 +89,3 @@ The survey states, “Virtually all methods in the FOL-autoformalization literat
 - fine-tuning objectives: specialize models with SFT, LoRA, RL rewards, or preference optimization on validated pairs
 - structured prompting: decompose OE/LT, recover axioms, translate subparts, retrieve examples, and constrain grammar
 - verification refinement loop: feed syntax errors, solver cores, counterexamples, or roundtrip mismatches back into generation
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The verification step may rely on formal tools or on the LLM itself, to target either syntactic or semantic correctness."): read the complete paper including references and appendices; checked quotations, task definition, technique steps, section and PDF page references, author/year and arXiv identifier; corrected page references, quotation wording, method attribution and evaluation scope, and marked recommendations as inferences; did not independently check cited papers, reproduce experiments, or validate the proposed Verus adaptations.

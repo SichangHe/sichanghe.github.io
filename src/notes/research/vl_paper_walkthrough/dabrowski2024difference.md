@@ -67,13 +67,11 @@ how to apply it
 
 Theorem 22 (p. 26) gives runtime `(nk)^{O(w)}`, suppressing polynomial input-size factors, for incidence treewidth `w`. For fixed `k`, this is XP: polynomial time for each fixed `w`, with the exponent depending on `w`. It is not a fixed-parameter tractability result. Table 3 (p. 9) and Theorem 33 (pp. 33–38) give W[1]-hardness already for `CSP(D_{2,1})` by primal treewidth, ruling out fixed-parameter tractability assuming `FPT ≠ W[1]`. With unbounded constants, Theorem 31 (p. 31) proves NP-hardness even at primal treewidth two by encoding Subset Sum along a cycle. This establishes pNP-hardness.
 
-Inference: For VL, small incidence treewidth and bounded constants could identify candidates for this specialized solver. The hardness results limit general worst-case guarantees; they do not predict whether a particular VC will be difficult.
-
 ## trust, contradictions, and product implications
 
 The paper presents satisfiability algorithms, reductions, and conditional complexity lower bounds, not a verified implementation or a Verus evaluation. For arbitrary existential formulas, Theorem 35 (p. 39) uses the small-solution property without constructing an exponentially larger CNF formula: “Note, however, that we do not need to compute the CNF formula explicitly in the proof of Theorem 35.” Section 7.2 (pp. 40–41) transfers the complexity classifications to integer domains through reductions without additional variables; strict integer inequalities become non-strict inequalities with shifted bounds.
 
-The finite candidate domain does not justify enumerating values for universally quantified DL. Section 8 (p. 42) gives `∀x∃y. y−x ≥ 1`, which is true over the rationals but false over every finite rational domain. Inference: VL should preserve the distinction between existential satisfiability and program correctness for all inputs. The paper supports classifying DL obligations by form and structure; it supplies no evidence about ownership, aliasing, or termination proofs in Rust.
+The finite candidate domain does not justify enumerating values for universally quantified DL. Section 8 (p. 42) gives `∀x∃y. y−x ≥ 1`, which is true over the rationals but false over every finite rational domain.
 
 ## techniques for the catalog
 
@@ -81,4 +79,3 @@ The finite candidate domain does not justify enumerating values for universally 
 - bounded-span recursion — solve binary disjunctive constraints by certificates, bounded-span cases, and recursive splits
 - treewidth dynamic programming — exploit incidence-tree decompositions with `(n k)^{O(w)}` tables when numeric values are bounded
 - hardness triage — use ETH and W[1]/pNP results to detect VC fragments that cannot have the desired fast automation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The treewidth of such graphs has been used extensively and it has been successfully employed for many application areas."): read the full paper, including references; checked quotations, numbers, section and page references, algorithm steps, and complexity assumptions; corrected point-algebra scope, certificates, both splitting cases, dynamic-programming records, fixed-k qualifications, page references, and unsupported Verus claims; did not independently prove the paper's theorems, inspect cited works, or test a Verus implementation. The mid-paper sentence is from Section 5, p. 24; the link uses the arXiv identifier printed on p. 1.

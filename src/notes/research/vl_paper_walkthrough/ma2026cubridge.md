@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `ma2026cubridge`, [paper](https://arxiv.org/abs/2605.05023)
 
-
 ## scope and result
 
 CuBridge adapts expert-written CUDA attention kernels instead of generating kernels from scratch. Its three stages are lift, transfer, and lower. The paper states: “We present CuBridge, an LLM-based framework that adapts expert-written attention kernels through a structured lift–transfer–lower workflow.” (Abstract, p. 1) The intermediate representation, CuIR, is executable and exposes execution orchestration—data movement, compute, synchronization, control, and worker granularity—while hiding low-level CUDA syntax.
@@ -71,16 +70,9 @@ The backend study uses H100 PrefixLM with the Llama2-7B configuration. GPT-5, Cl
 
 Appendix D (p. 16) adds a GEMM+ReduceSum case study on H100 and reports “1.03×–1.30× speedups” over PyTorch; Table 7's latencies for shape (4k,4k,1k) give 0.0802/0.0580 = 1.38×, outside that stated range.
 
-## what is proved, trusted, and relevant to VL
-
-The paper validates executable CuIR by numerical comparison against the source CUDA output and the PyTorch reference. It reports 100% correctness for final kernels but does not describe the final-kernel check in detail. It states no formal proof of floating-point equivalence, GPU memory safety, compiler correctness, or the correctness of the user PyTorch reference. Inference: the source expert CUDA kernel, CuIR executor's synchronization model, numerical tolerance, CUDA compiler, GPU hardware, LLM output, and performance profiler remain trusted. The authors state two limitations: “CuBridge relies on the availability of high-quality expert kernels as source references” and the evaluation “focuses primarily on attention variants.” (the full sentence says “our current evaluation focuses primarily on attention variants”) (Limitations, p. 9)
-
-Inference: the threat to agent-written verified Rust is a close analogue: an agent can produce code that matches a flawed executable reference or an incomplete IR model while preserving a high-performance structure. CuBridge's strongest reusable idea is to force semantic changes through an executable, inspectable representation and validate before lowering. For VL, use Verus contracts and lemmas as the intermediate acceptance signal, then keep low-level unsafe or FFI boundaries behind explicit trusted specifications. This reduces uncontrolled whole-file rewriting but cannot remove assumptions about hardware, external bodies, or the specification itself.
-
 ## techniques for the catalog
 
 - executable semantic IR — expose operations, dependencies, synchronization scope, and execution granularity in a runnable intermediate representation
 - closed-loop semantic lifting — annotate CUDA, map code to workers, lift primitives, execute against source, and regenerate on mismatch
 - performance-aware transfer — map target semantics into the IR and split full and boundary loops to avoid unnecessary checks
 - reference-guided lowering — difference source and target IR, lower primitives using source CUDA, and apply localized line patches
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Compared to PyTorch, CuBridge achieves significantly higher performance. PyTorch realizes attention variants by composing multiple fine-grained operators into separate CUDA kernels"): read the whole paper text including appendices; checked every quotation, the primitive table, the three-stage steps, the speedup and Pass@k numbers, the backend study, page and section references, and the tag and link (arXiv:2605.05023 appears in the paper text); changed the vague "executes both checks" wording, the worker-mapping example, the Pass@k source (text, not caption), the Limitations page (9, not 10), the Section 4.4 page range, added the paper's own inconsistencies (12 sequence lengths, Table 3 vs Table 5, Appendix D range) and removed an unsupported compile-and-profile step; did not check figure images beyond the extracted text, the Table 4 and 5 values beyond spot checks, or cited works.

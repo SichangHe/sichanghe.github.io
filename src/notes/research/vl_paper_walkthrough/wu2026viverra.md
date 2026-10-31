@@ -6,7 +6,7 @@ Tag: `wu2026viverra`, [paper](https://www.semanticscholar.org/paper/9a9e8f60bbfe
 
 VIVERRA generates a C program and candidate assertions from a natural-language task, then checks assertions with a portfolio of bounded model checkers. Its abstract describes the goal: “we present V IVERRA, a system that automatically produces formally verified annotations alongside generated code to aid user’s understanding of the generated program.” (Abstract, p. 1) The annotations are partial specifications and verified facts, not a complete proof that the program implements the natural-language task.
 
-The paper's key guarantee is bounded. A k-bounded invariant holds at an assertion location on every execution in which every loop back-edge is traversed at most k times (Definitions 3–4, p. 2). The authors state: “A k-bounded invariant provides a formal guarantee for all executions within the stated bound.” (Section 2, p. 2) Inference: this can support VeruLaw as a fast screening and comprehension layer, but it cannot replace unbounded Verus proofs for safety claims that must hold for all loop iterations.
+The paper's key guarantee is bounded. A k-bounded invariant holds at an assertion location on every execution in which every loop back-edge is traversed at most k times (Definitions 3–4, p. 2). The authors state: “A k-bounded invariant provides a formal guarantee for all executions within the stated bound.” (Section 2, p. 2)
 
 ## technique 1: partial co-specification
 
@@ -19,7 +19,7 @@ How to do it, following Algorithm 1 and Section 3.1.
 3. Give P0 and Π to `ANNOTATE`, which inserts C `assert` statements at function boundaries, loop-invariant points, or other suitable locations (Section 3.1, p. 3).
 4. Map each generated assertion to an elicited property so the final fact can be explained to the developer (Algorithm 1, p. 4).
 
-The Bubble Sort example elicits that the global swap counter equals the number of adjacent swaps and that the final array is sorted, then inserts assertions for those properties (Figure 2, p. 4). Inference: for Verus, replace C assertions with Verus `assert` statements and function `requires`/`ensures` contracts where appropriate. The natural-language property remains an untrusted candidate until a Verus proof discharges it. Inference: asking an agent to co-generate a contract risks specification drift; VL should preserve the task text, generated property, exact code location, and verifier result together.
+The Bubble Sort example elicits that the global swap counter equals the number of adjacent swaps and that the final array is sorted, then inserts assertions for those properties (Figure 2, p. 4).
 
 ## technique 2: bound reduction before bounded checking
 
@@ -76,8 +76,6 @@ The user study uses 10 multiple-choice questions, at least 20 MTurk workers per 
 
 Theorems 1 and 2 prove soundness of unconditional and dependency-conditional k-bounded facts assuming the bounded model checker is sound (Appendix A, pp. 12–13). The measurements cover assertion statuses, LLM and verification time, and comprehension responses. Trusted pieces include the natural-language task, LLM-generated properties and code, bound-reduction transformation, compiler, libclang extraction, CBMC/ESBMC/Bitwuzla, and the interpretation of verified facts. A bounded fact does not prove behavior beyond k loop traversals.
 
-Inference: the threat to an agent-written verified-Rust product is medium for comprehension and high if bounded facts are mistaken for complete correctness. VIVERRA's partial specifications may leave critical behavior unasserted, and conditional facts can hide a long dependency chain unless closure is shown. Inference: VL should not redo bounded annotation co-generation or call-graph compositional checking as a novelty claim; its open contribution would be a measured bridge from bounded screening to unbounded Verus contracts, including evidence that generated assertions correspond to the user's actual requirements.
-
 ## techniques for the catalog
 
 - partial co-specification: elicit properties and synthesize code from one task, then insert assertions linked back to those properties
@@ -86,5 +84,3 @@ Inference: the threat to an agent-written verified-Rust product is medium for co
 - conditional compositional checking: retry failed standalone assertions under explicitly recorded preceding assumptions
 - dependency closure: recursively replace intermediate assumptions with root facts and expose the final condition set
 - solver portfolio and compile gates: run parallel bounded checkers, normalize assertion locations, and compile after every generated artifact
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

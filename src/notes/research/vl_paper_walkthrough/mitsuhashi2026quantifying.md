@@ -45,8 +45,6 @@ The 1.5B final-step fit uses 108 observations and is (y=-0.936x^2-1.052p^2-1.978
 
 Verus form (Inference:)
 
-Inference: use Verus to prove deterministic accounting properties of an evaluation harness: a loop `invariant` can show that each configuration has exactly the intended number of rollouts, and `ensures` can connect recorded scores to the exact checker outputs. Statistical fitting and adjusted (R^2) are external computations; their scripts and floating-point behavior remain trusted. For VL, the analogue is to sweep verifier timeout, proof-obligation size, or injected false-negative rates while preserving a reference proof oracle.
-
 ## evidence and limitations
 
 Across the 1.5B grid, increasing (r=8\to32) improves validation accuracy but cannot eliminate noise-induced gaps; false negatives damage accuracy more than false positives (Section 4, p. 4). Appendix C expands symmetric noise to (r\in\{4,8,16,32,64\}) and reports cases where more compute overtakes a perfect low-rollout baseline: ((p,r)=(0.3,64)) beats ((0,4)) for Qwen 1.5B, and ((0.4,64)) beats ((0,4)) for Qwen 0.5B (Appendix C, p. 7). The paper says that "in many cases, the increase in compute eventually compensates for the error rate" (Appendix C, p. 7), and also reports plateaus for the larger model at many rollouts and low error rate. Inference: these examples do not contradict the main claim that compute cannot close all gaps; they show that the comparison depends on the baseline rollout budget. The abstract and Conclusion claim ("the gap persists under substantial scaling") rests on the r in {8,16,32} grid, and Appendix C only covers symmetric noise (p = x).
@@ -57,10 +55,6 @@ Each model has (N=108) configurations (six p values × six x values × three rol
 
 Measured quantities are exact-checker validation accuracies after GRPO under controlled noise and rollout counts. No theorem is proved about practical RLVR. Inference: trusted components include GSM8K labels and checker, NeMo-RL, GRPO implementation, random noise injection, optimizer, model initialization, one-epoch stopping choice, floating-point fitting, and the assumption that the hold-out checker measures the desired capability.
 
-Inference: for VL, a Verus timeout or flaky proof oracle can act like a false negative: a correct Rust proof is rejected and the agent learns to avoid useful constructions. A weak contract or incomplete test can act like a false positive. This paper therefore suggests measuring these error types separately and prioritizing reduction of false negatives, while keeping the logical specification as the authoritative oracle. Inference: unlike GSM8K, Verus proof checking can expose a concrete certificate, so a VL experiment should distinguish timeout, solver failure, specification failure, and true counterexample rather than collapse them into one reward bit.
-
-Inference: the product threat is moderate and specific: increasing sampling or RL compute cannot compensate indefinitely for a noisy verification pipeline. The paper's experiment is too small to quantify the effect on agent-written verified Rust, but its asymmetry is a plausible risk for any training loop that treats tool failures as incorrectness. Inference: existing work VL should not redo is the basic noise-flip model, rollout sweep, and polynomial fit without extending them to proof-oriented failure categories and multiple seeds.
-
 ## techniques for the catalog
 
 - asymmetric verifier injection — flip true labels separately for false negatives and false positives during training
@@ -68,4 +62,3 @@ Inference: the product threat is moderate and specific: increasing sampling or R
 - exact hold-out evaluation — apply the unmodified checker only at evaluation time to measure true capability
 - compute–supervision surface fit — fit accuracy as a function of verifier error rates and log rollout count
 - symmetric-noise extension — test larger rollout counts to reveal when compute can beat a low-compute clean baseline
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We chose one epoch because preliminary runs showed that the training reward curve plateaus well before the end of an epoch across all noise levels"): read the whole paper text (main text pp. 1-4, references, Appendices A-C pp. 6-8, text only; figure images not inspected) and checked every quotation, hyperparameter, sweep value, fitted equation, N=108, adjusted R^2, the (0, 0.3) optimum, the Appendix C examples, section and page references, and the arXiv link (arXiv:2605.25252 appears in the paper header); changed by adding the theory prediction being tested, the Table A1 pointers, the authors' own caveats and the "compute eventually compensates" sentence from Appendix C, and labelling my own conclusions "Inference:"; did not check the cited external works, the released code, or the Verus-analogue suggestions beyond their being labelled inference.

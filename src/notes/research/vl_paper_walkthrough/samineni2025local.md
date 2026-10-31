@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `samineni2025local`, [paper](http://arxiv.org/abs/2510.18176v1)
 
-
 ## what the paper measures
 
 This paper tests whether Reinforcement Learning with Verifiable Rewards (RLVR) improves intermediate mathematical reasoning, rather than only final answers. It trains Qwen-2.5-0.5B with GRPO on GSM8K, then asks GPT-4o to translate responses into first-order logic (FOL) and tag errors. The central distinction is explicit: “We distinguish between trace validity and trace coherence, noting that the former implies logical soundness while the latter measures local coherence via lack of errors.” (Abstract, p. 1). Trace validity means the full derivation is logically sound; trace coherence is a proxy that records whether detected local errors occur. The authors warn that “RL enhances local coherence without necessarily producing valid or correct solutions” (Abstract, p. 1).
@@ -62,16 +61,9 @@ evidence: the abstract reports the most significant gains where the base model f
 
 limits and assumptions: the base model is Qwen-2.5-0.5B fine-tuned with VERL; training uses batch size 64, mini-batch size 8, five sampled responses per prompt, learning rate 1e-6, KL coefficient β = 1e-3, 145 global steps/5 epochs, and one A100 80GB GPU (Appendix C, p. 9). Inference: results may depend on this small model, training run, sampler (temperature 1.0 and top-p 0.95 at evaluation), and GPT-4o judge; they do not establish that RLVR generally improves formal proof quality.
 
-## trusted boundary and implications for VL
-
-The paper's measured object is an LLM-judged proxy. Inference: interpreting it requires trusting the GSM8K labels, FOL translation, GPT-4o classification, and final-answer correctness test; the proxy does not establish full trace validity. The paper explicitly says “while RLVR improves trace coherence, it does not amount to trace validity or overall correctness in mathematical reasoning problems” (Conclusion, p. 4). Inference: for agent-written verified Rust, this is a warning against using local consistency scores, successful compilations of fragments, or natural-language proof explanations as evidence that a complete Verus contract holds.
-
-Inference: VL need not recreate the paper's existing methods. The paper defines a FOL error taxonomy, a conditional Pass@K coherence metric, and a four-pattern analysis for separating local trace quality from final correctness. Inference: VL should instead connect generated proof traces to Verus's executable proof result and report denominators, model, verifier version, and specification coverage; the product threat is proxy inflation when local reasoning improves without a globally checked contract.
-
 ## techniques for the catalog
 
 - FOL error taxonomy — translate reasoning steps to first-order logic and classify premise, rule, arithmetic, and format errors; the intended mutually exclusive taxonomy has a prompt allowing multiple tags
 - conditional Pass@K coherence — among correct sampled answers, count a group coherent when at least one trace is error-free
 - correctness-pattern stratification — compare base and RL traces in four joint correctness patterns across Pass@1, Pass@4, and Pass@16
 - Inference: proxy-versus-validity audit — require independent formal checking before interpreting local coherence as proof quality
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Improvements in trace coherence reflect local consistency but should not be mistaken for improved correctness unless validated through systematic and formal evaluation."): checked every quotation, number, page and section reference, and technique step against the full text, including appendices; corrected the abstract quotation, taxonomy details, prompt inconsistencies, pattern references, and inference labels; did not reproduce experiments, independently validate GPT-4o judgments, or extract numerical cells from figure images.

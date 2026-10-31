@@ -5,8 +5,6 @@ Tag: `silva2026improving`, [paper](https://arxiv.org/abs/2608.05399)
 
 The paper studies automated fault localization for Dafny programs whose implementation violates a correct specification. It compares state-based localization (SNAP), three counterexample methods (CNTB, CNTS, CNTM), and an LLM baseline. The evaluation uses 500 valid mutants generated from DafnyBench with MutDafny. The authors define the output as a ranking of source lines from most to least likely to contain the fault (Section I, p. 1). The paper says its “counterexample-based approaches substantially outperform state-based localization in this setting” (Abstract, p. 1).
 
-Inference: for VeruLaw, the directly reusable object is a diagnostic ranker around failed Verus proof obligations. The study does not prove that any ranking identifies a real bug in production Rust: its ground truth is a mutated line and its specifications are assumed correct.
-
 ## technique 1: contract-derived test generation (DafnyCBT)
 
 What it is: generate passing and failing executions from a contract independently of the implementation, then use those executions as the evidence for state-based localization. The paper says DafnyCBT “derives both inputs and expected outputs from contracts, independently of the implementation” (Section II-B, p. 2). This independence is intended to make a test fail whenever the implementation departs from the contract and to exercise specified behavior that the implementation does not reach.
@@ -109,10 +107,6 @@ Evidence and limits: On the 500-program dataset, LLM has file EXAM 0.159, method
 
 The paper measures localization quality against the mutated source line, using EXAM, Top-k, Found, and Empty rates, and reports paired Wilcoxon tests for EXAM and McNemar tests for Top-1 (Section V-C, p. 7). It does not prove that the mutation set models industrial defects, that a generated contract is correct, or that a ranked line is the causal fault. The authors identify threats from synthetic mutations, DafnyBench's pedagogical and algorithmic programs, and the deliberately minimal LLM setup (Section VII, p. 9).
 
-Inference: a VeruLaw deployment should report denominator, scope, and output availability together. The same 500 mutants support the headline Table II percentages, whereas the 297-program “Comp.” rows exclude cases without non-empty outputs from all methods. Mixing those rows would overstate coverage. The paper also reports an apparent wording tension: its abstract calls CNTM “our primary contribution,” while the conclusion calls counterexample localization generally the robust foundation; these are compatible if CNTM is the primary method within that family.
-
-Inference: the threat to a product that emits agent-written verified Rust is medium for debugging workflow and high for assurance. Path diversification, structural ranking, and independent verifier-native diagnostics transfer conceptually. Dafny-specific counterexample flags, Daikon, `assume false` path blocking, and the mutation benchmark do not transfer automatically to Verus. A Verus proof still trusts the specification, verifier, solver, compiler, erased proof code, and any external-body assumptions. VL should not redo a one-path-only diagnostic baseline as its sole debugging experiment; it should measure path coverage, ranking stability, repair effort, and whether diagnostics cause specification weakening.
-
 ## techniques for the catalog
 
 - contract-derived independent tests — split contracts into solver-satisfiable cases, add boundary and anti-trivial constraints, and separate passing from failing executions
@@ -120,4 +114,3 @@ Inference: the threat to a product that emits agent-written verified Rust is med
 - structure-aware counterexample ranking — augment traced lines with enclosing control nodes and rank by frequency, depth, and node type
 - iterative multi-trace localization — block each discovered failing path, collect independent counterexamples, and rank their aggregate line evidence
 - verifier-native versus LLM diagnostics — compare deterministic counterexample rankings with strict-output LLM line rankings under identical localization metrics
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

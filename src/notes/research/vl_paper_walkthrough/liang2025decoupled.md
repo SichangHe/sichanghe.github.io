@@ -8,8 +8,6 @@ The report separates strategic mathematical reasoning from formal proof construc
 
 The authors evaluate non-geometry IMO problems from 2000–2024 and report five solves: IMO 2000 Problem 2, 2005 Problem 3, 2011 Problem 3, 2019 Problem 1, and 2020 Problem 2 (section 1, PDF page 3; section 4, PDF page 7). They write: “We list detailed proofs in Appendix B and show current progress on IMO 2024 problems in Appendix A.” (section 4, PDF page 7). The Data Release section announces generated and verified lemmas for a broader range of problems (PDF page 3). The arXiv identifier and date on PDF page 1 are `2507.06804v1` and 7 July 2025. The paper concerns Lean; it does not evaluate Rust or Verus.
 
-Inference: VL could use a general model to propose Rust proof lemmas, verify each with Verus, and give the verified lemmas to a final proof model. This transfer remains untested by the paper and requires checking the complete Rust proof under its actual contracts and dependencies.
-
 ## technique 1: generate strategic formal subgoals with a dedicated Reasoner
 
 The Reasoner receives a Lean theorem and develops a complete strategy before emitting formal sub-theorem statements without proofs. The prompt requests: “The sub-theorems should be self-contained and provable, and collectively they should imply the original theorem.” (section 3.1, PDF page 5). It also says: “Avoid trivial splits such as case analysis or mechanical “divide into two cases” tactics unless they are genuinely part of the reasoning process.” (section 3.1, PDF page 5). This is a qualified instruction, not a ban on all case analysis.
@@ -24,15 +22,11 @@ Inference: in Verus, request named lemma statements with explicit preconditions 
 
 The paper gives the extraction pattern `theorem (.*?):= by sorry` and describes it as a “simple yet robust regular expression” (section 3.1, PDF page 6). Its purpose is to extract lemma statements from the Reasoner's free-form response before verification. The paper does not specify regex flags or report extraction precision, recall, deduplication, provenance storage, or a separate syntax-rejection stage.
 
-Inference: VL could request a fixed declaration format, parse proposed Verus lemmas, and record extraction failures. A parser or compiler can check whether the extracted text is valid source. These are implementation recommendations, not steps established by this report.
-
 ## technique 3: verify each subgoal independently with a bounded proof budget
 
 The authors select DeepSeek-Prover-v2 (7B, CoT version) to prove candidate lemmas. Each candidate lemma is treated as an independent theorem. The Prover generates up to k candidate proofs, and the paper states: “A lemma is considered "verified" and retained if at least one attempt succeeds.” It sets k to 128 to balance exploration and computational cost (section 3.2, PDF page 6).
 
 This filtering permits speculative lemma proposals while retaining only proved results for final construction. The authors describe the purpose as ensuring “that only logically sound and verifiable lemmas are passed to the final stage” (section 3.2, PDF page 6). They do not report the total number of candidate lemmas, attempts consumed, or cost per retained lemma.
-
-Inference: VL could sample a bounded number of Verus proof bodies per proposed lemma and retain only successful proofs under the actual crate and contracts. Store each lemma's assumptions with its proof; a statement proved under stronger assumptions may be unusable by its caller. Independent verification does not establish that a lemma is relevant or that its specification captures the intended program behavior.
 
 ## technique 4: construct the final proof from verified lemmas
 
@@ -42,8 +36,6 @@ DeepSeek-Prover-v2 often ignored auxiliary lemmas and attempted proofs from scra
 
 Section 4.3 contrasts standalone lemmas with local `have` statements: “However, have statements require strict alignment of symbols and definitions with the current proof state, limiting their flexibility.” (PDF page 10). Standalone lemmas offer flexibility but can be ignored. These are qualitative observations; the report provides no quantified lemma-use comparison or per-stage success table.
 
-Inference: VL could expose verified lemma interfaces to the final proof model, require callers to establish their preconditions, and verify the assembled proof against the original contract. If assembly fails, inspect whether the lemmas are unused, insufficient, or depend on assumptions the caller cannot establish.
-
 ## technique 5: separate reasoning from specialized proving
 
 The authors hypothesize that reinforcement learning with verifiable rewards (RLVR) can damage broader mathematical reasoning. They compare Qwen2.5-Math-7B-Instruct with Kimina-Prover-Preview-Distill-7B, a prover initialized from that base and fine-tuned for Lean theorem proving, on non-formal MATH and AIME24 problems (section 4.2, PDF page 9).
@@ -52,15 +44,11 @@ Table 1 reports MATH pass@1 of 83.6% for the base and 78.7% for the prover, a dr
 
 The authors interpret this as evidence of degradation from prover specialization. Inference: this comparison alone does not isolate RLVR as the cause, since it compares a base model with a specialized model rather than varying only the reward scheme. It also does not establish that all specialized provers lose reasoning ability.
 
-Inference: VL could separate contract planning from proof-body construction, then compare planning quality and verification success on the same Rust tasks before deciding which models should fill those roles.
-
 ## technique 6: diagnose failure with oracle lemmas and decomposition gaps
 
 The authors identify two bottlenecks: critical lemmas exceed the Prover's ability, and the Reasoner misses creative human insights. For the first, they write: “To validate this, we conducted an oracle experiment where we manually proved these bottleneck lemmas (or replaced their proofs with sorry).” They report solving “a significantly larger number of IMO problems” under that idealized condition, without giving a count (section 4.3, PDF page 10). Further decomposition of unresolved lemmas is suggested, not evaluated as a separate intervention.
 
 For the second, the authors manually compare Reasoner outputs with official IMO solutions. They observe systematic decomposition but difficulty producing the non-obvious reframings of human solutions (section 4.3, PDF page 10). Appendix A illustrates incomplete results: IMO 2024 Problem 1 still needs the interval base-case lemma (PDF pages 13–14), and Problem 2 still needs the unequal-input case (PDF page 15).
-
-Inference: VL could compare normal proof attempts with a diagnostic run supplied with a manually proved lemma. A diagnostic run that assumes an unproved statement is not a verified solution. Improvement after supplying a lemma suggests a proving bottleneck, but does not independently validate the entire proposed strategy.
 
 ## what is proved, measured, and trusted
 
@@ -70,10 +58,6 @@ The five-problem result must be distinguished from the incomplete IMO 2024 cases
 
 Inference: formal assurance depends on the proof assistant, imported definitions, theorem statements, and the absence of unproved assumptions. A machine-checked statement can still misrepresent the intended problem. This study checks the paper's account, not an independent replay of its Lean code or experiments.
 
-## what VL should reuse and avoid redoing
-
-Inference: VL should consider role separation, strategic formal-subgoal generation, independent verification with a bounded budget, final assembly from verified lemmas, and diagnostic use of manually proved lemmas. The paper's Lean results do not establish Rust systems capability. A relevant Verus evaluation would measure whether proposed lemmas verify, whether the final model uses them, and how they affect final proof success and cost.
-
 ## techniques for the catalog
 
 - decoupled Reasoner and Prover: separate strategic lemma generation from formal proof construction
@@ -82,5 +66,3 @@ Inference: VL should consider role separation, strategic formal-subgoal generati
 - verified-lemma final assembly: prepend proved lemmas to the main context
 - role-specific model selection: use Gemini 2.5 Pro for subgoals, DeepSeek-Prover-v2 7B CoT for lemma proofs, and OpenAI-o3 or Gemini 2.5 Pro for final construction
 - oracle bottleneck diagnosis: manually prove hard lemmas or assume them with `sorry` in an explicitly idealized analysis
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "By proving that the GCD property cannot hold for distinct positive integers a and b, our framework would successfully eliminate the only remaining case, thereby completing the proof for IMO 2024, Problem 2."): checked all paper text including appendices, quotations, numbers, section and page references, and technique steps; corrected references, the milestone description, model roles, and unsupported procedural claims, and labeled recommendations and conclusions as Inference; did not independently run Lean proofs, reproduce experiments, validate external links, or test Verus adaptations.

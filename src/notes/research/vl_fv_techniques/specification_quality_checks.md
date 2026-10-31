@@ -6,14 +6,6 @@ If the specification is wrong, empty, or too weak, the proof tells you little.
 These checks ask whether the specification says what you meant.
 They run before, beside, or after the proof.
 
-Verus is the Rust verifier VL uses.
-Every paper below worked in Dafny, Lean, Kani, VST or Python.
-So every Verus step on this page is my inference, unless I say a study gives it.
-Related notes, not repeated here:
-[spec quality and trusted base](../topic_studies/formal_verification_rust/practical_fv/spec_quality_trusted_base.md),
-[testing with proofs](../topic_studies/formal_verification_rust/practical_fv/testing_with_proofs.md),
-[LLM specifications](../topic_studies/formal_verification_rust/llm_for_verification/specifications.md).
-
 ## the problem
 
 There are four ways a verified specification can be bad.
@@ -31,10 +23,6 @@ The interviews agree.
 One practitioner said "you're not quite done yet, because you have to know that your specification is good" (a participant's words,
 quoted in the [practitioner survey study](../vl_paper_walkthrough/toward_practical_deductive_verification_20261012.md)).
 That study counts this as practitioner perception, with no independent oracle behind it.
-
-Agents make this worse.
-An agent that must make Verus pass can satisfy it by weakening the contract.
-Several studies list this as the main threat to VL.
 
 ## how to do it in Verus
 
@@ -81,8 +69,6 @@ Run them in this order, cheapest first.
 8. Compare with the intent in words.
    - A human reads the contract next to the docstring or requirement.
    - Nothing above replaces this step. Every study ends here.
-
-## variants by paper
 
 ### mutating outputs, to score postconditions
 

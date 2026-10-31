@@ -58,7 +58,7 @@ The paper’s focused experiment is IMO 2019 Problem 1. Pure iterative correctio
 
 Lean’s kernel checks proof candidates; the paper measures benchmark success rates, API/sample budgets, and repair/decomposition ablations. The benchmark statements were corrected before evaluation: “We use its Lean 4 version [51] and fix errors in the statements similar to [33, 41].” (§4.1, p. 11). Inference: proof checking depends on Lean’s kernel and the assumptions in the formal statements. The model, retrieval, and prompts guide search; they do not replace final proof checking. A verified proof does not establish that a corrected benchmark statement faithfully expresses the original problem.
 
-The paper reports no Verus experiment, Rust implementation, or product threat analysis. Inference: its relevance to VL is the workflow of verifier feedback, retrieval, repair, and decomposition. Whether that workflow improves Verus proofs or expresses VL’s intended security properties requires separate evaluation.
+The paper reports no Verus experiment, Rust implementation, or product threat analysis.
 
 ## techniques for the catalog
 
@@ -69,5 +69,3 @@ The paper reports no Verus experiment, Rust implementation, or product threat an
 - proof consolidation — substitute verified sub-proofs into the decomposition sketch and emit one checked proof
 
 - retrieval-augmented repair — use an erroneous identifier or kernel error to retrieve the exact theorem/definition name and signature for the next attempt
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The final sample budget is then the maximum of these values across all solved problems."): checked all paper text, study quotations, numbers, section/page references, algorithms, DSL operations, results, and inference labels; corrected page references, clarified the successful-attempt budget and per-round repair behavior, removed unsupported Verus prescriptions and trust claims, and narrowed the decomposition evidence; did not reproduce experiments, execute Lean/Verus proofs, or independently validate benchmark corrections and image-only appendix code.

@@ -83,10 +83,6 @@ Inference: trusted components include the environment transition and reward impl
 
 Inference: for agent-written verified Rust, CAMP's most useful lesson is to separate a utility specification from a robustness margin and to keep a reference behavior stable while optimizing a safety objective. A Verus contract can prove action margins and bounded perturbation arithmetic for an abstract policy, but it cannot by itself certify a floating-point neural policy, stochastic environment, or statistical confidence interval. The product threat is treating empirical robust returns as a universal safety proof; the safe integration is to use the certificate as a monitored assumption and verify the deterministic control wrapper separately.
 
-## what VL should not redo
-
-The paper already provides the smoothing-certificate usage, Neyman–Pearson transfer, change-of-variable radius, Lipschitz soft radius, local Q-gap theorem, Q-gap loss, reference-policy imitation, and a complete training loop (Algorithm 1). Inference: VL should reuse these as conceptual patterns rather than re-derive them for a Rust service unless its threat model includes observation perturbations and a discrete policy.
-
 ## techniques for the catalog
 
 - empirical smoothing certificate: estimate randomized-return CDFs and transfer them to bounded observation perturbations
@@ -94,4 +90,3 @@ The paper already provides the smoothing-certificate usage, Neyman–Pearson tra
 - soft and local radii: derive global and per-step bounds from Lipschitz smoothed return and Q-gaps
 - Q-gap loss: maximize the noisy top-1 versus runner-up action margin, with a reference-policy prerequisite check
 - policy imitation: stabilize robustness training with a TD-trained reference network and separate replay buffers
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "It can be observed that CAMP does not degrade the training performance in noise-free environments, supporting the versatility of CAMP."): read all 1401 lines of the paper text (body, Appendices A–C, references) and checked every quotation, number, equation, section/algorithm reference, and technique step; changed the link to the publisher page in the paper text, corrected the budget (ℓ2 norm, not squared), the Theorem 1 condition, how Theorems 1 and 4 are used (analysis, not computed in training), the full Theorem 4 bound, the ECDF quote (was cut mid-sentence), the burn-in and buffer steps of Algorithm 1 plus the paper's own buffer inconsistency, and replaced vague evidence claims with reported figures, tables, and costs; marked agent conclusions "Inference:"; did not check the PDF figures (curves not in the text) or the authors' code.

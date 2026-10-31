@@ -8,8 +8,6 @@ KernelOPT optimizes compiled PyTorch models by preserving cuBLAS/cuDNN dispatch,
 
 The benchmark contains 250 KernelBench problems: 100 Level 1, 100 Level 2, and 50 Level 3. On one NVIDIA H200, all-problem geometric-mean speedups over torch.compile are 1.40×, 1.15×, and 1.07× for L1/L2/L3; optimized-only values are 2.54×, 1.84×, and 1.37× over 36, 23, and 11 successful problems (Abstract and Table 1, pp. 1, 8). These denominators matter because 85/250 cases fall back and contribute 1.00× to all-problem means.
 
-Inference: For VL, KernelOPT is a concrete accept-or-reject architecture for agent-written verified Rust or GPU-adjacent code: search may be heuristic, but release requires independent static, functional, model-level, and performance checks.
-
 ## technique 1: dispatch-aware decomposition
 
 What it is. Treat a compiled model as Triton-generated kernels plus fixed external-library calls. Detect cuBLAS/cuDNN calls, preserve them, merge adjacent fusible Triton groups, and synthesize standalone Triton kernels only for optimizable groups (Sections 1 and 4.1, pp. 2–3).
@@ -31,7 +29,7 @@ The profiler extracts SOL throughput, duration, registers, occupancy, and top NC
 
 Algorithm 1 starts with baseline beam B₀, allocates total plan budget N across active chains, generates candidates, profiles them, and applies `DiverseSelect`: one lowest-latency candidate per chain plus global best candidates (Algorithm 1, p. 4). With T=5, N=4, K=4, B=4, each problem receives 20 LLM-driven candidates (Section 5, p. 6). A meltdown detector forces diversity when recent plans collapse to at most two unique approaches (Section 4.2, p. 4).
 
-The paper discloses a completeness limitation: “final selection tests only the single fastest candidate kfast against Gates 3–4, with no retry over lower-ranked candidates if it fails.” (Section 4.3, PDF p. 5.) Inference: a VL implementation should waterfall through ranked candidates to avoid discarding a correct slower candidate.
+The paper discloses a completeness limitation: “final selection tests only the single fastest candidate kfast against Gates 3–4, with no retry over lower-ranked candidates if it fails.” (Section 4.3, PDF p. 5.)
 
 Verus form. Inference: represent each candidate as data with a proof-carrying contract result; prove the selector returns only candidates whose gate predicates hold. Search heuristics remain untrusted because Verus verifies the selected result, not the optimality of the search.
 
@@ -47,17 +45,11 @@ Verus form. Inference: encode each gate as a pure predicate over a candidate rec
 
 If no candidate satisfies all gates, return the compiler baseline (Definition 2, p. 3). A bounded FIFO memory of capacity Q=8 stores experience when speedup is at least 1.05 or when inverse speedup is at least 1.20; strategies succeeding below 30% after at least three attempts are marked AVOID (Sections 4.5 and 5, pp. 5–6). These thresholds are planner context, not hard constraints.
 
-Evaluation reports 70 optimized, 95 matched, and 85 fallback outcomes out of 250 (Table 1, p. 8). The matched category includes kernels within the 3% noise margin and cases with no attempted optimization. Inference: VL should preserve a known-good verified implementation whenever a generated candidate fails any required gate, and should record failed strategies without weakening proof obligations.
+Evaluation reports 70 optimized, 95 matched, and 85 fallback outcomes out of 250 (Table 1, p. 8). The matched category includes kernels within the 3% noise margin and cases with no attempted optimization.
 
 ## what is proved, measured, and trusted
 
 KernelOPT measures speed and correctness on NVIDIA H200 with Claude Sonnet 4.6, fixed search hyperparameters, and approximately 1,100 GPU-hours (Section 5, p. 6). It does not prove global optimality, cross-GPU portability, or correctness beyond sampled seeds and the stated model-level checks. The authors note single-GPU inference scope, elevated NCU permissions, and >100K-context model requirements (Conclusion, p. 9).
-
-Inference: The trusted boundary includes PyTorch eager/float64 references, NCU and timing harnesses, compiler and vendor libraries, the H200 hardware, LLM-generated test inputs, and the Verus/Rust toolchain when adapted to VL. An agent can produce a candidate and test harness, but independent gate predicates and baseline fallback limit release risk. The 29% composition-gap result shows why component-level proofs or benchmarks do not establish whole-model behavior.
-
-## what VL should not redo
-
-Inference: VL should not repeat isolated-kernel acceptance without dispatch-aware re-stitching, multi-seed checking, and a performance gate. KernelOPT already supplies these patterns and quantifies their need. Open gaps include ranked fallback selection, accepted-side rho logging, vendor-library optimization, and cross-hardware benchmarks (Conclusion and Section 4.3, pp. 5, 9).
 
 ## techniques for the catalog
 
@@ -68,4 +60,3 @@ Inference: VL should not repeat isolated-kernel acceptance without dispatch-awar
 - end-to-end performance gate — accept only re-stitched model time within a 3% margin of baseline
 - fail-closed baseline fallback — ship the compiler baseline whenever no candidate passes every gate
 - composition-gap testing — re-stitch and test whole models because sub-kernel speedups can regress end-to-end execution
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -80,8 +80,6 @@ Inference: the trusted or assumed components include Rust and LLVM interpreter s
 
 The authors report: “On average, across each memory mode, 61% of tests terminated due to an unsupported operation, 19% passed, 10% timed out, 1% failed, and 9% had a potential bug.” (Section III.C, p.6).
 
-Inference: FFI is a high threat to agent-written verified Rust because a Verus proof can establish wrapper logic while trusting an incorrect binding, allocator pairing, alias permission, or initialization guarantee. VL should not redo a generic Miri-plus-LLVM dynamic interpreter. It should reuse this testing pattern at FFI boundaries and focus new work on checked ABI contracts, verified ownership-transfer adapters, and regression tests that survive toolchain and alias-model updates.
-
 ## techniques for the catalog
 
 - joint MIR/LLVM interpretation — combine Miri and LLI so dynamic UB checks cross Rust and foreign calls
@@ -89,4 +87,3 @@ Inference: FFI is a high threat to agent-written verified Rust because a Verus p
 - dual-mode initialization checking — separate LLVM undef propagation from genuine uninitialized Rust reads
 - alias-model differential testing — execute tests under Stacked and Tree Borrows and triage model differences
 - FFI bug deduplication and reports — normalize paired model outcomes, investigate errors manually, and provide representative tests and minimal examples where applicable
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This is considered undefined behavior under Stacked Borrows, but it is valid under Tree Borrows."): checked the entire paper text, all study quotations, counts, section and page references, and technique steps; corrected quotation attribution, crate counts, references, ABI-conversion details, triage steps, unsupported Tree Borrows outcomes, and inference labels; did not run MiriLLI, reproduce bugs, inspect the replication package, or validate the proposed Verus applications.

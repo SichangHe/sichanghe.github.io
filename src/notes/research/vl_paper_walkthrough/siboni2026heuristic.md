@@ -12,7 +12,7 @@ The hand-coded baseline scores 41.0 mean reward on the eight search scenarios wi
 
 The central formal result is an audit of the best heuristic: 65 checks, 61/65 passing and zero errors; 29 AST checks (27/29 plus two warnings), nine interval checks (8/9), ten Z3 checks (9/10, with five proved universally and four deferred), and 17 property-test checks (17/17 on 207 inputs) (Table 4, p. 7). Z3 proves five specifications for all valid inputs: three safety properties and two monotonicity properties. SPEC-006 has a Z3 counterexample at a degenerate near-zero-force boundary, although testing passes realistic ranges (Section 4.8, p. 7). The paper explicitly says, “The Z3 verification layer translates the heuristic’s Python AST into Z3 SMT constraints and proves that domain specifications hold for all valid inputs—not just sampled ones” (Appendix B.3, p. 10).
 
-What stays trusted is the Python-to-Z3 translator, the simulator and physical model, the specifications and input ranges, Hypothesis/property-test implementation, and the LLM-generated code. Inference: this is bounded formal checking of a model and translator, not a proof that PyRoll matches a steel mill. Inference: for VeruLaw, the strongest reusable idea is to turn each generated Rust/Verus candidate into explicit specifications and a staged proof/test report; Verus's kernel and contracts provide a stronger final checker than prose audit, but external hardware and library assumptions remain trusted.
+What stays trusted is the Python-to-Z3 translator, the simulator and physical model, the specifications and input ranges, Hypothesis/property-test implementation, and the LLM-generated code.
 
 ## technique 1: strategic decomposition and rich behavioral feedback
 
@@ -62,11 +62,7 @@ How to do it. (1) Sample inputs from Table 7, constraining current thickness ≥
 
 Verus form. Inference: use Verus proofs for universal properties and Rust tests for behavior outside the modeled fragment. Tests are evidence, not proof; retain explicit assumptions and report which properties lack Verus lemmas. A Verus `external_body` marks an unverified function and must not be placed on the function whose implementation is the target of verification.
 
-Evidence and limits. Seven edge cases encode domain knowledge, but 207 tests cannot establish universal continuity or responsiveness. The paper itself defers four specs involving responsiveness or epsilon-delta continuity to testing (Section 4.8, p. 7). Inference: VL should fail closed when a safety property is deferred instead of treating a passing sample as formal assurance.
-
-## product implications
-
-The paper already combines readable generated policies, staged static/interval/SMT/property audits, behavioral feedback, restart budgeting, and greedy portfolios. VL should not claim these orchestration or audit ideas as new. Inference: its distinct contribution must be Rust/Verus-specific evidence, such as proof completion, solver time, repair rates, and trusted-boundary accounting. The threat to a verified-Rust product is moderate: this paper shows practical agent synthesis plus formal checks can produce auditable control code, but it does not verify arbitrary Rust memory safety, concurrency, compiler behavior, or hardware. The most serious risk is specification mismatch: a controller can satisfy a mathematically checked property over an incomplete simulator model.
+Evidence and limits. Seven edge cases encode domain knowledge, but 207 tests cannot establish universal continuity or responsiveness. The paper itself defers four specs involving responsiveness or epsilon-delta continuity to testing (Section 4.8, p. 7).
 
 ## techniques for the catalog
 
@@ -76,4 +72,3 @@ The paper already combines readable generated policies, staged static/interval/S
 - two-translation relational verification — compare two symbolic executions to prove monotonicity and emit counterexamples when the relation fails
 - staged Z3/property audit — prove translatable universal properties with SMT and explicitly defer unsupported properties to randomized edge-case testing
 - Luby universal restarts — use a fixed restart schedule to diversify LLM search without retrospective budget tuning
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

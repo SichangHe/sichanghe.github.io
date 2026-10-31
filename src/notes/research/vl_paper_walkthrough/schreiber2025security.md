@@ -31,7 +31,7 @@ How to do it.
 4. Remove files under 150 bytes (Section 3.4, p. 6).
 5. For vulnerability analysis, retain Python, JavaScript, and TypeScript, and exclude attribution keywords occurring outside comments (Section 4.3, p. 10).
 
-Verus form. Inference: represent each filter as a pure predicate over a manifest record and prove that every retained record satisfies all predicates. Inference: if VL consumes generated Rust, replace language filtering with parser/type-check success and retain source-to-attribution provenance separately.
+Verus form.
 
 Evidence. Filtering reduced 82,413 raw files to 10,387: 22,736 duplicates, 42,615 text files, 6,634 unsupported-language files, and 41 undersized files were removed (Table 2, p. 8). The later analysis retained 7,117 attribution-valid files after excluding 586 non-comment keyword matches (Section 4.3, p. 10).
 
@@ -64,8 +64,6 @@ No formal safety property is proved. CodeQL, CWE mappings, NVD data, attribution
 
 The paper's file counts differ across places (Section 4.3, p. 10). The abstract and introduction say 7,703 files. Section 4.3 uses 7,703 for the Python/JavaScript/TypeScript files, excludes 586 non-comment keyword matches to reach 7,117 "analyzable files", and later says CodeQL analyzed 7,696 files with 1,236,725 LOC (Table 5). Table 4's Python, JavaScript, and TypeScript rows sum to 7,709. The 46.4% / 53.6% file-findings split uses 7,696, the 12.1% vulnerable-file share uses 7,117, and the 11.36% prevalence in Table 6 matches 7,696 minus 116 erroneous files. The paper does not reconcile these; report each number with its stated context. Inference: these inconsistencies weaken direct percentage comparisons, including the headline 87.9% (= 100% − 12.1%) versus the 11.36% overall prevalence in Table 6.
 
-What VL should reuse. Inference: reuse the staged provenance and filtering manifest, language-specific CWE checks, and explicit denominator reporting. VL should not treat CodeQL absence as a proof substitute; use it as a complementary security scan before or after Verus verification.
-
 Threat to a product of agent-written verified Rust. Inference: high for security assurance if product users mistake memory-safety proofs for broad security; medium for engineering workflow because the scanner can expose generated-code patterns but does not cover all Rust-specific semantic and supply-chain risks.
 
 ## techniques for the catalog
@@ -75,4 +73,3 @@ Threat to a product of agent-written verified Rust. Inference: high for security
 - CodeQL CWE analysis: run a consistent static query suite and retain directly mapped security findings
 - CVSS severity mapping: cross-reference CWEs with NVD CVEs and average CVSS v3.x scores under a stated frequency threshold
 - language/tool risk profiling: compare prevalence, LOC per CWE, CWE distributions, and denominators by language and generator
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This metric represents the average number of code lines that can be generated before encountering a security vulnerability, with higher values indicating better security performance."): I read the whole paper text and the whole study and checked the quotations, the table numbers (Tables 1-3, 5-7), the section and page references, and the technique steps; I changed the snapshot reference (Section 4.1, not 3.2), the section and page references for CWE mapping, NVD retrieval and the 77 types, the wrong claim that Table 6 file counts are the prevalence denominators (they are vulnerable files; the denominators are Table 5 counts minus erroneous files, my arithmetic), and the dataset-count discrepancy paragraph; I added the Table 8 point that most counted CWEs are quality findings and a note on small cells; I did not check Tables 4 and 8 beyond the figures cited, Appendix A, the reference list, or the PDF layout beyond the text extraction.

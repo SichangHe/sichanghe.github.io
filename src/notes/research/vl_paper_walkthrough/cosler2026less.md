@@ -110,16 +110,6 @@ Wall-clock results include training and proof search for RL and assume maximal p
 
 The baseline machine is an Intel Xeon E5-4650L 2.60 GHz with 1 TB RAM and eight cores per Tamarin call. RL uses one NVIDIA A100 40 GB GPU, up to 64 AMD Rome 7742 cores, and 250 GB RAM. The authors recommend at least 60 GB for CPU-only runs but did not systematically evaluate consumer CPU-only hardware (Section 6, p. 10). Tamarin baselines use two-hour timeouts, extended to four hours for SPDM and WPA2; RL budgets and hyperparameters vary by protocol (Section 6 and Appendix A, Table 3).
 
-## proved, trusted, and implications for VL
-
-The paper validates extracted proof trees with Tamarin's `checkProof` endpoint (Section 5.1, p. 8). Inference: acceptance establishes a result about the specified trace property in the symbolic protocol model, subject to the correctness of Tamarin and its checking interface; it does not establish correspondence to a deployed implementation. The neural policy, state observation, rewards, and training code guide search and need not be trusted as proof evidence.
-
-The paper reports failure to reproduce all original proofs for YubiKey, Signal, 5G AKA, SPDM, and WPA2 (Appendix B, p. 14). It discusses missing typing invariants for YubiKey and possible Tamarin-version differences or insufficient resources; these are proposed explanations rather than established causes. Its wording is: “We discuss potential reasons for this failure below.” (Appendix B, p. 14.) Inference: these reproduction failures make tool versions and available artifacts relevant to interpreting the results.
-
-Inference: this paper offers a relevant design pattern for an agent-written verified-Rust product; its experiments do not measure performance on Verus. The transferable pattern is verifier-in-the-loop search with a final proof prerequisite check, not trusting a learned score. A Verus agent could use MCTS or a policy network to choose lemma applications, but accepting generated code without a clean Verus run would remove the paper's own trusted boundary. Proof-size reward may reduce maintenance cost, while protocol-specific training and expensive solver calls limit portability.
-
-Inference: VL should reuse the API/search separation, partial-subproof replay, and explicit denominator reporting. It should not claim novelty for generic MCTS over proof steps alone; this paper already supplies an implementation, 16-case evaluation, graph deduplication, reward shaping, and comparison to built-in and human heuristics. A useful open direction is a reproducible Verus benchmark where the same generated proof is rechecked across compiler and dependency versions.
-
 ## techniques for the catalog
 
 - reusable verifier API — expose initial obligations, one-step execution, and final proof checking to an external client
@@ -130,4 +120,3 @@ Inference: VL should reuse the API/search separation, partial-subproof replay, a
 - online subproof reinforcement learning — train from resolved subproofs in a replay buffer while searches continue
 - multi-worker proof search — run independent verifier workers with centralized neural updates across lemmas
 - checked-proof boundary — use learning only to propose steps; accept results only after the underlying verifier validates the proof tree
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Unlike AlphaProof, which only learns from fully solved problems, our online loop generates training signal from partial subproofs, making training feasible without extensive pretraining."): checked quotations, author/year/arXiv link, numbers, section/page references, technique steps, and limitations; corrected API and training page references, case-split resolution and extraction, observation wording, reward exceptions, centralized inference, replay sampling conditions, baseline counts, and unsupported trust claims; did not rerun experiments, inspect implementation artifacts, or validate the proposed Verus adaptations.

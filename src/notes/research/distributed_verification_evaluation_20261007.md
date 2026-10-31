@@ -11,13 +11,6 @@ For each case, freeze an independent hidden evaluation packet containing require
 
 Liveness requires checking the conditions under which progress is promised. Anvil's OSDI 2024 introduction states: “an arbitrary number of faults can happen, but eventually faults stop happening.” Its §7.2 identifies “an incomplete specification of a trusted ZooKeeper API”. [Xudong Sun et al., Anvil](https://www.usenix.org/system/files/osdi24-sun-xudong.pdf). A completed proof therefore still needs tests of trusted environment contracts and an explicit assessment of failure and scheduling assumptions.
 
-The research artifacts live in [/ssd1/sichangheagent/verus_distributed/eval_and_cases](/ssd1/sichangheagent/verus_distributed/eval_and_cases):
-
-- [evaluation_plan.md](/ssd1/sichangheagent/verus_distributed/eval_and_cases/evaluation_plan.md): proposed end-to-end evaluation, task packets, metrics, liveness checks, and first study
-- [eval_spec_reviewed.md](/ssd1/sichangheagent/verus_distributed/eval_and_cases/eval_spec_reviewed.md): 21 reviewed specification evaluation methods, citing 22 primary texts/artifacts
-- [eval_benchmarks.md](/ssd1/sichangheagent/verus_distributed/eval_and_cases/eval_benchmarks.md): 21 existing evaluations, with task boundaries, source evidence, and gaps
-- [cases.md](/ssd1/sichangheagent/verus_distributed/eval_and_cases/cases.md) and [cases.jsonl](/ssd1/sichangheagent/verus_distributed/eval_and_cases/cases.jsonl): artifact catalog with source evidence and execution status
-
 Catalog availability does not establish that an artifact's proof was reproduced. The proposed evaluation has not yet been run.
 
 The catalog contains 1,914 records: 1,638 TLA module variants, 102 implementation/proof directories, 167 automatic-verification input files, one suite retrieval lead, and six archive leads. Helper modules and regression tests are included, and distinct usable benchmark cases have not been counted. Exact-content duplicates are recorded as aliases. Independent review checked aggregate counts and all quotes in five selected records.

@@ -1,18 +1,9 @@
 # Verifying Verus: a partial Lean model of expression translation
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## Paper and reading boundary
 
-Shuge Rong, *Verifying Verus: A Lean 4 Formalization of the SST-to-AIR Expression Translation*, Carnegie Mellon University master's thesis, May 2026. [Primary PDF](https://www.andrew.cmu.edu/user/avigad/Students/rong_ms_thesis.pdf), [formalization](https://github.com/SSSPigeon/SST2AIR-in-Lean), [SSD1 PDF](/ssd1/sichangheagent/vlpw/verifying_verus.pdf), [text](/ssd1/sichangheagent/vlpw/verifying_verus.txt). References below use printed pages; the PDF page is one higher after the title page.
-
 This adds implementation and completion detail to the [existing Verus overview](../topic_studies/formal_verification_rust/rust_verifiers/verus.md). The artifact has not been independently built or audited.
-
-## Central lesson for VL
-
-This is useful infrastructure for checking Verus's translation, with unfinished correctness proofs. It should not be cited as a completed verified compiler pass. The author states (§4.4.4, printed p. 54): “The mechanized proof of the theorem is left to future work.” The conclusion (§5, p. 55) also says: “we stated, but have not proved, on the SST side, preservation and soundness of the interpreter relative to the denotational semantics” Those statements qualify the more optimistic abstract and intermediate prose.
-
-Agent inference: a proof-producing backend proves the translated formula. To make that evidence cover original Rust, VL must also account for translation correctness and the exact supported fragment. This thesis begins that work; it does not close it.
 
 ## What it models
 
@@ -60,16 +51,6 @@ Remaining boundaries in §5.1–§5.2, pp. 55–57:
 - correspondence to the actual Rust implementation of the pass and the other pipeline stages
 
 The thesis reports no comparative benchmark or full-program success rate. Its evidence is formalization structure and selected proof cases, not empirical agent automation.
-
-## What VL can learn; what was already done
-
-Agent recommendations: record which translation stages remain trusted; retain source/target valuation coherence and domain guards in any translation audit; report axiom provenance and unfinished proof obligations explicitly. Use the thesis's syntax, semantic domains, and first-order model infrastructure as starting material if VL later investigates checked translations. Checking the current artifact would be a separate task.
-
-The work follows established compiler-verification practice, citing CompCert and CakeML (§5.2, p. 57). It does not invent the need for semantic preservation. Its concrete contribution is a Lean formulation of a real Verus expression-translation fragment. It is complementary to VerusBelt's API semantics: neither paper establishes the complete implemented Rust-to-SMT-to-executable chain.
-
-## Product threat
-
-Agent inference: little direct substitution for VL's proposed autonomous Verus generation. The thesis supplies no agent pipeline, inferred user intent, or repository proof-generation results. Its significance is assurance competition: a product may eventually promise a smaller trusted translation boundary using this line of work. Today, citing this thesis as evidence that Verus itself is fully verified would overstate the source. VL's existing requirement that verifier success be accompanied by semantic adequacy and provenance remains necessary.
 
 ## First reading
 

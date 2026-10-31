@@ -8,8 +8,6 @@ Katara takes a sequential C/C++ data type plus a small operation-ordering policy
 
 The key user artifact is a sequential reference, not a CRDT proof written by hand. The paper says: “Users need only to annotate their sequential data types with a simple function that defines the order in which conflicting operations should appear to occur.” (§1, p.2) Katara extracts LLVM semantics, synthesizes candidate state and runtime logic, checks bounded candidates, then synthesizes invariants for unbounded verification (§6, p.18; §5.3, pp.17–18).
 
-Inference: this is relevant to VL as a pattern for generating verified Rust data structures from a reference API and a compact policy. It is a synthesis system, not a Verus implementation, so the Verus forms below are translations of the proof obligations rather than claims about the paper's tool.
-
 ## technique 1: sequential reference plus ordered semantics
 
 What it is. A sequential type is modeled by `st(s,o)`, `query(s,q)`, and `initialState`; a CRDT has corresponding starred functions plus `merge`. Since distributed operations may arrive in different orders, Katara lets the user define `opOrder(o1,o2)`, meaning o2 may occur after o1. The paper explains: “Instead of having to consider all potential interleavings of operations in a distributed system, operation orderings make it possible for users to specify the distributed behavior in terms of a sequential execution model.” (§3.2, p.7)
@@ -93,7 +91,7 @@ What it is. Katara synthesizes state transitions, queries, relations, and invari
 
 How to apply it. Extract LLVM IR from the sequential C/C++ source, inline user-defined functions, map primitive and collection APIs to SMT theories, and turn basic blocks into conditional specifications (§6.1, p.18). Generate grammar productions consistent with argument and return types; increase expression depth iteratively. For non-idempotent operations, add node-ID map reads, writes, and reductions (Figure 9, p.15).
 
-Verus form. Inference: model the same restriction with Rust types and `spec fn` signatures so impossible expressions are rejected before proof search. Use `assert` and `broadcast proof fn` only where solver facts are needed; keep collection specifications explicit. Inference: Verus does not synthesize Rust from a grammar automatically, so a VL implementation would need a separate generator whose output is then verified.
+Verus form.
 
 Evidence. Table 2 reports default and no-pruning times for nine benchmarks, run on an AMD Ryzen 9 3900X (12C/24T) with 48 GB memory, up to 12 threads, LLVM 11, Rosette 4.1, and CVC5 1.0.2 (§7.1, pp.19–20). Default times range from 26s ± 0.2s (Last-Writer-Wins Register) to 21m 17s ± 11s (Add-Wins Set); General Counter takes 11m 3s ± 4s (Table 2, p.20). The paper reports averages with standard deviations and does not state the number of runs in the text I read.
 
@@ -103,7 +101,7 @@ Limits. CVC5 has no map theory in this implementation; “the bounds we use for 
 
 The proved claim is that generated CRDT operations and queries match the sequential reference under the declared ordering and that the state merge converges for the supported semilattice construction. The measured claims are synthesis success, time, pruning speed, and alternative designs for nine benchmark specifications (§7, pp.19–23). Inference: trusted or bounded parts include LLVM semantic extraction, Rosette/CVC5/Z3, collection theories and axioms, the grammar, the sequential reference, operation-ordering policy, and hardware/runtime behavior. Inference: the reference implementation and ordering policy are the dominant product trust boundary because a wrong reference can be proved perfectly.
 
-The paper reports a novel map-based Two-Phase Set using an `OrBool` map and default `true`, as the first design generated for the Two-Phase Set benchmark, “to our knowledge” novel; continued search emits the classic 2P-Set (Figure 14, p.22; §7.3, pp.22–23). Inference: VL should not redo generic synthesis of CRDTs from sequential types, semilattice-based convergence, query-parameterized equivalence, or two-phase bounded/unbounded pruning without a new Rust/Verus result. A product of agent-written verified Rust still faces specification omission, unsupported library semantics, bounded fallback proofs, and synthesis timeouts. Inference: the strongest reusable idea is to force a small reference contract and have the generator return only after an independent unbounded proof.
+The paper reports a novel map-based Two-Phase Set using an `OrBool` map and default `true`, as the first design generated for the Two-Phase Set benchmark, “to our knowledge” novel; continued search emits the classic 2P-Set (Figure 14, p.22; §7.3, pp.22–23).
 
 ## techniques for the catalog
 
@@ -114,4 +112,3 @@ The paper reports a novel map-based Two-Phase Set using an `OrBool` map and defa
 - bounded-log pruning — reject candidates with finite operation logs before unbounded invariant synthesis
 - typed SMT grammars — constrain generated expressions by specialized types and lower supported APIs to solver theories
 - node-owned non-idempotent state — use node-keyed maps and reductions to synthesize counters and related operations
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We derive significant power from our choice to implement the internal state of the CRDT via a semilattice."): read the paper text from first line to last and checked every quotation, page and section reference, Table 1/Table 2 numbers, Figure 13 numbers and the technique steps; changed the link to the arXiv page given in the paper text (arXiv:2205.12425), corrected page references for §5.1, §5.2.2, Figure 12 and Figure 14, rewrote the bounded-log step (the log is assumed in-order and coherent, not checked as a rejection test), fixed the garbled Table 2 time range, added the Grow-Only Counter counterexample to pruning speedups, and marked the trust-boundary sentence as Inference; did not check the Verus translations beyond marking them Inference, did not check cited works, and did not verify the DOI of the published OOPSLA version.

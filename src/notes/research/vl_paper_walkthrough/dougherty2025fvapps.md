@@ -8,8 +8,6 @@ FVAPPS turns ordinary programming interview problems into a benchmark that requi
 
 The sample shown in Figure 2 has `solve_elections` followed by nonnegativity, upper-bound, zero-vote, and concrete zero-vote theorems. This separates executable synthesis from explicit correctness properties. The source problems are not themselves trusted specifications: the authors caution that “it is nontheless [sic] possible that particular theorems are not applicable or vacuous in some form” (Section V, p. 77). Thus the benchmark measures ability to prove its supplied statements, not whether those statements express the product requirement.
 
-Inference: VL can use the same shape with a Rust/Verus function, a set of `requires`/`ensures` contracts, and proof obligations, while retaining the distinction between executable code and properties. Translating Lean syntax to Verus is an adaptation; this paper does not evaluate Verus.
-
 ## technique 1: staged benchmark curation
 
 Use staged filtering when creating a verified-code benchmark from ordinary programming tasks:
@@ -48,12 +46,9 @@ A human spent ten hours on one sample’s definition and one theorem, completed 
 
 Inference: the benchmark proves only that Lean accepts a generated definition and theorem proof under Lean 4.12.0 and the pinned Mathlib commit. It trusts the Lean kernel, Mathlib, the theorem statements, the conversion pipeline, and the quality filters. It does not prove that the theorems cover the intended behavior. A key failure mode is proof-amenable structure: the authors report that Sonnet solved many problems via imperative programming with the identity monad (`Id.run do`), which “fails to capture inductive structure that lends itself to proofs” (Section III.E, p. 76).
 
-Inference: the threat to VL is high for evaluation design and moderate for product safety. FVAPPS demonstrates a repeatable way to measure agent progress, but its 30% and 18.5% theorem success rates do not predict Verus production reliability. A VL benchmark should score proof completion, executable tests, contract adequacy, and adversarial properties separately. Reusing FVAPPS’s task format without checking contract meaning would reproduce its stated vacuity risk.
-
 ## techniques for the catalog
 
 - staged curation — filter ordinary programming tasks through tests, typed theorem formation, and property plausibility before proof benchmarking
 - prover-scaffold loop — run each model candidate in a pinned environment and feed complete diagnostics back for bounded repair
 - incremental obligations — solve the executable definition, then append and prove one theorem or contract at a time
 - environment prompting — state exact tool APIs, versions, goals, and working examples in the model context
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Initial attempts were unsuccessful in solving all of the theorem statements at once; to give the model a better chance at solving the problem we show and allow the model to solve one statement at a time"): I read the whole paper and checked every quotation, number, section and page reference, and the pipeline steps against it. I changed the pipeline step order (the paper runs theorem typechecking as stage 3 and Lean guard tests as stage 4), the Section V vs IV and p. 77 vs 76 reference and the paper's misspelling in the vacuity quote, the bracketed insertion in the loop quote, the location of the Prompt Details and Scaffolding Loop subsections (p. 75, after II.C, not II.B), the Table II reading (the paper does not define "Successes" and its text gives 43 and 23 samples with a theorem completed), the human-baseline cause wording, and labeled several of my own conclusions as Inference. I did not check the cited external works, the PDF figures beyond their captions and Table I/II/III numbers, or the dataset itself.

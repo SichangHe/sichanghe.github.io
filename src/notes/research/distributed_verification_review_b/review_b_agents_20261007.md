@@ -183,7 +183,6 @@ coverage and gaps
 - remaining leads: Lang2LTL, NL2TL, Grammar-Forced Translation, ClarifyCodeBench
 - 1999 ICSE patterns author PDF host unreachable
     - claims above use the saved 1998 paper
-- detailed source audit and search snapshots: /ssd1/sichangheagent/verus_distributed/lit_b/agents_evaluation.md
 - two misleading collection matches corrected during reading
     - Proofs Promptly print-warning PDF replaced by its actual paper
     - unrelated photo-sharing P3 excluded

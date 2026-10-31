@@ -7,8 +7,6 @@ The paper targets parallel programs whose internal computation is deterministic 
 
 The paper presents Musketeer for proving schedule-independent safety, Angelic for verifying one safe terminating interleaving, and ChainedLog as a relational foundation for Musketeer. The results are mechanized in Rocq using Iris (abstract and contributions, pp. 1–3). The verification method first establishes schedule-independent safety, then verifies one selected execution.
 
-## technique 1: schedule-independent safety with Musketeer
-
 ### when to use it
 Use Musketeer when a parallel program’s operations are internally deterministic or otherwise have safety independent of scheduling. The property is weaker than internal determinism: a program may observe nondeterministic actions yet remain safe. The paper’s motivating example is two atomic additions to a shared counter followed by an assertion.
 
@@ -29,8 +27,6 @@ Inference: In Verus, a concurrent data structure can expose a state-machine inva
 ### limits
 Musketeer transfers safety from one terminating execution to all executions; it does not establish termination of every execution. Extending the method to liveness properties such as termination is future work (§9, p. 26). Internal determinism implies schedule-independent safety, but the converse is false (§1, p. 3).
 
-## technique 2: Angelic verification of one interleaving
-
 ### what it is
 Angelic is a weakest-precondition-style logic that lets the verifier select one safe terminating interleaving. Angelic itself does not require schedule-independent safety; that property is needed to infer safety of every execution from its result (§6.1, Theorem 6.1, p. 16; §2.3, pp. 6–7). The abstract summarizes the combined method: “Once a parallel program has been shown to satisfy schedule-independent safety, we can verify it with a new logic called Angelic, which allows one to dynamically select and verify just one sequential ordering of the program.” (p. 1).
 
@@ -43,8 +39,6 @@ Angelic is a weakest-precondition-style logic that lets the verifier select one 
 
 ### Verus form (inference)
 Inference: A Verus proof can model the selected order as a ghost schedule and prove a sequential executor against a postcondition. A separate lemma can show that the concurrent implementation refines the same abstract state for every schedule. `requires` can constrain the schedule to a permutation of enabled operations; `ensures` can state the selected run’s result. This is a proof architecture inspired by the paper, not a Verus feature claim.
-
-## technique 3: MiniDet affine type system and logical-relations proof
 
 ### what it is
 MiniDet is an affine type system designed to prevent resource patterns that could produce nondeterministic behavior. Lemma 7.1 states that `∅ ⊢ e : τ ⊣ ∅` implies schedule-independent safety (§7.1, p. 18). The proof associates each typing judgment with a Musketeer triple and uses a logical relation over types, values, and shapes (§7.1, pp. 19–20).
@@ -61,8 +55,6 @@ The paper reports: “All results in this paper have been verified in Rocq using
 ### Verus form (inference)
 Inference: Verus can encode affine resource ownership with tracked ghost tokens and state-machine permissions. A logical relation can be a `spec fn` relating an abstract type tag, ghost shape, and concrete value; proof lemmas establish preservation across function calls. Verus’s ownership discipline helps, but the exact affine typing theorem would need a custom library and cannot be obtained from Rust ownership alone.
 
-## technique 4: deterministic primitives and phased use
-
 ### priority writes
 A priority write atomically updates a reference from y to `max(x,y)`. Because max is associative and commutative, writes can run concurrently; client reads occur in a separate phase (§7.2, p. 20). MiniDet tracks read and write phases with fractional permissions; changing phases requires full permission. The implementation observes nondeterministic intermediate values, so its Musketeer specifications are proved using ChainedLog (§7.2, pp. 21–22).
 
@@ -78,13 +70,6 @@ Inference: A Verus implementation should expose an abstract set sequence or fini
 ## technique 5: parallel deduplication
 The paper combines the primitives to verify parallel array deduplication. The implementation allocates a hash set with capacity `length a + 1`, inserts all input elements through `parfor`, and returns the input array paired with `elems s` (Figure 21, p. 24). MiniDet establishes schedule-independent safety, assuming the hash-function specification. Angelic then uses a derived sequential-loop specification for `parfor`; its hash-set rules require space for each insertion and ensure that `elems` returns exactly the set’s elements without duplicates (§7.4, pp. 24–25; Appendix C.2, p. 29).
 
-## evidence, trust, and product threat
-The paper reports mechanized soundness proofs for the logics, MiniDet, the primitive specifications, and the deduplication example (Contributions, p. 3; Data Availability Statement, p. 27). It gives no benchmark table of runtime, proof time, or lines of proof. Deletion is explicitly outside the verification: “Shun and Blelloch [2014] also propose a deletion function, which we do not verify.” (§7.3, p. 22).
-
-Inference: applicability to an implementation depends on its correspondence with MusketLang’s operational semantics, including atomic CAS. The paper proves its primitive specifications within that model; these specifications are not merely assumed. The study did not inspect the Rocq artifact or establish correspondence with Rust or a hardware memory model.
-
-Inference: For VL, the strongest reusable idea is to separate a concurrency proof into (a) an abstraction showing schedule-independent safety and (b) a sequential functional proof. This could lower proof branching for verified Rust data structures. The threat is conditional: if the abstraction omits an observable race, Angelic’s one-schedule proof can hide a bug. VL should not repeat the paper’s MiniDet mechanization or deterministic hash-set case study; a useful new experiment would measure proof effort and maintenance for equivalent Verus state-machine abstractions.
-
 ## techniques for the catalog
 - schedule-independent safety — prove one terminating safe execution implies safety of all schedules
 - Musketeer separation logic — use restricted triples and chained relational proofs to establish that schedule independence
@@ -92,4 +77,3 @@ Inference: For VL, the strongest reusable idea is to separate a concurrency proo
 - MiniDet logical relation — prove an affine type system sound by relating types, deterministic shapes, and values
 - phased priority writes — use associative/commutative updates concurrently and separate writes from reads
 - deterministic concurrent hash set — maintain ordered probing so parallel insertion yields deterministic contents
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "These two rules can be derived from the more general constructs of Angelic that we have now seen."): checked the full text, including appendices and references, against the study’s quotations, numbers, section and page references, and technique steps; corrected page references, safety versus termination transfer, Angelic’s independent soundness, witness handling, hash-insertion retries, deduplication prerequisites, and the distinction between proved specifications and implementation assumptions; did not inspect the Rocq artifact, rerun its proofs, or validate the Verus inferences.

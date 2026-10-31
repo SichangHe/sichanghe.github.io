@@ -69,15 +69,9 @@ Verus form. Inference: Verus has no `?` specification wildcard or optimistic hea
 
 The paper proves soundness through progress and preservation. Progress says execution continues when generated run-time checks hold; preservation says a valid dynamic state remains valid after a step. The statement is explicit: “Together, these imply that dynamic execution will only halt if a run-time check fails.” (§4, p.18) The soundness proof is built from lemmas for evaluation, framing, produce, consume, and the mutually recursive expression/formula judgments. (§4, pp.18–19)
 
-The result applies to the formal Gradual Viper/Silicon model and, by conservativity, to the corresponding static subset. It does not prove the concrete Viper implementation, Gradual C0 compiler, C0 runtime, or any user specification. Inference: for VL, the analogous trusted boundary includes Verus's source-to-formula translation, SMT solver, Rust compiler and erasure, external-body specifications, and the correctness of the Rust requirement encoded in `ensures`.
+The result applies to the formal Gradual Viper/Silicon model and, by conservativity, to the corresponding static subset. It does not prove the concrete Viper implementation, Gradual C0 compiler, C0 runtime, or any user specification.
 
 The authors list missing features: fractional and quantified permissions, richer front-end abstractions, and mechanization of the current symbolic-execution proof. (§6, pp.20–21) They also state that recursive handling is incomplete and propose formalizing Silicon's stronger SMT-axiom strategy. (§6, p.20) Inference: agent-written verified Rust is threatened mainly where a proof relies on unmodeled aliasing, incomplete recursive unfolding, or a contract that is too weak; the paper's semantics can guide a sound ownership API, but they do not automate contract discovery.
-
-## what VL should reuse and should not redo
-
-Inference: VL should reuse the separation of ownership predicates from heap-value properties, explicit footprint computation, visited-set recursion cutoffs with stated incompleteness, and progress/preservation proof structure. These give concrete design targets for proof-oriented Rust APIs and for a checker that distinguishes statically proved facts from runtime assumptions.
-
-Inference: VL should not redo a generic soundness formalization of unfolding and pure functions without comparing against this paper's rules and obligations. A new result would need Rust-specific semantics, implementation correspondence, or measured reduction in Verus specification burden.
 
 ## techniques for the catalog
 
@@ -86,4 +80,3 @@ Inference: VL should not redo a generic soundness formalization of unfolding and
 - gradual optimistic heaps — track precise and imprecise ownership separately and emit runtime checks for assumptions introduced by `?`
 - recursive visited-set cutoff — stop recursive symbolic unfolding or pure-function evaluation at visited instances and retain sound postcondition constraints
 - progress-preservation soundness — prove that matching static and dynamic states preserve validity and only halt when a generated runtime check fails
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -16,7 +16,7 @@ The paper models an ITP as `(A,S,T)`: proof steps `A`, states `S`, and transitio
 
 The Isar implementation relies on hierarchical `proof...qed` blocks. The `proof(prove)` mode indicates a newly declared goal whose next step must be a proof method; `proof(state)` and `proof(chain)` carry other structural roles (Section 2.2, p. 4). This explicit structure lets the algorithm replace an inner block without discarding surrounding context.
 
-Verus form. Inference: represent a generated Rust/Verus proof attempt as a parsed tree of contract blocks, proof functions, and tactic-like statements, with a verifier state after each executable/proof step. The direct Isar syntax does not carry over, so VL needs a parser for the Verus constructs it permits. A candidate remains untrusted until `verus` checks the complete resulting source. Verus's `proof fn`, `requires`, and `ensures` can express the retained contract, while placeholder nodes are search artifacts and must be removed before verification.
+Verus form.
 
 ## technique: maximal compatible semi-proof (MCSP)
 
@@ -49,7 +49,7 @@ Verus form. Inference: use deterministic proof automation (`assert`, `reveal`, a
 
 ERP extends ProofAug to tree search without restarting an entire proof. When ATP fails at a conjecture, the current partial proof and proof state are sent to the model. A successful completion is tested immediately. If it fails, the algorithm extracts failed tactics and retries them with ATP. New search nodes are added only for failed conjectures in the original MCSP. The state priority is the end position of the failed block: descendants are preferred to ancestors, and otherwise earlier semi-proof positions win (Section 3.3, pp. 6–7).
 
-The authors explain the motivation: early errors can mislead a whole-proof tree search into spending budget after an invalid path. ERP instead checks whether a proposed reasoning path is valid before expanding it (Section 3.3, p. 6). Inference: a VL proof-search agent can use the same bounded expansion policy: preserve verified prefix state, ask for a completion only at the failing obligation, and branch on the failed block rather than resampling the entire Rust file.
+The authors explain the motivation: early errors can mislead a whole-proof tree search into spending budget after an invalid path. ERP instead checks whether a proposed reasoning path is valid before expanding it (Section 3.3, p. 6).
 
 ## experimental evidence
 
@@ -61,9 +61,9 @@ Their mixed-strategy experiment solves 61.9% of the original miniF2F-test within
 
 ## what is trusted and what fails
 
-The ITP verifies the final proof, but model prompts, parser correctness, block-boundary detection, ATP implementations, timeouts, and the benchmark formalizations remain trusted or operational assumptions. The paper reports that built-in automation is nondeterministic and exact reproduction can fail even in the same environment; they therefore recheck found proofs in Isabelle (Appendix D, p. 14). It also notes that miniF2F versions contain mistakes and inaccurate statements (Section 4.1, pp. 7–8). Inference: for agent-written verified Rust, ProofAug reduces search waste but cannot detect an incorrect Verus specification, a trusted external body, or a mismatch between source requirements and contracts. The benchmark-quality warning from this paper should be applied before using pass rates to tune VL.
+The ITP verifies the final proof, but model prompts, parser correctness, block-boundary detection, ATP implementations, timeouts, and the benchmark formalizations remain trusted or operational assumptions. The paper reports that built-in automation is nondeterministic and exact reproduction can fail even in the same environment; they therefore recheck found proofs in Isabelle (Appendix D, p. 14). It also notes that miniF2F versions contain mistakes and inaccurate statements (Section 4.1, pp. 7–8).
 
-The paper says ProofAug is strongest for declarative proof structures; procedural systems may need a converted declarative interface (Appendix C, p. 13). Its future work includes combining ProofAug with expert iteration and online learning, and fully exploiting its robustness in software engineering (Discussion, p. 9). Inference: VL should first measure block parsing, repair success, verification time, and complete-proof validity on a fixed Verus corpus before attempting model fine-tuning.
+The paper says ProofAug is strongest for declarative proof structures; procedural systems may need a converted declarative interface (Appendix C, p. 13). Its future work includes combining ProofAug with expert iteration and online learning, and fully exploiting its robustness in software engineering (Discussion, p. 9).
 
 ## techniques for the catalog
 
@@ -71,4 +71,3 @@ The paper says ProofAug is strongest for declarative proof structures; procedura
 - bottom-up proof augmentation — invoke automation at each hole and widen to enclosing blocks only after a finer obligation fails
 - efficient recursive proving — branch only at failed conjectures using the preserved proof state and bounded model completions
 - mixed strategy evaluation — combine prompts and proof-search modes, reporting dataset curation, query budgets, and denominators separately
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

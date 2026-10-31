@@ -21,7 +21,7 @@ How to apply it:
 3. Combine summaries of files and subdirectories into directory descriptions, continuing upward to the repository summary (Section III-A, pp. 4–5)
 4. Preserve the hierarchy so a detector can navigate from an RFC section to likely files and functions (Figure 4)
 
-The Babel example summarizes `route_lost`, `find_best_route`, and `send_update_resend`; retrieval then reaches related code in a different file (Examples 1–2, pp. 5–6). The paper reports an average Phase 1 cost of $1.89 per repository using Claude 3.5 Sonnet, 287K input and 66K output tokens, and 42 minutes (Table V, p. 9). Inference: for VL, a similar index can summarize Rust modules, trait implementations, state-machine transitions, and proof lemmas before asking an agent to align a natural-language requirement with code.
+The Babel example summarizes `route_lost`, `find_best_route`, and `send_update_resend`; retrieval then reaches related code in a different file (Examples 1–2, pp. 5–6). The paper reports an average Phase 1 cost of $1.89 per repository using Claude 3.5 Sonnet, 287K input and 66K output tokens, and 42 minutes (Table V, p. 9).
 
 Verus form: Inference: keep the index as retrieval metadata. Express the selected requirements with explicit `requires`, `ensures`, invariants, and `proof fn` lemmas. Verus can check the resulting proof obligations; neither successful verification nor index summaries establish that the contracts capture every RFC requirement.
 
@@ -45,9 +45,7 @@ Verus form: Inference: use retrieval to propose candidate proof obligations and 
 
 RFCAUDIT's retrieval study samples 30 RFC subsections (five per protocol) covering 131 properties. Localization retrieves 102 of 143 ground-truth functions (71.3% recall); after retrieval, function recall is 136/143 = 95.1%, type recall 7/9 = 77.8%, and macro recall 6/8 = 75.0% (Section IV-B2 and Table III, p. 8). Table V reports averages of 1,123K input and 90K output tokens, $5.03, and 81 minutes per protocol (p. 9). Its input-token totals are internally inconsistent: Babel's phases list 261K and 1,340K, but its total is 1,061K; the phase averages are 287K and 926K, but the total average is 1,123K. Inference: treat the reported input-token total as uncertain.
 
-The authors classify the 15 false positives as incomplete context retrieval (3), RFC misinterpretation (6), code misinterpretation (5), and an intentional implementation choice (1) (Section IV-B3, p. 8). They also acknowledge that manual classification can introduce subjective bias; two authors independently reviewed reports and resolved disagreements through discussion (Section IV-G, p. 10). Inference: using this technique to propose VL proof obligations depends on RFC interpretation, semantic summaries, retrieval tools, and LLM reasoning. A plausible report needs independent checking before it supports a repair.
-
-Inference: VL could reuse staged retrieval and validation to connect RFCs or design documents with candidate contracts. The paper evaluates bug detection, not Verus proofs or completeness of formal specifications.
+The authors classify the 15 false positives as incomplete context retrieval (3), RFC misinterpretation (6), code misinterpretation (5), and an intentional implementation choice (1) (Section IV-B3, p. 8). They also acknowledge that manual classification can introduce subjective bias; two authors independently reviewed reports and resolved disagreements through discussion (Section IV-G, p. 10).
 
 ## techniques for the catalog
 
@@ -56,5 +54,3 @@ Inference: VL could reuse staged retrieval and validation to connect RFCs or des
 - staged conformance detection — localize, compare with the specification, retrieve, and validate in a finite-state workflow
 - self-critique validation — review the full reasoning chain to filter false positives
 - recall-first context collection — prefer retrieving extra relevant code over missing a function needed to establish a property
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Since this annotation is labor-intensive, we sample 30 RFC subsections (5 per protocol) from our datasets, covering a total of 131 properties across six protocols."): checked the complete paper text, quotations, counts, section and PDF page references, and technique steps; corrected the introduction quote attribution, page references, evaluation scope, retrieval-tool descriptions, and unsupported Verus coverage claim, marked conclusions as inferences, flagged inconsistent input-token totals, and replaced the link using the paper's arXiv identifier; did not independently reproduce experiments, inspect the artifact, or verify developer confirmations.

@@ -70,6 +70,5 @@ Concrete evaluation plan:
   obligation, or stale/deleted branch.
 
 Paper repository status: PDFs for several foundational adjacent papers already
-exist in `/hdd1/sichanghe/paper_collection`, but this agent could not download
 new memory-compaction PDFs because the collection is not writable by
 the agent account. URLs above are recorded as fallbacks until PDFs can be added.

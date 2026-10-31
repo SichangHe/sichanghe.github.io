@@ -67,14 +67,6 @@ The RPVP results concern the extended SPVP abstraction, with fixed import/export
 
 SPIN’s optional bitstate hashing uses a Bloom filter instead of explicit state storage and can miss execution paths. It was disabled in the other experiments: “Nevertheless, we have not turned on bitstate hashing in our other experiments in favor of full correctness.” (§5, p. 964).
 
-## relevance to VL
-
-Inference: Plankton supplies a reusable pattern for verified systems: prove a reduction theorem first, then optimize the executable checker under that theorem. For agent-written verified Rust, the threat is an unsound abstraction that passes local invariants while omitting a protocol behavior; a Verus transition-system proof can make this omission visible only if the full behavior is specified in the simulation contract.
-
-## comparisons and work VL should not redo
-
-The paper’s “10000× speedup” is a maximum over experiments, while “less than a second for networks with over 300 devices” is a separate implementation claim (§1, p. 954); the paper does not give one denominator for both, so they should not be combined into a single average. Minesweeper, Batfish, ARC, Bonsai, and prior explicit-state network model checkers already provide the baselines and reductions discussed in §§1–2 and 7. Inference: VL should not reproduce this network-verifier comparison unless the target is a verified Rust implementation or a new cross-layer proof.
-
 ## techniques for the catalog
 
 - PEC partitioning — build trie-based packet classes whose members have identical behavior
@@ -82,4 +74,3 @@ The paper’s “10000× speedup” is a maximum over experiments, while “less
 - RPVP reduction — model only convergence-relevant control-plane behavior and prove it covers all full converged states
 - completeness-preserving pruning — use consistent executions, deterministic-node tests, partial-order reduction, ordered failures, and representative failures from link classes
 - policy/state optimization — stop once policy-relevant nodes converge and hash repeated state entries
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Policies that check a single equivalence class are much cheaper: for example, single-IP reachability finishes in seconds or minutes even on the largest networks (Figure 7(b))."): checked the full text, quotations, numbers, references, technique steps, and limitations; corrected RPVP’s update procedure, theorem and section pages, scheduling dependencies, pruning conditions, scope limits, and publisher link; did not reproduce experiments or verify the implementation, mathematical proofs, or proposed Verus encodings.

@@ -79,10 +79,6 @@ The measured evidence supports the claim that this implementation and prompt pip
 
 The paper notes a numerical interpretation issue: ProGS's RF 0.903 is below Event-B Agent's 0.941 even though ProGS has higher PDR, because ProGS fixes Γ and does not add auxiliary lemmas; Event-B Agent may add over-restrictive components (§4.5, PDF pp.12–13). Runtime Coverage uses only three traces per system, so correctly modeled but unvisited cases can lower the score (§4.5, PDF p.13). The table values are proportions rather than explicitly stated counts of systems or obligations; the denominators for PDR and RF are the generated proof obligations and requirements, respectively, while Runtime and Trace are based on the three traces per system (§4.2, §4.4, PDF pp.10–11).
 
-Inference: The main product threat for agent-written verified Rust is semantic overfitting: a subtree repair can satisfy local proof obligations while changing intended behavior, just as the paper reports Event-B proof-oriented repairs causing unexpected deadlocks. A second threat is specification error: ProGS verifies the formalized requirements, not whether those requirements capture VeruLaw's user intent. A third is solver incompleteness and nondeterministic LLM repairs. VL should reuse the paper's repair-group and coverage ideas, but should not redo the Event-B benchmark comparison; it should test Rust/Verus transitions, real dependency assumptions, and behavior-preserving repairs.
-
-Inference: For VeruLaw, the practical adaptation is an explicit proof-sketch artifact alongside Rust code. Internal nodes hold case predicates and coverage lemmas; leaves hold transition functions and contracts. A CI loop can run Verus, group diagnostics by invariant and subtree, request a coordinated repair, then rerun structural and leaf obligations. This preserves the paper's essential method while making the Rust-specific translation and trusted boundary visible.
-
 ## techniques for the catalog
 
 - environment-model construction: generate typed state, invariants, variants, and validated dependency relations before event synthesis
@@ -91,4 +87,3 @@ Inference: For VeruLaw, the practical adaptation is an explicit proof-sketch art
 - sketch cleaning and cost selection: normalize trees, score structural quality, and repair the best of three candidates
 - subtree-based repair: map failed leaf obligations to a common subtree and repair related events together
 - joint evaluation: measure proof discharge, requirement fulfillment, runtime coverage, trace conformance, runtime, and LLM calls
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -2,12 +2,9 @@
 (authored by agents unless marked 🧑)
 Tag: `zhang2025drift`, [paper](http://arxiv.org/abs/2510.10815v4)
 
-
 ## purpose and result
 
 DRIFT is a four-stage retrieval-augmented autoformalization pipeline: decompose an informal theorem into concept queries, retrieve formal dependencies, illustrate their use with existing theorems, and formalize the original statement. The abstract states: “This facilitates targeted retrieval of premises from mathematical libraries such as Mathlib.” It evaluates Lean 4 on ProofNet (374 theorems), MiniF2F-test (224 after removing 20 noncompiling or duplicate examples), and ConNF (961 research-level theorems). On ConNF, GPT-4.1 with DRIFT reaches BEq+@10 62.33%, versus 6.76% zero-shot and 20.08% DPR; DeepSeek-V3.1 reaches 54.21% versus 11.03% zero-shot (Table 2, PDF p.9).
-
-Inference: For VL, this is a concrete design for selecting relevant vstd or crate lemmas before asking an agent to write Verus specifications. Lean numbers are evidence about retrieval and context assembly, not direct Verus performance.
 
 ## technique 1: atomic decomposition
 
@@ -65,10 +62,6 @@ Ablations show that the effects depend on the benchmark and metric. Removing all
 
 The oracle* baseline is only approximate: it supplies ground-truth dependencies that are “not necessarily optimal or exhaustive for formalization” (Section 4.2, PDF p.6). The authors hypothesize that illustrative theorems explain why DRIFT can exceed oracle* on ConNF (Section 5.2, PDF p.8; Appendix A.3.2, PDF pp.22–25). Table 2 reports percentages of problems with at least one successful generation among k attempts, for k=1 or k=10. BEq+ is an imperfect proxy: Appendix A.3.1 gives a false negative involving an equivalent formulation with local function definitions (PDF p.21).
 
-Inference: applying this system requires trusting the retriever training data and labels, embedding model, candidate theorem corpus, Lean compiler and tactics, BEq+ implementation, prompt templates, and the mapping from informal statement to reference formalization. Inference: in VL, generated retrieval metadata and contract translations should be logged as assumptions; a Verus proof can certify a chosen contract while the contract still omits a required safety condition.
-
-Inference: DRIFT could reduce wrong-lemma selection and provide examples of idiomatic Verus usage, especially for unfamiliar vstd APIs. Its Lean results do not establish Verus gains or eliminate specification errors. VL could evaluate decomposition and example selection on versioned Verus libraries; adaptive retrieval and compiler-feedback loops would be extensions.
-
 ## techniques for the catalog
 
 - atomic decomposition — split an informal theorem into concept queries with natural and formal anchors
@@ -77,4 +70,3 @@ Inference: DRIFT could reduce wrong-lemma selection and provide examples of idio
 - context assembly — provide declarations, examples, and the original statement to a formalizer
 - adaptive retrieval (future work) — choose between zero-shot and retrieval; the paper measures only an oracle upper bound
 - compiler feedback loop (future work) — revise attempts using compiler feedback; no implemented loop is evaluated
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We finetuned the BGE-M3 retriever model (Chen et al., 2024) on the Mathlib 4.7 dataset to specialize it for dependency retrieval in formal mathematics."): read the full paper including references and appendices; checked quotations, numerical results, method steps, section and page references, authorship tag and arXiv identifier; corrected page references, quotation wording, illustration selection details, pass@k interpretation, and the distinction between evaluated methods and proposed adaptive retrieval or compiler feedback; marked Verus proposals and trust assumptions as inferences; did not reproduce experiments, inspect released code or data, independently validate cited correlations, or test Verus adaptations.

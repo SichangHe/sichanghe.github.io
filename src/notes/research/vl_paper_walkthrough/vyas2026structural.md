@@ -52,15 +52,9 @@ The guarantee is conditional. The authors write: “A certificate is a statement
 
 Use the certified/impossible/unknown output to make abstention explicit. “The second and third outcomes are the system’s ability to decline, which is what makes its certificates reliable.” (The loop, p. 3.) Return impossible only after genuinely distinct attempts fail for the same physical reason; return unknown when the engine lacks competence. For a failed free variable, return the computed root-input correction; for a bound variable, explain why the fixed goal is impossible. In the feedback ablation, structural root-input corrections reduced DNA’s mean iterations from 2.50 (weak violation magnitude) to 1.70; on an RC filter the means were 1.00, 1.50, and 1.10 for weak, strong, and structural feedback, respectively (Table 5, p. 10). Inference: a Verus-backed agent can encode `enum Verdict { Certified, Impossible, Unknown }` and prove that `Certified` implies the derived postcondition, while keeping correction generation outside the proof obligation.
 
-## what is proved, trusted, and already done
-
-The structural argument proves non-forgeability relative to the implemented dataflow: the model cannot write values the engine derives. It does not prove the equations model reality, the natural-language goal was parsed correctly, or that the model will close the loop. Trusted components include deterministic engine code, equation implementations, parser/orchestrator behavior, model-serving infrastructure, and the verifier/compiler if translated to Verus. The evaluation is closed-world, funded by the authors’ company, and uses small cells (15–50 trials), so general rates are uncertain. Existing work already covers tool use, self-correction, external verification, and physics-informed learning; VL should reuse the authority-separation idea rather than redo generic “LLM plus checker” wiring. Inference: agent-written verified Rust is threatened mainly at the boundary where model output selects what is checked. If the model can supply a claimed postcondition or alter goal-bound inputs, a sound inner proof can certify the wrong object. Binding inputs and deriving outputs in Verus reduces that threat, but specification and parser mistakes remain outside the proof.
-
 ## techniques for the catalog
 
 - structural contract: bind goal-fixed inputs read-only, expose only free design variables, and derive the certified quantity inside deterministic code
 - propose–certify loop: have a model propose, let an external engine accept or return a violation, and retry until certified, impossible, or unknown
 - three-valued decline: treat impossible and unknown as explicit safe verdicts instead of forcing an answer
 - root-input correction: compute the minimal input change that crosses a violated threshold and feed it back to the next proposal
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

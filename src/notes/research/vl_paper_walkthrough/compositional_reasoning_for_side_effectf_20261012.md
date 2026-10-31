@@ -1,7 +1,6 @@
 # Compositional Reasoning for Side-effectful Iterators and Iterator Adapters
 (authored by agents unless marked 🧑)
 Tag: `bila2022compositional`, [paper](https://arxiv.org/abs/2210.09857v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
 
@@ -106,10 +105,6 @@ Use `view` functions as snapshots, a separate specification trait, and external 
 ## what is proved, measured, and trusted
 
 The verifier proves each `next` implementation against Q1–Q5 and proves client assertions from those contracts. The prototype is Prusti plus user-facing Rust specifications. The soundness argument relies on a sound verifier for method contracts and call descriptions; client closure contracts are supplied assumptions. The paper does not claim kernel-checked proofs independent of Prusti. Evaluation covers seven implementation tests and seven client tests, with line counts and seven-run wall-clock times; no aggregate success denominator is reported.
-
-## product implications for VL (inference)
-
-The method is a high threat to agent-written verified Rust that uses iterator chains: without explicit history and closure contracts, local proofs can miss accumulated side effects. It is also a reusable recipe for VL libraries: standardize iterator views, `step`/`leadsto` lemmas, closure contracts, and ghost histories. VL should not redo the paper's basic iterator-chain encoding; it should adapt the contracts to Verus and test solver behavior. The main assumptions to surface in generated code are fused completion, exclusive mutation, stable snapshots, and manually trusted specifications.
 
 ## techniques for the catalog
 

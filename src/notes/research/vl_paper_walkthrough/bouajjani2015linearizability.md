@@ -51,8 +51,6 @@ Steps (Section 4.2, pp. 9–10):
 3. Prove both directions: an accepted implementation execution has a projection violating `M_R`; and every violating execution can be renamed to one accepted by the automaton. The main text sketches this only for `RDeqEmpty` (Lemma 7, p. 9); the complete proof is deferred to the extended version, and the appendix gives `REnqDeq` (Lemma 16, Fig. 3, with a small-model result in Lemma 12) and stack rules (Lemmas 20–24, Fig. 4, mostly briefly). For register and mutex it only says the `REnqDeq` argument can be redone.
 4. Take the union `A` of all rule automata. Theorem 1 (p. 10) gives, for step-by-step linearizable and co-regular `S` and data-independent `I`, `I ⊑ S` iff `I ∩ A = ∅`.
 
-Inference: In Verus, the automata can be represented as a ghost finite state machine whose transitions consume operation events. A safety invariant proves the implementation never reaches an automaton accepting state. The regular-language construction remains an external synthesis step unless VL implements a generator.
-
 ## technique 4: reduce automaton intersection to Petri-net coverability
 
 Use this for finite-shared-memory implementations with a finite-state thread abstraction and an unbounded number of threads. The paper's class `C` permits Boolean/data-valued locals and shared variables, but data values cannot be used in predicates.
@@ -68,17 +66,9 @@ The reported complexity is PSPACE-complete for a fixed number of threads and EXP
 
 Inference: Verus can prove the finite-thread case directly with a state-machine invariant, but an unbounded thread count requires a parameterized invariant or an external Petri-net argument. Rust ownership and atomics do not automatically satisfy the paper's data-independence assumptions; they need explicit abstraction contracts.
 
-## evidence, assumptions, and VL impact
-
-The paper states step-by-step linearizability for queue, stack, register, and mutex (Lemma 4), co-regularity for all four (Lemma 7), and the generic reduction (Theorem 1); proofs are in the appendix (pp. 14–24) and, for Lemma 7, partly in an extended version. It gives no runtime benchmark or tool; its evidence is theorems and automaton constructions. The method assumes completed executions (sound when methods can always make progress in isolation), well-formed call/return histories, data independence, and non-ambiguous inductive rules. The paper notes that the methodology “currently does not capture priority queues, which are not data independent” (Section 7, p. 12).
-
-Inference: VL should not redo the generic reduction or the four ADT rule proofs. The reusable engineering target is a Verus ghost-history library plus generators for queue/stack violation monitors, followed by proofs that the Rust implementation's call/return trace refines the monitor model. Threat to agent-written verified Rust is high for concurrent objects: a local method contract can pass while a global history is not linearizable, and the monitor itself becomes a trusted specification artifact unless its rules are proved against the intended ADT.
-
 ## techniques for the catalog
 
 - inductive ADT rules: specify queue, stack, register, or mutex histories by ordered insertion rules and a unique last-rule function
 - step-by-step linearizability: reduce global linearization to projection checks against one finite matching set per rule
 - co-regular violation automata: recognize renamed call/return patterns for each non-linearizability class and union them
 - Petri-net reachability reduction: encode unbounded finite-state threads as tokens and check emptiness against the violation automata
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Methods communicate through a finite number of shared variables that also store Boolean values, or data values from D."): I read the whole paper text including the appendix and checked every quotation, section and page reference, rule definition, theorem and lemma statement, and the Petri-net and complexity claims; I changed the first quotation (it is from the introduction, p. 1, not the abstract), restored the last word-for-word quotation (“w.r.t.”), corrected page ranges, tightened the definitions of step-by-step linearizability and co-regularity, and replaced the Petri-net steps 3-4 that the paper does not state; I did not check the extended version, the appendix proofs line by line, or the Inference paragraphs beyond marking them.

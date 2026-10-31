@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `teuber2025next`, [paper](https://doi.org/10.1109/nse66660.2025.00007)
 
-Audit: audited 2026-10-13 against the paper; checked numbers, quotations, steps, pages and Verus forms; corrected page references (the paper has 6 pages; most were shifted by one or two), the 85% and 57% figures wrongly tied to the mixed strategy, the source-level-names instruction wrongly placed in the initial prompt, an unsupported claim about existing systems, and unmarked inference.
-
 ## what the paper studies
 
 Teuber and Beckert study generation of auxiliary JML annotations with an LLM and the KeY deductive verifier. The top-level specification is supplied by a human; the model fills one missing loop invariant or a subcontract for a called method. This boundary matters because the authors state: “if the partially annotated Java Program contains a top-level specification and the LLM only complements the annotation by auxiliary specifications such as loop invariants and/or method contracts for submethods, successful verification guarantees that the (human-provided) top-level specification is satisfied by the implementation.” (§II, p.2). The paper does not claim that an LLM-generated top-level contract captures user intent.
@@ -47,14 +45,6 @@ For invariant synthesis, the system prompt asks the model to understand the code
 For subcontract synthesis, the prompt asks for a `normal_behavior` contract with `requires`, `ensures`, and `assignable`, based on the calling method's needs. It says the contract should make the caller's specification provable (Appendix A, p.6). Feedback prompts distinguish syntax (“The provided code is not valid JML”) from semantics (“some proof goals were not closed”) and include the exact open proof branches.
 
 Verus form: Inference: use the same separation: first have the model state the intended relation, then emit only a Verus proof artifact; include the caller's required facts when asking for a callee contract. Keep feedback identifiers tied to source-level names and explain whether the failure is parsing, typing, invariant initialization, invariant preservation, or postcondition entailment.
-
-## evidence, limitations, and product threat
-
-The authors characterize the results as early and not statistically significant: the benchmark is small, shaded ranges in Figs. 2–3 are minima and maxima over five runs, and larger datasets are needed (§III, p.3). They only study one annotation gap; multiple missing invariants may require all gaps to be filled before any proof can succeed (§IV, p.4). Their claimed positive result is that iterative attempts improve success; the Results paragraph says the approach solves "approx. 85%" of invariant and 57% of subcontract problems (p.3), without saying which strategy. Table I gives 23/27 = 85.2% (pure sampling) and 24/27 = 88.9% (mixed) for invariants, and 7/14 = 50.0% and 8/14 = 57.1% for subcontracts. Inference: 85% matches pure sampling and 57% matches the mixed strategy.
-
-Inference: the trusted elements are KeY, its Java semantics and proof search, the human top-level contract, parser feedback, and the benchmark's manually prepared tasks. The paper proposes future testing or fuzzing before verification and using counterexamples as feedback (§IV, p.4).
-
-Inference: for VL, this is a moderate-to-high threat at proof-support boundaries. A model can generate a helper lemma or callee contract that makes a caller prove while omitting a requirement the human intended. VL should keep top-level requirements human-owned, verify every generated auxiliary artifact, and measure restart versus feedback under equal budgets. Inference: the mixed strategy suggests a practical agent policy: bounded repair attempts followed by fresh independent candidates.
 
 ## what has already been done
 

@@ -31,8 +31,6 @@ Steps:
 
 Evidence: this is the underlying completion task throughout the experiments, not a separately compared feature.
 
-Inference: this task is useful when an implementation and its contract already exist and only proof annotations are missing. For a VL implementation, protect the original executable code and contracts with a mechanical comparison and reject additions that merely assume the desired result. The prompt restriction alone does not establish preservation of either code or proof obligations. The paper does not demonstrate an attack or an integrity check, so it cannot establish whether such outputs were accepted in the reported runs.
-
 ## technique 2: verifier failures included before generation
 
 What it is: optionally run GNATprove on the incomplete program before the LLM call and add its unproved obligations to the prompt.
@@ -48,8 +46,6 @@ Evidence: the paper describes the feature as optional and gives no separate comp
 
 Limit: the paper does not compare different amounts of source context. It also rejects medium count as a measure of progress. §4.2 (p.7): “These provide feedback about which statements lead to a failure in verification, but the total number of medium messages is not indicative of the closeness to a completed verification.”
 
-Inference: the corresponding VL experiment would attach verifier diagnostics and the relevant source locations to the initial prompt, then compare against generation without these diagnostics. This paper supplies a procedure, not isolated evidence of its benefit.
-
 ## technique 3: n solutions per prompt
 
 What it is: request several responses to the same prompt. §3.4.5 (p.6): “N-Solutions determines the number of responses an LLM returns, per individual prompt.” The examples are one response at n=1 and five at n=5. The continuation notes that sampling temperature usually makes them distinct; it gives no temperature value.
@@ -57,8 +53,6 @@ What it is: request several responses to the same prompt. §3.4.5 (p.6): “N-So
 Steps: set n, request n responses for a prompt, and assess candidate outputs with GNATprove (§3.1, p.4; §3.4.5, p.6). The paper does not specify whether verifier runs execute in parallel or whether generation stops when one candidate verifies.
 
 Evidence: n=12 with no retry solves 20/71 cases (Table 1, p.9). Comparisons with retries appear below.
-
-Inference: multiple candidates are a reusable VL baseline. Parallel verification and early stopping are possible implementation choices, not documented steps of this paper's method.
 
 ## technique 4: retry with a failed attempt and its diagnostics
 
@@ -72,8 +66,6 @@ Steps (§3.4.6, p.6; Figure 1, p.5):
 4. Permit up to r retries, each producing n responses. §5.2 (p.8) bounds generated answers by n(r+1).
 
 Unspecified: which failed candidate is used when n exceeds one, whether candidates have separate retry chains, and whether all older attempts remain in the prompt. The description says that each additional attempt contains more context but does not define how that context accumulates.
-
-Inference: VL can reuse the failed-file-plus-diagnostics repair prompt, while specifying candidate selection explicitly. The paper's results do not distinguish alternative selection policies.
 
 ## technique 5: splitting a fixed answer budget between samples and retries
 
@@ -90,8 +82,6 @@ Evidence (Table 1, p.9; percentages below are calculated from the reported fract
 The authors conclude (§6.2, p.10): “This suggests that a balance between initial solution attempts and correction opportunities is more effective than relying on either approach alone.” Figures 6 and 7 (p.10) examine sample count and retry count while keeping the other parameter constant.
 
 Limits: only the two initially best configurations are reported as rerun. Their counts change by two and one cases. The paper gives no uncertainty estimates or statistical test. Inference: these observations motivate testing one or two feedback rounds, but do not establish a stable ranking or a statistically demonstrated advantage. They also do not compare retries against a policy that uses only retries and one initial sample, since n=1 was absent from the fixed-budget configurations.
-
-Inference: for VL, 4–6 samples with 1–2 retries are candidate starting settings, not demonstrated defaults for another verifier or dataset.
 
 ## technique 6: explain the failure before returning annotations
 
@@ -130,8 +120,6 @@ The table totals are 36 solved and 71 cases. Inference: schema-specific performa
 
 The authors acknowledge the dataset limit (§8, p.11): “Testing Marmaragan on a benchmark of 16 programs yielded initial results, but validating its robustness and generalizability requires a larger dataset.”
 
-Inference: VL can use the same removal-and-recheck recipe with existing verified functions, preserve their contracts, and report performance separately by removal schema. This is a proposed application; this paper evaluates no Verus code.
-
 ## technique 8: report a source believed to be outside model training separately
 
 What it is: include programs whose publication date is said to follow the model's training cutoff, then report their outcomes separately. §4.1 (p.7) claims of Argu: “It was first published after the cutoff dates for the training of GPT-4 and GPT-4o, so that unlike for the other programs in the benchmark, we can be certain that it was not included in the training data of these LLMs.”
@@ -150,14 +138,6 @@ Inference: confidence in a solved case depends on the verifier stack, adequacy o
 
 Specification generation remains future work. §8 (p.11): “One potential direction is enabling the generation of pre- and postconditions by the LLM itself.” Whole-program generation from a conversation is also future work in that section, not the evaluated task.
 
-## interpretation limits and relevance to VL
-
-The reported 36/71 combines the five initial configurations. Inference: their answer allowances total up to 60 per case, compared with 12 for any one configuration. The best initial result is 24/71 (33.8%), and the best reported rerun is 26/71 (36.6%). These counts should remain separate from the combined 50.7%.
-
-The source-count inconsistency prevents reconstructing the stated 16-program selection from §4.1 alone. The five removal-schema counts and both result tables are arithmetically consistent. The paper sometimes calls derived cases programs, including schema sizes of 22 despite the stated 16 source programs.
-
-Inference: the directly reusable ideas for VL are annotation completion under fixed contracts, diagnostics in generation and repair prompts, explicit sampling/retry budgets, and removal-based evaluation. Their effectiveness with Verus remains untested here. The small benchmark, uncertain training exclusion and limited reruns do not support a product-level competitiveness claim or a required success threshold for VL.
-
 ## techniques for the catalog
 
 - annotation completion under fixed contracts: prompt for only annotations and annotation-only control flow, then assess the returned implementation with GNATprove
@@ -168,5 +148,3 @@ Inference: the directly reusable ideas for VL are annotation completion under fi
 - explain-first prompt: request a diagnosis and code in one response; its one reported run matches the mean of the two base-prompt runs
 - removal-based benchmark: remove selected annotations from verified implementations and keep cases that produce mediums
 - training-exclusion subset: report Argu cases separately, preserving the authors' condition on cutoff information
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each benchmark, a separate schema for removing pragma statements from the programs was devised."): read the full paper text from first line to last; checked all study quotations, numbers, section and PDF-page references, and technique steps; corrected the success criterion and budget interpretation, flagged the source-count discrepancy, removed unsupported external claims, and marked proposed applications and conclusions as Inference; did not inspect the implementation, replicate experiments, verify model training membership, or check image-only details in the figures.

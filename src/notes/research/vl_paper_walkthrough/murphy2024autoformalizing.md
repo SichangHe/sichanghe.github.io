@@ -54,5 +54,3 @@ Inference: the repair examples suggest testing argument correction and theorem-v
 - approximate statement comparison: rank variable correspondences and count resolved precondition and postcondition obligations
 - implicit premise completion: use restricted symbolic reasoning while keeping object constructions explicit
 - proof repair measurement: report as-is acceptance separately from similarity to manually repaired Elements proofs
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "One additional intricacy in formalizing theorem statements from Elements is that, unlike in modern mathematics, Euclid does not always state a complete logical theorem statement before beginning a proof."): checked all paper text, study quotations, numbers, references, technique steps, tag, and arXiv link; corrected equivalence and completion procedures, evaluation scope and denominators, repair dataset, and page references, and marked proposed Verus transfers as inferences; did not reproduce experiments, inspect repository code, or independently validate the axioms and SMT implementation.

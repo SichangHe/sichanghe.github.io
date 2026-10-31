@@ -46,11 +46,6 @@ Verus form (Inference): a proof that a check matches a reference oracle can be e
 ## technique: perturbation and specification ablations
 The paper tests whether labels are stable under meaning-preserving paraphrases and deterministic template wrappers. Opus flips 33% of borderline labels versus 5% controls; GPT-4o flips 44% versus 7% under templates (Table 6, p. 18). A prescriptive rubric lowers contested EU AI Act rate by 30.9 percentage points and FINRA by 19.6, yet converted predicates are only 57.7% accurate versus 88.8% for unprompted consensus (§7, p. 6; Appendix D, p. 16). Swapping eight worked examples changes the resolved set (Jaccard 63.3%) and accuracy (58% versus 76%) (Appendix D, p. 16). Inference: Verus specifications need regression tests under semantics-preserving input changes, because proof stability does not establish requirement stability.
 
-## what is trusted, what remains, and VL threat
-The executable check, attested fields, record construction, rewording operator, extraction model, Verus verifier/solver, Rust compiler, external libraries, and natural-language-to-predicate decomposition remain trusted to varying degrees. The paper admits faithfulness is uncheckable by intervention alone: “One agent obligation carries three deontic clauses and its rule covers one.” (§8.3, p. 9.) Its synthetic gate is preliminary; the deployed corpus is one credit agent; regulatory labels are mostly proxy labels; and adversarial predicate authorship is out of scope (§9, p. 9; §E.4, p. 19).
-
-Inference: threat to VL is high for routing and specification capture, not because Verus fails its proof obligations. An agent can produce a valid proof for a check that reads an agent-written field or omits a clause. COVER’s attested-field and fail-closed ideas are directly useful: auto-verification should require externally produced evidence, while unresolved predicates remain judged. The paper’s cost model makes the trade explicit: token cost is `N(1-q)cj`, while safety cost is `Nqf` times missed-determination loss (Appendix F, p. 20). What VL should not redo is a single-model “decidability classifier” or a judge-agreement certificate; this paper already shows why both are unsound.
-
 ## techniques for the catalog
 - type routing: classify each predicate as fixed-checkable or judgment before enforcement
 - corroborate-then-verify: use unanimous panel output only to prioritize synthesis, then gate the executable check
@@ -58,4 +53,3 @@ Inference: threat to VL is high for routing and specification capture, not becau
 - intervention gate: require structure, groundedness, sensitivity, and rewording invariance
 - perturbation audit: re-probe labels under meaning-preserving paraphrases and templates
 - dual-cost accounting: report automation coverage, false-decidable denominator, and recurring judge cost
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

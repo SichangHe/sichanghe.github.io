@@ -60,8 +60,6 @@ Model choice remains material: Claude models proved about three times more theor
 
 The Lean kernel checks each accepted proof relative to the theorem statement, imported libraries, and trusted kernel. The agent's architecture and reviewer are not proofs. The paper measures pass rates, token budgets, error categories, and costs, but comparisons in Table 1 mix results reported by other papers and different budgets; the paper itself warns that foundation-model strength and architecture are intertwined. Its impact statement says, “A proof assistant certifies a theorem only relative to its formal statement, dependencies, and trusted kernel.” (Impact Statement, PDF p. 8)
 
-Inference: for agent-written verified Rust, the direct threat is false confidence from a compiled but mis-specified theorem, stale dependency assumptions, or reviewer acceptance of a loophole. AxProverBase's loop, compact memory, deterministic verification, and bounded retrieval are directly reusable patterns. Its Lean benchmark numbers do not establish Verus performance, systems-code correctness, or safety against all agent attacks. VL should adapt the acceptance and memory discipline before attempting larger autonomous proof search.
-
 ## techniques for the catalog
 
 - iterative proof refinement — compile each candidate, return diagnostics, and repair the same theorem until a complete proof is accepted
@@ -69,4 +67,3 @@ Inference: for agent-written verified Rust, the direct threat is false confidenc
 - self-managed proof memory — summarize durable lessons from prior attempts instead of replaying an unbounded transcript
 - bounded library retrieval — search theorem libraries and documentation within a fixed tool budget before proposing proof code
 - model–scaffold separation — compare foundation models inside the same agent loop so architecture and model gains are measurable separately
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

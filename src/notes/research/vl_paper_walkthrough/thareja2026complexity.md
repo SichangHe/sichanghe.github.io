@@ -38,16 +38,9 @@ Expose competing designs before implementation. The paper compares an ensemble-m
 
 Verus form (Inference): encode round/client cardinalities and dependency preservation as arithmetic and sequence invariants. A verified planner can prove each aggregation consumes exactly the preceding round's model and that namespaces are disjoint. Resource availability and measured wall time remain environmental observations.
 
-## trust, assumptions, and threat to VL
-
-The paper proves no theorem about workflow correctness. It reports: “All three produced functional Pegasus workflows but differ in design completeness, interaction effort, and reproducibility.” (section V-B, p. 6). Its evidence is source conformance, regeneration, execution completion, and corrected-run metrics. Trusted elements include the natural-language specification, reviewer judgments, manually formalized defect classification, Pegasus and HTCondor, containers, data paths, model code, and all external services. The conformance reviewers were ten sessions of one model; false-positive rate was not measured. The authors note that only six of nine defects fell under a written constraint, so static checking's reach is bounded.
-
-Inference: for VeruLaw, the transferable pattern is a persistent spec artifact that is independently checked and used to regenerate code, combined with runtime repair. Agent-written verified Rust can make the manifest and local wrappers trustworthy, but remote workflow orchestration, filesystem staging, GPU training, and data correctness remain outside a normal Verus proof unless modeled. The largest product threat is silent divergence between a high-level requirement and generated code that runs successfully; the paper's random-tensor incident is a concrete analogue. VL should adopt explicit acceptance criteria and regeneration tests before treating generated code as verified.
-
 ## techniques for the catalog
 
 - specification-driven generation — review constraints and expected outcomes before generating executable workflow artifacts
 - skill-grounded construction — package API knowledge, examples, templates, and checklists as reusable per-step skills
 - dual validation loop — combine runtime failure repair with static conformance and regeneration checks
 - orchestration choice and scale test — surface alternative DAG structures and measure controlled round/client tradeoffs
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

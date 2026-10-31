@@ -96,17 +96,8 @@ evidence and limits
 
 The paper manually validated 22 previously unknown findings and disclosed them; 16 were fixed or confirmed, two had CVEs, and the remainder were under assignment (Section 6.4, p. 11). Inference: these counts measure discovery and maintainer response, not formal proof or the number of previously unknown bugs missed. The benchmark baselines use the same OSS-CRS entry-point convention (Section 6.1, p. 8).
 
-## what remains trusted, contradictions, and product threat
-
-Inference: trusted elements include the LLM's threat model and hypotheses, the fuzzer and harness, the assertion instrumentation, triage reasoning, PoV reachability judgment, compiler/toolchain, and the correctness of the stated security intent. The paper evaluates findings against known PoVs or manual judgment; it does not prove the inferred invariants, the fuzzer's completeness, or the absence of undiscovered vulnerabilities. Tables 1–2 (pp. 9–10) state, “Parenthesized %: C ODE -AUGUR’s relative improvement over that baseline under the same backing model, computed over the subjects where both ran successfully.” Inference: the OSV improvements of 61–370% and AIxCC improvements of 34–63% concern Existing+New totals, not recall alone; ATLANTIS comparisons omit subjects it could not run. Inference: the relevance to agent-written verified Rust is specification error: a Verus proof can pass a wrong security contract just as a Code-Augur invariant can survive an insufficient campaign. The useful design to reuse is the explicit assumption, counterexample, repair, and boundary-validation loop around the proof, not runtime assertions as a replacement for proofs.
-
-## what VL should not redo
-
-Code-Augur combines threat modeling, source-level invariant recording, specification-guided grey-box fuzzing, violation triage, and boundary PoV validation (Sections 4.1–4.4, pp. 5–7). Inference: VL should not claim these as new mechanisms without a distinct Verus integration or evidence. VL can add value by checking that Verus contracts are linked to concrete attacker inputs and by preserving counterexamples and contract revisions across dependency changes; this paper does not evaluate that integration.
-
 ## techniques for the catalog
 
 - threat-model artifact — record attacker control, scope, trust boundaries, security state, and exclusions before local reasoning
 - falsifiable invariant loop — commit security assumptions as source assertions, target them with grey-box fuzzing, triage violations, and refine benign assumptions
 - boundary PoV validation — report only candidates reproducible from an attacker-controlled program boundary and allowed by the threat model
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To mitigate data-leakage risk, we restrict the snapshot to the most recently disclosed records, covering February–April 2026."): read the full paper text from first line to last and checked all study quotations, numbers, section and PDF-page references, technique steps, tag and link; corrected the unrelated DOI to the paper’s arXiv identifier, page and section references, a quotation, the AIxCC challenge count, feedback limits, discovery-attribution scope and validation wording; marked conclusions as Inference; did not reproduce experiments, verify external disclosure records, or test the proposed Verus adaptations.

@@ -1,11 +1,6 @@
 # Verifying the Rust Standard Library
 (authored by agents unless marked 🧑)
 Tag: `cook2026verifying`, [paper](https://doi.org/10.1007/978-3-032-28079-4_19)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
-
-## scope and prior notes
-
-This study covers the full paper (22 pages, no appendix). The repository already has [rust_std_verification_effort.md](/ssd1/sichanghe.github.io/src/notes/research/topic_studies/formal_verification_rust/rust_verifiers/rust_std_verification_effort.md), so this file records the methods and quantitative details that note lacks. The paper studies an open, multi-tool campaign for proving selected classes of undefined behavior (UB) absent from Rust's evolving `core`, `alloc`, and `std` libraries. Absence of those UB classes is a safety result, not full functional correctness, liveness, security, aliasing, or termination.
 
 ## technique 1: organize verification as a rewarded, reviewable challenge program
 
@@ -13,7 +8,7 @@ What it is and when to use it. Split a large, changing library into concrete cha
 
 The paper says, “Verification tasks are organized into challenges. Each challenge specifies a concrete verification target, a list of assumptions, explicit success criteria, and a financial reward disbursed upon completion.” It reports 29 published challenges, more than 450 pull requests, and at least 21 external contributors from four institutions. CI runs every active proof on each pull request, so a change that breaks a proof is visible immediately.
 
-Step by step (the study's sequence assembled from sections 3.1 and 3.2; the paper gives no checklist, and review of soundness and the diff is the study's wording): define the target and assumptions; publish the contract and success test; let a contributor fork the pinned verification repository; require tool output and any source edits in a pull request; review soundness and the diff; merge only accepted artifacts; rerun all tools on later revisions. Inference: in Verus, VL could apply the same governance around `requires`, `ensures`, loop invariants, and proof modules, while retaining a pinned Verus toolchain and a separate proof fork. Inference: the contest and CI ideas carry over directly; Kani annotations, VeriFast predicates, and Flux refinements do not.
+Step by step (the study's sequence assembled from sections 3.1 and 3.2; the paper gives no checklist, and review of soundness and the diff is the study's wording): define the target and assumptions; publish the contract and success test; let a contributor fork the pinned verification repository; require tool output and any source edits in a pull request; review soundness and the diff; merge only accepted artifacts; rerun all tools on later revisions.
 
 Evidence and limits. Four tools are integrated: Kani, ESBMC, VeriFast, and Flux; Verus, Creusot, KRust, and RAPx were under review. The authors explain that “no single tool can discharge all verification conditions.” Section 5.1 says the authors under-budgeted time for community consensus and institutional coordination, and that formal legal agreements took months to finalize; these are schedule lessons, not proof evidence. The campaign found no previously unknown memory-safety vulnerability, but did find incorrect SIMD results, missing unsafe annotations, incorrect SAFETY comments, and incorrect panic documentation.
 
@@ -34,8 +29,6 @@ fn check_wrapping_shl() {
 }
 ```
 
-For a Verus implementation, this is an inference: write a `proof` or harness function that constructs arbitrary values only where the type's invariants are represented, then call the verified Rust function under `requires` and `ensures`. Verus does not provide Kani's whole-program symbolic execution, so VL would need explicit finite-domain generation, a model-checking backend, or deductive contracts. The idea of generating harnesses at an intermediate representation level carries over; the exact `kani::any` API does not.
-
 The campaign produced 16,748 harnesses: 4,645 unsafe, 1,126 safe abstractions, and 10,977 other safe functions. 11,970 passed Kani's checked UB classes; 4,778 failed because of missing models, timeouts, or unsupported features. The denominator matters: only 11,970/16,748 (71.5%) automatic harnesses passed, and only 295 of those had contracts. With 694 manual contract proofs, 989 functions had contract-based proofs. Of 17,207 skipped functions, 9,635 (56%) were generic, 3,826 (22%) lacked `Arbitrary`, 3,246 (19%) were Kani internals, and 500 (3%) had other reasons. Thus extending generic and pointer/reference support could address 78% of skips, but this is a projection rather than a demonstrated result.
 
 ## technique 3: separate validity invariants from semantic safety invariants
@@ -50,7 +43,7 @@ In Verus, this maps naturally to a `spec fn` predicate and a `requires` clause, 
 
 By default Kani unrolls loops to a configured bound and inserts an unwinding assertion. If the assertion passes, all reachable paths up to the model are covered; if it fails, the proof fails. A `kani::assume` can limit input size, but then the result is only for that range. With a loop contract, Kani checks that the invariant is inductive from an arbitrary invariant-satisfying state and uses a one-iteration abstraction, removing dependence on the bound. The paper says Kani does not yet support loop variant (decreases) clauses, so termination is not verified there (sections 4.1 and 7). The kani study in this directory documents `loop_decreases` in Kani's own loop contracts, so the two papers differ on this point; this study follows the standard-library paper for what the campaign used.
 
-The paper states, “A successful verification with loop contracts therefore constitutes an inductive proof for the annotated loops, removing the dependency on the unwinding bound.” In Verus, the direct form is a `while` invariant plus a decreases clause when termination matters. Inference: VL should record whether a generated proof relies on bounded unwinding, an explicit finite input assumption, or an inductive invariant; these are different guarantees.
+The paper states, “A successful verification with loop contracts therefore constitutes an inductive proof for the annotated loops, removing the dependency on the unwinding bound.” In Verus, the direct form is a `while` invariant plus a decreases clause when termination matters.
 
 ## technique 5: use separation logic for pointer-heavy linked structures
 
@@ -62,21 +55,13 @@ For Verus, this is an inference. Model the list with a ghost sequence/set and a 
 
 ## technique 6: optimize a large proof CI with measurement and caching
 
-16,748 harnesses made compilation the bottleneck. The authors introduced compiler benchmarks, then used parallelization, caching, heuristically ordered code generation, and function stubbing. These changes yielded a reported 3.97x compilation speedup. Inference: in VL, the transferable method is to measure proof-build phases, cache stable intermediate artifacts, parallelize independent verification conditions, and stub only functions whose contracts are trusted and separately checked. A stub is a trust boundary and must be counted in the evidence.
+16,748 harnesses made compilation the bottleneck. The authors introduced compiler benchmarks, then used parallelization, caching, heuristically ordered code generation, and function stubbing. These changes yielded a reported 3.97x compilation speedup.
 
 ## what is proved, measured, and trusted
 
 The strongest reported result is 989 functions with contract-verified proofs (694 manual plus 295 automatic). The broader 11,970 automatic passes cover Kani's supported classes: out-of-bounds, null/dangling dereference, uninitialized reads, and selected arithmetic overflow. They do not cover Rust aliasing (Stacked/Tree Borrows), data races, invalid inline assembly, all provenance UB, or preservation of type-level safety invariants. Randomized testing, not formal proof, validated 565 SIMD intrinsics; it found two upstream bugs but is only high-confidence testing.
 
 Trusted components include the MIR-to-GOTO translation, CBMC, SAT/SMT solvers, VeriFast's symbolic executor, intrinsic and foreign-function models, the pinned Rust semantics, explicit harness assumptions, and the proof authors' contracts. None of the tools is itself formally verified. Inference: the title's “verified” therefore means a scoped theorem under these models and assumptions.
-
-## contradictions, unfinished work, and threat to VL
-
-The paper reports 33,955 functions in the snapshot, while Autoharness generated 16,748 and skipped 17,207; these sum exactly to 33,955. Table 1's 11,970 automatic passes equal 295 contract passes plus 11,675 without contracts. The headline “over 10,000 functions” can therefore hide a large uncontracted majority: 11,675 passed without function contracts, namely 10,127 safe functions, 926 safe abstractions, and 622 unsafe functions (Table 1; the totals 10,194 and 970 include 67 and 44 with contracts). For the 622 unsafe functions without contracts, the paper says a pass means either that the function is trivially safe for Kani's checked classes (its unsafe marker relating to properties such as aliasing) or that Kani's UB coverage is incomplete, and calls them candidates surfaced by automated triage.
-
-The paper says major APIs including BTreeMap internals, atomics, String, iterators, vectors, deques, and reference-counted types are only partially covered or not yet addressed. Generic functions, intrinsic models, relaxed-memory concurrency, and proof synchronization remain open. Inference: this overlaps work VL should not redo: the challenge/CI pattern, Autoharness eligibility accounting, invariant-vs-validity distinction, and linked-list separation-logic case are already demonstrated. VL should instead test how Verus contracts and linear ghost state handle the skipped generic and concurrency-heavy cases, and should report denominators and trust assumptions in the same detail.
-
-Threat assessment (inference). Agent-written verified Rust is threatened by the gap between compiling a proof and proving the intended property. An LLM can generate a contract that is too weak, an `assume` that removes difficult states, or a stub whose model is wrong; Kani will still certify the reduced claim. The paper's remedy is mechanical CI, explicit assumptions, complementary tools, and human review of unsafe contracts. VL needs generated proofs to carry machine-checkable preconditions, an assumption ledger, caller-side discharge checks, and tests against aliasing and concurrency models that Kani does not cover.
 
 ## techniques for the catalog
 
@@ -87,5 +72,3 @@ Threat assessment (inference). Agent-written verified Rust is threatened by the 
 - separation-logic ownership predicates — recursively own linked heap nodes with separating conjunction and transfer resources through pre/postconditions
 - multi-tool continuous verification — combine model checking, refinement types, and separation logic in CI because each covers different Rust behaviors
 - proof-pipeline performance engineering — benchmark compilation, then apply parallelism, caching, ordering, and stubbing while recording the resulting trust boundary
-
-Audited 2026-10-12 against the paper: checked every number (16,748 and its three parts, 11,970, 4,778, 295, 694, 989, skip counts and percentages, 33,955, 29 challenges, 450 pull requests, 21 contributors, 3.97x, 19 and 5 LinkedList functions, 565 SIMD), Table 1 arithmetic, quotations and their sections, and the Verus forms (sound, all marked inference). Changed: the uncontracted breakdown was wrong (10,194 and 970 are totals; without contracts it is 10,127, 926 and 622, summing to 11,675) and is fixed; the decreases claim is now attributed to this paper and flagged as differing from the kani study; the months of delay claim narrowed to the legal agreements the paper names; the unverified APIs sentence now says partially covered or not yet addressed; the LinkedList model-checking comparison and the necessary evidence phrase reworded to what the paper says; the 622 interpretation restated as the paper words it; several VL and Verus sentences marked as inference. Not checked: figure values beyond the text, cited tools and repositories.

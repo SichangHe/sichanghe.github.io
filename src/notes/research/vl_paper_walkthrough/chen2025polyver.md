@@ -76,19 +76,9 @@ Inference: for Verus, an LLM could propose `requires`, `ensures`, loop invariant
 
 Evidence and limits: the LLM synthesizer handles C and Rust examples including FFI, ROS2 service patterns, and LF systems; Table II gives seven full-fledged or multi-language benchmark rows. For Satellite, the authors report: “However, we noticed that providing a simple comment in the code that captures the logic of the controller greatly helped synthesis.” (Sec. VIII-B, p. 9). The LLM is outside the trusted base (footnote 2, p. 7); contract validity is checked by the verification oracle. Unavailable library functions such as atan were replaced with nondeterministic input/output values. The paper reports model and tool versions, but no repeated-run variation.
 
-## what was already done and what VL should not redo
-
-The paper already supplies a CEGIS/CEGAR architecture for combining language-specific verifiers, intermediate contracts, spurious-trace filtering, and LLM contract generation. Inference: VL should not redo a generic LLM contract proposal-and-check loop without a distinct target. A possible extension is the Verus-specific boundary: prove that contracts for unsafe/FFI Rust and external libraries correspond to the linked implementation, and measure repair under dependency changes. Inference: PolyVer's experiments do not establish that these contracts remain valid across Rust library upgrades, nor that its assumptions cover Verus erasure, ownership, or concurrency.
-
-## trusted surface and product threat
-
-Fact: CBMC, Kani, UCLID5, the IL-to-language compilers, and the stated semantic assumptions are trusted for the soundness theorem; the LLM is not trusted because its contracts are checked. Fact: the system model and property are inputs to Algorithm 1; procedure contracts are synthesized and checked. Inference: for agent-written verified Rust, a relevant threat is choosing a property too weak to express the intended requirement. Validating contracts and checking composition do not establish that requirement. A valid overapproximation preserves the conditional soundness argument but can admit spurious traces; it does not by itself make a false property provable.
-
 ## techniques for the catalog
 
 - intermediate contract language: express each language-specific procedure as a pre/post contract in a small IL, compile it semantics-preservingly, and model-check the composition
 - CEGIS contract synthesis: iteratively synthesize a contract, verify it on the concrete procedure, and add failing pairs as positive examples
 - CEGAR spuriousness refinement: analyze abstract counterexample traces, exclude unreproducible procedure pairs, and repeat synthesis
 - LLM-guided contract oracle: use an LLM to propose IL predicates while CBMC/Kani and UCLID5 decide validity and system properties
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This means that when mc reports pass, there does not exist a trace that is producible by the procedures that violates the property, since all producible behaviors have already been captured by the contracts."): read the entire paper, including references and appendices; checked quotations, numbers, PDF page and section references, technique steps, assumptions, and evaluation claims; corrected the benchmark synthesis count, refinement description, contract composition prerequisite, page references, prompt description, and user-supplied-contract claim; marked recommendations as inferences and identified the link as from the fetch record; did not reproduce experiments, inspect the implementation, independently verify Verus proposals, or validate the external link.

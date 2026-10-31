@@ -48,16 +48,6 @@ Table III reports original verification times of 0.98, 2.17, 2.97, and 3.67 seco
 
 The authors surveyed LLVM-slicing, LLVM-slicer, semslice, DG, and sbt-slicer after compiling Rust to LLVM representations. They report that these tools did not effectively support Rust slicing, so the experiments focus on RustPruner rather than a competing-tool comparison (Section IV.A, pp. 4–5). The paper supplies no detailed failure breakdown for those tools.
 
-## trust and threat to VL
-
-Inference: using this pipeline requires trusting Kani's translation, CBMC's dependency reduction, AST collection, and source reconstruction to preserve the selected verification task. Four projects with consistent outcomes provide limited empirical evidence. They do not prove preservation for other programs, specifications, or Rust features. The paper reports no Verus experiments or explicit evaluation focused on unsafe code, macros, generated code, or external-crate dependencies.
-
-Inference: RustPruner's approach could help VL reduce a large verification input to the code and proof dependencies needed by one contract. The main concern is accidentally changing the checked task, for example by removing a reachable assertion or a relevant specification. VL would need Verus-aware dependencies and checks that the original and sliced inputs retain the same selected contracts, assertions, and verification entry points. The empty proof function in the paper's output example makes entry-point preservation a concrete concern.
-
-## what VL should not redo
-
-Inference: reuse the paper's separation of goto dependency recovery, AST span collection, source reconstruction, and verification-result comparison where applicable. A Verus implementation would still need its own treatment of proof code and contracts; the Kani experiments do not establish that adaptation.
-
 ## techniques for the catalog
 
 - proof-entry slicing — start from Kani proof functions and their assertions or called-function outputs
@@ -65,5 +55,3 @@ Inference: reuse the paper's separation of goto dependency recovery, AST span co
 - AST span collection — use a `syn` visitor to record element names, types, source paths, and complete line ranges
 - source reconstruction — match dependencies to AST ranges, copy retained definitions and imports, and reorganize the output
 - verification-result comparison — compare original and sliced Kani results, including preservation of failing outcomes
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each Node information covers the entire scope of Rust elements, essentially ensuring the complete architecture of the dependent elements."): checked all quotations, numbers, section/page references, technique descriptions, and evidence against the full paper, including Fig. 3 in the PDF; corrected page references, the claim that post-slice timing was absent, and unsupported guarantees; distinguished the empty output proof function and marked Verus/VL conclusions as inferences; did not run RustPruner, reproduce experiments, inspect its implementation, or verify external references.

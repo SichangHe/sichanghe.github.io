@@ -8,8 +8,6 @@ source and scope
   - historical Rust module maintenance
   - specification generation with randomized implementation visibility
   - transfer of learned proof help across projects and changed dependencies
-- exact response retained locally at `/tmp/cx_llm_compact_answer.md`
-- helper diagnostic: `/tmp/cx_llm_compact.json`
 - opinions below are advice
   - they are neither experiments nor novelty determinations
 

@@ -155,8 +155,6 @@ Inference: refinement draws up to 32 + 16 + 16 = 64 samples against 32 for plain
 
 The paper releases a Lean translation of TIP problems and evaluation code: “We have published our benchmark as a public dataset on Huggingface, and released a repository for evaluating language models on miniCodeProps.” (Section 3.3, p.7)
 
-Inference: this is a benchmark for VL to consider, rather than evidence about an agent writing verified Rust. Its measured task supplies Lean code and specifications and asks only for proofs. The results do not establish success rates for Verus or for generating code and specifications. Candidate ideas to reuse are the task record format, the split by proof kind, and termination lemmas as separate tasks.
-
 ## techniques for the catalog
 
 - proof-only micro benchmark — cut self-contained program properties from an existing inductive problem set, translate by hand, and split by the kind of proof needed
@@ -167,4 +165,3 @@ Inference: this is a benchmark for VL to consider, rather than evidence about an
 - four-property sort specification — ordered, per-element count preserved, permutation, and equality with a reference insertion sort
 - many-to-one refinement — show the model all failed candidate proofs at once and sample a new batch, for two rounds
 - pass@k with a checker — count a property solved when any of k sampled whole proofs is accepted
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Since proving termination is an essential part of human interactive theorem proving, it is highly likely that improved performance on these lemmas could translate into useful automation for practitioners."): checked all quotations, numbers, section and page references, and technique steps against all 11 pages; removed unsupported Verus details and outside-note claims, corrected sorting formulas and reporting limits, and retained the unexplained split-count discrepancy; did not inspect the released code or dataset, run proofs, or validate a Verus adaptation.

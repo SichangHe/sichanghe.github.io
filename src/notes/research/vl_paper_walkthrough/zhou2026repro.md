@@ -8,8 +8,6 @@ RePro rewrites benchmark questions to reduce memorization and contamination, the
 
 The paper describes the intermediate semantic gate precisely: “The semantic check performs an LLM-assisted conservative alignment screen between the rewritten natural-language problem and the Lean formal statement.” (Section 3.3, p. 4.)
 
-For VL, the relevant pattern is verifier-gated generation: an agent can propose a Rust specification or benchmark instance, but acceptance is determined by a pinned checker and an explicit target-alignment test. Inference: RePro does not verify natural-language-to-Rust equivalence, so a Verus adaptation must preserve a separate semantic review boundary.
-
 ## technique: progressive verification pipeline
 
 What it is. RePro has three substantive stages. Feasibility screening removes ill-defined, contradictory, ambiguous, unrealistic, or infeasible rewrites. Executable formalization converts a surviving question into Lean code, first checking syntax and then using a conservative semantic-alignment screen. Proof-level verification asks an ATP to generate a Lean proof and keeps only instances accepted by the Lean kernel. A final answer-alignment step ensures that the verified proof supports the quantity requested by the rewritten question (Sections 3.1–3.4, pp. 3–5).
@@ -26,7 +24,7 @@ How to apply it.
 
 Verus form. Inference: use the same stages for agent-written Rust: rewrite or synthesize a task, screen its prose, compile the candidate in Verus, use a conservative prose-to-contract check, verify the original contract with Verus, and accept only if a result is copied from a verified postcondition or proof fact. Inference: a Verus proof function and `ensures` clause can play the final checker role, but no construct validates that the prose requirement was translated correctly; this remains a semantic-review stage.
 
-Evidence and limits. RePro explicitly says the semantic screen “should not be interpreted as formal verification of natural-language-to-Lean equivalence” (Section 3.3, p. 4). The strongest guarantee is therefore only for the accepted Lean statement and its proof. Inference: this distinction is essential for VL product claims.
+Evidence and limits. RePro explicitly says the semantic screen “should not be interpreted as formal verification of natural-language-to-Lean equivalence” (Section 3.3, p. 4). The strongest guarantee is therefore only for the accepted Lean statement and its proof.
 
 ## technique: preserve answer traceability by literal extraction
 
@@ -50,7 +48,7 @@ What it is. RePro repeatedly samples source problems and runs the full pipeline 
 
 How to apply it. Record every candidate, failure stage, and retry count; report both the generated distribution and retained distribution; and disclose that difficult cases are filtered more often. RePro uses pass@k for ATP attempts and defaults to pass@3 because gains diminish after the second attempt (Section 6.2.3, p. 8).
 
-Verus form. Inference: a VL benchmark should preserve rejected Rust tasks and classify whether failure came from parsing, compilation, contract mismatch, solver timeout, or missing library support. Report coverage by task difficulty and pass@k, rather than claiming that a high verified rate generalizes to all tasks.
+Verus form.
 
 ## evidence: reliability and model sensitivity
 
@@ -66,12 +64,6 @@ Lean proves the formalized statement and reference answer; the LLM screens and r
 
 The paper does not establish that all mathematically equivalent rewrites are equally difficult or contamination-free. It acknowledges that stronger ATPs improve coverage and that Lean formalization excludes tasks that cannot be expressed reasonably in Lean (Limitations, p. 9). Inference: the same coverage and expressiveness limits apply to a Verus product.
 
-## what VL should not redo and threat assessment
-
-RePro already supplies the verifier-gated rewrite pipeline, three-part reliability metrics, literal proof-grounded answer extraction, rejection-sampling accounting, and pass@k coverage analysis. VL should reuse these patterns and focus on Rust/Verus-specific contracts, ownership, dependencies, and maintenance.
-
-Inference: the threat to a product of agent-written verified Rust is high if the product reports only proof-pass rates or performs unconstrained postprocessing. A formally checked function may satisfy a vacuous or mis-translated contract. The threat is lower if prose-to-contract alignment is conservative, outputs are copied from verified postconditions, failed candidates remain in the dataset, and coverage is reported by task difficulty and verifier resources. RePro's own limitation makes this clear: semantic alignment is a filter, not formal equivalence.
-
 ## techniques for the catalog
 
 - progressive verifier pipeline — screen rewrites, formalize, prove with an ATP, kernel-check, then align the target answer
@@ -80,4 +72,3 @@ Inference: the threat to a product of agent-written verified Rust is high if the
 - rejection sampling audit — retain verified candidates while reporting failures, retention rates, and changed difficulty distribution
 - pass@k coverage — vary ATP attempts, report diminishing returns, and expose verifier capability limits
 - paired rewrite evaluation — compare original and proof-verified rewrites to diagnose memorization and reformulation sensitivity
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

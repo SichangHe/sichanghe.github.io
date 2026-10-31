@@ -1,15 +1,12 @@
 # An Empirical Study of LLM-Generated Specifications for VeriFast
 (authored by agents unless marked 🧑)
 Tag: `fan2026empirical`, [paper](https://arxiv.org/abs/2606.26490v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and setup
 
 This paper measures whether general LLMs can fill the auxiliary specifications required by VeriFast, a separation-logic verifier for C, rather than merely write compilable code. It studies 303 functions from 60 programs, each supplied in natural-language (NL), functional-behavior (FB), and functional-behavior-plus (FBP) input forms. The ground truth is a fully specified and verified version. The authors first select one prompt from eight and three models from ten pilot candidates, then run the selected setup on all 303 functions. The PDF's abstract states the core result: “The results show that LLMs preserve functional behavior in source code and specifications (both over 91%), but achieve modest verification success (31.4%).” (Abstract, p. 1.)
 
 The study is an empirical baseline for agent-written specifications. It does not prove a new verifier theorem, and its results concern C/VeriFast. The transfer to Rust/Verus below is explicitly an inference.
-
-## technique 1: represent heap behavior with separation-logic specifications
 
 ### what it is
 
@@ -39,8 +36,6 @@ Verus can encode the data property as a recursive `spec fn` over a mathematical 
 
 This technique is background needed to interpret the benchmark. The paper does not claim that every listed predicate pattern is hard: normal separation-logic functions have a 51.2% average generated-specification success rate, while loops average 11.4% (Table VI, p. 9). The verifier and its default Z3 backend remain trusted; passing VeriFast establishes the encoded contract, not that the contract captures an unstated requirement.
 
-## technique 2: prompt in stages with formal behavior and retrieved verifier examples
-
 ### what it is
 
 The authors compare Basic, chain-of-thought, sparse retrieval (RAG-sparse), and dense retrieval prompts, each with whole-program or one-function input. CoT explicitly asks for pre/postconditions, loop invariants, and auxiliary statements in sequence. RAG supplies VeriFast tutorials and related programs. Input strength is varied independently: NL gives only an informal memory description, FB gives formal functional pre/postconditions, and FBP additionally gives constructs needed for successful verification, such as allocation status and integer bounds.
@@ -68,8 +63,6 @@ For Verus, retrieve examples of `requires`, `ensures`, `invariant`, `proof`, `le
 
 The chosen prompt and models are justified by pilots, but pilot selection can still bias results. The full study uses temperature zero and one output per configuration, so it measures a deterministic sample rather than the distribution of stochastic generations. Retrieval quality, model costs, and benchmark leakage affect external validity.
 
-## technique 3: detect specification and code drift before counting verification
-
 ### what it is
 
 An output that verifies may have changed the program or weakened its contract. The authors therefore classify source behavior as unchanged/changed and contracts as equivalent, strengthened, weakened, or other. Two authors independently inspect each output, review disagreements, and use Cohen's kappa. This separates verifier acceptance from proving the intended function.
@@ -89,8 +82,6 @@ Run Rust tests or reference-model checks on generated code, then compare Verus c
 ### evidence and limits
 
 Of 2,727 outputs, 246 (9.0%) changed source behavior; 102 of those were small semantic edits and 143 were edits leading to compiler errors, such as hallucinated header files or entire duplicate source blocks (Section IV-A1; the two counts sum to 245, not 246, as the paper states them). Contracts were equivalent in 2,375 (87%), strengthened in 146 (5%), weakened in 116 (4%), and other in 90 (3%). Contract coding had only fair agreement (kappa 0.38) because NL is ambiguous; source coding had substantial agreement (0.73). The paper warns that “LLMs cannot guarantee the absence of behavioral changes” (Section IV-A3, p. 8).
-
-## technique 4: close the verifier loop with error taxonomy and targeted repair
 
 ### what it is
 
@@ -122,12 +113,6 @@ Across the frozen full configuration, FBP verifies 39.9% (363/909), FB 29.5% (26
 ## what is proved, measured, and trusted
 
 Measured: behavior preservation, verifier acceptance, and manually categorized fixes over the stated denominators. The paper does not prove a theorem about LLM correctness or VeriFast soundness. Trusted elements include VeriFast, Z3, the ground-truth specifications, the reviewers' semantic classifications, and the assumption that the verified contract expresses the intended behavior. Dataset programs mostly come from a public repository, although ten author-written programs reduce leakage risk. Only C is studied, despite VeriFast supporting Java and unsafe Rust.
-
-## reuse boundary for VL
-
-VL should reuse the separation between contract preservation, verifier acceptance, and repair taxonomy. A product can measure whether an agent changed code, weakened a specification, or merely failed to expose ownership facts. The FBP idea maps to giving a Rust agent a strong behavioral contract plus ownership-relevant invariants before asking for proof details. The OCAL finding argues for structured verifier-state feedback and small repair steps.
-
-VL should not treat this benchmark as evidence that LLMs can autonomously verify Rust. Verus's linear ghost types, SMT triggers, integer arithmetic, and Rust ownership differ from VeriFast's separation logic. A Verus benchmark needs Rust functions, explicit contracts, solver diagnostics, and a semantic regression oracle. The paper's C-only acceptance rates are a baseline for specification generation, not a replacement for a Verus-specific evaluation.
 
 ## product risk assessment (inference)
 

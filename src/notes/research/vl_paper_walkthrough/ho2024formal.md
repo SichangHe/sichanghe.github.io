@@ -8,8 +8,6 @@ Son Ho's thesis presents Aeneas, a Rust verification toolchain that translates a
 
 Aeneas is aimed at functional correctness after ownership has removed aliasing possibilities. Its translation is a semantic transformation, not a contract-only encoding. The thesis says: “Our functional translation then simply consumes the execution traces of the symbolic semantics to construct a pure, executable program that is functionally equivalent to the source Rust.” (Chapter 7, p. 141.)
 
-Inference: VL can use this architecture when a Rust function's ownership discipline makes memory details irrelevant to the target property. The output is a pure proof model, while the original Rust remains the deployed implementation. The borrow-checking soundness theorem does not prove the functional translation correct. Section 13.5 (p. 235) explicitly says: “The translation is currently trusted, and its correctness left as future work.”
-
 ## earlier verification techniques in the thesis
 
 The dissertation also teaches three earlier techniques that motivate Aeneas and are part of its formal-verification contribution.
@@ -101,8 +99,6 @@ The soundness strategy connects this semantics to a conventional heap-and-addres
 
 The thesis states: “We introduce PL, for ‘pointer language’, which uses a traditional, explicit heap inspired by CompCert’s C memory model, and show that it refines LLBC (Section 11.2).” (Chapter 11, p. 184.)
 
-Inference: For VL, a borrow abstraction should be connected to the deployed Rust semantics by a refinement argument or a trusted compiler boundary. Proving only a pure model's properties leaves the translation relation trusted.
-
 ## technique 6: symbolic borrow checking with region abstractions
 
 LLBC# extends LLBC with symbolic values and region abstractions. At a function call, use the callee's type to project input borrows into the regions named by the signature, create fresh output borrows and loans, and store the correspondence in region abstractions. The paper's `swap` example has two independent regions; ending one region restores access to only its associated input.
@@ -137,8 +133,6 @@ The formalism excludes nested borrows in function signatures, borrow-containing 
 
 Inference: A claim about deployed Rust additionally depends on the Rust frontend/compiler, Charon, Aeneas, backend modeling, and any supplied external assumptions. The thesis's modeled soundness result alone does not validate this whole chain.
 
-Inference: VL should reuse Aeneas's ownership-to-function translation, backward functions, explicit region summaries, and refinement proof plan. It should not redo these as an agent-specific invention. The threat from agent-written verified Rust is high for mutable-borrow APIs: an agent may prove the pure functional model while supplying an incorrect or trusted translation boundary. A product should record the translator version, generated model, and assumptions as part of every proof artifact.
-
 ## techniques for the catalog
 
 - ownership erasure: translate uniquely owned mutable references into pure value-passing functions
@@ -152,5 +146,3 @@ Inference: VL should reuse Aeneas's ownership-to-function translation, backward 
 - hybrid embedding: prove one generic low-level protocol implementation against an interpreter, then specialize it by compile-time partial evaluation
 - zero-cost staged rewriting: parameterize verified code over algorithm choices and erase the abstraction through elaborator rewriting and specialization
 - module-based induction: package syntax induction as an abstract module and instantiate small constructor lemmas to stabilize proof maintenance
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The model of the loop itself is actually exactly the same as the translation of the recursive version of list_nth_mut, which is perhaps not surprising given the fact that this function is tail-call recursive."): read the complete supplied thesis text in pieces, including front matter, references and appendices, and the whole study; checked quotations, numbers, section/page references, technique steps and scope; corrected quotation wording, tag/link, printed-code typo, signature/body distinction, chapter ranges, HOL4 partial-function support, termination claims, proof assumptions, trusted translation and unsupported-feature limits; did not execute tools or artifacts, reproduce benchmarks, mechanically validate the proofs, or visually inspect the PDF.

@@ -31,7 +31,7 @@ Inference: encode local states, messages, and transitions as Rust enums and fini
 
 reported evidence and boundary
 
-The authors claim that the four components are exhaustive for their model (Section 3.2, p. 4; Appendix A.3, p. 18). The authors note that richer timed or extended state machines can express data and deadlines but increase extraction difficulty (Section 10, p. 12). Inference: the four categories are a useful coverage checklist for VeruLaw specifications, while omitted clocks, data guards, or cross-document rules can create false negatives.
+The authors claim that the four components are exhaustive for their model (Section 3.2, p. 4; Appendix A.3, p. 18). The authors note that richer timed or extended state machines can express data and deadlines but increase extraction difficulty (Section 10, p. 12).
 
 ## technique 2: procedure-closure construction
 
@@ -128,14 +128,6 @@ Inference: represent each implementation as a separately specified transition fu
 
 The paper's concrete examples include one stale PDU Session ID causing OpenAirInterface to free one session while srsRAN tears down the device connection, and an identifier pairing that leaves conflicting contexts in one implementation but returns an error in the other (Section 7.4, pp. 10–11). Inference: these divergences establish different implementation behavior, but do not establish which repair a standard should adopt.
 
-## evidence, assumptions, and VL implications
-
-The pipeline costs $0.08 per delivered proposal on gemini-3-flash, $0.21 on claude-haiku-4.5, and $0.38 on gpt-5.4-mini; times are 0.78, 0.52, and 1.84 minutes respectively, measured across the whole pipeline (Table 6, p. 11). All 36 procedures saturated in 3–5 passes for each backend (Section 7.5, p. 11). Backend overlap is low: only 5–17% of gaps were found by all three backends, and 28–54% by at least two (Section 7.5, p. 11). The authors describe this overlap in terms of “gaps,” without giving absolute counts in Section 7.5.
-
-Inference: for VeruLaw, the transferable pattern is to let an LLM propose localized obligations and let deterministic or verified transition code decide reachability, impact, and test generation. The threat to agent-written verified Rust is specification underspecification: Verus may prove one completion while the prose allows another. Existing work already supplies CFSM reasoning, differential testing, protocol fuzzing, and formal extraction; VL should not redo them as generic discovery. A focused contribution would measure whether this staged lens reduces human effort to write complete Verus contracts, with expert review and implementation differential tests as separate evidence.
-
-Inference: the trusted boundary includes the normative documents, closure parser, model outputs, embedding deduplicator, deterministic engine implementation, test harness, pinned protocol code, compiler, and the human decision about repairs. The paper says, “This evaluation leaves two questions open: it reports no recall, since the space of valid-but-unhandled cases admits no ground truth, and it scopes each analysis to a single procedure, leaving cross-procedure interactions for future work.” (Section 7, p. 8).
-
 ## techniques for the catalog
 
 - CFSM underspecification taxonomy: classify reachable openings as Trigger, Effect, Ordering, or Eventuality, then separate gaps from forks
@@ -143,4 +135,3 @@ Inference: the trusted boundary includes the normative documents, closure parser
 - staged taxonomy mining: ask bounded typed questions in local and temporal passes, then iterate and deduplicate
 - deterministic impact analysis: compare model completions by decision, state, and output and derive a discriminator
 - differential implementation testing: run generated deterministic tests against independent implementations to expose observable divergence
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The generated test designs carry most of the weight, reducing the effort of writing manual tests: of the 60, 37 run exactly as designed and 19 more keep the generated trigger while adapting only the harness that observes it for implementation specific reasons."): checked all study quotations, numbers, section and page references, and technique steps against the full paper, including references and appendices; corrected expert-review populations, LLM triage versus deterministic impact analysis, closure steps, scope and page references, and quotations; marked extrapolations as Inference; did not independently validate the cited standards, implementation code, experimental results, or Verus proposals.

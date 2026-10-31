@@ -42,8 +42,6 @@ Steps from Sec. 3 (pp. 5–6):
 
 The paper explains why hints are needed: “VeriFast sometimes performs automation steps.” It also says that instead of re-running SMT equivalence and path satisfiability, “bodies_are_correct, instead, receives the index k of the chunk that should match as a ConsumeChunk(k) hint in symex_trees.” (Sec. 3, p. 5). The hints do not assert correctness by themselves; the Rocq replay checks that each hinted step is valid in the formal semantics.
 
-Inference: the closest Verus analogue is proof-carrying output where an agent or external verifier emits proof obligations or traces and Verus checks them. Verus's existing proof functions and `assert`/`ensures` constructs can validate replay lemmas, but there is no direct `ConsumeChunk` API. A VL tool could retain a compact trace of solver decisions while requiring Verus proofs for each memory/state transition.
-
 ## technique: foundational soundness model
 
 The soundness proof models VeriFast symbolic heaps as logical heaps, essentially multisets of `points_to_` chunks. Predicate and assertion meanings are inductively defined, and producing/consuming assertions plus opening/closing predicates are proved sound against that model (Sec. 4, p. 6). The proof also justifies VeriFast's special treatment of locals whose addresses are taken.
@@ -52,16 +50,9 @@ Evidence is qualitative: the authors report that the generated proof for the lin
 
 The trusted remainder is substantial. `AxSem` is unvalidated and has the known lifetime unsoundness. The implementation currently lacks loops, structs, generics, unwinding, inductive datatypes, fixpoints, lemmas, fractional permissions, and safe-abstraction well-typedness (Sec. 5, p. 6). The authors plan to compare against Radium or MiniRust semantics. The proof also assumes `bodies` faithfully represent source code and `specs` encode the intended properties; a false specification can still be certified.
 
-## implications for Verus and VL
-
-Fact: hinted mirroring can make a mature symbolic verifier's results checkable by a smaller foundational kernel. Fact: this paper's checker is for VeriFast's separation-logic semantics and does not validate Verus's Rust subset, solver translation, erasure, or standard-library specifications. Inference: VL should not redo a generic “replay a verifier trace” project without addressing a Verus-specific trust boundary, such as proving that solver-generated obligations correspond to executable Rust and that external-body assumptions match linked code.
-
-Inference: agent-written verified Rust is threatened by wrong specifications, omitted lifetime/state transitions, and unsupported unsafe features more than by the LLM itself. A certificate checker can reject an invalid proof trace but cannot detect a property that is too weak. The paper's explicit unvalidated `AxSem` is a warning that shrinking the checker is not the same as eliminating all trusted assumptions.
-
 ## techniques for the catalog
 
 - separation-logic heap chunks: verify pointer code by consuming and producing points-to and recursive predicate resources under pre/postconditions
 - hinted mirroring: record symbolic-execution decisions and replay them in a small Rocq checker with `ConsumeChunk` and `Done` hints
 - foundational soundness model: prove symbolic-heap operations sound against an Iris-based axiomatic semantics
 - certificate trust analysis: enumerate source representation, specifications, semantics, replay kernel, and unsupported Rust features that remain trusted
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

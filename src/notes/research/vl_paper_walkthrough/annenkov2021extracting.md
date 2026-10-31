@@ -5,8 +5,6 @@ Tag: `annenkov2021extracting`, [paper](https://arxiv.org/abs/2012.09138)
 ## result and scope
 The paper builds a Coq-to-functional-smart-contract pipeline in ConCert. Its abstract states: “We implement extraction of Coq programs to functional languages based on MetaCoq’s certified erasure.” (Abstract, p. 1.) The pipeline adds type erasure, an optimisation that removes unused arguments, and pretty-printers for Liquidity, Midlang, and Elm. It also integrates QuickChick testing over complete execution traces and presents Escrow and Boardroom Voting case studies.
 
-Inference: for VeruLaw, the transferable pattern is to keep a verified source model, execute a testable model before proving expensive properties, and make every compilation or extraction pass carry a semantic-preservation theorem. The paper is about Coq and functional smart-contract languages, so the Rust/Verus mapping below is an inference.
-
 ## technique: certified erasure and extraction pipeline
 
 What it is. Coq terms are translated to an untyped calculus in which computationally irrelevant types and proofs become a box. The authors separate this semantic erasure from later optimisation and printing. “Our implementation strategy of extraction is the following: (i) take a term and erase it and its dependencies recursively to get an environment; (ii) analyse the environment to find optimisable types and terms; (iii) optimise the environment in a consistent way; (iv) pretty-print the result in the target language syntax.” (Section 3, p. 6.)
@@ -74,7 +72,7 @@ Escrow correctness is a trace theorem: if the buyer confirms, buyer and seller n
 
 Inference: threat to a product that generates agent-written verified Rust is medium. The useful pattern is explicit executable models, trace properties, and verified optimisation boundaries. The main risk is trust leakage at code generation, external libraries, target semantics, cryptographic assumptions, and environment models. An agent can produce a plausible proof while leaving these boundaries unmodelled; requiring a checked source-to-binary relation would reduce this risk.
 
-The paper already covers certified erasure, dead-argument removal, refinement-style specifications, trace-level generators, and two contract case studies. Inference: VL should not redo a generic extraction pipeline as if these ideas were new; it should adapt the boundary-accounting and trace-generation ideas to Rust/Verus and measure maintenance or failure modes that this paper does not measure.
+The paper already covers certified erasure, dead-argument removal, refinement-style specifications, trace-level generators, and two contract case studies.
 
 ## techniques for the catalog
 
@@ -83,4 +81,3 @@ The paper already covers certified erasure, dead-argument removal, refinement-st
 - refinement-style contract specifications — encode preconditions and postconditions in dependent data and erase proof components for execution
 - trace-level QuickChick testing — generate valid interacting-contract traces and test decidable global properties before or alongside proofs
 - explicit trust accounting — separate verified erasure and optimisation from unverified type extraction, pretty-printing, execution models, and probabilistic cryptographic claims
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Instead, we focus on proving the logic of the smart contract correct under the assumption that both parties follow the protocol to completion."): read the whole paper text (pp. 1-25, including appendices and references) and checked every quotation, theorem statement, section and page reference, the figure numbers, the 10000 tests / 23743 discards figures, and each technique step against it; changed the link to the arXiv page (arXiv:2012.09138v2 is printed on the paper's first page; the previous DOI is not in the paper text), corrected two page references (type-formalisation scope is p. 4; the higher-kinded-types discussion is p. 16), reworded the trusted-base sentence, the validation, escrow-compilation and bug-insertion statements, and the vulnerability-discovery claim to follow the paper's wording; did not check the Verus and VeruLaw inferences against any Verus documentation, the cited artifact code, or the extracted code in the appendices line by line.

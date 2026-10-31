@@ -120,10 +120,6 @@ Limits. More iterations do not help when the visible oracle is silent. The paper
 
 The paper measures observed dynamic outcomes, paired repair/regression transitions, task-cluster bootstrap intervals, exact sign-flip tests, token/call budgets, and TFOR. It treats task—not trajectory—as the inference unit: 2,705 trajectories are repeated observations, while confidence intervals use 10,000 task-cluster bootstrap resamples and confirmatory tests use task-level sign-flip permutations with Holm correction (section 4.5, p. 8). No adjusted comparison reaches 0.05. Trusted components include model generation, sandbox isolation, benchmark contracts, dynamic oracles, machine and human oracle review, hidden-test construction, local tokenizer budgets, and the remote API's unreproducible backend.
 
-Inference: for VL, visible tests are useful executable specifications but cannot replace Verus contracts and hidden-behavior reasoning. A Verus-verified Rust function can satisfy all visible examples while violating an unmodeled attack family. The product threat is a false confidence path: tests pass, the agent stops, and the hidden behavior remains outside the contract. Keep hidden tests and independent proof obligations separate from model feedback; record test coverage families and TFOR-like diagnostics for every generated module.
-
-Inference: the safest VL adaptation is a staged gate: generate Rust, run visible tests only for diagnostics, require Verus proof of the complete explicit contract, then run hidden differential tests. Keep function and security predicates conjunctive and report partial states so a security repair cannot silently break functionality.
-
 ## techniques for the catalog
 
 - joint secure outcome — require functional and security success on the same candidate and retain four partial states
@@ -132,5 +128,3 @@ Inference: the safest VL adaptation is a staged gate: generate Rust, run visible
 - structured failure selection — prioritize security and novel failures with typed bounded diagnostics
 - oracle qualification — validate secure implementations, vulnerable mutants, stability, partition separation, and human review
 - test-feedback overfitting rate — measure hidden joint failures among visible-joint passes with explicit counts
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

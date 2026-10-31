@@ -49,7 +49,7 @@ Primal-dual Houdini exploits a duality between transition-system reachability an
 
 Inference: a workflow using either implementation would encode the transition system and safety property, seek universally quantified invariants, run the implementation, inspect its invariant or witness, and independently check any returned invariant with the inductiveness query. This is a proposed workflow based on Sects. 3.1 and 4 (pp. 76–79), not a checklist prescribed by the paper.
 
-Verus form. Inference: a VL pipeline could use external invariant synthesis to propose state-machine invariants and ask Verus to check translated proof obligations. A failed proof would not by itself establish a semantic counterexample. Candidate generation and independent proof checking would need separate validation; this paper evaluates neither their translation to Verus nor a Verus interface for these algorithms.
+Verus form.
 
 ## technique: build an extensible verification platform
 
@@ -57,15 +57,11 @@ The paper's engineering technique is to keep the representation close to the use
 
 The repository supplies over 30 transition systems (Sect. 2.1, p. 75) and includes invariants for use as benchmarks (Introduction, p. 73). Phase-PDR∀ builds on the code and PDR∀ implementation; SWISS accepts input files and uses benchmarks but is implemented separately in C++; P-FOL-IC3 uses the code and benchmarks; IC3PO uses manually translated benchmarks; and LVR uses models, benchmarks, and P-FOL-IC3 inference for ranking-function liveness proofs (Sect. 6, pp. 80–81). The paper gives these reuse modes without a common comparative evaluation.
 
-Verus form. Inference: a VL implementation could keep formula manipulation, solver queries, and counterexample presentation as reusable components. Recomputed scope contexts suggest a way to avoid stale symbol-table state. Existing mypyvy benchmarks could be translated into Rust state machines to test invariant-generation agents; translation effort and semantic fidelity would need measurement.
+Verus form.
 
 ## what is proved, measured, and trusted
 
 The paper relies on established logical facts about the EPR fragment: satisfiability is decidable and its small-model property yields finite counterexamples (Sect. 3.3, pp. 78–79). It demonstrates that mypyvy can express and query distributed transition systems and host two invariant-inference implementations, and it documents more than 30 benchmarks (Abstract; Sects. 2.1, 4, pp. 71, 75, 79). It does not report a controlled accuracy, runtime, or coverage denominator for all benchmarks in this platform description. The benchmark count is stated only as “over 30”.
-
-Inference: the trusted boundary includes the modeler's first-order axioms and abstraction, the translation to solver queries, and the external solver. EPR decidability does not establish that a model matches an implementation. For VL, the reusable contribution is a pattern for generating and checking quantified invariants and inspecting counterexamples. The paper does not establish automatic translation from arbitrary Rust to first-order transition systems or refinement from an implementation to its model.
-
-Inference: a Rust-specific contribution would need to go beyond the paper's existing modeling, checking, inference, and counterexample facilities. One possible VL direction is to translate selected mypyvy benchmarks into Verus state machines, compare generated invariants with the original clauses, and measure proof time, repair steps, and abstraction mismatches under fixed versions.
 
 ## techniques for the catalog
 
@@ -76,5 +72,3 @@ Inference: a Rust-specific contribution would need to go beyond the paper's exis
 - PDR∀ invariant inference: block forbidden sub-states and synthesize universally quantified inductive clauses
 - primal-dual Houdini: add universal clauses incrementally and return a witness when incremental construction fails
 - extensible solver platform: typed ASTs, recomputed contexts, solver interfaces, minimized models, unsat cores, parallel queries, printer plugins, and shared benchmarks
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "In general, mypyvy does not restrict the quantiﬁer structure used in formulas, nor the signatures of state variables."): read the entire paper text and study; checked quotations, counts, section and page references, technique steps, and reuse claims; replaced the fetch link with the paper DOI, corrected query references and relaxed-BMC details, attributed performance claims, and marked proposed workflows as inferences; removed unsupported Verus capability and product-threat claims; did not run mypyvy, inspect its source or artifact, verify cited papers, or test Verus adaptations.

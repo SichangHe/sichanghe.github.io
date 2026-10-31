@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `yao2026costefficient`, [paper](https://arxiv.org/abs/2610.09681)
 
-Audit: audited 2026-10-13 against the paper; checked every number, fraction and percentage in Tables 1-3, 7, 8, 10, 12-14, the page and section references, the steps of Algorithms 1 and 2 and B.1-B.7, the prompt rules of Appendix E, the quotations and the Verus forms; changed 7 slips: an ablation called uninterpretable where the paper says hard to attribute, the automation ablation said to agree with the induction-unfolding story though the paper explains the AlgoVeri drop otherwise, within noise for comparable to noise, two hardest lemmas for the one the paper calls hardest, the source of items 5 and 6 of technique 10, and two unmarked inferences.
-
 source: Yao, Holzer, Santolucito, Ray, Jana, She (Columbia, Barnard, HKUST), arXiv:2610.09681v1, 7 Oct 2026, preprint, 55 pages: main text pp.1-9, Appendix A theory pp.14-21, B operational details pp.21-26, C experiment details pp.26-30, D two case studies with full Lean code pp.30-51, E prompt templates pp.51-54, F limitations pp.54-55. The system is called CoCo-Prover. Cited pages are the PDF's, which carry the same printed number.
 
 ## the idea
@@ -254,7 +252,7 @@ Cost is compared only on problems that both systems solve. The reason: a method 
 
 Caps and prices (C.1, p.26): $30 and 5 hours per function-level problem (NTP4VC included), $60 and 8 hours per repository-level task; token counts by type converted at one fixed price schedule (Table 4).
 
-Verus form. Inference: check 1 is a scan for `assume(`, `admit()` and a clean Verus run; check 2 is a byte comparison of signatures, `requires`, `ensures` and the `spec fn`s they use; check 3 is a scan for `#[verifier::external_body]` and `assume_specification` items not in the original. Reporting cost only on commonly solved tasks is directly reusable for comparing VL configurations.
+Verus form.
 
 ## results, with denominators
 

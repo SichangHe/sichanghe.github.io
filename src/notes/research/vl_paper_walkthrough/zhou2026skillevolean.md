@@ -20,7 +20,6 @@ how to do it
 The operators are explicit: `LLMCompare` contrasts trajectories, `LLMLocate` finds the update position, `LLMSuggest` drafts changes, and `LLMRewrite` preserves overall structure while applying them (Table 1, p. 3).
 
 Verus form
-Inference: represent VL proof guidance as versioned Markdown plus Verus references and examples, and compare successful and failed `verus` runs by exact diagnostics. Update only the relevant proof-pattern section; keep the Rust contract and code under review. Inference: a successful trajectory is evidence about search, not evidence that its specification is correct.
 
 evidence and limits
 Progressive updates require at least some successful trajectories. The authors state that if all sampled trajectories fail, “no successful behavior is available for contrastive analysis” and local updates can stagnate (Section 2.2, p. 5). This motivates mutation rather than proving progressive evolution sufficient.
@@ -69,11 +68,9 @@ The paper concludes: “Progressive refinement helps consolidate effective behav
 
 Using the same target model, test set, Lean environment, and inference budget across methods (Section 3, p. 7), the full method reaches 94.7%/77.1% with DeepSeek-V4-flash and 98.4%/81.8% with DeepSeek-V4-Pro on MiniF2F-test/PutnamBench (Section 3.1, pp. 8–9). With GPT-5.5 it reaches 100.0% MiniF2F and 90.6% PutnamBench, plus 4/6 on each competition benchmark (Section 3.1, p. 8). Removing mutation lowers DeepSeek-V4-Pro results to 82.3% and 63.5%, and to 0/6 on both competitions (Section 3.2, p. 9). These are Lean theorem success rates under the stated models and budgets, not Verus or product correctness.
 
-Lean verifies the theorem statements supplied to it. The method leaves skill text, theorem statements, benchmark formalizations, and the Lean environment trusted. Inference: for agent-written verified Rust, the threat is medium: evolving proof guidance can improve coverage but may encode brittle or irrelevant strategies, and aggregate success can hide regressions. VL should not redo a generic Lean skill-evolution benchmark; it should test contract-faithfulness, dependency changes, and retention on real Verus systems.
+Lean verifies the theorem statements supplied to it. The method leaves skill text, theorem statements, benchmark formalizations, and the Lean environment trusted.
 
 ## techniques for the catalog
 - progressive position-tree refinement: compare successful and failed trajectories and patch only the relevant skill component
 - concept-guided semantic mutation: perturb abstract proof concepts, realize coherent candidate skills, and retain only verifier-improving candidates
 - retention and forgetting audit: compare verified-problem sets across checkpoints with disjoint tests and frozen controls
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

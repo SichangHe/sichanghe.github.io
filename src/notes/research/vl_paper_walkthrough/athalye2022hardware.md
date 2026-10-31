@@ -90,14 +90,6 @@ The TOTP modifications changed FPGA LUTs from 3966 to 3962 (−0%), maximum cloc
 
 Inference: these numbers establish feasibility for three small HSMs, not scalability to commercial HSMs or arbitrary Rust systems. The authors state that the verified HSMs are relatively simple, do not use public-key signatures, and rely on a manual audit for emulator efficiency.
 
-## trust, assumptions, and VL threat
-
-Knox proves initialization, functional equivalence, and physical equivalence under `R`, which together imply IPR under the modeled interface (§4, p. 506). The functional specification and driver are trusted developer inputs. The paper states, “Other components, the HSM implementation and proof artifacts, are verified by the framework.” (§6, p. 510) Emulator efficiency remains a manual audit (§8.1, p. 514). IPR requires deterministic specifications, so TRNGs are unsupported (§8.2, p. 514); analog side channels lie outside the threat model (§2, p. 505).
-
-Inference: the application also depends on the framework, solver, circuit translation, and deployment faithfully representing the modeled device. This is a trust-boundary assessment, not an additional theorem established by the paper.
-
-Inference: an agent can produce a functionally correct Rust implementation that leaks through response timing or error sequencing; an IPR-style relational proof would expose that only if the timing/observer model is explicit. VL should reuse the driver/emulator split, refinement relation, and separate functional/physical equivalence obligations where product security depends on observable behavior.
-
 ## techniques for the catalog
 
 - information-preserving refinement — require an emulator that makes real wire behavior indistinguishable from a secure functional specification
@@ -106,4 +98,3 @@ Inference: an agent can produce a functionally correct Rust implementation that 
 - physical equivalence — prove every wire trace is reproducible by an emulator with no extra observable information
 - fixed-point symbolic execution — summarize unbounded waiting and repeated cycles during symbolic equivalence checking
 - guided symbolic model checking — use `STEP`, `SUBSUMED`, and solver-checked hints to cover arbitrary-length physical traces and verify recovery at each step
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "To simplify verification, the HSM uses a strategy inspired by Notary [16] to minimize variation in the states that the hardware can be in."): read the entire paper, including references; checked every study quotation, numerical result, section/page reference, technique step, and trust claim; corrected the abstract quotation, publisher link, bug attribution, LUT direction, proof procedure, reset conditions, optional crash-safety checking, and emulator-efficiency distinction; marked additional trust conclusions as inference; did not run Knox, reproduce experiments, inspect source code, or validate the proposed Verus adaptations.

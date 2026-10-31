@@ -53,7 +53,7 @@ How to apply it.
 4. To claim frontier escape, exhibit an accepted target-native input and show every target witness either is not source-exposed or fails source acceptance (Theorem 5.3, p. 8).
 5. Treat moving a guard between exposure and core as representation-preserving when the guard is deterministic (Proposition 5.2, p. 7).
 
-Verus form. Inference: encode `K_S` and transcript translations as spec functions; prove authority as an implication lemma and exposure inclusion as a set-subset lemma. Inference: this gives VL a contract-audit structure for comparing agent versions, but it cannot derive semantic inclusion from benchmark scores.
+Verus form.
 
 ## technique 4: analyze recursive self-improvement under a uniform envelope
 
@@ -70,16 +70,6 @@ Verus form. Inference: treat candidate code and history as ghost inputs to a fix
 
 Selection error is separate. Proposition 8.2 says that for at most M adaptive selection calls, if each conditional false-selection probability is ≤δi, then total false-selection probability is ≤Σδi (Section 8.3, p. 15). For per-trial error 1/3, independent fresh coins, and majority size N≥18 log(M/δ), the total is at most δ (p. 15). Inference: Verus can prove call counting and candidate fixation, but probability bounds still need a trusted finite-probability library or external certificate.
 
-## controlled audit and relevance to VL
-
-The paper gives a finite lookup-repair audit and an XOR synthesis family. In the lookup example, exhaustive checking of all eight inputs rejects an incomplete patch while a four-test sample accepts it (Section 7.1, p. 9). In the XOR family, changing attempts alters discovery probability without changing languages; changing an enforced quota changes exposure and can change the frontier. At d=6, the reported language/frontier counts are (1,42), (42,42), and (57,57) for the three configurations (Section 7.3, p. 11). These are exact finite counts, not learned-agent measurements.
-
-The paper also gives a realizable randomized checker for matrix multiplication over F2: two independent vector tests accept correct products with probability one and incorrect products with probability at most 1/4 (Section 9.1, p. 16). It explicitly states, “Calibration of aggregate scores cannot prove either universal condition.” (Section 9.1, p. 16)
-
-What is proved: semantic language inclusions, amplification preservation, conditional complexity placements, bounded-envelope closure, and finite error inequalities under stated contracts. What remains trusted: task relation, exposure and soundness predicates, probability-gap proofs, encodings, and the theorem prover or arithmetic libraries. Inference: for VL, the strongest immediate lesson is to make every agent-written verification claim name its task relation, admitted evidence, bounds, and selection error; an empirical pass rate cannot replace these contracts.
-
-Existing work on test-time scaling and self-correction measures performance on particular distributions. This paper's contribution is a reusable semantic audit that distinguishes search, support, checker, and selection. Inference: product threat is high if VL reports benchmark gains as formal-verification gains; it is lower if VL emits explicit Verus contracts and treats unproved soundness, probability, and implementation links as open obligations.
-
 ## techniques for the catalog
 
 - bounded stage declaration: fix exposure, support, alternation, hidden coins, bounds, and task soundness before comparing verifiers
@@ -88,5 +78,3 @@ Existing work on test-time scaling and self-correction measures performance on p
 - uniform self-modification closure: quantify bounded candidate/history inside a fixed verification envelope with common contracts
 - adaptive selection budget: sum conditional false-selection probabilities across every candidate-selection call
 - finite reproducible audit: separate exact task correctness, discovery probability, language counts, and interface changes
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

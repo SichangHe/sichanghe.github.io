@@ -54,8 +54,6 @@ Verus form. Inference: use a finite graph model with a ghost visited set, a decr
 
 The paper describes algorithms, gives illustrative counterexamples and informal arguments, and reports, “Preliminary tests show that these techniques are promising for this use case.” (section 5, p. 6). It supplies no test count, benchmark denominator, runtime, or success percentage. It does not prove that type annotations eliminate aliasing or that erased proofs are always reconstructible. On substitution explanations, it states, “A major caveat to our algorithm is that we do not yet know how to properly handle justifications (used for explanations).” (section 4, p. 6). Lean’s kernel checks generated proofs; the paper does not require trusting the e-graph search or explanation conversion to establish an accepted theorem. Inference: a Verus implementation would need its own correctness argument for these transformations unless it also submits generated proofs to an appropriate trusted checker. Missing rewrite steps can prevent proof reconstruction even when the search finds an equality.
 
-Inference: VL could reuse the concrete binder checks, shift/substitution algorithms, and explicit account of what remains unproved. The tactic’s use of kernel checking does not establish soundness of its e-graph transformations.
-
 ## techniques for the catalog
 
 - dynamic capture check — inspect free variables and shift them before a binder-changing rewrite
@@ -65,4 +63,3 @@ Inference: VL could reuse the concrete binder checks, shift/substitution algorit
 - proof erasure — replace proof terms with `ϵ` and reconstruct them during proof generation
 - e-class beta/eta substitution — implement binder-aware shifts and substitutions on e-classes
 - cycle-breaking traversal — defer cyclic e-nodes until all substituted child classes are available
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We are so far unsure if there are cases where erased proof terms cannot be completely reconstructed."): checked all paper text, quotations, technique steps, section and page references, metadata, and stated limitations; corrected quotation wording, removed unsupported rewrite and merge requirements, corrected trust claims, and marked VL conclusions as inferences; did not inspect the implementation, reproduce preliminary tests, or verify the proposed Verus adaptations.

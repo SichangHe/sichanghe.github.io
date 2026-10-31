@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `volkov2018lemma`, [paper](https://arxiv.org/abs/1811.05879)
 
-Audit: audited 2026-10-13 against the paper; checked Tables I and II sums, Fig. 1 line counts, section references, quotations, technique steps and the Verus sketches; corrected the 31 lemma functions called a restatement of the old lemmas, an unmarked trusted-base and Verus inference, a missing reliance on an earlier lemma in the worked example, the number of axiom measures, the wrong lemma named as counterpart of the Verus sketch, the proxy condition left out, an SCC detail not in the paper, the strchr/strchrnul difference, Coq named where the paper says interactive prover, the tenfold line count, five reasons given as four, and an added after tuning. Not checked for lack of support in the Verus sources: broadcast proof fn behaviour and proof-mode loops.
-
 source: Volkov, Mandrykin, Efremov (Higher School of Economics; Ivannikov Institute for System Programming, Moscow), arXiv:1811.05879v1, 14 Nov 2018, 8 pages in two columns. References below are to the paper's sections (I to VI), tables and its one figure.
 
 ## what is proved and what stays trusted
@@ -172,12 +170,6 @@ The paper's five reasons against external provers (§II-A and §II-B); inference
 - speed is given as far less than a second for the example (§III) and a few seconds per lemma function (§IV); no table of times, no solver versions, no machine
 - no count of lines of lemma-function code against lines of Coq beyond the single figure
 - Table II omits check_bytes8, consistent with its 0 unproved lemmas in Table I
-
-## what is already done, and the threat
-
-Done here and long since built into Verus, so VL has nothing to rebuild: lemmas as terminating ghost code, induction by recursion, explicit lemma calls. Not covered: any automation of writing the lemma functions; anything beyond string functions; the higher-order reuse of §V-C.
-
-Inference on the threat to VL: none. It is a 2018 tool paper for C. Its use to VL is as a short manual of proof patterns that an agent writing `proof fn`s should follow: mirror the recursion of the `spec fn`, leave base cases empty, state the measure, lift per-value facts with `assert forall`, and never leave a trusted postcondition without a body.
 
 ## techniques for the catalog
 

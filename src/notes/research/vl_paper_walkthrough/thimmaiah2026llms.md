@@ -24,7 +24,7 @@ Evidence. The authors state: “We validate correctness by executing the program
 
 What it is. Preserve rule structure but alter the mapping from symbols to meanings. KeywordSwap exchanges meanings of selected operators (for example, plus and minus), while KeywordObf replaces standard operators and keywords with unfamiliar Caucasian-Albanian characters. The paper explains: “Because KeywordSwap preserves surface syntax while altering operational meaning, correct reasoning requires conditioning on the explicit transition rules rather than defaulting to pretraining-derived interpretations of common symbols.” (section 3.2, p. 5).
 
-When to use it. Inference: Apply this test when evaluating whether a model follows a supplied specification despite familiar names or symbols. For VL, an analogous experiment could vary an API contract while retaining familiar method names.
+When to use it.
 
 How to do it. (1) Start with standard C⋆ semantics and programs. (2) For KeywordSwap, exchange the meanings of selected operators while preserving program syntax (Table 3, p. 5). (3) For KeywordObf, consistently replace operators and keywords in both the program and formalization, preserving their standard behavior under the new symbols. (4) Execute each program under its corresponding formalization to obtain the oracle (Fig. 2, p. 3). (5) Supply that program and formalization to the model, then compare its final state, rule list, or trace with the oracle.
 
@@ -44,11 +44,11 @@ What it is. PredTrace asks for the complete sequence of semantic rules and inter
 
 How to do it. (1) Use Human-Written programs with an empty initial variable state. (2) Execute each under S or K to obtain the rule/state trace. (3) Prompt the model for the full ordered trace. (4) Require exact trace equality. As in PredRule, the denominator is the full dataset |D|, although only well-formed predictions D′ can contribute correct matches (section 5.3, p. 8). (5) Compare standard, swap, and obf conditions.
 
-Evidence. The authors state: “PredTrace sharply exposes the fragility of long-horizon rule conditioning: only four models achieve non-zero accuracy at all, and even these remain far from reliable.” (section 5.3, p. 9). Table 6 (p. 8) displays only those models on the Human-Written split. K accuracy percentages for QwQ 32B are 18 standard, 16 swap, and 15 obf; Gemini-2.5-pro scores 25, 25, and 25. Under S, Gemini-2.5-pro scores 32, 35, and 35, the table’s maximum. Inference: A VL pipeline could use rule/state traces to locate a model’s first incorrect execution step. Proving that a Rust implementation follows those transitions would be separate work.
+Evidence. The authors state: “PredTrace sharply exposes the fragility of long-horizon rule conditioning: only four models achieve non-zero accuracy at all, and even these remain far from reliable.” (section 5.3, p. 9). Table 6 (p. 8) displays only those models on the Human-Written split. K accuracy percentages for QwQ 32B are 18 standard, 16 swap, and 15 obf; Gemini-2.5-pro scores 25, 25, and 25. Under S, Gemini-2.5-pro scores 32, 35, and 35, the table’s maximum.
 
 ## what is proved, trusted, and left unresolved
 
-The paper defines execution and evaluates predictions against executions from K and the ANTLR4-based interpreter. It provides no mechanized correctness proof for those engines and no Rust/Verus evaluation. Inference: Trust in its scores includes trust in the interpreters, grammar and mutation implementations, public test oracles, and exact-match scoring. The authors conclude: “These results position inferential rule conditioning as a largely unsolved capability axis motivating models to adapt to externally specified formal systems rather than entrenched lexical associations.” (section 7, p. 9). Inference: For VL, the relevant concern is whether model-generated specifications or proof plans follow the actual contract. The benchmark supplies useful diagnostics, but adapting them to Rust/Verus requires a corresponding oracle and explicit treatment of specification adequacy.
+The paper defines execution and evaluates predictions against executions from K and the ANTLR4-based interpreter. It provides no mechanized correctness proof for those engines and no Rust/Verus evaluation.
 
 ## techniques for the catalog
 
@@ -56,5 +56,3 @@ The paper defines execution and evaluates predictions against executions from K 
 - semantic mutation testing: exchange familiar operators’ meanings, or replace program and rule symbols consistently with unfamiliar symbols
 - state-free rule selection: evaluate exact rule lists with no store changes before the terminal statement-step
 - long-horizon trace scoring: require exact sequences of rules and intermediate states over loops and branches
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The fuzzer starts by randomly sampling an integer from the range defined by the minimum and maximum number of variable declarations."): read the full paper text including appendices and example code; checked quotations, numbers, references, procedures, and tag; corrected scoring denominators, terminal configurations, semantic transformations, PredRule construction, numerical comparisons, and page references, replaced unsupported Verus claims with explicit inferences, and linked the paper’s arXiv identifier; did not rerun experiments or independently validate interpreter implementations or Verus adaptations.

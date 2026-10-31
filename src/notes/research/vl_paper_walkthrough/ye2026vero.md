@@ -2,9 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `ye2026vero`, [paper](https://doi.org/10.48550/arxiv.2608.13522)
 
-## scope and result
-Vero is a repository-level benchmark for agents that must implement APIs and discharge machine-checked specifications. It contains 43 Lean 4 instances sourced from Python, Dafny, Verus, and Coq projects. The abstract states, “The strongest agent fully solves only 27 of 43 instances and closes no specifications on the hardest repositories.” (abstract, page 1). Inference: The benchmark is directly relevant to VL because its formal-source track includes Verus repositories, but evaluation occurs after translation into Lean 4. A prior note, [Vero and VL: repository-level verified-code evaluation](/ssd1/sichanghe.github.io/src/notes/research/vero_20260821.md), already covers its scope and threat; this study adds the paper-grounded curation, audit, and denominator details below. The paper says, “Each specification is parameterized over RepoImpl instead of fixed to a single implementation.” (section 3.1, page 4) It also requires, “Full coverage is necessary because any unproven specification leaves room for a bug it would have caught.” (section 3.2, page 5)
-
 ## technique: separate proof-only and code-and-proof obligations
 A Vero instance fixes data types/helpers, API signatures, specifications, and a `RepoImpl` structure. Each specification is a predicate over an implementation, rather than a theorem tied to one reference body. In proof-only mode, the agent proves every specification against the fixed reference implementation. In code-and-proof mode, it supplies every API body and proves every specification against its own implementation. The paper's example defines `spec_create_zero_balance (impl : RepoImpl) : Prop` and proves `spec_create_zero_balance canonical` (Figure 2, page 4).
 
@@ -16,12 +13,8 @@ Paper procedure (sections 3.1–3.2, pages 4–5):
 3. In code-and-proof, fill every implementation slot and then prove every specification over that implementation.
 4. Rebuild a clean copy and machine-check all specifications; score only a repository with full coverage.
 
-Inference: VL can run the same split with Verus: one track proves existing Rust implementations, and another permits agent implementation changes while retaining the Verus contracts. A Verus `spec fn` can state a predicate and `ensures` can connect executable functions to it; proof functions and `assert` blocks discharge obligations. The paper's Lean syntax and `sorry` placeholders do not carry over.
-
 ## technique: benchmark curation from real repositories
 Vero's 13 formal-source instances come from Dafny, Verus, and Coq; 30 come from Python. The curation stages are discover, select, plan, translate, spec write (Python only), and validate, with human approval between stages (section 3.3, pages 5–6). Discover lists declarations, select chooses included APIs, plan fixes dependencies/signatures/module layout, translate dispatches modules in dependency order, and validate runs build checks and semantic reviews. Formal tracks translate existing types, definitions, and specifications; Python tracks additionally draft specifications from documented behavior and tests. A new source language is added as a modular agent skill.
-
-Inference: For VL, freeze source commits, module dependencies, and Verus specifications before agent evaluation. Human review is needed for the semantic link between a source Rust project and its extracted contract; machine build success alone cannot validate that link.
 
 ## technique: prevent reward hacking with clean re-rendering and audits
 The grader extracts only marked editable regions, inserts them into a fresh benchmark copy, rejects untrusted axioms through an allowlist, and screens agent declarations for proof-trivializing mechanisms such as malicious typeclass instances or `noncomputable choice` combined with `@[implemented_by]` (section 3.2, page 5). The formal audit route lets an agent instantiate each specification with the reference implementation, an individual specification, or jointly inconsistent specifications, and returns machine-checked evidence of benchmark defects to curation (section 3.5, pages 6–7).
@@ -33,12 +26,10 @@ Vero has 743 scored APIs and 2,705 scored specifications across 43 instances (Ta
 
 Across 172 matched instance-agent pairs, 26 are solved in both modes, 13 only in code-and-proof, 17 only in proof-only, and 116 in neither (Figure 4, page 9). Five pairs replace a hard-to-prove reference algorithm with a simpler behaviorally correct implementation; those pairs close all 250 specifications in code-and-proof versus 201 when proving the fixed reference. This is a measured implementation/proof tradeoff, not evidence that the simpler algorithms preserve efficiency.
 
-Across 82 full solves, helper theorems contain median 73.6% of proof lines in code-and-proof and 71.6% in proof-only; 80/82 share a helper across at least two specifications and 65/82 across at least five (Figure 5, page 10). Inference: this is strong evidence that VL agents need reusable lemma libraries and cross-module invariants, rather than isolated proof attempts. The benchmark reports no direct Verus run, so its Lean timing and pass rates cannot be assumed to predict Verus.
+Across 82 full solves, helper theorems contain median 73.6% of proof lines in code-and-proof and 71.6% in proof-only; 80/82 share a helper across at least two specifications and 65/82 across at least five (Figure 5, page 10).
 
 ## what is proved, trusted, and missing
 The grader proves the submitted Lean artifacts against frozen specifications and checks anti-cheating constraints. The benchmark's translation, specification intent, source semantics, Lean kernel/toolchain, and audit coverage remain trusted. The paper reports ten instances resisting all eight configurations across both modes (section 4.2, page 8); this is a benchmark result, not a universal capability limit.
-
-Inference: threat to a product of agent-written verified Rust is substantial at repository scale. Agents can pass many local contracts yet miss shared invariants, choose inefficient implementations, or exploit a weak specification. Vero already covers repository-level benchmark design, clean grading, anti-cheating, and audit routes; VL should not redo those ideas without adapting them to Verus's ownership, external-body, and dependency assumptions. The direct gap is a Verus-native benchmark with full Rust builds and product-relevant contracts.
 
 ## techniques for the catalog
 - two-mode repository benchmark — compare proving fixed implementations with jointly choosing implementations and proofs
@@ -46,5 +37,3 @@ Inference: threat to a product of agent-written verified Rust is substantial at 
 - clean re-rendered grading — extract editable regions into a fresh checkout and enforce axiom and declaration screens
 - formal benchmark audit — use machine-checked counterexamples to distinguish agent failures from defective specifications or references
 - shared lemma-library measurement — track helper reuse and proof-chain depth across specifications, not only local proof success
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

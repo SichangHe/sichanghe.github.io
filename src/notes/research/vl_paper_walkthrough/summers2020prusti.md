@@ -30,13 +30,8 @@ The keynote establishes a claim about project design, not a quantitative result.
 
 Inference: the paper does not discuss a trust boundary; the following is the study's reading. Rust type checking and compiler analyses are inputs to Prusti; Prusti's translation and verification engine, its logic, solver, and the correctness of user specifications would remain trusted or separately justified. Inference: the same boundary applies to agent-written Verus Rust. A passing proof establishes the written contract under the tool's model; it does not establish that the contract captures product intent or that unmodeled libraries and environments behave as assumed.
 
-## relation to VL
-
-Inference: this keynote is background rather than a technique catalog entry with new algorithms. VL can reuse its central separation of concerns: agents should state functional behavior in source-level terms while the verifier exploits ownership information automatically. VL should not claim that this source demonstrates Prusti's coverage, performance, or soundness; those claims require the cited flagship paper or tool artifacts. Inference: the threat to a product of agent-written verified Rust is medium when source-level contracts are explicit, and high when agents rely on Rust's memory safety as if it proved functional behavior.
-
 ## techniques for the catalog
 
 - compiler-assisted specification: combine Rust compiler ownership/type facts with user-written functional contracts
 - Rust-expression abstraction: keep specifications and tool interaction at the level of source-language expressions
 - modular deductive verification: prove intended behavior separately from the language's memory-safety guarantees
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Alex Summers works broadly on program correctness techniques and tools, specialising in particular on imperative concurrent languages, and modular deductive verification."): I read the whole one-page paper (abstract, biography, §1, references) and checked every quotation, the DOI and the reference [1] title against it; I added the paper's “(almost…)” hedge and the §1/[2]/[3] pointers, moved unsupported claims (what deductive means, when to use it, steps 4-5, trust boundary) under "Inference:", and corrected the step citations (live demos are in the abstract, not §1). Not checked: the flagship OOPSLA paper, the Prusti tool, and the Verus-related Inference lines, which rest on outside knowledge.

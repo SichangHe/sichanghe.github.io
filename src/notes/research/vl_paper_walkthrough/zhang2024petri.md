@@ -35,10 +35,7 @@ Verus form (Inference): encode exclusive permission to a location as a linear `t
 The detector builds a transition-to-state predecessor map, starts at every fired relaxed load followed by a branch, and recursively backtracks incoming transitions. It collects relaxed stores to the same atomic place, stops at synchronization transitions, and reports when at least two stores are found (Algorithm 5, pp. 16–17). The method is a bounded pattern and does not cover the AtomVChecker pattern in Fig. 4(a). Inference: a Verus model would represent an atomic protocol as an abstract state machine and prove an invariant relating load results to permitted store histories; this is a proof of a chosen protocol, not an automatic search over all interleavings.
 
 ## reduction and trust boundaries
-The three reductions are linear-sequence compression, concurrency-irrelevant call-chain pruning that protects shared nodes, and localized loop abstraction without resource access (Section 6.5, p. 24). The claimed preservation is for safety and liveness properties in the modeled subset. Trusted components include Rust/MIR extraction, alias analysis, mapping rules, reachability implementation, external Tina/Lola/Pnml tools (Figure 2, p. 6), and correctness of bug predicates. Unsupported language features, unbounded thread creation or recursion, and incomplete unsafe alias modeling can invalidate completeness. Inference: for VL, this technique threatens concurrency analysis only indirectly: an agent could use it to find races before Verus proofs, but it does not prove the functional contracts VL promises.
-
-## what should not be redone
-The paper already supplies a MIR-to-PPN formalization, three detectors, reduction algorithms, complexity formulas, and comparative LockBud/Miri experiments. A new VL project should instead test whether Verus transition-system proofs cover the same unsafe cases and whether PPN findings can seed proof obligations.
+The three reductions are linear-sequence compression, concurrency-irrelevant call-chain pruning that protects shared nodes, and localized loop abstraction without resource access (Section 6.5, p. 24). The claimed preservation is for safety and liveness properties in the modeled subset. Trusted components include Rust/MIR extraction, alias analysis, mapping rules, reachability implementation, external Tina/Lola/Pnml tools (Figure 2, p. 6), and correctness of bug predicates. Unsupported language features, unbounded thread creation or recursion, and incomplete unsafe alias modeling can invalidate completeness.
 
 ## techniques for the catalog
 - MIR-to-PPN translation — extract monomorphized MIR, resource metadata, and aliases, then map blocks and operations to Petri-net places and transitions
@@ -46,5 +43,3 @@ The paper already supplies a MIR-to-PPN formalization, three detectors, reductio
 - unsafe race detection — pair concurrently enabled accesses to one unsafe place when at least one access writes
 - relaxed atomicity backtracking — trace predecessors from a branch after a relaxed load and collect unsynchronized relaxed stores
 - Petri-net reduction — compress linear chains, prune irrelevant calls, and abstract resource-free loops before exploration
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

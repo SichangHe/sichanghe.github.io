@@ -8,8 +8,6 @@ Pipeline Denotational Design (PDD) moves pipeline reasoning from generated SQL o
 
 The motivating failure is a fan trap: joining revenue at customer-channel-date grain with units at customer-product-date grain and aggregating by customer-date silently multiplies rows. Schema checks, type checks, and small sampled tests can miss it (section 1, p. 1). PDD’s goal is prevention. The authors write that “the remedy is not better detection” but making illegal states unrepresentable (section 1, p. 2).
 
-Inference: the transferable idea for VL is a semantic intermediate representation in which agents instantiate only operations with contracts, then emit Rust and Verus evidence. PDD’s data-grain theory is domain-specific; it does not itself verify ownership, memory safety, or concurrency.
-
 ## technique 1: denotational design and the pipeline development life cycle
 
 What it is. Design a pipeline as a function between semantic types, then derive executable code from that design. The semantic function maps a data type to `(grain, entity key, behavioral class)` and maps operations to algebraic operations. The paper states: “The meaning of running a pipeline on data equals the meaning of the pipeline applied to the meaning of the data” (section 2.2, p. 4). This homomorphism is the faithfulness link between design and implementation.
@@ -58,12 +56,6 @@ For an agent workflow, the engineer reviews the denotational specification, whil
 
 Verus form. Inference: choose a corresponding assurance level: runtime tests, a Verus-aware contract checker, or fully checked Verus proof functions. Require the agent to return source plus proof artifacts, and review the specification before accepting the certificate. Verus’s checker and pinned libraries become trusted; generated Rust remains untrusted until verification succeeds.
 
-## evaluation, trust, and product threat
-
-The planned evaluation has five sanitized production case studies across ingestion, staging-to-landing, augmentation, and aggregation, with Entity, Event, MultiVersion, and Snapshot classes (Table 15, p. 19). It compares three arms: PDD with deployed `/pdd`, PDD mechanized in PDL/Agda, and direct LLM code generation without PDD (section 8.2, p. 19). Defects are seeded from a fixed taxonomy and mined from historical bugs; raters grade artifacts blind. No quantitative results are reported yet, so claims about defect reduction or zero-cost discharge remain proposed measurements.
-
-Trusted components are the semantic specification, operation contracts, CalcG rules, type checker, proof assistant or `/pdd`, and the code-generation faithfulness theorem. The engine, data, and runtime are not proof of design correctness; runtime queries check only input preconditions. Inference: threat to agent-written verified Rust is high when specifications omit ownership, aliasing, or concurrency invariants, and moderate for the general pattern of typed composition. PDD shows how to make classes of errors unrepresentable and how to separate specification review from code review. VL should reuse the certificate and pre-verified pattern workflow, while adding Rust/Verus-specific denotations and proofs. Existing PDD already addresses design-time prevention for data pipelines; VL should not recreate grain checking as a generic contribution.
-
 ## techniques for the catalog
 
 - denotational pipeline design: specify semantic types and derive executable operations from a typed algebra
@@ -71,4 +63,3 @@ Trusted components are the semantic specification, operation contracts, CalcG ru
 - behavioral-class typing: reject invalid read/write transitions and require key evidence for re-graining
 - proof-carrying constraints: compose `(Pre, Intra, Post)` contracts and compile residual predicates to faithful queries
 - assurance spectrum: choose runtime, typed, or machine-checked evidence and require an agent certificate
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

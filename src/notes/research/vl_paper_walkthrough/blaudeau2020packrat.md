@@ -50,12 +50,6 @@ Because compacted trees are not syntactically equal to reference trees, equivale
 
 Inference: in Verus, define a semantic result enum and prove a refinement theorem from the full parser result to the compact result. Keep a ghost full AST for proof if memory matters, and execute only compact values. Semantic actions should be pure specification-linked functions or separately verified Rust functions; otherwise the parser proof ends at syntax and does not establish the action's meaning.
 
-## evidence, scope, and product threat
-
-The paper reports formal PVS proofs and executable interpreters, but no benchmark denominator, runtime table, or parser corpus evaluation. It explicitly lists empirical performance studies and efficient data structures as future work (Conclusion, p. 14). The demonstrated arithmetic parser is a hand-built example, not evidence over production grammars. The proved results the paper claims are termination for well-formed PEGs, satisfaction of the parsing rules, uniqueness, completeness and soundness, packrat equivalence to the reference parser, and semantic-parser equivalence to the reference parser. Inference: trusted elements include PVS's type checker and proof kernel, the formalized input and grammar models, and any semantic action supplied by the user unless separately proved.
-
-Inference: the threat to VeruLaw is moderate for agent-generated parsers. A generated parser can be made auditable if it emits a grammar well-formedness proof, an AST certificate, and a cache-equivalence proof. The main risks are grammar changes that invalidate termination ranks, semantic actions whose contracts are too weak, and mismatch between byte-level model and Rust string handling. The paper already solves the core reference-versus-optimized-interpreter pattern; VL should measure maintenance and Rust integration rather than claim that memoization verification itself is new.
-
 ## techniques for the catalog
 
 - grammar property fixpoint: compute failure, nullable success, and consuming success facts to a coherent bounded fixpoint
@@ -64,4 +58,3 @@ Inference: the threat to VeruLaw is moderate for agent-generated parsers. A gene
 - lexicographic parser termination: prove recursive calls decrease grammar size, nonterminal rank, or remaining input
 - packrat refinement: memoize `(nonterminal, position)` results while typing each cache entry as reference-parser equivalent
 - semantic tree compaction: replace verified subtrees with semantic values and failures with compact failure nodes under an equivalence relation
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "To prove that well-formed trees actually correspond to parsing of a given input given a grammar, we introduce two notions."): read the whole paper (PDF text, pages 1-15) and checked every quotation, number, section and page reference and technique step; changed page and section references (P≥0 definition p. 4, well-formedness p. 6, pre-AST sections, Theorem 4.3 title, Figure 8 on p. 11), the abstract quote extension, the nondecreasing wording, the star rule description, the arithmetic example (index 1 is the second character, and the paper's text and Figure 15 disagree on the input), the constant-time caveat of footnote 12, the user-supplied nonterminal order of footnote 5, and marked trusted-element and certificate remarks as Inference; did not check the PVS code on GitHub, the cited related work, or the proofs themselves.

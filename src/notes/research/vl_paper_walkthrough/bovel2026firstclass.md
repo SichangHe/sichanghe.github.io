@@ -75,7 +75,7 @@ How to do it.
 
 Verus form. Inference: an adaptation could use an executable wrapper that evaluates arguments once, checks a condition, and calls a verified function only on success. The wrapper would need a proof that its executable check establishes the function's precondition.
 
-Evidence and limits. Dynamic checks support only first-order predicates that can be evaluated directly; higher-order values cannot be checked eagerly. JVM erasure also prevents direct matching against parameterized refinement types such as `List[ID]` (Section 2.5, p. 8). The paper's own purity checker rejects mutable variable references in predicates but does not yet enforce purity of called functions (Section 2.2, p. 5). Inference: a runtime fallback can hide a specification problem if the predicate is effectful, so VL should require an explicit effect boundary.
+Evidence and limits. Dynamic checks support only first-order predicates that can be evaluated directly; higher-order values cannot be checked eagerly. JVM erasure also prevents direct matching against parameterized refinement types such as `List[ID]` (Section 2.5, p. 8). The paper's own purity checker rejects mutable variable references in predicates but does not yet enforce purity of called functions (Section 2.2, p. 5).
 
 ## technique 5: Rocq semantic soundness proof
 
@@ -107,7 +107,7 @@ How to do it.
 4. Open both predicates' outermost bound variable with the same fresh free variable. Unopened bound variables never merge with other nodes; the opened free variable may participate in merges (Section 4.3, pp. 21–22).
 5. Report entailment when the target predicate is equivalent to `true`.
 
-Verus form. Inference: a VL front end could generate proof obligations and use a separate tactic or lemma library to normalize arithmetic and sequences, then require Verus to check the resulting `assert`. The e-graph itself would be trusted only if its rewrite soundness were proved or every result were replayed as a Verus proof. Inference: avoid treating a tactic success as a proof result.
+Verus form.
 
 Evidence and limits. The solver is intentionally less complete than full equality saturation: its canonical representative can miss an alternative simplification (Section 4.3, p. 22). The authors state: “As a consequence, several of Schmid’s benchmarks that require linear arithmetic reasoning (e.g., sumnat, arrfold) cannot be verified by our solver, and Stainless can verify functional correctness properties well beyond what refinement types alone can express.” (Section 4.4, p. 24). Table 1 also lists programs named `sumnat` and `arrfold` for First-class; the passage concerns several of Schmid's benchmarks rather than claiming that every program with these names is unsupported. This is a concrete expressiveness limit.
 
@@ -123,12 +123,6 @@ For existing code, the authors report: “It passes unchanged: this includes com
 
 The Rocq theorem covers the core calculus's typing and subtyping rules under the operational, partial-correctness semantics. The Dotty integration and e-graph solver are implementation artifacts with separate assumptions. Called functions' purity and termination are trusted by the prototype solver; the authors identify purity enforcement and a termination checker as future work (Sections 2.2–2.3, pp. 5–7). Inference: a product must keep the contract/specification, solver rewrites, erasure, compiler, and external libraries in its trust inventory.
 
-## what VL should reuse and threat to agent-written verified Rust
-
-Inference: VL can reuse first-class API contracts, mixed-precision fact recovery, explicit purity restrictions, runtime fallback wrappers, and a small proof-replay layer. The core design suggests keeping ordinary Rust types stable while exposing ghost facts only where a contract needs them.
-
-Inference: the threat to agent-written verified Rust is greatest at the solver boundary. A model may exploit an impure specification function, rely on an unproved arithmetic rewrite, or widen a type while preserving compilation. VL should keep `spec fn` predicates pure and reviewable, require Verus to check `ensures`, and treat solver or tactic output as a candidate proof step rather than authority.
-
 ## techniques for the catalog
 
 - first-class refinement contracts — make value predicates ordinary API types that compose with subtyping and generic use
@@ -137,4 +131,3 @@ Inference: the threat to agent-written verified Rust is greatest at the solver b
 - runtime refinement checks — fall back to predicate evaluation at explicit pattern or checked-call boundaries
 - semantic soundness mechanization — prove typing and subtyping adequacy with a fuel-bounded interpreter and semantic types
 - e-graph entailment — normalize collected equality, branch, and qualifier facts to discharge predicate implications
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This is exactly what the implementation does via skolems (§4.2), which hoist arguments to local bindings so that dependent result types can refer to them by name."): checked all paper text, study quotations, numbers, section/page references, technique steps, and proof/prototype limits; corrected references, the 21-row count, bound-variable handling, selfification and runtime restrictions, qualified overhead claims and Rust adaptations; did not run the artifact, compiler, benchmarks, or Rocq proofs, or independently validate Verus adaptations.

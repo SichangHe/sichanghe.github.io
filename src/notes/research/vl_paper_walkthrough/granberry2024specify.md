@@ -8,8 +8,6 @@ The paper studies specification synthesis for C by combining an LLM with two Fra
 
 The baseline prompt contains an unannotated C program, instructions, and annotation examples. The PathCrawler prompt adds input/output pairs, and the EVA prompt adds a static report of possible value errors (Section 2, pp. 3–4; Appendices A–C, pp. 20–23). Three specifications are generated per program and prompt at temperature 0.7 (Section 4, p. 5). The study uses 55 supposedly correct PathCrawler programs and an eight-program hand-mutated set (Section 3, p. 4).
 
-Inference: the transferable design for VeruLaw is to place analysis artifacts in the specification prompt, but treat every generated Verus contract as a candidate requiring Verus checking and human-intent review. PathCrawler's concrete examples and EVA's C value domains are not themselves Verus proofs.
-
 ## technique 1: baseline few-shot contract generation
 
 What it is. GPT-4 (gpt-4-0125-preview) receives C source and instructions to add ACSL annotations without editing code. The authors provide few-shot examples of `requires`, `loop invariant`, `loop assigns`, and `loop variant`, plus guidance on valid and invalid `assigns` clauses, and ask for the reasoning behind annotations (Section 2, p. 4; Appendix A, pp. 20–21). The prompt also uses chain-of-thought and an emotional-stimulation instruction (Section 2, p. 4).
@@ -85,8 +83,6 @@ Limitations are explicit. PathCrawler may supply too few examples and no pre/pos
 
 The paper measures annotation types and performs human qualitative analysis of generated ACSL; it does not establish that the synthesized contracts are semantically correct (Section 5, pp. 5–6). Inference: relying on these results requires assessing GPT-4's interpretation, PathCrawler's examples, EVA's analysis, and the researchers' judgment of intent; these are not proofs of the generated contracts. The authors write: “we cannot always expect our code to be semantically correct when generating a specification for it.” (Section 1, p. 2)
 
-Inference: the threat to an agent-written verified-Rust product is high for specification generation and medium for bug discovery. Symbolic context can focus an LLM, but sparse traces can create invalid preconditions and safety reports can eclipse functional intent. Inference: VL should not redo the claim that symbolic artifacts can guide an LLM toward richer contracts; it should test whether Verus proofs, mutation detection, and caller coverage prevent those failure modes.
-
 ## techniques for the catalog
 
 - few-shot contract prompting: provide code, valid annotation examples, and output constraints to elicit ACSL contracts
@@ -94,5 +90,3 @@ Inference: the threat to an agent-written verified-Rust product is high for spec
 - EVA safety context injection: add abstract value ranges and runtime alarms to steer preconditions toward overflow and memory safety
 - intent-versus-implementation mutation testing: compare specifications generated for controlled buggy programs against intended behavior
 - human qualitative contract audit: inspect annotation abstraction, over-approximation, tunnel vision, and intent alignment when no gold specification exists
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The more common response is that the LLM disregards the error and generates a specification using inferred intent from other language cues in the program."): checked every quotation, number, section and page reference, and technique step after reading the full paper, including appendices; corrected the paper link, baseline examples, ADPCM/BugKPath attribution, EVA prompt description, quotation location, and page ranges, and marked conclusions as inferences; did not reproduce the experiments, verify generated contracts, or check external sources.

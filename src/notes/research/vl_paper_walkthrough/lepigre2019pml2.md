@@ -72,10 +72,6 @@ The paper demonstrates type-checked examples: arithmetic equalities, vector appe
 
 Inference: the threat to agent-written verified Rust is specification drift and hidden proof state. PML2's uniform proof/program syntax can guide generated proof structure, but Verus requires explicit contracts, decreases measures, and lemmas. Inference: the equivalence-to-surrogate technique could reduce proof search, while its domain-restricted nature makes unchecked substitution dangerous.
 
-## what VL should not redo
-
-Inference: existing work already demonstrates proof-as-terminating-program, automatic equality-context management, sized termination checking, refined data types, classical extraction, and surrogate-based termination proofs. VL should reuse these patterns as design hypotheses and focus on their Rust/Verus encodings, explicit evidence, and specification inference. It should not claim PML2's metatheoretic strength: the paper itself lists missing subject reduction and external proof traces.
-
 ## techniques for the catalog
 
 - equality-type specifications — state program properties as term equations inhabiting types
@@ -85,5 +81,3 @@ Inference: existing work already demonstrates proof-as-terminating-program, auto
 - size-change termination checking — reject non-well-founded proof recursion using sized types
 - equivalence-guided termination — check a hard implementation through an equivalent terminating surrogate
 - internal totality proofs — expose value witnesses needed for call-by-value equational reduction
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Indeed, the totality of is_odd implies that this function always produces a result value, and hence that we can pattern match on its result."): read the whole paper text and checked every quotation, section and page reference, the technique steps, the stated results (three-zeroes output, `2 × n` remark, subject-reduction and proof-trace limits) and the tag and link (arXiv 1901.03208v1 and DOI 10.4230/LIPIcs.TYPES.2017.5 both appear in the paper text); changed the scope sentence on termination, the list of example specifications, the vector size remark and its page attribution, the `extract` page range and added the lookahead and substream caveats, the `hard_aux` omission, the §5.3 page reference and one inexact quotation about totality proofs, and marked the last section as inference; did not check the Verus translations beyond marking them as inference, nor the cited related work, nor run PML2.

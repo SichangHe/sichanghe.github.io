@@ -46,13 +46,9 @@ The CMA Mutator uses about 205 input and 287 output tokens per problem; the Gene
 
 The measured claims rely on Python benchmarks, proprietary APIs, deterministic decoding settings, BERT threshold 0.8, benchmark oracles, and coverage.py. The paper states: “The current implementation employs only LLM-based mutation operators within the Mutator module, which may introduce linguistic or domain biases inherited from the underlying models.” (Section 7.4, p. 21). It also says evaluation focuses on functional correctness and coverage, leaving efficiency, maintainability, and semantic equivalence unexplored (Section 7.4, p. 21).
 
-Inference: the paper’s main value for VL is an agent loop that proposes specification variants and edge-case tests, followed by a formal Verus prerequisite check. Inference: VL could reuse the demonstrated MR mutation, semantic filtering, oracle execution, coverage measurement, and per-MR ablations. Inference: the threat to agent-written verified Rust is moderate to high if a mutation silently weakens a contract or if tests are treated as proof; it is lower when every mutation is checked against a canonical Verus specification. Inference: the paper does not assess compiler, library, hardware, or solver trust for formal verification.
-
 ## techniques for the catalog
 
 - specification MR mutation: rewrite task descriptions into semantically equivalent variants before LLM generation, then filter and regenerate invalid variants
 - MR-guided test augmentation: transform oracle tests through swapping, permutation, algebraic, subset, and incremental relations and measure coverage
 - reviewer filtering: use similarity to validate descriptions before code generation, and oracle execution to validate generated test mutations before evaluation
 - selective MR control: measure each relation independently and retain relations that improve correctness without semantic distortion
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each variant, we measured Pass@1 and Pass@5 scores by executing generated programs against oracle test suites."): checked all paper text, quotations, numbers, section and page references, and technique steps; changed the link to the paper’s arXiv identifier, corrected experimental scope and page references, distinguished recommendations and inferences, and exposed inconsistent reported results; did not reproduce experiments, inspect implementation code, or validate the proposed Verus adaptations.

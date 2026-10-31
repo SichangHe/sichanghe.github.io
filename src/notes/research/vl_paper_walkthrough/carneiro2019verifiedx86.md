@@ -6,7 +6,7 @@ Tag: `carneiro2019verifiedx86`, [paper](http://arxiv.org/abs/1907.01283v1)
 
 Mario Carneiro presents the x86-64 part of Metamath Zero (MM0), a minimal framework for specifying and proving properties of ELF binaries down to machine-code semantics. The design deliberately keeps the trusted base small: specifications are written in a first-order theory equivalent to Peano Arithmetic (PA), the proof checker is custom and minimal, and only the behavior needed by a target program is modeled. The paper's goal is a reusable method for end-to-end verification, not a benchmark of many programs.
 
-The abstract states: “We present a simple framework for specifying and proving facts about the input/output behavior of ELF binary files on the x86-64 architecture” (p. 1). It also says that “the specification says only what it needs to about the target executable” (p. 1). Inference: VL can borrow the paper's scope discipline—specify the exact machine behavior exercised by a verified Rust binary—while retaining Verus for source-level contracts.
+The abstract states: “We present a simple framework for specifying and proving facts about the input/output behavior of ELF binary files on the x86-64 architecture” (p. 1). It also says that “the specification says only what it needs to about the target executable” (p. 1).
 
 ## technique 1: minimize the trusted bootstrap
 
@@ -80,15 +80,9 @@ The paper specifies instruction execution, memory permissions, selected Linux IO
 
 The trusted base is explicitly the verifier binary plus the correctness theorem, with the reference checker and incomplete self-verification as engineering scaffolding. Inference: the main threat to agent-written verified Rust is an overly weak endpoint model or an omitted machine/environment assumption; a small trusted kernel reduces the review burden but cannot repair a wrong specification.
 
-## what VL should not redo
-
-VL should not reproduce the PA encoding, MM0 parser design, or x86 instruction formalization as a new contribution. Those are available as the MM0 project artifact and this paper's documented method. A useful VL adaptation would measure which Rust/Verus proofs need machine-level models and whether an automatically generated ISA slice remains sound across compiler upgrades.
-
 ## techniques for the catalog
 
 - minimal trusted bootstrap: place the verifier binary and correctness theorem in a small, inspectable trust base
 - endpoint ISA slicing: specify only the instructions, memory rules, and syscalls exercised by a target binary
 - predicate-based weak-logic specification: replace missing types and pattern matching with explicit relations and preservation theorems
 - stream-and-ELF abstraction: model IO as mathematical byte streams and simplify ELF to the headers needed by the endpoint
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Lean is a full dependent type theory with support for inductive types and pattern matching."): read the whole 4-page paper text; checked every quotation, the line counts (311, 1600/766/1095, 237), the configuration and KernelState definitions, the mul and execXAST examples, and section and page references. Changed: removed the unsupported "proof-checking rules" claim in technique 1 step 1; added the paper's own wording for the trust argument; fixed the unspecified-versus-nondeterministic mix-up in technique 2 (unspecified Intel behavior is nondeterministic; faults and unspecified instructions have no successor); fixed page ranges for execXASTT (p. 3 only); marked the stream-theorem step and the step on other syscalls having no transition as inference. Not checked: the linked MM0 repository, Sail and Lean sources, the cited external works, and all Verus-form paragraphs (these are the study's own inference, not claims of the paper).

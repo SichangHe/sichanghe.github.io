@@ -56,4 +56,3 @@ Inference: ESSS-style mining could help prioritize contracts for foreign-functio
 - missing/incorrect check detection — compare every delayed or direct checked-value set with the inferred error set
 - Wilson filtering — retain rare defects while filtering proportionally dominant false-positive patterns
 - propagation checking — detect signedness conversions that alter returned error values
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The sample size used to compute the precision is the same as for computing the recall."): checked the entire paper, quotations, numbers, page and section references, technique steps, and limitations; corrected the publisher link, page references, slicing and matching rules, expansion steps, propagation checker, sampling interpretation, and inference labels, and noted inconsistent reported bug totals; did not reproduce experiments, inspect source code, or validate the Verus proposals.

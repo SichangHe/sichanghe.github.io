@@ -4,8 +4,6 @@ Tag: `chen2026juryrl`, [paper](http://arxiv.org/abs/2604.25419v1)
 
 JURY-RL separates cheap candidate proposal from expensive verification-based reward assignment. Multiple model rollouts vote for a plurality answer; one formal verifier checks only that answer. Verified supporters receive positive reward. If verification is inconclusive, ResZero penalizes the unverified plurality and assigns residual rewards based on their relative support, with a global offset making the group reward sum to zero. The paper calls this variance-preserving; unanimous groups still receive zero fallback reward (Appendix A.2, p. 14). The abstract describes the central rule: “votes from model rollouts propose a candidate answer, and a formal verifier determines whether that candidate can receive positive reward” (Abstract, p. 1). The system is implemented with Lean; Verus mappings below are inferences.
 
-## techniques
-
 ### vote once, verify the plurality
 
 What it is: sample `G` rollouts for a prompt, parse each answer, compute vote shares, and select plurality answer `â`. Query the verifier once on `â`; do not verify every distinct answer. The paper says, “This design choice avoids the prohibitive cost of formally verifying every unique answer” (Section 1, p. 2).
@@ -46,14 +44,9 @@ Verifier component evidence is explicit: the autoformalizer produced syntactical
 
 The Lean Prover@16 setting has 87.6% accuracy, 93.4% F1, and 324.31 seconds on MATH500; Prover@64 reaches 91.1% accuracy at 655.80 seconds; an LLM-as-judge baseline is 87.2% at 290.30 seconds (Table 8, p. 21). Cold-start JURY-RL adds about 200 seconds per 128-question step to a 100-second training step; the authors describe later cost approaching GT training time through cache reuse, without a numerical run-wide timing summary (Appendix C.4, pp. 20–21). The paper states that the Lean Prover “has a false positive rate of 0%” (Appendix C.3, p. 20). Inference: formal soundness concerns the Lean statement; it does not establish that the statement preserves every original requirement, as the imperfect pipeline precision illustrates.
 
-## what VL should reuse and threat
-
-Inference: VL could reuse one verifier query per rollout group, explicit inconclusive handling, ResZero-style rewards, verification-result caching, and component-wise evaluation of requirement translation. Cache keys that include specifications and tool versions are an extension proposed here. For agent-written verified Rust, the relevant risk is reward assignment and specification fidelity: plurality voting may favor a common wrong contract, and Verus acceptance only establishes the obligations expressed in its checked specification. A failed or timed-out run can be treated as inconclusive. The paper evaluates Lean-based mathematical training, not Verus or Rust; its results do not establish performance or requirement fidelity in VL.
-
 ## techniques for the catalog
 
 - plurality proposal with one verifier call — vote among rollouts, then formally check only the plurality candidate
 - ResZero fallback — penalize unverified consensus and redistribute a zero-mean signal over residual answers
 - cascaded autoformalization verifier — translate, consistency-check, and prove before granting reward
 - verification-result caching — reuse stored outcomes for recurring question-answer pairs; configuration-aware keys are an inference above
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This term acts as a global offset that exactly balances the penalties applied to the majority group and the rewards distributed among the residual group."): checked the entire paper, quotations, numbers, technique steps, section and printed-page references, title, tag, and arXiv identifier; corrected page references, fallback edge cases, the zero-mean correctness claim, and the distinction between pipeline precision and formal soundness; marked cache-key and VL proposals as inferences; did not reproduce experiments, inspect code, or execute Lean proofs.

@@ -5,8 +5,6 @@ Tag: `beckett2022katra`, [paper](https://www.usenix.org/conference/nsdi22/presen
 ## scope and result
 Katra incrementally verifies layered network data planes after forwarding-rule insertions or deletions. It models packets as unbounded header stacks, partitions headers by local forwarding behavior, and explores symbolic paths while repairing dependencies between stack layers. The abstract reports: “We present a new verification algorithm to efficiently and incrementally verify arbitrarily layered network data planes that are implemented using packet encapsulation.” (Abstract, p. 617)
 
-Inference: For VeruLaw, Katra supplies a useful state-space-reduction and incremental-rechecking design. Its network semantics and algorithm are not Rust or Verus code, so translation below is an engineering analogy.
-
 ## technique: formal multilayer model
 The model contains vertices, directed edges, headers, transformations, and prioritized rules. The matching rule with the lowest priority value determines the next edge and transformation. A layered packet contains a stack of encapsulated headers, not a history of traversed layers. Matching and ordinary transformations inspect or modify only the top header. Two special operations duplicate the top header or remove it; transformations may be composed. The paper states: “A layered network is just an instance of a network that processes stacks of headers:” (Sec. 3.4, p. 619). Push requires a nonempty stack; pop requires at least two headers (p. 620).
 
@@ -45,4 +43,3 @@ Inference: Performance claims should retain their benchmark and update-order con
 - partial equivalence classes: partition headers by equal local edges and transformations
 - layered DFS and loop detection: explore symbolic stacks and detect recurring behavior without requiring whole-stack repetition
 - stack repair: reverse and replay transformations after restricting the symbolic top
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "To repair the stack, we reverse all transformations applied to the current stack to recover the initial set of packets from the source that will eventually lead to the new restricted stack."): checked the entire paper including references and appendix, study quotations, numbers, section and page references, and technique steps; corrected the model, PEC meaning, DFS initialization and references, repair procedure, proof scope, and evaluation comparison; replaced the link with the publisher page printed in the paper; did not independently validate proofs, run Katra, reproduce experiments, or validate the proposed Verus adaptations.

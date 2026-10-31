@@ -67,8 +67,6 @@ A crash matching type and location is a validated PoV; any other sanitizer crash
 
 The paper’s main limits are C/C++ memory vulnerabilities, sanitizer-dependent validation, no guarantee of semantic completeness, and a 30-task ablation subset chosen only from tasks the full system solved (Section 5.4, p. 8; Section 6, p. 9). Generated PoVs differ substantially from ground truth, with average similarity 0.0296 across 24 solved CVEs (Section 6, p. 9); this supports behavioral validation but does not prove exploit equivalence.
 
-Inference: for VL, the reusable pattern is execution-grounded repair around a typed proof state. A Verus agent can use compiler diagnostics and counterexamples to refine proofs, but should terminate only on a Verus-checked postcondition. The threat is high if a runtime trace is trusted as a proof of safety; it is evidence that guides proof search. DrillAgent already covers root-cause context, instrumentation validation, hybrid feedback, and two-phase refinement, so VL should adapt these to Rust/Verus proof obligations rather than copy C sanitizer assumptions.
-
 ## techniques for the catalog
 
 - persistent root-cause context: analyze entry prerequisites and crash predicates once, then reuse the semantic context
@@ -76,4 +74,3 @@ Inference: for VL, the reusable pattern is execution-grounded repair around a ty
 - two-phase generation: explore to the vulnerable function first, then refine near-target inputs toward the triggering effect
 - hybrid execution feedback: always provide coarse source-level coverage and query fine-grained coverage when stalled
 - validated versus variant outcomes: distinguish matching sanitizer type/location from other crashes and report both denominators
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

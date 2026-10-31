@@ -42,8 +42,6 @@ A proof establishes memory safety under SLAyer's logical object semantics and th
 
 Inference: Exhausted is therefore not evidence of unsafety. The trusted components are the C frontend, OS model, assertion semantics, Z3, and the implementation of subtraction, symbolic execution, and abstraction; the paper does not list them as such.
 
-Inference: VL should reuse SLAyer's layered pattern: a closed environment model, heap-shape predicates, summaries, and loop abstraction (the paper describes no separate proof checker). It should not claim that a Verus proof of a shape predicate covers byte layout, allocator behavior, or kernel contracts unless those are modeled. The threat from agent-written verified Rust is high at abstraction boundaries: an incorrect list-segment predicate can make every later proof vacuous. Requiring concrete ownership wrappers and a checked correspondence between ghost nodes and actual allocations reduces that risk.
-
 ## techniques for the catalog
 - object-level separation heap: model disjoint structured objects with points-to and list-segment predicates
 - subtraction/frame inference: split a required heap fragment from a formula and carry the remainder through symbolic execution
@@ -51,5 +49,3 @@ Inference: VL should reuse SLAyer's layered pattern: a closed environment model,
 - interprocedural summaries: relate procedure-entry and procedure-exit heaps with quantified ghost variables
 - guarded abstraction: weaken formulas into loop invariants using reachability-guarded rewrite rules and nested-disjunction hoisting
 - closed OS-model analysis: link driver code to an environment model before proving memory safety
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Searching for proofs with Cut enables localizing case analysis, resulting in much smaller proofs and search spaces, as well as more compactly represented remainders."): I read the whole paper text (279 lines, pp. 178-183) and checked every quotation, page and section reference, the Table 1 description, and each technique step against it. I changed: the wrong program count (19, now 17: 7 fw plus 10 sll; 15 Safe, 2 Unsafe), "wall-clock" (the paper says usr+sys), the Z3 role wording, the bug description, the Section 4.2 page range, the added "small proof checker" (not in the paper, removed), and marked unsupported statements (subtraction use, Exhausted meaning, trusted components) as Inference. Link from the fetch record (paper gives no DOI). I did not check the Verus inferences for correctness, the cited external works, or the Figure 1 code and Figure 2 flow diagram in the PDF.

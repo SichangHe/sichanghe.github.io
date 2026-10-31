@@ -18,7 +18,7 @@ The initial 16-topic model yielded 209 unique questions among the top 20 documen
 
 The resulting challenge classes include proof elaboration, environment setup, memory-model understanding, and language understanding. Proof-elaboration examples are inability to design or complete a proof strategy, choosing a non-ideal strategy, finding or expressing loop invariants, and identifying or expressing termination clauses (sections III-B–III-C and Table II, PDF pp. 7–8). The authors describe the proof-strategy challenge: “The first challenge is related to creating a proof strategy. In many questions, authors could not even start the proof, not knowing what proof strategy to choose.” (section III-B(a), PDF p. 7)
 
-Verus form. Inference: apply this pipeline to VL's issue tracker, proof failures, and rejected patches. Stratify by Verus version, solver, and construct before clustering; otherwise one topic can mix unrelated failures. Label clusters with concrete proof actions such as invariant discovery, trigger selection, nonlinear arithmetic, termination, or specification mismatch. Keep human review because the paper's topic labels are manually assigned after LDA.
+Verus form.
 
 Evidence and limits. Topic frequencies reveal what developers ask about, not the prevalence of failures in all projects. The authors caution that Stack Overflow may miss relevant posts and that topic modeling can obscure actual challenges; they mitigate this by reviewing topic keywords and question bodies (section VII, Threats to Validity, PDF p. 11). Inference: the uneven language counts limit transfer of the results to Verus.
 
@@ -34,19 +34,9 @@ Verus form. Inference: use a short, versioned survey after a Verus onboarding or
 
 The paper asks participants to rate five proposed improvements: readable counterexamples, tutorials with common exercises, searchable documentation, broader documentation themes, and teaching VA languages in mandatory courses (section V, PDF pp. 9–10). Most participants, 83.9%, supported user-readable counterexamples; 64.5% supported tutorials; beginners valued documentation search more than experienced participants, 66.7% versus 15.4%, with `p = 0.02822`; 41.9% rated broader documentation themes very important; and the paper reports 50.1% rating undergraduate inclusion highly impactful (section V, PDF pp. 9–10). Inference: 50.1% appears to be a reporting error because it cannot represent a whole-participant count out of 31. Open coding found five requests for better documentation and learning materials, four each for mainstream-tool integration and improved usability, and three each for better error messages, automation, education, and debugging/profiling tools (Table V, PDF p. 10).
 
-Inference: VL could test strategy guidance, clearer failure feedback, examples for invariants and termination, and reusable verification patterns. The survey measures support for proposed changes; it does not establish that these changes improve Verus workflows or adoption.
-
-## what is trusted, what VL should reuse, and product threat
-
-The paper measures practitioner reports, question frequencies, model-selection choices, and statistical tests. It does not prove that its taxonomy is complete or that proposed improvements increase adoption. Inference: for a product that emits agent-written verified Rust, a possible risk is a specification error: a developer or agent can misunderstand the intended invariant while the proof succeeds. This paper does not measure that risk or rank it against other product risks.
-
-Inference: VL should reuse the paper's mixed-methods loop, but tailor it to Verus artifacts: mine proof logs and issue text, cluster failure modes, validate them with users, and measure whether a concrete intervention changes completion time or correct-specification rate. The paper provides no Verus-specific evaluation.
-
 ## techniques for the catalog
 
 - LDA challenge mining — preprocess real verification questions, fit and compare topic models, then manually label recurring proof obstacles
 - human-in-the-loop taxonomy — review topic clusters and open-card-sort them into concrete challenge classes
 - survey validation — convert challenge classes into Likert items and test ratings with nonparametric comparisons
 - evidence-to-tool mapping — rate counterexamples, tutorials, search, documentation coverage and teaching; code open suggestions for automation, debugging and integration
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We used deductive and inductive coding to analyze the qualitative data derived from these questions."): checked the full paper, quotations, reported counts, section and PDF page references, technique steps, findings and inference labels; corrected the link to arXiv, search scope, duplicate-count interpretation, preprocessing, model selection, statistical tests and page references, flagged inconsistent counts, and removed unsupported product claims; did not check supplementary material, raw data, implementation or cited works independently.

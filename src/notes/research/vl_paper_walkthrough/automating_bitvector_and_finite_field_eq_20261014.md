@@ -74,16 +74,9 @@ Inference: A Verus adaptation should preserve explicit conversion bounds and dis
 
 During tool comparison, SMT-based verification found a CirC soundness bug in 32-bit arithmetic right shift caused by integer overflow in its Rust implementation; it did not appear at smaller widths and was fixed after notification (§5.5, PDF pp. 18–19). The authors state, “The issue was uncovered via SMT-based verification during tool comparison, did not occur at smaller bit widths, and shows the importance of verification beyond toy sizes.” (§5.5, PDF p. 19.)
 
-## what is proved, what stays trusted, and product threat
-
-The paper states termination and validity preservation for the translation strategies, plus termination and soundness for range analysis (§4.2–4.3, PDF pp. 12–15; Appendices A–B, PDF pp. 24–25). It describes Lean proof checking as shrinking “the trusted computing base (TCB) to Lean’s small trusted kernel.” (§3.3, PDF p. 6.) Mathlib lemmas and tactic-generated proofs are checked by that kernel; the paper does not identify the tactic implementation as part of this trusted base.
-
-Inference: Kernel checking establishes the stated theorem; it does not establish that benchmark extraction or source encodings capture the intended system. For VeruLaw, representation conversions and range assumptions should therefore be explicit. A proof of the wrong polynomial or an assumed overflow condition can miss the intended property. Any proposed Rust/Verus contribution should distinguish itself from BitModEq’s existing translation, bound analysis, and proof-checking workflow.
-
 ## techniques for the catalog
 
 - finite-field to bitvector translation — convert field terms through bounded naturals, preserve modulo when bounds are unavailable, then bit-blast the fixed-width equality
 - syntax-directed range analysis — decompose inequalities with placeholders, eliminate bounds from hypotheses, and use conservative bit case splits for dependencies
 - width-aware bit-blasting — compute safe widths, normalize formulas, and discharge the resulting bitvector equality with a proof-producing checker
 - explicit conversion soundness checks — prove validity preservation of translation rules and termination of their application strategies
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The majority of our translation and range analysis rules are implemented using existing lemmas in mathlib."): read the full paper including appendices and checked quotations, numbers, section/page references, translation rules, range analysis, and trust claims; corrected generation timeouts and limits, rule prerequisites, implementation widths, Table 5's page, SMT bug attribution, and unsupported Verus assertions; did not run the Lean implementation, reproduce experiments, inspect source code, or validate the proposed Verus adaptations.

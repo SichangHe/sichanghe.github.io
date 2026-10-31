@@ -27,8 +27,6 @@ The rational domain permits fractional dimensions. The paper's example has a wav
 
 Verus form (inference)
 
-Inference: encode units as ghost/specification data attached to Rust types or to a quantity wrapper, and prove arithmetic relations with Verus `spec fn`, `requires`, and `ensures`. Use integer or rational exponent representations in specifications, not floating-point tags. Verus does not provide ΛS's unit calculus automatically; the unit algebra, normalization, and soundness lemmas must be modeled and proved. Inference: a practical VL library can expose constructors that prevent adding unequal units while keeping the unit metadata erased from executable values.
-
 what it proves and assumes
 
 ΛS proves typing and later invariance properties for its own calculus. Inference: it assumes a finite base-unit vocabulary and exact rational arithmetic in the metatheory (the paper's checker works on a finite unit system with rational factors, Section 3, pp. 7–8). Inference: the paper does not claim that a declaration reflects physical reality; Theorem 3.2 (p. 8) concerns consistency and determinacy of the declarations supplied.
@@ -146,11 +144,7 @@ Inference: encode dimension matrices and nullspace calculations as ghost proofs,
 
 The Lean artifact has 10,900 lines of definitions and proofs and 6,300 lines of documentation, with no admitted proofs and no axioms beyond the three of Lean's standard library (Section 10, p. 18). Mechanization caught a variable-capture bug in substitution that every test missed; it was exposed when the composition law of substitutions was proved (Section 10, p. 18). Inference: this is evidence for proof-based testing of metatheory, not evidence that every compiled numeric result is exact.
 
-The paper explicitly separates trusted layers: a theorem reader trusts Lean's kernel and three axioms; executed `#guard` checks additionally trust Lean's compiler; a reader who believes the number the compiled binary prints trusts, in addition, Lean's code generator, the Float carrier, and three C functions behind a BLAS-shaped interface (Section 10, p. 18). The denotational theorems use real arithmetic and do not prove floating-point equivalence (Section 10, pp. 18–19). Inference: for VL, the same separation should appear in reports: Verus proof soundness and specifications, external libraries, compiler and erasure, floating-point behavior, hardware, and the physical meaning of unit declarations remain distinct assumptions.
-
-## product threat and prior work VL should not redo
-
-Inference: the product threat is a generated API or numerical kernel that typechecks while conversion factors are inconsistent, underdetermined, or silently scale an answer. A Verus proof of a wrong conversion table can pass; the table checker and drift diagnostic address that missing property. Inference: the paper already provides a design for exponent-vector units, declaration consistency, exact factor extraction, drift diagnostics, adequacy/erasure, and dimensioned matrix typing. Inference: VL should not present those mechanisms as new without a concrete Rust/Verus implementation and measurements. The paper does not evaluate Verus, Rust, agent-written code, or product-scale maintenance; Inference: those are open integration questions.
+The paper explicitly separates trusted layers: a theorem reader trusts Lean's kernel and three axioms; executed `#guard` checks additionally trust Lean's compiler; a reader who believes the number the compiled binary prints trusts, in addition, Lean's code generator, the Float carrier, and three C functions behind a BLAS-shaped interface (Section 10, p. 18). The denotational theorems use real arithmetic and do not prove floating-point equivalence (Section 10, pp. 18–19).
 
 ## techniques for the catalog
 
@@ -164,4 +158,3 @@ Inference: the product threat is a generated API or numerical kernel that typech
 - Pi factorization: derive dimensionless products and output power products by rational linear algebra
 - dimensioned linear algebra: type vectors and matrices so entry units are determined by domain and codomain spaces
 - mechanized metatheory: use Lean proofs of checker, evaluator, invariance, and erasure properties to expose bugs missed by tests
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The ratio records how a value moves under a rescaling beyond the factor its type predicts."): read the whole paper text (pages 1-24) and the whole study; checked the quotations, theorem numbers, section and page references, the declaration example and the drift example against the text; changed the abstract quotation (removed a comma), the derivation quotation (lower-case start, page 5 not 6), several page references (Section 2 unification p. 5, Section 3 incomplete-system example p. 7, Section 6 bounded comparison p. 13, Section 8 pendulum p. 15, Section 10 pp. 18-19), the adequacy step (adequacy is evalC_eq_den, Theorem 7.1 is the declared-factor theorem), the Pi theorem scope (positive arguments, closed scope), the Theorem 6.1 scope, the checker-soundness wording, and marked the unsupported conclusions as Inference; did not check the Lean artifact, the cited references, the PDF figures beyond the text layer, or any Verus-form advice (all marked Inference).

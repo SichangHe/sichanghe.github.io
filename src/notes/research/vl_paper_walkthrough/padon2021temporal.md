@@ -30,13 +30,7 @@ Steps: identify existential temporal facts that affect future behavior; add one 
 
 Inference: A possible Verus model could use immutable ghost values for witnesses. Its proof would need to show that choosing such values preserves all relevant original behaviors, as Lemma 4 does for the paper’s construction.
 
-## trust, limits, and VL risk
-Theorem 2 proves soundness under its construction and no-abstract-lasso premise; it does not require selected prophecy formulas to hold unconditionally. They split cases about possible futures. The method remains incomplete: “for some systems and properties, liveness holds but the safety of the resulting system does not hold, no matter what temporal prophecy is used.” (section 5, p. 7). Theorem 3 establishes closure under first-order reasoning, with modus ponens and cut as corollaries, assuming an oracle for the resulting safety checks (section 5, p. 7).
-
-Ivy extracts prophecy formulas and witnesses from the user’s inductive invariant and checks the resulting verification conditions with Z3 (section 6, p. 8). The conclusion states: “Because our approach relies on an inductive invariant supplied by the user, it requires the user to understand the liveness-to-safety transformation and it requires both cleverness and a deep understanding of the protocol.” (section 8, p. 10). Inference: applying the approach to VL would require checking the model, fairness assumptions, transformation, and proof implementation. This paper alone does not validate a Verus adaptation or establish that a Rust program meets environmental fairness assumptions.
-
 ## techniques for the catalog
 - abstract-lasso reduction: freeze a finite footprint and prove no fair repeated projection exists
 - temporal prophecy tableau: add future-sensitive FO-LTL formulas to refine the product state space
 - prophecy witnesses: add immutable constants witnessing existential temporal formulas
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "In particular, the theorem does not hold if A is restricted to subformulas of the temporal proof goal."): checked the whole paper, study quotations, formulas, technique steps, examples, numbers, and section/page references; corrected the Lemma 3 quotation, tableau and fairness descriptions, page references, and evaluation scope; removed unsupported Verus capability claims and trust assumptions; did not reproduce proofs mechanically, run Ivy experiments, inspect implementation code, or validate the proposed Verus adaptations.

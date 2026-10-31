@@ -7,8 +7,6 @@ Autonomous Trustworthy Agents (ATA) separates offline policy formalization from 
 
 The demonstration is insurance claims processing using many-sorted first-order logic. A policy supplies the rules, and each claim supplies facts. The paper states, “The T&C document represents the informal specification while the claim is the input that needs to be processed.” (Sec. 1, p.3) The prover checks whether the rules and extracted facts entail coverage; a counterexample means coverage is not entailed.
 
-Inference: for VL, the transferable idea is to compile a policy once into reviewed Verus specifications and translate each request into typed facts. The paper does not implement Rust, Verus, or verification of executable code.
-
 ## technique 1: one-time formalization of a policy
 The paper's formalization procedure is:
 
@@ -70,12 +68,8 @@ The prover checks entailment relative to the formal theory and claim axioms (Sec
 
 Privacy is a proposed deployment benefit. Section 4.5 (p.12) reports 76.19% accuracy for corrected ATA using `gemini-2.5-flash-lite`, compared with 76.50% for end-to-end `gemini-2.5-pro`. Fine-tuning and on-premise or on-device deployment remain future work. The datasets are unavailable: “Due to data privacy constraints, these datasets are not publicly available at the time of writing.” (Sec. 4.1, p.8)
 
-Inference: the formal proof does not validate the policy translation, extracted facts, or ground-truth labels. The useful VL experiment would test whether reviewed policy modules and typed request encoders reduce maintenance effort and errors caused by parsing. This would require evidence beyond the paper's claims-processing results.
-
 ## techniques for the catalog
 - one-time policy formalization: translate a reusable natural-language specification into a typed formal theory with optional human correction
 - typed claim axiomization: extract constants and literal facts using the policy's existing sorts and predicates
 - prover decision with explanations: check the negated goal for unsatisfiability and explain the result with an unsat core or counterexample
 - stability and oversight controls: test repeated inputs, paraphrases, and model substitutions, and trigger human review on configured conditions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Due to data privacy constraints, these datasets are not publicly available at the time of writing."): checked the full text including references, quotations, reported numbers, section/page references, and technique steps; corrected the empty offline function signature, optional and author-performed review, relation-extraction page references, unsupported accuracy denominators, entailment wording, and the distinction between security claims and measured results; did not reproduce experiments, inspect private datasets or implementation, or validate proposed Verus adaptations.

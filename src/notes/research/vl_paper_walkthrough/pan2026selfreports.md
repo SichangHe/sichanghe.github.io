@@ -59,13 +59,9 @@ Inference: A Verus product should select on independently checked task propertie
 ## what is proved, measured, and trusted
 The paper measures reports against Contexto ranks, intervention outcomes, and permutation tests (1,000 permutations; Table 3, p. 13). It proves no theorem about language models. Trusted elements include the hosted game's ranking function, model serving, prompts, random sampling, and data extraction. Appendix C reports invalid proposals: 1/2,084 Qwen offspring, 0/881 Gemma, and 130/3,758 Ministral were all invalid or duplicate (p. 15). GPU usage was an approximate upper estimate of 1,680 aggregate GPU-hours; exact occupancy was not retained (Appendix C, p. 15). The authors note a contradiction-like design tension: selecting on report quality would make the report a fitness target and potentially corrupt the measurement (Appendix A, p. 13).
 
-Inference: Threat to a product of agent-written verified Rust is high for any workflow that treats model confidence or rationale as evidence that a proof or contract is correct. The threat is lower when every intermediate artifact is checked by Verus, compilation, tests, or an independent environment. Existing work on ReAct, Toolformer, CRITIC, and step-by-step verification is cited as prior external-checking practice (§2, p. 2); VL should reuse those ideas rather than redo claims that narration alone verifies code.
-
 ## techniques for the catalog
 - dense environment grounding: grade every intermediate action externally so each self-report is checkable
 - separate calibration and discrimination: test probability accuracy and ranking ability as different properties
 - inherited-rationale replay: hold search state fixed and replace only the rationale to test causal influence
 - selection audit: test selection differentials and parent–offspring transmission before claiming optimization improves report quality
 - independent report-off control: compare matched runs with reporting enabled and disabled; the paper found no detectable behavior change (25 runs per condition, §3, p. 4)
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

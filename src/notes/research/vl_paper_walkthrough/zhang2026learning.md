@@ -89,7 +89,7 @@ How to do it.
 3. Build an action-to-token matrix that distributes one action's advantage uniformly over its exact token span and gives other tokens zero weight (Appendix A, Equation 22, p. 14).
 4. Apply the clipped PPO loss plus a sampled KL penalty to a fixed reference policy; the implementation additionally dual-clips negative advantages (Appendix A, Equations 23–26, p. 14).
 
-Verus form. Inference: this is training infrastructure rather than a Verus proof pattern. A VL system could use the verifier's proof obligations as reward labels while separately compiling accepted Rust/Verus code. Verus proves the generated program and contracts; it does not implement PPO, token alignment, or policy gradients.
+Verus form.
 
 Evidence. The rule-conditioned baseline has lower held-out prediction error than a global baseline: at training step 100, error is 0.18 versus 0.24 (section 4.4, p. 8). The paper reports that full PROOF-R1 improves Qwen2.5-7B-Instruct ProverQA-Hard over the strongest baseline by 4.86 Avg@3 points, 11.05 Pass@3 points, 1.15 FVR points, and 3.66 RVR points, while reducing RGD from 1.15 to 1.05 (section 4.2, p. 7). The gradient analysis reports a 96.6° MCFV/ASDC angle in layers 0–8, 126.6° in the final layer, and an MCFV weighted gradient norm about 1.14 times ASDC (section 4.4, pp. 8–9). These are training diagnostics, not proof soundness results.
 
@@ -98,16 +98,6 @@ Evidence. The rule-conditioned baseline has lower held-out prediction error than
 The paper proves a conditional theorem: if every generated conclusion in the answer closure passes semantic entailment, dependencies are acyclic and trusted, and goal binding identifies the terminal answer, then the premises entail the selected answer. If rule checks also pass, each inference conforms to its declared schema (Appendix D, p. 17). This is a proof of the checker under explicit assumptions, not a proof that the assumptions hold for arbitrary model outputs.
 
 For out-of-distribution FOLIO, the authors add seven guarded quantifier rule families to the training ontology: universal implication chaining, universal propositional inference, existential introduction, existential conjunction elimination/introduction, existential implication elimination, and quantifier negation (Appendix G, Table 11, p. 21). They replay frozen outputs without changing formulas, identifiers, or goal binding, and classify each step as training-seen or unseen. On unseen rules, PROOF-R1 reaches FVR 86.21 and RVR 63.08, versus the backbone's 63.24 and 34.92 (Table 12, p. 21). Inference: a Verus port would need explicit lemmas for each quantifier pattern and a model of the Rust property being quantified; these first-order rules cannot be copied into Rust proofs mechanically.
-
-## evidence, trust, and product threat
-
-The principal experiments train on ProverQA and test four backbones: Qwen2.5-7B-Instruct, Llama-3.1-8B, Qwen3-8B, and GLM-Z1-9B-0414. Cross-dataset tests use FOLIO and ProofWriter. The paper states: “We recheck the frozen Qwen2.5-7B-Instruct outputs from the main ProverQA comparison.” (Appendix E, p. 18). The frozen comparison contains three responses for each of 681 problems for each of three methods, totaling 6,129 responses. FVR and RVR numerators and denominators are identical across the four backends (Appendix E, pp. 18–19). A blinded GPT-5.5 review of 2,000 sampled steps reports 1,952 agreements out of 1,957 determinate reference cases, weighted 99.73% (Table 9, p. 19); this is an independent semantic review, not a kernel proof of the model.
-
-What is proved or measured: the conditional certificate argument proves entailment assuming trusted components; the experiments measure answer accuracy, eligible-step semantic and rule pass rates, proof-length deviation, backend agreement, and training diagnostics. What remains trusted: parsing, formalization of natural language into formulas, premise consistency, the solver/checker implementations, and the model's goal binding. The authors' limits exclude unrestricted natural-language interpretation and other logical formalisms.
-
-Inference: the threat to a product that asks an agent to write Verus-verified Rust is medium. The useful design is explicit dependency-carrying proof actions, state admission only after checks, and credit restricted to the final proof closure. The threat is that a high answer score can coexist with untrusted or irrelevant proof steps unless every Rust/Verus obligation is checked. PROOF-R1 does not verify Rust, memory safety, API contracts, hardware behavior, or the correctness of a Verus specification. VL should reuse the separation between semantic validity, rule faithfulness, and proof progress, but must replace first-order SMT checks with actual Verus verification and preserve the trust boundary around external code and specifications.
-
-No contradiction appears in the reported main tables. Percentages are rounded means and standard deviations; the paper explicitly says FVR/RVR are micro-averaged over eligible steps, while Avg@3 and Pass@3 use K=3 outputs. The stronger Qwen3 answer accuracy is near saturation, so gains there are mainly proof-verification gains. Training-free LogicAgent sometimes has slightly higher answer accuracy but uses multiple model calls and substantially more inference-time tokens (section 4.2, p. 7).
 
 ## techniques for the catalog
 
@@ -118,5 +108,3 @@ No contradiction appears in the reported main tables. Percentages are rounded me
 - rule-conditioned centering: normalize verification rewards by the moving average for each logical rule
 - conditional proof-certificate soundness: derive answer entailment from acyclic trusted dependencies and discharged semantic obligations
 - expanded rule coverage: add guarded unseen quantifier schemas and replay frozen outputs to test rule generalization
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

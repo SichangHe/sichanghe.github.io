@@ -58,14 +58,6 @@ Limits. Not every cycle has a simple recurrence, and unbounded actor materializa
 
 DissProve checks whether a newly generated symbolic state is entailed by an existing state and prunes duplicates or infeasible states. Entailment cuts cycles that ordinary feasibility checks cannot remove. The ablation caps runs at 25,000 states; without entailment, most benchmarks fail to terminate, while Barrier Lock reaches 87 states and still does more work than the normal run (section 6, p. 24). Entailment is expensive: Table 2 reports 339,864 entailment queries and 8,910 feasibility queries for Two-Phase Commit, and 629,940 and 12,429 respectively for Atomic Broadcast (section 6, p. 23). These denominators are query counts over one benchmark run, not percentages of all states.
 
-Verus form (inference). State subsumption can be encoded as implication lemmas between ghost predicates, but checking arbitrary entailment is outside ordinary Verus automation. A practical VL integration would precompute summaries or use an external SMT engine and import only proved lemmas.
-
-## evidence, trust, and product threat
-
-DissProve verifies seven protocols: One-Shot Election, Bakery, Dekker's Algorithm, Drinking Philosophers, Two-Phase Commit, Barrier Lock, and Atomic Broadcast. Table 1 gives 56–99 SLOC, 16–9,275 explored states, 4–8 materialized actors, and runtimes from 4 seconds to 1:12:46 on a 2.4 GHz i9 MacBook Pro with 64 GB RAM and 12 cores (section 6, pp. 22–23). Two-Phase Commit took 5,888 states and 1:08:46; Atomic Broadcast took 9,275 and 1:12:46. No user invariants were supplied. The paper reports: "To the best of our knowledge, this is the first time these two protocols have been verified in an asynchronous setting without the need for explicit inductive invariants." (section 1, p. 3).
-
-The proofs trust the Lean-mechanized soundness theorems, the P parser and semantics, symbolic transfer rules, SMT queries, and the implementation of DissProve. The experiments do not establish scalability to arbitrary protocols: Single-Round Paxos and Raft are theoretically affine but did not finish after several hours (section 6, p. 24). Safety formulas are restricted to prenex-universal properties whose negation can be skolemized into actors and fields. Inference: agent-written verified Rust for distributed protocols faces a high threat from asynchronous interleavings, queue/history abstraction bugs, and unsound generated summaries; the paper's explicit affine condition and checked causal/segment soundness are useful design boundaries. VL should not redo a generic backward protocol verifier before determining whether its target systems satisfy affine communication and supported property shapes.
-
 ## techniques for the catalog
 
 - affine backward safety verification: refute a negated safety goal by symbolic predecessor exploration
@@ -73,4 +65,3 @@ The proofs trust the Lean-mechanized soundness theorems, the P parser and semant
 - actor-causality reduction: retain predecessor events that can produce the current obligation
 - message-segment summarization: compress cyclic message histories with affine-bounded symbolic lengths
 - entailment pruning: subsume repeated symbolic states to force convergence
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

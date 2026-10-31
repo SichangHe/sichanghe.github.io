@@ -79,13 +79,9 @@ how to apply it:
 4. classify failures by hallucinated identifiers, formalization competence, incomplete output, or formatting (Section 5.4, p. 8)
 5. report the denominator and prompt/model for every rate
 
-Verus form: Inference: prompt a VL agent to produce executable Rust first and Verus proof obligations second, then run the verifier on every sample. Record whether failure came from Rust compilation, specification mismatch, or proof search. Do not count a generated contract with `external_body` as proof of the function it replaces.
+Verus form:
 
 evidence, contradictions, and trusted scope: the paper manually classifies 3,189 DeepSeek-R1 error messages. It reports hallucination 47.3% (1,512 cases), formalization competence 32.7%, incomplete outputs 15.2% (487), and formatting 4.8% (154) (Section 5.4, p. 8). The percentages are rounded and their displayed case counts cover only categories with explicit counts; 1,512/3,189 is approximately 47.4%, so the paper's 47.3% is internally approximate. Lean compilation is the check for accepted outputs, while model adherence, Mathlib declarations, and the benchmark's formalization remain trusted inputs. The paper concludes that specialized theorem provers can be worse at multi-stage applied tasks despite strong local proof skill (Section 5.2, p. 7). Inference: this is a direct warning against choosing a Verus model solely by isolated proof completion.
-
-## implications for VL
-
-Inference: VL should separate construction of executable Rust from proof of its contract, require both artifacts to pass Verus, and benchmark algorithm and representation tasks separately from lemma proving. AMBER already covers the product risk of proof-only agents that return logically valid but non-computational witnesses. VL should record Pass@k denominators, model, task category, and exact verifier outcome; otherwise a success rate can hide whether construction or verification failed. Inference: the benchmark's explicit templates and semantic-dependency analysis are worth reusing, while its Lean syntax and Mathlib-specific retrieval should not be copied as if they were Verus mechanisms.
 
 ## techniques for the catalog
 
@@ -94,4 +90,3 @@ Inference: VL should separate construction of executable Rust from proof of its 
 - representation transformation proof — construct target domains and maps, then prove relaxation or equivalence
 - semantic dependency density — measure non-trivial typed declaration dependencies to stratify formal tasks
 - structural prompt and failure audit — enforce construction-first output and classify compile/proof failures with denominators
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

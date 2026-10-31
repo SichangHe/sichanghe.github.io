@@ -6,8 +6,6 @@ Tag: `cordeiro2009continuous`, [paper](http://arxiv.org/abs/0911.3784v1)
 
 Cordeiro, Fischer, and Marques-Silva reduce repeated verification cost by combining source-control history, equivalence checking, dynamic tests, and SMT-based bounded model checking (BMC). The abstract says: “This paper describes a new approach called continuous verification to detect design errors as quickly as possible by looking at the Software Configuration Management (SCM) system and by combining dynamic and static verification to reduce the state space to be explored.” (abstract, p. 1). Their embedded-software case study reports that the approach “reduces the overall verification time by up to 50%.” (abstract, p. 1).
 
-Inference: For VeruLaw, the transferable idea is incremental proof scheduling: verify changed behavior and propagate only when equivalence fails. This is an engineering workflow, not evidence that unchanged code remains correct under arbitrary dependency or specification changes.
-
 ## technique 1: SCM-guided incremental re-verification
 
 At each build, query SCM for modified functions. For each changed function, compare old and new input-output relations; if equivalent, reuse prior proofs for that function and its unchanged dependents. The paper notes: “if we can prove that the old and new versions of a function are functionally equivalent, then we do not need to show for the new version any of the properties already shown for the old version.” (continuous verification, §2, p. 2).
@@ -16,7 +14,7 @@ Their signal-inverter example has an if/else implementation and a shorter condit
 
 Inference: In Verus, attach `ensures` contracts to both function versions and prove a lemma that equal inputs imply equal outputs. Reuse a caller proof only when the exact contract and relevant dependencies are unchanged; Verus does not automatically justify equivalence from textual similarity. A ghost hash of normalized contracts can index cached proofs, but the hash is a build-system heuristic, not a proof.
 
-The authors concede: “Of course, proving the equivalence of two functions is in general undecidable, due to unbounded memory usage [16], and the effort we spend in trying to do so might be wasted.” They add: “However, in our experience, this does not occur very often, since a high degree of predictability is a desirable design characteristic in embedded software (i.e., dynamic memory allocations and recursion are discouraged).” (§2, p. 2). Inference: VL must invalidate caches when specifications, external contracts, compiler behavior, or unsafe code change.
+The authors concede: “Of course, proving the equivalence of two functions is in general undecidable, due to unbounded memory usage [16], and the effort we spend in trying to do so might be wasted.” They add: “However, in our experience, this does not occur very often, since a high degree of predictability is a desirable design characteristic in embedded software (i.e., dynamic memory allocations and recursion are discouraged).” (§2, p. 2).
 
 ## technique 2: tests as state-space guidance
 
@@ -40,8 +38,6 @@ ESBMC experiments ran on an otherwise idle Intel Pentium Dual CPU at 2 GHz with 
 
 Inference: what remains trusted is SCM change detection, equivalence-checking encoding, test assumptions, BMC bound, SSA translation, SMT solver, compiler semantics, and any approximated numeric theory. The approach can miss bugs beyond the unwinding bound or outside test-guided intervals, and the 50% result is one commercial product's four-release sequence, not a universal factor. The paper states that equivalence is undecidable in general (§2, p. 2).
 
-Inference: Product threat is moderate to high for agent-written verified Rust maintenance. Incremental caching can hide a changed dependency or weakened contract if invalidation is incomplete. VL should adopt SCM-triggered proof reuse only with contract/dependency fingerprints and periodic full re-verification. The paper already demonstrates test-guided BMC and change-based selection of functions to verify, and describes equivalence checking on a small example; VL should not redo those as if novel, but should adapt their boundaries to Verus's proof contracts.
-
 ## techniques for the catalog
 
 - SCM-guided proof reuse — identify changed functions; the paper skips unmodified functions and proposes reusing proofs for modified ones whose old/new input-output equivalence is proved
@@ -50,4 +46,3 @@ Inference: Product threat is moderate to high for agent-written verified Rust ma
 - theory-specific encoding — choose bit-vectors, integers/reals, pointers, and solvers according to program operators and precision needs
 - dynamic-object validity encoding — track object identifiers and liveness to detect invalid allocation, free, and dereference operations
 - verus translation (inference) — use contracts, loop invariants, and dependency fingerprints for sound proof-cache invalidation around changed Rust code
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Although UFs simplify the proofs, they ignore the semantics of the operators and consequently make the formula weaker."): I read the whole arXiv text (and viewed Tables 1-3 in the PDF) and checked every quotation, number, section and page reference (PDF pages) and technique step against it; I corrected page references, the equivalence-undecidability and test-stub claims, the solver-selection rule, added the 0.3-1% result of variable elimination, the getCommand/commandLoop inconsistency, and that equivalence proofs are not reported for the case-study functions, removed an unsupported step (regression tests), and marked own conclusions "Inference:"; I did not check the cited references, the Figure 3 Büchi automaton details, or formulas (4)-(6) beyond reading them, and the link is the arXiv link already in the study (arXiv:0911.3784v1 appears in the paper text).

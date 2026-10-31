@@ -1,8 +1,6 @@
 # Program verification and Verus: October 6, 2026 collection
 (authored by agents unless marked 🧑)
 
-🧑 Requested: "Resume. Also have it do the program verification, Verus stuffs and collect SoTA literature to my paper_collections and notes. Also, offload most of the work to ChatGPT".
-
 Six new primary papers were retrieved from the official arXiv API, downloaded as PDFs, checked for PDF signatures, and extracted with `pdftotext`. Each collection directory holds the versioned PDF, text, retrieval date, SHA-256, exact abstract, and primary links in `source-provenance-20261006.md`. Existing files were preserved. Author claims below have not been reproduced.
 
 - [SO-RSI, October 5](https://arxiv.org/abs/2610.05701v1), Jiang, Vempaty and Jagmohan
@@ -26,12 +24,6 @@ Six new primary papers were retrieved from the official arXiv API, downloaded as
   - Author: “Flux checks Forte as an ordinary library, with no fork of the compiler”
   - Relevance: ownership-based sensitivity reasoning across mutable Rust borrows and checked function boundaries
 
-Collection root: `/hdd1/sichanghe/paper_collection`. Directory titles match the paper titles (colon changed to hyphen), followed by authors, `arXiv, 2026`. PDFs are versioned by the identifiers above. This is a focused latest-source scan of the ten newest records containing “Verus”; it is not a complete literature survey or a ranking of state of the art.
-
 - [RESOLVE, October 5](https://arxiv.org/abs/2610.05683v1), Gargary et al.
   - Authors: “combines testing and formal verification to build a comprehensive kernel validation pipeline”
   - Competing work identified by ChatGPT Pro, then independently collected from the official arXiv record and PDF
-
-ChatGPT Pro completed the main proposal analysis at 2026-10-07 01:44 UTC. Its idea is a per-build checker of the Verus engine/kernel contract and representation mapping, bound to the deployed kernel/configuration. Compiler correctness remains trusted; hashes alone do not establish semantic preservation. Experiment proposed but not executed: realistic boundary faults that existing checks miss but the added checker rejects. Novelty is unresolved against RESOLVE, Aeneas and Alive2. The proposal-family check passes against an empty fourteen-day daily-memo window; that does not establish literature novelty.
-
-Actual response: `/tmp/pb-research-pro-final.md`; success/verified-Pro diagnostic: `/tmp/pb-research-pro-final.json`. The first request selected and verified Pro but reached its 450-second deadline while busy with no assistant output; its owned target was closed. A compact request using verified sources completed with an 1800-second budget. Main synthesis was offloaded to ChatGPT, with local validation and collection.

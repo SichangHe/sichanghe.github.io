@@ -48,12 +48,9 @@ Proved: each successful Frama-C result proves the C implementation against its t
 
 The numbers have different denominators. 130/162 is the complete curated input; the five-check results use 161 files. Inference: the paper does not explain the one-file difference, which may be the one empty first-iteration response in Section 5.1. Mutation percentages use 157 files that generated mutants. Test skips are interface failures rather than passing behavior. Inference: the five-check total is therefore a strict composite signal, not a claim of equivalence.
 
-Inference: for VL, this workflow is a substantial product threat if an agent can produce Rust that verifies against an accidentally weakened contract. The direct reusable defense is independent test execution, mutation of implementation behavior, and checking contract structure and interfaces in addition to Verus success. The paper does not measure Verus or agent-written Rust, so the threat estimate is an inference.
-
 ## techniques for the catalog
 
 - source validation — reject a translation unless source verification and tests both pass
 - separate translation — translate implementation and tests independently and use different model families where possible
 - verifier-guided repair — feed localized verifier errors to a narrow repair prompt for bounded iterations
 - complementary validation — combine clause counts, round-trip reconstruction, target verification, mutation testing, and translated tests
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Most of these translations are fixed in the first iteration (12), and subsequent iterations are not as effective."): read all 8 pages and checked every quotation, number, page and section reference, and the steps of techniques 1–4 against the text, tables and figures; changed the page of the setup details (pp. 44–45), the page of Figure 1 (p. 43) and of Figure 5 (p. 47), the backslashes inside two quotations, the paraphrase of the three-iteration limit (now quoted), the claim that the 161-file denominator excludes the unusable response (the paper does not say so; now marked Inference), an unsupported run order in technique 1, and marked two of my own conclusions as Inference; did not check the cited external works, the GitHub artifact, the exact colour-to-category assignment in Figures 4 and 5 beyond the numbers stated in the text, or the Verus adaptations (which are labelled inferences).

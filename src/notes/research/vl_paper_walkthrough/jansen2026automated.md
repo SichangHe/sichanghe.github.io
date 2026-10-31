@@ -52,13 +52,9 @@ Inference: In Verus, TSIs would map to typed `spec fn` fragments or direct expre
 
 Translation accuracy is checked with OpenJML. HAFIS with GPT-4o produced 496 correct, 3 incorrect, and 62 no-output JML specifications: 496/(496+3+62)=88% (Table 11, PDF p. 30). HAFIS with StarCoder2 produced 563/731 correct (563 correct, 19 incorrect, 149 no output = 76%). The pure grammar baseline produced 1/1 correct but had only one translatable MR. The paper reports average mutation scores from Major; the highest HAFIS average is 0.44 for o3 and Claude-4 Opus, while pure LLM scores range down to 0.006 (Section 6.2, PDF p. 30). A mutant is killed only when theorem proving finds at least one new verification error (Section 5.1, PDF p. 27).
 
-Trusted components include the LLM prompt and output, ccg2lambda templates, LR(1) grammar, TSI mappings, OpenJML, Z3, Java compiler assumptions, manually added loop invariants, and the correctness of the informal-to-formal semantic mapping. The paper explicitly says: “Loop invariants are added manually to all programs in order to facilitate formal verification.” (Section 5.1, PDF p. 26) Inference: For VL, this is a high threat if generated contracts are accepted without checking that they express the user’s intent; it is a useful architecture for narrowing generation and rejecting type errors, but not a proof of requirement equivalence.
+Trusted components include the LLM prompt and output, ccg2lambda templates, LR(1) grammar, TSI mappings, OpenJML, Z3, Java compiler assumptions, manually added loop invariants, and the correctness of the informal-to-formal semantic mapping. The paper explicitly says: “Loop invariants are added manually to all programs in order to facilitate formal verification.” (Section 5.1, PDF p. 26)
 
 The stated boundary is that explicit words “parameter” and “result” are required to distinguish preconditions and postconditions; sentences without them are excluded (Section 8, PDF p. 38). Inference: Agent-written verified Rust would need an equivalent requirement discipline and independent review of generated specifications.
-
-## what vl should reuse
-
-Inference: VL should reuse the staged pattern—natural-language restriction, typed intermediate representation, deterministic synthesis, solver checking, and mutation-based contract testing. It should not redo a generic LLM-only contract generator or a parser without type checking. The paper’s dataset and metrics also show that “translation accuracy” includes no-output and incorrect-output cases, so VL evaluation should report all three counts and denominators.
 
 ## techniques for the catalog
 
@@ -69,4 +65,3 @@ Inference: VL should reuse the staged pattern—natural-language restriction, ty
 - TSI typed synthesis: match syntax and argument data types before recursively generating contract fragments
 
 - OpenJML and mutation evaluation: check generated contracts and measure killed mutants with explicit correct/incorrect/no-output denominators
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

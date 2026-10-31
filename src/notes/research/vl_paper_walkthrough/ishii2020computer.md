@@ -44,8 +44,6 @@ Table 2 reports all four operators verified. It records one branch for addition 
 
 The extracted OCaml program required rounding operators implemented in C and interfaced with OCaml, and a Why3 extraction driver for `Float64.t` (Section 8.3, p. 11). Related work: Ayad and Marché verified only the soundness of an interval multiplication code with Frama-C; this paper adds tightness (Section 9, p. 11).
 
-Inference: The proof does not by itself verify the C rounding implementation, compiler, or hardware, and it does not cover empty intervals or division by intervals containing zero. VL should probably not repeat generic NaN-extremum or nonlinear-arithmetic lemmas unless there is a Rust/Verus-specific integration gap.
-
 Inference: The threat to agent-written verified Rust is focused: branch-heavy numeric libraries remain proof-costly, and reusable arithmetic lemma libraries are valuable. The paper does not address Rust ownership, unsafe code, concurrency, or specification adequacy.
 
 ## techniques for the catalog
@@ -54,4 +52,3 @@ Inference: The threat to agent-written verified Rust is focused: branch-heavy nu
 - NaN-aware extrema — define min/max operators and case predicates that make all-NaN behavior explicit
 - VC splitting — compare unsplit, exhaustive, and cost-optimal decomposition of generated proof obligations
 - proof extraction boundary — separate verified WhyML logic from trusted runtime rounding and extraction code
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "min2 ignores NaN given as an argument so that the expression min2 x y evaluates to x when y evaluates to NaN."): read the whole paper text and checked every quotation, number, table value, section and page reference, and technique step against it; changed page references (hull and Definition 1 on p. 3, Section 7.2 postconditions and 7.3 on p. 10, Table 2 and Section 8.2 on p. 11), corrected the divisor restriction (divisors not containing zero, not only positive), removed unsupported claims (proof script, trigger on Rmult_le_compat, symmetric max2, hand-written C), fixed the lemma text escaping, and marked own conclusions as Inference; did not check the proofs themselves, the downloadable code archive, the cited references, or the PDF layout beyond the text extraction (overlines in the division condition were lost in the text, so the divisor restriction was read from the Appendix A table and Figure B.5). Link from the fetch record (arXiv ID matches the paper text).

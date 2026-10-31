@@ -6,7 +6,7 @@ Tag: `zhang2023cumulative`, [paper](https://arxiv.org/abs/2308.04371)
 
 Cumulative Reasoning (CR) decomposes a problem into small propositions, checks each proposition, and stores only checked propositions in a directed acyclic graph (DAG). Three roles operate over this graph: a Proposer suggests a step, Verifier(s) accept or reject it, and a Reporter decides when to synthesize an answer (Section 3, pp. 4–5). The paper says: “The specific contribution of each role is crucial: the Proposer explores, the Verifier ensures reliability, and the Reporter synthesizes, all operating on the shared, growing DAG of verified knowledge.” (Section 3, p. 4.)
 
-The authors allow the Verifier to be an LLM, a symbolic reasoner, a theorem prover, or a code environment (Section 3, p. 4). Inference: CR is a reasoning architecture, not a proof of arbitrary programs. For VeruLaw, a possible replacement is a Verus verifier or a checker for an explicit intermediate contract; an LLM-only Verifier would not supply the same trust guarantee.
+The authors allow the Verifier to be an LLM, a symbolic reasoner, a theorem prover, or a code environment (Section 3, p. 4).
 
 ## technique 1: proposer–verifier–reporter loop over a verified DAG
 
@@ -82,8 +82,6 @@ How to apply it. Inference: the following adapts the paper's curation and ablati
 
 Evidence. On curated FOLIO-wiki, GPT-4 with CR reaches 98.04% versus 96.09% for GPT-4 CoT-SC (Table 3, p. 9), with denominator 460 examples. On the uncurated 534-example FOLIO-wiki set, GPT-4 CR is 87.45% versus 85.02% CoT-SC (Table 2, p. 9). GPT-3.5 ablation on the uncurated set gives CR 73.03%, CR without Verifier 64.23%, CR without premises-random-choice 68.73%, and both removed 67.23% (Table 5, p. 10); each percentage uses the same 534-example test collection. The gap between 73.03% and 64.23% is 8.80 percentage points, while the table labels CR’s improvement over direct prompting as +10.11 because the direct baseline is 62.92%; these are different comparisons and should not be conflated.
 
-Inference: benchmark curation matters for VL evaluations because a malformed requirement can make a verifier appear wrong or an agent appear successful. A Verus study should report both raw and reviewed sets.
-
 ## broader evaluation and trust boundary
 
 FOLIO contains 1,435 total examples, of which 52.5% are Wikipedia-derived; after few-shot and unlabeled exclusions from the Wikipedia-derived portion, 534 are testable as FOLIO-wiki (Section 4.1, p. 9). AutoTNLI contains 1,478,662 table–hypothesis pairs, but the paper evaluates only the first 1,000 (Section 4.3, p. 10). CR improves LLaMA-13B from 52.1% CoT-SC to 57.0% and LLaMA-65B from 61.7% to 72.5%; each rate uses those 1,000 pairs (Table 6, p. 11). Inference: selecting the first 1,000 is a sampling limitation, not evidence over the entire dataset.
@@ -101,4 +99,3 @@ Inference: CR's combination of iterative decomposition, self-critique, graph rea
 - arrival-probability analysis: compare reasoning strategies under explicit verifier and monotonic-context assumptions
 - executable state search: maintain reachable states, verify each transition, and report a checked terminal state
 - verifier integration and ablation: use theorem provers or interpreters as step checkers and measure each component’s contribution
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "If all roles are LLM-based, CR can involve more LLM calls per problem than a single CoT pass."): checked every quotation, number, section/page reference, and technique step against the full supplied paper text; corrected quotations, dataset scope, page references, stopping condition, probability assumptions, decoding settings, and unsupported assertions; marked adaptations and conclusions as inferences; did not reproduce experiments or inspect implementation code.

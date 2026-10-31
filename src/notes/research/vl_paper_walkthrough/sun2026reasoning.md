@@ -47,11 +47,8 @@ The proof assistant checks all retained Rocq tactics and complete proofs. The me
 
 Inference: threat to an agent-written verified-Rust product is moderate. The approach can reduce repeated failed proof attempts and retrieve domain lemmas, but its only hard guarantee is whatever Verus proves after generation. It does not solve specification mistakes, unsupported Rust features, missing invariants, or unsafe external assumptions.
 
-The paper shows a concrete workflow VL should reuse: maintain per-goal failure records, distinguish syntax acceptance from strategic usefulness, and retrieve by proof intent. VL should not redo a generic claim that LLM self-reflection improves theorem proving; its new work would need Verus-specific measurements, failure taxonomies, and trustworthy handling of specifications and external code.
-
 ## techniques for the catalog
 
 - validation with reflection — execute generated proof steps, selectively ask an LLM to detect misapplied branching tactics, roll back, and preserve a structured failure record
 - retrieval with planning — generate a natural-language proof plan, embed plan steps and semantic lemma descriptions, and retrieve strategy-aligned lemmas and proof examples
 - per-goal failure history — feed the full failed tactic sequence and reason back into the next proof-generation prompt
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

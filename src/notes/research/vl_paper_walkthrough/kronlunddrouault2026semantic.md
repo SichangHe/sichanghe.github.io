@@ -124,16 +124,6 @@ evidence, limits, and assumptions
 
 Generation uses one greedy attempt per task, small hand-selected validation corpora, and heterogeneous metrics (Section 6, p. 10). The C generation cells predate a return-type check added later; rerunning is future work (Sections 3.2 and 4.2, pp. 5, 9). Semantic masks can reduce token branching and generation cost, but constrained decoding cannot repair a model's semantically wrong final program; the paper states that the mask prunes rather than repairs (Section 3.1, p. 5).
 
-## what remains trusted and product threat (inference)
-
-Inference: The trusted base includes the semantic grammar compiler, Earley implementation, unification engine, tokenizer bridge, production compilers, independent validators, and model/tokenizer behavior. The paper's theorem proves a rejection discipline for the specified IR, while the shipped optimized engine and finite differential cohorts remain implementation evidence. Dead-end freedom is not claimed for STLC or tool DSLs, and no theorem is mechanized in Verus.
-
-Inference: For VeruLaw, semantic-prefix checking is a strong pattern for rejecting impossible proof obligations before expensive generation, provided the specification's constraints are sound and stable. The threat to agent-written verified Rust is moderate to high: an unsound or incomplete semantic oracle can hide valid repairs or steer decoding toward a semantically wrong but verifier-accepted program. Use independent differential checks, explicit trusted-kernel boundaries, and specification adequacy tests before treating oracle verdicts as safety evidence.
-
-## what VL should not redo
-
-The paper already supplies the semantic grammar IR, safe-pruning and dead-end contracts, tokenizer-lifting lemma, P7 loop, finite-lambda/ML/C/tool instances, differential validation, and matched syntax-only ablation. Repeating a generic constrained-decoding implementation would add little. New work should instantiate the contracts for Verus proof states, prove or test tokenizer and parser correspondence, and measure false-prune risk on real Rust specifications.
-
 ## techniques for the catalog
 
 - stable-contradiction semantic pruning — retain `Live`/`Satisfied` branches and mask only branches whose semantic contradiction cannot be repaired by continuation
@@ -141,5 +131,3 @@ The paper already supplies the semantic grammar IR, safe-pruning and dead-end co
 - tokenizer lifting — transfer character-level witness reachability to token sequences under exact spelling and vocabulary coverage
 - differential prefix validation — compare every oracle prefix verdict with independent production compilers and report finite-cohort denominators
 - semantic-versus-syntactic ablation — isolate the effect of semantic constraints with matched parser, sampler, tokenizer, and surface grammar settings
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

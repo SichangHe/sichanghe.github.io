@@ -71,8 +71,6 @@ The others are Lean, Eiffel, Move, Coq, CUDA or C, and I mapped them.
 
 Mark generated clauses (for example `[inferred]`) so a rerun does not overwrite user-written ones.
 
-## variants by paper
-
 ### persistent agent with search and submit tools
 
 [study](../vl_paper_walkthrough/automating_formal_verification_with_agen_20261012.md)

@@ -23,15 +23,11 @@ how to apply it:
 
 The rover example has Vision, Planner, Plan Reasoning Agent, and Hardware Interface nodes. The Plan Reasoning Agent assumption is “A3 (i3 ) = ∀p · p ∈ PlanSet ⇒ goal ∈ p” (Section II, p. 1): every candidate plan contains the goal. Its guarantee selects a plan in `PlanSet` whose length is no greater than every other candidate. The paper gives only these two example formulas (Section II, p. 1) and leaves their verification to the selected node-level technique.
 
-Inference: in Verus, encode (A_N) and (G_N) as `spec fn`s over Rust input/output datatypes, then expose node functions with `requires` and `ensures`. A caller proof can establish that its output satisfies the callee's `requires`; a callee proof establishes its `ensures`. Temporal eventuality is not a direct Verus postcondition, so a bounded one-step contract or a state-machine progress invariant is needed. Inference: the contract boundary is useful for VL because agent-written Rust can be verified per module, while composition checks whether generated outputs satisfy the next module's preconditions.
-
 ## technique 2: selecting a verification method from implementation access
 
 The paper's Table I (p. 2) marks, per node, which of three categories (testing, simulation-based testing, formal methods) apply. Vision has only testing; Planner and Plan Reasoning Agent have all three; Hardware Interface has testing and simulation-based testing but not formal methods. The paper introduces the table as showing which techniques "might be employed for each node in our simple example" (Section III, p. 2), so the entries are a proposed assignment for the illustrative rover, not measured results. Inference: the table is a lookup of available techniques, not a selection algorithm. The authors give the reason for heterogeneity in the abstract: “distinct nodes in a robotic system often require different verification techniques to ensure that they behave as expected.” (Abstract, p. 1).
 
 Per Figure 1 (p. 2), the Vision node is a black-box implementation verified by software testing, the Planner a model-based specification verified by theorem proving, the Plan Reasoning Agent verified by program model checking, and the Hardware Interface a white-box implementation verified by simulation-based testing. For the Plan Reasoning Agent, the paper says: "we can specify the node using the GWENDOLEN agent programming language and then use the AJPF model-checker to verify that it behaves as specified [1]" (Section II, p. 2). The paper does not describe the test suites, the theorem prover, or the simulation set-up.
-
-Inference: a Verus system can make this choice more uniform for Rust nodes, but black-box dependencies and hardware still require testing or simulation evidence. Verus proof of a wrapper does not prove an external device obeys the wrapper's assumed contract. VL should preserve the distinction between implementation-level proof and environment-level evidence.
 
 ## technique 3: composing contracts and measuring confidence
 
@@ -41,13 +37,9 @@ For confidence, the paper "broadly partitioned current verification techniques i
 
 The paper's rationale is that "formal verification is usually only feasible on an abstraction of the system whereas testing can be carried out on the implemented code" (Section III, p. 2). It concludes: “Therefore, it is our view that we achieve higher levels of confidence in verification when multiple verification methods have been employed for each node in the system” [5] (Section III, p. 2). Inference: this is the authors' stated view, supported in the paper by a citation and no experiment, not a theorem that adding methods always improves defect detection.
 
-Inference: in Verus, a practical confidence record could distinguish proof obligations discharged by Verus, contract assumptions trusted about libraries or hardware, and runtime tests over concrete Rust. A simple percentage should not be presented as probability of correctness; it counts covered evidence categories. Inference: VL should use the paper's accounting idea to expose unverified interfaces, while retaining explicit threat models and denominators.
-
 ## evidence, trusted boundary, and limits
 
 The paper provides one planetary-rover example (Figure 1), one table of verification techniques per node (Table I), and the 9/12 (75%) confidence score. It reports no benchmark population, fault-seeding experiment, runtime, or empirical comparison. The calculus is still being developed, and the authors "plan to provide tool support for this and to evaluate it using a set of more complex robotic space missions" (Section IV, p. 2). Inference: the FOL contracts, node models, test adequacy, simulation fidelity, and inference rules are therefore trusted or unfinished, and a contract can be internally proved while its assumption is false of the deployed environment.
-
-Inference: threat to a product that generates verified Rust is primarily compositional omission. Agent-generated modules may each pass Verus while a downstream precondition is not implied, or while a hardware/test assumption is undocumented. The transferable work is the explicit per-node assumption/guarantee boundary and evidence ledger. VL should not redo the paper's illustrative 9/12 score as a correctness metric; it should implement checked contract entailment and report each denominator and trusted assumption.
 
 ## techniques for the catalog
 
@@ -55,5 +47,3 @@ Inference: threat to a product that generates verified Rust is primarily composi
 - heterogeneous verification mapping — pair each node with testing, simulation-based testing, model checking, or theorem proving according to its implementation (black box, white box, or model-based specification)
 - contract composition — connect an upstream guarantee to a downstream assumption across sequential, joining, branching, and loop structures
 - evidence-category confidence ledger — score a system by the node/category combinations covered (9/12 in the paper); Inference: also record the denominator and the unverified interfaces
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Note that our use of temporal operators here is motivated by the temporal nature of robotic systems and will be of use in later extensions of this work."): I read the whole two-page paper (text and page images, including Figure 1 and Table I) and checked every quotation, the node/technique assignments, the 9/12 = 75% score, the FOL formulas, and the section and page references. I changed: the abstract quote was misattributed to the Introduction (now Abstract); step 1, 2, 3 and 5 wording that the paper does not support (typed variables, environment condition, entailment check) was replaced with the paper's wording; unsupported statements (actuator model, recording obligations, rule shape of the calculus, "decision matrix") were removed or marked Inference; the 9/12 derivation is now marked Inference. I did not check the cited works [1]-[5], or the Verus and VL inferences beyond marking them as inferences.

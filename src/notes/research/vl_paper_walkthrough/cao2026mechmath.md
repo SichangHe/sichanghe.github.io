@@ -78,7 +78,7 @@ Inference: snapshot Verus function signatures, `requires`, `ensures`, and releva
 
 Evidence and limits
 
-The controls are described architecturally, with no separate pass/fail dataset or denominator. Inference: these controls address statement weakening but cannot establish that a specification expresses the intended behavior. VL still needs semantic review of contracts and tests that detect vacuous proofs.
+The controls are described architecturally, with no separate pass/fail dataset or denominator.
 
 ## technique 4: proof-chain auditing and counterexample recovery
 
@@ -109,18 +109,6 @@ Verus form
 
 Inference: this is a pattern for partitioning large Rust proof obligations into independently checked cases, with a bounded exception queue. Each case must produce a Verus proof or a concrete counterexample; an unsuccessful counterexample search cannot close a case. Store counts and certificate hashes so a product can audit coverage.
 
-## evidence, trusted parts, and product threat
-
-The abstract reports: “Across a two-month deployment, 11 problems have been solved, demonstrating its capacity to act as a co-pilot throughout the entire research cycle.” (p. 1.) Table 4 lists 11 results, marks two as formally verified, two as partially formalized, and seven as not formally verified. It defines partial formalization: “The symbol ◆ signifies partial formalization, where only the theorems presented in our paper are formalized, with all referenced theorems retained as axioms.” (p. 15.) The conclusion instead says “it solved ten problems” (p. 21). The paper contains no Putnam or miniF2F results or appendices. It provides neither a controlled baseline for the full harness nor a denominator for all attempted open problems.
-
-The OEIS A287616 case invokes 137 NL-Prover subagents and produces over 3,500 lines of Lean 4 (§4.1, pp. 15–17; Figure 5). Its formal result remains conditional: “The task is therefore returned to the Formalizer, who progressively refines the formalization boundary until only two explicit external assumptions remain: the classical genus local-global theorem and the computer-certified finite-cover statement fin_cell_residual.” (§4.1, p. 17.) The system uses `#print axioms` to check for unintended project axioms. Inference: compilation certifies the remaining derivation relative to these assumptions; it does not independently verify those assumptions. Table 4 marks this result as formally verified despite that boundary. Vasc’s inequality uses computational certificates and an independent computational audit (§4.2, p. 18), while Table 4 marks it as not formally verified.
-
-KB-Manager stores Source, Concept, Analysis, Lean, PartialProof, and Obstruction cards with explicit graph links (Table 3, p. 14). Ingestion has a human prerequisite check: “For instance, the Ingester is prohibited from silently compiling parsed wiki cards; it is mandated to halt execution, summarize core takeaways, and await explicit human acknowledgment before final commit.” (§3.3.2, p. 14.) Maintainer and Archivist use a propose-verify-commit protocol. Inference: this architecture treats archived knowledge as reviewed artifacts rather than automatically accepting an agent’s proposed card.
-
-Inference: relevant trusted parts include the Lean kernel, external mathematical assumptions, computational certificates and their checkers, statement translation review, and the tooling that enforces snapshots and scans. LLM exploration and unsuccessful counterexample searches provide candidate arguments rather than certificates. VL can reuse these workflow patterns, then evaluate their adaptation to Verus’s Rust ownership, solver behavior, and specification semantics.
-
-Inference: the threat to agent-written verified Rust is high for workflow integrity but low for checker soundness. A harness can prevent specification drift and catch failed proofs, yet a compilable Verus contract may still state the wrong property. Product controls therefore need statement review, immutable snapshots, counterexample search, and complete artifact provenance.
-
 ## techniques for the catalog
 
 - tripartite harness — separate scheduling, isolated execution, and human/memory augmentation with explicit state
@@ -129,5 +117,3 @@ Inference: the threat to agent-written verified Rust is high for workflow integr
 - proof-chain auditing — trace imported lemmas and search extreme parameters for counterexamples
 - exception-branch certification — keep a primary exhaustive scan running while specialized agents patch unresolved cases
 - negative-constraint memory — store recurring reasoning failures as reusable behavioral constraints
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The Formal Generator (F-Generator) conducts speculative proof searches exclusively within ephemeral scratchpads, shielding the baseline repository from corruption."): checked the full text, study quotations, numbers, section and page references, technique steps, and paper identity; corrected page references, role interactions, statement snapshot responsibility, and formalization limits, removed unsupported Putnam and miniF2F statistics, and marked Verus adaptations as inferences; did not independently validate the mathematical proofs, execute MMAT or Lean, or inspect external references and artifacts.

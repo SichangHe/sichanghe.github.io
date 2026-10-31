@@ -56,9 +56,7 @@ Verus form. Inference: represent the encoding and decoding as `spec fn`s and pro
 
 Pastry is a Python prototype using Probably for parsing, SymPy for linear systems, NetworkX for graph analysis, and SciPy sparse matrices, evaluated on a 3.22 GHz Apple M1 Pro with 16 GB RAM running macOS Sequoia (Section 6, p. 97). Inference: counting Table 1 gives 42 benchmark rows. The authors report: “Pastry suﬃces to determine the termination category of all but 2 benchmarks” (Section 6, p. 97). Programs with open inputs were initialized using randomly drawn inputs (Section 6, p. 97). `geometric_gauss` is outside PCPs because it samples continuously, and `polynomial_nast` has nonlinear updates. The table’s timings are total time for both PAST and AST for Pastry, Amber, and KoAT1, but PAST-only for KoAT2 and Absynth (Table 1, p. 98). Pastry is slower on some multidimensional cases because graph construction is unoptimized (Section 6, p. 99). The parameter study reports expected analysis complexity `O(β²)+O(|α·β|)` for a random walk whose step size is β (Section 6, p. 99).
 
-Inference: the mathematical correctness theorem does not establish that the Python implementation and its dependencies implement the algorithm correctly. Inference: the reduction may help classify termination of randomized Rust protocols, provided their semantics and counter encodings satisfy the model; that classification alone would not prove functional correctness or memory safety. Inference: VL should treat Pastry’s output as an external certificate and independently verify the finite abstraction and encoding assumptions.
-
-Prior work already covers supermartingale, invariant, probabilistic pushdown, and expected-runtime techniques (Sections 1 and 7, pp. 82, 99–100). Inference: VL could prioritize this paper’s reduction over another generic ranking-supermartingale synthesizer; the distinct reusable idea is periodic Markov-chain reduction with explicit treatment of null recurrence.
+Prior work already covers supermartingale, invariant, probabilistic pushdown, and expected-runtime techniques (Sections 1 and 7, pp. 82, 99–100).
 
 ## techniques for the catalog
 
@@ -68,5 +66,3 @@ Prior work already covers supermartingale, invariant, probabilistic pushdown, an
 - coupled-chain imbalance — use SCC stationary distributions and increase/decrease imbalance to classify tail recurrence
 - qualitative AST/PAST reachability — decide non-AST, AST-only, or PAST from bottom SCC and null-recurrence reachability
 - essentially one-dimensional reduction — pack bounded, monotone, affine-bounded, or constant-probability multidimensional counters into one counter
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The intuition behind the coupling is to measure how much time a random walk over M spends in its “decreasing” component S×{−1} compared to that in the “increasing” component S × {1}."): checked all study quotations, numerical claims, references, and technique steps against the supplied paper; corrected the benchmark count, DOI link, page references, decomposition boundaries, coupled-chain preprocessing and label priorities, and unsupported Verus claims; flagged the Zeroconf initialization inconsistency; did not check the separate preprint appendices, run Pastry, reproduce experiments, or validate Verus proposals.

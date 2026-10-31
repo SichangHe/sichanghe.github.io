@@ -49,13 +49,9 @@ Inference: the procedure trusts the SMT theory implementation, quantifier-instan
 
 Inference: the threat to agent-written verified Rust is moderate and indirect. The technique can generate candidate contracts or small pure helpers, but Verus still requires explicit specifications and proofs, and synthesis soundness is only relative to those specifications. The paper's SMT extraction should be reused as a candidate-generation component rather than treated as end-to-end Rust verification.
 
-Inference: what VL should not redo is a generic SMT-internal CEGIS loop for first-order single-invocation arithmetic and grammar synthesis; this paper already supplies the algorithms, soundness/completeness conditions, and a competitive benchmark evaluation. A Verus-specific contribution would need to measure proof repair or Rust integration beyond this result.
-
 ## techniques for the catalog
 
 - counterexample-guided quantifier instantiation — grow ground counterexamples inside the SMT solver and extract a conditional function from an unsatisfiable set
 - datatype-embedded syntax-guided synthesis — encode a grammar as algebraic datatypes plus evaluation axioms and search candidates by refutation
 - minimal-size datatype enumeration — constrain constructor size incrementally to obtain smallest grammar terms
 - normal-form reconstruction — rewrite an unrestricted solution into an equivalent term accepted by a syntax grammar using cached subterm equivalences
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Currently, this problem can be solved in about 0.5 seconds in the latest development version of CVC4."): I read the whole paper text and checked every quotation word for word, the section, figure and page references, the steps of Figures 1, 3 and 5, Examples 1 to 3, and all benchmark numbers in Figures 6 to 8 and the prose; I corrected the Figure 6 page reference, the ESOLVER Figure 8 wording, the minimal-size support (with its page), and marked the trusted-remainder claims as Inference; the link is the arXiv id printed in the paper text; I did not check the Verus inferences against Verus notes or the cited external works, and did not check the proofs beyond their statements.

@@ -77,12 +77,6 @@ PARVAL's measurements support extraction and bug-finding claims for one BFD impl
 
 The result is informative but narrow: one protocol, one implementation, and one RFC. Inference: the 5.6% rate should not be generalized to other parsers, languages, or standards. A parser whose behavior depends on negotiated state can invalidate the isolation assumption, and an RFC's implied constraints can depress recall without causing false positives.
 
-## what VL should not redo and product threat
-
-Prior model-checking, static lifting, and differential-fuzzing tools already detect some parser errors, but the paper identifies their limitations: formal models require manual effort, fuzzers often target crashes rather than semantic violations, and differential testing needs multiple independent implementations (Section 6.1, pp. 6–7). Inference: VL should not treat an LLM-extracted format as a replacement for a verified parser contract; the reusable contribution is the staged path from retrieval to isolation to differential proof obligations.
-
-Inference: threat to agent-written verified Rust is moderate. PARVAL could expose missing length, type, and constraint checks before Verus proof work, especially when standards are prose. It does not generate Verus proofs, does not establish parser completeness, and leaves manual triage. Its strongest product use is as a front-end that supplies explicit candidate predicates and counterexamples to a subsequent Verus proof.
-
 ## techniques for the catalog
 
 - dependency-aware parser retrieval — recursively follow input data/control dependencies and calls from the entry parser
@@ -91,4 +85,3 @@ Inference: threat to agent-written verified Rust is moderate. PARVAL could expos
 - RFC format lifting — turn prose fields, types, and constraints into the same DSL representation
 - differential specification analysis — compare code and document formats and triage mismatches
 - trace-guided refinement — instrument rejected positive inputs and use parser traces to correct extracted formats
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Despite some missing constraints, the high precision indicates that those extracted constraints are reliable and useful for validation."): checked the full paper, quotations, numbers, section and page references, and technique steps; corrected the unrelated DOI, an incomplete quotation, field-type metrics, recall-denominator claim, references, and unsupported procedural details; did not reproduce experiments, inspect the implementation or RFC independently, or validate the proposed Verus adaptations.

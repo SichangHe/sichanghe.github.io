@@ -74,7 +74,7 @@ How to do it.
 4. Let Klever Core generate tasks in parallel; let Scheduler distribute resources, respect priorities, cancel jobs, and try a lower speculative limit before reserving the maximum (Section 2.5, p. 22).
 5. Use BenchExec to isolate runs of Klever Core and verification tools and to measure and limit CPU and memory on a single machine; the Scheduler can also solve tasks in parallel using VerifierCloud (Section 2.5, pp. 22–23). At the moment CPAchecker is the only supported backend (Section 2.4.2, p. 21).
 
-Verus form. Inference: the equivalent VL pipeline should generate a stable verification manifest per Rust fragment, Verus configuration, and specification, then record tool version, solver settings, limits, and source revision. Contracts at fragment boundaries can make unit assumptions explicit. Inference: resource scheduling and reproducibility metadata are engineering controls outside Verus's proof calculus.
+Verus form.
 
 Evidence and limits. The paper reports no separate task-generation correctness proof. In its evaluation each task had 5 minutes of CPU and 5 GB of memory on an 8-vCPU, 64-GB Debian 9 VM (Section 4, p. 34). Increasing the timeout from 5 to 15 minutes for one requirement produced 5 additional Safes and 1 additional Unsafe, from about 3,300 Safes and 14 Unsafes originally, while CPAchecker CPU time rose from 15 to 25 hours (Section 4.1.3, p. 39). The paper adds that further increasing the CPU time limit gave similar improvements with degradation in CPU time (p. 39). These are results for one requirement specification.
 
@@ -102,12 +102,6 @@ Inference: Klever proves only the properties its backend can establish under the
 
 Inference: trusted elements include CIL/CIF transformations, Clade graphs, environment models, requirement instrumentation, CPAchecker, solver assumptions, BenchExec isolation, and expert classification. A Verus adaptation would additionally trust Rust/Verus front-end translation, solver soundness, proof erasure, external APIs, and the correctness of each generated model. Inference: the high false-alarm rates (88% and 91% of memory-safety Unsafes, Table 5, p. 36) show that environment and backend precision materially affect product confidence.
 
-## implications for VeruLaw
-
-Inference: the most transferable idea is the end-to-end verification service, not a new verification logic: partition a large Rust/Verus codebase, model external interactions, generate reproducible proof jobs, isolate resources, and make results auditable across revisions. Inference: VL should not redo generic fragment scheduling, environment modeling, or witness/coverage triage as novel concepts; Klever already provides those patterns and a 2,059–2,141-module evaluation.
-
-Inference: the threat to agent-written verified Rust is high for systems with external callbacks, drivers, or rapidly changing dependencies. A passing proof can be conditional on an incomplete environment model, while a failed proof can be an Unknown rather than a code defect. For self-contained sequential Rust with explicit contracts, the environment-model threat is lower, but the paper offers no Verus-specific evidence.
-
 ## techniques for the catalog
 
 - graph-guided decomposition: split large source trees with call/build graphs, configurable tactics, and manual refinement
@@ -115,4 +109,3 @@ Inference: the threat to agent-written verified Rust is high for systems with ex
 - reachability specifications: weave model state and error calls so API rules become unreachability properties
 - reproducible task generation: assemble merged source, property, task, and benchmark files under verifier profiles and resource limits
 - witness and coverage triage: source-link traces, merge coverage, classify warnings, and compare marks across versions
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Klever generates a verification task for each pair of a program fragment and a requirements specification."): I read the whole paper text (Sections 1-7 and Appendices A-F) and the whole study, and checked the quotations, section and page references, technique steps, and the numbers from Tables 3-10 and Section 4 against it. I changed: page references for the fragment graph, decomposition specification, scenario-notation limits, ldv_assert, coverage and job-comparison claims; softened overstated claims (data races "may be hard or even impossible" to express in C; "most" tools stop at the first violation; BenchExec runs on one machine; CPAchecker is the only supported backend); added the translator limitation (sequential code, no interleavings, Section 2.2.2, p. 15); noted that the paper's 31,444 and 31,886 generated tasks do not equal the sum of the Table 4 rows (37,062 and 38,538); and marked my own derivations as Inference. I did not check the cited external works, the Klever repository or documentation, the appendix fault table (Table 11) row by row, or the figures beyond their captions; the Verus-form and VeruLaw paragraphs are my inferences, not claims of the paper.

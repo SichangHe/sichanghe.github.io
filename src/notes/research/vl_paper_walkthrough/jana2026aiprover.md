@@ -59,12 +59,9 @@ The Lean kernel proves type correctness and accepted proof terms. Completeness i
 
 The table's percentages are internally consistent with the stated 771 validation problems and four attempts per problem, but “pass@4” is a per-problem probability of at least one successful attempt, not a fraction of all attempts. The paper's Mizar distillation analysis reports a 24.1% compile rate (9,428/39,123) and a 12.4% upper bound on semantically correct yield (4,857/39,123), showing that compilation can substantially overstate semantic quality (Appendix E, Table 5, p. 26). No result demonstrates Verus performance, and no experiment measures cost or robustness under Rust ownership and concurrency.
 
-Inference: For VL, the strongest reusable idea is the certificate-first loop: classify Verus output by type-checking, trust-boundary audit, specification equivalence, and readability, then feed structured diagnostics into both repair search and training. Inference: AIProver is a substantial threat to a product that only prompts an LLM and checks whether Verus compiles, because harness evolution and graded feedback directly optimize that workflow. Inference: it is less of a threat to a product with a strong specification-translation protocol, independent review of generated specifications, and strict rejection of `assume`/untrusted bodies.
-
 ## techniques for the catalog
 
 - semantic-alignment fine-tuning — contrastive alignment of informal and formal theorem representations alongside supervised generation
 - graded verifier reward ladder — ordered type, completeness, semantic-equivalence, and length checks with diagnostic certificates
 - HarnessEvolve — UCB-guided evolutionary mutation of the agent harness while retaining rejected designs and their verifier certificates
 - Agentic RLSF — multi-turn GRPO post-training from symbolic verifier rewards inside a frozen harness
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

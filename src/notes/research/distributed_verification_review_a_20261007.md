@@ -5,11 +5,6 @@ purpose
 - agents turn a vague requested guarantee into a strong specification and a checked proof for executable distributed Rust
 - research completed 7 October 2026 UTC
 - detailed source records and reading limits
-  - [human specification and validation methods](/ssd1/sichangheagent/verus_distributed/lit_a/findings_foundations.md)
-  - [distributed proofs and progress](/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md)
-  - [Rust and Verus systems](/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md)
-  - [automatic invariant and progress proofs](/ssd1/sichangheagent/verus_distributed/lit_a/findings_automation.md)
-  - [proof agents and evaluation](/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md)
 
 main inference
 - evaluate intended meaning, proof correctness, and implementation correspondence separately
@@ -120,7 +115,6 @@ environment assumptions as a separate result
     - “deep understanding of the protocol”
   - extracting prophecy from a supplied invariant differs from discovering that invariant
   - proof variables must not become extra environmental promises
-- [detailed assumption and liveness-method records](/ssd1/sichangheagent/verus_distributed/lit_a/findings_assumptions.md)
 
 automatic proof methods
 - I4, IC3PO, SWISS, DistAI and DuoAI search for supporting invariants
@@ -178,11 +172,9 @@ agent evidence
   - reusable helper lemmas and shared specifications matter across functions
 
 case database
-- [system/property inventory](/ssd1/sichangheagent/verus_distributed/lit_a/system_cases.json)
   - 127 source-reviewed system/property or case-family entries
   - grouped cases and repeated systems retained
   - catalog-only evidence distinguished from inspected property statements
-- [TLA+ inventory](/ssd1/sichangheagent/verus_distributed/lit_a/tla_cases.json)
   - 81 case directories, 424 modules, 233 declared model configurations
   - 73 modules have declared proof metadata
   - repository revision recorded; checks not rerun
@@ -226,7 +218,6 @@ limits
 
 consultation and first experiments
 - ChatGPT Extra High completed a focused critique
-  - [consultation record](/ssd1/sichangheagent/verus_distributed/lit_a/chatgpt_review.answer.md)
   - “treat assumptions as a first-class output”
   - source citations remain leads until independently checked
 - my recommendation after that critique
@@ -240,14 +231,12 @@ consultation and first experiments
 - no experiments were run by this literature-review task
 
 intent and assumption checks
-- [requirement-formalization evidence](/ssd1/sichangheagent/verus_distributed/lit_a/findings_intent.md)
 - ARTEMIS distinguishes candidate meanings with example executions
   - evaluation simulates users with expert formulas
   - expert candidates are injected for validation-effort measurements
   - candidate coverage differs from autonomous selection of the intended meaning
 - FRET checks whether an implementation can satisfy requirements against allowed inputs
   - removing initialization can hide a conflict by making its mode unreachable
-- [timing and relational boundaries](/ssd1/sichangheagent/verus_distributed/lit_a/findings_boundaries.md)
 - eventual network stabilization permits an arbitrarily late start of useful progress
   - a fixed startup deadline requires another assumption
 - secret-independent output compares multiple executions

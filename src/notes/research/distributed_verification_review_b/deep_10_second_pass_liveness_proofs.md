@@ -11,9 +11,6 @@ The requested list has 22 titles. Choreo's exact paper title remains unlocated; 
 
 The sections below group the evidence by task. Related additions are marked. All downloaded PDFs were checked for a `%PDF` header; existing collection copies were reused. Page references are printed paper pages unless labelled PDF pages. Tools and source repositories were inspected where noted; this review did not rerun their verification experiments.
 
-## Temporal proofs, rankings, and rlive
-
-
 ### Liveness to Safety for Distributed Systems (2026): found; full text unavailable
 
 Lenore D. Zuck. *On the Pursuit of Insight and Elegance: Essays Dedicated to Andreas Podelski*, Springer LNCS, 2026, pp. 23–39. [Publisher](https://doi.org/10.1007/978-3-032-13711-1_2), [author publication list](https://www.cs.uic.edu/~lenore/publications.html). The abstract describes replacing a progress proof with a monitor of a sequence of weakly fair states. Its concrete examples are spanning tree construction, leader selection in each tree of a forest, and maximal independent set. Evidence: “The method is extended to protocols with probabilistic elements” (publisher abstract). Springer returned a subscription preview instead of a PDF; Semantic Scholar reports `"status": "CLOSED"`. No open full text found through the author page, Crossref, Semantic Scholar, OpenAlex, or exact-title search. Human inputs, proof checking, sizes, times, and related-work details cannot be established from full text; do not treat this as a completed paper review.
@@ -126,9 +123,6 @@ This is a mathematical foundation, not an evaluated proof-generation tool. The h
 Its non-emptiness procedure is a “semi-decision procedure ... if satisfiability of [initial] and of [acceptance] and T-satisfiability of [transition] are decidable” (Theorem 8, p.14945). This means that finding an accepted trace can terminate, while failure to find one need not terminate. No experiments, code repository, benchmark counts, LOC, or human-effort measurements are reported. **Inference:** use it to delimit expressive specification languages and solver assumptions; do not count its constructions as an end-to-end agent proof benchmark.
 
 Duplicate audit: `rg --files --no-ignore` found pre-existing flat PDFs for Forward-Backward (byte-identical SHA256 to the author download) and Timers (arXiv v1 extended edition with the same main results/Table 2). Both originals were preserved, and the newly created duplicate PDF/text directories were removed. Six PDFs were newly saved in this slice; two existing PDFs were reused.
-
-
-## Refinement, hardware, real time, and termination follow-up
 
 ### A Higher-Order Separation Logic for Verifying Liveness-Preserving Refinements of Distributed Systems
 
@@ -335,9 +329,7 @@ Searches used exact titles in OpenAlex, Crossref, primary HAL/Springer/Dagstuhl 
 
 Unexpanded direct relevant cache references (titles verified in CPP26 §7/bibliography, not full-text-reviewed): *A Novel Approach to Parameterized Verification of Cache Coherence Protocols* (Li et al., ICCD 2016, DOI 10.1109/ICCD.2016.7753341); *Proofs of Correctness of Cache-Coherence Protocols* (Stoy/Shen/Arvind 2001, DOI 10.1007/3-540-45251-6_4; Springer PDF endpoint returned HTML); *Exact and Efficient Verification of Parameterized Cache Coherence Protocols* (Emerson/Kahlon 2003); *Parameterized Verification of the FLASH Cache Coherence Protocol by Compositional Model Checking* (McMillan 2001); *Verification of FLASH Cache Coherence Protocol by Aggregation of Distributed Transactions* (Park/Dill 1996); *A Simple Method for Parameterized Verification of Cache Coherence Protocols* (Chou/Mannava/Park 2004); *An ACL2 Proof of Write Invalidate Cache Coherence* (Moore 1998); *Modular Verification of Hardware Systems* (Vijayaraghavan 2016 dissertation). These are acknowledged gaps, not found-irrelevant exclusions.
 
-
 ## Consensus, cloud controllers, and broker crash windows
-
 
 The six requested titles were found. Four PDFs were saved; the PRDT and SoK PDFs already existed and were reused. Search used OpenAlex, Figshare, HAL, Zenodo, Springer, arXiv, and GitHub over HTTP after the web search endpoint returned HTTP 404. No requested title in this slice was dismissed as absent or irrelevant. Two additional related papers were read from existing PDFs. All new files begin with `%PDF`. Page references below refer to printed pages unless stated otherwise. For the dissertation, the detailed reading covered its models, reduction arguments, evaluations, limitations, and relevant appendices; it was not a line-by-line audit of every formal derivation.
 
@@ -441,13 +433,7 @@ Giuliano Losa and Mike Dodds. FMBC 2020, OASIcs 84, article 9. [Paper](https://d
 
 **Concrete problem.** SCP balloting: prevent conflicting decisions and eventually decide under stated intact-set and synchrony conditions; tools Ivy/Isabelle/Z3; authors Losa/Dodds; paper/repo above; effort unquantified. **Inference:** a good test of whether an agent can justify an abstraction separately from proving properties in that abstraction.
 
-
-
-## second pass: executable specifications and leases
-
 ## Specifying Paxos for System Builders: Pseudocode Made Executable
-
-Yanhong A. Liu and Rahul Sihag. SSS 2026 invited paper; 41-page extended version, arXiv:2609.12239, submitted 10 September 2026. [Paper](https://arxiv.org/abs/2609.12239); [original Paxos-SB implementation](https://jhu-dsn.github.io/Paxos-SB.html); [DistAlgo](https://github.com/DistAlgo/distalgo). Saved PDF: `/hdd1/sichanghe/paper_collection/Specifying Paxos for System Builders- Pseudocode Made Executable, Yanhong A. Liu, Rahul Sihag, arXiv, 2026/paper.pdf`. Full text inspected, including protocol/code appendices.
 
 **Human input.** Existing, detailed Paxos-SB pseudocode, plus manual transcription into DistAlgo, manually supplied initial values and helper functions, and consultation with the protocol's designers. This is considerably more input than a vague guarantee. §3.1, p.8: “initial values are not specified in the pseudocode except for 5 scalar variables in the recovery procedure, but we created all and confirmed them with the C code.”
 
@@ -460,8 +446,6 @@ Yanhong A. Liu and Rahul Sihag. SSS 2026 invited paper; 41-page extended version
 **Inference for our goal.** A precise runnable specification can expose progress defects with a very small fault scenario. Evaluate whether an agent fills omitted initializations and detects the missing self-votes, then distinguish passing runtime traces from an unbounded proof.
 
 ## PaxosLease Revisited: A Checked Model of Diskless Distributed Leases
-
-Márton Trencséni. arXiv:2609.14640v2, 1 October 2026; preprint, no conference claimed. [Paper](https://arxiv.org/abs/2609.14640); [complete artifacts and recorded results](https://github.com/mtrencseni/paxoslease-revisited). Saved PDF: `/hdd1/sichanghe/paper_collection/PaxosLease Revisited- A Checked Model of Diskless Distributed Leases, Márton Trencséni, arXiv, 2026/paper.pdf`. Full text inspected, including evidence inventory and authorship appendix.
 
 **Human input.** The original 2012 protocol, historic Keyspace/ScalienDB C++ implementations, an explicit clock/crash/network model, manual choices of rules and finite configurations, and line-by-line review. Appendix F, p.15: “Large language models produced much of the TLA+ specifications and TLC configurations, the TLAPS proofs, the Python programs, the source audit, and some of the article prose, under the author’s manual, iterative direction, with line-by-line reviews and rewrites; the overall process spanned months.” Models/prompts, calls, acceptance rates and manual hours are not identified.
 
@@ -487,11 +471,7 @@ Diogo Canut Freitas Peixoto and Odorico Machado Mendizabal. LADC 2025, proceedin
 
 Exact paper title not found in OpenAlex title/keyword searches, Semantic Scholar search, arXiv API (rate-limited), or the official [Choreo repository](https://github.com/quint-co/choreo); that existing Quint library is already covered in first-pass `03_spec_tools_and_tla_to_code.md` and `05_llm_agents.md`, so no paper/PDF or new proof claim is asserted.
 
-## Newly found related work absent from the first pass
-
 ### Reusable TLA+ Communication Primitives for Modeling and Verifying Distributed Systems
-
-Diogo Canut Freitas Peixoto and Odorico Machado Mendizabal. WTF 2025, pp.113–125. [Open paper](https://sol.sbc.org.br/index.php/wtf/article/view/35652); [source](https://github.com/diogocanut/tla-communication-module). This is reference 17 of the Practical TLA+ Library chapter and its explicitly identified preliminary version. Saved PDF: `/hdd1/sichanghe/paper_collection/Reusable TLA+ Communication Primitives for Modeling and Verifying Distributed Systems, Diogo Canut Freitas Peixoto, Odorico Machado Mendizabal, WTF, 2025/paper.pdf`. Full 13-page text read.
 
 **Human input and automation.** Humans write PlusCal Echo process bodies, three temporal properties, choose link semantics, fairness and drop/duplication bounds. PlusCal translates to TLA+; TLC explores the bounded model automatically. §5.5, PDF p.9: “We delegate the handling of message-dropping non-determinism to the end user”; eventual delivery of inbox messages is also the user's responsibility. No code correspondence proof or autonomous requirement inference.
 
@@ -501,8 +481,6 @@ Diogo Canut Freitas Peixoto and Odorico Machado Mendizabal. WTF 2025, pp.113–1
 
 ### What's Live? Understanding Distributed Consensus
 
-Saksham Chand and Yanhong A. Liu. arXiv:2001.04787v2, 21 June 2021; shorter PODC 2021 brief announcement. Directly referenced as CL20/CL21 by Specifying Paxos. [Full paper](https://arxiv.org/abs/2001.04787); [PODC author PDF](https://www.cs.stonybrook.edu/~liu/papers/Liveness-PODC21.pdf). Existing collection PDF reused: `/hdd1/sichanghe/paper_collection/What's Live- Understanding Distributed Consensus, Saksham Chand, Yanhong A. Liu, arXiv, 2021.pdf`. Full main text, experiment appendix, and protocol evidence appendices consulted; no new PDF saved.
-
 **Human input.** Humans extract published liveness statements and assumptions, formalize them in a temporal language and TLA+, compare implication relationships, and supply existing Paxos models plus finite process/round bounds. There is no LLM specification generation. This is primarily an analytical comparison, supplemented by finite TLC experiments, not newly verified implementation code.
 
 **Main result and numbers.** §1, p.2: “out of the 31 algorithms listed in Table 1, only 18 (58%) of them mention liveness”; “only 11 (35%) of them give some kind of liveness proof”. The authors distinguish three link assumptions, seven server assumptions and six progress assertions (§1 pp.2–3). Reaching a quorum vote, some server learning, executing and answering the client are different guarantees. The proof hierarchy is mathematically argued; TLC experiments illustrate finite single-value Paxos liveness patterns. §1, p.3: “on up to 4 proposers and 4 acceptors in a few hours”, while multi-value or larger models are too expensive. Appendix A uses an explicit tick bound (Figure 7), not a theorem over arbitrary implementation executions. Human hours and model LOC are unstated.
@@ -510,8 +488,6 @@ Saksham Chand and Yanhong A. Liu. arXiv:2001.04787v2, 21 June 2021; shorter PODC
 **Inference.** This is a particularly useful reference for evaluating whether agents silently weaken the user's intended progress. 'Eventually there is a live majority' can mean a changing majority or one fixed majority, and 'consensus progresses' can stop short of responding to every request. An agent should expose those choices explicitly.
 
 ### Assurance of Distributed Algorithms and Systems: Runtime Checking of Safety and Liveness
-
-Yanhong A. Liu and Scott D. Stoller. RV 2020 tutorial, LNCS 12399, pp.47–66; arXiv:2008.09735v2. Direct reference LS20 in Specifying Paxos. [Full paper](https://arxiv.org/abs/2008.09735); [polling/checker source](https://github.com/DistAlgo/examples/tree/master/polling); [tutorial](https://distalgo.cs.stonybrook.edu/tutorial). New PDF: `/hdd1/sichanghe/paper_collection/Assurance of Distributed Algorithms and Systems- Runtime Checking of Safety and Liveness, Yanhong A. Liu, Scott D. Stoller, RV, 2020/paper.pdf`; full 19-page text read.
 
 **Human input.** A complete distributed program and its inputs, executable safety/progress queries, fault configurations, and explicit timeout values. §7, p.14 lists the three inputs: “A distributed algorithm, plus input taken by the algorithm”; “Safety and liveness requirements to be checked”; “Process and communication failures to be considered”. The polling example has a poller ask ten processes a question, receive replies, and broadcast the outcome. Humans implement the checker and choose which events and logical/real times to observe.
 
@@ -523,8 +499,6 @@ Yanhong A. Liu and Scott D. Stoller. RV 2020 tutorial, LNCS 12399, pp.47–66; a
 
 ### Moderately Complex Paxos Made Simple: High-Level Executable Specification of Distributed Algorithms
 
-Yanhong A. Liu, Saksham Chand and Scott D. Stoller. PPDP 2019; extended arXiv:1704.00082v4, 12 August 2019. Direct reference LCS19 in Specifying Paxos. [Full paper](https://arxiv.org/abs/1704.00082); [author proceedings PDF](https://www3.cs.stonybrook.edu/~stoller/papers/ppdp2019.pdf); artifact address in paper is `darlab.cs.stonybrook.edu/paxos` (HTTPS failed at retrieval); [DistAlgo](https://github.com/DistAlgo/distalgo). New PDF: `/hdd1/sichanghe/paper_collection/Moderately Complex Paxos Made Simple- High-Level Executable Specification of Distributed Algorithms, Yanhong A. Liu, Saksham Chand, Scott D. Stoller, PPDP, 2019/paper.pdf`; extended full text and proof appendix read.
-
 **Human input and automation.** Humans start from Lamport's English and van Renesse/Altinbuken's detailed pseudocode; restructure it into message-history queries, manually translate the DistAlgo specification into TLA+, choose invariants and manually develop proofs. §6, p.18: “This was done systematically but manually”; §6.1: “Our proofs are manually developed and automatically machine-checked using TLAPS”. Direct execution compiles through DistAlgo; TLAPS automates obligation checking. Earlier automatic translators existed but were not used for these proofs because they introduced difficult low-level control detail. No intent-only input, LLM generation or automated invariant inference is claimed.
 
 **What was proved.** Safety of TLA+ models of Multi-Paxos with preemption, replicated state-machine behavior, reconfiguration, state reduction and failure detection. §6, p.18: “for each slot, only a single command may be decided and it must be one of the commands proposed.” This is a proof about manually translated models, with no machine-checked translation/compiler refinement proof claimed. Liveness defects under lost messages are identified and timeout repairs discussed, not formal liveness proofs. The lost-slot defect prevents replicas from applying any later decisions and eventually exhausts the proposal window; missing Phase-1/Phase-2 replies can block a leader. §4 cautions that the source pseudocode assumes fair links/retransmission, so these are defects under weaker transport assumptions, not violations of its stated reliable-link model. A failed safety proof also exposed a preemption bug in an earlier author-written specification (§6.2).
@@ -535,8 +509,6 @@ Yanhong A. Liu, Saksham Chand and Scott D. Stoller. PPDP 2019; extended arXiv:17
 
 ### Towards a Formal Verification of the Lightning Network with TLA+
 
-Matthias Grundmann and Hannes Hartenstein. arXiv:2307.02342v1, 5 July 2023, work-in-progress. Direct reference in the Practical Library bibliography. [Full text](https://arxiv.org/abs/2307.02342); normative [BOLT source](https://github.com/lightning/bolts), separate TLA+ artifact not located. New PDF: `/hdd1/sichanghe/paper_collection/Towards a Formal Verification of the Lightning Network with TLA+, Matthias Grundmann, Hannes Hartenstein, arXiv, 2023/paper.pdf`; full main text and appendices read.
-
 **Human input.** Humans formalize the BOLT payment-channel protocol, Bitcoin transactions, adversarial actions, ideal payment channels and ideal payment network; design time and single-channel abstractions and refinement mappings; give pen-and-paper composition arguments. §IV/Figure 5 decomposes the protocol into ten specifications and nine proof steps. TLC checks two difficult finite refinement steps, while the other steps require manual mathematical reasoning. This is no intent-to-model automation or source-code verification.
 
 **Guarantee and limitations.** Security safety: an adversary cannot steal an honest user's funds; intermediates' total balances are preserved by multi-hop forwarding, and sender/recipient amounts are correct. However, the abstract's broad fulfillment language must be read with the introduction, PDF p.1: “Our work is still in-progress and, thus, not all steps are complete”. §V says “currently working on fully formalizing every step of the proof.” The contribution is a partially checked refinement architecture, not a completed universal theorem or implementation proof. Weak fairness appears in the ideal withdrawal model, but the reported central result is funds safety rather than a complete liveness proof. §IV checks `(IV) ⇒ (V)` and `(IX) ⇒ (X)` by model checking; no model-state counts, runtimes, LOC or human hours are stated.
@@ -544,8 +516,6 @@ Matthias Grundmann and Hannes Hartenstein. arXiv:2307.02342v1, 5 July 2023, work
 **Bugs and inference.** §III-B reports “two subtle flaws” in an earlier published formalization (Kiayias/Litos, CSF 2020), one exposed by model checking an analogous error in the authors' own draft. Appendix D explains penalty logic and HTLC transaction-signature/locktime issues. These are formalization defects, not demonstrated defects in shipped Lightning binaries. Useful as an agent task for constructing and justifying intermediate abstractions; any evaluation should require agents to distinguish proposed composition from already checked refinements.
 
 ### Quartz: A Framework for Engineering Secure Smart Contracts
-
-John Kolb, John B. Yang, Randy H. Katz and David E. Culler. UC Berkeley technical report UCB/EECS-2020-178, 31 August 2020. Direct Practical Library reference. [Report and open PDF](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2020/EECS-2020-178.html). Separate implementation repository not located; appendices provide language grammar and generated auction PlusCal. New PDF: `/hdd1/sichanghe/paper_collection/Quartz- A Framework for Engineering Secure Smart Contracts, John Kolb, John B. Yang, Randy H. Katz, David E. Culler, UC Berkeley technical report, 2020/paper.pdf`; full main text, references and code appendices read.
 
 **Human input and automation.** Humans write an extended finite-state-machine contract in a DSL (fields, typed parameters, guards, authorization, transition actions), choose invariants and finite search bounds (identities, integer values, time and call-stack depth), interpret counterexamples and repair the DSL. §4.1, printed p.6: “a contract author must write the invariants she would like to have verified”; Quartz then “fully automates the more difficult task of writing a formal specification”. The generator emits PlusCal/TLA+ including Ethereum exceptions and adversarial reentrancy; TLC automatically searches the bounded model. A second generator emits deployable Solidity. No verified correspondence theorem between generated Solidity and checked TLA+ is claimed. The guarantee is finite model safety for user-selected invariants, not consensus correctness, full unbounded liveness or a production-code proof.
 
@@ -572,9 +542,6 @@ John Kolb, John B. Yang, Randy H. Katz and David E. Culler. UC Berkeley technica
 The web search tool returned HTTP 404 (`Cannot POST /alpha/search`); requests against primary arXiv/publisher/author/GitHub pages, OpenAlex and Semantic Scholar were used. Every title above was searched against `0[1-9]_*.md`; Choreo/DistAlgo general tooling already present, but the specific newly written cards were absent. New PDFs were checked for `%PDF` before saving; existing What's Live PDF reused.
 
 Related-work sections contain further absent leads that remain **not fully audited**: Shivam/Paladugu/Liu, *Specification and Runtime Checking of Derecho* (2023); Bodade's *Formal Specification and Runtime Checking of Lumiere* thesis (2025); House/Tang's *A TLA+ Module for Asynchronous Message-Passing Systems* (2018); the Pastry and Zab TLA+ papers; original PaxosLease (2012), Keyspace (2012), ScalienDB (2013), and Paxos Quorum Leases (2014). The last four are protocol/implementation background rather than established formal-verification papers; they were not counted as additional verified cases. The first-pass grep found none of those exact titles. Derecho was identified by Crossref (DOI 10.1145/3584684.3597275), but ACM returned 403 and guessed author PDFs 404; Lumiere thesis full text was not located; House/Tang (DOI 10.1109/SECON.2018.8479004), Pastry (DOI 10.1007/978-3-642-21461-5_16), and Zab (DOI 10.1007/s11390-020-0538-7) were identified but primary full texts were inaccessible. These remain retrieval gaps; this fragment does not present them as read papers. Generic protocol/background references were not silently treated as verified code cases.
-
-
-## Rust cryptographic protocol implementations
 
 ### Formal Security and Functional Verification of Cryptographic Protocol Implementations in Rust (2025)
 
@@ -640,8 +607,6 @@ The fourteen older designs are simplified; their interoperability/performance wa
 | secure echo server | one-round application checked in Owl, or fuel-bounded handwritten Verus specification with a loop invariant; infinite wrapper in the Owl variant is trusted (§7) |
 
 **Inference for the end goal:** OwlC demonstrates a reusable route from a precise, checked human protocol design to executable Rust and an automatically checked refinement. It supports evaluating whether agents supply the right security types and assumptions before running the compiler. It supplies no measured success rate for agents discovering those inputs.
-
-
 
 ### Related work absent from the first pass: Owl (2023)
 
@@ -713,6 +678,3 @@ Inference for our goal: this turns an expert-written abstract protocol into reus
 | signed Diffie–Hellman in Java | same symbolic safety/model-to-code property; Tamarin + VeriFast | same inputs; 113 Java / 1,022 spec lines; 76% generated |
 
 All rows: Arquint et al.; full paper and archived source linked above. The authors also injected an implementation that sends the secret exponent instead of its public share; checking correctly rejects its unauthorized output (§6.1). This is a useful concrete negative evaluation case.
-
-
-

@@ -63,8 +63,6 @@ FVEval's functional metrics rely on Jasper assertion equivalence and commercial 
 
 The benchmark does not prove that a reference assertion is the complete specification. It tests whether outputs match the reference or are formally related to it. Design2SVA's “most important” property is judged by whether a commercial tool proves it, so a trivially true assertion may pass unless the generated testbench and evaluation criteria exclude vacuity; the paper does not claim a complete solution to that problem. The authors list broader limitations: more design/testbench varieties, stronger prompting, structural inference, and tool-feedback agents remain future work (§6, p. 15).
 
-Inference: the threat to VeruLaw is diagnostic: high syntax pass rates can create false confidence while exact semantic correctness remains low. FVEval demonstrates that verifier-backed equivalence and proof metrics expose this gap. VL should not redo a generic benchmark of SVA syntax; the reusable lesson is to evaluate agent-written Rust with denominator-labeled semantic checks, include partial-strength relations, and separate compilation from contract adequacy.
-
 ## techniques for the catalog
 
 - human-grounded assertion benchmark: remove expert assertions, provide testbench context and NL requirements, and score generated SVA with formal equivalence

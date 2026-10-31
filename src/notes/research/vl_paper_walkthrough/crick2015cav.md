@@ -19,8 +19,6 @@ how to do it:
 
 The BMA example found that only one machine could deploy a web service because one developer had run undocumented commands for mixed 64- and 32-bit components; the proposed fresh build would expose this because “such undocumented commands would lead to all tests failing until explicitly added to the build process” (Section 2.1, PDF p. 3).
 
-Inference: for VL, put the Rust toolchain, Verus revision, `vstd` version, solver version, crate lockfile, and build flags in a reproducibility manifest. A clean runner should compile and run Verus from the recorded commit. The CI layer would sit outside Verus (my assumption, not checked against Verus documentation), and a passing local proof without a clean rebuild is weak evidence.
-
 ## technique 2: two-stage unit-test and benchmark pipeline
 what it is: separate a developer's fast sanity tests from property-bearing model benchmarks, and record both stages.
 
@@ -31,7 +29,7 @@ how to do it:
 4. record outcomes in a database with the commit ID
 5. expose historical results through a web interface (Section 2.2, PDF pp. 3–4)
 
-The paper says the first stage is intended “as a sanity check to ensure that basic features of the code have not been broken by the updated code,” while the second checks models for a known property. Inference: a VL analogue should run ordinary Rust tests, then run Verus verification and executable tests for each verified function; store proof diagnostics and model/property identifiers separately so a unit-test pass cannot be mistaken for a proof pass.
+The paper says the first stage is intended “as a sanity check to ensure that basic features of the code have not been broken by the updated code,” while the second checks models for a known property.
 
 The paper does not report how many BMA tests or models passed, so no success percentage can be inferred. Its evidence is an architecture proposal and qualitative BMA history.
 
@@ -47,12 +45,8 @@ how to do it:
 
 The authors describe BMA refinements: some subtle ones, such as switching rounding mechanisms between floors and rounds, “were identified by unit tests”, while more complex changes, such as the treatment of nodes without inputs, “broke behaviours which were not tested in our available benchmark set” (Section 2.3, PDF p. 4). They argue that user-submitted benchmarks would help identify such breaking changes. They also propose logging models that time out under one algorithm but succeed under another, then examining their features (Section 2.5).
 
-Inference: VL should accept adversarial Rust/Verus examples and regression obligations from users, replay them after agent or library changes, and retain counterexamples. The paper's model repository is a testing practice; it does not prove that a finite benchmark set covers all Rust behaviors.
-
 ## technique 4: dependency-triggered and performance-aware runs
 Dependencies may be supplied as binaries, but the authors suggest triggering the same compile-and-test workflow when external dependencies change (Section 2.6). This can expose third-party breaking changes. Performance comparison is harder in cloud VMs because of “too much infrastructure interference” such as VMs spinning up, being torn down and migrating, and the bus being used by other VMs (Section 2.7, PDF pp. 5–6). The paper cites Recomputation.org's use of cloud virtual machines to freeze and unfreeze experiments as “not the whole solution” but “a move in the right direction”, and says performance “is one aspect of this proposal that needs further investigating”.
-
-Inference: for VL, dependency updates should trigger a clean Verus replay, including trusted-specification changes and solver versions. Record wall time only with machine and resource metadata; proof success is a pass/fail prerequisite check, while timing comparisons require controlled runners. A CI result cannot establish semantic equivalence of a changed dependency unless its contract is checked against the linked implementation.
 
 ## technique 5: artefact review and staged adoption
 what it is: make reproducibility an explicit conference workflow with declared requirements, parallel artefact review, traffic-light reporting, and a curated repository.
@@ -67,13 +61,6 @@ how to do it:
 
 The paper's explicit criterion is whether reviewers can execute the artefact and get the paper's results; the proposed schedule was optional in CAV 2016, mandatory but non-evaluative in 2017, and review-relevant in 2018. These are recommendations, not results measured by the paper.
 
-Inference: VL can publish a per-commit proof artefact with toolchain manifest, verifier output, benchmark commit, and a traffic-light status. This improves auditability but does not itself prove the specifications are correct.
-
-## trusted boundary, limitations, and VL threat
-The service runs arbitrary submitted code and therefore has security concerns; the authors explicitly warn about “providing open e-infrastructure that pulls, compiles and runs arbitrary code as an autonomous continuous integration framework” (Section 2.8, PDF p. 6). The paper says only that “we need to consider precisely how this infrastructure would interact with other open services, as well as privileges it would require to run as an autonomous cloud service”; it gives no design for isolation. It also says raw performance numbers are “not possible any more” when the whole workflow runs on the cloud (Section 2.7).
-
-The paper's claim is operational reproducibility: the same artefact can be rebuilt and its stated tests rerun. It does not establish proof soundness, specification adequacy, benchmark completeness, or hardware/OS equivalence. Inference: for agent-written verified Rust, the threat is moderate and operational. A stale Verus version, hidden `assume`/`external_body`, missing benchmark, or unrecorded dependency can make a claimed proof irreproducible even when a local run passed. The paper already supplies the needed build-test-benchmark workflow; VL should not redo that generic CI proposal. VL's added work is to define proof-specific artefact contents and reject runs whose verifier configuration or specification changed without review.
-
 ## techniques for the catalog
 - clean-room rebuild — compile every commit in a fresh environment with declared dependencies and toolchain
 - two-stage verification CI — run developer unit tests, then property-bearing benchmarks, recording commit-linked results
@@ -81,4 +68,3 @@ The paper's claim is operational reproducibility: the same artefact can be rebui
 - dependency-triggered regression — rerun builds and tests when a third-party dependency changes
 - artefact traffic-light review — execute submitted artefacts in parallel with review and report reproducibility status
 - controlled performance replay — use frozen or otherwise controlled environments before comparing benchmark timings
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Models which time-out with one but are successfully proved can be logged and identified for future study."): read the whole paper text (392 lines, 9 pages) and checked every quotation, section and page reference, the three-role list, the workflow steps of Sections 2.1-2.8 and 3, the 2016/2017/2018 schedule, tag, author, year and arXiv link (id 1502.02448v1 appears in the paper text); changed the commit-ID step, test/benchmark step 3, the BMA refinement sentence, the performance and security wording (the paper does not discuss isolation or dependency handling as security issues), added a quotation for the paper's self-description, and labelled my extensions and the Verus statement as inference or assumption; did not check the cited references, the BMA papers, or any claim about Verus, Rust or VL beyond marking them as inference.

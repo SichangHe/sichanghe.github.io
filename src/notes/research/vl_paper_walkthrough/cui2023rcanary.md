@@ -6,8 +6,6 @@ Tag: `cui2023rcanary`, [paper](https://arxiv.org/abs/2308.04787)
 
 rCanary is a static checker for leaks caused when Rust values cross from automatic ownership-based destruction to manual destruction. It works over Rust MIR, encodes heap ownership as bit vectors, emits SMT-Lib2 constraints, and asks Z3 for satisfiability. The paper’s abstract claims: “We further apply our tool to more than 1,200 real-world crates from crates.io and GitHub, identifying 19 crates having memory leaks.” (Abstract, p. 1). It also says: “Our analyzer is also efficient, that costs 8.4 seconds per package.” (Abstract, p. 1).
 
-Inference: rCanary checks leak freedom only. It does not prove functional behavior, arithmetic correctness, or Verus contracts. Its useful VeruLaw lesson is a small, explicit resource invariant that can complement functional verification.
-
 ## technique 1: model the semi-automated boundary with rtokens
 
 what it is and when to use it
@@ -86,8 +84,6 @@ The prototype has around 8,000 lines of Rust and targets rustc 1.62 (Section 6, 
 
 Stated limitations: no storing of orphan objects in static arrays or dynamic vectors (Section 2.3, p. 3); “rCanary is neither sound nor complete”; the heap-item unit relies on `PhantomData` and may give false positives for some user-defined types; field access depth is restricted, which can cause false negatives; orphan objects in arrays or containers (e.g., `Vec`, `HashMap`) and pointer arithmetic are unsupported (Section 6.5, p. 11); it cannot cross the FFI boundary (Section 6.1.4, p. 10). The benchmark construction excluded leaks caused by reference cycles and leaks caused solely by manual memory management (Section 6.1.1, p. 9); Inference: these are outside rCanary’s target patterns. The authors conclude: “Semi-automated memory management model cannot prevent memory leaks in Rust.” (Section 8, p. 11).
 
-Inference: the paper’s threat to VeruLaw is narrow but practical: a product that promises memory safety while omitting resource-release specifications can miss safe-but-leaking Rust. rCanary’s explicit token, field, and deallocation invariants are reusable as a Verus ghost layer. They do not replace functional contracts, and its unsupported cycles, pointer arithmetic, FFI, and intentional leaks mark code where agent-written verified Rust still needs human-designed models.
-
 ## techniques for the catalog
 
 - rtoken ownership model — assign one transferable token to every live heap item and require unique ownership
@@ -96,4 +92,3 @@ Inference: the paper’s threat to VeruLaw is narrow but practical: a product th
 - CFG/SCC traversal — process flow-sensitive MIR with monotone joins and one traversal per SCC-DAG node
 - taint-source/sanitizer analysis — follow escaped allocations through pointer-returning sources and owner-restoring sanitizers, and suppress irrelevant reports
 - SMT leak checking — classify a function as leak-free when its generated constraints are satisfiable
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "We observed that the leaks across the semi-automated boundary have specific patterns; thus we use taint analysis to simplify function boundaries; these functions are also used in the bug reporter to suppress false positives."): I read the whole paper text (arXiv:2308.04787v2) and the whole study, and checked every quotation, number, section and page reference (the PDF page numbers were derived from the page headers in the text), and the technique steps. I changed: the tag-line link (the placeholder DOI replaced by the arXiv link from the paper text; the tag year 2023 matches the arXiv identifier, the ACM reference line says 2024); many page references (e.g., Figure 5 is on p. 7, Figure 6 and Section 5.3.2 on p. 8, the ecosystem results on p. 10, the conclusion on p. 11); one quote's opening words; the description of the mapping M, the move rule, the O(fd) definition, the return check and the UNSAT report; the taint analysis, where the paper uses source and sanitizer and not sinks and does not call `forget` a taint source; the prototype size and the evaluation numbers; and the limitations list. I added the Table 4 false-positive counts and marked my own conclusions "Inference:". I did not check: the reference list, the cells of Tables 4–6 other than the false-positive counts, the remaining rules in Figure 5, the Figure 7 per-crate values, the cited repositories, or whether the Verus-related inferences hold.

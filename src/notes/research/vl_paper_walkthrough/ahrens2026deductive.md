@@ -6,8 +6,6 @@ This paper defines a deductive infrastructure for weighted programs whose execut
 
 A monoid M supplies trace-weight multiplication; a module W supplies commutative aggregation and scalar multiplication by elements of M. The tropical instance uses `(N∞, +, 0)` and `(N∞, min, ∞, +)` for optimization; the probability instance uses finite nonnegative real scalars and extended nonnegative real module values, with multiplication and addition; the formal-language instance uses concatenation and language union (Section 2.1, pp. 4–5). Weakest preweighting `wp` combines terminating executions and their final postweightings; `wlp` also accounts for nontermination (Section 2.3, p. 7). The paper says: “For the tropical monoid-module, this is the minimal cost among all non-deterministic execution traces.” (Section 1, p. 2).
 
-Inference: for VL, this is a design pattern for verifier infrastructure rather than a drop-in Rust library. Verus itself reasons about ordinary specifications, so the weighted algebra must be represented by ghost state, predicates, and lemmas.
-
 ## technique: weighted weakest-preweighting semantics
 
 What it is and when to use it
@@ -104,4 +102,3 @@ Inference: a Verus implementation could reuse modular contracts, local loop reas
 - local Park induction — prove loop bounds on a state space closed under local-variable reachability
 - κ-induction and ω-rule — establish finite-step and infinite-family loop bounds
 - quantifier elimination — prenex, strip, and recursively remove supported quantitative quantifiers before SMT solving
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The suffix validate; assume 𝜓 checks whether 𝜓 ⊑ 𝜑 holds and turns this qualitative test into a boolean-valued weighting."): read the entire paper including appendices; checked quotations, notation, symbolic bounds, section/page references, technique steps, author/year tag, and arXiv identifier; corrected wGCL syntax, the tropical-order counterexample, loop-rule details and references, quantifier-elimination assumptions, and prototype scope; did not execute Caesar or validate the proposed Verus adaptations, and did not independently re-prove the paper’s theorems.

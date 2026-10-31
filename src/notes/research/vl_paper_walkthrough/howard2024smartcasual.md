@@ -24,16 +24,9 @@ When implementation and specification atomicity differs, compose actions. The pa
 
 Inference: in Verus, define a single proof-level transition lemma for implementation operations that jointly update related abstract fields; use unchanged ghost state to model stuttering. This is a modeling choice, not a Verus primitive.
 
-## evidence, limits, and product threat
-Validating a trace against the consistency spec took less than one second with DFS versus about one hour with BFS (§6.4, PDF p. 8). Deriving a consensus Trace spec that validated the majority of traces took approximately two engineer-months over four months (§6.5, PDF p. 8); applying consistency trace validation took approximately one engineer-week over two weeks (§6.5, PDF p. 9). Table 1 compares state coverage but its states-per-minute entries use powers-of-ten notation; they are measurements on an Azure DC8s v3 VM (note below Table 1, PDF p. 9). The paper reports six bugs, including safety and liveness bugs, fixed before user impact (§7, PDF p. 9).
-
-Inference: successful trace validation establishes compatibility of recorded observations with an allowed model behavior; it does not establish correctness of unrecorded executions or of the instrumentation. The authors identify “Bogus logging, incorrect mappings from implementation to spec state, or true discrepancies between the spec and the implementation” as causes of invalid traces (§6.3, PDF p. 8). CCF’s threat model states: “The host, the OS, the hypervisor, the network and persistent storage are all assumed to be corruptible.” (§2, PDF p. 2). Inference: the workflow is relevant to agent-written verified Rust because it detects discrepancies between models and implementations as both evolve. Applying it to Verus would require separate justification of the Rust refinement model and its assumptions; this paper does not evaluate that adaptation.
-
 ## techniques for the catalog
 
 - dual-level specifications: separate node-protocol behavior from client-visible histories and check each with model checking
 - trace validation: constrain specification actions with implementation trace events and require a nonempty behavior intersection
 - action composition and stuttering: reconcile mismatched atomicity, omitted faults, and extra implementation events
 - CI integration: rerun specification checks and trace validation as the production code and protocol evolve
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "All these bugs were fixed before they affected any end-users or resulted in customer bug reports."): checked all quotations, numbers, section and PDF page references, technique steps, and the arXiv identifier; corrected page references, the two-variable client model, the read-only consistency counterexample, trace-validation wording and effort scope, and unsupported proof and Rust claims; did not inspect source code, run CCF or TLC, reproduce experiments, or verify the proposed Verus adaptations.

@@ -139,7 +139,6 @@ follow-up review, 8 Oct 2026
   - full-paper reading, artifact checks, and novelty assessment remain incomplete
   - publication does not complete every proposed research study
 - source of assessment
-  - independent reviewer record: /tmp/cx_storage_review.md
   - original human goal: “do extensive literature review of each one!”
   - original human presentation requirement: “Results should be in a neat doc tree in my notes”
 - validation
@@ -165,14 +164,12 @@ follow-up validation
 - a second independent reviewer checked nine primary sources
   - the new mechanism descriptions and quoted passages matched their sources
   - clarified persistent-memory emulation and Macaron-TTL
-  - review record: `/tmp/cx_storage_followup_review.md`
 - the four named regional-paper holes are closed
   - this is evidence of progress rather than completion of all citation chains
 - full citation-chain review remains incomplete
   - Extra High consultation is now complete
 
 successful Extra High consultation, 8 Oct 2026
-- [ChatGPT, GPT-6.1 Sol, Extra High, saved conversation](https://chatgpt.com/c/6ac7beb1-8ac4-832e-b2f7-f046c874ccbd)
   - opinion: “checker → replicated snapshots → proof/simulator mapping → combined store”
   - context: ranks cheap falsification of four supplied candidates
     - it did not see the notes directory or run experiments
@@ -195,14 +192,12 @@ consultation review outcome
 
 - independent review checked six primary documents supporting the consultation corrections
   - no material factual error was found
-  - review record: `/tmp/cx_storage_consult_review.md`
 - next useful work is to choose one precise contract and inspect its existing implementation
   - a broad claim about new snapshot tracking or new weak-isolation theory is no longer supported
 
 final assessment against the human goal
 - independent reviewer: “the storage literature survey can now close with disclosed access and coverage limits”
   - scope: this storage slice only
-  - source: `/tmp/cx_storage_goal_final.md`
 - completed bounded comparisons
   - Plume theory/code inventory and Viper artifact boundaries
   - Ferrite crash-model/execution connection

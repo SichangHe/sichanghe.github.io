@@ -8,9 +8,7 @@ Page numbers below are pages of the 16-page arXiv v1 PDF (arXiv:1806.07239v1); p
 
 PaMpeR learns which Isabelle/HOL proof method is likely to help a proof state, then explains the recommendation. Its training data comes from existing hand-written proof corpora: the Isabelle standard library and the Archive of Formal Proofs (AFP) (Section III-B, p. 4). The introduction motivates the work with the fact that “Isabelle/HOL comes with 159 proof methods defined in its standard library” and that picking the right one “still requires ITP specific expertise” (Section I, p. 1). The abstract states: “Given a proof state, PaMpeR recommends proof methods to discharge the proof goal and provides qualitative explanations as to why it suggests these methods.” (Abstract, p. 1.)
 
-The tool has a preparation phase that extracts boolean features and trains one regression tree per method, and a recommendation phase that evaluates the current state with a faster extractor (Section II-B, p. 2). It recommends proof methods; Isabelle still checks the resulting proof. Inference: for VL, the reusable idea is context-sensitive recommendation of Verus proof constructs or solver settings with explanations, while Verus remains the sound checker.
-
-## technique: expert-written boolean feature extraction
+The tool has a preparation phase that extracts boolean features and trains one regression tree per method, and a recommendation phase that evaluates the current state with a faster extractor (Section II-B, p. 2). It recommends proof methods; Isabelle still checks the resulting proof.
 
 ### what it is
 
@@ -29,8 +27,6 @@ The assertions deliberately avoid user-defined constants because the developers 
 
 Inference: Define a Verus feature extractor over the current verification obligation, nearby `requires`/`ensures`, quantified variables, mutable references, loop invariants, called specs, and available lemmas. Assertions can test whether the goal is arithmetic, sequence/Set reasoning, ownership transfer, a loop postcondition, or a state-machine transition. A feature should report observable proof-state metadata, not inspect untrusted model output. Verus has no Isabelle/ML assertion API; a driver would need compiler or verifier diagnostics and source-level parsing. The abstraction may conflate distinct obligations, so the final proof remains checked by Verus.
 
-## technique: logging proof corpora at method invocation
-
 ### what it is
 
 The authors modify Isabelle's `apply` and `by` commands, only to build the database; this “is the only modification we made to Isabelle’s source code” (Section III-B, p. 4). Each invocation logs the current feature vector and the method the human proof used. The paper gives the exact sequence: “1) apply assertions to the current proof state, 2) represent the proof state as an array of boolean values, 3) record which method is used to that array, 4) apply the method as the standard apply or by command, accordingly.” (Section III-B, p. 4.) The logging ignores `apply` commands that contain composite proof methods, because naive logging would record steps that are later backtracked (Section III-B, p. 4).
@@ -40,8 +36,6 @@ The default database construction from the standard library and AFP took “abou
 ### Verus form
 
 Inference: instrument a Verus proof-generation workflow to record the feature vector immediately before each successful lemma call, `assert`, `reveal`, `broadcast use`, solver hint, or invariant edit. Keep only steps that occur in a proof accepted by Verus, and record the exact construct and arguments. A failed attempt can be stored separately for search diagnostics but must not be treated as a positive label. Verus proof macros and diagnostics may make exact interception difficult; this is an engineering gap absent from the paper.
-
-## technique: per-method regression trees
 
 ### what it is
 
@@ -73,14 +67,6 @@ The reported metric is “coincidence rate”: how often the human-selected meth
 
 The method labels reflect one human proof path even when several methods are valid: “existing proof corpora describe only one way of attacking it” (Section IV-A, p. 5). The paper also notes that some methods work well only with certain arguments or following methods, so the labels ignore arguments and combinations (Section IV-A, p. 5; Section VII, p. 10). No assertion takes the sequence of earlier proof methods into account (Section VII, p. 10), and assertions cannot rely on user-defined constants (Section III-A, p. 3). Inference: these are key limits for a Verus transfer; a tree trained on one style can underrate an equivalent proof construct, and feature changes after a crate refactor can invalidate its advice.
 
-## what remains trusted and product threat
-
-Isabelle's logical kernel is isolated by the Standard ML module system (Section II-A, p. 1). The paper argues the training labels are reasonable because “Isabelle mechanically checks the proof scripts”, the standard library was written by experienced developers, and the AFP accepts proofs only after peer review (Section IV-A, p. 5). Inference: soundness does not depend on PaMpeR's prediction because Isabelle checks whatever method the user applies; the corpus proof scripts, feature implementation, tree trainer, and persisted trees are operational dependencies affecting only recommendation quality. The corpus's human proofs and assertions are evidence about which methods were used, not specifications of all valid tactics.
-
-Inference: VL should not redo hand-written method recommendation, regression-tree ranking, or proof-state explanations as general ideas. The open Verus work is extracting ownership-aware features, recording successful proof actions, and measuring whether recommendations reduce repair time and solver cost on unseen crates. The paper's own future direction is to use PaMpeR's recommendations to navigate PSL's search, “changing PSL’s evaluation strategy from the IDDFS to the best-first search” (Section VII, p. 10); this is an existing pattern to reuse rather than claim as new.
-
-Inference: The threat to an agent-written verified-Rust product is medium. Context-sensitive method advice could reduce wasted proof attempts and expose specialized lemmas, but this paper does not address Rust, Verus specifications, unsafe code, solver soundness, or intent. Coincidence with the human's method ignores arguments, so a high coincidence rate does not guarantee a recommendation would close the goal, and the random 10% split of data points may place closely related states from one development in both sets.
-
 ## techniques for the catalog
 
 - expert boolean abstraction — encode proof-goal, chained-fact, and context properties as hand-written boolean assertions
@@ -88,5 +74,3 @@ Inference: The threat to an agent-written verified-Rust product is medium. Conte
 - per-method regression trees — train one RSS-minimizing tree per tactic and store leaf expectations
 - reduced feature extraction — retain only assertions used by trained tree branches for faster online lookup
 - explainable tactic ranking — return top methods, feature-based reasons, and a rank for a user-specified method
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Since there are often multiple equally valid proof methods for each proof state, it is only reasonable to expect that which_method should be able to recommend the proof method used in the evaluation dataset as one of the most important methods for each proof method invocation."): read all of the paper text (title page through the appendix tables) and checked every quotation, number, section and page reference, and the technique steps against it; changed page references to the arXiv v1 PDF pages (they were IEEE-style pages that did not match), fixed the 6021-hour wording ("about"), the fun/function inference, the "composite methods" description, the step 4 explanation-text claim, added the section references for the evaluation counts, replaced the Semantic Scholar link with the arXiv link from the paper text, removed the word "gate", marked unsupported conclusions as Inference, and replaced the claim that the coincidence metric can look high while a recommendation fails with a supported statement about ignored arguments; did not check the Verus-transfer inferences against Verus itself, the cited related work, Figure 2/3 values beyond the numbers the text states, or appendix Tables III-V row by row beyond the 12-of-38 count (taken from the text, not recounted).

@@ -1,15 +1,12 @@
 # Sound Borrow-Checking for Rust via Symbolic Semantics
 (authored by agents unless marked 🧑)
 Tag: `ho2024sound`, [paper](https://doi.org/10.1145/3674640)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and relation to earlier notes
 
 The existing Aeneas note in the human research notes describes the original functional-translation pipeline and mentions this paper as its semantic foundation. It does not walk through this paper's proof constructions, rules, loop algorithm, or measurements. This study supplies those missing details. The source studied is the long version, arXiv:2404.02680v2, 1 July 2024; section and page references below refer to that PDF.
 
 The paper has one central claim: a borrow-centric Rust core calculus (LLBC), and its symbolic abstraction (LLBC#), are sound with respect to a conventional heap-and-addresses language (PL). It establishes this by composing simulations LLBC# → LLBC → HLPL → PL, where HLPL is an intermediate pointer view. The same framework proves a sound join for abstract environments and uses it to analyze loops. The result is a semantic foundation and a borrow-checking algorithm, rather than a Verus implementation or a proof of the Rust compiler.
-
-## technique 1: prove simulations with local state transformations and a hybrid language
 
 ### what it is
 
@@ -41,8 +38,6 @@ Verus does not provide a direct notation for a reflexive-transitive closure over
 
 The paper proves Theorem 2.2 (p. 5), forward simulation on the superset language, and Definition 2.3 (p. 6), stability. It then instantiates this template twice. No benchmark is attached to the proof method itself. The method assumes matching program syntax, inductive big-step evaluation, and carefully chosen excluded rules. It does not by itself prove compiler correctness or handle arbitrary language translations.
 
-## technique 2: connect valued borrows to an explicit heap with a staged simulation
-
 ### what it is
 
 LLBC models values attached to loans and borrows; PL models words in an explicit heap at addresses. The paper inserts HLPL, where values remain attached to locations and pointers, then relates HLPL to PL with a global location-to-address map and a heap invariant. It proves LLBC → HLPL with local rewrites, then HLPL → PL with the conventional global invariant. This makes the borrow-centric execution a sound restriction of a low-level execution.
@@ -72,8 +67,6 @@ Represent a Verus heap as a map from abstract block identifiers and offsets to w
 
 Theorem 3.1 (p. 13) proves evaluation preserves the HLPL+ relation; Theorems 3.2 and 3.3 connect HLPL+ to HLPL and LLBC. Appendix B supplies the global-map proof for PL. The model covers a core, desugared Rust language, not all Rust, unsafe code, concurrency, or the compiler's LLVM lowering. PL's determinism is assumed and is used later; the paper does not establish a real compiler refinement theorem.
 
-## technique 3: make divergence explicit with step-indexed big-step semantics
-
 ### what it is
 
 Plain big-step semantics cannot distinguish safe divergence from a stuck computation because neither produces a terminating derivation. The authors add a natural-number fuel index to statement evaluation. At zero fuel, evaluation returns ∞; recursive calls and loops decrement fuel. They then define unindexed divergence as “returns either ∞ for diverging computations, or the previously seen pair of a control-flow outcome and an environment”, and termination as existence of a non-∞ fuel result.
@@ -97,8 +90,6 @@ Make fuel an explicit `nat` parameter and prove step-indexed preservation with `
 ### evidence and limits
 
 Figure 7 and Theorem 3.4 (p. 15) give the indexed rules and the divergence result. The complete indexed proofs are described as a straightforward adaptation and omitted. The method reasons about divergence but does not establish productivity, fairness, or termination.
-
-## technique 4: symbolic borrow checking with region abstractions
 
 ### what it is
 
@@ -130,8 +121,6 @@ Model symbols as an uninterpreted ghost value type and regions as ghost sets or 
 
 Theorem 4.1 (p. 18) proves successful LLBC# evaluation has a corresponding safe LLBC execution, assuming every function in the environment passes `borrow_checks`. Theorem 4.2 (p. 22) derives a backward simulation from PL to LLBC and, with PL determinism, a bisimulation for borrow-checked programs. The theorem treats panic as safe and permits divergence. It trusts the signature environment, the LLBC semantics, and PL determinism; it does not prove that a source Rust program was correctly translated to LLBC.
 
-## technique 5: join and collapse abstract environments
-
 ### what it is
 
 LLBC# originally collects one state per branch, causing path explosion. The paper introduces a pointwise join followed by collapse. Join compares each variable in two environments. Equal values are kept; unequal plain values become a fresh symbol; bottom on either side yields bottom; differing borrows and loans create fresh identifiers and region abstractions. Values are marked by origin (left or right) so that a mutable borrow is not duplicated accidentally. Collapse removes those markers and duplicate loans/borrows using the existing region-merge rules.
@@ -161,8 +150,6 @@ Represent a joined state as a ghost state carrying an origin tag, then prove a p
 ### evidence and limits
 
 Theorem 5.1 (p. 25) states: if join then collapse yields an unmarked state, both inputs are ≤ that state. Appendix E proves it using left/right projections, lemmas for value joins, state joins, abstraction merging, and collapse. The theorem is conditional and does not show that collapse always succeeds. The implementation uses heuristics and can raise an error; this incompleteness is a deliberate soundness-preserving failure mode.
-
-## technique 6: loop fixpoints up to identifier renaming
 
 ### what it is
 
@@ -205,12 +192,6 @@ Trusted or assumed: the LLBC language model and its desugaring from Rust; the PL
 The paper calls the join “(naturally) incomplete” (Section 1) and later says the implementation fails after a fixed number of nonconverging steps; these are consistent, but mean the reported success on all examples (the study's reading: a 100% rate) is only over the selected suite. The 3,000 OCaml lines are implementation size, whereas 300 and 867 are input Rust lines; they must not be compared as a proof-size ratio. The phrase “all the examples” has no denominator beyond the stated 22 micro-tests and two case studies, and “less than 1s” has no hardware or per-example breakdown. The paper claims PL/LLBC bisimulation only under successful borrow checking and PL determinism, so it must not be read as unconditional equivalence.
 
 Failure is conservative at the join/fixpoint boundary: a marked value left after collapse or a nonconverging loop causes rejection/error. The symbolic semantics is nondeterministic and heuristic, so an implementation must find a successful derivation rather than merely execute one deterministic path. Big-step proofs cover divergence only after adding the step index. The scope excludes unsafe Rust and does not certify LLVM compilation.
-
-## reuse boundary for VL
-
-VL should reuse the decomposition of an ownership proof into local rewrites, a hybrid semantic layer, explicit stability lemmas, and a final concrete-memory bridge. The region-abstraction contract for modular calls, directional merging to prevent cyclic ownership, projection proofs for joins, and alpha-equivalent loop shapes are concrete design patterns for agent-written verified Rust. The paper's separation between a semantic checker and a downstream theorem prover also suggests that VL can emit small, checkable certificates rather than ask Verus to rediscover the entire analysis.
-
-VL should not redo a generic LLBC-style borrow semantics, the local/hybrid simulation recipe, or the join/collapse soundness argument without a new target or a materially different Rust subset. Work still needed for VL is a Verus-native certificate format, a checked source-to-intermediate translation, integration with Verus's specifications and SMT backend, support for unsafe/concurrent features, and evaluation on agent-generated code rather than curated examples. The existing human Aeneas note already records the functional-translation overview; this study adds the proof and algorithm details.
 
 ## product risk assessment (inference)
 

@@ -90,18 +90,9 @@ CoSl's theorem gives conditional soundness over T. The implementation is OCaml w
 
 Verus form: Inference: an adaptation could express the state transitions as function contracts and ghost proofs. It would need justified primitive summaries and a model for parallel composition. Whether Verus can discharge the resulting obligations is not evaluated here.
 
-## trusted boundary, gaps, and product threat
-
-The paper proves distribution lemmas and states soundness theorems for FrInfer and CoSl. The appendices prove the distribution and normalization principles; they do not contain full proofs of Theorems 5.1 and 6.1. Section 7 reports successful verification of 10 selected programs and a runtime upper bound. Inference: trusting a deployed verifier also requires confidence in the assumed summaries, predicate definitions, permission model, and OCaml/Z3 implementation. A VL adaptation would additionally need to connect its ghost regions to the Rust program's actual memory behavior.
-
-The paper's method targets fine-grained heap sharing and does not supply a Rust memory model, scheduler proof, or unsafe-code soundness argument. It reports no denominator beyond 10 programs for the headline success claim, and “within one minute” is an upper bound rather than a per-program time table. Inference: agent-written verified Rust remains threatened by incorrect contracts, missing interference specifications, and abstraction gaps even when every generated Verus proof checks. Inference: CoSl's residual-frame search and permission composition provide candidate techniques for VL, but their applicability to Verus requires separate testing.
-
-Inference: the evaluation's 10/10 success statement is a program-level count, while the table's 8–32 query counts are workload sizes; no arithmetic conversion from queries to success rate is justified.
-
 ## techniques for the catalog
 
 - permission-region separation — model shared heaps with labels, fractional permissions, weak sharing, and strong disjointness
 - disjointness-preserving distribution — split and rejoin weak/strong conjunctions while retaining pure heap-separation constraints
 - residual-frame inference — search entailment proof forests to infer unused heap resources and variable instantiations
 - predicate-transformer concurrency — compute procedure/thread post-states compositionally and check each against its contract
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For fork, CoSl uses FrInfer to find the frames between the current program state and the pre-condition of proc."): checked the complete paper, including appendices, against the study’s quotations, numerical results, references, and technique steps; corrected page references, permission-model scope, search order, unfolding restrictions, the residual permission at y, and soundness-proof claims; removed unsupported Verus assertions and marked proposed adaptations as inferences; did not rerun CoSl, independently validate the proofs, or test a Verus implementation.

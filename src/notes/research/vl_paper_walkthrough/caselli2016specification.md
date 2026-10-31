@@ -4,7 +4,7 @@ Tag: `caselli2016specification`, [paper](https://www.usenix.org/conference/useni
 
 ## scope and formal-verification relevance
 
-This paper automates deployment of a specification-based intrusion detector for networked control systems (NCSs). It mines device and constraint information from traffic and documentation, translates that information into rules, and checks live traffic. The implementation uses Python, Bro, and a Spicy BACnet parser (Section 4, p. 796). Inference: the paper offers an empirical evaluation, not machine-checked proofs of the rules, parser, or detector. Inference: its main lesson for VeruLaw is specification extraction and contract monitoring, while its empirical alerts are evidence about two BACnet deployments rather than formal assurance.
+This paper automates deployment of a specification-based intrusion detector for networked control systems (NCSs). It mines device and constraint information from traffic and documentation, translates that information into rules, and checks live traffic. The implementation uses Python, Bro, and a Spicy BACnet parser (Section 4, p. 796).
 
 The abstract states: “Our approach leverages the same documentation to automatically derive the specification rules and continuously monitor network traffic.” It reports tests on two real infrastructures and says: “Our implementation successfully identifies process control mistakes and potentially dangerous misconfigurations.” (Abstract, p. 791.)
 
@@ -54,8 +54,6 @@ The system generated hundreds of rules and monitored more than two months of tra
 
 The work identified undocumented vendor-defined objects, unimplemented documented properties, and an unexpected write accepted by a controller. Operators attributed that write to a human configuration mistake (Section 7, pp. 801–802). Operators confirmed that HMIs did not signal the discovered misconfigurations, and the University of Twente requested continuous deployment (Section 8.1, p. 802). Only ten EDE configuration files were available, all from Twente; none came from LBNL. Value rules therefore covered a limited subset of devices (Section 6, p. 799; Section 7, p. 800). The Python scripts and Spicy parser were released, while privacy agreements prevented release of the Bro rule-checking code (Section 4, p. 796). The paper discusses ICS and in-vehicle adaptations as proposals rather than evaluated deployments (Sections 8.2–8.3, pp. 803–804). The approach remains dependent on correct, authentic, linkable documentation; it does not provide a general method for unstructured natural-language extraction, which the authors leave as future work (Section 8.1, pp. 802–803).
 
-Inference: VL should not redo generic specification-based monitoring or the type/value/method decomposition as if those were new. For agent-written verified Rust, the product threat is stale or spoofed configuration, incorrect device linking, parser/document mismatch, and rules that cover only documented behavior. Verus can strengthen the rule evaluator and parser contracts, but it cannot by itself prove the deployed NCS conforms to its documentation or that in-specification attacks are harmless.
-
 ## techniques for the catalog
 
 - three-stage specification mining — discover devices, retrieve and structure documentation, then instantiate executable rules
@@ -63,4 +61,3 @@ Inference: VL should not redo generic specification-based monitoring or the type
 - PICS/EDE parsing — extract supported objects, properties, services, and value ranges from structured documents
 - type/value/method rules — check allowed object types, value bounds, service use, and write/create/delete permissions
 - ordered live detection — apply progressively specific rules to observed messages and alert on mismatches
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "According to BACnet specifications, a PICS has a standard template and we observe that most PICSs are closely modeled to it."): checked all paper text, study quotations, numbers, section/page references, assumptions, and technique steps; corrected discovery and lookup references, passive discovery wording, object creation/deletion versus property writability, EDE lookup, and interpretation of detection results; did not independently validate the implementation, deployments, linked website, or proposed Verus proofs.

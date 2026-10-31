@@ -84,11 +84,7 @@ limits: One university, English, declarative rules, and six syntactic signatures
 
 The paper proves the deterministic deontic-to-SHACL mapping only by construction and reports measured classifier, parser, shape, and portability results. It reports fixed-seed hash-identical output across 443 shapes on the same A100 host, while a different RTX 4060 produced 360/443 versus 351/443 FOL successes and 403/443 versus 401/443 valid shapes (§5.4, p. 10). Trusted components include Mistral, Ollama, PDF extraction, the ontology/reference set, SHACL implementation, retry prompts, and the paper's own validators. Inference: Verus would move the deterministic mapping and registry membership into a machine-checked trust boundary, while the language model, PDF parser, and ontology remain assumptions unless separately specified and verified.
 
-The paper's strongest caution is its external boundary: LexDeMod permission F1=.038 and the in-house 69-shape reference set mean the headline F1 is neither universal legal coverage nor an independent gold-standard result (§5.4, p. 10; §7.6, p. 20). Inference: for agent-written verified Rust, the reusable threat is uncontrolled natural-language-to-spec translation and stale vocabulary, not SHACL serialization itself. A VL product should require explicit contracts, source spans, validator evidence, and domain-specific regression tests before treating generated constraints as verified.
-
-## what VL should not redo
-
-The paper already demonstrates the staged FOL intermediate, validator retry, deterministic SHACL templates, registry-based vocabulary grounding, and a corpus-scoped higher-order audit. Inference: VL should not present these patterns as new without adding a Rust/Verus-specific contribution. The unresolved opportunities are verified semantic preservation between source policy and generated contracts, robust handling of exceptions and nested deontic operators, and adapter evaluation across larger, independently curated domains.
+The paper's strongest caution is its external boundary: LexDeMod permission F1=.038 and the in-house 69-shape reference set mean the headline F1 is neither universal legal coverage nor an independent gold-standard result (§5.4, p. 10; §7.6, p. 20).
 
 ## threat to a product of agent-written verified Rust
 
@@ -100,4 +96,3 @@ Inference: the threat is medium to high at the specification boundary. A Verus p
 - validator-directed retry and fallback — use stage diagnostics for one repair and route irreducible formulas through direct NL→SHACL
 - Corpus Adapter grounding — select predicates from a registry, canonicalise residual names, and swap registries for domain transfer
 - two-pass expressiveness audit — scan six higher-order signatures and manually inspect fallback rules before claiming FOL adequacy
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

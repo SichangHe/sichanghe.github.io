@@ -89,8 +89,6 @@ The paper states its own limits. CAD scales poorly with variables and algebraic 
 
 Inference: the main trusted boundaries are Mathematica/CAD, manual lemma verification, floating-point or symbolic implementation details, the formal correspondence between geometric definitions and code, and the proof that the enumerated split family covers all required cases. 
 
-Inference: the threat to agent-written verified Rust is moderate and specific. The strongest reusable idea is to make an agent propose small, typed proof artifacts and route every candidate through an exact checker and a final global certificate. The threat remains in translating informal requirements into the formal predicate, choosing complete cases, and trusting external symbolic tools. VL should not redo an LLM-only proof search; it should reuse the search–check–reflect pattern only where a sound executable verifier and coverage argument exist.
-
 ## techniques for the catalog
 
 - splitting induction — reduce a Steiner tree and prove a marginal length inequality for the removed and reconstructed parts
@@ -102,4 +100,3 @@ Inference: the threat to agent-written verified Rust is moderate and specific. T
 - bottleneck reflection — feed uncertified parameter boxes back to the lemma generator
 - dual exact verification — combine Mathematica/CAD checks with independent manual proof review
 - global certificate assembly — augment a finite function family and certify the final lower bound over the full domain
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Consequently, the global verification problem is partitioned into four distinct sub-problems based on the topological status of D and the domain of the parameter f"): read the whole text including appendices A to H; checked every quotation, number, theorem, algorithm, line and page reference, and the technique steps against it; changed the abstract/§1 attribution and capitalization of the reflection quote, the 0.8559 page references, the Algorithm 1 and §H.2.2 stopping-rule citations, the Lemma 7–9 labels (Lemmas 7, 8 and Theorem 9), the Theorem 20 location, the Appendix G.1 page (p. 42, not 57), the 80% denominator (lemmas, not rounds), the Appendix E description of what CAD verifies, the token/time page range, and the bottleneck notation (B⋆ in §3.3, Ωk in H.4); added the 0.8282 baseline, the Table 2 trajectory, the f=d restriction on four-point lemmas, the conservative monotonicity policy, and the Lean remark; marked own conclusions as Inference. Not checked: the cited external literature, the correctness of the paper's proofs and Mathematica computations, the linked GitHub certificate code, and figure contents (figures were read only as extracted text).

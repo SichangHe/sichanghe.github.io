@@ -104,8 +104,6 @@ Verus form. Inference: supply security assets, attacker-controlled inputs, and i
 
 The paper reproduces vacuity theorems from prior literature (§II-B, p. 2), runs JasperGold on generated assertions, and reports property counts, assertion counts, coverage, and five benchmark bugs (§IV, pp. 4–7). It does not prove that LLM generation captures every security requirement. The discussion acknowledges: “LLMs struggle with complex, specialized tasks and are constrained by a finite set of use cases in generating SVAs, often leading to incomplete or erroneous responses.” (§IV-H, p. 7.) Fine-tuning, stronger vacuity checks, syntax checking, advanced reasoning, and improved coverage metrics are proposed improvements (§IV-H, p. 7).
 
-Inference: a Rust adaptation would depend on specification extraction, retrieved context, candidate contracts, verifier assumptions, and the verification tool. For VeruLaw, the reusable idea is a loop from structured context to candidate specifications, checker feedback, and targeted revision. Record prompts, assumptions, contracts, and verification results so the basis for a passing check can be inspected. The hardware-specific gap is how to assess contract relevance, vacuity, and coverage for Rust/Verus; LASA does not resolve it.
-
 ## techniques for the catalog
 
 - hierarchical RAG prompting: summarize design components and retrieve relevant documentation before property generation
@@ -113,5 +111,3 @@ Inference: a Rust adaptation would depend on specification extraction, retrieved
 - few-shot assertion translation: translate retained properties to SVAs and repair malformed candidates with tool feedback
 - coverage-driven refinement: add targeted properties when configured coverage is low
 - counterexample bug finding: combine threat context, assertion failures, and source inspection to identify potential flaws
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "There were some manual efforts involved for those properties requiring re-prompting for conversion to SVAs."): read the complete nine-page paper text and study; checked quotations, counts, coverage values, references, and technique steps; corrected page and section references, clarified prompted vacuity screening and its inconsistent wording, removed unsupported repair steps, qualified average coverage and the stopping rule, and marked Rust/Verus adaptations as Inference; did not independently run LASA, JasperGold, or Verus, validate the cited prior work, or inspect benchmark source code.

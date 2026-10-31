@@ -8,8 +8,6 @@ The paper builds a two-phase system for automated theorem proving in a large for
 
 The evaluation has 2,078 Mizar problems from 33 articles (Section 5, p. 15). Vampire 0.6 runs on one CPU of an Intel Xeon E5520 2.27GHz server with 8GB RAM; the baseline uses a 10-second limit (Section 6, pp. 16–17). The headline claim is relative to this benchmark and these settings: MOR plus fine dependencies reaches 795 solved problems (MOR-60) versus 548 for Vampire/SInE, a 45.1% gain; combining MOR-40 and MOR-100 reaches 824, a 50.4% gain (Tables 4–5, pp. 20–21). The "Gain over Vampire" column in those tables is relative to the 548 problems Vampire solves in auto mode; the solved counts are out of the 2,078-problem benchmark, not all Mizar theorems. The paper's prose in Section 6.3 (p. 19) writes "SNoW-60 resp. MOR-70" where Table 4 and Figure 2 give SNoW-70 and MOR-60; this study follows the tables and the surrounding text ("SNoW's maximum is 652 with the top 70 premises").
 
-## technique: exact dependency extraction by micro-articles and greedy minimization
-
 ### what it is
 
 An interactive prover can suppress typing, notation, and other inferences. This paper exposes them by splitting each source article into one-item “micro-articles”, then finding the smallest environment that still verifies each item. The paper says: “The first step in the computation of fine-grained dependencies in Mizar is to break up each article in the mml into a sequence of Mizar texts, each consisting of a single top-level item (e.g., theorem, definition).” (Section 3, p. 4.)
@@ -38,8 +36,6 @@ Table 1 averages fine dependencies against the old MPTP approximation for 33 art
 
 Greedy removal can be expensive; the paper says that minimization of certain kinds of dependencies "can be time consuming" (Section 3, p. 5). The paper says the computed set is minimal "with respect to the power of the proof checker" (Section 3, p. 5), and that any expansion of the proof dependencies can lead to an alternative proof (Section 4, p. 7). Inference: the method therefore assumes the checker can be run many times, and a minimal dependency set for the recorded proof is not the only sufficient set.
 
-## technique: proof matrix and formula features
-
 ### what it is
 
 The exact dependencies become supervised labels. For each formula pair `(c,p)`, define `μ(c,p)=1` when premise `p` occurs in the recorded proof of conjecture `c`, otherwise `0`. The paper names this the proof matrix: “Using the fine-grained Mizar proof analysis - which says for each pair of formulas p, c ∈ Γ whether p is used in the mml proof of c - define the function μ : Γ × Γ → {0, 1} by” (Definition 2, p. 7.) The matrix is the adjacency matrix of direct proof dependencies.
@@ -61,8 +57,6 @@ Inference: Treat each Verus `spec fn`, `lemma`, and proved function contract as 
 
 The corpus has one recorded Mizar proof per theorem, so the label set is the premises used by that proof, not all premises that could support an alternative proof (Section 4, pp. 7–8). The authors explicitly caution that training on a human proof may differ from training on an ATP-discovered proof. The authors call their feature choice "quite arbitrary" (Section 4, p. 8), and say that for ad hoc collections like TPTP, where symbols are used inconsistently across problems, features that abstract from particular symbols will likely be needed (Conclusion, p. 23). Inference: this leaves a direct failure mode for Verus: renamed APIs, generic instantiations, and equivalent but differently written specifications may not share surface features.
 
-## technique: naive-Bayes premise ranking
-
 ### what it is and how to do it
 
 For each premise `p`, train a classifier `C_p(c)` estimating the probability that `p` is used for conjecture `c`, conditional on the conjecture's features. The paper converts the naive-Bayes log odds into a linear feature score: “Line (6) shows that the naive-Bayes classifier is ‘essentially’ (after the monotonic transformation) a linear function of the features of the conjecture.” (Section 4.1, p. 10.) Compute each feature weight from the log likelihood ratio in equation (7), add the prior log odds, score every candidate premise, and rank by score. The paper uses SNoW's multiclass naive Bayes as the comparison learner (Sections 4 and 6.2, pp. 9, 18).
@@ -72,8 +66,6 @@ Inference: In Verus, fit one binary classifier per lemma or a multiclass ranker 
 ### evidence
 
 On the chronological MPTP2078 training protocol, SNoW places "around 80%" of the used premises within its top 50 predictions, whereas MOR places on average 88% there (Section 6.2, p. 18). Recall is defined per conjecture as the overlap with the premises used in the Mizar proof divided by the number of used premises (Section 6.2, p. 18); this is recall against Mizar labels, not the fraction of problems proved. In the ATP experiment with a 10-second limit, SNoW-70 solves 722/2,078 = 34.7%, a 31.8% gain over 548, while MOR-60 solves 795/2,078 = 38.3%, a 45.1% gain (Table 4, p. 20). The table's 31.8% is `(722−548)/548`; 45.1% is `(795−548)/548`.
-
-## technique: Gaussian-kernel multi-output ranking (MOR)
 
 ### what it is
 
@@ -95,14 +87,6 @@ Inference: Build `K` between the new obligation's normalized feature vector and 
 
 MOR's 88% top-50 recall is measured against Mizar's single human proof, while its end-to-end result is 795 solved in 10 seconds and 729 solved in 5 seconds at the best reported single top-segment setting (Section 6.3, pp. 19–20). The combined MOR-40/100 runs solve 824/2,078 = 39.7%, which is 50.4% above the 548 baseline (Table 5, p. 21); `(824−548)/548 = 50.36%`. The paper notes that later chronological problems become harder and that human selection increasingly outperforms the algorithms (Section 6.3, pp. 21–22). The paper says that computing the kernel matrix "is generally quadratic in the number of training data points" (Section 4.2.4, p. 13). Inference: the result assumes a sufficiently similar, ordered corpus and a budget that can pay for training and ranking.
 
-## what remains trusted, contradictions, and product threat
-
-Inference: the formal checker, Mizar's translation to first-order formulas, Vampire, the solver implementation, the hardware, and the correctness of the recorded specifications remain trusted. The dependency minimizer only establishes that the retained environment verifies the recorded item; it does not establish that the theorem expresses the intended property. The machine learner is not trusted for soundness because it only chooses premises; a proof checker accepts or rejects the final proof.
-
-The paper's 50% headline is consistent with Table 5: `(824−548)/548` = 50.4%. Its Section 6.1 prose calls 1,105 versus 1,023 an “8% improvement”; the exact ratio is 8.01%. The 88% versus "around 80%" recall values are stated in the Section 6.2 prose (p. 18) for the top 50 premises; they are averages from Figure 1, with no table of exact values. The 5-second and 10-second results use different time limits and must not be compared as if they were one denominator.
-
-Inference: VL should not redo exact premise ranking, proof-dependency labels, kernel regularization, or the basic “retrieve then check” pattern as if they were new. What remains specific to Verus is extracting dependencies from Rust/Verus proof bodies, normalizing ownership and quantified-state features, and evaluating whether retrieved contexts reduce solver time without destabilizing proofs. The threat to an agent-written verified-Rust product is medium: premise retrieval could materially reduce proof search cost and token use, but this paper does not address Rust ownership, specification correctness, unsafe code, or whether an LLM can produce faithful Verus proofs. Its 2,078-problem Mizar benchmark is much narrower than product-scale Rust crates, and its training labels come from human-written proofs.
-
 ## techniques for the catalog
 
 - exact dependency minimization — split verified articles into one-item units and greedily remove environment facts while recompiling to retain only checker-required dependencies
@@ -111,5 +95,3 @@ Inference: VL should not redo exact premise ranking, proof-dependency labels, ke
 - naive-Bayes premise ranking — estimate per-premise usefulness from feature likelihood ratios and advise the highest-ranked premises
 - Gaussian-kernel MOR — learn regularized nonlinear premise scores with a shared kernel matrix, cross-validated `λ` and `σ`, and multi-output ranking
 - retrieve-then-ATP evaluation — measure both label recall and solved-problem counts after giving selected premises to an automated prover
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "A general advantage of naive Bayes over kernel-based algorithms is the computational efficiency, particularly when taking into account the fact that computing the kernel matrix is generally quadratic in the number of training data points."): I read the whole paper text (arXiv 1108.3446v2) and checked every quotation, the table values (Tables 1, 3, 4, 5), the percentage arithmetic, the equations and the section, page and table references. Changes: link set to the arXiv page from the paper text; fixed pages for Tables 4 (p. 20) and the kernel matrix (p. 14) and the TPTP remark (p. 23); fixed 795/2,078 from 38.2% to 38.3%; removed an unsupported step about confirming that each item verifies before minimization and the claim that the 88%/80% recall values are read only from Figure 1 (the prose states them); replaced an unsupported overfitting remark and an unsupported Verus-syntax sentence; labelled my own conclusions as Inference; noted the paper's own SNoW-60/MOR-70 versus SNoW-70/MOR-60 inconsistency. Not checked: the Verus-related Inference paragraphs (they go beyond the paper), the published JAR version (the paper text is the arXiv v2 preprint), and the figures' plotted values beyond what the prose states.

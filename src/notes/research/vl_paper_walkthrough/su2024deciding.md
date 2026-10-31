@@ -46,14 +46,6 @@ CompSPEN+ extends CompSPEN, parses SL-COMP input, and uses SMT queries for arith
 
 The authors report MEM-SAT and MEM-ENT as verification-derived allocator formulas; RANDOM-SAT and RANDOM-ENT contain random or manually generated formulas, including unfoldings of verification-derived formulas (Section 6, p. 14). They attribute challenging entailments to splitting spatial atoms and exploring all total preorders for valid queries (p. 15). Inference: These timings support performance on the reported suites, not a general speed guarantee.
 
-## what is proved, trusted, and threat to VL
-
-The paper supplies the satisfiability abstraction proof in Appendix A and EUB proofs in Appendices B–C. Section 5 states the coNP-completeness result and explains the ordered matching procedure. However, Appendix D (pp. 21–22) opens by describing Theorem 2's upper bound as EXPTIME, contrary to the theorem's coNP statement, and contains unfinished notes: “M: TODO” and “M: difficult in P!” Inference: This version should not be described as containing a finished appendix proof of the entailment complexity bound.
-
-Inference: Using the solver for verification would require trusting its implementation, the underlying arithmetic solver, and the correspondence between program memory and SLAH's mathematical semantics. No implementation audit or mechanized metatheory is established here. The authors could not access SLar and found its example format difficult to translate; they provide no competing-solver timing comparison (Section 6, pp. 14–15). Inference: This limits comparative performance evidence.
-
-Inference: For VeruLaw, interval summaries, effective size bounds, and spatial splitting are candidate techniques for allocator proofs. The paper does not evaluate verified Rust, Verus, or agent-generated code, so it does not establish a comparative threat level. Its natural-number memory model also does not itself establish machine-address overflow or Rust pointer validity properties.
-
 ## techniques for the catalog
 
 - inductive heap-list summaries: replace recursive pointer-arithmetic list predicates with equivalent Presburger constraints
@@ -61,4 +53,3 @@ Inference: For VeruLaw, interval summaries, effective size bounds, and spatial s
 - ordered entailment decomposition: enumerate compatible address preorders and reduce entailment to sorted spatial matches
 - effective upper bounds: compute realizable chunk-size bounds to decide heap-list entailments with arithmetic constraints
 - spatial atom splitting: partition block or heap-list atoms at consequent boundaries and recurse on the resulting regions
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This case splitting is due to the fact that the ordered entailment problems always assume non-empty hls atoms in the formulas."): read the full paper including references and Appendices A–D; checked quotations, numerical results, page and section references, syntax, and technique steps; corrected entailment scope, QFPA construction, EUB computation, splitting reference, unsupported Verus claims, and overstatement of the unfinished entailment proof; noted inconsistent timeout statements; retained the tag and arXiv link identified on p. 1; did not run CompSPEN+, reproduce experiments, audit code, or independently prove the theorems.

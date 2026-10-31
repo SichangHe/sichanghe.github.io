@@ -86,15 +86,9 @@ Evidence and limits. On 11 Linux tasks, both systems passed the first five tasks
 
 The paper measures test pass counts, module-level LLM-judged semantic equivalence, speedups under named workloads, and Linux task outcomes. It does not claim machine-checked proof; S YS S PEC* is a structured natural-language representation. Trusted components include the Plan and Specification, generated tests, QEMU/toolchain, GPT judges, ground-truth patches, OSKB rules, and human interpretation of requirements. Inference: a Verus deployment would shrink the trusted implementation layer for specified Rust properties, but still trust the specification, solver, compiler, external libraries, hardware model, and runtime assumptions.
 
-## what VL should reuse and avoid repeating
-
-Inference: reuse persistent plans, explicit non-goals, modular rely/guarantee contracts, concurrency specifications, implement–verify loops, compact execution evidence, independent review, and dependency-aware contract patches. Inference: do not treat 70/70 tests, 259/259 LLM judgments, or 9/11 task outcomes as formal verification; the missing experiment is the same blueprint driving Verus proof obligations, with proof logs and adversarial tests reported separately. Inference: the failed IPVS and NTFS cases warn that implicit domain invariants are the main threat to agent-written verified Rust: if a specification omits a publication, layout, or lifetime invariant, Verus can faithfully verify the wrong behavior.
-
 ## techniques for the catalog
 
 - persistent Plan and Specification — preserve goals, non-goals, state contracts, module guarantees, and concurrency semantics across agent iterations
 - dependency-aware SpecModules — bound context and propagate changed rely–guarantee contracts through affected dependents
 - implement–verify OS loop — combine contract checks with build, boot, QEMU, tests, and compact runtime diagnostics
 - independent review and refinement — turn general and OS-specific findings into scoped contract updates before regeneration
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

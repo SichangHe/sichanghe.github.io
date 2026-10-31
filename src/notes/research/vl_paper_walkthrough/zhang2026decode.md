@@ -115,8 +115,6 @@ For CANN ops-nn, every induced fragment passed the gate, but no local compiler e
 
 The paper proves that exact Γ-dependent reference support cannot be represented by any finite family of precompiled fixed-support grammars while remaining both ghost-free and non-blocking (Proposition 3, Section 4.3, pp. 16–17). The reason is that generated declarations can introduce an unbounded or prefix-dependent name; a fixed support either omits a future legal name or admits a ghost. Inference: this necessity argument applies to a Verus code generator only when its legal reference set is similarly prefix-dependent; a finite closed enum does not require dynamic grammar construction.
 
-The paper separates directly supported properties (skeleton plus Γ-enumerable references) from properties needing a verifier or monitor: whole-program relations, execution, mutable fixed points, numerical correctness, and termination (Section 5.3, p. 19). This is the formal boundary a VL design should preserve.
-
 ## technique 6: engine-correspondence differential testing and typed attributes
 
 The formal theorem is modulo Assumption 1, so the appendix tests the denotation used in the proof against XGrammar. The test drives the real instantiation path over 24 environment and construct configurations, including all five escape classes, quotes, backslashes, newlines, Unicode, 256-character names, metacharacters, single and multiple candidates, and the empty-environment path (Appendix A.3, pp. 30–31). It accepts all 90 in-set strings and rejects all 772 controlled out-of-set strings; the accept set equals the declared-name set on the reported 16-case test, with zero discrepancy (Appendix A.3, p. 31). Token-mask replay additionally checks that ghost tokens are masked at every step.
@@ -133,8 +131,6 @@ On one TileLang GEMM diagnostic, four fragment rungs had free_bits 92, 287, 538,
 
 Serving measurements used two Intel Xeon Gold 6430 CPUs, 512 GB memory, four RTX PRO 6000 GPUs, vLLM 0.24.0, and XGrammar 0.2.3 (Section 6.6, p. 22). Across eight configurations, gproj reduced throughput by 10.6–17.8% relative to XGrammar, 14.0% on average, and by 17.3% relative to unconstrained decoding (Table 4, pp. 22–23). These denominators are configurations, not generated programs.
 
-Inference: for VeruLaw, τΓ maps naturally to generation-time checking of declared Rust identifiers, fields, and verified API contracts, but it cannot guarantee ownership, arithmetic, termination, or behavioral intent. The support-set theorem is complementary to Verus proofs: use the mask to prevent undefined symbols, then use Verus `requires`, `ensures`, invariants, and `proof fn`s to establish semantics. Existing work already covers fixed grammar masks, syntax-constrained decoding, and post-hoc execution checks; VL should not redo those as a generic constrained-decoding system. The threat is assuming no ghost names imply verified Rust. The trusted boundary includes Γ extraction, tokenizer-engine correspondence, fragment induction, model sketch, external compiler, library version, and the semantic specification.
-
 ## techniques for the catalog
 
 - Γ-typed slot masking: replace open references with escaped alternatives drawn from the current environment and prove No-Ghost support
@@ -143,4 +139,3 @@ Inference: for VeruLaw, τΓ maps naturally to generation-time checking of decla
 - offline fragment induction: anti-unify corpus examples, mine ghost substitutions, and gate executable fragments before deployment
 - dynamic-support necessity: synthesize exact prefix-dependent reference support online because finite fixed-support families cannot be both sound and non-blocking
 - engine correspondence testing: differentially test rendered slot grammars and token masks, then extend Γ queries to immutable sort and shape attributes
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

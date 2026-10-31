@@ -1,7 +1,6 @@
 # What’s in a Proof? Analyzing Expert Proof-Writing Processes in F* and Verus
 (authored by agents unless marked 🧑)
 Tag: `jain2025whats`, [paper](https://arxiv.org/abs/2508.02733v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## study design and evidence
 
@@ -12,8 +11,6 @@ Jain et al. instrumented VSCode extensions for F* and Verus and recorded more th
 what and when. Final source snapshots hide planning, failed attempts, pauses, and verifier interaction. Instrument the editor and language server so every code save and solver query is timestamped, then classify events into Spec, Impl, Proof, Structure, Comment, and Test states. Use this when designing proof assistants or training agents from expert behavior rather than only successful final files.
 
 how to apply. Hook Language Server calls, edits, and VSCode actions into a database. On each event, attach a state tag based on language-specific keywords. Cross-check samples against screen recordings. Compute task duration, correctness, verifier frequency, active-error count, pause fraction, early specification ratio, and defer fraction. The study finds F* users spend 55–65% of time on specification/proof and Verus about 60% on proof; F* invokes the verifier 3.39 times/minute on average and Verus 9.11. Average active errors are 1.49 (F*) and 1.9 (Verus), but some participants let Verus active errors spike to 35–40 (§5.2.2; the paper does not say these were the unsuccessful sessions).
-
-verus form. Verus already exposes verifier diagnostics, so a VL workflow can log each `cargo verus` invocation, edited `requires`/`ensures`, loop invariant changes, and active diagnostics. This is an inference from the study's telemetry design, not a claim that telemetry itself proves anything. Logs should be treated as process evidence and should not enter the proof trust base.
 
 ## technique 2: specification-first decomposition with temporary holes
 
@@ -31,19 +28,11 @@ Rapidly invoking the verifier is not equivalent to productive interaction. K-mea
 
 how to apply. After each focused verifier run, pause to interpret the error, fix one cause, and return to a clean state before expanding scope. Delay or hide unrelated failures. Treat a rising invocation rate plus persistent errors as a trigger for decomposition, representation review, or lemma search rather than another blind retry. The authors' case study contrasts P7's dense verification and specification churn, which failed after 45 minutes, with P8's complete skeleton, temporary assumptions, one-subgoal-at-a-time repair, and deliberate pauses.
 
-verus form (inference). A VL agent can maintain a diagnostic frontier: run Verus on a selected module or function, retain only actionable diagnostics, and refuse to call the verifier repeatedly without a changed hypothesis. This can reduce token and solver waste, but it does not replace proof checking.
-
 ## technique 4: retrieve and reuse libraries, then specialize agents
 
 Experts search documentation and adapt existing lemmas. The recommended copilot retrieves lemmas and examples conditioned on the current subgoal, offers task plans, interprets verifier messages, and uses specialized agents for lemma search, proof sketching, syntax, and feedback. The F* case study implements two agents with AutoGen and GraphRAG: a Proof Expert writes a specification-first roadmap covering representations, helper functions, and lemmas; a Syntax Expert turns it into valid F* and iterates with verifier feedback. On T4 and T1 it obtains verified solutions in 8 and 7 verifier loops; the baseline o4-mini fails within 30 loops, suggesting a 3.75× reduction, although this is only two tasks and one model setup.
 
 verus form (inference). A Verus copilot can retrieve `verus` library lemmas and prior proof patterns, have a planner draft contracts/invariants, then a syntax/proof agent edit Rust, and route diagnostics back to the planner. Keep the verifier as authority and require a clean final run.
-
-## what is measured, trusted, and already done
-
-Measured facts are telemetry counts, session outcomes, cluster features, and the two-task F* agent demonstration. The verifier, tests, event instrumentation, automated annotations, screen-recording cross-checks, and researchers' clustering are trusted as measurement machinery; the paper does not claim causal proof that a strategy causes success. Small sample size, task simplicity, participant selection, annotation errors, and researcher thematic coding limit generalization. The paper already establishes that final code alone misses critical proof-development signals; VL should not redo a one-shot “LLM writes proof” study without process telemetry, deliberate baselines, or larger maintenance tasks.
-
-Inference: for agent-written verified Rust, the threat is workflow failure rather than kernel unsoundness: agents can thrash in edit-verify loops, keep many active errors, or choose a representation that makes the intended proof opaque. The authors conclude that “formal proofs often depend on abundant informal information and intermediate reasoning steps”. The study supports an inference that specification-first planning, bounded errors, and subgoal decomposition may improve throughput, but it does not show that these practices guarantee correctness or scale to VeruLaw workloads.
 
 ## techniques for the catalog
 

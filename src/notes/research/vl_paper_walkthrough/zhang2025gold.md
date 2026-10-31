@@ -31,13 +31,8 @@ For randomness, the authors select 50 Isabelle/HOL formalizations produced by Qw
 ## what is proved, measured, and trusted
 The paper's prover check establishes FV, defined here as syntactic validity. The experiments measure ranking agreement, aspect correlations, model comparisons, and temperature variation. Inference: a high ensemble score remains an assessment by learned judges; it does not establish faithful translation. The reported human disagreement and incorrect-judgment examples further limit treating either a single annotator or a judge as an unquestionable reference.
 
-## what VL should reuse
-Inference: reuse the separation of source alignment, mathematical consistency, code quality, and formal validity, and retain explanations for individual judgments. For verified Rust, adapt the questions to the intended program behavior and distinguish specification faithfulness from verification of the implementation. Report the judge, sampled statements, annotators, and score definitions so that agreement results remain interpretable.
-
 ## techniques for the catalog
 - three-tier taxonomy: distinguish AF/FC, then LP/MC/FQ/FV, then nine atomic properties
 - OAP ensemble scoring: independently judge atomic properties, average within aspects, and combine with prover validity
 - prover-plus-judge protocol: collect aspect judgments and explanations; distinguish five-point overall assessment from computed ensemble scores
 - temperature and bias checks: repeat judgments across temperatures and compare judge/autoformalizer model pairs
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While LP, MC, and FQ scores exhibit some variance across multiple runs, the OA scores show consistent stability."): read the full paper and study; checked quotations, numbers, taxonomy, technique steps, and section/page references; corrected tier count, dataset attribution of scores, sample counts, prompt/score distinctions, and Verus extrapolations; did not reproduce experiments, inspect code or datasets, or validate the proposed Verus adaptation.

@@ -58,17 +58,9 @@ All participants identified both problems and correctly explained the new constr
 
 The authors explicitly limit the result: “Given the small number of participants, the measured task durations and the observed differences in completion times must be interpreted cautiously: they illustrate possible benefits rather than constituting statistically generalizable results.” (Section 5.3, p. 11). They also state: “One cannot conclude from this pilot study of KeY experts that a novice to KeY or to deductive verification would benefit from the new view.” (Section 5.3, p. 11).
 
-## what is proved, trusted, and relevant to VL
-
-The paper presents a prototype, implementation schemes, and a pilot evaluation. Inference: it provides no formal guarantee that every displayed overlay preserves the underlying obligation's meaning. A user relying on the display must trust its origin tracking, translation, and placement in addition to the verifier. The evaluation does not establish benefits for novices or other verifiers (Section 5.3, p. 11).
-
-Inference: for VL, an incorrect source mapping could lead an agent to change the wrong Rust contract. Origin metadata and repeated verification could help detect some such mistakes, but would not establish that a specification expresses the user's intent. A measured Verus integration could test whether source-linked obligations reduce repair time without increasing contract weakening; neither outcome is established by this paper.
-
 ## techniques for the catalog
 
 - inline proof overlays — display one open proof leaf as generated source-level assumptions and assertions
 - origin propagation — preserve source origins through proof transformations while limiting their accumulation
 - source-level proof actions — expose implemented macros and distinguish proposed finer actions, retaining a logical fallback
 - proposed script recording — persist interactions as JML commands; automatic recording remains future work
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "However, the possibility to record these high-level interactions as a proof script is still a vision and the implementation remains future work."): checked the full text, quotations, authors, year, arXiv identifier, page and section references, technique steps, prototype limits, and pilot numbers; corrected page references, separated implemented macros from proposed actions and script recording, expanded positioning and origin rules, and marked Verus/VL conclusions as inferences; did not run the prototype, inspect its code, reproduce the user study, or independently validate cited work.

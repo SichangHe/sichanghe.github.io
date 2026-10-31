@@ -6,8 +6,6 @@ Tag: `zhan2016efficient`, [paper](http://arxiv.org/abs/1610.06996v3)
 
 Zhan configures the Isabelle prover auto2 for a two-stage workflow: prove a functional program, then refine it to an imperative implementation with separation logic. The introduction states: “The verification process can be roughly divided into two stages: verifying a functional version of the program, and refining it to an imperative version using separation logic.” (§1, p.2) Case studies include red-black and interval trees, priority queues, union-find, Dijkstra's algorithm, and rectangle intersection.
 
-Inference: the useful VL pattern is to separate algorithmic invariants from memory-transfer proofs, then connect them through a representation relation. A Verus development can use pure `spec fn` models and executable Rust methods with `requires`/`ensures` contracts in the same role.
-
 ## technique: saturation-based proof search
 
 What it is. Auto2 maintains a list of facts and terms, tables for equalities and properties, and a priority queue of new items. Proof steps generate items from existing items; items with smaller propositions receive higher priority. The paper says: “Auto2 uses a saturation-based proof search mechanism.” (§2, p.2) The paper contrasts this with “the backtracking approach usual in the tactics framework” (§1, pp.1–2). Inference: the search keeps derived facts and applies all registered rules repeatedly.
@@ -104,12 +102,6 @@ The red-black-tree development proves both functional correctness and invariant 
 
 Inference: trusted elements include Isabelle's kernel and libraries, auto2's ML implementation, the registered theorem/proof steps, the separation-logic definitions, and the human-supplied induction hints. A Verus analogue additionally trusts the Verus verifier, SMT solver, Rust compiler, specifications of external libraries, and any ghost model of heap ownership. The paper verifies sequential programs with simple allocation patterns; it does not establish concurrency, unsafe Rust, FFI, or arbitrary allocation correctness.
 
-## VL implications
-
-Inference: VL should reuse the two-stage split, concrete-to-abstract representation relations, and modular hiding of low-level proofs. These techniques prevent every client proof from reopening pointer layout. A Verus implementation should benchmark whether explicit lemmas and solver context can replace auto2's saturation tables before building a new search engine. The paper has already verified the listed data structures and Dijkstra variant; VL should avoid redoing those as novelty claims and instead test agent-written Rust, ownership APIs, concurrency, and dependency evolution.
-
-Inference: the product threat is moderate for sequential data structures and high when generated code crosses representation, allocation, or external-library boundaries. A successful abstract contract can remain valid while the implementation's unmodeled assumptions change. The paper's own simplifying assumptions and omitted size invariant show why a passing proof is bounded by its stated model.
-
 ## techniques for the catalog
 
 - saturation proof search — repeatedly apply scored proof steps to a shared fact list until contradiction
@@ -120,4 +112,3 @@ Inference: the product threat is moderate for sequential data structures and hig
 - forward separation refinement — match each imperative command against spatial and pure preconditions
 - inductive heap assertions — expand recursive list/tree predicates to expose frame components
 - abstraction-layer contracts — derive abstract Hoare triples and hide concrete representation proofs
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "While less efficient than a graph-based implementation, it is sufficient for our purposes, and also interacts better with other proof steps."): read the whole paper text and checked every quotation, the case-study table numbers, the 14-minute and hardware figures, and section and page references; changed the attribution of the first quote (introduction, not abstract), the union-find example description (the last lemma uses plain auto2, not induction), the extended quotation of the induction-hint sentence, several page references (§2 start, §4.2, §5.2), the inductive-assertion description, the interval-tree quote, and marked some statements as Inference; did not check the Verus-side claims against Verus documentation or the cited references, and the link is the arXiv link already in the study (matches the paper text).

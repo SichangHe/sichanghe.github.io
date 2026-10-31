@@ -17,7 +17,7 @@ How to apply:
 
 Verus form (Inference): use the same discipline for Verus-agent studies: pin the Verus toolchain, Rust version, solver settings, crate revision, proof timeout, and test corpus; record compile and verification failures separately from runtime failures. A mixed-effects model can estimate language or API effects, but it does not prove a Verus proof is semantically adequate.
 
-The benchmark’s visible tests create a realistic iterative setting, but the authors report two cheating traces and note that tasks are contest-sized, not repository-scale (§3.3, p. 4; Limitations, p. 6). Inference: a VL benchmark should add hidden and adversarial tests for specification gaming and should not infer repository-level behavior from MiniLCB.
+The benchmark’s visible tests create a realistic iterative setting, but the authors report two cheating traces and note that tasks are contest-sized, not repository-scale (§3.3, p. 4; Limitations, p. 6).
 
 ## technique: re-execute every intermediate snapshot
 The paper writes every solution snapshot to disk and runs the external test harness on each snapshot, producing outcome vectors `s0,…,sn` (§4.2.2, p. 5). It explicitly states, “We test intermediate solutions after the agent concludes execution.” (§4.2.2, p. 4). Consecutive vectors receive labels: breakthrough, stay, improved, regressed, churn, broke, or stuck (§4.2.2, p. 5). A graph of these transitions reveals loops and failure modes; a snapshot span includes the resulting code, diff, test changes, reasoning, tool calls, and output up to the next write (§4.2.3, p. 5).
@@ -41,11 +41,6 @@ The paper finds agents planning in comments, prototyping in Python before transl
 
 Verus form (Inference): log prompts, proof edits, solver output, and test commands; detect translation detours and comments that propose a proof without corresponding executable specification. Require the agent to run the provided verifier and tests before self-authored stress tests, while still allowing additional tests after the required gate.
 
-## evidence, trusted pieces, and threat to VL
-The external test harness is the correctness oracle for every snapshot, and the task test cases are visible to the agent (§3.3, p. 4). The study assumes public pretraining distributions explain language familiarity; it does not measure repository-scale maintenance, hidden tests, or other agent scaffolds (footnote 1; Limitations, p. 6). The paper’s conclusion is that token consumption varies significantly by language and that lower-resource languages trigger syntax struggle, repeated correction, and Python detours (§5, p. 6).
-
-Inference: threat to VL is high in engineering cost and moderate in direct safety. Rust is only 1.07× Python for Gemma, 1.20× for Qwen, and 1.57× for GLM in the reported mixed-effects contrasts (Table 2, p. 4), but Rust trajectories can still spend many turns on compile and proof-interface errors. Verus adds specification and solver costs absent from this benchmark, so these ratios cannot be reused as VL forecasts. The useful existing work is the snapshot-vector and transition-graph analysis; VL should not redo token counting without recording proof outcomes and post-success rewrites.
-
 ## techniques for the catalog
 - controlled language comparison: hold tasks, scaffold, environment, limits, and tests fixed while varying language
 - snapshot re-execution: run every intermediate artifact through an external checker and store outcome vectors
@@ -54,4 +49,3 @@ Inference: threat to VL is high in engineering cost and moderate in direct safet
 - failure taxonomy: classify spans into implementation, debugging, infrastructure, verification, optimization, and cosmetic work
 - strategy-text audit: inspect comments, test choices, and cross-language prototyping for recurring agent behaviors
 - mixed-effects cost model: estimate language penalties with problem identity as a random effect
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

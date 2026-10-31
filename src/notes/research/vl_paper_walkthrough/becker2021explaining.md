@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `becker2021explaining`, [paper](https://doi.org/10.4204/EPTCS.338.10)
 
-
 ## problem and result
 
 The paper addresses a practical diagnosis problem: a proof failure "may be due to an incorrectness in the program, an incompleteness in the program annotations, or an incompleteness of the prover" (abstract, p. 82). Its central proposal compares two executions driven by the solver's candidate model. The abstract states: “The first RAC execution follows the normal program semantics, and a violation of a program annotation indicates an incorrectness in the program.” It then defines giant-step execution, which “does not execute loops nor function calls but instead retrieves return values and values of modified variables from the oracle”; a violation “only observed under giant-step execution characterises an incompleteness of the program annotations” (abstract, p. 82).
@@ -41,4 +40,3 @@ Inference: for agent-written verified Rust, this is a moderate product threat an
 - model-guided counterexample generation — turn a failed SMT model into source-location values for replay
 - giant-step assertion checking — replace calls and loops with oracle-supplied writes while checking contracts and invariants
 - two-stage failure classification — use ordinary RAC for non-conformance, then giant-step RAC for weak contracts or invalid models
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Run the standard RAC on the enclosing function of the VC, with arguments and values of global variables taken from the counterexample."): read all 341 lines of the paper text; checked every quotation, number, section and page reference, the toy example, Figure 2 call and loop rules, the two-step categorisation, the 16/247/14/57/22/154 counts and the isqrt example against the paper. Changed: moved the "may add more confusion than help" quote from Introduction to the abstract; fixed the toy example page (p. 83); added the precondition-failure, stuck and loop-exit outcomes of Figure 2; corrected "proves neither" to "states no theorem"; noted the SPARK integration is work in progress; replaced the arXiv link with the DOI printed in the paper (doi:10.4204/EPTCS.338.10); marked own conclusions "Inference:". Not checked: the research report [2], the Verus-specific claims (outside the paper, labelled Inference), the figures' rendering in the PDF.

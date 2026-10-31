@@ -8,8 +8,6 @@ LLM4PDR adds language-model-generated semantic hints to word-level Property Dire
 
 The three mechanisms enter different PDR phases. Predicate helpers enlarge the atom vocabulary used by inductive generalization. Clause helpers are candidate first-frame lemmas and must satisfy initiation and one-step consecution. Assertion helpers temporarily strengthen the target property and are removed when counterexamples falsify them. The implementation uses OpenAI GPT o3 with a fixed prompt template and up to five declarations per request (§IV-B, p. 7; §V-A, p. 10).
 
-Inference: for VL, the transferable principle is to let an LLM suggest proof-relevant facts while keeping all soundness decisions in the verifier. A Verus adaptation could generate candidate invariants, lemmas, or state-machine relations, but Verus would need a typed interchange format and verifier-side checks for each use. This paper concerns RTL and SMT-LIB2, not Rust or Verus.
-
 ## technique 1: restricted helper interface and soundness pipeline
 
 What it is. Each generated helper is an SMT-LIB2 `define-fun` whose reserved prefix selects its role: `predicate.*`, `clause.*`, or `assertion.*` (Fig. 4, p. 5). The verifier performs three checks before consumption: syntax parsing, elaboration that binds arguments and checks bit-vector widths, and dispatch to the role-specific validation path (§IV-A, pp. 5–6).
@@ -24,8 +22,6 @@ How to do it.
 4. Bind every formal argument to a transition-system variable and check exact bit-vector widths (§IV-A, p. 6).
 5. Dispatch predicates to the MIC pool, clauses to frame validation, and assertions to counterexample-guided refinement (§IV-A, pp. 5–6).
 6. Let ordinary PDR proof obligations decide whether a helper affects the final proof (§IV-A, p. 6).
-
-Inference: the helper file is a side input and should not modify transition semantics. A Verus system should similarly keep generated facts outside executable Rust and outside the transition semantics. Candidate facts could be represented in a parser-checked JSON or Rust annotation format, then translated into `spec fn` terms only after type and scope checks. This format and translation are VL design work, not paper results.
 
 Evidence. The paper's final conclusion states that the verifier “parses, type-checks, validates, and refines those artifacts through ordinary PDR proof obligations.” (§VI, p. 13) The LLM cannot directly add a fact to a frame or alter a property; those operations occur only after checks described below. The paper does not provide a formal theorem about the LLM or the parser implementation. Inference: the trusted base still includes Pono, its SMT solvers, parser, and transition-system encoding.
 
@@ -104,16 +100,6 @@ On 33 arithmetic micro-benchmarks, vanilla Pono solves 13/33, AVR 11/33, and LLM
 
 The ablation retains the IC3ng engine but disables helpers. The paper reports that IC3ng without helpers sometimes improves and sometimes regresses against IC3bits, so engine changes alone do not explain the gains (§V-F, p. 12). Inference: the evidence supports complementary benefits by design class, not a universally best helper type. The LLM, prompts, parser, Pono implementation, SMT solvers, and RTL/BTOR2 models remain trusted infrastructure; generated helpers are not trusted proofs.
 
-## Verus relevance and product threat
-
-Inference: the paper's architecture is directly relevant to agent-written verified Rust because it separates semantic suggestion from proof acceptance. A VL system could ask an agent for candidate loop invariants, state-machine transitions, ownership facts, or arithmetic lemmas, then validate each against existing Verus contracts before exposing it to subsequent proof search. The main risks are specification drift, irrelevant or malformed generated facts, and solver cost from too many candidate lemmas. COI-like slicing and role-specific validation can reduce those risks.
-
-Inference: this does not establish that LLM-generated Verus proofs are sound by themselves. Soundness remains with Verus's verifier and its trusted compilation/solver boundary, while the specification can still be wrong or vacuous. The paper's own design keeps the LLM outside that boundary and should be treated as a prior result VL should integrate rather than redo.
-
-## what VL should not redo
-
-LLM4PDR already demonstrates restricted helper interfaces, COI-aware prompting, predicate generation with two-phase generalization, frame-clause side-loading, counterexample-guided assertion refinement, soundness-preserving validation, and per-benchmark ablations. New VL work should measure how these roles map to Verus proof states and whether candidate-lemma search remains stable under Rust code and dependency changes.
-
 ## techniques for the catalog
 
 - restricted helper interface — route typed LLM suggestions through parser, binding, and role-specific verifier checks
@@ -122,4 +108,3 @@ LLM4PDR already demonstrates restricted helper interfaces, COI-aware prompting, 
 - clause side-loading — inject only initiation- and consecution-checked lemmas into the first PDR frame
 - assertion refinement — strengthen a property temporarily and remove only assertions falsified by counterexamples
 - soundness separation — keep the LLM as a hint generator while the model checker makes every proof decision
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

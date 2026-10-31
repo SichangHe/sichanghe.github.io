@@ -8,8 +8,6 @@ The paper separates proposal from adjudication. A human sets direction and stopp
 
 Attestral binds exact code, verdict, and a content hash in an ed25519 certificate. The paper distinguishes 23 exact-symbolic certificates (22 exploratory identities plus a companion result) from 20 Lean-kernel proofs. It states: “A certificate is always both signed and tiered; neither substitutes for the other” (Section 2, p. 4). Signature authenticity does not make an exploratory computation a theorem. The standalone verifier checks the hash and signature offline and can optionally rerun the public checker ladder.
 
-Inference: VL can use the same separation for agent-written Rust: an agent proposes code and proof, while an independent process runs Verus and signs a receipt only after success. The receipt should identify source bytes, tool versions, dependencies, and the exact contract. A Verus proof receipt remains conditional on the verifier, compiler, libraries, and specification; this workflow does not remove those trust assumptions.
-
 ## technique 1: use a checker ladder with explicit assurance tiers
 
 Use the strongest checker a candidate supports, but label weaker results honestly. The reported ladder includes exact SymPy/Hypothesis/CrossHair checks, finite-field and Gröbner computations, and Lean 4 plus Mathlib kernel proofs. The paper’s load-bearing structural results were re-proved in Lean: “20 axiom-audited kernel proofs” (Section 1, p. 2). Exact symbolic checks are decisive only for the decidable identity they execute; they are not proof-assistant proofs.
@@ -23,8 +21,6 @@ Inference: a Verus ladder can put ordinary Rust tests and linting below Verus pr
 Before trusting a novel checker, test it against known positive and negative examples. For the nilpotent normal-form episode, the authors first certified the checker itself: it accepted a triangular nilpotent cubic, flagged it as injective, rejected a non-nilpotent decoy, and detected the known collision (Section 9, p. 7). Inference: this catches checker bugs before they influence a claim.
 
 The workflow also re-runs calculations with independent settings. The paper reports that a command-line argument aliased the working prime onto the compensator-degree flag, silently running the Gröbner closure over GF(3) instead of GF(32003), and it still returned a clean-looking “obstructed” verdict. A “verify-the-verifier” check found that the nullspace rank differed from the two-prime re-run; the result was discarded and recomputed (Section 8, p. 7). The paper’s exact description is: “The verdict was discarded and recomputed at proper primes before any claim.”
-
-Inference: for VL, test the Verus invocation, wrapper, source selection, dependency lockfile, and receipt checker against known failing and passing crates. Run an independent command that checks the intended Verus version and all source files. This is an engineering inference from the paper’s method.
 
 ## technique 3: let refutations drive repair and report walls
 
@@ -48,4 +44,3 @@ Inference: this is a direct threat to an agent-generated verified-Rust product o
 - assurance ladder — label exact computation, bounded checking, and kernel proof as different tiers
 - verifier self-tests — validate the checker and tooling on known positives, negatives, and independent reruns
 - refutation-driven loop — feed counterexamples back for repair and publish unresolved walls
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "A homogeneous transport forces a zero constant term, so a counterexample needs a degree-0 anchor"): I read the whole paper text and checked every quotation, number (20 Lean proofs, 23 exact-symbolic certificates, 43 receipts, GF(3) versus GF(32003), 200 variables, m = 4), section and page reference, and the technique steps against it. I corrected the page of the Section 2 quote (p. 4), the Section 9 range (pp. 7-8) and the Section 12 page (p. 11), reworded the prime-collapse account and the Gaussian Moments description to match the paper, and marked my own conclusions "Inference:". The link is from the fetch record: the paper text gives no DOI for itself, only the artifact bundle DOI 10.5281/zenodo.21567375. I did not check the PDF figures, the cited external works, the certificates, the Lean sources or the Zenodo bundle.

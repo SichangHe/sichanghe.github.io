@@ -8,8 +8,6 @@ This August 2026 position paper argues that output accuracy misses a deployment 
 
 The method separates ground truth (GT), verifier behavior, and deployment constraints. A fixed model configuration produces outputs; verifiers inspect them under a budget B, confidence threshold τ, and protocol; the resulting verification trace (VT) records verdicts, times, counterexamples, and confidence. A VCE is an incorrect pair for which at least a fraction q of the verifier population fail to identify the error within B. The paper's six-step protocol is designed for human verification and says automated validation needs an adaptation outside its operationalization (section 5, pp. 7–8).
 
-## technique: verification-aware benchmarking
-
 ### definitions and setup
 
 Choose a cost unit u (human-minutes, FLOPs, or USD), a verifier population V, a budget B, a stopping confidence τ, a VCE threshold q, a verifier count m, an interval method and its confidence level, a pre-registered estimator and decision rule, tools, interface, and dataset. The paper warns that verification cost is relational: “verification cost is not an intrinsic property of a model: it is a property of a model output evaluated according to a specific measurement specification” (section 5, p. 8). The formalism uses an acceptance relation A over inputs and outputs, allowing several valid programs for one specification; the protocol fixes GT independently before verification.
@@ -30,17 +28,11 @@ The operational VCE condition is: the pair is incorrect and at least q of the ve
 
 6. model-level reporting. Aggregate VT into observed budget consumption E[Edᵘ]/B, probability of a correct verdict within B, confirmed VCE rate, inconclusive rate, and the classification envelope. Keep the dataset, budget, tools, interface, verifier population, and protocol fixed when comparing models. The paper calls these comparative indicators, not universal scalar metrics (section 6, Step 6, p. 15).
 
-### application to Verus (inference)
-
-Inference: apply this measurement design to VeruLaw by measuring human effort to review agent-produced Rust/Verus outputs against independently fixed requirements. Record the generated artifact, checker configuration and result, human verdict and effort, budget, and stopping outcome. Treat a checker result as evidence about the declared contract; separately assess whether that contract expresses the requirement. The paper supplies no Verus evaluation or evidence that proof checking reduces human review effort. A fully automated adaptation would need a changed verifier population and cost unit, because the proposed protocol operationalizes human verification.
-
 ## evidence, trust, and limitations
 
 The paper's method is proposed, not empirically validated: “We leave concrete instantiations and empirical evaluation to future work.” (section 6, p. 16). Its numerical examples (three versus six verifiers, q = 1/2, confidence bounds) are specification illustrations. Table 1 is explicitly illustrative; it gives no benchmark denominator. The protocol's maximum instrumentation effort is mnB verifier-cost units for m verifiers and n outputs, plus baseline and calibration overhead (section 6, pp. 15–16). This is a budget bound, not a measured cost saving.
 
 Inference: what stays trusted includes GT or the acceptance relation, verifier sampling, interface and tools, the model configuration, and the correctness of any automated checker. The paper requires representative sampling for population claims and repeated measurement as models, tools, budgets, and verifiers change (section 5, p. 10; section 6, pp. 13–16). It distinguishes latent correct-verdict cost from observed effort: “What the protocol does observe, in every episode and without exception, is the effort actually spent before the episode terminated.” (section 5, p. 10). The authors state that budget exhaustion reveals only that no correct verdict was reached within B; it does not reveal how much longer correctness would have taken (section 5, pp. 10–11).
-
-Inference: proof pass rates alone could conceal human review effort, incorrect high-confidence review verdicts, inconclusive cases, or contract mismatch. VL could instantiate the protocol on real Rust repositories, disclose denominators and failed cases, and test whether machine-checkable certificates reduce human verification burden.
 
 ## techniques for the catalog
 
@@ -52,4 +44,3 @@ Inference: proof pass rates alone could conceal human review effort, incorrect h
 - stratified burden reporting: separate correct and incorrect outputs and report observed effort with correct-refutation success
 - three-state classification: report confirmed, rejected, and inconclusive VCEs with the finite-sample interval rule
 - model-level indicators: aggregate success probability, budget consumption, confirmed rate and inconclusive rate over incorrect outputs, and their descriptive envelope under a fixed protocol
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "What the protocol does observe, in every episode and without exception, is the effort actually spent before the episode terminated."): checked all paper text, quotations, definitions, numbers, section and page references, and six protocol steps; corrected the error-detection wording and Step 6 page reference, clarified uncertainty and observed effort, and shortened and marked the Verus application as inference; did not independently check cited studies, reproduce empirical results, or test the proposed Verus application.

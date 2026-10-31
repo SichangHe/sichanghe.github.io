@@ -7,8 +7,6 @@ The paper proposes a compositional specification for concurrent components that 
 
 Components are actions, nondeterministic joins `f [] g`, or sequential compositions `seq(...)` (Section 2.1, p. 3). Every action has a guard and body. Execution is fair: “every control point is chosen eventually for execution, so that no component is ignored forever”, while an ineffective execution of an action models busy waiting (Section 2.2, pp. 3–4). A specification is `{r} f {Q  s}`, where `r` is a precondition, `s` a terminal postcondition, and `Q` a set of perpetual properties (Section 3.1, p. 5).
 
-Inference: the practical lesson is to make liveness and safety part of component interfaces, so a parent can prove properties without source code for every child. This is a paper inference applied to VL, not a claim about Verus.
-
 ## technique 1: local annotations and compositional terminal proofs
 
 when to use it
@@ -51,8 +49,6 @@ The counter proof first establishes the ensures property (E), applies the leads-
 
 The paper says what “bilateral” means: “An invariant, a perpetual property, may be used to strengthen a postcondition, a terminal property, using the invariance rule. Conversely, a terminal property, postcondition postf of f , may be employed to deduce a transient predicate, a perpetual property.” (Section 6, p. 14). Appendix C.2 uses the first direction: invariants derived from the perpetual property (S) are applied via the invariance rule to obtain the terminal property `Σu = Σu′, |u|+k = |u′|` (Appendix C.2, p. 25).
 
-Inference: for VL, expose each verified component's safety and progress contracts as reusable lemmas. A parent proof can combine contracts for opaque components, but it must carry scheduler fairness and rely on explicit well-founded measures.
-
 ## technique 5: derived safety and progress rules
 
 The appendices provide reusable rules that avoid reopening action code. For `co`, use conjunction, disjunction, left strengthening, and right weakening (Appendix A.1, p. 15). For `transient`, use strengthening: given `transient p`, `transient p ∧ q` holds for any `q` (Appendix A.2, p. 16). For `ensures`, use implication, right weakening, partial conjunction, and the PSP rule. PSP combines `p en q` with `r co s` to derive `p ∧ r en (q ∧ r) ∨ (¬r ∧ s)`; with stable `r`, it simplifies to `p ∧ r en q ∧ r` (Appendix A.3.2, p. 17).
@@ -65,8 +61,6 @@ Inference: encode these as Verus proof lemmas over a ghost transition relation. 
 ## evidence, assumptions, and trusted material
 The paper is a proof-theory proposal with detailed distributed-counter, mutual-exclusion, and recursive-fold examples; it reports no runtime benchmark or success-rate denominator. Its introduction says: “(The soundness and relatively-completeness of this theory has not been proved yet.)” (Section 1, p. 2). The execution model assumes each action body terminates (“we assume that this guarantee is independently available”, Section 2.1, p. 3) and assumes a fairness constraint that eventually chooses every control point (Section 2.2, p. 4). Those are trusted assumptions, not derived results.
 
-Inference: the product threat is medium to high for concurrent VL code. The compositional contracts can reduce proof scope and support hidden vendor components, but progress claims are unsound if fairness, action termination, or interference assumptions are omitted. VL should reuse the contract structure and safety/progress decomposition; it should not claim the paper's completeness or treat its rules as a Verus library without re-proving them.
-
 ## techniques for the catalog
 - local annotation — assign point assertions and derive component pre/postconditions from action proofs
 - safety co calculus — prove stepwise `p co q` and lift it with inheritance and invariance
@@ -74,4 +68,3 @@ Inference: the product threat is medium to high for concurrent VL code. The comp
 - leads-to closure — derive eventual properties by basis, transitivity, disjunction, and well-founded induction
 - bilateral component composition — use invariants (perpetual) to strengthen postconditions (terminal) via the invariance rule, and `post_f` (terminal) to derive transient predicates (perpetual); compose components through their specifications
 - derived progress rules — reuse PSP, well-founded induction, completion, and interference lifting without re-proving action code
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Instead, the safety and progress specification of each component is given by a set of properties that are proved directly."): read the whole paper text (Sections 1–6, Appendices A–C) and compared every quotation, rule statement, section and page reference against it; I corrected page numbers (Sections 2.1, 2.2, 3.2, 3.4, 4.4, 5.1, 5.3, Appendix A.2, A.3.2 were off by one or more), the basis rule description, the counter-example leads-to steps, the lifting rule conclusion, and replaced the unsupported “bilateral” reading with the paper’s own definition (Section 6); the link is the arXiv id printed in the paper (arXiv:1704.01814v1). I did not check the Appendix B mutual-exclusion and Appendix C progress proofs line by line against the study (the study only mentions them in passing), nor did I check any Verus claim (all marked Inference).

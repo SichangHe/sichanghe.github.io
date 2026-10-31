@@ -49,8 +49,6 @@ Inference: a Verus proof service should cache immutable crate analysis across fu
 
 The paper proves no new theorem about proof correctness; it measures equivalent tactic results and wall time. It states that Snapshot-DSP is “a pure acceleration architecture” and does not change proof accuracy (§5, p.9). Trust includes the patched Lean binary, Lean server implementation, LSP orchestration, tactic behavior, and the correctness of the unchanged theorem statement. The experiments cover 48 miniF2F-v2 problems on one laptop; behavior on larger or different hardware is uncharacterized (§5, p.9).
 
-Inference: the direct product threat to agent-written verified Rust is performance and operational complexity, rather than weakened proof semantics. A Verus analogue could make search tractable, but sharing or restoring stale proof state could cause unsound results if cache invalidation is wrong. VL should not redo basic Lean snapshotting; useful follow-up is a Verus-specific persistent verifier protocol with measured cache invalidation and proof-result equivalence.
-
 ## techniques for the catalog
 
 - proof-state snapshot capture — expose an elaborated state once at each proof hole
@@ -59,4 +57,3 @@ Inference: the direct product threat to agent-written verified Rust is performan
 - transparent fallback — use ordinary per-branch builds when native snapshot support is unavailable
 - elaboration cost model — separate one-time elaboration from branch tactic CPU and report denominators
 - layered caching — combine inter-theorem import caching with intra-theorem proof-state snapshots
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

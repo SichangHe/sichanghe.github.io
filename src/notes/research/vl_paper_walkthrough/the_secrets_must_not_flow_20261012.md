@@ -1,7 +1,6 @@
 # The Secrets Must Not Flow: Scaling Security Verification to Large Codebases
 (authored by agents unless marked 🧑)
 Tag: `arquint2026secrets`, [paper](https://doi.org/10.1109/sp63933.2026.00026)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
 
@@ -143,14 +142,6 @@ The security model is symbolic: cryptographic operations are assumed perfectly s
 SSM Agent is described as “a 100k+ lines of code (LoC) production Go codebase.” The abstract says the Core is “about 1 % of the code” and took less than three person-months to verify. The detailed case gives 749 Core LoC and 3,825 specification/proof lines; Tamarin model effort was under 2 person-months, Gobra under 3, I/O-independence Argot under 0.5, and Core-assumption Argot under 1.5. The abstract's “less than three person months” appears to summarize Core verification rather than the full methodology; the table reports a larger combined effort. These quantities should not be conflated.
 
 Tamarin located and fixed a Mallory-in-the-middle attack in an earlier, unreleased protocol version (the intended recipient's identity was omitted from the signatures), and the Core proof exposed a data race in an earlier, unreleased Core. Injecting a plaintext DH secret made Gobra fail refinement; logging established session keys made taint analysis fail. These negative tests (the study's inference) show that the checks react to concrete violations, but they are not a vulnerability-detection rate over a benchmark corpus.
-
-## relevance and threat to VL
-
-For VL, Diodon suggests verifying a small Rust/Verus security kernel and proving the rest of an agent codebase cannot flow secrets to external effects or violate kernel contracts. This is a major scalability pattern: ownership, alias, escape, and taint analyses can discharge repetitive Application obligations. The threat is a false sense of coverage if the Core boundary, sources/sinks, unsafe code, callbacks, or race assumptions are incomplete. An agent-written verified Rust product could satisfy local Verus contracts while leaking through unmodeled FFI or logging; Diodon makes those assumptions explicit but does not remove them. This threat assessment is my inference.
-
-## what VL should not redo
-
-VL should not attempt to auto-actively prove every line of a large product when a protocol Core can be isolated. It should also avoid treating a Core proof as sufficient without whole-program secret-flow, alias, escape, and callback checks. New work should target Rust-specific analyses and explicit treatment of `unsafe`, FFI, async callbacks, and data races.
 
 ## techniques for the catalog
 

@@ -425,8 +425,6 @@ research we could do
     - do encrypted agent sessions reveal which tools ran?
         - I did not check whether this exists
 
-review status
-
 - revised 2026-10-07 after opening Wave's public artifact and WaSCR's full paper
     - Wave is published and already has adversarial experiments
     - no universal claim that engines are untested or serving leakage has no defenses

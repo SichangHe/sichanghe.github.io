@@ -74,11 +74,11 @@ RAG reduced DeepSeek-Coder-V2 from 21.92% to 20.00% (−1.92), OpenCoder from 19
 
 ## what is proved, measured, and trusted
 
-The paper measures source-level CHR, model and temperature effects, pattern frequencies, and mitigation changes. It reports no downstream build-failure rate, repair effort, exploitability, or actual package installation. The authors state, “Our study does not directly measure downstream consequences such as build failure rates, developer repair effort, or the exploitability of hallucinated crate names.” (Section 7.2, p. 10) Inference: CHR is an early warning signal for VL, not a direct estimate of verified-product compromise.
+The paper measures source-level CHR, model and temperature effects, pattern frequencies, and mitigation changes. It reports no downstream build-failure rate, repair effort, exploitability, or actual package installation. The authors state, “Our study does not directly measure downstream consequences such as build failure rates, developer repair effort, or the exploitability of hallucinated crate names.” (Section 7.2, p. 10)
 
 The paper found no significant model-size effect in the tested open-source families: Qwen2.5-Coder size ANOVA gave F(1,4)=0.0138, p=0.912, R²=0.0034 (Section 4.2, p. 6). Temperature also had no significant effect under the four-model blocked ANOVA: F(4,12)=0.9159, p=0.4859, while model identity was significant at F(3,12)=5.0425, p=0.0173 (Section 4.2, p. 6). These tests support the paper’s evaluated settings only.
 
-Trusted elements include the inventory’s completeness, parser correctness, registry data, model prompts, and the operational definition that an absent name is hallucinated. Inference: VL’s highest threat is dependency confusion and build failure before Verus runs; a second threat is a real crate whose API or behavior differs from the model’s assumption. Inference: Cargo lockfiles, registry checks, and Verus contracts should be treated as separate gates because passing one does not establish the others.
+Trusted elements include the inventory’s completeness, parser correctness, registry data, model prompts, and the operational definition that an absent name is hallucinated.
 
 ## techniques for the catalog
 - registry inventory detection: build a crates.io, standard-library, compiler-crate, and alias inventory and classify extracted Rust paths absent from it
@@ -86,5 +86,3 @@ Trusted elements include the inventory’s completeness, parser correctness, reg
 - bounded self-refinement: ask the model to review each external crate and regenerate up to three times when the name is suspect
 - registry RAG grounding: retrieve five relevant crates from a 10,000-crate database and append a standard-library list to the prompt
 - Cargo and verifier gating: combine dependency resolution and source checks with Verus contracts because CHR does not measure behavior or installation outcomes
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

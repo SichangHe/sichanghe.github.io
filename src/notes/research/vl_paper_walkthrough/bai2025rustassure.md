@@ -58,5 +58,3 @@ Inference: for a product that lets agents write verified Rust, translation and t
 - graph-distance equivalence: parse KQuery returns as graphs and use edit distance, with zero distance as the checker’s equivalence criterion
 - divergence diagnosis: report the mismatching output and symbolic expression difference so a missing operation or wrong branch is actionable
 - compiler-feedback repair: send compiler diagnostics back to the LLM; semantic-divergence feedback remains a proposed enhancement
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We symbolized all arguments for each C and Rust function and symbolically executed them, with a timeout of 180 minutes."): checked quotations, numbers, output denominators, page and section references, technique steps, and stated limits; corrected bug-count wording, layout claims, recall methodology, timeout wording, figure and SMT references, and proposed versus implemented semantic feedback; did not rerun the tool, reproduce experiments, inspect implementation code, or independently verify the reported bug labels.

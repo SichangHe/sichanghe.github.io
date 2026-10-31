@@ -47,5 +47,3 @@ Inference: a verified Rust workflow could encode the software access and overwri
 - execution-aware correlation sets: propagate stable and transient leakage terms using traces
 - netlist co-verification: compile, simulate, extract VCD, and SAT-check labeled shares
 - leakage-directed co-design: fix reported hardware locations or impose software constraints and rerun
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This design choice ensures that no glitches can occur across SRAM blocks, yet they could still occur between the words of a single SRAM block."): checked the whole paper, quotations, numbers, section/page references, and technique steps; corrected quotations, biased-set rules, stability conditions, SRAM placement constraints, and references; expanded evaluation limits and replaced unsupported Rust claims with a proposed integration marked Inference; used the publisher link printed on the paper; did not inspect implementation artifacts or reproduce proofs, synthesis, timings, or measurements.

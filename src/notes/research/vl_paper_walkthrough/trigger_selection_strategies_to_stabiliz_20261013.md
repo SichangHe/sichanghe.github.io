@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `leino2016trigger`, [paper](https://doi.org/10.1007/978-3-319-41528-4_20)
 
-Audit: audited 2026-10-13 against the paper; checked every number, page and section reference, quotation, the Appendix A comparisons and the Verus forms against the Tunable Automation paper; changed: the quantifier-splitting ordering sentence no longer called the paper's main claim to novelty (the introduction names willingness to rewrite quantifiers), Verus trigger statements that were unsupported (arithmetic in triggers, splitting) now follow the Tunable Automation paper, a counts-are-approximate claim narrowed, three unmarked inferences marked, and the already-done sentence no longer says since this paper; not checked: whether Verus offers alternative trigger sets by syntax, and Verus quantifier splitting beyond the Tunable Automation paper remark.
-
 source: Leino and Pit-Claudel, CAV 2016, LNCS 9779, pp. 361–381 (page numbers below are the proceedings' own); Appendix A gives pseudo-code (pp. 378–379)
 
 ## proved, measured, trusted
@@ -232,15 +230,6 @@ Where it fails. Dynamic instability, the kind the introduction describes, is not
 - The 1.15 average speedup is said to be “across the test suite” inside the IronRSL paragraph (p. 374); the surrounding sentences are about the 48 IronRSL files, so that is the likely denominator, but the wording points at Dafny's test suite.
 - Appendix A's `SplitQuantifier` splits only at a conjunction, and its `FalsePositive` has three conditions where §3.3 lists four; the appendix states that it simplifies.
 - §3.1 (p. 366) lists `f(x)` as a trigger head and `f(x+1)` as a killer in the same body; consistent with the definitions, but it means the head/killer label belongs to an occurrence, not to a function.
-
-## already done; VL need not redo
-
-- Source-level trigger selection with adequacy, parsimony and minimality; a per-quantifier static loop check; splitting with shared candidates. The paper reports all of them implemented in Dafny.
-- Left open by the authors, still candidates for new work: loop detection across several quantifiers; automatic rewrites of looping quantifiers (technique 6); “an automatic postmortem analysis of an SMT-solver run to detect loops that caused bad performance” (§6, p. 377); non-linear arithmetic, which the paper names as a separate source of instability and does not address.
-
-## threat to VL
-
-Inference: none as competition; it is a verifier-internals paper from 2016 for Dafny. It bears on a Verus product as a checklist. An agent that writes quantified specifications will write `forall x · a[x] <= a[x+1]`-shaped facts, and by this paper's account such a proof may pass today and time out after an unrelated edit. The cheap defenses are techniques 1, 4, 5 and 6 applied when the quantifier is written, and technique 8 before a proof is called done.
 
 ## techniques for the catalog
 

@@ -44,7 +44,7 @@ Inference: fallback should be an explicit enum separating verified output from u
 
 ## what is proved, trusted, and missing
 
-The layer checks programmer-specified runtime predicates and types; it does not machine-check the contract implementation or the LLM semantics. The paper’s future-work statement is explicit: “Current contracts lack formal guarantees about type system correctness.” (§4, PDF p.3) It proposes Lean formalization of type safety, contract consistency, composition preservation, and probabilistic bounds, but that formalization is prospective and the runtime does not depend on it (§4, p.3). No experimental success rates, evaluated model configurations, or run counts are supplied. Inference: for VL, mistaking best-effort fallback output for a Verus proof would undermine reliability. The contract and retry pattern could organize candidate generation around Verus; the paper does not implement or evaluate this integration. Before adopting it, measure false acceptance, retry cost, and the fraction of outputs whose contracts are statically proved.
+The layer checks programmer-specified runtime predicates and types; it does not machine-check the contract implementation or the LLM semantics. The paper’s future-work statement is explicit: “Current contracts lack formal guarantees about type system correctness.” (§4, PDF p.3) It proposes Lean formalization of type safety, contract consistency, composition preservation, and probabilistic bounds, but that formalization is prospective and the runtime does not depend on it (§4, p.3). No experimental success rates, evaluated model configurations, or run counts are supplied.
 
 ## techniques for the catalog
 
@@ -52,4 +52,3 @@ The layer checks programmer-specified runtime predicates and types; it does not 
 - error-history remediation — feed predicate errors into bounded corrective prompts and retry with backoff
 - graceful verified/best-effort fallback — preserve operation after failure while explicitly degrading the guarantee
 - empirical probabilistic contract score — estimate joint predicate success over independent invocations and state any independence approximation
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The original forward method is always executed in a finally block, regardless of contract validation outcomes."): checked the complete paper, quotations, author/year, page and section references, execution steps, fallback behavior, and probability formula; corrected page references, the quoted type symbol, remediation wording, and inference labels, and identified the retained fetch-record link as a cited work; did not inspect linked code, run the implementation, reproduce experiments, or verify the proposed Verus adaptations.

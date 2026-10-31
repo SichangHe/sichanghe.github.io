@@ -31,8 +31,6 @@ Step by step:
 4. Give the top example to the synthesis prompt, warning the model not to copy it (Appendix A.2, pp. 11–12).
 5. If no match exists, tell synthesis to analyze the problem fresh (Appendix A.2.1, p. 12).
 
-Inference: A VL implementation could index verified Verus lemmas by state shape, transition relation, and invariant form, then retrieve proof skeletons while requiring fresh specifications and rechecking every generated proof. Retrieval should be treated as suggestion because a copied invariant may be unsound for changed preconditions.
-
 Table 3 reports the distribution of 90 successful cases: 49 solve on the first attempt without refinement (49/90 = 54.4%); the table labels this I1-R0 and reports 63/90 (70.0%) solved during the first main iteration including refinements (section 4.4, p. 6). The denominator is successful cases, while Table 2’s 90% denominator is all 100 benchmark systems; these percentages therefore answer different questions. Inference: the first-attempt comparison with the single-prompt baseline does not by itself isolate retrieval from all other framework differences.
 
 ## technique 3: two-stage verification and feedback refinement
@@ -44,13 +42,9 @@ Inference: In Verus, the sample stage can be a debugging heuristic but cannot es
 
 Table 3 reports 14/90 (15.6%) successes from R1–2 and 13/90 (14.4%) from R3–4, with 90/90 successful cases partitioned as 63+14+13. The framework’s overall Claude result is 90/100, leaving 10 unsolved systems (section 4.4, p. 7). The paper says these involve highly complex nonlinear combinations, and SMT solvers often time out or fail to decide satisfiability (Limitations, p. 7). The paper also reports failure to synthesize a barrier satisfying all conditions. Inference: the formal guarantee depends on faithfully encoding the supplied dynamics and sets, including any transformations used for verification. Section 3 (p. 5) mentions symbolic conversions and Taylor approximations but does not specify approximation-error bounds or how they preserve the original safety claim.
 
-## proved, trusted, and product threat
-The paper invokes the conditional safety theorem: a valid barrier implies safety (Theorem 1, p. 3), and the verifier checks the encoded inequalities (section 3, p. 5). Inference: the LLM’s text, retrieval ranking, sample filter, prompts, and timeout policy do not themselves prove those inequalities. Inference: for agent-written verified Rust, the product threat is medium: the architecture demonstrates useful search and feedback patterns, but the reported synthesis and solver failures, together with the need to validate model encodings, require keeping generation separate from proof acceptance. Section 5 (pp. 7–8) discusses prior work on SOS, CEGIS, neural certificates, and data-driven barriers. Inference: VL could reuse these search patterns, but their benefit for Rust verification would need a separate evaluation.
-
 ## techniques for the catalog
 - barrier certificate conditions: separate initial, unsafe, and invariant-boundary obligations and discharge their negations with SMT
 - retrieval-guided synthesis: retrieve structurally similar verified examples to seed fresh candidate templates
 - staged verification: reject sampled counterexamples before invoking formal SMT checks
 - feedback refinement: adjust coefficients first, then alter structure using solver counterexamples within bounded iterations
 - barrier-controller co-synthesis: generate a feedback law and substitute it into the dynamics before checking safety
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In certain cases, the Synthesis Agent fails to generate barrier certificates satisfying all safety conditions due to the complexity of the underlying dynamics."): read all 17 pages, including references and Appendix A; checked quotations, equations, numbers, page and section references, and technique steps; corrected the motivation quote, continuous-time condition, retrieval page, iteration-budget attribution, and mathematical notation; linked the supplied arXiv version, marked interpretations as Inference, and clarified partial solutions and approximation limits; did not rerun experiments, inspect implementation code, or independently prove the examples.

@@ -80,10 +80,6 @@ Verus form: Inference: put the same context into a reviewed Rust module and expr
 
 Evidence and limits: Table 5 (p. 9) reports average safety ratios of 0.50 for heterogeneous LLMs, 0.4945 for GPT-4o alone, and 0.3927 for DeepSeek alone; average FRR is 93.61%, 91.04%, and 88.01%, respectively. Average queries and tokens are higher with heterogeneous LLMs. Inference: these averages support an overall gain, but not superiority on every benchmark or metric; for example, GPT-4o alone achieves safety ratio 0.43 on `truncate`, versus 0.33 for heterogeneous LAC2R (Tables 2 and 5). A second `tail` failure depends on missing `Hash_table` and `Hash_tuning` definitions; the authors write, “Without these structural facts, LAC2R cannot determine field types, aliasing, or lifetimes, and MCTS fails to find a safe refinement” (Section 3.3, p. 9). Richer structural context, heuristic pruning, and token-budget-aware generation are proposed future work (Sections 3.3–4, p. 9).
 
-## what remains trusted and threat to VeruLaw
-
-Inference: LAC2R's evidence depends on C2Rust's initial translation, the static dependency analyzer, compiler and test harness, the five unsafe-construct counters, and the fixed tests. LLM-generated edits are checked through compilation and available tests, not a proof of C/Rust equivalence. A Verus adaptation would need explicit contracts and proofs for the translated Rust, plus a separately justified relation between those contracts and the C source. The paper evaluates no Verus adaptation. Its safety ratio and test pass rate therefore provide no direct evidence about success at generating Verus proofs or selecting correct specifications.
-
 ## techniques for the catalog
 
 - function-wise dependency ordering — translate a C2Rust baseline one function at a time in static dependency order
@@ -92,5 +88,3 @@ Inference: LAC2R's evidence depends on C2Rust's initial translation, the static 
 - validator-driven repair — feed compiler and test errors into `Fix` prompts and accept only passing children
 - heterogeneous LLM generation — diversify root and intermediate candidates with GPT-4o and DeepSeek V3
 - context-rich prompting — provide call sites, globals, imports, and conversation history to each refinement
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Table 2 also shows the translation cost, including the number of LLM queries and tokens consumed."): read the full paper; checked quotations, metrics, technique steps, section/page references, and the arXiv link; corrected coreutils averages, failure descriptions, references, prompt placeholders, and heterogeneous-model claims; marked recommendations as Inference; did not rerun experiments or validate the proposed Verus adaptations.

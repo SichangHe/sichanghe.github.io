@@ -53,11 +53,6 @@ The deployed planner reads only current state and violated ledger entries, emits
 
 Verus form (Inference): prove each transition preserves previously satisfied ledger predicates with a loop invariant over the bounded repair loop. Runtime should still fail closed on invalid patches; a proof of the transition relation does not prove that captions describe the actual video.
 
-## trust boundaries and threat to VL
-The paper trusts the typed schemas, ledger authoring, upstream captions and beat tracks, verifier implementation, model training, and renderer. It explicitly says, “The verifier checks structural correctness, not factual accuracy, fairness, or social appropriateness.” (Limitations, p. 11.) The benchmark’s ledgers are LLM-generated, revised by assistants, and checked by editors (§4.8, p. 10). Human preview evaluation uses 150 randomized A/B pairs and three annotators (§4.9, p. 11), but VES remains an in-protocol metric.
-
-Inference: threat to VL is substantial at specification capture and trusted-input boundaries. Verus can prove a Rust implementation satisfies a ledger, yet a wrong ledger, stale caption, omitted obligation, or unsound renderer contract leaves the product behavior wrong. The reusable design is the execution gate plus fail-closed Apply/Verify loop, verifier replay before learning, and explicit provenance for fields. VL should not redo raw imitation of teacher traces; the paper’s matched comparison already shows it wastes noisy labels. What remains open is proving semantic correspondence between natural-language requirements, ledger entries, upstream observations, and the rendered artifact.
-
 ## techniques for the catalog
 - typed executable planning: represent actions as schema-checked patches over a typed state
 - constraint ledger: turn requirements into per-entry deterministic predicates and evidence
@@ -66,4 +61,3 @@ Inference: threat to VL is substantial at specification capture and trusted-inpu
 - verifier-centered DPO: sample repairs, score with verifier/rubric, and train on high-margin pairs
 - closed-loop Apply/Verify: bound repairs, reject invalid patches, and recompute obligations after every step
 - component failure accounting: report hard-pass, recall, duration, no-regression, and execution metrics separately
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -48,14 +48,9 @@ Verus form — Inference: represent each decomposition as a lemma with explicit 
 
 Evidence and limits: all three closed-source models score 0.00% on competition-hard in Table 1; each expert prover scores above zero. The authors report, “The Gemini successfully proved 22 theorems in the field, but DeepSeek-Prover-V2 only finished six theorems.” (§3.4, thermodynamics discussion, PDF p. 8) Appendix D.2 qualitatively compares proof complexity, and Figure 6 (PDF p. 21) shows both proofs. Inference: these examples support studying different proof strategies, but do not test an automatic strategy-selection procedure.
 
-## what remains trusted and what VL should reuse
-
-Inference: distinguish proof checking from statement selection. Lean checks the generated proof against the supplied theorem; model-generated proof search need not be trusted as a source of valid proofs when its output is checked. Physical meaning still depends on definitions, hypotheses, NL-to-formal translation, and expert review. For VeruLaw, a corresponding risk is a valid Rust/Verus proof whose assumptions do not match the intended system. The reusable ideas are layered domain libraries, explicit hypotheses, expert statement review, and comparison of proof generation with and without library context. Whether these ideas transfer to Verus requires separate evaluation.
-
 ## techniques for the catalog
 
 - layered domain library — build foundations, topic units, and proved topic theorems in separate layers
 - qa-to-theorem formalization — transform natural-language answers into hypotheses, targets, and compiled proof statements
 - library-context proof generation — compare proofs generated with and without domain definitions and lemmas in context
 - difficulty-matched proof decomposition — Inference: select unit normalization, algebra, or new lemmas according to problem class
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The framework includes PhysLib, an extensible, community-driven foundation library that sets the cornerstone for units, fields, and theorems for formal physics reasoning."): checked all paper text, quotations, numbers, section/page references, and technique descriptions; corrected the paper link and page references, removed unsupported retrieval and law-proof steps, noted inconsistent results, and labeled conclusions as inferences; did not execute Lean/Verus code, inspect the repository, or independently reproduce experiments.

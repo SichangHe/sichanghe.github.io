@@ -60,16 +60,9 @@ The formal results establish soundness of the threshold-sort model and TIP-to-FO
 
 Inference: trusted components for a Verus deployment include the chosen resilience assumptions, ghost set representation, solver, verifier translation, and the executable protocol code and libraries outside the model. The paper proves properties of its abstract transition systems, not the network, cryptography, or an unmodeled implementation. Inference: adding unproved intersection axioms could hide a protocol error; omitting needed valid axioms can instead prevent verification.
 
-## limitations and what VL should not redo
-
-The paper calls the FOL abstraction sound, then states that it is incomplete because arbitrary threshold-faithful validity is not recursively enumerable (Section 3.2, page 8). Inference: these claims are compatible. Valid supplied axioms preserve soundness, while the method cannot cover every first-order property of threshold-faithful structures. Inference: the reported BAPA-query percentage concerns candidates considered in the experiments, not all possible TIP formulas.
-
-Inference: VL should not redo generic quorum-intersection lemmas or a generic proposal to generate invariants from thresholds without distinguishing the TIP/A_IP decomposition. A possible extension would encode the same lazy CTI loop for Verus ghost sets and compare proof time, lemma count, and repair effort across real protocol changes.
-
 ## techniques for the catalog
 
 - threshold-sort abstraction: encode “at least t” sets with dedicated sorts and membership relations in FOL
 - TIP decomposition: prove protocol-independent set intersections in BAPA and use their FOL translations as axioms
 - A_IP inference: enumerate, subsume, and decide all valid simple threshold properties under resilience assumptions
 - CTI-guided minimization: add only intersection lemmas that block counterexamples to induction
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "In fact, it captures a stronger requirement that for every pair of thresholds, there is a model of Γ in which one of them is not interpreted as 0 and the other is not interpreted as n."): read the full paper, including Figure 2 and references; checked quotations, numerical claims, section and page references, modeling steps, algorithm assumptions, and evaluation scope; corrected the abstract quotation, page references, threshold bound, abstraction description, A_IP stopping rule and guarantees, cyclic-formula assumptions, and safety/liveness scope; marked proposed Verus adaptations as inferences and removed unsupported Verus capability and risk claims; did not rerun the protocol experiments, independently prove the theorems, or test the Verus adaptations.

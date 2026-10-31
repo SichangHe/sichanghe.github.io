@@ -46,12 +46,9 @@ Verus form (inference): require a human to compare each `requires`/`ensures` con
 
 Lean proves that the final code type-checks under Mathlib and its declared hypotheses. It does not prove that the formal statement preserves the physics. The paper's own examples say that a proof can verify “a subset of the required argument” after collapsing scientific objects (§5, p.5). Trusted elements include the expert's binary alignment judgments, prompt templates, LLMs, post-processing scripts, Lean/Mathlib, benchmark source statements, and the choice of drift taxonomy. The dataset has only 200 physics examples and no other scientific domain in the experiments (§6, p.7).
 
-Inference: threat to VeruLaw is high for specification drift and moderate for compiler-feedback repair. The human alignment gate and explicit drift taxonomy should be applied before accepting agent-written Rust. A Verus proof can establish a contract while missing the product requirement, just as Lean can prove a simplified physics identity. FormalScience has already explored this human-in-the-loop alignment problem; VL should reuse its review categories and not claim that compiler success alone provides semantic assurance.
-
 ## techniques for the catalog
 
 - gold-seeded corpus generation — use expert statement-proof exemplars, batch prompting, and alignment review before formal translation
 - compiler-driven correction — compile each candidate, feed exact errors to an LLM, and iterate to a verified result
 - surface guard and minimal patching — reject malformed code early, regenerate structural errors, and apply minimal diffs to semantic errors
 - human alignment and drift taxonomy — classify semantic mismatch after compilation and track notational, abstraction, strategy, and premise drift
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -144,18 +144,6 @@ Inference: improved step-level measures do not guarantee improved theorem succes
 
 Verus form (Inference; untested proposal): per failing function, sample 8 edits and record acceptance, error-count changes and edit length, together with the final verification success rate. The paper’s offline DPO results suggest monitoring length, without establishing it as a general diagnostic.
 
-## already tried here, so VL need not
-
-Inference, from Tables 1, 2 and 4:
-- binary acceptance alone did not improve proof success in these DPO runs; all six lowered the proof rate, the three offline ones by approximately 17 to 21 percentage points
-- prefer online candidate refresh in this tested setup; the paper does not establish that all fixed failure datasets are ineffective
-- do not report step validity as a stand-in for proofs completed
-- treat longer proofs as an unresolved limitation: the authors report more failures as required proof length increases, but do not establish that one-step rewards cannot help longer proofs
-
-## threat to VL
-
-Inference: this paper provides limited direct evidence about a product for agent-written verified Rust. It fine-tunes a ByT5-based Lean prover, gains 9 net theorems among 1,992 random-split test theorems, and reports lower Pass@1 on MiniF2F and ProofNet than ReProver*. Training takes approximately 40 A100 GPU-days. Applying its goal-count reward or online sampling method to Verus would require separate evaluation.
-
 ## techniques for the catalog
 
 - goal-delta step reward — score a proof step by softplus of open goals before minus after, and 0 if the verifier rejects it
@@ -166,4 +154,3 @@ Inference: this paper provides limited direct evidence about a product for agent
 - accept/reject preference pairs — use random, zero-accuracy or hard pairing; online DPO raised step validity but all DPO settings lowered theorem success
 - step-validity panel — Prec.@8, MAP, MRR, no-valid-step share and token length per state, to be read together with the proof rate, not instead of it
 - paired proof-length table — cross-tabulate per theorem the proof lengths and failures of two provers to see where a change helps
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Since LeanListener is trained with a one-step look-ahead process, it excels at proving theorems that can be solved in a single step."): checked all paper text, quotations, numerical results, section and page references, technique steps, and Figure 3(a) in the PDF; corrected the all-metrics offline claim, benchmark scope, zero-variance discussion and pairing details, and qualified unsupported generalizations and Verus proposals; did not reproduce experiments, inspect implementation code, or validate Verus proposals.

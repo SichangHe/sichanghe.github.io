@@ -8,8 +8,6 @@ Jian Cao, Liyong Lin, and Lele Li study verification and synthesis of linearizat
 
 The paper distinguishes model fidelity to user intent, equivalence after transformation, and solver correctness. It focuses on equivalence: “This work’s main focus is to address b).” (section 1, PDF p. 1). Its conclusion states, “As a work-in-progress, there is an obvious weakness of our approach, that is, the scalability to large instances (including unbounded synthesis) is limited.” (section 3, PDF p. 3). Approximate synthesis is future work. The paper provides a max example and symbolic formulas, with no implementation evaluation, benchmark counts, timings, or success rates.
 
-Inference: the reusable idea for VL is separating candidate generation from a search for counterexamples. However, the printed formulas have correctness problems described below. The paper does not establish a Rust or Verus implementation.
-
 ## technique: encode a reduction as a linear template
 
 What it is. Section 2.2 introduces a predicate Φ(y), where y has m real components in domains D1,…,Dm, k auxiliary Boolean variables u, and l linear inequalities. A real coefficient matrix X has l rows and m+k+1 columns; the last column supplies constants. Write L_X(y,u) for the conjunction X[y,u,1]ᵀ ≤ 0 (PDF p. 3).
@@ -49,16 +47,8 @@ The paper claims optimal synthesis only in principle. Remark 4 says, “With a m
 
 Verus form. Inference: keep counterexamples as concrete arithmetic obligations, and prove a selected candidate's equivalence over the specified domain. A finite collection of successful obligations is insufficient for a proof over real domains. The paper offers no evaluated route from SMT counterexamples to Rust proof repairs.
 
-## what is proved, trusted, and relevant to VL
-
-Proposition 1 gives a direct proof of the max encoding under its M assumption (PDF p. 2). Section 2.2 describes the synthesis loop and claims that absence of a refutation verifies a reduction (PDF p. 3). Inference: that general claim is not justified for projected equivalence by the displayed formulas, as the examples above show. It should not be treated as a demonstrated sound synthesis procedure without correcting the formulas and proving the resulting procedure.
-
-The raw model's fidelity and solver correctness are explicitly outside the work's focus (section 1, PDF p. 1). Inference: a VL adaptation would also depend on faithful arithmetic encodings and explicit domain assumptions. A proof restricted to bounded real variables does not automatically establish correctness for a Rust API with different domains or machine arithmetic. Candidate generation and proof checking remain useful separate tasks, but the paper gives no empirical evidence about automating Rust proofs.
-
 ## techniques for the catalog
 
 - bounded linear-template encoding — parameterize a candidate by real coefficients, a number of inequalities, and Boolean auxiliaries; Inference: correct Definition 1's quantifier placement before using it for projected equivalence
 - SMT refutation CEGIS — synthesize on accumulated samples and search the domain for counterexamples; Inference: correct both displayed queries before treating absence of a counterexample as proof
 - auxiliary-size search — the paper increases both l and k after failed candidate finding and claims an unspecified modification can yield an optimum in principle
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Thus, without loss of generality, in the rest of this work we shall only consider nonlinear constraints."): checked the whole paper, all study quotations, mathematical claims, numbers, section and PDF page references, technique steps, and the arXiv identifier; corrected page references, unsupported claims, and descriptions of the printed formulas, with counterexamples marked Inference; did not run an SMT implementation or validate a Verus adaptation.

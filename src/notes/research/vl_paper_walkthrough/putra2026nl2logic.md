@@ -40,14 +40,8 @@ The LLM parser, SaT segmentation, JSON runtime, deterministic generator, Z3 sema
 
 The abstract describes a 30% semantic improvement, while the conclusion and Table 5 describe about 31% average gains; these rounded summaries use different comparisons and are not directly reconciled.
 
-What VL should not redo: generic AST parsing and two-pass solver compilation are already demonstrated; new VL work should evaluate Verus specification semantics and proof obligations.
-
-Inference: for VeruLaw, AST-guided specification generation is a substantial opportunity and threat. It can reduce malformed Rust/Verus syntax by separating semantic parsing from deterministic code emission, but a wrong AST can produce a perfectly verified implementation of the wrong contract. Independent contract review and counterexample tests are still needed.
-
 ## techniques for the catalog
 - recursive FOLAST parsing — classify each sentence's outer construct and recursively parse operands or quantified scopes
 - two-pass deterministic compilation — collect declarations first, then emit solver expressions with checked scope and arity
 - structured parser output — constrain LLM responses to JSON schemas and count malformed or incomplete nodes
 - solver-backed semantic evaluation — execute generated rules for entailment, contradiction, or uncertainty after syntax checks
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

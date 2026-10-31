@@ -35,7 +35,7 @@ What it is. TLAPM is run on a root module, flattens the module structure, expand
 
 How to apply it. Keep specifications and proofs in the same language. User-defined operators are hidden by default; a definition is made usable in one leaf proof by citing it, or for the rest of the current subproof by a use step (§3, p.3). Positional or labelled references to earlier subexpressions are replaced by the expressions they resolve to; a labelled reference keeps referring to the same expression even if the definition is later modified (§3, p.3). Let TLAPM rewrite prime expressions syntactically and then send the resulting constant-fragment obligation to a backend (§3, p.3).
 
-Verus form. Inference: preserve proof locality with modules and private `proof fn` lemmas. Expose only the lemmas needed by a proof context; avoid globally broadcasting every fact because solver context size affects automation. Inference: a VL manager could flatten module dependencies, collect proof obligations from Verus diagnostics, and route arithmetic or nonlinear subgoals to specialized lemma templates while leaving the final Verus checker authoritative.
+Verus form.
 
 Evidence. TLAPM invokes Zenon first, then Isabelle/TLA+ automation when Zenon fails; pragmas can bypass Zenon, use particular Isabelle tactics, or use other backends (§3, pp.3–4). TLAPM flattens the module structure because the module language of TLA+ is not supported by backend verifiers (§3, p.2).
 
@@ -49,7 +49,7 @@ When to use it. Inference: use a certifying backend when the obligation is in a 
 
 How to apply it. Try Zenon first; if it succeeds, it produces an Isabelle/Isar proof script checked by Isabelle/TLA+. Otherwise instruct Isabelle/TLA+ to use an automated proof method, or select another backend via pragmas (§3, pp.3–4). Using the theorem SimpleArithmetic in a leaf proof invokes the Presburger decision procedure (§3, p.4). For SMT-LIB, obligations are rewritten into the AUFLIRA theory, which generally requires omitting assumptions outside that theory (§4.3, p.5).
 
-Verus form. Inference: Verus already emits solver obligations and checks solver responses through its verifier pipeline. A VL portfolio can supply proof lemmas for arithmetic and algebra, but must not treat an unverified external answer as a proof. Use `proof fn` lemmas with `ensures` as the certifying artifact; keep `assume` only for explicitly documented environment axioms, never to discharge the target property.
+Verus form.
 
 Evidence. The paper lists successful use of Yices, CVC3, Z3, veriT, and Alt-Ergo through the SMT backend (§4.3, p.5). Isabelle/TLA+ provides rewriting, tableau, resolution, and combinations of those methods, and its standard library provides more than 1400 lemmas and theorems (§4.1, p.4).
 
@@ -71,8 +71,6 @@ Limits. TLC explores only the selected finite instances. The authors warn that u
 
 The release handles temporal reasoning needed for standard safety properties, in particular invariance and step simulation, but not liveness properties (§1, p.1). The backends prove leaf obligations under TLA+ semantics; they do not establish that the specification captures the intended system. The paper warns: “It is far more likely for a system error to be caused by an incomplete or incorrect specification than by an incorrect proof inadvertently accepted as correct due to bugs in TLAPS.” (§2, p.2)
 
-Inference: for VL, the reusable lesson is a layered workflow: finite counterexample search, hierarchical proof decomposition, obligation dispatch, and an explicit certifying/non-certifying trust ledger. The paper predates Verus and does not prove Rust, ownership, unsafe code, compiler behavior, or hardware. Inference: VL should not redo a generic proof-manager portfolio without a Rust/Verus integration or measured reliability benefit; the product threat is accepting a proof of the wrong or incomplete contract.
-
 ## techniques for the catalog
 
 - hierarchical proof decomposition — break system invariants and refinements into named intermediate steps and leaf obligations
@@ -80,4 +78,3 @@ Inference: for VL, the reusable lesson is a layered workflow: finite counterexam
 - certifying backend chain — have a proof-producing prover emit scripts checked by a trusted proof assistant
 - explicit non-certifying boundary — record SMT and decision procedures that automate obligations without a checked proof
 - finite model-checking preflight — test bounded instances and assumptions before investing in an unbounded proof
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Tuples and sequences are defined as functions whose domains are initial intervals of the natural numbers."): read all 7 pages of the paper text; checked every quotation, number (130, 800, 550, over 1000, 1400, 100 lines), section and page reference, and the technique steps against the paper; changed several page references (§3 begins on p.2, so the TLAPM quote and module flattening are p.2; subexpression references are p.3; the Zenon-then-Isabelle procedure spans pp.3-4), rewrote the hierarchical steps to follow the paper's §5 description, removed claims the paper does not make (recursive flattening, named steps, "Mark operators hidden", finite-bound guidance, hierarchy improving maintenance) or marked them as Inference, and added that the second Paxos proof was incomplete; did not check the Verus-side inferences against Verus documentation, the cited references, or the unverified claims about TLAPS outside this paper.

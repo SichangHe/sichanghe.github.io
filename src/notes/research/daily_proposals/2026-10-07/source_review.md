@@ -1,8 +1,6 @@
 # Six primary source cards and review notes
 (authored by agents unless marked 🧑)
 
-Discovery: existing collection naming inspected; direct author/official URLs retrieved. Web search unavailable (HTTP 404). The ChatGPT main search never submitted. Selection is a focused prior-work check, not a comprehensive SoTA survey. Exactly six sources reviewed.
-
 ## iCoq
 
 Authors: Ahmet Celik, Karl Palmskog, Milos Gligoric. Version/venue/date: ASE 2017; author manuscript. Primary link: https://doi.org/10.1109/ASE.2017.8115630.

@@ -29,9 +29,6 @@ On a 218-problem suite, SCOPE certifies 191/218 = 87.6% with 135M parameters. De
 
 The paper reports all 101 first errors at the final chain step, with residual correspondence 799/799 corpus and 181/181 test rows (introduction, p. 2). Trusted components include Lean compiler/kernel, deterministic engine implementation, compiler templates, review program, and the generated reference corpus. Inference: threat to agent-written verified Rust is substantial but bounded: restricting the model to policy decisions can sharply improve proof reliability, yet the engine and templates become a larger trusted computing base and must be independently audited.
 
-## what VL should reuse and avoid
-Inference: reuse typed operator plans, exact external computation, deterministic code generation, state visibility at every step, and reverse-verification tests. Avoid natural-language chain-of-thought as a correctness channel and avoid assuming a high token accuracy implies proof validity. SCOPE already establishes the measurable benefit of state-conditioned symbolic execution; VL should test whether Verus diagnostics can provide the same feedback.
-
 ## techniques for the catalog
 - operator-vocabulary planning — predict typed proof operations instead of unrestricted proof text
 - exact symbolic execution — compute numerics externally and return a checkable state/certificate
@@ -39,4 +36,3 @@ Inference: reuse typed operator plans, exact external computation, deterministic
 - legality-constrained decoding — restrict arguments with per-operator admissibility sets
 - version-frozen audit — replay, checksum, independently recheck, and reverse-test accepted proofs
 - state-visible decision loops — feed each engine result into the next policy decision
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `janen2023chatgpt`, [paper](https://arxiv.org/abs/2311.02433)
 
-Audit: audited 2026-10-13 against the paper; checked every Table 1 cell and column sum, all counts and fractions, page and figure references, quotations, the prompt in Appendix A, and the Verus sketch of Figure 1; changed: a section reference for step 1, the placeholder name, one general claim about the checker taken from a single case, one unmarked inference on timeouts, and the procedure of the no-invariant run marked as the study's reading; the Verus statements on shifts and bit_vector in technique 5 are left unchecked.
-
 source: Janßen, Richter, Wehrheim (Oldenburg), arXiv:2311.02433v2 (v2 dated 14 Oct 2025); 8 pages of text, references, Appendix A (pp.13-14) with the full prompt
 
 ## measured, and trusted
@@ -154,16 +152,6 @@ Evidence. The k-induction columns of Table 1 exist because of it; the model's in
 - §3 (p.6) says the model produced useful invariants “for 22 out of 28 tasks in the case of Frama-C and for 15 out of 19 tasks in the case of CPAchecker’s k-induction”. The 28 and 19 are the human-invariant counts, not supersets: in loop-zilu the model's column exceeds the human's for k-induction (11 against 10 verified, 6 against 5 useful). So these are ratios of two counts, not success rates.
 - The number of samples is k in one sentence and n in the next (§3, p.4: “one of the n generated invariants”); n is not defined.
 - §3 (p.6), on Figure 3, says the model proposed `j >= 0` and `k >= 0` conjoined with the human invariant; the human invariant is printed as `j <= n <= k + j` and the model's as `j <= n && k >= n - j`, the same fact in another form.
-
-## already done; VL need not redo
-
-- The 2023 question of whether a general chat model can write invariants a verifier accepts, without training: yes, for 75 of 106 small single-loop C programs.
-- The valid-versus-useful split as an evaluation protocol.
-- Not done here: any feedback loop (only proposed), programs with more than one loop, preconditions or postconditions, any language other than C.
-
-## threat to VL
-
-Inference: none as a system. It has no repair loop, one old model, and toy programs. Its lasting content is a warning that applies to any agent that writes Verus invariants: on these tasks most valid invariants (53 of 75 with Frama-C) did not yield a proof, so a pipeline that scores itself by invariants accepted will overstate progress.
 
 ## techniques for the catalog
 

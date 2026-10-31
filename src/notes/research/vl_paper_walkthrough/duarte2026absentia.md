@@ -8,8 +8,6 @@ ABSENTIA is a source-only audit scaffold for application-specific authorization 
 
 BAC-BENCH contains 30 disclosed advisories from 25 repositories, nine frameworks, and three languages. On vulnerable commits, ABSENTIA recalls 19/30 and paired recall (detected on vulnerable commit and absent on fixed commit) is 17/30. CodeQL and Semgrep recall 0/30; an unstructured agent recalls 3/30 (Table 2, PDF p. 14). An LLM verifier confirms 51% of findings in the full configuration (Abstract, p. 1; Table 4, p. 17).
 
-Inference: For VL, the transferable technique is invariant-first auditing: infer a property from code and then falsify it, instead of asking an agent to “check correctness” without coverage or a claim.
-
 ## technique 1: application mapping
 
 What it is. ABSENTIA builds a graph whose nodes record route declarations, handlers, authorization checks, request values, and sensitive operations; edges connect elements belonging to one route (Section 4.1, PDF pp. 7–9).
@@ -61,17 +59,11 @@ The benchmark uses a deterministic location gate, then Claude Sonnet 4.6 at temp
 
 For eight instances under 100 routes, five full runs each (40 runs) measure nondeterminism. Six instances had identical verdicts each run; average pass@1 is 0.68, pass@5 0.75, and pass5 0.50 (Table 3, PDF p. 16). These rates use eight instances and k=5; they do not estimate large-repository probabilities.
 
-Inference: VL should separate deterministic proof checking from stochastic proposal generation and report denominators, seeds, and adjudicator agreement. A Verus proof can validate a proposed counterexample or contract, while an LLM remains a search component.
-
 ## what is proved, measured, and trusted
 
 ABSENTIA measures source-level vulnerability recall, paired fixed-commit behavior, report volume, verifier precision, run stability, cost, and reuse. It does not prove inferred policies, guarantee complete route extraction, or establish safety for all undisclosed defects. Its 30-advisory benchmark is human-validated but narrow. The authors state that route extraction may miss unmatched routes and that the method “will not reach the reproducibility of a static analyzer” (Section 8, PDF p. 20).
 
 Inference: In a verified-Rust product, the trusted base includes the inferred specification, source parser/graph, LLM reasoning, external-library contracts, and the Verus verifier/solver. The threat is specification error: a perfectly proved function can satisfy an invariant that the application never intended. ABSENTIA’s fixed finding schema and independent adjudication reduce unsupported reports but do not remove that risk.
-
-## what VL should not redo
-
-Inference: VL should not build another unconstrained agent prompt for code review. The paper already demonstrates coverage mapping, route-by-route invariant inference, falsification requests, cross-route composition, and dependency-aware reuse. Remaining gaps are complete graph extraction, symbolic policy synthesis, verified composition across many routes, and human-calibrated precision at larger repositories.
 
 ## techniques for the catalog
 
@@ -83,4 +75,3 @@ Inference: VL should not build another unconstrained agent prompt for code revie
 - dependency-aware incremental audit — reuse route verdicts only when changed files and import closures are absent
 - deterministic adjudication gate — filter by location, then independently judge findings against a benchmark oracle
 - run-stability accounting — report pass@1, pass@k, passk, and their exact instance/run denominators
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

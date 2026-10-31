@@ -45,7 +45,7 @@ Use this when repeated analyses of a large framework would otherwise repeat expe
 2. Use the map as expert knowledge on subsequent runs (Section 6.1, p. 1110).
 3. Use service dependencies to precompute execution-path conditions and restrict analyses to subsets of dependent services. Stitch service results at RPC boundaries in post-processing (Section 6.1, p. 1109).
 
-On API level 17, reusing the recorded data reduced processing time by about 75% to about 7 hours (Section 6.1, p. 1110). This is a measured runtime for one framework version and machine, not a soundness theorem. Inference: VL can cache verified summaries for service boundaries, but summaries need explicit assumptions about caller identity, mutable global state, and message queues; otherwise cache reuse can silently invalidate authorization proofs.
+On API level 17, reusing the recorded data reduced processing time by about 75% to about 7 hours (Section 6.1, p. 1110). This is a measured runtime for one framework version and machine, not a soundness theorem.
 
 ## technique 4: permission-map construction and locality analysis
 
@@ -68,11 +68,7 @@ Axplorer analyzed Android 4.1.1, 4.2.2, 4.4.4, and 5.1. Table 1 reports 27,749�
 
 Initial processing took 14–126 hours on four Intel Xeon E5-4650L processors with 768 GB RAM; high-precision call-graph generation consumed about 85% of runtime (Section 6.1, p. 1109). Protected-resource distributions were stable: field updates about 75%, native calls about 21–23%, return values 51–69 entries, broadcasts about 0.7–1.0%, and runtime exceptions about 0.7–1.0% (Table 2, Appendix B, p. 1118). The taxonomy rests on manual inspection and conservative assumptions. Native-code analysis is out of scope, broadcast effects depend on receiver configuration, and some IPC patterns remain unsupported (Sections 4.3 and 6.1, pp. 1108 and 1110). Reflection was measured as rare in framework code (Section 6.1, p. 1110). Section 8 identifies further resource refinement as future work, including excluding constructor updates to a `this` reference (p. 1114).
 
-No formal theorem or mechanically checked proof is supplied. Inference: trusted components include WALA's points-to analysis, Android framework source, class hierarchy resolution, hand-selected ground truth, permission-string resolution, and the assumption that every reachable permission check protects a security-sensitive resource. Inference: The threat to a product of agent-written verified Rust is substantial at the authorization boundary: missing asynchronous edges or identity changes can invalidate a proof's model even when individual functions verify. VL should use this paper's discovery workflow before writing contracts, then verify concrete Rust transitions and treat unresolved runtime behavior as explicit trust.
-
-## what VL should not redo
-
-The paper already supplies the entry-point definition, protected-resource taxonomy, asynchronous IPC handling, permission-map construction, and locality metric. Inference: VL should not claim these analyses as new. It should adapt them to the product's actual runtime, close the unsupported cases, and prove the resulting authorization contracts.
+No formal theorem or mechanically checked proof is supplied.
 
 ## techniques for the catalog
 
@@ -80,5 +76,3 @@ The paper already supplies the entry-point definition, protected-resource taxono
 - asynchronous IPC resolution — recover Handler and Runnable targets and message-code paths with interprocedural slicing; follow StateMachine message branches, with AsyncChannel support incomplete
 - protected-resource taxonomy — classify field updates, native calls, broadcasts, sensitive returns, and security-relevant exceptions
 - permission-map and locality analysis — compose SDK-to-entry reachability with permission checks and count enforcing classes per permission
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "During our initial analysis run Axplorer records both an RPC-map per entry class as well as a list of resolved sender-to-handler relationships."): checked every quotation, number, section/page reference, technique step, tag, and publisher link against the whole paper including appendices; corrected page references, separated StateMachine modeling challenges from described implementation, stated incomplete AsyncChannel support, clarified slicing and comparison assumptions, and removed an unsupported reflection limitation; did not reproduce experiments, inspect Axplorer code, or validate the proposed Verus adaptations.

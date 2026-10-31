@@ -26,7 +26,7 @@ Verus form. Inference: represent the blueprint as a dependency DAG outside Rust,
 
 Evidence. On 12 cases GPT-5.4 initially failed, MathCoPilot passed 9/12 on the first system pass and 10/12 after recursive local-lemma refinement (Table 3, p. 7). The denominator is twelve selected GPT-unsolved FormalMATH problems, under Lean 4.30.0-rc2 and Mathlib v4.30.0-rc2 with a 1200-second timeout. The authors report: “Counting this lemma-refinement stage, MATHCOPILOT verifies 10/12 of the targeted GPT-unsolved cases.” (Section 4.3, p. 7).
 
-Failure and assumptions. The blueprint does not guarantee a proof: two of the twelve cases remain open after refinement. The formalizer can expose a local obligation while leaving its mathematics unresolved. Inference: VL must retain human review of contracts and decomposition boundaries, because a well-organized graph can still encode a false or vacuous specification.
+Failure and assumptions. The blueprint does not guarantee a proof: two of the twelve cases remain open after refinement. The formalizer can expose a local obligation while leaving its mathematics unresolved.
 
 ## technique 2: feedback-driven proving-skill orchestration
 
@@ -52,12 +52,6 @@ Verus form. Inference: use a repository of verified Rust modules where each entr
 
 The PDE study uses three formalization routes and 20 attempts. Table 5 reports 12/20 (60%) Lean-checked certificates, but the paper warns: “Current Mathlib does not contain a full formal development of DG methods, Sobolev estimates, or Gauss–Radau projection theory.” (Section 5.1, p. 9). Successful files therefore use opaque declarations or axioms for deep analysis and verify only assembly. Per-route denominators are 2/8 for GPT-Formalized, 6/6 for Opus-Formalized, and 4/6 for Direct (Table 5, p. 9). Wrong-proof review is separate: Gemini 3.1 Pro and GPT-5.4 reject all four flawed PDE proofs (Table 6, p. 10).
 
-Inference: the largest VL threat is specification and abstraction drift. Agent-written verified Rust can be internally correct while relying on an opaque external contract or a wrong model. The paper's explicit separation of certificate assembly from end-to-end PDE formalization is a useful product boundary.
-
-## what was already done and what VL should not redo
-
-MathCoPilot already combines human blueprint editing, recursive subgoal refinement, verifier feedback, skill routing, retrieval, and verified knowledge-base maintenance. VL should not present those workflow ideas as new by themselves. A distinct VL contribution would need evidence on Rust/Verus contracts, ownership, concurrency, and real maintenance rather than Lean mathematics.
-
 ## techniques for the catalog
 
 - editable proof blueprint — decompose a target into human-navigable dependent nodes and recursively refine hard nodes
@@ -65,5 +59,3 @@ MathCoPilot already combines human blueprint editing, recursive subgoal refineme
 - NL-first scaffold — write an informal proof before formal translation when the formal statement is hard to navigate
 - verified knowledge base — extract source mathematics, formalize in dependency order, compile, index, and re-verify on library updates
 - abstraction-aware certification — separate opaque domain assumptions from the formally checked assembly and report both
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

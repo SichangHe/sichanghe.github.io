@@ -81,10 +81,6 @@ Evidence and limits. The case study’s slowest work concentrated on Lemma 4’s
 
 The mathematical result is reported as complete and human checked, with seven chat artifacts and four proof drafts for auditability. No formal proof assistant checked the result. Trusted elements include the matrix model, theorem statement, human interpretation of boundary conditions, ChatGPT outputs, algebraic tools, and final human review. The authors explicitly limit scope to one structured problem with strong prior scaffolding and say the model adapted a classical method rather than introduced a fundamentally new one (Section 4.5, p. 7). Inference: a Verus translation could mechanically check encoded algebra and contracts, but would not by itself validate the theorem specification, numerical-to-symbolic modeling, or transcendental libraries.
 
-## what VL should reuse and threat to a product
-
-Inference: VL should reuse the obligation-oriented generate–referee–repair loop, independent patch search, versioned proof artifacts, dependency-visible decomposition, and mechanization of arithmetic bottlenecks. The critical guard pattern—state branches and positivity before transformations—maps directly to Verus `requires` and `assert`. VL should not redo the claim that consumer LLMs can propose useful global proof structure; it should test the missing closure step on agent-written Rust with compiler-checked contracts and measured repair effort. Inference: threat to a verified-Rust product is moderate: the workflow demonstrates practical LLM assistance but also shows that human verification remains the bottleneck and that no formalized Rust artifact was produced.
-
 ## techniques for the catalog
 
 - theorem scaffolding — provide a precise target, known boundaries, and a recognizable proof template before strategy generation
@@ -93,4 +89,3 @@ Inference: VL should reuse the obligation-oriented generate–referee–repair l
 - parallel patch search — compare independent fixes for one obligation and retain only checkable patches
 - versioned dependency control — keep drafts and transcript anchors, expose dependencies, and recheck downstream claims
 - mechanized bottleneck checking — delegate algebra and inequality-domain obligations to CAS or certified checkers while retaining human boundary review
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

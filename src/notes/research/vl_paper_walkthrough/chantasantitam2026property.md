@@ -57,12 +57,6 @@ evidence: The paper reports that under its assumed adversary, “Adv cannot tamp
 
 Verus form: Inference: model the protocol’s software state machine with enums and ghost state; use `requires`/`ensures` to bind a quote record to the challenge and input/output hashes, and prove that acceptance implies a prior execution event. Verus can prove the Rust bookkeeping and hash-binding logic, while TDX MAC/signature and hardware measurement remain trusted assumptions unless separately verified.
 
-## what remains trusted, contradictions, and VL implications
-
-Inference: the design relies on TDX hardware and module, QE, H100 hardware, SPDM channel establishment, the PAL*M TD image, hash/MSH implementations, and trusted-authority reference values (Sections 3.2, 4.3.1, 4.4 and Appendix D). The paper states that its measurement/attestation prototype is implemented in Python (Section 5.2, p.9). Inference: a VeruLaw product should treat PAL*M’s measurement-and-quote design as a useful architecture for attesting agent-produced artifacts, but retain independent Verus checking of Rust properties and explicit review of what the attested operation actually means. Inference: VL could reuse indexed MSH for full-dataset operations on randomly sampled records. Distributed-training proofs are future work; side-channel defenses are treated as orthogonal (Section 6.3, p.12; Section 3.2, p.3).
-
-The abstract claims “incurring <11% overhead for common operations” (p.1). Tables 5–6 report 11.24% total observed overhead for memory-mapped Llama MMLU evaluation and 11.39% for Llama session inference; Table 6 also reports 11.03% raw measurement overhead for that session. Single-query inference is 45.52%–66.43%, and memory-mapped attribute distribution is 42.50% total observed overhead (Tables 2, 5 and 6, pp.9–11). Inference: the abstract’s strict <11% bound is inconsistent with some workloads that Section 6.1.4 itself calls common. Inference: threat to agent-written verified Rust is moderate: QUOTE integrity can attest that a measured binary ran, but it does not prove that the binary’s specification captures the intended safety policy or that an LLM-selected property is adequate.
-
 ## techniques for the catalog
 
 - indexed incremental multiset hashing — measure a full dataset once in any access order while detecting changes to indexed records
@@ -70,5 +64,3 @@ The abstract claims “incurring <11% overhead for common operations” (p.1). T
 - CPU–GPU evidence binding — include GPU attestation and an SPDM-bound session in the operation measurement
 - challenge-bound TDX protocol — extend operation, challenge and measurements into REPORTDATA and verify a signed QUOTE
 - Tamarin protocol modeling — check confidentiality, integrity and authenticity goals across four memory/privacy cases, with a hand-justified multiset restriction
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We do not explicitly model the scenario of GPU reassignment in our formal verification: we assume the SPDM key exchange between the GPU and TD occurs before TD launch, as it is impossible to launch a GPU in CC-mode without this [36, 70]."): checked all quotations, numerical claims, section/page references, technique steps, threat assumptions and formal-model claims against all 20 pages; corrected the arXiv link, incomplete quotation, page and lemma references, full-dataset MSH prerequisite, BLEU range and overhead contradiction; marked interpretations as Inference; did not reproduce experiments, run Tamarin, inspect implementation code or verify the proposed Verus adaptations.

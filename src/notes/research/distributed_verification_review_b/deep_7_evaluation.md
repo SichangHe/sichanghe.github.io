@@ -5,8 +5,6 @@ Evidence cutoff: 6 October 2026, 22:36 PDT (7 October 2026, 05:36 UTC). The brie
 
 ## What should count as success
 
-**Recommendation:** count a task as complete only when an independent evaluator accepts the intended guarantee, its assumptions, the whole proof, and any implementation correspondence. Report each decision separately. An agent can prove a weak statement perfectly; a sound checker cannot repair that statement.
-
 The closest starting points are **VeriContest/VERINA/CLEVER** for separate specification, implementation, and proof scores; **Vero/CryptoProver** for full artifact completion and integrity checks; **IronSpec/Spec-Harness/SpecGym** for specification adequacy; **SysMoBench** for distributed model correspondence; and **VeruSAGE's Anvil tasks** for proof completion involving temporal logic. No agent benchmark located combines vague requirements, independently scored distributed assumptions, an unbounded liveness proof, and validated correspondence to an executing implementation. IronFleet supplies human-written end-to-end proofs; it does not evaluate that agent task.
 
 Use five separately reported outcomes:
@@ -27,14 +25,9 @@ These are proposed evaluation requirements, not an existing universally accepted
 | Correspondence | SysMoBench trace checks; IronFleet refinement and reduction | Trace agreement is weaker than an implementation refinement proof |
 | Cost | SaltBench budgets/censoring; IronFleet human effort; Atmosphere/TickTock replay measurements | Match guarantee strength; do not replace person-time with checker seconds |
 
-
 ## Existing human notes: cite and extend
 
 I read the three requested notes. Their audits remain the detailed source maps; this file adds other benchmarks, distributed/liveness checks, and newer versions. Local notes are synthesis, not independent reproductions.
-
-- [CryptoProver and LeetProof audit](</ssd1/sichanghe.github.io/src/notes/research/verified_agent_code_evaluation_20260808.md>): preserves the distinction between proof acceptance, claim integrity, and intent. Source identifiers `CP-*` and `LP-*` locate exact paper sections and artifact evidence.
-- [Vero audit](</ssd1/sichanghe.github.io/src/notes/research/vero_20260821.md>): full-instance grading, clean reconstruction, axiom checks, formal defect reports, and shared lemmas. Its follow-up explains existing VL controls; those are project policies, not completed experimental results.
-- [SaltBench audit](</ssd1/sichanghe.github.io/src/notes/research/saltbench_20260914.md>): external referee, measured isolation, frozen arms, censored budgets, and instrument bias. **Update below:** October v3 adds a post-hoc correctness reading.
 
 ### CryptoProver: preserve the public claim and audit the generated interior
 
@@ -60,8 +53,6 @@ The new correctness analysis is explicitly post hoc. Abstract: “registered aft
 
 The following catalogue records the task actually graded, its specification oracle, integrity controls, and limits. “Not established” means no corresponding enforcement was confirmed in the reviewed paper/artifact, not that no enforcement exists anywhere.
 ### DafnyBench
-
-**Identity.** *DafnyBench: A Benchmark for Formal Software Verification*, Chloe Loughridge, Qinyi Sun, Seth Ahrenbach, Federico Cassano, Chuyue Sun, Ying Sheng, Anish Mudide, Md Rakib Hossain Misu, Nada Amin, Max Tegmark. arXiv 2024; TMLR 2025. [Paper](https://arxiv.org/abs/2406.08467); [artifact](https://github.com/sun-wendy/DafnyBench). Saved `/hdd1/sichanghe/paper_collection/DafnyBench- A Benchmark for Formal Software Verification, Chloe Loughridge et al., TMLR, 2025/paper.pdf`.
 
 **Measures.** Restore missing assertions/loop invariants in 782 already specified and implemented Dafny programs. Formal-check pass rate measures proof completion, not intent formalization. Sec. 3.2 p.4: “LLM preserves all preconditions (requires statements) and postconditions (ensures statements)”; “LLM does not use {:verify false} or {assume false} to "cheat."” 
 
@@ -155,9 +146,6 @@ The following catalogue records the task actually graded, its specification orac
 
 **Inference.** Good inductive program-property control, not concurrent fairness/liveness. Termination of recursion is not distributed liveness under scheduler/fault assumptions.
 
-
-## Repository context and compositional evaluation
-
 ### RagVerus / RepoVBench
 
 *RagVerus: Repository-Level Program Verification with LLMs using Retrieval Augmented Generation*, **Si Cheng Zhong, Jiading Zhu, Yifang Tian, Xujie Si**; arXiv 2502.05344v1, 7 Feb 2025. [Paper](https://arxiv.org/abs/2502.05344). Existing PDF read.
@@ -173,8 +161,6 @@ Retrieval indexes same-repository code; benchmark evaluates useful available nei
 300 LLM-synthesized Dafny programs, 2–5 functions, chain composition. From 1,200 attempts 564 verified then 300 selected. Removes requires/ensures/reads/modifies/decreases while retaining internal proof annotations (Sec. 3.3); model reconstructs cross-function contracts. Reports syntax rate and verifier rate conditional on syntactically valid outputs, pass@1/2/4/8. Sec. 6 p. 10: “but not liveness properties, resource bounds, or security policies”.
 
 Integrity gap: no documented assume/admit/new-axiom/spec-equivalence/vacuity screen located. Checker pass therefore cannot independently establish intended contract strength; overrestrictive requires could help verification. Ground truth is generated and verifier-accepted, not independent semantic intent certification. Appendix G prompt asks preserve original pre/postconditions and fill loop/assert annotations, whereas Sec. 3.3 says those contracts were removed: task-description/prompt mismatch needs artifact audit. Contamination check exact/n-gram against MBPP-DFY does not establish unseen model-training data. Paper's claim low success implies architectural limitation is inference, unsupported causality. Directly relevant compositional-reasoning diagnostic; no concurrency/fairness/liveness coverage.
-
-## Distributed modeling, temporal proof, and verifier evaluation
 
 ### SysMoBench
 
@@ -240,7 +226,6 @@ Figure 12 records 1,400 spec SLOC, 5,114 implementation SLOC, 39,253 proof SLOC,
 
 Liveness conditions matter as much as theorem text (§2.2): IronRSL needs an eventually synchronous quorum, minimum host-loop frequency and sufficient memory; IronKV needs infinitely recurring host execution and fair delivery of infinitely resent messages. The trusted boundary includes high-level spec, main-event-loop/reduction assertion, Dafny/toolchain/runtime/OS/hardware assumptions. **Inference:** a useful agent evaluation should score the guarantee together with its explicit environment assumptions and trusted code, and compare human editing time, review time, proof size, serial/parallel verifier time, solver instability, and runtime overhead separately. Do not reward shrinking proof effort by strengthening fairness or silently assuming desired response progress.
 
-
 ### Two further TLA+ evaluation papers already in collection
 
 **Can LLMs Write Correct TLA+ Specifications: Evaluating Natural-Language-to-TLA+ Generation**, Arslan Bisharat, Brian Ortiz, Eric Spencer, Khushboo Bhadauria, TaiNing Wang, George K. Thiruvathukal, Konstantin Läufer, Mohammed Abuhamad. arXiv 2606.05792v1, 4 Jun 2026. [Paper](https://arxiv.org/abs/2606.05792). Existing PDF read, especially §3, Tables 3–4 and limitations. It derives input natural language by extracting comments from TLA+ Examples, and compares full generation, progressive prompts, half-completion, and filling the middle. §3 reports 205 specs across 98 projects, 143/31/31 train/validation/test split stratified by project, with only 26 usable test specs after filtering for comments/configs. It tests 25 open models across four strategies (2,600 runs) plus five proprietary models in few-shot mode (130 runs).
@@ -253,7 +238,6 @@ The paper's limitations acknowledge one run per model/task/strategy, uneven comm
 
 Only three obligations are evaluated: full Boyer–Moore majority-vote safety correctness, a hand-crafted simpler initialization lemma from that algorithm, and an elementary arithmetic fact. Inductive invariant is supplied as input, so this is proof construction with spec/invariant fixed, not agent selection of spec or invariant. §4.2: full theorem fails all methods despite ten attempts; proposed system succeeds three of three independent attempts on intermediate lemma; arithmetic is already solved by built-in TLAPS automation. Reported generated-proof times are about two minutes for intermediate lemma and one minute for arithmetic, whereas built-in arithmetic takes under one second. Mechanical checking is a useful adequacy gate for proof obligations. The described experiment does not separately report axiom/OMITTED scans, immutable theorem/definition hashes, or trusted dependency audits; those should accompany agent success. No distributed liveness obligation is evaluated, despite use of a systems proof language.
 
-
 ### Temporal requirement translation: VLTL-Bench and GraFT
 
 Two distinct studies from overlapping authors; one new benchmark suite. Both existing PDFs read.
@@ -265,8 +249,6 @@ Table 2 (p.6) has Kitchen Assistant 10,000, Search-and-rescue 7,304, Traffic-lig
 **Grammar-Forced Translation of Natural Language to Temporal Logic using LLMs**. William H. English, Dominic Simon, Sumit Kumar Jha, Rickard Ewetz. ICML 2025, PMLR **267:15370–15383**. [Primary proceedings](https://proceedings.mlr.press/v267/english25a.html). GraFT constrains permitted output tokens with a grammar and separates proposition identification from temporal translation. Quote (§3, p.5): “grammatically correct temporal logic expressions”. It evaluates **existing** Navigation, GLTL, Cleanup World datasets, 1,000 examples per dataset; tests in-domain and held-out-domain combinations (§4). Proposition identification uses top-1 binary success. Table 2 evaluates full translation accuracy. I found no explicit formal equivalence checker or implication/strength score in its evaluation description; do not infer semantic adequacy from its grammar guarantee.
 
 **Inference:** syntax constraints prevent malformed formulas, but cannot prevent a well-formed weakened requirement. Its proposition “grounding” preserves/maps NL proposition segments; VLTL-Bench later demands concrete scenario predicates and reveals why these should be scored separately. Neither study evaluates fairness assumptions, unbounded distributed liveness proofs, failure models, cluster-size generalization, or code correspondence. Use VLTL equivalence and scenario grounding as requirement checks, then add separate model/proof/implementation evaluations.
-
-## Specification adequacy and verified-system failures
 
 ### IronSpec
 
@@ -326,9 +308,6 @@ Liveness matters beyond the proved theorem: “our toolchain tests for liveness�
 
 The verification wrapper is part of evaluation: solver crashes or interruption were mistakenly reported as success (§6). **Inference:** run deliberate false proofs, solver interruptions and resource failures through the exact benchmark harness; require fail-closed results, not merely a parsed zero-error line. The study found no protocol-level bugs and warns that three research prototypes and unknown false-negative rates limit generalization (§3.4).
 
-
-## Further methods for measuring specification quality
-
 ### Spec-Harness, formerly VeriAct
 
 *Spec-Harness: Measuring and Improving Behavioral Adequacy of LLM-Synthesized Formal Specifications*, Md Rakib Hossain Misu, Iris Ma, Cristina V. Lopes; arXiv 2026. [v2 paper](https://arxiv.org/abs/2604.00280v2), revised 8 September. The collection's existing March v1 is titled *VeriAct: Beyond Verifiability*. Saved/read v2 rather than silently treating those versions as equivalent.
@@ -361,8 +340,6 @@ The current [AutoCLRS completeness-test artifact](https://github.com/microsoft/n
 
 *SpecGen: Automated Generation of Formal Program Specifications via Large Language Models*, Lezhi Ma, Shangqing Liu, Yi Li, Xiaofei Xie, Lei Bu; ICSE 2025. [Paper](https://arxiv.org/abs/2401.08807). Existing PDF read. It mutates generated **specifications** to find verifier-compatible annotations; this generation method differs from mutating implementations to score spec strength. Its 120-task Java SpecGenBench has expert-written references (§IV.B). A blinded study uses 15 Ph.D. students to rate 15 programs handled by all compared methods (§V.D); anchor: “specifications are kept anonymous”. **Inference:** useful semantic judgment, but selected common successes and numerical ratings do not establish population-wide completeness. The paper's verifiability criterion is weaker than that review.
 
-*StarVerus: LLM-Powered Multi-Agent Collaboration for Industrial Rust Code Verification Automation*, Chao Jiang, Ding Wang, Dugang Liu, Zhiwu Xu, Cheng Wen, Zhong Ming, Yuwei Liu, Xinyi Wan, Lin Huang; KDD 2026. [DOI](https://doi.org/10.1145/3770855.3818485). Build on the [existing full-paper audit](</hdd1/sichanghe/paper_collection/StarVerus- LLM-Powered Multi-Agent Collaboration for Industrial Rust Code Verification Automation, Chao Jiang, Ding Wang, Dugang Liu, Zhiwu Xu, Cheng Wen, Zhong Ming, Yuwei Liu, Xinyi Wan, Lin Huang, KDD, 2026/full-paper-source-map-20260809.md>). It generates contracts and proofs, using verifier acceptance, BLEU, an LLM auditor, and mutant-admission rates. Table 8 reports “7.56%” mutant admission. The prior audit found no operators/count/equivalent-mutant policy, calibrated judge procedure, project holdout, or repeat-run variance in the reviewed paper. It also found retrieval neighbors drawn from other scored corpus keys. **Inference:** that is direct demonstration visibility, distinct from possible model pretraining exposure. BLEU and model judgments are supporting signals, not semantic closure; the undocumented mutation procedure cannot be reconstructed from its SpecGen citation.
-
 ### Empirical VeriFast study: score changed code and changed claims explicitly
 
 *An Empirical Study of LLM-Generated Specifications for VeriFast*, Wen Fan, Minh Tran, Sanya Dod, Xin Hu, Marilyn Rego, Danning Xie, Jenna DiVincenzo, Lin Tan; arXiv 2026. [Paper](https://arxiv.org/abs/2606.26490). Existing PDF read. Uses 303 C functions from 60 programs, including concurrency, with natural-language, formal-contract, and fuller proof-context input conditions (§III). Two authors classify code as changed/unchanged and contracts as equivalent/strengthened/weakened/other, resolve disagreements, and report agreement. §V: “Cohen Kappa is 0.73 and 0.38”; abstract: “31.4%”. The latter is overall verifier success, not intent success. It manually repairs sampled failures and records error location/severity/fix, revealing the human work needed after generation. Private authored programs supplement public VeriFast examples. **Inference:** low success cannot establish low contamination, and supplying formal contracts measures a different task from intent recovery. The coding categories are useful for reviewing strengthened assumptions and altered runtime behavior.
@@ -372,8 +349,6 @@ The current [AutoCLRS completeness-test artifact](https://github.com/microsoft/n
 *Intent Formalization: A Grand Challenge for Reliable Coding in the Age of AI Agents*, Shuvendu K. Lahiri; arXiv 2026. [Paper](https://arxiv.org/abs/2603.17150). A research agenda, not a new controlled benchmark. Abstract: “there is no oracle for specification correctness other than the user”. It calls for tests, mutation, interaction, and rich-logic support; existing algorithm benchmarks do not establish real-system intent recovery. **Inference:** measure successful clarification of genuinely ambiguous requirements and harmful assumptions as well as theorem completion. A hidden reference can grade a benchmark, but cannot determine a user's unspecified preference.
 
 ### MutDafny: mutation survival needs adjudication
-
-*MutDafny: A Mutation-Based Approach to Assess Dafny Specifications*, **Isabel Amaral, Alexandra Mendes, José Campos**. ICSE 2026 main proceedings, pp.3573–3585, DOI [10.1145/3744916.3787816](https://doi.org/10.1145/3744916.3787816). [arXiv 2511.15403v2](https://arxiv.org/abs/2511.15403), 12 Apr 2026; [tool](https://github.com/MutDafny/mutdafny); supplementary data [figshare](https://doi.org/10.6084/m9.figshare.30640202.v2). Existing collection PDF read, no duplicate saved: `/hdd1/sichanghe/paper_collection/MutDafny- A Mutation-Based Approach to Assess Dafny Specifications, Isabel Amaral, Alexandra Mendes, Jose Campos, arXiv, 2025/paper.pdf`.
 
 **What it measures.** Mutates implementation code while leaving specs in place. If altered code still verifies, contract may fail to exclude wrong behavior. Forty AST mutation operators, 30 adapted from conventional tools + 10 new mined from Dafny bug fixes. Applies to 794 files(743 DafnyBench+17 AWSencryption+34 Dafny-EVM), 43178 LOC. Original files required to verify; invalid, timeout, verifier-error and files verifying nothing removed. Uses Dafny 4.10.0 / Z3 4.12.6.
 
@@ -391,7 +366,6 @@ The current [AutoCLRS completeness-test artifact](https://github.com/microsoft/n
 **Limits.** Average analysis 22 min/file, scale depends mutation count, verifier timeout and parallelism. Dataset mixes introductory/public benchmark files with industrial encryption/EVM files; operator coverage and equivalent-mutant rate affect score. A 100%score on chosen mutants would not prove intent completeness. Arbitrary verifier failure is not an invalid behavior counterexample, particularly when proof annotations are kept; explicit semantic checks and separating proof failure from contract refutation strengthen evaluation.
 
 **Distributed/liveness inference.** Reuse strategy to mutate transition logic, delete state updates/messages, suppress enabled actions, and alter progress conditions, while auditing permitted implementation edits separately. Need independent traces or proofs showing mutants break intended safety/progress. For infinite-execution liveness, finite mutation survival and finite testing cannot certify fairness adequacy or progress under all schedules. MutDafny itself does not evaluate such temporal semantics.
-
 
 ### Intent-aligned Formal Specification Synthesis via Traceable Refinement
 
@@ -412,8 +386,6 @@ COINS evaluates Rocq predicates on 164 HumanEval problems with expert-written re
 The final REJECTall score means no negative acceptance proof was found. Exact anchors: “If the LLM judges rejection, we skip the formal proof” (§3, p. 4); “does not guarantee S rejects all negative cases” (appendix C, p. 16). These twenty-word excerpts expose the crucial limit: failure to find an acceptance proof is weaker evidence than proving rejection. Conversely, successful positive proofs establish covered-example acceptance; failed positive proofs remain inconclusive.
 
 **Inference:** a difficult-to-prove weak spec can appear strong; report proof-search uncertainty separately from semantic quality. Appropriate for concrete behavioral challenges, with expensive expert annotation and prover effort, but no distributed infinite-run liveness evaluation established.
-
-## Older proof corpora and human contests
 
 ### CoqGym: project separation and checker-owned proof state
 
@@ -457,8 +429,6 @@ Use human time and proof size as separate measurements. Person-years combine peo
 *TickTock: Verified Isolation in a Production Embedded OS*, Vivien Rindisbacher, Evan Johnson, Nico Lehmann, Tyler Potyondy, Pat Pannuto, Stefan Savage, Deian Stefan, Ranjit Jhala; SOSP 2025. [Paper](https://doi.org/10.1145/3731569.3764856). Existing full PDF read. §5: “3,603 lines of checked annotation across 2,581 functions”. §6/Figure 15 reports total/max/mean/stddev verifier time; granular kernel versus monolithic proof design and lifted interrupt code have different costs. This is a useful pattern for reporting tail latency and proof-structure effects. It also enumerates trusted functions caused by solver/tool limitations, ghost-only code, and out-of-scope functions (§5), rather than presenting all functions as equally proved. **Inference:** report the trust inventory beside reduced proof size; lower annotation ratios can reflect a narrower guarantee or stronger type system rather than lower human effort.
 
 IronFleet above supplies direct distributed safety/liveness effort; IronSpec supplies defect-diagnosis time; Scope supplies tool-building time; CLEVER supplies human contract-curation time; the VeriFast study supplies manual repair/error categories; SaltBench supplies total experimental cost. These measure different activities. For an agent study, prerecord time spent learning the system, clarifying requirements, writing specs, proving/refactoring, reviewing, diagnosing benchmark defects, and maintaining a proof after changes. Compare against humans with matched guarantees, implementation freedom, tool expertise, and resources. Treat manually estimated historical effort as descriptive.
-
-## Older temporal adequacy methods that still apply
 
 ### Vacuity Detection in Temporal Model Checking
 
@@ -535,14 +505,12 @@ Source warning: template labels are not always sound descriptions of property ty
 
 Table 1 calls these “AI-generated TLA+ models”. Authors: Qian Cheng, Ruize Tang, Emilie Ma, Finn Hackett, Peiyang He, Yiming Su, Ivan Beschastnikh, Yu Huang, Xiaoxing Ma, Tianyin Xu; ICLR 2026. Source systems are supplied/instrumented in the [benchmark repository](https://github.com/specula-org/SysMoBench). The four metric stages are syntax, runtime, trace conformance, and property checks. All rows share that paper/repository evidence, rather than implying separate publications.
 
-
 The older IronFleet examples supply end-to-end safety/liveness proofs. Sizes below are Figure 12 fields, with the paper and source links in the IronFleet entry above. Development effort is shared across the methodology and both systems, not independently measured per row.
 
 | System | Guarantee and environment constraints | Size and effort evidence |
 |---|---|---|
 | IronRSL Paxos replicated state machine | S: implementation refines centralized state machine; two learners do not choose different request batches for a slot. L: client repeatedly sending to all replicas eventually gets reply. Requires eventually synchronous live quorum, sufficiently frequent scheduling, bounded message bursts, bounded clock error, enough memory, no overflow-prevention stop | Fig.12: high-level spec 85 SLOC; implementation 2,941; implementation proof 7,535; protocol-liveness proof 7,869, checked in 115 min; property in §5.1.4 |
 | IronKV sharded key-value store | S: implementation refines centralized hash table despite dynamic key delegation; exactly-once reliable-transmission semantics; keys owned by exactly one host or in-flight packet. L: reliable-transmission packets eventually received. Requires host loops run infinitely often and fair delivery of infinitely resent packets | Fig.12: high-level spec 34 SLOC; implementation 1,340; implementation proof 2,937; protocol-liveness proof 2,093, checked in 23 min; property in §5.2.1 |
-
 
 The following older implemented systems and spec-defect cases are useful evaluation targets. These rows report the scope of the cited study, rather than implying a new end-to-end proof by the evaluators. Paper metadata and quotes are in the IronSpec/PK entries above; sizes below are the PK paper's combined implementation/verification sizes, not separate proof counts.
 

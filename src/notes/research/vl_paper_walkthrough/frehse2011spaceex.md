@@ -53,14 +53,6 @@ For a transition with guard `G` and target invariant `I+`, compute `PostAsgn(X �
 
 Each segment can spawn a successor flowpipe. To limit growth, process the sets in order, adding the next set to the current hull while their support-value spread in every template direction is at most a chosen fraction `c` of the spread across all original sets. For sets `P1,…,Pz`, the spread in direction `l` is `max_i ρ(l,Pi) − min_i ρ(l,Pi)` (equation 20, p. 390). The paper considers template hulls, which are fast but coarser, and convex hulls, which are more precise but slower. They can be combined. In the eight-variable oscillator example, 57 sets can take the first transition; combined template clustering `cTH = 0.3` and convex clustering `cCH = 1` takes 3.64 seconds without a noticeable accuracy loss in that example (p. 390). Inference: this runtime and accuracy observation does not establish exactness.
 
-## evidence, limits, and VeruLaw use
-
-Table 1 reports a full fixed-point computation for a 198-variable filtered oscillator with box constraints: 7,822.5 seconds, 511 MB, and 57 iterations (p. 391). Its dynamics are only weakly coupled. The helicopter example combines an eight-dimensional plant and a twenty-dimensional controller; Tables 2–3 compare approximation models and time steps (pp. 392–393). At requested error 0.1, the new variable-step method takes 2,943 steps and 31.2 seconds, versus 3,418 steps and 26.6 seconds for an ideal fixed step. Thus fewer steps do not always mean less runtime.
-
-Proofs are supplied in a separately linked appendix (p. 381); that appendix is not part of the extracted paper checked here. Experiments illustrate scalability rather than prove termination or practical efficiency for arbitrary hybrid systems. The authors identify automatic selection of suitable template directions as further research (p. 394).
-
-Inference: for VeruLaw, the reusable ideas are containment invariants, delayed representation conversion, accumulated error budgets, and explicit precision/performance tradeoffs. A Verus implementation could specify set membership and prove preservation of containment across propagation, conversion, intersection, and clustering. Continuous mathematics, matrix exponentials, numerical error, and model-to-controller correspondence require separate justification. This paper supplies neither a Rust implementation nor Verus proofs.
-
 ## techniques for the catalog
 
 - affine hybrid automata: combine discrete transitions with continuous affine dynamics and bounded convex inputs
@@ -69,5 +61,3 @@ Inference: for VeruLaw, the reusable ideas are containment invariants, delayed r
 - interpolation error bounds: intersect forward and backward approximation errors
 - accumulated error adaptation: compute input and interval sequences with separate time grids and shared error tolerance
 - transition clustering: replace groups of successor sets by template or convex hulls to reduce flowpipe growth
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "In our error calculation, we do not bound the error introduced at each step, but the overall error introduced since the beginning of the current continuous evolution."): read the complete paper and study; checked quotations, model assumptions, technique steps, numbers, section and printed-page references, and catalog entries; corrected transition-label terminology, completed a quotation, clarified the interpolation and clustering steps, marked an accuracy conclusion as inference, removed prior-edit history, and recorded link provenance; did not check the separate proof appendix, cited works, implementation, reproduce experiments, or independently verify the fetch-record link.

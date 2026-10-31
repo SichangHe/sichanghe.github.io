@@ -8,8 +8,6 @@ The paper addresses a claim-scope gap: kernels often state an operation and data
 
 The paper reports motivating measurements from prior work, including 87,840 model variants executed across five platforms, model-level divergence of 5.1% on Huawei and 14.1% on Apple against NVIDIA, 1,700 approximately silent out-of-bounds cases on AMD, 9.15% accuracy variance across runtime configurations, and a 37.9% throughput cost for deterministic FlashAttention-3 backward passes. These are cited empirical inputs, not measurements performed by this paper (Sections 1 and 4, PDF pp. 1, 9).
 
-Inference: For VeruLaw (VL), the useful artifact is a disciplined way to turn an informal kernel requirement into an explicit specification and an executable falsification plan before attempting a Verus proof. The paper's language is not itself a proof system: “A contract is a written artifact, not a Coq development.” (Section 3.1, PDF p. 5.)
-
 ## technique 1: eight-part kernel contract
 
 What it is. A contract contains: (1) identifier, (2) scope, (3) precondition, (4) postcondition, (5) tolerance, (6) reference oracle, (7) measurement protocol, and (8) violation signature (Section 3.1, PDF p. 5). The grammar requires these fields in a fixed skeleton; Appendix A makes the skeleton extensible at identifier positions.
@@ -42,7 +40,7 @@ How to apply it. Construct the baseline first (for example, a zero-returning mat
 
 Verus form. Inference: encode the good implementation's mathematical behavior as the proved function and write a lemma or test harness whose counterexample model represents the bad behavior. The baseline/bad/good distinction is an evaluation design, not a Verus keyword. Keep any `external_body` assumptions restricted to genuinely external measurements; do not mark the function under verification as external.
 
-Evidence and limits. The paper calls the bad candidate the “calibration anchor” and says that failure to distinguish bad from good means the contract or protocol is mis-specified (Sections 3.4 and 5.1, p. 7, 13). Inference: this directly guards VL against tests that reward agent-written code for passing only easy examples.
+Evidence and limits. The paper calls the bad candidate the “calibration anchor” and says that failure to distinguish bad from good means the contract or protocol is mis-specified (Sections 3.4 and 5.1, p. 7, 13).
 
 ## technique 3: twelve contract classes
 
@@ -52,8 +50,6 @@ The classes are grouped into four families (Section 4, PDF pp. 8–12).
 * Ordering and determinism: C-ORD-01 bounds reduction-order error by `N * eps(P) * max|x|`; C-ORD-02 declares BITWISE, RUN_TO_RUN, or NONE for atomic operations; C-ORD-03 checks collective results across rank counts and overlap schedules.
 * Compiler-induced: C-CMP-01 checks fused versus sequential numerical equivalence; C-CMP-02 checks autotune schedule invariance; C-CMP-03 checks shape-polymorphism over held-out shapes.
 * Exceptional values: C-EXC-01 declares NaN/Inf propagation, masking, or raising; C-EXC-02 declares out-of-bounds RAISE, CLAMP, ZERO, or UNDEFINED behavior.
-
-Inference: A VL catalog entry can use each class as a reusable review checklist, while the Verus specification should select only classes that can be modeled for the target Rust abstraction. Floating-point bounds, GPU scheduling, and hardware exceptions need explicit assumptions or test evidence in addition to functional proofs.
 
 ## technique 4: contract-derived tests and trace discipline
 
@@ -79,19 +75,11 @@ Case study 2 maps Sakana/robust-kbench reward hacking to C-CMP-03. The contract 
 
 Case study 3 maps AMD silent out-of-bounds acceptance to C-EXC-02. The test injects in-range and out-of-range indices and compares behavior with RAISE, CLAMP, ZERO, or UNDEFINED. Approximately 1,700 cases matched none of these policies on AMD (Section 6.3, PDF pp. 20–21).
 
-Inference: For VL, these mappings suggest adversarial tests for agent-written Rust: held-out shapes, boundary magnitudes, NaN/Inf inputs, and explicit invalid-index policies should accompany Verus contracts.
-
 ## what is proved, measured, and trusted
 
 The paper measures the operational cost and sensitivity of its randomized checker and defines testable contract protocols. It does not prove all twelve classes, prove the reference implementations, prove full training-run correctness, or establish a certification body. It explicitly leaves full training correctness, distributed-training contracts, within-SKU variance, and compiler-internal contracts out of scope (Section 8.2, PDF p. 22).
 
-Inference: The trusted base for a VL adaptation includes the Verus verifier and solver, Rust compilation and proof erasure, the stated mathematical model, external libraries, hardware, measurement harness, and the correctness of the contract itself. Verus can reduce the implementation-proof gap for a modeled Rust checker; it cannot make an unstated kernel requirement correct.
-
 The paper's agent contribution estimate is 50–60% for porting, shape enumeration, and tolerance boilerplate, while humans retain tolerance calibration, oracle validation, and edge-case discovery (Section 5.4, PDF p. 14). Inference: this indicates a substantial but bounded threat from agent-written verified Rust: agents can automate scaffolding and checks, but a bad contract or trusted oracle can still certify the wrong behavior.
-
-## what VL should not redo
-
-The paper already supplies an eight-field contract skeleton, twelve named classes, calibration protocol, trace schema, version-diff policy, and three incident mappings. Inference: VL should reuse these as requirements and test-design patterns rather than inventing another generic checklist. The paper also identifies open problems—contract composition, versioning theory, adversarial verification beyond sampling, and distributed-training contracts (Section 8.3, PDF p. 23)—that remain genuine research gaps.
 
 ## techniques for the catalog
 
@@ -103,4 +91,3 @@ The paper already supplies an eight-field contract skeleton, twelve named classe
 - batched Freivalds checking — batch randomized matmul checks into three skinny matmuls and report overhead and detection denominators with their hardware settings
 - held-out-shape adversarial testing — test the declared shape class outside benchmarked inputs to expose hardcoded or reward-hacked kernels
 - explicit exceptional policies — declare and test NaN/Inf and out-of-bounds behavior as RAISE, CLAMP, ZERO, masking, propagation, or documented undefined behavior
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

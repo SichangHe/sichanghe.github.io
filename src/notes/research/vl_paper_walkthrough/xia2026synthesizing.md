@@ -72,8 +72,6 @@ Inference: A semantic feature can be wrong while remaining executable, and a Ver
 
 The paper trains Random Forest and AutoSklearn selectors with five-fold cross-validation and also reports AutoFolio and LLAMA (Section 4.2, p.6). It compares Single Best and Virtual Best references, expert mzn2feat, all released trans2feat variants, and ten independent LLM2feat syntheses. This protocol prevents a single favorable run from standing for the method. The paper evaluates feature correlation, importance above a 0.001 threshold, accuracy as top-feature count grows, and best/mean/worst across runs (Sections 4.3–4.7, pp.7–9).
 
-Inference: For VL, use the same separation between synthesis and downstream utility: prove the extractor’s contracts first, then measure selector quality on held-out instances with denominators and model settings attached. Do not treat selector accuracy as evidence that the feature semantics are correct.
-
 The paper’s scope is specific. Extractor synthesis adds less than one minute while solver runs can last 20 minutes per instance (Section 4.6, p.8). It does not show that generated features transfer to unseen problem families, that neural baselines are semantically interpretable, or that feature importance proves causation. Inference: the product risk is moderate: executable, inspectable generated programs are easier to audit than opaque embeddings, but a specification gap or data-distribution shift can make a verified extractor select a poor solver.
 
 ## what is proved, measured, and trusted
@@ -82,10 +80,6 @@ Measured: script success rates by backend, synthesis cost and tokens, feature co
 
 Inference: A Verus product should make its trusted parser, model interpretation, and feature specification explicit, and then use proof-carrying extractors as the acceptance boundary. Inference: check–fix–verify is a reusable generate-then-check loop, but the verifier must be independent enough that generated code cannot redefine what counts as a valid feature.
 
-what VL should not redo
-
-Inference: VL should not redo opaque embedding-based feature engineering as its main path; this paper already shows inspectable, problem-specific programs can outperform those baselines on three tasks. The reusable work is typed intermediate representations, deterministic checks, repair feedback, feature contracts, and run-level denominators.
-
 ## techniques for the catalog
 
 - check–fix–verify synthesis — repeatedly clear, insert, validate, execute, and repair a complete extractor until it produces the required vector
@@ -93,4 +87,3 @@ Inference: VL should not redo opaque embedding-based feature engineering as its 
 - solver-aware feature engineering — add tightness, propagation, constraint-family, and domain metrics correlated with solver behavior
 - inspectable fixed-shape output — require exactly 50 named features and a methodology description for downstream selection
 - multi-run selector evaluation — compare baselines, all independent syntheses, and valid-run denominators with held-out accuracy and rank
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -10,8 +10,6 @@ The paper identifies two contributions: “Implementing algorithms in Haskell to
 
 The evaluation covers chapter 3 of Mathematical Proofs by G. Chartrand, A. D. Polimeni, and P. Zhang. The paper reports, “Out of the 62 statements contained in the chapter, GFLean can parse and formalise 42 statements with a minor rephrasing of the input.” (section 1, PDF p. 2). Appendix A, PDF pp. 12–17, supplies those 42 statements, rephrased inputs, and outputs. The remaining 20 require lexicon expansion and support for phenomena such as postfix quantification and donkey anaphora (section 1, PDF p. 2). This is coverage after rephrasing, rather than a reported proof-success rate.
 
-Inference: the reusable idea for VL is a grammar-constrained front end followed by explicit AST transformations. Applying it to Rust or Verus would require a new grammar and target translation; this paper supplies neither.
-
 ## technique: grammar-controlled parsing into an AST
 
 What it is. A GF grammar contains one abstract syntax and at least one concrete syntax. The abstract syntax defines linguistic categories and constructors; concrete syntaxes specify how their trees become strings. The paper explains, “For translation, the abstract syntax acts as a bridge between the various concrete syntaxes.” (section 2.2, PDF p. 3).
@@ -66,19 +64,9 @@ Verus form. Inference: give each lexicon entry an explicit specification meaning
 
 Evidence and limits. The reported result remains 42 of 62 textbook statements with minor rephrasing, with no repeated-run analysis or confidence interval. Appendix A also reports two parse trees and two outputs for Theorem 3 and says a single parse tree would be preferable (PDF p. 13). Thus, the grammar does not always produce a single parse tree.
 
-## what is proved, trusted, and relevant to VL
-
-The examples end in `sorry`; GFLean generates statements rather than proofs. Its interaction with the target is limited: “Continuing the discussion about dynamicity from Section 4, GFLean nowhere communicates with Lean.” (section 5, PDF p. 10). Inference: these examples establish neither Lean acceptance nor correctness of the source-to-target translation through proof checking.
-
-The paper states, “All the definitions need to be hard-wired in the grammar.” (section 4, PDF p. 10). GF grammars cannot be extended at runtime, preventing users from introducing new definitions for translation. Singular and plural variants are conflated, allowing the input `Assume x are an odd integers.` (section 4, PDF pp. 9–10). Reimplementation in Lean is discussed as a possible way to access its environment, not an implemented solution (section 5, PDF p. 10).
-
-Inference: VL could reuse explicit intermediate trees and normalization, then connect the resulting specifications to Rust state and library contracts. Correctness of a generated contract and correctness of an implementation against that contract are separate obligations. This paper illustrates restricted coverage and a proposed way to inspect meaning; it does not measure either obligation for agent-written Rust.
-
 ## techniques for the catalog
 
 - GF abstract/concrete grammar — define typed constructors and separate their tree structure from string forms
 - AST normalization — assign fresh names, unify variables, expose quantifiers, and rewrite adjective modifiers before target translation
 - typed lexical translation — map noun and adjective categories to target types, functions, and relations
 - proposed rule/neural round trip — verbalize a neural formalization with rules so a user can compare meanings
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Rule-based systems designed for linearizing formal expression to natural language text can be used to help the user filter out the wrong translations without putting a domain expert in the loop."): read the entire paper including both appendices; checked quotations, counts, section and PDF page references, translation steps, limitations, and the arXiv identifier; corrected quotations and page references, separated the toy grammar from GFLean's two-grammar pipeline, distinguished the proposed round trip from implemented features, and marked recommendations as inferences; did not run GFLean, check outputs in Lean or Verus, or independently verify the textbook and cited works.

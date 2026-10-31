@@ -18,7 +18,7 @@ How to apply it. The paper's stated workflow is:
 4. Feed proof failures, counterexamples, and satisfiability results back into generation to repair or constrain the candidate (section 2.2, PDF p. 5).
 5. Record links between the original requirement, each generated annotation, and its revision history for expert review (section 2.2, PDF p. 5).
 
-The paper says these steps are an intended architecture; it does not give a complete prompt, repair algorithm, termination criterion, or deployed VERIFYAI implementation. Inference: a VL implementation would let an LLM propose Verus `requires`, `ensures`, loop `invariant`s, and proof steps, then compile and verify each candidate before accepting it. Inference: failed verification should be returned as structured diagnostics, while the accepted Rust/Verus source and the requirement should be linked in a trace record. Verus syntax and the exact repair loop are not specified by this paper.
+The paper says these steps are an intended architecture; it does not give a complete prompt, repair algorithm, termination criterion, or deployed VERIFYAI implementation.
 
 Evidence and limits. Section 2.4 summarizes a controlled experiment on a filtered CASP subset for C/ACSL annotation generation. It compares five approaches: a rule-based Python script, Frama-C's RTE plugin, and DeepSeek, GPT-5, and OLMo3. All generated annotations are checked with Frama-C WP and multiple SMT solvers. The paper reports “verification success rates remaining in the range of 83–95% across models” (section 2.4, PDF p. 6). This is a percentage over the experiment's generated annotations, but this paper does not state the number of CASP programs, annotations per model, solver-by-solver denominators, or timeout counts; those denominators must be taken from Beg et al. (2026a), not inferred here. It also says rule-based and RTE approaches are consistent for safety properties, while LLMs produce additional functional constraints (section 2.4, PDF p. 6). Inference: the result supports using LLMs as candidate generators, not treating their output as proof. The paper's own threat is instability: small prompt changes can materially change ACSL/JML output, and solver configuration and path coverage affect reliability (section 5, PDF pp. 13–14).
 
@@ -40,7 +40,7 @@ How to apply it. The paper's three explicit reuse steps are:
 2. Semantic enrichment assigns each node an embedding encoding textual and symbolic meaning (section 3.2, PDF p. 8).
 3. Approximate graph matching finds alignment candidates by combining structural similarity with embedding-level proximity (section 3.2, PDF p. 8).
 
-After alignment, the paper proposes graph-based adaptation: apply rewriting, insertion, deletion, or refinement rules, then check that relational invariants survive (section 3.2, PDF pp. 8–9). It gives no implemented matcher, thresholds, benchmark denominator, or measured precision/recall. Inference: a VL tool could retrieve a previously proved Verus lemma or invariant as a candidate, require exact type and dependency compatibility, translate names and types, and rerun Verus on the adapted artifact. A failed proof would reject the transfer; embedding similarity alone would never be evidence of correctness.
+After alignment, the paper proposes graph-based adaptation: apply rewriting, insertion, deletion, or refinement rules, then check that relational invariants survive (section 3.2, PDF pp. 8–9). It gives no implemented matcher, thresholds, benchmark denominator, or measured precision/recall.
 
 ## technique 4: refinement-preserving artifact adaptation
 
@@ -51,8 +51,6 @@ Inference: in Verus, adaptation would mean changing a candidate lemma, predicate
 ## technique 5: semantic interoperability with UTP and Institutions
 
 The paper proposes UTP's relational calculus and the Theory of Institutions as a common semantic layer. UTP supplies healthiness conditions and refinement theories; Institutions describe a logic using signatures, sentences, models, and a satisfaction condition. The paper quotes the institutional maxim “Truth is invariant under change of notation” (section 4.1, PDF p. 11). The intended method is to check AI-generated predicates against healthiness conditions, interpret behavior through design theories, and transport specifications through institution morphisms (section 4.2, PDF pp. 12–13). Mechanised UTP work in Isabelle/UTP is cited as prior evidence, but this paper supplies no new proof or benchmark.
-
-Inference: this suggests a VL knowledge layer in which a Verus contract is associated with a language-independent meaning before any translation to another verifier. Verus itself is not an Institution implementation in this paper, so a concrete mapping, soundness theorem, and translation rules remain open work. The useful constraint is semantic: transfer is acceptable only when satisfaction or refinement is preserved, not merely when syntax looks similar.
 
 ## what is proved, measured, and trusted
 
@@ -67,5 +65,3 @@ Inference: the threat to a product that lets agents write verified Rust is subst
 - embedding-enriched graph matching — combine LLM semantic embeddings with structural and type constraints to retrieve candidate correspondences
 - graph-based artifact adaptation — rewrite aligned artifacts and check preservation of relational invariants before reuse
 - semantic interoperability — use UTP healthiness/refinement and Institution satisfaction-preserving mappings as language-independent constraints
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

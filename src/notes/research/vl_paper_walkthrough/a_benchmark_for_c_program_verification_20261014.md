@@ -26,7 +26,7 @@ steps from the paper. For each program, verify absence of undefined behavior and
 
 Verus form. Inference: score each Rust case on memory safety/defined execution, functional postconditions, verification of the actual compilable Rust, and preservation of production code. A Verus model or extracted spec should receive a penalty if it omits the implementation. Treat `requires`/`ensures`, `invariant`, and proof functions as annotations, but count changing executable code or replacing unsafe code as a fidelity loss. Report the exact Verus commit, solver, timeout, and whether external bodies or axioms remain trusted.
 
-evidence and limits. The score has a fixed denominator of 100 possible points across 25 programs, but the authors intentionally leave what counts as “same” open (Section 1, p. 2). The authors also write that "if someone wants to award him- or herself a certain number of points for a verification effort, they should feel free to do so" (Section 1, p. 2). Inference: scores therefore require a written rationale and are not fully objective, and this is useful for VL's product comparisons only if the scoring rubric is frozen before results and every trust exception is disclosed.
+evidence and limits. The score has a fixed denominator of 100 possible points across 25 programs, but the authors intentionally leave what counts as “same” open (Section 1, p. 2). The authors also write that "if someone wants to award him- or herself a certain number of points for a verification effort, they should feel free to do so" (Section 1, p. 2).
 
 ## technique 3: require an explicit implementation model, preconditions, and postconditions
 
@@ -36,7 +36,7 @@ steps from the paper. First declare restrictions on the C implementation, such a
 
 Verus form. Inference: put input restrictions in `requires`, functional behavior in `ensures`, loop facts in `invariant`, and implementation assumptions in explicit spec types or axioms. Use checked arithmetic or prove bounds before multiplication. For floating point, model operations with the verified library available to the project and state rounding assumptions; do not silently replace executable floats with reals. Record whether an environment model is proved, axiomatized, or external.
 
-evidence and limits. These conditions make a proof reproducible, but the benchmark does not mandate one specification, so two tools can prove different contracts. For `cat1` the paper says "How the functional behavior of this program should be specified is not addressed in this paper." (Section 3.1, p. 8), illustrating that I/O correctness needs a chosen trace or stream model. Inference: VL should not treat a passing proof of an underspecified contract as evidence of product correctness.
+evidence and limits. These conditions make a proof reproducible, but the benchmark does not mandate one specification, so two tools can prove different contracts. For `cat1` the paper says "How the functional behavior of this program should be specified is not addressed in this paper." (Section 3.1, p. 8), illustrating that I/O correctness needs a chosen trace or stream model.
 
 ## technique 4: use progression from toy code to real library code
 
@@ -46,11 +46,7 @@ steps from the paper. Start with `fac1`, a loop multiplying 1 through `n`; then 
 
 Verus form. Inference: mirror the progression in separate crates or modules so each stage can reuse verified lemmas while adding one semantic feature. Begin with pure arithmetic and slices, then add recursive specs, ownership-linked structures, external library contracts, and unsafe system interfaces. Keep the small cases as regression tests; a failure in a large case should identify the newly introduced feature rather than erase the baseline.
 
-evidence and limits. The paper provides source listings and feature motivations, but it does not report completed verification results for a particular tool; it is a benchmark proposal. The only pointer to prior verification work is that "something close to that one already has been done, see the slides of [23]" (Section 8, p. 31, about proving program 3 in a framework). Therefore no success percentage or time denominator can be attributed to an evaluated verifier. Inference: CBench's value for VL is experimental design and comparable reporting, not evidence that a Verus port has succeeded.
-
-## proved, measured, trusted, and product threat
-
-The paper defines a 25-program suite and a 100-point scoring rule; it does not prove the programs correct or benchmark a named verifier. Measured facts are program counts, approximate lines, feature coverage, and scoring weights. Trusted inputs include the chosen C implementation model, compiler/library semantics, floating-point assumptions, and each submission's specification. Inference: existing work already supplies a concrete benchmark structure and should prevent VL from inventing an uncalibrated showcase suite. Inference: the product threat is evaluation theater: an agent may earn a high score by proving a model, modifying code, or choosing weak preconditions. Requiring all four points and publishing assumptions makes that failure visible.
+evidence and limits. The paper provides source listings and feature motivations, but it does not report completed verification results for a particular tool; it is a benchmark proposal. The only pointer to prior verification work is that "something close to that one already has been done, see the slides of [23]" (Section 8, p. 31, about proving program 3 in a framework). Therefore no success percentage or time denominator can be attributed to an evaluated verifier.
 
 ## techniques for the catalog
 
@@ -58,4 +54,3 @@ The paper defines a 25-program suite and a 100-point scoring rule; it does not p
 - four-part verification score — separately score defined behavior, functional correctness, valid source, and unchanged implementation
 - explicit assumptions and contracts — state implementation restrictions, input preconditions, and behavioral postconditions
 - staged toy-to-production evaluation — progress from fragments through functions and files to multi-file library code
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The count of free threads is kept in the variable available for which a mutex is used when updating it."): I read the whole paper text and checked every quotation, number, section and page reference, the program counts per family, line counts, scoring rules, and the technique steps against it; I changed the family counts (six factorial, not five), the line range (2 to about 6,000), the cat1 and IEEE 754 wording to match the paper, added quotes for fac3 and the Section 8 spectrum, and marked the staged-progression step and the product-threat sentence as Inference; I did not check the GitHub repository, the cited references, or the Verus mappings beyond marking them as Inference.

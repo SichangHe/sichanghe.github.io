@@ -95,15 +95,9 @@ Inference: In Verus, prove the intended contract and retain fuzzing as a bug-fin
 
 The paper reports two concrete failure modes. GPT-4o repeatedly missed value swaps in three existential programs; JQF could not generate inputs satisfying their complex candidate conditions, so invalid candidates passed validity-fuzzing (§4.5.1, PDF pp. 10–11). O4-mini generated a condition valid for mathematical arithmetic but invalid under Java integer overflow; validity-fuzzing exposed the flaw and the model repaired it in every iteration (§4.5.2, PDF p. 11). Inference: A phase that finds no counterexample needs scrutiny when it has tested no satisfying states; arithmetic feedback must reflect the implementation language.
 
-## what is proved, what stays trusted, and product threat
-
-The paper measures semantic equivalence to manually derived WPs, stability over k=5 runs, and FG usage/success. It does not prove that fuzzing is exhaustive, that an LLM’s repair is weakest, or that unspecified `sort` behavior matches the intended contract. Inference: For VeruLaw, the reusable pattern is generate–execute–repair–recheck, with a Verus proof as the final prerequisite check for the fixed contract. Inference: The main threat is accepting a specification that is merely valid on sampled states or stronger than required; a product should report denominators, fuzz budgets, counterexamples, and proof status separately. Existing work already supplies the FG loop and benchmark methodology; VL should adapt its feedback boundary to Rust/Verus rather than claim random testing establishes formal weakestness.
-
 ## techniques for the catalog
 
 - initial contract generation — prompt an LLM to emit a Boolean precondition checker alongside unchanged program code
 - validity-fuzzing — execute randomly generated states satisfying a candidate and feed failures to a repair prompt
 - weakness-fuzzing — search states rejected by a candidate that nevertheless execute successfully, then remove unnecessary conditions
 - iterated fuzzing guidance — alternate bounded validity repair with weakness repair and retest after every change
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The ‘FG Usage’ statistics denote the min, max, and average number of programs where FG was employed in an attempt to direct the LLM in the task of WP generation."): checked all paper text, quotations, numbers, section/page references, prompts, fuzzing phases, and example repairs; corrected references, prompt wording, FG usage interpretation, and unsupported stopping-budget wording, added failure cases, and marked recommendations as inferences; did not reproduce experiments, inspect supplementary logs, or verify the proposed Verus adaptations.

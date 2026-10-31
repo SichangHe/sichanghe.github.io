@@ -52,5 +52,3 @@ Inference: for agent-written verified Rust, the threat is high at the specificat
 - bounded theorem proving: run LLM theorem provers with a fixed sample budget and validate returned proofs in the prover's kernel/REPL
 - retrospective aggregation: encode state sequences with a small LSTM to produce a trajectory score
 - score ensembling: multiply retrospective formal evidence with a prospective PRM score to select Best-of-N outputs
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While verification is conducted at a stepwise level, our method does not provide a precise reward score for each step due to the noise introduced by the current limitations of both auto-formalization and automated theorem proving."): checked all paper text, quotations, numbers, technique steps, section and PDF-page references; corrected quotations, page references, the paper link, training-data wording, and unsupported Verus details; distinguished reported percentages from inconsistent counts and marked conclusions as inferences; did not reproduce experiments or validate the implementation or Verus adaptations.

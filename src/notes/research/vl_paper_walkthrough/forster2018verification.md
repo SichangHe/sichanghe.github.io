@@ -7,8 +7,6 @@ Page numbers below are PDF pages of the arXiv v2 text (page 1 is the title page;
 ## result and scope
 Forster, Heiter, and Smolka formalise reductions among undecidable problems in Coq: `TM → SRH → SR → MPCP → PCP`, plus `PCP → CFP` and `PCP → CFI`. Their abstract says: “We formally verify several computational reductions concerning the Post correspondence problem (PCP) using the proof assistant Coq.” (Abstract, p. 1.) Their stated contribution: “Our reduction functions follow the ideas in the literature. The main contributions of the paper are the formal correctness proofs for the reduction functions.” (Introduction, p. 2.) They also say the decomposition `TM → SRH → SR → MPCP` “is novel” (Section 9, p. 15). The core of the work is finding the inductive invariants that textbook proofs omit.
 
-Inference: the lesson for VeruLaw is to specify transformations as total functions with a bidirectional correctness relation, then strengthen the statement until induction is possible. The paper uses constructive Coq lists and naturals, not Rust or Verus; all Verus mappings below are inferences.
-
 ## technique: constructive reduction as a function and iff specification
 
 What it is. A problem is a type `X` with predicate `p`; a reduction to `(Y,q)` is a function `f : X → Y` such that `∀x. p x ↔ q (f x)` (Section 2, p. 3). The paper notes that “the usual requirement that f is total and computable can be dropped since it is satisfied by every function in a constructive type theory” (Section 2, p. 3), so no separate computability proof is needed. Transitivity is proved once: “If p  q and q  r, then p  r.” (Fact 1, Section 2, p. 3.)
@@ -67,8 +65,6 @@ The paper proves correctness of each reduction function in Coq and reports devel
 
 Inference: threat to agent-written verified Rust is medium. The strongest protection is the iff specification and compositional proof chain; the main risks are an underspecified predicate, an incorrectly modelled external machine, or an unverified representation conversion. Agents can write a locally valid proof of a weak predicate, so review must check that the predicate matches the intended reduction.
 
-Inference: VL should not redo textbook undecidability reductions; it can reuse the invariant-discovery pattern for transformations between verified Rust representations. The paper provides formal PCP reduction proofs, inductive invariants, fresh-symbol facts, and three stated design choices (PCP without card positions, symbols as numbers, Post grammars instead of general context-free grammars; Section 9, p. 15).
-
 ## techniques for the catalog
 
 - constructive reduction specification — implement a total function and prove source predicate iff target predicate
@@ -76,4 +72,3 @@ Inference: VL should not redo textbook undecidability reductions; it can reuse t
 - freshness reasoning — generate fresh symbols and preserve non-membership through every transformation
 - compositional reduction chain — verify small reductions independently and compose them by transitivity
 - representation-aware formalisation — choose lists, naturals, or explicit alphabets according to the proof's construction and inversion needs
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The challenge of proving the correctness of the reduction function is finding strong enough inductive invariants that can be verified with canonical inductions."): read all 17 pages of the arXiv v2 text and viewed PDF pages 10 and 11 to confirm the string-reversal overlines; checked every quotation, section, lemma and theorem number, the line counts, and the technique steps against the text; changed all page references to PDF pages (the old ones did not match), added the string reversal in Fact 20 and the PCP→CFP rule, corrected "Lemmas 21–24" and "Lemmas 25–28" (24 and 28 are theorems), added the missing `x ⊆ Σ` hypothesis in Lemma 11, corrected the TM→SRH configuration description, removed the claims that the kernel checking is stated in the paper and that changing representation changes the invariant (no support), and marked remaining conclusions "Inference:"; did not check the Coq development itself, the cited literature, or any Verus claim (those are the study's inferences).

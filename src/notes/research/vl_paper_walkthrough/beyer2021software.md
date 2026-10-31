@@ -53,14 +53,12 @@ Inference: for agent-generated Verus Rust, record wall time and solver time sepa
 
 Use this when a single ranking must combine solved tasks and correctness. The SV-COMP 2021 schema gives +2 for a validator-confirmed True-correct result, +1 for a confirmed False-correct result, −16 for a false alarm, and −32 for a wrong proof; unknown or unconfirmed results score zero (Table 2, p.406). The paper notes: "Now score points are only assigned if the results got validated (or no validator was available)." (§2, p.407)
 
-Steps: define the expected property, classify the verifier answer, require confirmation where available, assign the table's points, sum per category, normalize meta-categories, and use successful CPU time as a tie-breaker (§2, p.407). Report alternative rankings as well: Table 9 ranks Correct Verifiers by errors per score point and Green Verifiers by joules per score point (§4, pp.413–415). Inference: VL should publish separate quality, proof-cost, failure-rate, and energy rankings rather than hiding unsoundness behind aggregate pass counts.
+Steps: define the expected property, classify the verifier answer, require confirmation where available, assign the table's points, sum per category, normalize meta-categories, and use successful CPU time as a tie-breaker (§2, p.407). Report alternative rankings as well: Table 9 ranks Correct Verifiers by errors per score point and Green Verifiers by joules per score point (§4, pp.413–415).
 
 ## what is proved, trusted, and already done
 SV-COMP proves or records only the tested property outcomes and confirmed witnesses under fixed resource limits. It trusts task specifications, expected labels, each verifier, each validator, BenchExec, the hardware energy meter, and the underlying language semantics. The report publishes repositories for tasks, definitions, tool-info modules, verifier archives, BenchExec, and witness format (Table 3, p.408), plus Zenodo artifacts for tasks, results, witnesses, and BenchExec (Table 4, p.408).
 
 The paper reports that the top three C-Overall verifiers had fewer than 2 per mille wrong results and that the Java-Overall winners had no wrong answers (§4, Correct Verifiers, p.414). Table 8's Overall ranking is CPAchecker 12,217 points with 9,835 solved tasks and 18 false alarms (no wrong proofs), PeSCo 12,208 with 9,743 solved and 19 false alarms, and UAutomizer 11,769 with 5,980 solved, one false alarm and one wrong proof (§4, Table 8, p.413). The figures are category-specific and must not be generalized to Rust.
-
-Inference: threat to a product of agent-written verified Rust is medium. The paper does not provide a Rust proof technique, but it makes unsoundness, reproducibility, independent replay, and denominator discipline unavoidable. VL should reuse witness validation, fixed-resource benchmarking, and artifact hashes; it should not redo the general competition protocol without adding Rust/Verus-specific task and witness semantics.
 
 ## techniques for the catalog
 
@@ -70,5 +68,3 @@ Inference: threat to a product of agent-written verified Rust is medium. The pap
 - reproducible resource control — pin machines, limits, versions, logs, hashes, and energy measurement
 - penalized scoring — reward confirmed results, penalize false alarms and wrong proofs, and score unknowns as zero
 - alternative rankings — expose correctness rate and energy per score point alongside aggregate quality
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Each tool was executed several times, in order to make sure no installation issues occur during the execution."): read the whole paper text (references only skimmed); checked every quotation, number, table value (Tables 2, 8, 9, 11 against the PDF page image for Table 8), section and page reference, and technique step; changed the false-alarm/wrong-proof attribution in Table 8, page references for the assume semantics and the 2 per mille claim, the "freeze" and "linter before validators" wording that the paper does not state, the prerun step, and the link (DOI from the paper text); did not check the cited earlier reports or the competition web site.

@@ -100,7 +100,7 @@ how to do it:
 3. run both under an initial free list `[r0, r1]` and force allocation failure for `t`
 4. observe final lists `[r0, r1]` versus `[r1, r0]`; therefore `move` is effectful and cannot be a contextual isomorphism for arbitrary types (Section 4.2, p. 207)
 
-Verus form. Inference: model `move` as a state transition with an explicit postcondition describing the new ghost order. Do not silently use commutativity of a sequence; prove only the permutation or order property required by the API. If VL needs only conservation of resources, a multiset contract may suffice; this is an application suggestion.
+Verus form.
 
 evidence and limits: the evidence is the two program examples, their different final free lists on allocation failure, and the contextual-isomorphism argument. It assumes destructor order is observable through the free list; real Rust may hide or expose different effects.
 
@@ -120,12 +120,6 @@ Verus form. Inference: treat this as a specification-model check for an ownershi
 
 evidence and limits: Theorem 13 establishes equality of the interpretations of a command and its reduct, not syntactic equality of the commands (Section 5, p. 210). The model is mathematical and resource-order specific; the authors leave richer presheaf constructions for the linear and move-enabled settings as future work (Section 5.1, p. 211).
 
-## what is proved, what remains trusted, and implications for VL
-
-The paper proves determinism, substitution, subject reduction, progress, ordered list preservation, linear permutation preservation, and the translated exception/destructor theorem. It reports no experimental measurements. The resource theorems concern closed programs returning purely positive, resource-free values; Theorem 11 additionally assumes a purely positive, resource-free exception type. Release is assumed never to fail. The translation is proved well typed, rather than merely assumed to preserve resource safety.
-
-The authors state the model’s scope explicitly: “Notice that no operation is given for interacting with resources: we are only interested in observing resource-safety properties of the program state arising from the (correct) use of new and delete.” (Section 1.5, p. 196). Inference: applying these results to VL would require separate justification for the resource API, its Verus contracts, and the connection to executable Rust. A possible application is an owned-handle API with explicit cleanup contracts and a ghost sequence or multiset proof covering `Result` error paths. The paper supplies no such implementation or proof.
-
 ## techniques for the catalog
 
 - allocation state monad — model resources as a linear free-list transformer and prove final-state preservation
@@ -135,5 +129,3 @@ The authors state the model’s scope explicitly: “Notice that no operation is
 - destructor and exception translation — compile cleanup and error paths into a linear core with established theorems
 - effectful move — represent ownership reordering as an explicit stateful operation
 - presheaf semantics — model ordered resource lists to validate admissible rules and sound reduction
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "It is not presented as a structural rule in the traditional way: it indeed performs an effect and does not commute with other rules."): checked all quotations, page and section references, theorem assumptions, technique steps, and the DOI; corrected page references, purely-positive result restrictions, translation details, and semantic equality, and marked application suggestions as inferences; did not independently reconstruct the proofs, check cited works, or implement or verify the proposed Verus encodings.

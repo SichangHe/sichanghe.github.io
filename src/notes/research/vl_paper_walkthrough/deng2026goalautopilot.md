@@ -8,7 +8,7 @@ Autopilot constrains an unattended agent's terminal claim. It compiles a natural
 
 The headline corpus has 3,150 cells: 70 tasks × 3 systems × 3 models × 5 seeds, with 20 trap and 50 SWE-bench Lite tasks across 11 repositories. Each cell has a 600-second cap and uses static-then-LLM auditing (Section 6.5, PDF p. 7). Table 3 reports Autopilot 10 fabrications/1,050 = 0.95% [95% bootstrap CI 0.38–1.62], Reflexion 85/1,050 = 8.10%, and StateFlow 263/1,050 = 25.05% (PDF p. 7). On SWE-bench Lite alone, Autopilot has 5/750 = 0.67% versus StateFlow 253/750 = 33.73%; paired difference −33.07 percentage points [−36.53, −29.73] (Section 6.5, PDF pp. 7–8). These are results for the reported models, budget, seeds, and audit configuration.
 
-The paper states: “The guarantee in Theorem 1 is conditional on three assumptions whose enforcement varies by implementation.” (Section 7, PDF p. 8). It describes A1 and A2 as implementation invariants checked by unit tests, while A3 remains a property of the compiled plan relative to the goal. Inference: for VeruLaw, DONE should require independently executed Verus verification whose contract entails the user goal; a model's statement that verification ran is insufficient.
+The paper states: “The guarantee in Theorem 1 is conditional on three assumptions whose enforcement varies by implementation.” (Section 7, PDF p. 8). It describes A1 and A2 as implementation invariants checked by unit tests, while A3 remains a property of the compiled plan relative to the goal.
 
 ## technique 1: durable FSM and stateless tick
 
@@ -42,14 +42,6 @@ For the scaled corpus, Table 3 reports 85 TRUE, 10 FAB, 928 STALL, and 32 UND fo
 
 The coverage cost is explicit: “Autopilot’s TRUE SUCCESS rate on SWE-bench Lite is 0%” (Section 7, PDF p. 9). Section 6.5 reports 745/750 honest stalls and five fabrications under the 600-second cap (PDF p. 8). Inference: for unattended verified-Rust deployment, surface stalls for repair and measure successful completion alongside fabrication.
 
-## trusted boundary, limitations, and what VL should retain
-
-The theorem requires sound runtime checks, enforced execution before DONE, and plan conditions that entail the actual goal. Textual coverage does not prove semantic A3 coverage. The paper states: “We empirically observe that the textual reduction is sufficient for the failure modes in our weak-planner regime, but offer no claim about tasks whose semantics cannot be tokenized.” (Section 7, PDF p. 8). Its ethics statement also limits the mechanism to user-chosen constraints rather than content safety (Section 10, PDF p. 9).
-
-The trap contrast is statistically null: Autopilot 1.67% versus StateFlow 3.33%, with paired difference −1.67 percentage points [−4.33, +1.00], n = 300 (Section 6.5, PDF p. 7). The paper also reports seven conservative blocks among 35 pilot tasks whose underlying executors would have produced oracle-passing artifacts (Section 7, PDF p. 9; Appendix C, PDF p. 19).
-
-Inference: VL should retain durable state, explicit stall status, and the requirement for independently executed verification before DONE. Its central remaining risk is a verified contract weaker than the user's actual goal. A model judge or a textual requirement checklist cannot close that gap alone.
-
 ## techniques for the catalog
 
 - durable stateless FSM — externalize goal, progress, prerequisite checks, and history; advance one atomically persisted tick at a time
@@ -57,5 +49,3 @@ Inference: VL should retain durable state, explicit stall status, and the requir
 - A3 coverage auditing — inspect textual and semantic coverage of concrete requirements before execution, with residual semantic risk
 - verified completion floor — allow DONE only after every prerequisite check on the path ran and passed
 - paired fabrication evaluation — compare true success, stall, underclaim, and fabrication against an independent held-out oracle
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The auditor was trap-positive validated against the three archived A3 fab cases from §6.4 (all three FAIL with the expected reasons) and trap-negative validated against the corresponding F1 autopilot runs (all PASS)."): checked the full text, quotations, numerical claims, page and section references, technique steps, tag, and arXiv link; corrected the theorem page, abridged quotation, bounded-state cost assumption, auditor implementation and ensemble descriptions, and limitation references; flagged inconsistent outcome counts and separated Verus inferences; did not inspect source code, raw benchmark artifacts, or reproduce experiments or Verus verification.

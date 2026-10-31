@@ -23,8 +23,6 @@ The reported procedure is:
 
 Input interpretation also matters. In §5.1 (pp.3–4), ChatGPT reads a JPG state diagram but struggles with another diagram drawn using Word shapes. The authors then supply its transition table, after which the conversion succeeds. Inference: the resulting score reflects both mathematical reasoning and assistance with reading the input.
 
-Inference: VL could use a Verus diagnostic as retry feedback and report first-attempt and revised compilation results separately. Human hints in this experiment do not establish that a model can repair a proof using compiler feedback alone.
-
 ## technique 2: question database with consistent grading and retries
 
 The database separates results by topic and question type (§3.2; Table 3). Its questions include definitions, properties, examples, and proofs. Two examples are “What is the formal definition of a Deterministic Finite Automata?” and “Give an example of a language that a DFA cannot model?” (§3.2, p.3).
@@ -39,23 +37,11 @@ The procedure is:
 
 The authors explain that vague feedback limits hints that might supply the knowledge being tested (§5.2, p.5). They also report retries that worsen an answer, including an ambiguous-grammar example that adds an unrelated derivation. Inference: retaining every attempt would expose regressions hidden by maximum scores.
 
-Inference: VL could separate executable constructions from proof obligations and distinguish the initial result from the best result under a fixed attempt budget. The paper's higher DFA scores do not isolate recall from reasoning: §5.2 explicitly notes that DFA questions were largely definitions, while regular-expression questions were largely practice problems.
-
 ## technique 3: change the initial prompt on a fixed question subset
 
 Section 5.3 (p.5) retests the same 30 NFA questions with the same rubric and a different initial prompt. The replacement asks ChatGPT to act as the preeminent computer science professor, provide intuitive and complete responses, reason methodically, and improve answers using feedback scored out of 4. One exact instruction is: “You will respond methodically and give your complete reasoning for every question.”
 
 The comparison proceeds by holding the question subset and rubric fixed, replacing the initial prompt, and comparing average scores. The reported NFA average rises from 3.23 to 3.53. True/false rises from 3.4 to 3.6, multiple choice from 3.3 to 3.9, and proofs from 3.0 to 3.1. The largest observed increase is for multiple choice. The paper does not report repeated runs or uncertainty estimates for this comparison.
-
-Inference: VL could compare prompts on a fixed proof set and attempt budget, using Verus results as the outcome. This study's prompt comparison alone does not establish that role instructions improve formal proof generation.
-
-## proof failures, trust, and relevance to VL
-
-Section 5.1 (p.4) reports failures to consider every string decomposition in pumping-lemma arguments, informal reasoning about bounded Turing-machine behavior, and an incorrect application of Rice's theorem. These are observations from the examined responses. The rubric explicitly allows a score of 2 for a somewhat correct answer containing a major flaw (§3.2, p.3); partial credit therefore does not certify a valid proof.
-
-Section 6 (p.5) identifies scoring accuracy as the largest possible validity threat. The first two authors assigned scores, and the third independently verified them after teaching the course eight times. The study uses human grading, not machine-checked proof validation. Its conclusion about passing is based on exams and the question database, not completion of every course assessment.
-
-Inference: for VL, fluent explanations and high partial-credit grades are weak evidence of proof correctness. Verus compilation supplies a prerequisite check, while specifications, trusted assumptions, and external bodies still require inspection. The paper supports studying feedback, question types, and concrete proof errors; it does not measure verified Rust generation.
 
 ## techniques for the catalog
 
@@ -63,5 +49,3 @@ Inference: for VL, fluent explanations and high partial-credit grades are weak e
 - balanced question database: compare topic/type groups using a shared rubric
 - score-only retry feedback: allow three attempts and report best-answer scores
 - fixed-subset prompt comparison: change the initial prompt on the same 30 NFA questions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In this case, we resorted to directly giving ChatGPT the transition table, after which it performed the conversion correctly."): checked the entire paper text, study quotations, numbers, section/page references, link, and technique steps; corrected question provenance, exam-score interpretation, retry protocols, source locations, and unsupported proof-review steps, and added the reported prompt comparison; did not reproduce experiments, audit underlying responses, or independently inspect the figure's diagrams.

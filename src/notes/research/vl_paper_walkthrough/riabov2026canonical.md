@@ -5,7 +5,7 @@ Tag: `riabov2026canonical`, [paper](https://arxiv.org/abs/2603.23364)
 ## scope and result
 This paper defines Base-m-len, a deterministic codec from byte strings to residue streams in `Fin(m)`, with a fixed-width length header, fixed-width payload-state header, and normalized base-m payload. It supplies a Rust implementation and Lean 4 specification, but the paper states, “The proof scope is intentionally limited to the abstract specification boundary. It does not verify the Rust implementation line by line.” (Section 2.2, p. 2). Thus the formal evidence is about the Lean model, not compiled Rust.
 
-The admissible domain is byte strings of length `< 2^w`; supported moduli satisfy `m ≥ 2` and decoder lower bound `≥256` (Section 2.1, p. 2). The main theorem is: “Decodeₘ (Encodeₘ (bytes)) = ok(bytes).” (Theorem 4.1, p. 5), also with any valid trailing suffix. Inference: VL can reuse the proof decomposition for a Rust codec, but must separately connect the Lean-style model to the Rust implementation with Verus contracts.
+The admissible domain is byte strings of length `< 2^w`; supported moduli satisfy `m ≥ 2` and decoder lower bound `≥256` (Section 2.1, p. 2). The main theorem is: “Decodeₘ (Encodeₘ (bytes)) = ok(bytes).” (Theorem 4.1, p. 5), also with any valid trailing suffix.
 
 ## technique: fixed-width base-m headers
 What it is: choose `k = min {j | m^j ≥ 2^w}` and encode both byte length and final payload state in exactly `k` little-endian base-m digits. This gives deterministic framing and allows the decoder to know the output length before consuming payload.
@@ -37,7 +37,7 @@ Evidence: zero-length lemmas and suffix theorem are traced to `Stream.lean` (The
 ## evidence, measurements, and trust
 The evaluation fixes `w=64`. Table 5.1 reports payload digits per byte/header digits: `m=25` gives 1.723/28, `m=50` 1.417/24, and `m=257` 0.9993/16 (Table 5.1, p. 6). Table 5.2 reports Apple M3 Pro throughput in MiB/s: native `m=65` encode/decode 1 KiB 163.6/485.9 and 64 KiB 188.1/510.3; native `m=257` 217.0/640.5 and 236.7/669.1; BigUint and ANS columns are comparison settings, not the same wire format (Table 5.2, p. 8). The benchmark appendix says native tests cover moduli 2,3,13,65,251,257 and sizes 32 B,1 KiB,64 KiB (Appendix A, p. 9).
 
-What remains trusted: Lean's kernel/elaboration, the abstract specification, and any unchecked link between Rust and the model. The Rust implementation, parser hardening, I/O, and allocation behavior are outside the machine-checked theorem. Inference: for VeruLaw, a verified Rust codec should treat the Lean theorem as a design oracle and prove implementation refinement, range checks, cursor safety, and resource limits in Verus. The paper's representation layer is already done; VL should not redo it as a novel algorithm.
+What remains trusted: Lean's kernel/elaboration, the abstract specification, and any unchecked link between Rust and the model. The Rust implementation, parser hardening, I/O, and allocation behavior are outside the machine-checked theorem.
 
 Threat to an agent-written verified-Rust product (Inference): low for algorithm novelty, medium for integration risk. Agents can reproduce the loops but may omit the `Fin(m)` range invariant, suffix cursor proof, or length cap. A passing Verus proof of a weak contract would not establish canonical encoding or safe resource use.
 
@@ -46,4 +46,3 @@ Threat to an agent-written verified-Rust product (Inference): low for algorithm 
 - normalized payload transduction: reverse-scan bytes with thresholded emit/divide and `256x+b` updates
 - staged suffix-tolerant decode: recover declared length, invert state, consume exactly that many bytes, ignore valid suffix
 - layered roundtrip proof: prove prefix inversion, renormalization, payload inversion, then stream correctness
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -56,8 +56,6 @@ The formal evidence is exhaustive model checking of the decomposed models. Hardw
 
 Inference: trusted assumptions include nuXmv, the CTL encoding, soundness of the abstractions, synchronized bit timing, SIC mode, and the authors’ transcription of the standard. On fast mode the authors expect it “to only lessen the impact of V1.2” and state “All other vulnerabilities remain intact” (§9, PDF p. 17); this is a reasoned expectation, not a checked result.
 
-Inference: for VeruLaw, the paper is a threat pattern for agent-written verified Rust protocol code. A product could inherit the same failure if it verifies only message-level contracts and omits bit timing, attacker nondeterminism, or cross-version states. The decomposition workflow is reusable, but its human-chosen boundaries and physical assumptions mean a Verus proof would still need explicit environment contracts.
-
 ## techniques for the catalog
 - ctl security properties — express safety and liveness requirements over protocol states and check them exhaustively
 - bit-precise attacker fsm — model every bus bit, node state, and nondeterministic attacker action
@@ -65,4 +63,3 @@ Inference: for VeruLaw, the paper is a threat pattern for agent-written verified
 - reachable-state saturation — iteratively discover all ending states with `AF F` checks
 - counterexample reconstruction — prepend predecessor-field traces until a complete idle-to-violation execution is obtained
 - attacker refinement — exclude the manually identified action from a violating model and rerun to enumerate distinct attacks
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "This is because the condition to exit bus re-integration as specified in the standard (receiving 11 consecutive 1s) is never met."): checked every quotation, number, section and page reference, CTL formula, and technique step against the paper text; changed page references (they had been off by one to three pages; PDF page = proceedings page − 2225), the two-node rationale, model-construction steps (added error-state initialization, CRC-detection nondeterminism, Eq. 1 soundness), Algorithm 1–2 details, the overclaim that the monolithic timeout establishes the need for both techniques, the duplicated timing evidence, added hardware and attack results, marked agent advice as Inference, and replaced the link with the publisher page printed in the paper; did not check figure contents garbled in the text extraction (e.g., Fig. 2 frame format), the reference list, or the released artifact at Zenodo.

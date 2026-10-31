@@ -30,15 +30,8 @@ The appendix gives an actionable three-phase algorithm. First allocate a tempora
 
 Inference: a possible Verus adaptation would represent `newrank`, `mask`, and partner mapping as pure specifications and prove that each round preserves the multiset (or ordered fold for noncommutative operations) of contributors. A state-machine transition can represent each send/receive; invariants state that every active rank's buffer equals the fold of its assigned subset. The paper's code-level rank arithmetic transfers, but MPI blocking and aliasing behavior need separate contracts.
 
-## what remains trusted and product threat
-
-The reported recursive-doubling equivalence proof has finite bounds; the wrapper assumes built-in datatypes and operators. The paper does not report verification of recursive multiplying. Its stated obstacle is that this algorithm uses nonblocking sends and receives that CIVL could not then model (p. 91).
-
-Inference: the result depends on CIVL’s built-in `MPI_Allreduce` semantics, the supplied function definitions, and the wrapper’s assumptions. The paper does not separately establish the correctness of that verification infrastructure. For verified Rust communication code, a corresponding concern is that a proof about modeled communication could miss differences in runtime transport, datatype layout, or progress. A Rust adaptation would need to connect those models to the implementation.
-
 ## techniques for the catalog
 
 - compatibility wrapper: replace private implementation calls with standard-library shims while preserving algorithm control flow
 - bounded symbolic equivalence: use symbolic sizes and values plus an assertion against a built-in reference model
 - recursive-doubling rank reduction: fold non-power-of-two ranks into a power-of-two core, exchange by XOR masks, then restore excluded ranks
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "After ensuring that the number of processes participating in the reduction is a power of two, the recursive doubling algorithm begins at line 67."): read the entire paper, including Appendices A–C, and checked quotations, numbers, page and code-line references, wrapper behavior, proof bounds, and driver steps; corrected page references, assertion placement, mask progression, the wrapper’s commutativity assumption, and unsupported claims, and replaced the link with the paper’s DOI; did not run CIVL, inspect the external repository, or verify the proposed Verus adaptations.

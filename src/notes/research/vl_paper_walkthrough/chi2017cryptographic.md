@@ -27,8 +27,6 @@ Inference: a Verus form should isolate each cryptographic primitive behind a spe
 ## technique: cryptographic protocol handling and assumptions
 For TLS, observed outputs include the client Diffie-Hellman parameter, IV, ciphertext, and tag; server-side session keys can be injected. The ephemeral private exponent may never be inferred, so the verifier emits the assumption that some exponent produces the observed public value and key. It therefore does not detect attacks violating that assumption, such as invalid-curve attacks (section 5.4, p. 183). No decryption routine is required for stream/counter modes: replay recovers plaintext once AES inputs become concrete.
 
-Inference: VL should represent key availability and cryptographic assumptions explicitly in contracts. A Verus proof can establish protocol-state invariants conditional on a `requires` clause for key derivation, but cannot claim end-to-end cryptographic soundness without proving the primitive and validating peer inputs.
-
 ## technique: deferred constraints and shared version choices
 Appendix C (pp. 193–195) adds lazy constraint generators for computations that need a known output to infer an input, such as CBC decryption. Register expressions for a pure function's inputs and outputs. When all designated inputs become concrete, evaluate the function and add the resulting equality to the path constraints. An inverse function can thus constrain the original function's input. These generators can also revisit calls skipped in earlier execution fragments, which the basic multipass procedure does not revisit (Section 5.2, p. 182). The implementation adds solver calls at sends to detect implied concrete values. Inference: verify each registered equality and its relation to the primitive; an arbitrary callback is another trusted component.
 
@@ -41,9 +39,6 @@ Section 3 (pp. 179–180) assumes a trusted server, a single-threaded client, an
 
 Inference: verification depends on faithful modeling of the client source and environment, instrumentation and stubs, the symbolic executor, constraint solver, session-key logging, cryptographic assumptions, and network trace. The approach requires a known implementation and configuration (Section 7.3, p. 188). Section 2 (p. 179) states, “As such, our techniques show nothing about the intrinsic security of the client (or server) implementation itself; nevertheless, they are helpful in detecting a broad range of common exploit types, as we show here.” Inference: a verified Rust monitor could reuse the path-witness and residual-assumption pattern, but soundness still depends on the modeled binary, environment, and cryptographic assumptions.
 
-## what VL should reuse
-Inference: VL could reuse path witnesses, constraint reconciliation, multipass replay until no new constraints arise, and explicit residual assumptions. A Rust adaptation could specify trace consistency and prove transition lemmas in Verus, conditional on the modeled client, environment, and cryptographic assumptions.
-
 ## techniques for the catalog
 - symbolic path exploration: fork unknown branches and retain paths consistent with observed messages
 - message reconciliation: constrain send states with concrete network bytes and reject contradictions
@@ -52,4 +47,3 @@ Inference: VL could reuse path witnesses, constraint reconciliation, multipass r
 - lazy constraint generation: add exact constraints when selected buffers become concrete, including inverse-function constraints
 - shared version choice: explore multiple known versions while preserving one consistent choice across a trace
 - concurrent path scheduling: explore candidate executions in parallel to reduce latency
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This lag coincided with an initial burst of traffic related to requests while loading the Gmail application."): checked all paper text including appendices, quotations, numbers, section/page references, technique steps, and limitations; corrected the source/binary description, conditional acceptance, prohibitive-function requirements, replay steps, incomplete quotation, cost page reference, and semidecidability statement, and marked adaptation conclusions as inferences; did not run the implementation or independently reproduce the experiments.

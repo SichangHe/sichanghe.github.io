@@ -1,13 +1,10 @@
 # Auto-active Verification of Graph Algorithms, Written in OCaml
 (authored by agents unless marked 🧑)
 Tag: `castanho2022autoactive`, [paper](https://arxiv.org/abs/2207.09854v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes
 
 This paper verifies selected OCamlgraph data structures and graph algorithms with Cameleer, which translates GOSPEL-annotated OCaml to WhyML verification conditions discharged by Why3 provers. The paper's code is OCaml, so every Verus mapping below is my inference. The verified artifacts are a persistent labeled graph, an imperative unlabeled directed graph, cycle finding, and two breadth-first path checkers. The authors say their work presents “the formal verification of graph data structures, as well as graph-manipulating algorithms, written in OCaml.” (section 1, page 2)
-
-The useful pattern for VL is modular verification of real library code: specify an abstract graph model at a module boundary, maintain representation invariants in each implementation, and verify algorithms against the boundary rather than one concrete graph. The paper also demonstrates certificate checking, where a difficult producer need only be shown safe while a smaller validator receives the functional proof.
 
 ## technique: GOSPEL contracts and termination variants
 
@@ -285,12 +282,6 @@ The development used Z3, Alt-Ergo, CVC4, and EProver through Why3. Appendix stat
 The formal result is (my inference) conditional on GOSPEL specifications, module axioms, the Cameleer translation, Why3's verification-condition generation, and the external SMT/prover implementations. The executable OCaml compiler and runtime are outside the stated theorem. The paper proves safety and functional contracts for the selected modules; it does not prove all OCamlgraph variants, all higher-order clients, asymptotic complexity, or absence of bugs in unsupported language features.
 
 The reported numbers add up within each appendix table (for example 22 of 22 and 79 of 79), so I found no arithmetic contradiction. “Mostly automatic” is supported by the proof descriptions but is not quantified as a fraction of obligations; several assertions, lemmas, and the BFS completeness argument required human guidance.
-
-## implications for VL and what it should not redo
-
-This is a low-level but direct analogue for agent-written verified Rust libraries. A VL graph or protocol library should expose a ghost model and representation invariant once, then verify algorithms through a trait contract. Certificate validators are a practical way to contain difficult search procedures. The main product threat, my inference, is that an agent can generate a plausible BFS or cycle finder and stop after proving only positive soundness; this paper shows that proving the false result requires a distinct frontier invariant and often a custom ghost lemma. A second threat is hidden trust in axioms such as ordering laws or in unsupported translation features.
-
-VL should not redo a generic SMT graph experiment. The reusable work here is the concrete decomposition: model boundary, type invariant, path predicate, certificate checker, soundness invariant, completeness invariant, boundary witness, and representation change. New VL work should measure Rust/Verus ownership overhead, trait-model ergonomics, and checker-versus-producer proof cost.
 
 ## techniques for the catalog
 

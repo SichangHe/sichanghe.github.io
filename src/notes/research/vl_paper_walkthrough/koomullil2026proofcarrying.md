@@ -13,7 +13,7 @@ How to apply the boundary and audit:
 3. An auditor parses the certificate, optionally recomputes the digest, runs the kernel at the declared type, runs transitive `#print axioms`, and checks that the set is contained in Ω plus the declaration's assumptions; then it compares the output with the certificate (audit protocol, Section 3.3, p. 11)
 4. Maintain evaluation evidence and scope predicates for each persistent tier-4 oracle; the paper names ParaphraseOracle, SignedSupportOracle, DecompositionOracle, StepConfidenceOracle, and IIDSamples (Section 3.5 and Table 2, pp. 12–13)
 
-The paper's `AttestedInterface` sketch has `coerce`, `digest`, and `declared_axioms` fields (Section 3.3, p. 11). Inference: a Verus implementation would represent the boundary with Rust structs, hash the serialized ML artifact, and verify a certificate in a small deterministic checker. Verus can prove properties of the checker and its state transitions, but the paper's Lean kernel and `#print axioms` mechanism would remain an external trusted component unless reimplemented and modeled. Inference: the named-oracle list is directly useful to VL because a Verus proof can expose which natural-language judgments remain assumptions instead of silently treating them as proved.
+The paper's `AttestedInterface` sketch has `coerce`, `digest`, and `declared_axioms` fields (Section 3.3, p. 11).
 
 The paper distinguishes four statuses: compiled (kernel checked and audited), specified (formal obligation not compiled), architecturally enforced (type signature), and conjectural (informal) (Section 2.1, p. 8). It reports a compiled artifact of 25 modules and 46 audited declarations: 17 axiom-free, 29 using Ω plus declared non-Ω assumptions, and zero `sorryAx` or `Lean.ofReduceBool` (Abstract, pp. 1–2; Table 5, p. 54). Build time is approximately 10 seconds with a warm Mathlib cache; typical per-certificate kernel re-check is under 100 ms and the full axiom pass under one second on the stated 2024-class laptop (Table 5, p. 54). Inference: these measurements indicate that checking a small certificate can be separated from expensive model execution, but they do not establish production throughput.
 
@@ -59,7 +59,7 @@ Model a pipeline as layers with gain `g_i` and margin `m_i`. The compiled two-la
 
 Inference: Verus can implement a recursive layer-list proof with a ghost perturbation bound and per-layer `requires`/`ensures`; the n-layer theorem is not yet compiled in the paper, so it should be treated as a proof obligation rather than imported as an established Lean theorem.
 
-The Universal Assurance Card is a specified Lean record carrying a verdict (Certified, Partial, Residue, or Abstain) and vectors for stability, evidence, calibration, scope, freshness, safety, residue, and provenance. Its `VerdictConsistent` predicate is decidable, but `AssuranceCard.lean` is flagged as not yet compiled (Section 10, pp. 37–38; Table 3, p. 15). A downstream application policy interprets the same vector differently by domain. Inference: a Verus card should be a serializable record with a verified consistency predicate and explicit policy inputs; because the paper's card is specified, VL must not claim a compiled proof until the checker exists.
+The Universal Assurance Card is a specified Lean record carrying a verdict (Certified, Partial, Residue, or Abstain) and vectors for stability, evidence, calibration, scope, freshness, safety, residue, and provenance. Its `VerdictConsistent` predicate is decidable, but `AssuranceCard.lean` is flagged as not yet compiled (Section 10, pp. 37–38; Table 3, p. 15). A downstream application policy interprets the same vector differently by domain.
 
 ## extended certificate catalogue
 
@@ -83,13 +83,11 @@ The paper's core five are supplemented by 17 catalogue types. It explicitly stat
 - multi-hop reasoning — compose certificates across explicitly linked retrieval or inference hops
 - meta-audit — audit the checker, build, and kernel hashes that validate the other certificates
 
-Appendix E also specifies, without compiled modules, semantic text types with role non-interference, conformal prediction, Markov-category uncertainty composition, spectral sensitivity, abstract interpretation, canonical-denotation decoding, dual-model cross-verification, and zero-knowledge proof-carrying outputs (Section 15, p. 59). Inference: these narrative extensions are design candidates for VL, not techniques whose compiled Verus form can be claimed from this paper alone.
+Appendix E also specifies, without compiled modules, semantic text types with role non-interference, conformal prediction, Markov-category uncertainty composition, spectral sensitivity, abstract interpretation, canonical-denotation decoding, dual-model cross-verification, and zero-knowledge proof-carrying outputs (Section 15, p. 59).
 
 ## what is proved, measured, and trusted
 
 The artifact proves arithmetic and structural properties: grounding emission soundness, MCR maximality/idempotence, embedding squared-drift bounds, Hoare trajectory safety, and the two-layer composition lemma (Section 13.4, pp. 53–56). It does not prove natural-language truth, corpus correctness, oracle faithfulness, calibration without held-out data, or the semantic adequacy of safety predicates. Persistent tier-4 oracles are explicitly evaluated but remain trusted assumptions (Sections 3.4–3.5, pp. 12–13).
-
-Inference: the main threat to a product that generates Verus Rust is false confidence at the boundary: a proof can be kernel-valid while a decomposition, NLI judgment, edit family, or safety predicate is wrong. The paper's auditable oracle inventory and per-call card provide a concrete integration pattern for VL; its short-query embedding failures and HC1 predicate-coverage failure warn against presenting soundness machinery as universal empirical protection. The paper's own comparison says adjacent work stops at model verification, empirical reliability, or generic proof infrastructure, while this architecture adds a certificate taxonomy for interfaces; VL should therefore reuse these interface patterns rather than redo generic embedding or NLI benchmarking (Section 2.3, pp. 9–10).
 
 ## techniques for the catalog
 
@@ -101,5 +99,3 @@ Inference: the main threat to a product that generates Verus Rust is false confi
 - compositional stability budget — propagate per-layer gains and margins to a pipeline-wide perturbation radius
 - universal assurance card — ship a decidable vector of verdict, evidence, stability, scope, safety, residue, and provenance fields
 - proof-of-sampling and oracle audit — commit sampling transcripts and maintain held-out evidence for persistent ML/human assumptions
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

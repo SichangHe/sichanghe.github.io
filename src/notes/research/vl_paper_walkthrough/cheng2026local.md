@@ -137,16 +137,6 @@ OPN uses one unknown predicate per neighborhood up to isomorphism, rather than p
 
 Inference: translate only the selected predicates to Verus and retain proof lemmas for omitted cases via symmetry. Do not assume fewer clauses means faster Verus verification; measure solver time and proof maintenance separately.
 
-## evidence, trusted assumptions, and VL implications
-
-Mosaic evaluates 30 programs over rings, lines, grids, bounded-depth trees, and binary trees. It solves 26 of 30 benchmarks; among those, OPN wins 16 times, DPG 8, their combination 13, and the unoptimized Algorithm 1 4, counting ties (Section 9, p. 15). Four benchmarks remain unsolved: one needs nonlinear reasoning, one has an encoding that is too large, and one line plus one ring benchmark fail in the CHC solver. A width-2 grid case can require 347 small programs even with optimizations (Section 9, p. 16). These are counts over the stated 30-program benchmark set, not percentages of a larger corpus.
-
-The formal theorems establish cut-off completeness, normalization equivalence, CHC correspondence, and downward-closure conditions. The conclusion states, “Hence, verification conditions do not require any axiomatization of the underlying topology family.” (Section 11, p. 17). The experiments use Z3/Spacer except for BT4, which uses Golem, on a MacBook Air M1 with 16 GB RAM. Generation and solving each receive a 600-second timeout. Mosaic's winning configuration is chosen by solve time, with generation time breaking ties (Appendix D.2, pp. 28–29). Section 9 also reports excluded benchmarks requiring richer invariants or ghost variables (p. 16).
-
-Inference: applying the method requires confidence in the topology and transition models, complete type enumeration, the solver, and any translation into another verifier. Existence of a bounded-width Ashcroft invariant limits completeness; it is not an assumption needed for soundness of a proof that is found.
-
-Inference: the method threatens VeruLaw only where agent-written verified Rust protocols have repeated local communication structure and a finite symmetry basis. It offers a principled way to synthesize bounded-width invariants and then discharge them in Verus. VL should not redo generic CHC invariant search; the valuable integration work is translating topology-local predicates into Verus state-machine invariants, measuring proof effort, and checking model fidelity for ownership, scheduling, and external resources.
-
 ## techniques for the catalog
 
 - finite-basis cut-off: reduce a width-k parameterized invariant to complete checks on a rank-(k+1) topology basis
@@ -157,4 +147,3 @@ Inference: the method threatens VeruLaw only where agent-written verified Rust p
 - redundancy-aware CHC generation: enumerate type-level constraints directly with Algorithm 1
 - complete optimizations: use one predicate per neighborhood and distinct process generators under the stated basis and modeling prerequisites
 - Inference: Verus adaptation could translate synthesized predicates into `spec fn` contracts and prove the fragment and topology-model obligations
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The output encoding is in SMT-LIB2 format and can be passed to a variety of existing CHC solvers [6, 20, 23]."): checked the full text including appendices, quotations, numbers, section/page references, and technique steps; corrected embedding direction, basis prerequisites, normalization, Hoare and CHC premises, syntactic satisfiability, closure assumptions, and optimization details; did not reproduce experiments, inspect the artifact, or validate the proposed Verus adaptations.

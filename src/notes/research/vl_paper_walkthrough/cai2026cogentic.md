@@ -44,17 +44,9 @@ When a candidate passes, exploration may continue for a stronger proof. A compar
 
 Inference: for Verus, keep the final module tied to the accepted version, verify it with Verus, and check that the written explanation matches its contracts.
 
-## evidence, trust, and VL threat
-The paper reports five open-problem results checked by domain experts (Section 3, p.5), but gives no aggregate success denominator or per-problem call counts beyond the orders reported in Section 1. Inference: five reported results do not establish a success rate or isolate the benefit of individual harness components.
-
-The prompts constrain what autonomous discovery means here. Appendix A.5 supplies the two-bidder mechanism and asks for its 1.5 price-of-anarchy bound (pp.16–17); Section 3.5 says the authors already conjectured that bound (p.10). For the general-bidder result, the paper says: "The authors had not previously studied the second part of the theorem and did not provide any hints to the system." (Section 3.5, p.10) Appendix A.5 also reports asking Gemini to modify the output proof to remove a mild assumption (p.16). The final companion papers include human work: "We checked the argument, wrote the exposition around it, and in some cases carried it further than the harness had." (Section 4, p.10)
-
-Inference: for VL, independent proof search, adversarial review, and reusable checked lemmas are useful design candidates. Their effectiveness for verified Rust is untested here. Natural-language acceptance would need to be replaced by machine verification of code and review of its specifications. The paper does not establish that its harness outperforms an equally funded single-agent system.
-
 ## techniques for the catalog
 - round-based direction allocation — assign independent agents to claims, counterexamples, and repairs with selective briefings
 - adversarial dual verification — accept a draft only after isolated and cross-draft criticism
 - verified ledger — extract, rewrite, and reverify useful lemmas while recording dead ends
 - process-level adaptation — use log trends to tune instructions and allocation without mathematical opinions
 - final consolidation audit — expand the accepted proof and verify the final manuscript against it
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The leading constant is optimal, since an anytime algorithm is in particular a fixed-horizon algorithm at every 𝑇 ."): read the full paper including references and Appendix A; checked quotations, numbers, section/page references, and harness steps; corrected the paper link and call-count page, clarified literature retrieval, marked extrapolations as Inference, and added prompt and human-contribution limits; did not independently prove the mathematical results, read companion papers, run the harness, or test the proposed Verus adaptations.

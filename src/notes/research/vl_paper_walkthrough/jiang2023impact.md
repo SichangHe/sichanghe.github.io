@@ -5,8 +5,6 @@ Tag: `jiang2023impact`, [paper](https://arxiv.org/abs/2302.05020)
 ## scope and evaluation principle
 This ICSE paper evaluates ten code language models (CLMs) and four deep-learning automated program-repair (APR) systems on Defects4J v1.2, Defects4J v2.0, QuixBugs, and a new HumanEval-Java benchmark. It uses Java bugs, developer tests, and manual inspection of plausible patches. The central evaluation rule is execution, not text similarity: “We run developer-written test cases to validate the correctness of generated patches to evaluate and compare the ten CLMs.” (Section I-A, p.2)
 
-Inference: VL should use the same separation between generated proof code and checked behavior. A Verus acceptance result is stronger than a textual similarity score, but a specification can still be wrong, so tests and specification review remain necessary.
-
 ## technique 1: create an uncontaminated benchmark
 
 What it is. Public code corpora can contain benchmark bugs or fixes. The authors manually convert HumanEval functions to Java and inject bugs, creating 164 single-hunk bugs that the evaluated CLMs had not seen during pretraining (Section III-B, p.4). They write: “HumanEval-Java contains 164 (single-hunk) Java bugs, varying from simple bugs like incorrect operator usage to complex logical bugs that require modification of several lines of code to fix.” (Section III-B, p.4)
@@ -65,12 +63,6 @@ What it is. The paper compares correct fixes against parameter count, GPU second
 
 Verus form. Inference: report verified-task count per model, wall-clock time per accepted proof, peak memory, solver time, and number of repair iterations. A model that proves more obligations but exhausts deployment memory may be unusable. Include failed and timed-out attempts in denominators.
 
-## what is trusted and what VL should learn
-
-Inference: the study trusts developer tests, manual patch inspection, the benchmark construction, model implementation, and the experimental scripts. Its threats section (Section VIII, p.11) names data leakage, the exclusion of Codex (a black box that cannot be fine-tuned), and the subjectivity of manually checking patch correctness; separately it notes that HumanEval-Java is mostly small programs (Section VII-C, p.10) and that it fixed one random seed to minimize variance (Section III-E, p.6). BLEU or textual similarity is rejected because “many patches with a good BLEU score are incorrect patches.” (Section I-A, p.1) Section VIII adds that RewardRepair’s CodeBLEU on HumanEval-Java (36.76) is higher than fine-tuned CodeT5’s (33.47) although it fixes 19 fewer bugs.
-
-Inference: existing VL work should not redo a generic ten-model APR leaderboard. It should reuse the paper’s executable validation, held-out benchmark construction, prompt ablation, training-size sweep, and cost reporting for Verus proof repair. The threat to agent-written verified Rust is substantial but bounded: a model can generate a plausible or vacuous proof, or overfit known obligations, yet Verus rejects code that fails its formal checks. Product safety still depends on immutable specifications, independent tests, leak-resistant benchmarks, and review of what the specification actually says.
-
 ## techniques for the catalog
 
 - leak-resistant benchmark: inject unseen faults into tested programs and keep intended fixes outside model training
@@ -79,4 +71,3 @@ Inference: existing VL work should not redo a generic ten-model APR leaderboard.
 - APR fine-tuning: train a general code model on buggy/fixed pairs with fixed optimization settings
 - data-size sweep: vary task-specific training volume and measure the peak before overfitting
 - cost reporting: pair correct-fix counts with parameter, time, and memory efficiency
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We fine-tune the CLMs to directly output the patched lines, the same as the output of DL-based APR techniques."): I read the whole paper text and checked every quotation, number, table value, percentage, section and page reference (pages located in the PDF) and the per-model prompt and fine-tuning steps; I changed the link (the old DOI 10.1145/3318162 is reference [2], Goues et al., not this paper; now the arXiv page from the paper's stamp), about ten page references, the prompt description per CLM, the threats list (the study had named model stochasticity and benchmark size as stated threats), the over-reach in the HumanEval-Java and 1,267% claims, and added Inference labels; I did not check the cited related papers, did not verify Table I or the Figure 10 values beyond the quoted numbers, and did not re-derive the paper's own percentages beyond those shown.

@@ -57,12 +57,9 @@ Inference: in Verus, split a large executable function into a helper with a prec
 
 Lean proves the quantifier-rewrite equivalence theorem under Equations 1–4. VerCors reports verification outcomes and times for OpenCL GPU kernels, Halide-generated CPU programs, and a Radio Telescope pipeline. The proof does not establish that the contracts express the intended algorithm, that OpenCL hardware obeys the model, or that Viper, SMT solvers, the VerCors translation, and the compiler are bug-free. The reported means use ten runs, but failed and timed-out runs are included in speedup calculations where the tables say so (Section 5, PDF p. 15). The abstract's average factor of 9 and the level totals (8.5 and 10.8) use different experiment subsets; they must not be combined.
 
-Inference: for agent-written verified Rust, the strongest threat is solver scalability around quantified array invariants and accidental alias assumptions, especially in parallel kernels. The paper already supplies a trigger-normalization strategy, disjointness encoding, immutable views, and proof decomposition; VL should reuse and adapt these ideas rather than rediscover equivalent heuristics. It does not solve nonlinear arithmetic, unsupported modulo patterns, specification mistakes, or trust in external code.
-
 ## techniques for the catalog
 
 - quantifier inverse rewriting — replace arithmetic-indexed quantified accesses with an equivalent single-index domain so `A[x]` can trigger SMT instantiation
 - immutable sequence modeling — encode never-written arrays as immutable mathematical sequences after releasing mutable permissions
 - uniqueness classes — assign pointer and field uniqueness numbers so non-overlapping arrays use separate heap fields
 - kernel-body extraction — verify a GPU body under its own contract to reduce solver context and proof time
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

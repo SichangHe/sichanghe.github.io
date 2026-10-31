@@ -62,8 +62,6 @@ Inference: an application workflow is to fix the address universe, record member
 
 Liveness assumptions depend on the protocol and execution model. The survey names “timeouts, message delivery, scheduler fairness, and, in some cases, randomization” (§2.2, p. 4), rather than requiring all of these in every proof. It claims, “No existing tool handles dynamic stake, liveness, and economic incentives in a unified manner.” (§5, p. 15) This is the authors' assessment, not an independently checked claim about every tool. Symbolic BMC scales only marginally further than the explicit checkers discussed above (§5). Most verified models target abstract TLA+ or Rocq specifications that diverge from production Go/Rust code; the authors write, “verified theorems do not guarantee implementation correctness, and protocol upgrades quickly invalidate verification artifacts.”
 
-Inference: VL should reuse the survey's property–method matrix and its separation of safety, liveness, economic, and implementation claims. Work already covered includes generic Raft/HotStuff safety proofs, explicit-state bug finding, threshold automata, and timer abstractions. A possible project-specific research direction is a refinement pipeline connecting a Verus Rust implementation to consensus-level properties, with explicit treatment of upgrades and liveness assumptions. The paper supplies no Verus results or evidence for ranking product risks.
-
 ## techniques for the catalog
 
 - inductive transition invariants — prove initialization and preservation of state, refinement, and safety properties
@@ -74,5 +72,3 @@ Inference: VL should reuse the survey's property–method matrix and its separat
 - Heard-Of communication abstraction — reason about per-round received-process sets instead of low-level message schedules
 - dynamic-stake state derivation — derive committees from a static address universe and blockchain lookback state
 - hybrid verification — combine automated transition-system checking with interactive proof obligations
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Despite these optimizations, verification for 4 monitors required processing 206 million states and took approximately 11 minutes, with exponential growth observed beyond this point."): read the full paper and study; checked quotations, numbers, section and page references, technique descriptions, author/year tag, and arXiv identifier; clarified inconsistent protocol counts, unspecified liveness-count denominator, maturity-scale limits, timeout attribution, and assumed fault bounds; labeled proposed workflows as inferences and removed unsupported notes-history and product-risk claims; retained the link matching the paper's arXiv identifier; did not independently check cited papers, tool implementations, or proposed Verus applications.

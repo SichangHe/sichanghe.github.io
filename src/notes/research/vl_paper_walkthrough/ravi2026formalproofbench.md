@@ -30,19 +30,11 @@ Evidence and limits. The “valid” label is deterministic for the exact toolch
 
 The authors observe a positive but modest relationship between the number of code-execution calls and accuracy (Figure 5, p. 8). Repeated search can be counterproductive: “models sometimes spiral into repeated lean_loogle tool calls while attempting to find non-existent lemmas.” (Section 5.1, p. 7) The practical method is to execute a small candidate early, use the error to constrain the next search, and then rerun the corrected code. This is a heuristic derived from aggregate correlations; it has no reported causal intervention.
 
-Inference: A VL agent should similarly run Verus after a small contract or proof fragment, use the exact diagnostic to guide lemma search, and avoid unbounded documentation search. Measure success against a fixed turn, wall-clock, and token budget so tool scheduling is comparable.
-
 ## benchmark results and what they establish
 
 Claude Opus 4.5 (Thinking) ranks first at 33.50% accuracy, cost $1.34 per test, and 4,036.78 seconds per test across 200 problems (Table 2, p. 7). Gemini 3 Pro obtains 18.50% at $1.26 and 9,966.43 seconds; GPT-5 obtains 17.00% at $0.89 and 5,017.28 seconds. The denominator for every accuracy is 200 tasks. The paper reports that average evaluation can take minutes to hours and costs range from about ten cents to over a dollar (Section 5.2, p. 8).
 
 The result measures end-to-end agent success under the given tools and 40-turn cap. It does not measure correctness of informal reasoning independent of formalization, nor does it show that one model is universally better outside this benchmark. The private task set and provider-default sampling settings limit direct replication (Sections 3.1–3.2, pp. 4–5).
-
-## what is proved, trusted, and risky for VL
-
-The Lean kernel proves accepted proof terms for the 200 formal statements. The benchmark trusts the formalizers' translations, secondary review, Lean kernel and Mathlib, tool implementations, model-provider outputs, and the decision to reject `axiom`/`local_instance`. It does not prove that the informal problem and Lean statement have identical intent; the authors explicitly identify misformalization as a known problem (Section 3.1, p. 4).
-
-Inference: The threat to agent-written verified Rust is concentrated at requirement translation and trusted library contracts. Passing Verus proves the selected specification, while a wrong or incomplete specification can pass. VL should reuse the benchmark's deterministic kernel gate, iterative compiler feedback, private contamination-resistant evaluations, and explicit cost/latency accounting. It still needs Rust-specific review of unsafe boundaries, external dependencies, and concurrency models.
 
 ## techniques for the catalog
 
@@ -51,4 +43,3 @@ Inference: The threat to agent-written verified Rust is concentrated at requirem
 - kernel-only acceptance: accept a proof only when the exact Lean kernel compiles it and reject escape-hatch declarations
 - execution-guided search: run candidate code early and use concrete diagnostics to focus subsequent lemma searches
 - contamination-resistant private benchmark: keep formalizations private while reporting deterministic kernel-checked accuracy, cost, and latency
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

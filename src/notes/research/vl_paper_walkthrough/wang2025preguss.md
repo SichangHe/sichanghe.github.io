@@ -50,11 +50,9 @@ Evidence and limits. The `id` example is the paper's evidence that postcondition
 
 ## what is proved, measured, and trusted
 
-The paper proves no theorem about Preguss and reports no measurements. Its examples show how Frama-C/Eva and Frama-C/Wp interact on `abs` and `id`. It does not establish a formal trusted computing base for Preguss. Inference: a sound implementation would need sound analysis, complete relevant call dependencies, appropriate slices, and deductive checks of generated specifications; LLM output alone would not establish correctness. The paper itself identifies the missing foundation: "establishing a formal proof of its soundness remains non-trivial" (Section 4, PDF p. 5). Inference: for VL, Preguss is an orchestration pattern for prioritizing Verus obligations, not evidence that an agent can safely generate Rust contracts at scale. Inference: adapting it to verified Rust requires checking that generated assumptions are justified at call sites and that relevant interprocedural dependencies are retained; this paper does not assess Verus soundness.
+The paper proves no theorem about Preguss and reports no measurements. Its examples show how Frama-C/Eva and Frama-C/Wp interact on `abs` and `id`. It does not establish a formal trusted computing base for Preguss.
 
 Other explicit limitations are mutual recursion, which disrupts bottom-up traversal, and star-shaped call graphs, whose many callees can exceed the LLM context limit. For the latter, the authors suggest slicing to statements relevant to the target assertion and omitting nonessential callees (Section 4, PDF p. 5). They also leave translation of verifier diagnostics into effective LLM refinement prompts as a research challenge (Section 4, PDF p. 5).
-
-Already done that VL should not redo. The paper's static-analysis-to-deductive-verification split, bottom-up call-graph order, and host-then-callee contract phases are explicit design ideas. Inference: VL can reuse these as orchestration hypotheses; implementation and evaluation on Rust/Verus programs, including checks of generated contracts and soundness assumptions, remain work beyond this paper.
 
 ## techniques for the catalog
 
@@ -63,5 +61,3 @@ Already done that VL should not redo. The paper's static-analysis-to-deductive-v
 - two-stage contract synthesis — infer host preconditions first, then callee postconditions only when a guard depends on a return value, with verifier-guided refinement
 
 - precondition discipline — prohibit callee precondition synthesis in the callee phase to avoid over-constrained contracts and false alarms
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For each assertion, we construct a verification unit (V-Unit) containing both the assertion and its necessary contextual program slices."): read all six pages, including references; checked quotations, examples, numbers, section/page references, technique steps, tag, and paper identity; corrected page references, the interval-example description, precondition checks, unsupported parser and trust claims, and the paper link using its arXiv identifier; added stated limitations and marked conclusions as inferences; did not reproduce verification examples, test the Verus adaptations, or validate the cited external works.

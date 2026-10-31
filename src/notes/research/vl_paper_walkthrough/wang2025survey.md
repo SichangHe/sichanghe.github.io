@@ -58,7 +58,7 @@ Evidence and limits. The survey reports that knowledge retrieval guides accurate
 
 ## what is proved, trusted and already done
 
-The survey proves no new theorem and presents no new formal-verification implementation. Its reported evidence is literature-level observations, dataset sizes, model-training procedures and cited benchmark results. The survey describes formal proof systems (§6, p. 18), theorem-proving datasets (Table 2, p. 10; Appendix A.3, p. 31), process reward models (§4.2.1, p. 12), MCTS reasoning search (§4.3, pp. 14–15), self-verification (§4.4, p. 15) and tool/RAG integration (§4.5, pp. 15–16). Inference: a generic CoT prompt or ORM-only checker would repeat patterns already covered by this survey. Inference: VL’s product risk is concentrated at the specification boundary: an agent can produce a verified Rust implementation of the wrong contract, or rely on trusted `external_body`/axioms; search and reward machinery cannot detect that semantic mismatch without independently validated specifications.
+The survey proves no new theorem and presents no new formal-verification implementation. Its reported evidence is literature-level observations, dataset sizes, model-training procedures and cited benchmark results. The survey describes formal proof systems (§6, p. 18), theorem-proving datasets (Table 2, p. 10; Appendix A.3, p. 31), process reward models (§4.2.1, p. 12), MCTS reasoning search (§4.3, pp. 14–15), self-verification (§4.4, p. 15) and tool/RAG integration (§4.5, pp. 15–16).
 
 ## techniques for the catalog
 
@@ -69,4 +69,3 @@ Inference: the following catalog entries adapt the surveyed methods to formal ch
 - structural proof search: explore tree/graph/MCTS states with verifier feedback and backtracking
 - self-verification and proof-assistant integration: iteratively repair candidates and run Lean-like checking, mapped to Verus compilation for Rust
 - external tools and RAG: retrieve lemmas or execute calculations, then accept results only after formal checking
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "A fundamental challenge in this approach concerns the generation and selection of high-quality responses to ensure methodological reliability and effectiveness."): checked all paper text, study quotations, numbers, section/page references, technique descriptions, author/year and arXiv identifier; corrected page references and dataset classifications, qualified reward and DPO claims, and marked proposed procedures and Verus applications as inferences; did not check cited papers independently or run Verus experiments.

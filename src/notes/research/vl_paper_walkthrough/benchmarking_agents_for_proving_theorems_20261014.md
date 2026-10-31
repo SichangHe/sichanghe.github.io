@@ -105,16 +105,6 @@ Steps from the paper.
 
 Inference: A Verus study should separately record solver time, model time, retry count, and engineer repair time. A cost per verified-contract point is meaningful only with its task denominator and fixed hardware/tool setting.
 
-## what VL can reuse and what it should not claim
-
-Inference: VeruLaw can reuse the paper's fixed task contract, independent final verification, semantic-risk review, comparison of library-access conditions, and field-level denominators when evaluating agents that write verified Rust. The direct transfer is the evaluation protocol, not the quantum mathematics or Lean syntax.
-
-Inference: The main product threat is measurement error: an agent may pass a weak or relaxed Rust contract, just as the paper's entanglement task accepts a relaxed protocol model. A second threat is inflated progress claims from unmatched baseline/LAD runs. A third is solver/library dependence hidden by a single aggregate score. These are inferences from the paper's explicit semantic and comparability limits.
-
-Already done. The paper explicitly combines fixed formal targets, kernel checking, targeted semantic review, retrieval/library access, weighted scoring, field decomposition, and cost reporting (Sections 2–4). Inference: VL should not present any of these as a new evaluation idea without a distinct Rust-specific contribution. A new VL contribution would need evidence about Rust ownership, concurrency, external-library contracts, or maintenance over revisions.
-
-Trusted and untrusted parts. The measured proof acceptance is the Lean kernel's check relative to the imported environment and the independently rerun submission check (Sections 2–4). The benchmark's statement selection, difficulty rubrics, semantic review coverage, model/tool implementation, and imported library remain human or infrastructure decisions. The authors also state that one run per suite–model–condition gives no stochastic-variation estimate and that economic records are missing for some combinations (Section 7.1, p. 15). The evaluation uses GPT-5.5 through Codex and Kimi K3, DeepSeek V4-Pro, and MiniMax M3 through Claude Code (Table 6, p. 21). Section 4 explicitly cautions: “The runs also differ in agent tool: GPT-5.5 uses a different agent tool from the other three models (Table 6), so each combination measures a model and agent tool jointly, and cross-model orderings compare these joint settings.” (p. 4).
-
 ## techniques for the catalog
 
 - theorem-completion benchmark: convert source results to theorem signatures with explicit assumptions, fixed definitions, and an agent-completed body
@@ -123,4 +113,3 @@ Trusted and untrusted parts. The measured proof acceptance is the Lean kernel's 
 - library augmentation comparison: compare a task containing the statement and supporting definitions with the same task plus a verified reference library; disclose unmatched execution details
 - weighted field scoring: freeze rubric-based difficulty, compute difficulty-normalized scores, and expose field denominators and task counts
 - cost-per-proof reporting: divide recorded monetary and invocation-time costs by verified score with explicit missing-value rules
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The statement is a conjunction, and its two directions impose different proof obligations on the trace norm."): checked quotations, numbers, section and page references, technique steps, and stated limits; corrected page references, the LAD quotation and comparison wording, the score formula, and inference labels; did not rerun the experiments, inspect benchmark code, or independently validate Verus adaptations.

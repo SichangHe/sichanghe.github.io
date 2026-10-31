@@ -17,7 +17,7 @@ how to apply it (the paper's pipeline, in order):
 5. emit CHCs representing control flow, data constraints, and error reachability (Section 3)
 6. pass the CHCs to a Horn-clause engine (Spacer, GPDR); Ikos can supply invariants to it (Section 4)
 
-Verus form. Inference: a VL pipeline can separate Rust parsing/ownership lowering, a ghost transition model, and a proof engine. The analogue of CHCs is a generated set of proof obligations or state-machine transition lemmas; Verus itself is the final checker. Do not treat LLVM/CHC transformations as Verus constructs.
+Verus form.
 
 ## technique 2: mixed-semantics transformation for deep assertions
 
@@ -75,7 +75,7 @@ how it works (Section 4.1, pp. 353–354):
 
 The paper says: “MBP obtains a quantifier-free under-approximation η(y) of ∃x · ϕ(x, y).” (Section 4.1, p. 353). This is an under-approximation, so it preserves a witness for the current model rather than an equivalent formula in general. Spacer also has a compositional BMC mode, where no computation toward invariant generation is done after checking safety for a given bound (Section 5, p. 356).
 
-Verus form. Inference: Verus's solver handles quantifiers and triggers internally; a VL tool can use model-guided lemma instantiation or concrete counterexamples, but it must leave the final contract and proof to Verus. Do not claim that a generated under-approximation proves the original quantified property.
+Verus form.
 
 ## technique 6: abstract interpretation supplies invariants to SMT checking
 
@@ -92,9 +92,6 @@ On the 215 benchmarks “that we either could not verify or took more than a min
 
 For autopilot software, Table 2 has four rows: mnav.inlined (607 checks), mnav.mixed (815), paparazzi.inlined (343), paparazzi.mixed (684), where #C counts overflow and underflow checks. The comparison analyzer's warning rate is 4.7% and 8.2% for the two mnav rows, 0% for paparazzi.inlined, and 43% for paparazzi.mixed (Table 2, p. 357). The text says “SeaHorn proves absence of buffer overflows for both benchmarks, while analyzer can only do it for paparazzi”. Contradiction: the 43% entry for paparazzi.mixed in Table 2 conflicts with that sentence unless it is a misprint; the paper does not comment. Times are in seconds and include front (TF), middle (TM), Spacer, Spacer+Ikos, and total columns; the Spacer-alone cell for paparazzi.inlined is “–” and the proof was discharged by the front end only. The paper says “The best configuration is the inter-procedural encoding with Ikos.” (p. 357). These results are tool/benchmark-specific and do not establish universal speed or completeness.
 
-## trusted boundary and product threat
-Inference: the evidence depends on LLVM compilation and semantics, front-end transformations, DSA's heap abstraction, CHC encoding, Spacer/Ikos/Z3, and user-supplied assertions. The paper states only part of this: it says the bitcode “has been formalized [54]”, which “in principle” gives a well-defined formal semantics (Section 1, p. 344), and that “If SeaHorn proves the program is safe then it guarantees that the program is free of buffer overflows” (p. 357). Inference: for agent-written verified Rust, SeaHorn's modularity suggests separating source lowering, semantic models, invariant generation, and proof checking. It is a high threat to a product that assumes one monolithic solver can infer all procedure contracts and heap invariants; it is less threatening to Verus's contract-centered workflow because SeaHorn does not establish Rust ownership or specification intent. VL should reuse inter-procedural summaries, precision tiers, mixed failure paths, and hybrid invariant generation, while independently checking every generated Rust contract in Verus.
-
 ## techniques for the catalog
 - layered verification architecture — separate source lowering, operational semantics, verification semantics, CHCs, and interchangeable engines
 - mixed-semantics transformation — raise deep failures by combining one inlined failing path with summarized successful calls
@@ -102,4 +99,3 @@ Inference: the evidence depends on LLVM compilation and semantics, front-end tra
 - inter-procedural error summaries — propagate assertion failure through compositional procedure predicates
 - model-based projection — eliminate existential locals with model-preserving under-approximations for arithmetic and arrays
 - hybrid abstract interpretation — feed Ikos numerical invariants to Spacer's SMT model checking
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "That is, to check safety of an input program, the algorithm iteratively creates and checks local reachability queries for individual procedures"): read the whole paper text (pp. 343-361, including Tables 1 and 2 against the PDF page images) and checked every quotation, number, page and section reference, and technique step; changed Table 1 figures (Z3-PDR is 3 safe and 7 unsafe, Spacer BMC has no safe entry), the description of the 215 benchmarks, Ikos's role (invariant supplier with its own IR, not a CHC back end), the assume(false) placement, the Ikos-versus-Spacer example, the page for the inlining limits (pp. 352-353), and the "all four" overflow claim, and added the 43% analyzer entry that conflicts with the text; marked my own advice as Inference; did not check the cited references, the figures' content (Figs. 2-4 are image-only in the text), the SV-COMP medal tables outside the paper, or the Verus-form suggestions beyond labeling them Inference.

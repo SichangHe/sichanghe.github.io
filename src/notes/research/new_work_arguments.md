@@ -1,13 +1,5 @@
 # New-work arguments beyond related work
 
-## 🤖 Agent-added planning note (2026-05-24, manager email 3957 follow-up)
-
-Context: this note follows the related-work deepening pass that updated
-`literature_directions.md`, `static_analysis.md`, `browser_agent.md`, and
-`agent_memory.md`. The human feedback was that related work alone is not enough;
-the next question is what original research arguments we could make, what
-questions those arguments answer, and how to write papers around them.
-
 Fact from the existing notes: the common research object is not the model alone.
 It is the interface between a large model and a structured environment: a Verus
 repository, a browser/API execution substrate, or a long-running agent state.
@@ -115,16 +107,6 @@ Risks:
   - 🤖 we verified code in Verus
 - 🤖 strong claim
   - 🤖 Verus changes the system design space by making a useful guarantee practical
-- 🤖 VL next move
-  - 🤖 pick one real subsystem now
-  - 🤖 build the smallest publishable artifact
-  - 🤖 define one crisp property
-  - 🤖 choose the reusable verification idea
-  - 🤖 report blockers to the human immediately
-    - 🤖 blocked on target choice
-    - 🤖 blocked on property choice
-    - 🤖 blocked on baseline or evaluation access
-    - 🤖 blocked on Verus proof feasibility
 
 Paper narrative:
 
@@ -343,10 +325,8 @@ Writing strategy:
 ### 🤖 Paper-collection status (2026-05-24)
 
 The paper collection remains readable but not writable to this agent. A direct
-write probe to `/hdd1/sichanghe/paper_collection/.omo_write_probe_3957_<pid>`
 failed with `Permission denied`. Existing VeruSAGE and KVerus root PDFs and OCR
 directories are present. Because the collection is not writable, this agent did
 not download PDFs or fabricate local citations. The human was emailed a concise
 `[omo]` reminder asking for write permission to
-`/hdd1/sichanghe/paper_collection` or another writable paper-collection path
 before PDF downloads continue.

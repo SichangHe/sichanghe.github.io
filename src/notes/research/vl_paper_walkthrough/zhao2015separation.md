@@ -6,7 +6,7 @@ Tag: `zhao2015separation`, [paper](http://arxiv.org/abs/1508.07066v3)
 
 Zhao surveys formal specification and verification of separation kernels for safety and security-critical systems. A separation kernel partitions resources and mediates explicit information flows; the survey separates security policies/properties, formal models, and verification evidence. It quotes the foundational requirement that the kernel must “provide multilevel secure operation on general-purpose multi-user systems” (Section 2.1, pp.3–4). The introduction says that “for the purpose of fully formal verification, the verification chain should reach the implementation level” (Section 1, p.2). The survey covers work since 2000, including MASK, ED, PikeOS, AAMP7G, INTEGRITY-178B, PROSPER, seL4, DEOS and hypervisors.
 
-The properties are data separation, information-flow security, temporal separation and fault isolation. The survey groups the first three spatial properties and notes that many verification efforts work on abstract or low-level models and that model-to-source correspondence is “typically by code review and not formally assured” (Section 4.2.5, pp.28–29); it lists compiler and hardware assumptions among the ingredients of kernel correctness (Section 4.2.4, p.28). Inference: a proved model leaves source, compiler, hardware and configuration correspondence as trusted unless separately verified. Inference: this decomposition is directly useful for VL because an agent-written Rust system needs separate functional, memory, information-flow and scheduling contracts rather than one undifferentiated “correctness” claim.
+The properties are data separation, information-flow security, temporal separation and fault isolation. The survey groups the first three spatial properties and notes that many verification efforts work on abstract or low-level models and that model-to-source correspondence is “typically by code review and not formally assured” (Section 4.2.5, pp.28–29); it lists compiler and hardware assumptions among the ingredients of kernel correctness (Section 4.2.4, p.28).
 
 ## technique 1: formalize partition policies as state-machine properties
 
@@ -58,7 +58,7 @@ how it is done:
 4. define mappings from concrete code states to abstract TLS states and from event pre/postconditions to code annotations
 5. prove conformance, retaining the explicit assumptions about ignored code
 
-Evidence: the survey reports 2.5 weeks for TLS/property, 3.5 weeks for the TAME model and proof, and 5 weeks for code conformance (p.17). ED contains 3,000 lines of C and assembly. The survey also says the cost was “much lower than the verification effort on seL4” (p.17). Inference: this staged evidence can be a VL product mode: first verify a compact API/state model, then require checked contracts linking it to Rust functions.
+Evidence: the survey reports 2.5 weeks for TLS/property, 3.5 weeks for the TAME model and proof, and 5 weeks for code conformance (p.17). ED contains 3,000 lines of C and assembly. The survey also says the cost was “much lower than the verification effort on seL4” (p.17).
 
 limits: “Other Code” is ignored in the ED verification (p.16). Inference: that code is therefore trusted or outside the property, and the conformance mappings and hardware assumptions remain part of the trusted boundary unless formally checked.
 
@@ -92,16 +92,6 @@ Inference: Verus can express this invariant style with loop `invariant` and tran
 
 Evidence: the PVS DEOS collection has 1,648 lines and 212 lemmas (p.24). Other surveyed schedulers use Times and UPPAAL timed-automata model checking, and Cheddar simulation analysis of AADL models (Section 3.3.2, pp.24–25; Table 1). The survey says time “can be conveniently represented in model checkers” but that model checking is limited to “only one configuration at a time,” and that provers have “a low degree of verification automation” (Section 4.2.3, pp.27–28); the DEOS feature-based technique “scales well to models of increasing complexity” (p.24).
 
-## evidence, trusted boundary and implications for VL
-
-The survey reports many successful projects but does not independently audit their proof scripts. Inference: trusted elements include formal policy correctness, abstraction-to-code correspondence, compiler and hardware models, configuration assumptions, and any code not included in a model. It notes that model-to-source correspondence is typically established by code review, for example in the INTEGRITY-178B CC evaluation (Section 4.2.5, pp.28–29). The survey recommends full source-level verification, but writes “our opinion is to recommend fully formal verification on source code level” (p.29); this is the author’s opinion, not an experiment.
-
-Inference: the threat to agent-written verified Rust is high for system properties that span memory isolation, information flow, interrupts and scheduling. Function-level Verus proofs can establish local contracts, while this literature shows the need for an abstract state machine, refinement relation, and cross-component noninterference invariants. VL should report which code, compiler, hardware and policy assumptions remain trusted. It should not claim that memory safety or individual `ensures` clauses imply partition isolation.
-
-## what VL should not redo
-
-Inference: VL should not redo generic noninterference definitions, unwinding proofs, TLS/code-conformance decomposition, or scheduler invariant patterns without a Rust-specific gap. These are established techniques with decades of applications. New work should measure how to encode them in Verus, maintain them across unsafe Rust and hardware boundaries, and expose correspondence evidence to users.
-
 ## techniques for the catalog
 
 - policy state machines — model partitions, resources, flows and transition-local separation properties before implementation verification
@@ -109,4 +99,3 @@ Inference: VL should not redo generic noninterference definitions, unwinding pro
 - TLS-to-code conformance — prove a small top-level state-machine security model, then map concrete code states and contracts to it
 - refinement-based development — transform Z/B/Event-B models through proof obligations into executable or linked code
 - scheduler invariants — prove temporal separation with initialization and transition preservation, using timed model checking or induction
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The Workhorse Lemma states that the function’s graph sufficiently captures the dependencies in the data flows of the function."): I read the whole paper text (arXiv:1508.07066v3, pages 1–32) and the whole study. Checked every quotation, number, equation reference, section and page reference, and the ED five-step, unwinding, Z/B/Event-B and DEOS technique steps against the paper. Changed: page references for the PIFP equation, ED properties, seL4 proof size, unwinding conditions, GWV/temporal-separation remark and Section 4.2.5; the Z/Eves result, B/PIFP code generation, DEOS property and sanitization description; the Cheddar and model-checking-versus-theorem-proving statements; the weak step consistency step; the “three categories” step of ED; the unsupported “fault condition” and “authors” wording; and marked unsupported own conclusions “Inference:”. Not checked: the cited primary papers, the Verus encodings (the study’s own inferences, not in the paper), and the PDF figures (Fig. 1–2) beyond the text layer.

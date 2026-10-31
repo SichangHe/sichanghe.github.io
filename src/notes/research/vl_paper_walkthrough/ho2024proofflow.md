@@ -42,16 +42,6 @@ The standard GFlowNet uses a replay buffer with probability 0.5; GFlowNet-OO sam
 
 Table 1 records best validation solve counts over 20 theorems: Base 4/20, SFT 9/20, GFlowNet-BR-OO 9/20, GFlowNet-OO 8/20, and GFlowNet 9/20 (Appendix D.1, p. 10). The full GFlowNet's peak of 9 occurs before the end and then regresses; replay completes 2,000 steps in 0.86 times the duration of other runs, but introduces short-run instability (Section 3, p. 4). The authors state: “For our low compute budget training and evaluation, SFT yielded better results than GFlowNet.” (Section 3, p. 4) Their proposed gains from larger models, datasets, and search budgets remain hypotheses.
 
-Inference: For VL, compare any learned proof-search policy with a simple SFT or hand-written baseline under the same verifier budget. Report solved-count denominators, search time, branching, and whether replay or ground-truth trajectories are injected. The paper's 20-problem split is too small for a product claim.
-
-## what is proved, trusted, and risky for VL
-
-The authors describe Lean feedback as a binary reward and add an RM because that reward can be sparse (Section 2, pp. 2–3). They state: “Our experiments, constrained by search budget during training and dataset size, may limit GFlowNet fine-tuning’s full potential.” (Section 4, p. 4)
-
-Inference: The RM, history encoding, reward shaping, and replay implementation influence search; their use does not establish the correctness of a specification or replace proof verification. The reported solve counts do not separately establish that the policy explores more diverse proofs.
-
-Inference: For agent-written verified Rust, a search policy cannot establish that a Verus contract captures the intended requirement or that external assumptions hold. VL could reuse the paper's exact-verifier trajectory collection, reward-ablation discipline, replay-vs-online comparison, and explicit low-budget denominators; it should not assume that better exploration beats SFT without a larger controlled study.
-
 ## techniques for the catalog
 
 - history-augmented proof states: include initial state and tactic history so each trajectory state has one parent
@@ -60,4 +50,3 @@ Inference: For agent-written verified Rust, a search policy cannot establish tha
 - replay-buffer GFlowNet training: mix replayed and newly sampled proof trajectories and measure off-policy instability
 - online and binary-reward ablations: compare full GFlowNet with online-only training, then compare online-only training with and without the RM under matched search budgets
 - Lean trajectory collection: run sampled tactics in Lean to obtain next states and compute trajectory rewards
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Generative Flow Networks are a class of probabilistic models designed to sample complex, structured objects through sequential decision-making processes."): checked all quotations, numbers, section and page references, technique steps, and reported results against the full paper text; changed the paper link to its arXiv identifier, corrected the TB quotation, reward formula, algorithm description, and page references, distinguished in-progress RM work and hypotheses from results, and removed unsupported claims; did not check the code, reproduce experiments, or independently validate the Verus/VL inferences.

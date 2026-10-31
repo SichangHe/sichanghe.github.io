@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `poesia2024dafnyannotator`, [paper](https://arxiv.org/abs/2411.15143)
 
-Audit: audited 2026-10-13 against the paper; checked every number in Table 1, the DafnySynth counts, the 83/326 split, the page and section references and all quotations against the PDF text; corrected one widened prompt description (up to the method, not including it), one unsupported yield claim, and marked six unmarked inferences (use-when rationale, peeling limits, single-run remark, code-pretraining explanation, comparability remark, textbook-scale label); the Verus maxArray form could not be run (no Verus binary) and is left as the study's marked inference.
-
 source: Poesia, Loughridge, Amin, arXiv:2411.15143v1 (5 Nov 2024), 6 pages, no appendix. Code: https://github.com/metareflection/dafny-annotator
 
 earlier notes: one-paragraph summaries exist in `topic_studies/formal_verification_rust/llm_for_verification/proof_synthesis.md` and `distributed_verification_review_b/deep_5_llm_agents.md` (greedy search, synthetic data, 15.7% to 50.6%, code and contracts fixed). They lack the search steps, the training-pair construction, the edit-graph editors, the full results table and its inconsistencies; this study adds those.
@@ -87,8 +85,6 @@ steps (Section 2.2, p.2):
 
 Fine-tuning setup (Section 3, p.5): LoRA with r = α = 128, 1500 gradient steps for every run regardless of training-set size, one NVIDIA A100 80GB GPU.
 
-Verus form (inference): the same peeling works on any verified Verus function: delete the last `invariant` clause, `assert`, or `decreases` in source order, emit (function without it, deleted text), repeat. Sources could be the Verus studies' benchmarks or VL's own accepted outputs. Two differences: (a) Verus `assert ... by` blocks and `proof { }` blocks are multi-line, so the unit to peel must be chosen (the whole block or only its head); (b) removing a `decreases` from a recursive `spec fn` makes the file fail in a different way than a missing loop invariant, so examples should record the annotation kind. A product that calls a hosted model and does not fine-tune can still use the peeled pairs as retrieval or few-shot examples; the paper does not test that use.
-
 evidence (Table 1, p.4; 83 test programs; search of at most 5 iterations):
 - Llama 3.1 8B fine-tuned on DafnyBench only: 15.7% with 25% of the 1000 training programs, 20.5% with 50%, 15.7% with 100%
 - CodeLlama 7B fine-tuned on DafnyBench only: 20.5%, 28.9%, 39.8% for 25%, 50%, 100%
@@ -140,17 +136,6 @@ where it fails or what it assumes:
 - the paper says gains generally grow with the DafnyBench share, "a trend that only breaks when not using DafnySynth in combination with it when training LLaMa 3.1 8B" (Section 3, p.5). Inference: with 83 test items one program is 1.2 percentage points, the Llama 3.1 8B DafnyBench-only column moves 15.7, 20.5, 15.7, and no run is repeated with another seed, so differences of a few points in this table are within what a single run can move; the paper gives no variance
 - unit mix: DafnyBench is "1326 standalone Dafny programs", yet the split is "a training set of 1000 Dafny methods, holding out the remaining 326 for test" (Section 3, p.4), and Table 1's caption says 83 programs. Programs and methods are used for the same items
 - test-set selection: "Out of the 326 test methods, only 83 failed to verify after we removed the original annotations." (Section 3, p.4) So 243 of 326 (74.5%, inference from the two counts) needed no annotation at all. Inference: a success rate computed on all items, including ones that need no hints, is not comparable with these numbers
-
-## what was already done that VL should not redo
-
-- greedy single-annotation search with exhaustive placement for invariants, asserts and `decreases`: done here for Dafny, code public
-- the peel-one-annotation training-pair construction: done
-- a verifier-filtered LLM edit graph that keeps partially verified programs as data: done at small scale ($10, 699 programs)
-- not done here, by the paper's own statement: specification writing, lemma proposal, implementation synthesis. It lists them as future uses of synthetic data: "from generating specifications, proposing lemmas, producing implementations, as well as working to aid the verifier with annotations" (Section 5, p.6)
-
-## product threat
-
-Inference: low. The tool targets Dafny, needs code and contract supplied, adds only single-line hints, uses 7B to 8B models, and reaches about half of 83 hint-needing DafnyBench methods. It does not write code, contracts or lemmas. What it shows that matters to VL is a cheap recipe: a verifier plus a general LLM can manufacture training or retrieval data for a language with little public code, and partially verified programs are usable data.
 
 ## techniques for the catalog
 

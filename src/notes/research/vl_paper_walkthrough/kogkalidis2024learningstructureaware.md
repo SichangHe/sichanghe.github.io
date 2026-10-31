@@ -6,8 +6,6 @@ Tag: `kogkalidis2024learningstructureaware`, [paper](https://arxiv.org/abs/2402.
 
 The paper targets premise selection for dependently typed proof assistants. Given a goal (a proof hole) and all lemmas in scope, a model ranks lemmas likely to help fill the hole. Its first contribution is AGDA2TRAIN, an Agda compiler backend that extracts type-checked proof states as structured JSON. Its second is QUILL, a neural encoder that represents dependent-type ASTs using structure rather than symbol names. The abstract says the dataset “details proof states at the sub-type level” and that the architecture is “targeted at faithfully representing dependently-typed programs on the basis of structural rather than nominal principles.” (Abstract, p. 1.)
 
-Inference: the direct VL lesson is retrieval of relevant lemmas and facts from a Verus proof context. This paper does not generate Rust or prove Verus properties; it learns a ranking that can reduce proof-search candidates while leaving the proof assistant to check the resulting proof.
-
 ## technique 1: type-safe, subterm-level proof-state extraction
 
 What it is. AGDA2TRAIN first lets Agda type-check source files, then queries Agda's internal representation and emits JSON. It walks every definition and pauses at every possible proof subterm, not merely textual prefixes. At each hole it records the missing term and full typing context (Section 3.2).
@@ -55,15 +53,9 @@ Ablations remove Taylor expansion, tree positional encoding, or structural de Br
 
 Verus form. Inference: a Verus-assisted pipeline can rank candidate lemmas, instantiate the top-k, and run `cargo verus`; collect successes and failed obligations as labels for a similar contrastive model. The model should never be allowed to bypass a failed proof. Inference: evaluate both retrieval metrics and end-to-end proof completion, because premise relevance is not proof sufficiency.
 
-## trusted boundary and VL implications
-
-The paper confines guidance within a proof assistant: “the model’s predictions are made safe by virtue of being confined within (and verified by) a trustworthy white box: the proof assistant.” (Section 1, p. 1.) Its current pipeline is offline and unidirectional; interactive proof completion remains future work (Section 6, p. 10). Inference: when suggestions receive a final proof check, neural weights, extraction, and relevance labels affect usefulness but need not be trusted for proof validity. The verifier and its assumptions determine that validity. Inference: VL could test this approach on a Verus corpus with stable lemma IDs, measuring retrieval and proof completion under dependency and naming changes; subterm extraction, binder-relative encoding, and premise ranking already have precedent here.
-
 ## techniques for the catalog
 - subterm-level proof-state extraction — compile type-checked files and record every typed hole with its full context
 - alpha-equivalent variable resolution — replace names and raw de Bruijn indices with binder-relative structural references
 - dependency-level reference encoding — build lemma representations in topological order and reuse them for cross-lemma links
 - structure-aware efficient attention — combine linear attention with binary-tree positional bias for dependent-type ASTs
 - premise ranking with InfoNCE — train relevance scores and use top-ranked lemmas to shrink proof search
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Finally, the dataset does not currently contain structured decompositions for literals, sorts (i.e., kinds of types), and universe levels."): checked all paper text, quotations, numbers, section/page references, and technique steps; corrected retrieval metrics, model inputs, static embeddings, loss and baseline descriptions, limitations, and proof-validity claims; replaced the link with the paper’s arXiv identifier and noted conflicting repetition/confidence-interval reports; did not inspect external code or data, reproduce experiments, or validate proposed Verus adaptations.

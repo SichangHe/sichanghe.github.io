@@ -6,8 +6,6 @@ Tag: `wang2023lego`, [paper](http://arxiv.org/abs/2310.00656v3)
 
 LEGO-Prover is an Isabelle theorem-proving system that accumulates machine-verified lemmas (“skills”), retrieves them for later proofs, and evolves them into more reusable forms. Its abstract states: “LEGO-Prover advances the state-of-the-art pass rate on miniF2F-valid (48.0% to 57.0%) and miniF2F-test (45.5% to 50.0%).” (Abstract, p. 1). The method has two components: a prover that decomposes and formalizes each task, and an evolver that solves pending requests or transforms existing skills.
 
-Inference: The transferable idea for VeruLaw is a verified lemma library whose entries are reusable Rust/Verus proof functions, with retrieval and controlled generalization around them. Isabelle syntax, ATP behavior, and the reported model numbers do not transfer directly.
-
 ## technique 1: three-stage modular proving
 
 What it is: construct a proof block by block from an informal solution, decomposed steps, and retrieved lemmas. Figure 2 describes the sequence: “The informal solver produces an informal solution for the problem statement, followed by using the decomposer to decompose it into step-by-step proof and propose useful sub-goals in the form of lemma statements.”
@@ -95,17 +93,13 @@ How to apply:
 3. Repeat with the library and evolver removed; the paper says "we remove the growing skill library (including the evolver)" (Section 4.2, p. 7), and runs the ablation only on the miniF2F validation set (Section 4.1, p. 7).
 4. Compare the number of problems solved against the number of proving attempts for both settings (Figure 3(a), p. 8).
 
-Verus form: Inference: measure VL with and without persistent lemma storage under equal model calls, verifier time, and task ordering. Because later tasks can benefit from earlier proofs, randomize or disclose task order and reset-library conditions.
+Verus form:
 
 The paper's main process uses multiprocessing with prover:evolver ratio 3:8, temperature 0.7, 3-shot decomposer prompts, six retrieved skills on valid and four on test, and two formalization examples (Section 4.1, p. 6). Inference: these settings are part of the reported system and should be recorded as reproducibility parameters, not hidden implementation details.
 
 ## what is proved, trusted, and left open
 
 Isabelle verifies accepted lemma code, and the method rejects `sorry` and `oops`; however, Inference: the embedding model, vector database, retrieval ranking, prompts, Python orchestration, and benchmark statements are not checked by Isabelle (the paper names ChromaDB and an OpenAI embedding model, footnote 2, p. 4). The paper assumes each theorem has an informal statement, human-written informal proof, and formal statement (Section 3, p. 3); it also evaluates GPT-4-generated informal proofs in place of the human ones (Section 4.1, p. 7). Inference: the human-proof setting gives the agent unusually rich supervision.
-
-Inference: threat to a product that emits agent-written verified Rust is medium to high for proof reuse and low-level automation, but unknown for system assurance. A growing Verus lemma library could reduce repeated work and improve consistency, yet stale specifications, incompatible ownership contexts, or an unsound trust escape could contaminate many downstream proofs. The paper studies mathematical Isabelle tasks, not unsafe Rust, concurrency, API contracts, or adversarial specifications; VL must add those cases before using its success rates as product evidence.
-
-Inference: a VL evaluation of a lemma library should measure persistent growth, deduplication, and cross-task reuse, not only a static library. The paper's own ablation shows the library gain is 3.3 percentage points (50.4%−47.1%) under 50 attempts on miniF2F-valid, while the headline 57.0%/50.0% uses 100 attempts and, per the Table 1 caption, is the cumulative pass rate over problems solved with model-generated and human-written proofs. These denominators and conditions must remain separate.
 
 ## techniques for the catalog
 
@@ -115,4 +109,3 @@ Inference: a VL evaluation of a lemma library should measure persistent growth, 
 - request solving — turn pending decomposer subgoals into independently verified reusable lemmas
 - library ablation — compare equal-budget proving with and without persistent skill storage
 - dual informal-proof evaluation — hold formalization fixed while comparing model-generated and human-written plans
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Since every skill in the skill library is verified by the Isabelle prover, LLM can directly copy the lemma code from the input prompt without fear of causing an error."): I read the whole paper text (main text, references, appendix prompts) and the whole study, and checked every quotation, number (Table 1 rates, 244 problems per set, 22,532 skills and the 10.8/38.2/51.1 split, 135 problems/24%/51%/49%, 0.85 threshold, 3:8 ratio, 11 heuristic tactics, nf=6/4, nd=4, 3 request-solver skills, 300 dollars), and the section and page references. I changed: the page for the GPT-4 informal-proof sentence (p. 6 to p. 7) and for the Section 3 assumption (p. 4 to p. 3); added missing section pointers; marked the rounding explanation, the Isabelle trust-boundary sentence and the human-proof supervision remark as inference; added the paper's 71% figure for directly applied request-solver skills and corrected the earlier claim that origin counts say nothing about reuse; rewrote the model-versus-human-proof inference, which the paper does not support as stated. I did not check the Verus-form paragraphs beyond confirming they are labelled inference, Figures 1-4 code contents, the cited related work, or the released code and skills.

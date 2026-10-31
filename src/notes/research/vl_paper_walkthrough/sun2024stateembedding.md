@@ -60,16 +60,9 @@ State embedding primarily detects soundness bugs: unsafe programs accepted becau
 
 The one-month upstream campaign found 15 unique verifier logic bugs, 10 fixed by submission; 12 were soundness bugs and three completeness bugs (pp. 622–623). Table 1 attributes six to range analysis, three to memory-access validation, two to state pruning, two to control-flow checking, and two to other causes (p. 623). Two bugs enabled local privilege escalation, one through incorrect stack-depth tracking and one through sign information loss in a spill; the paper reports both affected kernels v5.10.33 and later (§1, p. 616; §2.2, p. 619; §4.3, p. 624).
 
-## evidence, overhead, assumptions, and product threat
-
-Experiments used a 64-core AMD Ryzen Threadripper 3990X with 256 GiB, Linux v5.15, QEMU 6.2.0 with KVM guests, and an upstream eBPF verifier (§4.1, p. 622). Over 24-hour comparisons, the paper reports average profiling impact on execution of 5.3%, an average verification-time increase of 17.2%, and overall testing-throughput impact of 1.6% (§4.4, p. 625). It attributes the smaller throughput impact to infrequent acceptance and to embedding being a small part of the campaign, which also includes generation and test-case persistence.
-
-The paper uses deterministic, closed programs so one profiling round produces repeatable states (§3.2, p. 620). The authors report no false positives in their campaign but warn of false negatives when generation explores too little or inserted arithmetic obscures a mismatch (§4.5, p. 625). Inference: this oracle depends on correct tracing, execution semantics, transformation, and sink behavior. For verified Rust, a similar test could supplement proofs of an abstract interpreter by checking observed executions against its approximations. The authors classify state embedding as metamorphic testing and distinguish it from differential testing against another checker (§5, p. 626).
-
 ## techniques for the catalog
 
 - containment sink: embed a concrete state and an invalid sink so verifier acceptance exposes an abstraction bug
 - folded state embedding: combine many profiled states with tracked ALU folds and check one final sink
 - continuous SEV loop: generate, profile, transform, verify, and triage accepted programs until termination
 - completeness specialization: replace the sink or inspect non-sink rejection to find false rejections
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The collected states are essentially a basic block trace in conjunction with the states, where the basic block could appear multiple times due to loops."): checked the full paper, quotations, numbers, section and page references, technique steps, and stated limitations; corrected quotation wording and references, the publisher link, folding claims, deterministic-program prerequisites, workflow termination, and unsupported Verus claims; did not reproduce experiments, inspect SEV source code, or validate the proposed Verus adaptations.

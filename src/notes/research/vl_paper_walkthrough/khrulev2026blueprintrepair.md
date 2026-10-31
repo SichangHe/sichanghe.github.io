@@ -59,16 +59,6 @@ Inference: In Verus, the same discipline would require checking the compiled ver
 
 The paper isolates interface effects by giving typed edits, atomic exact search-and-replace patches, and complete-module rewrites the same normalized source, typed diagnostics, verifier feedback, model, output cap, and eight-step (twelve for compound) budget (Section 3). Patches apply atomically; rewrites pass the same parser, import, namespace, forbidden-token, target-signature, Lean, and dependency checks (Section 3). The benchmark artifact pins Lean/mathlib, records input/cache/reasoning/output tokens and provider prices, and retains exact prompts and schemas (Table 6, Appendix C).
 
-Inference: VL can use this as an evaluation pattern for proof repair: hold the Rust/Verus state, diagnostics, model, and stopping budget fixed; compare typed proof-plan actions, local source patches, and whole-file rewrites; count success only after a fresh Verus run and any declared-dependency audit. The paper does not measure Verus, Rust, or production-sized graphs, so transfer is an inference.
-
-## what remains trusted, contradictions, and product threat
-
-The trusted core is Lean's kernel and the independent graph/dependency checker; the model, prompts, operation schema, node prover, benchmark construction, and one-episode policy remain experimental machinery. The fixed node prover is rfl, simp, omega (with norm_num on six states), each at 200,000 heartbeats; on 39 proof-authoring states, aesop closes 2 and nlinarith 1, while ring, linarith, and norm_num close none, with six modules requiring an import (Appendix B.2). This confirms that the proof-authoring label depends on the fixed prover and budget.
-
-The reported totals are internally consistent: Table 5 sums 104, 109, and 104 over 142; Table 7's family rows also sum to 142 and the None column to 24. The paper says no pairwise coverage difference is clear of zero and gives typed-versus-patch −2.2 points on 91 edit-shaped states, 95% interval [−6.6,+2.2], exact McNemar p=0.63 (Section 4.1). Its percentages and cost ratios use different denominators, so 103/142 at the 10k budget must not be read as the final 104/142 coverage.
-
-Inference: For a product that lets agents write verified Rust, the threat is moderate and localized. Typed operations reduce accidental edits and make repair traces auditable, while kernel checking blocks unsound proofs; however, a dependency graph can be semantically incomplete even when Verus accepts a function, and the small miniF2F benchmark says little about long-lived Rust modules. VL should adopt immutable target specifications, schema-checked local edits, fresh verifier rechecks, and retained rejected trajectories before trusting automated repair.
-
 ## techniques for the catalog
 
 - typed local blueprint repair — expose one schema-checked operation at a time for statement, node, edge, or proof edits while preserving untouched source
@@ -76,4 +66,3 @@ Inference: For a product that lets agents write verified Rust, the threat is mod
 - post-run dependency audit — repeat compiled-proof dependency extraction on stored endpoints and record unused edges separately
 - typed-versus-free-form evaluation — compare typed edits, atomic patches, and rewrites under matched source, feedback, model, and token/cost budgets
 - trajectory artifact — retain accepted and rejected actions, diagnostics, graphs, tokens, costs, and final certificates for reproducibility
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

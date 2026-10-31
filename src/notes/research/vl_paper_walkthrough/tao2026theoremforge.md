@@ -8,8 +8,6 @@ TheoremForge is a data-synthesis workflow for Lean formal mathematics. The paper
 
 The paper reports: “The high cost of agentic workflows in formal mathematics hinders large-scale data synthesis, exacerbating the scarcity of open-source corpora.” (abstract, PDF page 1). It reports a verified rate of 12.6% versus 8.6% for the baseline on 2,000 problems, with average cost $0.4806 per successful verified trajectory for Gemini-3-Flash (Table 2, PDF page 7). These are Lean results, not Verus results.
 
-Inference: for VL, the useful object is a verifier-gated data flywheel: each candidate artifact must be checked by Verus or an explicitly weaker checker before it becomes training data. A failed end-to-end proof can still teach a repair pair or a proved lemma, but only if the local artifact's boundary and assumptions are recorded.
-
 ## technique 1: normalize a statement and retrieve definitions
 
 What it is. Statement formalization converts an informal statement SN into a formal specification SF using retrieved premises P. The paper says the input may omit premises, answers, or clear semantics, so a general LLM first denoises and normalizes it. It then creates search queries and retrieves definitions from LeanExplore. In the paper's formal data format, a valid sample is the triplet (SN, P, SF) where SF is syntactically and semantically valid (section 2, PDF page 2).
@@ -80,10 +78,6 @@ The paper's cost statement has a denominator caveat: Figure 4 defines average co
 
 Inference: Verus adoption would trust the Verus verifier, solver, proof erasure, Rust compiler, library specifications, and any external-model assumptions. It would not trust the LLM's semantic vote as a proof. The product threat is medium to high for contract mis-specification: the paper's two semantic-mismatch cases show that compiling Lean code can encode a different problem. The engineering threat is also material because most subgoals were bypassed or failed, and proof-correction data were scarce. The pipeline is therefore a useful proposal for verified-Rust data harvesting only when contract review and exact Verus replay remain mandatory.
 
-## what VL should reuse and avoid redoing
-
-Inference: VL should reuse the decomposition into normalization, retrieval, candidate generation, correction, subgoal solving, assembly, and local extraction; these are concrete workflow components rather than a reason to repeat a Lean benchmark. It should also reuse early stopping and per-artifact provenance. VL should not claim Lean's rates as Verus evidence, or treat an LLM semantic judge as a substitute for checking that a Rust contract expresses the product requirement. TheoremForge has already measured the value of salvaging locally verified artifacts and documented that proof sketching and semantic fidelity are bottlenecks; a new VL experiment should instead test those mechanisms on real Verus systems code.
-
 ## techniques for the catalog
 
 - statement normalization and definition retrieval: denoise an informal task, retrieve candidate library facts, and formalize against selected premises
@@ -92,5 +86,3 @@ Inference: VL should reuse the decomposition into normalization, retrieval, cand
 - proof sketch subgoal decomposition: turn an informal proof into compilable intermediate lemmas, solve them, assemble, and stop early on failure
 - decoupled local extraction: retain verified statements, subgoals, premises, corrections, and sketches even when the parent theorem fails
 - independent majority semantic verification: exclude the generator identity and aggregate independent binary semantic judgments
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

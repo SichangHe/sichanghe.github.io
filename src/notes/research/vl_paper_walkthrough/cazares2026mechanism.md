@@ -6,8 +6,6 @@ Tag: `cazares2026mechanism`, [paper](http://arxiv.org/abs/2607.04534v1)
 
 This empirical study tests whether models select the fine-grained proof mechanism behind an already verified Lean theorem. FiberRing Set A has 22 clean-anchor items and 13 mechanism labels; each row links a prompt to a named Lean declaration or certificate family. Set B adds six POM/CollisionKernel items and expands the label set from 13 to 19, for 28 items total (Section 3, pp. 3–4). The model classifies a template, a verdict, a reason, and a caveat; it is not asked to generate Lean code. The paper states: “The benchmark does not ask models to prove the statements or emit Lean code.” (Section 3, p. 3). Its central result is that a mechanism-bearing Lean verdict/witness cue improves routing while some granularity errors remain.
 
-Inference: this isolates an upstream failure relevant to VL. A Verus agent may recognize that a contract is true while choosing the wrong proof architecture—such as a map-preservation lemma instead of a data-structure invariant. Mechanism metadata and source anchors can make that distinction explicit before proof search.
-
 ## technique 1: source-anchor manifest and closed mechanism labels
 
 what it is
@@ -133,11 +131,9 @@ A cue can alter routing rather than produce a monotonic correctness bonus: Llama
 
 ## what is proved, trusted, and still open
 
-The paper evaluates classification of statements anchored to Lean-verified artifacts, rather than generated proofs (Section 3, p. 3). Template and verdict outputs are normalized and matched, while caveats use keyword hits (Section 4, p. 5). Inference: interpreting the results relies on the source snapshot, declaration-to-label mapping, prompt renderer, canonicalizer, and evaluation protocol. For VL, a manifest can expose proof architecture, but it does not establish that the architecture or contract is the right product requirement.
+The paper evaluates classification of statements anchored to Lean-verified artifacts, rather than generated proofs (Section 3, p. 3). Template and verdict outputs are normalized and matched, while caveats use keyword hits (Section 4, p. 5).
 
 The headline numbers use clear denominators: n = 66 per Set A cell, three deterministic runs of 22 items; Set B n = 18 per cell, six items × three runs (Tables 4 and 7). The paper states: “Here “ceiling” is used operationally: it names the observed blind-routing saturation in this fixed Set A protocol, not a universal upper bound for the model family.” (Section 7, p. 10). Inference: the reported fractions and rounded percentages are arithmetically consistent.
-
-Inference: threat to agent-written verified Rust is moderate to high at proof planning time. Verus may reject a wrong mechanism, but an agent can waste search on the wrong abstraction or choose a stronger, easier contract. VL should keep source anchors, distinguish broad property from certificate family, and measure routing before proof generation. Existing work already does machine-checked Lean artifact anchoring and paired mechanism-cue evaluation; VL should adapt those ideas to Rust contracts and invariants instead of repeating a natural-language classifier without kernel evidence.
 
 ## techniques for the catalog
 
@@ -145,4 +141,3 @@ Inference: threat to agent-written verified Rust is moderate to high at proof pl
 - paired cue ablation — compare blind and mechanism-metadata conditions on the same item, model, and run
 - separated routing metrics — score mechanism template, truth verdict, and caveat evidence independently
 - cue-induced confusion analysis — distinguish errors fixed by metadata from errors caused by label granularity
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In paired terms, gpt-oss-120b has 7 wrong-to-correct transitions and no correct-to-wrong transitions; all 7 improvements are CRT rows."): checked every quotation, number, section/page reference, technique step, and source-versus-inference distinction; corrected the label-count expansion, quotations, references, unsupported recommendations, and Llama persistence claim; did not inspect the repository, rerun model evaluations, or independently verify Lean artifacts.

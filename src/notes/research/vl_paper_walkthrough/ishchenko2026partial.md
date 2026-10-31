@@ -47,11 +47,7 @@ Evidence and limits. The paper does not report solver timings, solved-VC counts,
 
 The complete pipeline is: parse annotations and code into an AST; construct a CFG; generate structural invariants; traverse the CFG to produce independent VCs; build a per-VC proof context; negate the behavioral requirement as the SMT goal; translate to SMT-LIB; call CVC5; classify `sat`, `unsat`, or `unknown`; and retry `unknown` with more lemmas before deferring it to Isabelle/HOL (Section VI, PDF p. 5). The paper says: “If the solver returns unknown, the system attempts to refine the proof context.” (Section VI, PDF p. 5).
 
-What is proved is conditional validity of generated VCs under the supplied annotations, generated invariants, SMT encoding, and solver result. Trusted elements include input `assume` annotations, the Reflex-to-VC semantics, CFG construction, state datatype axioms, SMT solver correctness, and Isabelle/HOL for deferred proofs. No experiment establishes that the proposed modifications work on a real controller. Inference: for VL, the design suggests a useful separation between contract syntax, automatically inferred state invariants, and per-obligation solver contexts, but it is an architectural pattern rather than reusable Verus code. Inference: the threat to agent-written verified Rust is moderate for stateful controllers because missing history, aliasing, or unsound assumptions can make a passing proof irrelevant; the absence of evaluation leaves effectiveness unknown.
-
-## what VL should not redo
-
-The paper already specifies a three-layer automation pattern—annotations, CFG-derived invariants, and SMT context refinement—and a fallback to interactive proving. VL should not claim these as new ideas. A potentially new VL contribution would need measured evidence on Rust/Verus programs, such as solved-VC fractions, proof time, repair effort, or robustness under code changes; this paper reports none.
+What is proved is conditional validity of generated VCs under the supplied annotations, generated invariants, SMT encoding, and solver result. Trusted elements include input `assume` annotations, the Reflex-to-VC semantics, CFG construction, state datatype axioms, SMT solver correctness, and Isabelle/HOL for deferred proofs. No experiment establishes that the proposed modifications work on a real controller.
 
 ## techniques for the catalog
 
@@ -59,5 +55,3 @@ The paper already specifies a three-layer automation pattern—annotations, CFG-
 - structural invariant generation — derive reachable-state, state-variable, and transition-condition invariants by CFG and path analysis
 - layered SMT proof contexts — encode state updates and getters in SMT-LIB, select base/advanced/optional lemmas, and refine on `unknown`
 - per-VC fallback — classify solver results and defer unresolved obligations to an interactive theorem prover
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

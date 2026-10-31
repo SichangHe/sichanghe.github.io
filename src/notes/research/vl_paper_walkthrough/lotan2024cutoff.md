@@ -36,16 +36,9 @@ The hardest condition has the form `(∃x_h. α(x_h,z)) ⇒ (∃x_l. β(x_l,z))`
 
 Verus form (Inference): encode `t` as a pure `spec fn` and prove totality/sufficiency as lemmas over finite sets. The hint is a witness-producing proof, not executable code. Solver performance claims cannot be transferred directly because Verus uses SMT differently and may require explicit witness lemmas.
 
-## evidence, limits, and product threat
-
-The implementation uses mypyvy and Z3 4.12.2.0 on a Windows Core-i7 2.8 GHz laptop; all runs take under 10 seconds (Section 5.2, p. 17). Table 1 reports cutoffs and update/hint counts for TreeTermination, EchoMachine, ToyConsensus, LockServer, ListToken, PlusMinus, EqualSum, and EqualSumOrders. For example, TreeTermination has cutoff node 2, one nondefault update out of three, an invariant, and one hint out of one; ListToken has cutoff node 3, two updates out of seven, an invariant, and one hint out of three (Table 1, p. 17). These denominators are table columns, not percentages.
-
-The high-low update is manual; the conclusion says the paper leaves automating its search to future work. Without hints, conditions are not in EPR and Z3 can struggle when a query is invalid (Section 7, p. 20). Liveness is also left open. The user supplies updates, invariants, and hints, whose required properties are checked by verification conditions. Inference: applying the result relies on the adequacy of the system model and finite-domain assumption, the soundness of the encoding, and correct implementation and solver behavior. Inference: for VL, the method threatens proofs involving unbounded numbers of agents or threads because a manually discovered cutoff could replace an induction over all instances. It does not automatically discover the cutoff, and a Verus encoding would still require explicit state and transition models. VL should reuse the size-induction idea but should not claim automatic parameterized verification from this paper.
-
 ## techniques for the catalog
 
 - size-reducing simulation: relate initial states above k to smaller initial states, match transitions by finite low traces, and preserve faults
 - high-low update encoding: express deletion and deterministic symbol updates as first-order verification conditions checked by SMT
 - z-excluded projection: encode deletion of one domain element by guarding low-state quantifiers against the deleted variable
 - quantifier hints: supply witness relations that split existential simulation checks into totality and sufficiency obligations
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To ensure that a state is obtained, we further need to verify that the resulting substructure satisfies the axioms."): checked all paper text including Appendix A against the study, quotations, numbers, references, and technique steps; corrected general simulation to permit finite low traces, distinguished strong simulation from its deterministic encoding, added all seven verification conditions, corrected a quotation reference, and clarified checked user inputs and inferences; did not rerun the research artifact, independently prove the theorems, or validate the proposed Verus encodings.

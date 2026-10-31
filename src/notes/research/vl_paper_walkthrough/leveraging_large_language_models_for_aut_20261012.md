@@ -1,7 +1,6 @@
 # Leveraging Large Language Models for Automated Proof Synthesis in Rust
 (authored by agents unless marked 🧑)
 Tag: `yao2023leveraging`, [paper](https://arxiv.org/abs/2311.03739v2)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and contribution
 
@@ -60,8 +59,6 @@ Inference (not stated in the paper): this is a sound syntactic propagation only 
 
 When Verus rejects a response, the tool concatenates the last response and the error message into a new prompt. It retries once in the main setup. A later model version is allowed two additional attempts. The reverse example shows GPT-4 initially omitted one invariant; Verus reported three errors, and the second query generated all five needed invariants.
 
-This method carries directly to VL: preserve the exact diagnostic, ask for a minimal annotation repair, re-run Verus, and stop after a bounded number of attempts. Do not treat a model explanation as evidence. The proof checker is the acceptance test. Inference: error feedback can expose missing invariants, syntax mistakes, and failed postconditions, but it does not discover a missing high-level requirement.
-
 ## evidence and denominators
 
 The evaluation contains 20 programs split into 110 segments and 163 GPT-4 queries. Of 110 segments, 55 needed no proof annotations, 18 were verified from GPT-4's direct proof, 17 more after static invariant propagation, 2 after error feedback, 1 after both propagation and feedback, 16 only after human correction, and 1 was unverified because the Rust program was buggy (Table 1, p. 5). The line-count comparison records 334 ground-truth proof lines; the developer corrected 55 lines in total, including 5 syntax-only, 49 semantic, and 1 mixed correction (Table 2, p. 5). The paper reports a reduction of more than 80% in proof lines for these entry-level examples.
@@ -71,8 +68,6 @@ With GPT-4 dated 2023-03-15, only 3 of 20 complete programs were fully automated
 ## what is proved and trusted
 
 Verus proves each accepted segment against its generated predicates. Static analysis provides candidate invariant facts but does not establish semantic intent. The authors manually checked that all 20 C-to-Verus translations were equivalent, and a developer remained in the loop for 16 segments. Trusted assumptions include Verus, its SMT solver, the model's examples and generated contracts, translation equivalence, and the correctness of the split interfaces. The prototype supports only single-function vector programs; the paper lists Set, Map, user-defined data types, cross-function verification, and reusable lemmas as future work.
-
-The threat to VL is medium (inference). The paper demonstrates the core interaction that a Verus agent needs: structured prompts, verifier feedback, and mechanical propagation of stable facts. It does not solve specification recovery, repository-scale dependencies, unsafe memory models, or autonomous review. VL should reuse segmentation and diagnostics rather than repeat a prompt-only invariant benchmark. Existing work already establishes these techniques for small vectors; a product contribution must show broader code, stronger intent checks, and maintained proofs.
 
 ## techniques for the catalog
 

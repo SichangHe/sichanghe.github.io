@@ -15,8 +15,6 @@ What it is. Identify which pipeline stage can recover the most end-to-end failur
 
 Steps in the paper. (1) Run the unmodified Decomposer–Formalizer–Prover pipeline and record units, contexts, statements, scripts, local diagnostics, and the full result (section 3, p. 3). (2) Expose that trace to exactly one editable stage (section 3, p. 3). (3) Re-execute downstream stages while holding the other outputs fixed (section 3, pp. 3–4). (4) Compare end-to-end verification recovery under the matched budget (section 3, p. 4). The paper reports, on all 184 ProofFlowBench samples after five passes, 94/184 = 51.1% for D-Intervene, 83/184 = 45.1% for F-Intervene, and 62/184 = 33.7% for P-Intervene; baseline accuracy is 29.9% (Figure 2, p. 4). The denominator is 184 benchmark problems, and the setting is five correction passes.
 
-Inference: A VL team can run the same intervention on generated Verus code: freeze contracts and proofs while revising decomposition, then freeze decomposition and proofs while revising contracts, and finally revise proof code. This measures where verifier diagnostics are actionable before adding more inference calls. It assumes comparable budgets and stable downstream agents; it does not prove that decomposition is always the bottleneck for systems code.
-
 ## technique 2: atomic, self-contained proof-unit decomposition
 
 What it is. Make each unit small enough for formalization and proof, yet complete enough to state its assumptions and dependencies. The paper says, “A useful proof unit should be atomic enough for the Formalizer and Prover to handle, but complete enough to specify the right claim, assumptions, side conditions, and dependencies” (section 2.2, p. 3). Its appendix decomposer prompt requires an exact quote from the proof, explicit assumptions, and a separate lemma for every atomic inference (Appendix A.1, pp. 12–15).
@@ -39,12 +37,6 @@ Inference: For Verus, replace Lean-friendly with solver-friendly and contract-co
 
 What it is. Treat the maximum number of decomposition-evolution rounds as a controllable latency/accuracy parameter. The paper’s ablation shows increasing rounds improves syntactic correctness while adding wall-clock cost and then yields diminishing returns (section 5.3, p. 8). Table 2 reports TOMAP-Qwen30B on ProofFlowBench at 39.67%, 52.72%, 59.24%, and 66.30% SC for 1, 3, 5, and 10 rounds; miniF2F is 57.78%, 75.41%, 81.15%, and 86.89% (Table 2, p. 9). TOMAP-Gemini is 35.33%, 50.54%, 56.52%, and 63.59% on ProofFlowBench and 61.89%, 75.41%, 79.09%, and 82.79% on miniF2F at the same round counts (Table 2, p. 9). Each percentage is over the full benchmark split stated in Table 1.
 
-Inference: VL can select decomposition rounds by measured proof success per latency budget, with separate settings for interactive and batch verification. These curves do not establish the best budget for Rust systems, whose compilation and solver costs differ.
-
-## evidence, trust, and product threat
-
-The paper’s evidence is Lean-based benchmark evaluation and matched intervention, not a production systems study. It assumes input informal proofs are correct and explicitly leaves detection and repair of incorrect or incomplete steps for future work (section 7, p. 9). Trusted elements include the Lean kernel, the LLM semantic judge, model endpoints, and benchmark annotations. Inference: for agent-written verified Rust, the largest threat addressed here is wasted compute and poor decomposition; the larger product threat remains semantic mismatch between an intended systems requirement and a formally verified but incorrect contract. Existing VL work already has verifier feedback, proof-oriented APIs, and solver-context controls; this paper contributes a measurable weak-link protocol and a cheap rubric gate rather than a new Verus proof rule.
-
 ## techniques for the catalog
 
 - weak-link intervention: edit one pipeline stage under identical verifier traces and budgets to find the highest-recovery interface
@@ -52,4 +44,3 @@ The paper’s evidence is Lean-based benchmark evaluation and matched interventi
 - Pareto rubric evolution: evolve a pool of decompositions using faithfulness, provability, and language-friendliness scores
 - verification gating: invoke expensive formal checking only after cheap proxy scores clear a threshold
 - budget scaling: choose test-time optimization rounds from measured accuracy-cost curves
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

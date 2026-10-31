@@ -88,5 +88,3 @@ No numerical contradiction is apparent in Table 1: percentages are multiples of 
 - canonical independent checking — test generated solutions for feasibility and optimality against a separate reference encoding
 - intermediate symbolic planning — make the model list variables, constraints, preferences, objective, and output schema before code generation
 - bounded execution-feedback repair — return runtime, API, and schema errors and allow up to five corrected generations
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

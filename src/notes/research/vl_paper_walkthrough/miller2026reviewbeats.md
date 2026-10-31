@@ -54,12 +54,9 @@ Verus form. Inference: expose complete behavioral contracts, type constraints, r
 
 The paper’s evidence is empirical pass@1 measurement with deterministic greedy decoding, extraction and compilation checks, visible test retries, and benchmark hidden tests. It does not establish that the reviewer’s diagnosis is sound, that richer generated specifications are correct, or that the Qwen pair generalizes to other models. It explicitly limits the scope to single-function benchmarks and says the results are model-specific.
 
-Inference: the threat to a product that writes agent-generated verified Rust is high at the interaction layer but manageable with a verifier gate. Plan-then-code can inject wrong imports, spelling “correction” that breaks an intentional `delimeter` signature, mismatched algorithms, and unnecessary complexity; the paper’s 15 regression cases quantify this over 164 problems. A review-after-generation architecture is a useful product pattern, but its effect depends on contract richness and does not replace Verus. This paper already covers generic dual-model review, retries, adversarial generation, and specification-richness analysis; VL should reuse these patterns rather than claim them as new verification techniques.
-
 ## techniques for the catalog
 
 - review-then-fix — generate code freely, review it against the specification, and feed concrete bug reports back for one fix pass
 - verifier/test feedback loop — compile and test visible examples, then perform bounded repairs from diagnostics
 - adversarial dual-generation — generate independent candidates, select passing outputs, and synthesize after both fail
 - specification-richness measurement — compare review gains across explicit and lean contracts with fixed denominators
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

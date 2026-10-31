@@ -20,15 +20,8 @@ Inference: before diagnosing a Verus proof or compiler failure, inspect the actu
 ## technique: separate formal checking, human reconstruction, and independent follow-up
 The paper’s evidence table assigns distinct questions to distinct acts (Table 2, p. 8): a formal certificate checks an encoded proposition; human technical review checks mathematics to a stated depth; an independent derivation supplies another argument; a strengthening or extension may entail a weaker theorem only after assumptions match; complementary uptake develops related content; and a reference-work entry documents recognition but is not independent certification. The paper warns that independent follow-up may itself use AI assistance and therefore distinguishes independence from the original project from independence from AI systems (§5, p. 7).
 
-Inference: VL’s attestation should expose these evidence types separately. A Verus certificate, a human review of the contract, a rerun under pinned dependencies, and an independent implementation are different fields with different claims. Do not collapse them into one “verified” badge.
-
 ## technique: preserve correction and provenance as first-class artifacts
 The audit recommends a standardized report header and immutable manifest containing stable identifiers, exact manuscript version and checksum, report date, reviewer status and expertise, checking scope, disclosed authorship mode and AI/formal-tool use, Lean commit, and unresolved dependencies (§6, p. 9). Public deposition makes correction auditable, but does not make reports infallible (§6, p. 9). The archive DOI is `10.5281/zenodo.22218229` (§6, p. 9).
-
-Inference: for VL, retain the Rust/Verus commit, toolchain and dependency lockfile, exact command, imported specifications, proof logs, generated executable hash, reviewer scope, and unresolved assumptions. If a contract or review changes, append a new version and preserve the old one with its withdrawal reason. This supports reproducible correction without treating provenance as proof of semantic adequacy.
-
-## what remains trusted and threat to VL
-Trusted elements include the Lean kernel and formalization environment, the human reviewers’ mathematical competence, the source manuscript, imported theorems and axioms, and the mapping from formal propositions to published claims. The audit is explicit that it does not establish that humans independently reproduced all ten proofs, that Lean verified every informal claim, or that 18 documents represent 18 independent reviewers (§6, p. 9). Inference: the threat to agent-written verified Rust is substantial when a proof certificate is presented without contract-semantic review, dependency assumptions, or correction history. Existing formal-verification workflows already provide compiler/kernel checking; VL should add this paper’s evidence separation, source-fidelity checks, scoped review, and immutable provenance rather than claim that a verifier pass alone establishes product correctness.
 
 ## techniques for the catalog
 - proposition-scope separation — distinguish encoded theorem, published theorem, and advertised achievement
@@ -36,4 +29,3 @@ Trusted elements include the Lean kernel and formalization environment, the huma
 - source-fidelity audit — verify objections against immutable source artifacts and record withdrawals
 - evidence decomposition — report certificates, human review, independent derivation, extensions, uptake, and references separately
 - immutable provenance — preserve versions, checksums, tool commits, reviewer scope, AI use, and unresolved dependencies
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

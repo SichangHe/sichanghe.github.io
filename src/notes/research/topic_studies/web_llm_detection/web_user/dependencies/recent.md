@@ -135,7 +135,6 @@ Fingerprinting the Fingerprinters: Learning to Detect Browser Fingerprinting Beh
 
 source preservation
 
-- PDFs and extracted text saved in /hdd1/sichanghe/paper_collection
 - local source folders use the full paper titles above
     - each contains `source.md` with URL, version, retrieval date, and SHA256
     - each contains `full_text.txt` for later reading

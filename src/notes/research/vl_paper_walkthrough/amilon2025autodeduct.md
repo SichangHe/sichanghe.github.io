@@ -74,12 +74,6 @@ The authors state: “We did not compare AutoDeduct against other tools, since w
 
 The paper states: “The verification with WP ensures that the entry-point function satisfies the provided contract, and that every helper function satisfies its inferred contract.” (Section 3, p. 3.) TriCera and Eva generate annotations that WP then checks. The authors therefore place the necessary trust base at WP, as quoted above. Inference: successful verification establishes the supplied contract; it does not independently establish that the contract captures the intended industrial requirement. This study does not audit WP, its dependencies, the inference implementations or their soundness.
 
-## what VL should not redo and product threat
-
-The demonstrated approach combines property-guided helper-contract inference from one entry contract; separate functional and auxiliary inference; abstract-interpretation frame/range/pointer annotations; staged artifact production; and a timing measurement on a simplified industrial module. Inference: VL should test how these patterns map to Rust and Verus, especially whether ownership reduces auxiliary annotations and how to infer loop invariants, which AutoDeduct explicitly leaves unimplemented.
-
-Inference: threat to a product that emits agent-written verified Rust is moderate. Automatic helper contracts could reduce specification effort, but context-specific contracts can overfit a call graph, and the paper's sole successful case is a reduced 123-line module. Missing loop-invariant inference and the listed unsupported C features limit the demonstrated scope. A proposed Verus pipeline would need a separate method for supplying invariants and a final verifier check against the intended specification.
-
 ## techniques for the catalog
 
 - entry-contract-guided functional inference — infer helper `requires` and `ensures` sufficient to prove a supplied module contract
@@ -87,4 +81,3 @@ Inference: threat to a product that emits agent-written verified Rust is moderat
 - auxiliary abstract-interpretation inference — derive value ranges, pointer validity and frame conditions with Eva-like analysis
 - staged annotation and verification — run functional inference, auxiliary inference and final proof as inspectable stages
 - related-work foundation: state-summary specification inference — weakest/strongest conditions and counterexample-guided methods; not a separately implemented AutoDeduct mode
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "By running AutoDeduct on the program, we infer contracts for the helper functions, and verify the program using WP."): checked all paper text, study quotations, numbers, section/page references, technique steps and stated limitations; corrected incomplete quotations, page references, the verification outcomes, evaluation wording and trust claims, and marked proposed adaptations and conclusions as Inference; did not run AutoDeduct, inspect its artifact or implementations, reproduce timings, or verify Verus adaptations.

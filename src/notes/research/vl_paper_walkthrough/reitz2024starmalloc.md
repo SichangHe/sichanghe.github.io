@@ -66,12 +66,6 @@ The performance setup was a 4-core/8-thread Intel Xeon E5-1620 at 3.60 GHz, 12 G
 
 Section 6.2 reports caught use-after-free cases from Yagemann et al. and the bzip2 CVE-2016-3189, and states: “We prevent the “fastbin_reverse_into_cache”, “fastbin_dup” and “tcache poisoning” exploits, all of which are successful with the most recent version of glibc (2.38).” (PDF p. 20). Inference: no detection percentage follows because the paper gives no total count of attempted exploits. The effort estimate is explicit: “We estimate that our implementation effort for StarMalloc took two person-years.” (Section 6.4, PDF p. 20).
 
-## proof boundary and VL risk
-
-The formal claims cover modeled memory safety, functional allocator behavior, thread safety, zeroing postconditions, and layered data-structure invariants (Sections 4–5). Inference: the end-to-end guarantee also depends on F★/Steel and the proof toolchain, extraction and compilation, OS and pthread behavior matching their models, and the ABI wrappers. The paper explicitly assumes page alignment and axiomatizes memory-related syscalls. It supplies no formal attacker model and does not formally prove absence of deadlocks or effectiveness against attacks (Sections 4.2–4.3). Canary behavior is described in Section 3.2, without a canary-specific formalization in Section 4.3.
-
-Inference: a passing allocator proof can mislead users if it relies on incorrect foreign-function or hardware contracts, stale configuration assumptions, or an incomplete attacker model. The strongest reusable lesson is the architecture: specify ownership and functional behavior in layers, isolate mutable representations behind interfaces, and make security mechanisms contract extensions. VL should not redo generic bitmap/list/AVL proof libraries or the specification-guided modularity idea. Inference: a Verus study could add evidence for a verified Rust implementation, explicit accounting of trusted assumptions, and measured proof maintenance under configuration and dependency changes.
-
 ## techniques for the catalog
 
 - layered separation logic — specify ownership, values, and thread safety with compositional predicates and contracts
@@ -79,5 +73,3 @@ Inference: a passing allocator proof can mislead users if it relies on incorrect
 - allocator invariant layers — tie slots, bitmaps, slabs, lists, size classes, arenas, and large-allocation maps into modular ownership contracts
 - localized hardening proofs — extend specifications for zeroing, quarantine, and guard pages while limiting changes to affected layers
 - specification-guided extraction — implement to contracts, specialize static parameters by verified normalization, and extract to C behind explicit trust boundaries
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We then instantiate this abstract model with a new implementation of AVL trees in Steel; using any other data structure would be straightforward."): checked the full text including references and appendix, quotations, counts, section and PDF page references, technique steps, evaluation baselines, and proof limits; corrected the Section 5 page, line-count arithmetic and scope, unsupported canary-proof wording, lock and security limits, and the paper link; marked extrapolations as Inference; did not inspect source code, rerun proofs or benchmarks, or validate Verus translations.

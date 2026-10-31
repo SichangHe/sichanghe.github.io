@@ -53,8 +53,6 @@ Inference: apply the repair when a valid property is rejected (these steps are o
 
 The paper calls this quantifier instantiation, says many problems can be solved without it, and says it was "only required for a small fraction of benchmarks in one of the three case studies conducted in [17]", where [17] is a separate OOPSLA 2026 paper by Lewchenko et al., not this one (Section 2.3, p. 12). The claim has no count or denominator, so it should not be reported as a rate.
 
-Inference: In Verus, the analogous repair is an explicit lemma call or `assert` that instantiates a quantified fact, often with a carefully chosen trigger. The paper's dead-binding syntax is Ravencheck-specific. A VL agent should diagnose missing instantiation before weakening a contract.
-
 ## technique 5: CBPV, partial evaluation, and relational abstraction
 
 Ravencheck's encoding pipeline has three phases (Section 3, p. 12). First, lower the Rust AST to a CBPV-based IR, rejecting unsupported logical syntax such as mutation statements and method calls. Second, partially evaluate the IR: inline `#[define]` functions and nested `let` bindings into A-normal form, leaving calls only on variables and constants. Third, replace each uninterpreted function call by an implication that quantifies the function's output and assumes it is related to the input by an uninterpreted relation symbol; the paper motivates this by sort cycles, since `get` and `set` have an argument type equal to the return type. Figure 13 shows `R_set(h,x,v)` and `R_get(h0,x)` relations replacing `set` and `get` calls (Section 3, pp. 12–13).
@@ -67,14 +65,6 @@ The linked-list reversal case study models a heap as a boxed pointer array and d
 
 Because the Rust compiler rarely performs automatic tail-call optimization, the developer does not define `reverse` recursively but defines the loop components `init`, `cond`, `step`, and `finish`. Ravencheck assembles them into a recursive function used for verification and its tail-call optimization (a loop) passed to the Rust toolchain. The paper states: “This allows the verified code to achieve runtime performance indistinguishable from unsafe imperative code.” (Section 4, p. 13.) That is a qualitative claim for the case study, with no measured timing denominator.
 
-Inference: VL can use the same split: verify an abstract recursive/state-machine view and compile an ownership-safe loop. The abstraction relation, acyclicity condition, and correspondence proof must be product-specific; the case study does not establish general performance equality.
-
-## evidence, trust, and product threat
-
-The paper provides architecture, code-shaped examples, and a linked-list reversal case study. It reports no benchmark table of success rates, proof times, or number of verified programs. Decidability is a design guarantee for the supported EEPR fragment, not a claim about arbitrary Rust; the paper says the type checker enforces it by statically analyzing quantifier alternations for sort cycles and reporting compile-time errors (Section 2, p. 10). The paper's three case studies and more complex properties are in [17], which this study did not read. Inference: trusted elements include user axioms, partial-function assumptions, the Rust compiler and borrow checker, CBPV lowering, relational abstraction, and SMT solver correctness.
-
-Inference: Ravencheck directly addresses Verus's proof-instability problem by restricting the logic, but it gives up some language and specification expressiveness. VL should not redo Ravencheck's basic EEPR encoding. It should reuse the warning about incomplete relational abstraction, explicit instantiation, and the separation between executable mutation and pure specifications. The threat from agent-written verified Rust is substantial when an agent adds assumptions or weak specifications to obtain a stable proof; verifier acceptance alone does not show that the executable implementation meets the intended property.
-
 ## techniques for the catalog
 
 - ownership-backed functional abstraction: use unique ownership to expose in-place mutation as a pure state transition
@@ -83,4 +73,3 @@ Inference: Ravencheck directly addresses Verus's proof-instability problem by re
 - manual quantifier instantiation: add a dead binding for a missing function application to trigger a relational axiom
 - EEPR encoding pipeline: lower to CBPV, partially evaluate, then replace function symbols with relations
 - pure heap state machine: verify recursive heap behavior while compiling an equivalent tail-call-optimized loop
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Unlike non-recursive function definitions, recursive definitions cannot be inlined as it would lead to infinite expansion."): read the whole paper text (pp. 8-14, including the reference list) and looked at Figure 13 in the PDF; checked every quotation word for word, every figure, section and page reference, the attribute descriptions, the three encoding phases and the heap-reversal case study; changed the filter and total/partial descriptions, added the Box::new identity detail, the partial-function semantics wording and the note that the case studies are in the separate paper [17], removed code formatting from inside one quotation, and labelled the application steps and the trusted-elements list as inference; the Verus comparisons and the product-threat paragraph are the study's own inferences and were not checked against any Verus source; paper [17] and the other references were not read.

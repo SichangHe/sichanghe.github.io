@@ -39,7 +39,7 @@ Inference: Verus form: state the backward property as a quantified `spec fn` pre
 Evidence and limits: the authors prove soundness for three encodings: rational permissions as reals under restricted assertions, lazy field creation, and immutable heaps represented by arbitrary positive fractions. Their immutable-heap relation permits “all such amounts p” in `(0,1)`. General magic wands and unrestricted lossy type translations fail the requirements. The framework assumes an affine front-end separation logic and a sound back-end IVL.
 
 ## what is proved, measured, and trusted
-The proved result is a meta-level soundness theorem for the specified framework and instantiations, mechanized in Isabelle/HOL. No runtime benchmark or success denominator is reported; the evidence is formal proofs and concrete counterexamples. Trust therefore includes Isabelle/HOL, the IVL semantics and back-end soundness assumptions, and the correctness of each front-end's primitive rules. Inference: for VL, the paper is a high threat warning against translating Verus ownership or ghost state into a richer solver state without a witness-preservation proof. Existing verifier bugs already occupy this space; VL should not redo an informal the encoding looks equivalent argument.
+The proved result is a meta-level soundness theorem for the specified framework and instantiations, mechanized in Isabelle/HOL. No runtime benchmark or success denominator is reported; the evidence is formal proofs and concrete counterexamples. Trust therefore includes Isabelle/HOL, the IVL semantics and back-end soundness assumptions, and the correctness of each front-end's primitive rules.
 
 ## techniques for the catalog
 - relational state encoding — model one source state to many IVL states when representation is nondeterministic
@@ -47,5 +47,3 @@ The proved result is a meta-level soundness theorem for the specified framework 
 - backward satisfiability — require every usable IVL assertion witness to have a source-state witness
 - spurious-split audit — test inhale/exhale and framing for IVL states outside the encoding image
 - mechanized front-end soundness — discharge encoding, assertion, statement, and control-flow obligations in Isabelle/HOL
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

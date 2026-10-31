@@ -89,12 +89,6 @@ The authors caution that AI formalizations may be buggy and AI proofs may not be
 
 Inference: a Verus workflow could require verifier checks for generated proofs and human review of whether contracts express the intended requirements. Verifier acceptance alone would not establish that the requirements were specified correctly. This is a proposed adaptation, not a workflow evaluated in the paper.
 
-## trust, limitations, and threat to VL
-
-Figure 5 labels “Semantics of PL” and “Lean Kernel” as the intended trusted computing base (p. 9). Verified transpilation and trustworthy VC generation are design goals; the prototype is not evidence that all planned front ends already meet them. The roadmap plans future support for pointers, concurrency, separation logic, and low-level systems (§2.2, p. 10; §6, p. 14). The complexity API relies on manual ticks and cannot directly prove algorithmic lower bounds (§2.1, p. 8). The 2026/2027 forecasts are tentative roadmap expectations (§6, pp. 13–14), not measured results.
-
-Inference: CSLib is relevant to VL as ecosystem infrastructure, not as a drop-in Verus library. Its strongest product lesson is to invest in reusable, searchable specifications and source-linked verification conditions, because those artifacts support both human maintenance and AI training. The threat to agent-written verified Rust is that a translation or contract layer can silently change meaning; the mitigation is a checked semantic bridge, explicit TCB accounting, and review of specifications before proof search.
-
 ## techniques for the catalog
 
 - unified formalization corpus: organize reusable computer-science models, algorithms, data structures, and proofs in one Lean framework
@@ -102,4 +96,3 @@ Inference: CSLib is relevant to VL as ecosystem infrastructure, not as a drop-in
 - Lean-replayed SMT: translate Lean goals to SMT, obtain proof certificates, and replay proofs in Lean
 - TCB-minimizing translation: aim for verified transpilation, embed the IVL ecosystem in Lean, and keep generated goals connected to source code
 - reviewed AI assistance: keep AI advisory and require manual code review of committed formalizations and proofs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The #prove_vcs command in our example invokes a prototype verification condition generator that generates goals in Lean."): read the full paper and study; checked quotations, numbers, page and section references, technique steps, and roadmap status; corrected the TCB description, an incomplete quotation, the complexity-API page reference, and the Boole excerpt; distinguished proposed adaptations from paper results; did not run Lean, inspect repositories, validate cited works, or test Verus adaptations.

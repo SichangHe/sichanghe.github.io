@@ -72,17 +72,9 @@ Table 2 contains 26 benchmark cases in five feature groups (PDF p.21). Examples 
 
 The paper reports: “The compiling of the benchmarks was done in 0.15s and the analysis was done in 0.3s.” (§7.2, PDF p.21). The machine was a laptop with a 2.20 GHz Intel Core i9-13900HX and WSL 2.3.24.0/Ubuntu 22.04.3 LTS. The authors report manual checking and say: “We encode some cases with the derived bounds in Flux [Lehmann et al. 2023] to check that the derived bounds are correct.” (§7.2, PDF p.22). They list 17 Flux cases. They also state that some bounds, including `min` and `max`, are not tight. Inference: these selected examples demonstrate supported features, rather than establish an accuracy rate over arbitrary Rust programs.
 
-## trusted, missing, and VL implications
-
-The paper presents soundness for the RABC type system and reports successful inference on the selected benchmarks. RABC includes integer lists and recursive top-level functions; loops are excluded from the calculus for presentation, while the implementation supports `while true`, `break`, and `continue` (§4, footnote 3, PDF p.10; §7.1, PDF p.21). The paper's limitations include unsafe code, generic types, closures, trait objects, and non-linear bounds (§1, PDF p.3; §8, PDF pp.23–24). Proposed resource-annotated APIs for `Cell`, `Vec`, and `Rc` are future extensions, not implemented support (§8).
-
-Inference: applying the result to Rust execution requires trusting Rust borrow checking, Charon's translation, the solver, and the implementation's correspondence to the formal calculus. Applying it to a particular resource also requires justifying that resource's `tick` model. VL could investigate translating inferred potential annotations into explicit Verus contracts for mutable resource accounting. This paper does not evaluate that integration or establish a threat level for VL.
-
 ## techniques for the catalog
 
 - shared-potential splitting — split a shared borrow's annotation into borrowed and remainder potentials whose sum is conserved
 - prophecy potentials — track current and future potential for a mutable borrow and require current ≥ prophecy at drop
 - lattice merge for aliasing — merge branch types with minimum current and maximum prophecy potentials, retaining branch drop conditions
 - RABC plus LP inference — model Rust-like execution with explicit ticks, generate linear constraints, and solve annotations automatically
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The type system creates symbolic variables to denote unknown annotations in rich types and signatures."): checked the entire paper text, study quotations, numbers, page and section references, technique steps, implementation, evaluation, and limitations; corrected quotations and page references, changed the benchmark count from 21 to 26, replaced the paper link with the paper's arXiv identifier, and marked proposed Verus/VL adaptations as inferences while removing unsupported claims; did not rerun the artifact or independently validate the proofs, implementation, or Verus adaptations.

@@ -72,8 +72,6 @@ Inference: Plateau detection assumes that recent aggregate stagnation predicts f
 
 The checker’s four operations above are reusable as a verifier-gated search pattern. The LLM-generated innovations included basin hopping with contact-graph SLSQP polish (iteration 1), hexagonal-lattice initialization (iteration 4), island-model parallel chains with elite migration (iteration 5), KKT-Newton contact polish (iteration 8), and defect migration that removes weak circles and reinserts them into holes (Section 4.5, p.6). The iteration table records these ideas and distinguishes champion, rejected, and no-code outcomes (Table 2, p.5).
 
-Inference: For VL, each generated Rust optimization routine could be accepted only after a separately implemented specification checker proves safety and objective claims. Domain moves such as lattice initialization are algorithmic heuristics and do not themselves become Verus lemmas; the invariant to prove is that every move preserves representation validity, while objective improvement remains an empirical measurement.
-
 The paper’s limitations are concrete: it tested one problem domain; it kept one champion rather than a population; model performance depends on generating correct compilable Python; and a MIPLIB experiment had a 75% code-generation failure rate (Section 6.2, p.7). Its evaluation was cheap enough for 120-second target runs and one LLM call per iteration (Sections 4.1 and 5, pp.4 and 6). The comparison table reports Discovery Loop’s single consumer PC, local parallel evaluation, one LLM call per iteration, full-program replacement, $27.72 reported cost, and open source status (Table 3, p.6).
 
 ## what is proved, measured, and trusted
@@ -81,10 +79,6 @@ The paper’s limitations are concrete: it tested one problem domain; it kept on
 Measured results are candidate scores, feasibility checks, iteration costs, wall-clock time, and Packomania acceptance. The paper reports approximately eight hours on the consumer PC and says the results were independently accepted by Packomania (Abstract and p.2). It does not present a formal proof of the optimization algorithm’s global optimality, of the checker implementation, of the LLM translation, or of the generated programs’ general correctness beyond tested targets.
 
 Inference: The trusted base for a Verus product would include the Verus verifier and solver, the formal specification, the checker implementation and its numeric model, and any external target or library contracts. The LLM, score history, and candidate search are untrusted proposal mechanisms. Inference: the strongest product lesson is to preserve independent acceptance checks and make generated artifacts replaceable, rather than to trust an LLM because its score improved.
-
-what VL should not redo
-
-Inference: VL should not spend effort reproducing this paper’s circle-packing heuristics as a product feature. The reusable contribution is the verifier-gated loop, per-target best retention, complete-candidate isolation, and measured plateau stopping. Inference: VL should test these patterns on verified Rust synthesis tasks, where the acceptance predicate is a Verus proof result and specification compliance rather than a floating-point benchmark score.
 
 Inference: For agent-written verified Rust, the threat is moderate. A verifier gate can reject invalid artifacts, but a faulty or incomplete specification can still accept an undesired program; model failures and plateau stopping can also miss useful candidates. The paper’s own 75% MIPLIB code-generation failure rate shows that generation reliability is a material operational risk (Section 6.2, p.7).
 
@@ -95,4 +89,3 @@ Inference: For agent-written verified Rust, the threat is moderate. A verifier g
 - independent zero-tolerance feasibility checking — recompute bounds, pairwise non-overlap, objective, and numerical shrink outside the solver
 - plateau-window stopping — stop after a configurable window has no champion or has improvement below a threshold
 - complete replacement isolation — evaluate self-contained candidate programs so architectural changes do not accumulate patch conflicts
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

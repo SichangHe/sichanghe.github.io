@@ -24,7 +24,7 @@ The spinlock example uses variables `lock_state` and `pc`; actions `StartLock`, 
 
 Verus form. Inference: use the task's mandatory actions as executable Rust methods and define an abstract state machine in ghost/spec code. Write a representation invariant relating the concrete lock state and thread states to the abstract model, then prove mutual exclusion and lifecycle properties with Verus `requires`, `ensures`, loop invariants, and lemmas. The benchmark's exclusion of RAII details does not justify dropping ownership obligations in Rust; it defines only the abstraction boundary.
 
-Evidence and assumptions. Section 3.1 states: “We evaluate behavioral conformance rather than structural equivalence, allowing fine-grained modeling of core actions as long as they preserve semantic obligations needed for verification.” (p. 4.) Inference: this makes the task useful for VL's abstraction design, but a passing abstract model still needs a proved refinement link to concrete Rust.
+Evidence and assumptions. Section 3.1 states: “We evaluate behavioral conformance rather than structural equivalence, allowing fine-grained modeling of core actions as long as they preserve semantic obligations needed for verification.” (p. 4.)
 
 ## technique 2: four automated quality metrics with prerequisite checks
 
@@ -79,12 +79,6 @@ Inference: SysMoBench measures generated model quality; it does not prove that a
 
 The authors report: “Without any hints about specific bugs, AI-generated models successfully reproduced several hard-to-find bugs across multiple systems in S YS M O B ENCH.” Table 11 identifies Etcd Raft #10998, Xline CURP #402, Redis Raft #19, Asterinas Mutex #1279, and Asterinas Rwmutex #1303. Models were generated from earlier code versions and checked for these known bugs (Appendix C.2, p. 19). Inference: known-bug reproduction is evidence that partial models can be useful for bug finding, not evidence of full correctness.
 
-## what VL should not redo and product threat
-
-Existing formal-model benchmarks target small puzzles, function contracts, or proof generation; SysMoBench's distinct target is real system code with concurrency, distributed behavior, traces, and invariants (Section 6, p. 10). Inference: VL should not spend effort rebuilding a syntax-only benchmark; the useful gap is a Rust/Verus harness that checks abstraction, trace refinement, and proof invariants together.
-
-Inference: threat to agent-written verified Rust is high for model-generation assistance on small synchronization components, because the benchmark shows strong spinlock scores. Threat is lower for large distributed Rust systems: Etcd Raft scores expose failures in abstraction and conformance even when syntax passes. SysMoBench's metrics and prerequisite checks are a practical template for detecting plausible but semantically incomplete agent output.
-
 ## techniques for the catalog
 
 - behavioral task contracts — specify mandatory core actions and excluded implementation details before generation
@@ -93,5 +87,3 @@ Inference: threat to agent-written verified Rust is high for model-generation as
 - invariant concretization — map reusable invariant templates to model-specific names, then model-check each separately
 - code-translation modeling — translate source statements and control flow before asking an LLM to abstract the system
 - no-human feedback loops — rerun agents with compiler/model-checker errors for up to three iterations
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Without any hints about specific bugs, AI-generated models successfully reproduced several hard-to-find bugs across multiple systems in S YS M O B ENCH."): checked all quotations, numbers, section/page references, technique steps, results, and inference labels; corrected the paper link, optional task inputs, page references, mapping inputs and semantic adaptation, agent-result scope, and known-bug evidence; did not rerun benchmark experiments, inspect the repository artifact, or verify the proposed Verus adaptations.

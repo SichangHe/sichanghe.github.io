@@ -81,7 +81,7 @@ How to do it.
 
 Verus form. Inference: define a numeric or ordered `spec fn` measure over the state and prove that an accepted transition preserves validity or changes the measure as promised. Inference: reward arithmetic itself is not a correctness proof; it is a training or selection heuristic layered over a verified transition predicate.
 
-Evidence and limits. The paper provides the verification data needed for dense rewards but does not train an RL policy in this study. The Discussion's future-work list proposes RL fine-tuning, process-reward-model training, and curriculum learning using these signals (§7, p. 14). Inference: VL should treat this as an unvalidated transfer idea until a Rust/Verus experiment measures proof completion, repair cost, and reward hacking.
+Evidence and limits. The paper provides the verification data needed for dense rewards but does not train an RL policy in this study. The Discussion's future-work list proposes RL fine-tuning, process-reward-model training, and curriculum learning using these signals (§7, p. 14).
 
 ## technique: measure difficulty from solution compressibility
 
@@ -97,8 +97,6 @@ Measured: SAT-verified unique-solution dataset construction, deterministic step 
 
 Trusted or unproved: pzprjs rule implementations, cspuz-solver2 and its encodings, the board-to-move conversion, benchmark sampling, model outputs, tool harness, and the assumption that the chosen constraints capture the intended puzzle rules. All success rates are single-run point estimates without confidence intervals, and no human baseline is established (§7, p. 14).
 
-Inference: the threat to agent-written verified Rust is moderate. The paper supplies a concrete pattern for verified transition feedback and deterministic oracles, but it does not show that an LLM can author Verus proofs or that reward signals avoid gaming. VL should not redo generic model benchmarking; it should apply the state-transition and per-step diagnostic pattern to proof-state editing, with machine-checked contracts and explicit budgets for retries.
-
 ## techniques for the catalog
 
 - unique-solution oracle: use a SAT-based solver and independently checked encoding to construct instances with one intended state
@@ -106,4 +104,3 @@ Inference: the threat to agent-written verified Rust is moderate. The paper supp
 - iterative verification loop: let an agent act, inspect deterministic feedback, and course-correct until solved or bounded out
 - dense violation rewards: derive process signals from the change in typed, located constraint violations
 - compressibility curriculum: use solution compression as a measured difficulty feature for training and evaluation
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Each attempt has one of three outcomes: correct (puzzle solved), incorrect (model returned a response but the solution was wrong), or request failed (infrastructure timeout or API error before any response was returned)."): read the whole paper text and checked every quotation, number, section and page reference and the technique steps against it; fixed page citations (check() §3.1 p. 4; Python API p. 7; unsolved varieties p. 11; 49% pp. 14-15), the abstract quote's attribution, the run-in-heading and footnote artifacts in the solver quote, unsupported steps (encoding the constraints, converting to RL data), and added the paper's own 35% versus 44% xhigh failure-rate inconsistency; did not check the figures' pixel content, the reference list, or the external repositories and dataset.

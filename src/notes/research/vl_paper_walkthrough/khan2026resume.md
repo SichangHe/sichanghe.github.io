@@ -29,7 +29,7 @@ What it is: introduce one fault switch per suspected mechanism, run every switch
 
 How to apply it: implement the reference transition system; add one controlled fault; run TLC for each invariant; record state counts and shortest counterexample depth; add a companion module when the base atomic action cannot express a production race. The paper's CO-c witness adds a consumption counter and a second racer that reads the waiting flag before the first clearing write.
 
-Evidence: ForkIgnore satisfies EO, PC, CV, CO, and RD while violating FD; InvalidPersist isolates CV; StateRebuild separates PC from EO; Redeliver isolates EO; CO-e is structurally implied by EO, while CO-c is independently violated. Inference: this technique tells VL which property a Rust API contract actually buys, instead of collapsing recovery into one “safe” bit.
+Evidence: ForkIgnore satisfies EO, PC, CV, CO, and RD while violating FD; InvalidPersist isolates CV; StateRebuild separates PC from EO; Redeliver isolates EO; CO-e is structurally implied by EO, while CO-c is independently violated.
 
 ## technique 3: deterministic conformance probes
 What it is: drive framework persistence APIs with pure Python sequences and an external durable effect ledger. The paper states: "Every probe is a pure-Python protocol sequence over framework persistence APIs — no LLM calls, no timing windows." Crashes are exception-based in the matrix and reproduced with barrier-synchronized SIGKILL; effect counters and an on-disk ledger provide the oracle.
@@ -43,7 +43,7 @@ R EMIT interposes at the checkpointer interface. It uses an append-only effect l
 
 How to apply it: keep the Rust core decision-free and expose typed exceptions through PyO3; make the veneer only extract configuration and route core verdicts; gate validity before delegating to the saver; decide fork and duplicate behavior on the durable read path. For cross-process consume, claim `(thread, checkpoint)` in a shared store with compare-and-swap before executing a node.
 
-Evidence: Verus files report zero errors for ledger/frontier, CV, FD, RD, recovery, and executable gates; differential tests cover about 70k sequences, and the composite TLA+ correspondence explores 6,110 states/13,035 transitions at R0 and 414,675 states/1.07×10^6 transitions at scaled bounds. The shipped cross-process gate yields `{1:10}` on both durable backends and across two hosts, while the default path yields duplication. The authors explicitly omit a Verus refinement from model to compiled core. Inference: VL can reuse the seam pattern for a verified Rust recovery decision core, but must separately prove its storage and binding correspondence.
+Evidence: Verus files report zero errors for ledger/frontier, CV, FD, RD, recovery, and executable gates; differential tests cover about 70k sequences, and the composite TLA+ correspondence explores 6,110 states/13,035 transitions at R0 and 414,675 states/1.07×10^6 transitions at scaled bounds. The shipped cross-process gate yields `{1:10}` on both durable backends and across two hosts, while the default path yields duplication. The authors explicitly omit a Verus refinement from model to compiled core.
 
 ## what is proved, trusted, and left open
 Proved: the FD–CO impossibility lemma, finite-state reference invariants, separation witnesses, and (with TLAPS) the reference conjunction. Machine checked: TLA+ states and Verus R EMIT components. Measured: framework behavior on pinned probes. Trusted: TLA+/TLC/TLAPS, Verus and Z3, framework persistence backends, and the stated model assumptions. Inference: the threat to agent-written verified Rust is high when retries and approvals share an undifferentiated API; a proof of task code alone cannot establish EO or CO across a store and multiple processes.
@@ -53,5 +53,3 @@ Proved: the FD–CO impossibility lemma, finite-state reference invariants, sepa
 - fault-matrix separation — discover property independence with one controlled fault and exhaustive finite model checking
 - deterministic conformance probing — use pure API traces, durable effect ledgers, and synchronized crash injection
 - verified decision seam — enforce validity, branch identity, and consume claims in a Verus-checked Rust core at the read/decision path
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

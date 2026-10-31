@@ -58,12 +58,6 @@ Inference: The Verus form is a checked Rust function or lemma plus compiler diag
 
 Evidence and limits. On 350 Olympiad problems, GPT-5.4 FaithSieve scored 81.43% exact and 93.71% binary, versus 72.29% and 88.29% direct judging (Table 5, p. 9). On 200 University problems it scored 84.50% exact and 92.50% binary versus 75.00% and 87.00% (Table 3, p. 7). These denominators are the benchmark sizes; the paper does not report confidence intervals. Lean success does not prove that the formal statement captured the informal requirement, which is why the faithfulness gate is trusted in the pipeline.
 
-## what is proved, trusted, and risky for VL
-
-Lean proves the selected formal obligations under Lean and mathlib, and the reported benchmark labels measure first-error localization. The datasets are expert-verified, but the language model's decomposition, suspicion scores, obligation templates, semantic checker, repair loop, and final evidence fusion remain trusted components of the evaluator (Sections 3–5). The paper does not establish that all local proof transitions are checked, nor that a failed check always identifies the first human-intended error.
-
-Inference: For VL, the direct transfer is a verifier-gated workflow for agent-written Rust: split code changes into local state transitions, generate typed contracts, compare those contracts with requirements, and let Verus produce checkable artifacts only after semantic alignment. The threat is high for specification drift and incomplete local obligations, because a generated Rust proof can pass while proving a weaker contract. The paper's already-completed decomposition, semantic gate, and evidence-fusion design should be reused rather than rediscovered; VL still needs Rust/Verus mappings, trusted-boundary accounting, and product-level tests.
-
 ## techniques for the catalog
 
 - proof-state-tree decomposition: split coarse proof steps into faithful state transitions and EdgeUnits before formal checking
@@ -72,4 +66,3 @@ Inference: For VL, the direct transfer is a verifier-gated workflow for agent-wr
 - faithfulness scoring gate: compare formal premises and conclusions with the source claim before accepting Lean evidence
 - hybrid formal evaluation: use SymPy for pure numerics and Lean for other faithful obligations, with explicit inconclusive outcomes
 - evidence fusion: aggregate local artifacts back to benchmark steps and return the earliest step with reliable negative evidence
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

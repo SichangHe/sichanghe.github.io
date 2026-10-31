@@ -6,7 +6,7 @@ Tag: `wu2025vep`, [paper](https://www.usenix.org/conference/nsdi25/presentation/
 
 VEP is an annotation-guided toolchain for eBPF programs. It keeps SMT solving in user space, compiles source annotations and proofs into annotated eBPF bytecode, and leaves a small proof checker in kernel space. The three components are VEP-C, VEP-compiler, and VEP-eBPF (abstract, p. 277). The authors state: “VEP consists of three components: VEP-C, a verifier for annotated eBPF-C programs; VEP-compiler, a compiler targeting annotated eBPF bytecode; and VEP-eBPF, a lightweight bytecode-level proof checker.” (abstract, p. 277).
 
-The goal is to verify memory safety, termination, kernel-interface compliance (acquire-release ordering, no resource leaks), and user-specified functional properties without rejecting safe programs because loops or data structures are complex (Sections 1–2, pp. 277–282). The key trust claim is: “Therefore, the entire TCB of VEP is effectively reduced to the lightweight proof checker, VEP-eBPF.” (Section 2.1, p. 280). Inference: that reduction is useful to VL only if the proof checker's rules and semantics are themselves covered by a suitable specification and review; moving trust does not remove it.
+The goal is to verify memory safety, termination, kernel-interface compliance (acquire-release ordering, no resource leaks), and user-specified functional properties without rejecting safe programs because loops or data structures are complex (Sections 1–2, pp. 277–282). The key trust claim is: “Therefore, the entire TCB of VEP is effectively reduced to the lightweight proof checker, VEP-eBPF.” (Section 2.1, p. 280).
 
 ## technique 1: annotate C with preconditions, postconditions, loop invariants, and separation logic
 
@@ -39,7 +39,7 @@ How to apply it.
 
 The paper illustrates register allocation with a source assertion `y == x + 1 && p != q` and a bytecode assertion using `R1`, `*(R10-4)`, and existential `_p`, `_q` (Figure 13, p. 287). It also says: “the compiler introduces auxiliary logic variables _Ri-s to relate the register values at function entry and those at the return point.” (Section 4.2, p. 286).
 
-Verus form. Inference: treat compilation as a separately specified transformation. A Rust/Verus compiler boundary can have a `spec fn` relating source state to generated state and `ensures` clauses for each lowering pass. Keep proof-only correspondence facts in `proof fn`s and executable register operations in ordinary functions. The paper does not prove the compiler correct and says it has few optimization passes (Section 4, p. 285), so a VL implementation would need independent preservation theorems or a final recheck like VEP-eBPF.
+Verus form.
 
 ## technique 3: check proofs again with a small bytecode checker
 
@@ -62,16 +62,9 @@ Verus form. Inference: a Verus proof checker analogue would expose executable va
 
 The appendix makes the source-to-internal assertion pipeline explicit. First, normalize user assertions into disjunctive normal form; second, convert expressions while generating auxiliary `Local` and `Sep` facts; third, run a scope check that rejects assertions such as `forall i, 0 <= i && i < 4 => a[i] == 0`, because “every logic variable appearing in S should be bound by existential variables introduced in exists x, S.” (Appendix B, p. 295). Internal assertions use `Exist`, `Local`, `Prop`, and `Sep` parts, which gives symbolic execution a canonical representation (Appendix A.2, p. 293). Inference: this is a useful Verus front end pattern: elaborate ergonomic source predicates into canonical proof-state facts, then reject ill-scoped specifications before solver calls.
 
-## what the evaluation shows and what VL should learn
-
-VEP is evaluated against the Linux verifier (Kernel 5.15) and PREVAIL (August 2024 version) on 41 programs (Section 6, p. 287). The text claims the Linux verifier has “consistent sub-millisecond verification times (avg. 0.94 ms) and low memory consumption (<5.2 MB) across all benchmarks” (Section 6.1, p. 288). Per-row averages: PREVAIL 13.88 ms on PREVAIL samples, VEP-C 39.46 ms and VEP-eBPF 8.42 ms on Linux samples (Tables 2–3, p. 289). PREVAIL accepted 1/10 StringLib safe programs and 8/10 of its own safe tests, while VEP accepted 10/10 annotated safe programs (Section 6.2, p. 288). These are reported prototype results, not a universal performance or correctness theorem.
-
-Inference: threat to agent-written verified Rust is high at compiler and specification boundaries. Verus can prove source-level contracts, but an unchecked lowering step, foreign function, kernel API, or weak contract can preserve a proof while changing the deployed behavior. VEP's useful pattern for VL is a small final checker over a proof-carrying artifact, paired with source-level feedback and explicit memory/resource contracts. VL should not redo ordinary loop-invariant and separation-logic foundations; it should investigate how to preserve Verus contracts across generated code and dependency boundaries.
-
 ## techniques for the catalog
 
 - annotated contracts: specify function preconditions, postconditions, loop invariants, and disjoint heap ownership
 - proof-carrying compilation: transform code, assertions, and proof terms together through lowering and register allocation
 - lightweight final checking: recheck bytecode entailments with a small proof checker rather than an SMT solver
 - explicit trusted boundary: isolate the final checker while recording compiler, semantics, and specification assumptions
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "As long as the user provides correct annotations, VEP ensures there are no false positives and no false negatives."): checked every quotation, number, section and page reference, and technique step against the paper text and tables; changed the link to the publisher page from the paper text, fixed wrong page numbers (TCB quote p. 280, Section 6.2 and 6.4 p. 288, Tables 2–3 p. 289, Figure 13 p. 287), the Figure 10 pass order, the memset Ensure clause, a miscapitalized quote, max-vs-average memory figures, the Key_Connection proof-line count (5,800 in text, 5,819 in table), the claim that symbolic execution moves to user space, and marked trust-boundary conclusions as Inference; did not check the appendix formal rules (Figures 21–22) or the per-program Tables 4–5 beyond spot checks.

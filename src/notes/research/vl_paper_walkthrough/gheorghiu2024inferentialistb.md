@@ -60,11 +60,9 @@ Inference: In Verus, encode a bunch as a tree of ghost resource sets and prove d
 
 For a distributed system graph, assign each component a policy formula and base, then combine them with a bunch and interface base. “A distributed system D comprises distinct components (or sub-systems) C1, . . . , Cn, each of which has its own policy which may interface with each other.” (Section 5, p. 9–15). Remark 5.2 (p. 9–15) says a component may be substituted by a more detailed set of interfacing systems, and the base modelling the refined systems "still models the policy of" the original component, with no change needed.
 
-Inference: In VL, this suggests verifying each Rust module against a resource transition contract, then proving interface lemmas and composing them. The product threat is specification mismatch: a generated proof can establish a model while the model omits a resource flow or interface rule. The paper provides no threat measurement, benchmark, or cost data.
-
 ## what is proved and trusted
 
-Cited, not proved in this paper: derivability/support equivalences for the presented logics. Presented here: a generic support interpretation and two examples. Trusted: the base rules, resource algebra, policy formulas, and the logical metatheory used for each fragment. Inference: existing Separation Logic and linear-logic readings already cover the underlying ideas; VL should reuse the separation/resource-contract pattern rather than invent a new logic. The novel value for VL is a uniform way to describe consumption, preservation, sharing, and component interfaces before encoding them in Verus.
+Cited, not proved in this paper: derivability/support equivalences for the presented logics. Presented here: a generic support interpretation and two examples. Trusted: the base rules, resource algebra, policy formulas, and the logical metatheory used for each fragment.
 
 ## techniques for the catalog
 
@@ -73,4 +71,3 @@ Cited, not proved in this paper: derivability/support equivalences for the prese
 - bunch sharing/separation — represent shared versus disjoint component resources with BI context structure
 - compositional policy bases — union component bases with explicit interface rules and refine components recursively
 - authentication as separated resources — require disjoint factor resources for multi-factor access
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Two components share resources when they use the available resource at the same time and separate resources when the available resources must be divided between components."): read the whole paper text (pp. 9–1 to 9–17 and the reference list) and checked every quotation word for word, the section and page references (now given as the paper's own page numbers 9–N), the (Gen-Inf) clause, the theorem citations, the connective readings and both examples; changed the link to the DOI printed in the paper text, fixed the page numbers, moved the location of the Γ/B/R/φ quotation to Section 1, replaced the wrong reading of the comma as additive conjunction, softened "proves" to "cites" for the three equivalence theorems, corrected the Remark 5.2 paraphrase, fixed a capitalised quotation start, and marked reconstructed steps and the Verus/VL conclusions as Inference; did not check the Verus and VL claims (outside the paper), the proofs in the cited works, or the reference list entries.

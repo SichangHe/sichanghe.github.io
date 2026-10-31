@@ -43,10 +43,7 @@ The evidence is a worked symbolic proof of Quicksort partial and total correctne
 
 Inference: the results rest on the assertion logic, the semantic model, the procedure declarations, and the unproved Partition properties; the method assumes recursive calls can be described by contracts and that suitable invariants and ranking expressions can be found.
 
-Inference: threat to a product that generates verified Rust is medium. Contract dependency graphs and measure-based recursion are directly useful; however, the paper does not address Rust aliasing, unsafe code, library specifications, solver brittleness, or generated proof maintenance. VL should reuse the property-first structure and termination pattern rather than redo a generic Hoare calculus.
-
 ## techniques for the catalog
 - modular recursive contracts: prove generic-call contracts from body proofs, then reuse them as assumptions in later proofs
 - property-first decomposition: prove permutation or another auxiliary property before the stronger functional property
 - ranking-function termination: choose a nonnegative bound and prove every recursive call strictly decreases it
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Correctness of Quicksort amounts to proving that upon termination of the procedure call Quicksort(m, n) the array section a[m : n] is sorted and is a permutation of the input section."): read all 21 PDF pages of the text; checked every quotation, section and page reference (page numbers are PDF page numbers, 1 = title page), the rule and step descriptions, and the Quicksort property names P1–P4, Q1–Q4; changed the P1/P2 swap, the J and K description, the INSTANTIATION side condition, two quotation fixes (missing bar on x̄i, extra "the"), the soundness claim (it is in [3], not this paper), page ranges, and added the MODULARITY and DECOMPOSITION rules and the unproved Partition properties; did not check the Verus inferences against Verus, the arXiv metadata beyond the paper's own header, or the cited references [1], [3], [7].

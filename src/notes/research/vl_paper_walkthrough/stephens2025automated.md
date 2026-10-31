@@ -49,16 +49,9 @@ Zequal uses Z3 over integers, models finite-field operations modulo the BN254 pr
 
 The authors report that manual inspection confirmed 26 real bugs among the first 116 counterexample cases; rerunning without the external-template-safety assumption found 20 more, for 46 buggy templates total. Of these, 41 violated determinism and 5 were deterministic but failed to properly validate inputs (page 333). Failure analysis reports 61 cases with insufficient invariants (53% of false positives), 10 with imprecise loop bounds (9% of false positives), 7% of false positives from imprecise stubs, and roughly 9% from imprecise SMT modeling (pages 332–333). These are the paper’s reported categories and percentages, not fractions of all 464 templates.
 
-## trust, limits, and VL relevance
-
-Section 5.1 states: “The theorems stating the soundness of our analysis can be found in the extended version of the paper [25], along with their proofs.” (page 326). This study checks the supplied conference paper, not those proofs. Section 7 reports verification failures from weak invariants, imprecise bounds, stubs, and SMT modeling (pages 332–333).
-
-Inference: The product-program and guarded-array-invariant patterns may help agents write Verus proofs that compare two implementations. Such a transfer requires an explicit model of finite-field operations and subcircuit behavior; the paper does not evaluate Verus. A consistency proof establishes the relation between the modeled witness computation and constraints, not the correctness of the compiler, cryptographic protocol, or an independently intended application specification.
-
 ## techniques for the catalog
 
 - pseudo-product construction — execute witness and constraint artifacts in aligned copies with shared inputs
 - symbolic equivalence analysis — infer equal signal pairs from flow-sensitive symbolic stores and simplify the product
 - guarded array equalities — synthesize quantified loop invariants from writes, bounds, and counter step sizes
 - Houdini invariant filtering — iteratively remove predicates failing initiation or consecution before SMT checking
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The theorems stating the soundness of our analysis can be found in the extended version of the paper [25], along with their proofs."): checked all paper text, quotations, numbers, section and page references, technique steps, and scope; corrected the agreement citation and quotations, product construction, invariant-filtering order, modular assumptions, and distinction between failed verification conditions and confirmed bugs; marked transfer advice as inference; did not check the extended-version proofs, external sources, implementation, experiments, or Verus examples.

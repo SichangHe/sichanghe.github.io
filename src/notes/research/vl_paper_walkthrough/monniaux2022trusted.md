@@ -6,8 +6,6 @@ Tag: `monniaux2022trusted`, [paper](https://doi.org/10.1007/978-3-030-99336-8_8)
 
 Monniaux and Boulmé audit the trusted computing base (TCB) around CompCert and two forks. CompCert proves that, for a defined-behavior C source, generated assembly has the same observable behavior, but the audit asks which unverified models, extractors, interfaces, printers, runtimes, and platform assumptions can still invalidate that chain. The paper’s abstract says, "We comprehensively analyze aspects of CompCert where errors could lead to incorrect code being generated" (abstract, p. 204).
 
-Inference: this is a trust-boundary checklist for VL. It is not a Verus soundness result and does not test Rust. The Verus mappings below identify analogous boundaries.
-
 ## technique 1: decompose and audit the TCB by semantic boundary
 
 what it is and when to use it
@@ -28,7 +26,7 @@ Inference: for a Verus project, inventory the verifier, SMT solver, proof erasur
 
 evidence and limits
 
-The authors write, "None of the problems found were in the verified parts of CompCert"; they report two bugs in the front-end elaboration rules, a few subtle semantic bugs in some back-ends, and "most bugs were found in the very last part of the back-end, which expands and prints assembly instructions" (section 7, p. 228). This is an empirical audit of the analyzed releases and forks, not a universal frequency claim. Inference: VL should measure defects by boundary and severity, retaining denominator and release information.
+The authors write, "None of the problems found were in the verified parts of CompCert"; they report two bugs in the front-end elaboration rules, a few subtle semantic bugs in some back-ends, and "most bugs were found in the very last part of the back-end, which expands and prints assembly instructions" (section 7, p. 228). This is an empirical audit of the analyzed releases and forks, not a universal frequency claim.
 
 ## technique 2: keep external oracles untrusted and check their results
 
@@ -90,18 +88,11 @@ how to apply it
 
 Verus form
 
-Inference: for VL, treat serialization, FFI, allocator, and generated-machine-code boundaries as separate lemmas/contracts. Use `external_body` only for a precisely documented boundary and add executable differential tests where the model is incomplete. Verus’s proof of an abstract Rust function does not prove a hardware ABI, linker, or foreign implementation.
-
 evidence and limits
 
 The paper reports that none of the problems found were in the verified parts, with most bugs in the last back-end stage; it attributes them to tedious printers, many expansion cases, and unsynchronized specifications (section 7, p. 228). It also records that CompCert assumes `malloc` always succeeds and never returns null, and assumes IEEE-754 round-to-nearest and stable rounding mode (section 6.3, p. 227). For malloc, the paper says an optimization could "in theory" remove defensive checks against heap overflow, but "we do not know of any optimization in CompCert exploiting this model of malloc" (section 6.3, p. 227).
 
-## what is proved, what remains trusted, and threat to VL
-
-CompCert’s theorem is conditional on defined source behavior, formal language semantics, assembly semantics, ABI, runtime, extraction, assembler/linker, and platform behavior. The authors say that "much attention is often given to doing away with such axioms and the extractor; this may not reflect the most pressing needs", while the bugs they found were in specification and unverified back-end parts (section 7, p. 228). Inference: this is a high threat to a product that promises agent-written verified Rust if the product boundary is defined as deployed behavior rather than Verus-accepted source. VL should publish a TCB ledger, test generated artifacts and FFI boundaries, and distinguish proof failure, executable rejection, performance-only mismatch, and semantic miscompilation.
-
 ## techniques for the catalog
-
 
 - TCB boundary decomposition — enumerate every trusted transformation from source text through verified model to execution
 
@@ -112,5 +103,3 @@ CompCert’s theorem is conditional on defined source behavior, formal language 
 - hash-consing discipline — enforce smart constructors and a global uniqueness invariant before treating pointer equality as semantic equality
 
 - back-end case audit — test printers, pseudo-instruction expansions, clobbers, ABI conventions, and runtime assumptions separately
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Yet, this OCaml code is small, with few execution paths, and can be easily tested and audited."): I read the whole paper text (pp. 204–228) and the whole study, and checked every quotation, page and section reference, and technique step against it. I fixed the oracle quotation (wrong words), a nonexistent "section 4.1", several page ranges (3.3 drawbacks p. 212, hash-table assumption p. 216, section 7 p. 228), and removed claims the paper does not make (that absence of axiom/extractor bugs is "not evidence" of safety, that the decomposition "finds bugs", and a defensive-check claim for IEEE rounding). I tied "do not axiomatize pointer equality" to the paper's "unsound" finding and marked the decomposition benefit as Inference. I did not check the Verus mappings (marked Inference), the cited commits or external works, or the code examples by running Coq.

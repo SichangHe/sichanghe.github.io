@@ -1,7 +1,6 @@
 # Resource Specifications for Resource-Manipulating Programs
 (authored by agents unless marked 🧑)
 Tag: `grannan2023resource`, [paper](https://arxiv.org/abs/2304.12530v2)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
 This paper extends Prusti with first-class, user-defined resources for programs that manipulate assets such as token balances. State-based specifications become verbose because they must spell out frame conditions, e.g. that other accounts' balances are unchanged by a deposit. The authors' methodology makes resource operations explicit. They verify 31 resource-related functions across four applications (IBC token transfer, IBC NFT transfer, an ERC-721 contract, a PSP-22 contract) and report shorter and syntactically simpler specifications but slower verification (Sec. 6). They write that “specifications for resource-manipulating programs quickly become verbose and difficult to interpret” and propose “defined first-class resources”.
@@ -20,15 +19,10 @@ Limits stated by the paper: functions that reborrow and return a live mutable re
 ## what is proved and what remains trusted
 Prusti checks function contracts, with coupling invariants enforced as postconditions. The case study proves two properties, two-way peg and preservation of supply (Sec. 5.3), not any unstated requirement. Inference: solver incompleteness can cause false rejections; the paper does not claim a soundness proof.
 
-## implications for VL (inference)
-Inference: Verus agents can adopt a resource layer for balances, capabilities, or tokens: define ghost resources, a concrete-state invariant, and a small operation vocabulary. This can reduce repetitive proof obligations in generated Rust. VL should reuse the abstraction idea rather than reimplementing ad-hoc balance lemmas, while testing aliasing and overflow cases (the paper's text does not mention overflow).
-
 ## techniques for the catalog
 - first-class resources — represent conserved assets directly in specifications with explicit operations
 - coupling invariants — two-state invariants tying resource state changes to program state changes, enforced as postconditions
 - default conservation obligations — make create/destroy/transfer semantics enforce conservation automatically
 - concise contract comparison — compare specification lines, AST size/depth and verification time against a state-based baseline
-
-The motivation is semantic as well as ergonomic: the authors note a “wide semantic gap between the way we think about resources” and what can be expressed in classical techniques for formal specification (Sec. 1). Inference for VL, through the end of this paragraph: closing that gap gives generated proofs a stable vocabulary. A Verus implementation could expose a ghost map from account identifiers to quantities, define transfer as subtraction plus addition, and prove that the sum changes only on mint or burn. The representation invariant then connects this map to storage. This pattern would also help review: reviewers inspect a small resource API and its conservation axioms instead of every function's duplicated balance arithmetic. It fails when the resource has hidden aliases or when external systems mutate state without a modeled operation. Therefore an agent should reject or flag calls outside the resource boundary rather than silently assume conservation. The evaluation to run (inference, not the paper's) should report specification lines, proof time, solver queries, and number of functions, with denominators for every comparison.
 
 Audited 2026-10-12 against the paper: read the full text; checked operations, steps, quotes and Sec. 5-6 numbers (31 functions, 48% fewer lines, 25/3/3, 29/26, 41%/38%, 35% slower, Table 3). Changed: removed invented `split` operation and "representation relation" (now coupling invariants); replaced invented how-to steps with the paper's; corrected "conservation facts" and "heap predicates" to frame conditions and state-based specifications; replaced one-application, "easier to write" evaluation claim with four applications, the numbers above, longer verification time, and ease of understanding as an untested hypothesis; replaced unsupported soundness claims with the paper's stated limits and marked the rest as inference. Not checked: supplementary material and Appendix-free PDF figures beyond text. Follow-up: the closing implications paragraph is now marked as inference through its end (its first sentence is the paper's quotation), and the claim that overflow cases are absent from the application was replaced by the fact that the paper does not mention overflow.

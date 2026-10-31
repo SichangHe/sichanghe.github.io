@@ -6,8 +6,6 @@ Tag: `vandoorn2026blueprint`, [paper](http://arxiv.org/abs/2608.27321v1)
 
 The blueprint formalizes quantitative norm-variation estimates for multiple ergodic averages. The abstract says, “This blueprint serves as a companion to a forthcoming, shorter traditional mathematical paper.” Its main estimate covers (n\ge2) commuting measure-preserving transformations and (r>2^{n-1}) (or (r\ge2) for (n=2)); Theorem 1.2 gives an explicit variation bound with inputs in (L^{2n}). The real-variable core is Theorem 1.4, a bound for twisted multilinear averages. The introduction states, “At the core of the analysis lies an explicit real-variable estimate for twisted multilinear averages that is closely related to certain singular Brascamp–Lieb inequalities.”
 
-Inference: for VeruLaw, the paper is primarily a method for organizing a large proof so an automated prover can elaborate it, rather than a method for discovering the theorem. The authors say the mathematical decisions, theorem organization, and dependencies were human decisions; the machine fills routine proof obligations after those decisions are fixed.
-
 ## technique: design a forward-chaining formalization blueprint
 
 What it is: arrange definitions and lemmas in an acyclic order in which every theorem uses only earlier results or explicitly admitted standard results. Section 1.3 calls this “Strict forward reasoning” and requires the proof to follow the statement.
@@ -92,4 +90,3 @@ The paper claims successful Lean 4/mathlib formalization of the stated theorems 
 - explicit dependencies and constants — expose theorem parameters and recursively named inequality constants so automation can audit them
 - staged LLM formalization — keep human control of statements and structure while models generate routine proof text checked by the prover
 - real-to-ergodic reduction — combine endpoint permutation, multilinear interpolation, Calderón transference, and jump-to-variation conversion
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -13,7 +13,7 @@ What it is. A response `Y` is parsed into tactics `(T1,…,TN)` in AST order. Le
 
 How to apply it. (1) Generate a group of Lean responses for one theorem. (2) Parse each response's AST and sort tactic nodes by source position. (3) Read Lean's error log and info tree. (4) Set `g(Y)=1` only when the complete proof verifies. (5) Assign each tactic a scalar according to global success and local error status. (6) Convert tactic scores to process rewards in the RL objective. The tactic-level MDP has states equal to partial proof prefixes, actions equal to single tactics, deterministic concatenation transitions, and EOS absorbing states (Section 3.2, p. 4).
 
-Verus form. Inference: use `cargo verus` as the hard oracle for generated Rust proof fragments. Parse candidate proof blocks into Verus-relevant units such as lemma calls, `assert`, `calc`, and invariant steps; classify a unit as locally accepted only if the verifier accepts the prefix. A locally accepted step may still leave unsolved obligations, so retain a separate whole-function score. Verus does not expose Lean's info-tree API, therefore the parser and error-location adapter would be new VL infrastructure. Use only constructs documented in the Verus notes: `requires`, `ensures`, `invariant`, `assert`, `calc`, `spec fn`, and proof functions.
+Verus form.
 
 Evidence and limitations. The authors compare outcome-only, tactic-only, and combined rewards. For STP at budget 64, outcome-only is 57.9% ± 0.5 MiniF2F and 19.0% ± 0.3 ProofNet; tactic-only is 56.8% ± 0.6 and 17.9% ± 0.8; combined is 59.2% ± 0.5 and 19.0% ± 0.3 (Table 2, p. 7). Inference: the combined signal's advantage is strongest on MiniF2F in this table, while ProofNet's combined score ties outcome-only at pass@64, so “consistently improves” should be read as an aggregate claim rather than every cell improving.
 
@@ -39,23 +39,19 @@ The paper tests alternatives: distribute tactic reward over all tokens, put it o
 
 Outcome-only RL is sparse and can plateau; tactic-only RL is dense but lacks a global objective. The authors report that combining them lets outcome rewards enforce proof-level correctness while tactic rewards provide local credit (Section 5.3, pp. 7–8). In Table 2, STP-Lean combined at pass@32 is 57.1% ± 0.8 versus 55.7% ± 1.0 outcome-only and 55.6% ± 0.6 tactic-only on MiniF2F; ProofNet is 18.6% ± 0.3 versus 17.4% ± 0.6 and 18.3% ± 0.0. The denominator is the benchmark's pass@32 evaluation with reported mean ± standard deviation, not the 10k training samples.
 
-Inference: the combination is directly relevant to VL training if verifier calls are already part of generation. It still requires enough examples where intermediate Verus obligations are informative; no experiment here measures unsafe Rust, concurrency, or solver-trigger sensitivity.
-
 ## appendix findings and explicit failure mode
 
 The reward ablations test the mechanism rather than only the headline model. With first-error propagation removed, STP at budget 64 reaches 58.2% ± 0.7 on MiniF2F and 18.3% ± 0.3 on ProofNet; the complete method reaches 59.2% ± 0.5 and 19.0% ± 0.3 (Table 4, p. 8). Removing the difficulty baseline gives 57.4% ± 0.7 and 18.3% ± 0.5, while using one equal tactic penalty gives 58.7% ± 0.8 and 18.1% ± 0.6. These rows use the same 7B model and sample budgets, so the denominator is the benchmark pass@64 sample budget.
 
 Timeout is itself a training technique. The authors compare 5, 10, 15, and 30 seconds; 5 seconds yields too few valid reward signals, while 15 seconds gives the best overall balance, and shorter 10–15 second limits can outperform 30 seconds because they bias training toward concise proofs (Section 5.3, p. 8). Inference: a Verus training loop should record timeout as a distinct verifier outcome and tune it against proof completeness, rather than silently treating timeout as a logical error.
 
-The appendix gives a concrete limitation. On `imo_2019_p1`, the model introduces many hypotheses and then calls `omega`; the call is the first Lean error. First-error propagation penalizes `omega` and later tactics but not the earlier `intro`, `have`, and `simp`, even though those steps were strategically unproductive (Appendix H, pp. 25–26). The paper says: “our current scheme only punishes the terminal failing step and fails to capture that the earlier (locally successful) steps did not make meaningful progress toward solving the global goal.” (Appendix H, p. 26) Inference: VL should measure proof-state progress or obligation reduction in addition to first-error status if it wants to discourage locally valid but globally dead-end Verus steps.
+The appendix gives a concrete limitation. On `imo_2019_p1`, the model introduces many hypotheses and then calls `omega`; the call is the first Lean error. First-error propagation penalizes `omega` and later tactics but not the earlier `intro`, `have`, and `simp`, even though those steps were strategically unproductive (Appendix H, pp. 25–26). The paper says: “our current scheme only punishes the terminal failing step and fails to capture that the earlier (locally successful) steps did not make meaningful progress toward solving the global goal.” (Appendix H, p. 26)
 
-Appendix J explicitly treats potential-based reward shaping as a conceptual model, not a theorem of policy optimality. The authors write: “We emphasize that we do not claim any formal optimality guarantee for this shaped reward in our large-scale LLM and Lean setting.” (Appendix J.4, p. 28) Inference: the same distinction must appear in a VL training claim; verifier-grounded rewards are evidence about search, not a correctness theorem for the learned policy.
+Appendix J explicitly treats potential-based reward shaping as a conceptual model, not a theorem of policy optimality. The authors write: “We emphasize that we do not claim any formal optimality guarantee for this shaped reward in our large-scale LLM and Lean setting.” (Appendix J.4, p. 28)
 
 ## what is proved, measured, and trusted
 
 Lean's kernel checks the final proof and elaborated tactic steps. The measured claims are pass@32/pass@64 percentages on MiniF2F-Test and ProofNet-Test, with 7B models, specified budgets, and standard deviations. The paper notes that tree-search baselines count verifier expansions while these experiments count whole-proof samples, so budgets are not directly comparable (Table 1 footnote, p. 6). Training relies on Lean version/tooling, the REPL timeout, reward constants, model initialization, and the STP dataset; those are outside the proof theorem.
-
-Inference: threat to agent-written verified Rust is medium. A Verus-aware process oracle could improve credit assignment and reduce wasted proof generations, but it would not prove that a generated specification matches product intent. Verus's solver and supported Rust subset remain trusted components, and local acceptance cannot establish whole-function correctness. VL should reuse first-error and first-token measurements; it should not claim Lean benchmark gains transfer without a Verus experiment.
 
 ## techniques for the catalog
 
@@ -64,4 +60,3 @@ Inference: threat to agent-written verified Rust is medium. A Verus-aware proces
 - first-token credit — attach process advantage to the first token that chooses each tactic's strategy
 - combined outcome/process GRPO — optimize global proof success together with dense verifier-grounded local feedback
 - verifier as process oracle — use the proof assistant during training, not only for final evaluation
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -62,12 +62,9 @@ Heifer verifies 13 small programs involving maps, folds, iterators, composition,
 
 The implementation description says: “Here, our prototype targets SMT encodings via Why3 [12].” and “As an optimization, it uses Z3 [9] directly for queries which do not require Why3’s added features.” (Section 6, p. 13). Its evaluation is explicitly limited: “As the focus of our work is to explore a new program logic and subsumption-based verification methodology (rather than to verify existing programs), the benchmarks are small in size, and are meant to illustrate the style of specification and give a flavor of the potential for automation.” (Section 6, p. 13).
 
-Inference: HSSL is relevant prior work for ordering effects around unknown higher-order calls. A claim of novelty for VL in this area should distinguish its contribution from staged specifications. A usable, sound Rust/Verus encoding and evidence about proof maintenance would require additional work beyond this paper.
-
 ## techniques for the catalog
 
 - staged higher-order contracts: record requirements, updates, unknown calls, and final results as an ordered trace formula
 - biabductive normalization: compact staged flows by merging compatible stages and inferring missing frames across requirements
 - forward staged verification: summarize each expression with sound rules and prove summary subsumption by entailment
 - recursive staged summarization: unfold recursion and re-summarize at call sites to recover compact client contracts
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "As an optimization, it uses Z3 [9] directly for queries which do not require Why3’s added features."): read all 33 pages, including references and appendices; checked quotations, numbers, references, and technique steps; corrected the link to the arXiv identifier in the paper, Iris comparison scope, normalization form, heap-frame propagation, theorem page, and benchmark interpretation; removed unsupported CHC/trusted-base and Verus feature claims; did not independently validate proofs, run Heifer or benchmarks, or test the proposed Rust/Verus adaptations.

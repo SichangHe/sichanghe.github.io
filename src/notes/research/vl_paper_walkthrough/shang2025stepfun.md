@@ -35,8 +35,6 @@ On corrected Numina miniF2F-test, the 32B model scores 70.0% pass@1, the 7B mode
 
 Appendix A illustrates repair of a positive-real inequality proof. After several failures, the model uses REPL feedback to recognize a sum-of-squares expression (PDF pp. 19–20). It then repeatedly fails to prove a nonnegative denominator using a strict-positivity tactic, before explicitly proving positivity and converting it with `le_of_lt`; the last sketch receives empty REPL feedback `{}` (PDF pp. 20–24). The final proof follows `</think>` (PDF pp. 24–25).
 
-Inference: the verifier checks the submitted formal statement, so incorrect formalizations or vacuous assumptions can undermine the intended result even when a proof passes. The reported metrics do not establish the soundness of all generated natural-language reasoning or transfer to Rust verification. A Verus adaptation should check the final artifact and validate its specification; timeouts and malformed delimiters can also interrupt the workflow. VL could reuse the iterative checker-feedback loop for proof production.
-
 ## techniques for the catalog
 
 - tool-integrated proof search: alternate natural-language reasoning, checker-executed sketches, diagnostics, and final verified code
@@ -44,5 +42,3 @@ Inference: the verifier checks the submitted formal statement, so incorrect form
 - cold-start and correction SFT: bootstrap syntax, then train on multi-turn trajectories and repaired failures
 - mixed-success data selection: retain prompts whose sampled verifier success rate is strictly between zero and one
 - verifier-service scaling: isolate, timeout, parallelize, and structure checker processes for training throughput
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This is still complex, but perhaps we can find a way to show it’s non-negative."): checked all quotations, numbers, section and PDF page references, technique steps, and the arXiv identifier against the full paper including Appendix A; corrected the SFT page span, fusion initialization, data-selection details, and unsupported conclusions, and added the worked repair example; did not reproduce training, benchmark results, or Lean execution, or check external links and Verus adaptations empirically.

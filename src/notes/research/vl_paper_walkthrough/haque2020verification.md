@@ -8,8 +8,6 @@ The paper verifies functional correctness of the Muen separation-kernel generato
 
 The result is conditional. A parameter-independent proof establishes refinement when generated parameters satisfy conditions R; a separate checker validates R for each policy. The paper reports “machine-checked proofs of correctness for 12 different input configurations” and detection of undeclared sharing in seeded faulty configurations (§1, p.3). The generic proof used about 20K lines of source and annotation (§1, p.3); the detailed artifact table reports 13,970 combined lines of code and 6,214 lines of annotation, with an estimated 3–4 person-years (§9, pp.18–19). Inference: the two figures are consistent, since 13,970 + 6,214 = 20,184, which is about 20K. The paper notes that “the LoC count includes comments and repetition of code due to case-splits” (§9, p.19).
 
-Inference: this is a reusable architecture for VL when an agent generates specialized Rust from a policy: prove one parameterized implementation against one parameterized specification, then check generated data. It avoids proving the generator itself, but its guarantee is only as strong as the parameter predicates, hardware model, abstract specification, and checker.
-
 ## technique 1: conditional parametric refinement
 
 What it is. A parametric program has read-only variables left uninitialized; assigning values produces an ordinary program. The paper defines conditional refinement with a concrete parameter program Q[V̄], abstract program B[Ū], parameter predicate R(Ū,V̄), and one gluing relation π over both states. Its three obligations are type compatibility, initialization, and simulation. The paper states: “We say π is adequate, with respect to the condition R, if the following conditions are satisfied.” (§2.2, p.7)
@@ -93,12 +91,6 @@ Evidence. The four properties are argued from the already checked refinement, no
 
 Limits and trusted base. The paper states explicit assumptions about initial TSC values, error halting, and TSC and minor-frame bounds, and implicit assumptions that the page-table and VMX hardware behave as modelled (§12, p.25). Fig. 10 distinguishes automated tools, manual transformations, and trusted components (§12, pp.25–26). Inference: the abstract specification being the desired security contract, and the Spark Ada verifier, its solvers and the manual transformations being correct, are further parts of the trusted base. Invalid instructions halt in an error state, and the conclusions cover error-free sequences (§7, p.16; §11, p.24).
 
-## what VL should retain
-
-Inference: VL can reuse the paper's split between a universal proof and a per-artifact prerequisite check for generated Rust, especially for policy-generated parsers, schedulers, memory maps, or device tables. The reusable proof boundary is R: make every assumption explicit and make the build reject artifacts that fail it. Inference: a Verus port should model only the hardware behavior required by the Rust contract and should expose unmodeled hardware and generator correctness as trusted assumptions in the study's threat accounting.
-
-Inference: the work is a substantial precedent, so VL should not redo a generic generated-system refinement architecture without a new setting or measurable improvement. The unresolved product threat is specification and assumption drift: an agent can produce Rust that passes a stable proof while the policy format, hardware interface, or intended separation property changes. The paper's post-facto setting and explicit trusted model make this threat concrete.
-
 ## techniques for the catalog
 
 - conditional parametric refinement — prove one parameterized concrete program refines one parameterized abstract program under a predicate R, then check R for every generated instance
@@ -110,4 +102,3 @@ Inference: the work is a substantial precedent, so VL should not redo a generic 
 - sparse policy condition checker — check injectivity, permissions, validity, contents, and parameter consistency over contiguous used components in O(Nu + P) per subject
 
 - security-by-refinement — derive no exfiltration, no infiltration, temporal separation, and effective kernel integrity from simulation plus injective mappings
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The kernel is actually a template of code written in Spark Ada, and the Muen toolchain generates the constants for this template based on the given policy."): read all of the paper text through the conclusion and checked every quotation, number, section and page reference, algorithm step and table value against it, and viewed the PDF image of Table 2; changed the 20K versus Table 1 explanation (now marked Inference), page references for several quotes and algorithms, the tick-event subcase wording, the configuration counts, the Algorithm 2 condition, the kernel-integrity wording and the trusted-base statement; removed the unsupported claim about the unexplained "7"; did not check the references list or the cited external works, and the Verus-form paragraphs and VL recommendations are the study's own Inference.

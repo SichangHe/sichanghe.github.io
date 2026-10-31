@@ -6,8 +6,6 @@ Tag: `krauss2024clearstamp`, [paper](https://www.usenix.org/conference/usenixsec
 
 ClearStamp is a model-ownership proof for a neural network. Inference: it is a security mechanism rather than a proof of Rust program behavior. The owner embeds one or more visible secret images in a model, later extracts them with secret keys, and lets a person inspect the result. The paper's central claim is that embedding and the model's useful task are entangled: removing the watermark damages useful accuracy. The authors state, “This paper introduces ClearStamp, the first DNN watermarking method designed for intuitive human assessment.” (Abstract, p. 5269.) They report experiments on MNIST, CIFAR-10, GTSRB and CIFAR-100 with CNN, ResNet-18, ResNet-34, ViT and VGG11 architectures (Introduction, p. 5270).
 
-Inference: for VeruLaw, this is an example of a claim about an artifact's provenance and tamper evidence, not a replacement for a Verus functional contract. A Verus proof could make the extraction and comparison code memory-safe and contract-correct, while the learned model, training process and visual judgement remain trusted inputs.
-
 ## technique 1: reverse a model into a transposed watermark path
 
 What it is and when to use it. A transposed model reverses the original model's layer order and operation as far as possible. It maps a normal output-like key to an input-like image secret. Use it when a model owner wants a white-box, multi-bit watermark that a person can recognize.
@@ -62,14 +60,9 @@ The paper measures image similarity, classification accuracy, pruning/fine-tunin
 
 Section 5.5 (pp. 5279–5280) measures capacity by encoding bits as black or white patches, thresholding extracted channel values at 0.53, and decoding each patch by pixel majority. The authors embed an 8,544-bit license in ResNet-18 using 100-bit images; (7,4) Hamming encoding expands it to 14,952 bits. After fine-tuning they report bit error rate (BER) 6.46% without error correction and 4.45% with it. Inference: the 4.45% figure concerns the error-corrected experiment and does not demonstrate exact recovery.
 
-## what VL should not redo
-
-The paper already supplies a concrete reverse-training construction, multi-key capacity experiment, four-dataset/seven-architecture evaluation, and adaptive-erasure experiment. Inference: VL should not repeat those as if they establish general formal verification. A useful new direction would be to specify and verify the small deterministic extraction, key management, and evidence-recording layer, then test whether the recorded evidence remains valid across model serialization and dependency upgrades.
-
 ## techniques for the catalog
 
 - transposed model generation: reverse supported layers, share weights, and freeze one branch of a skip connection when inversion is ambiguous
 - watermark hardening and constraint training: overfit the reverse path, then alternate forward and reverse losses so useful accuracy and the watermark are jointly retained
 - multi-key entanglement with dropout: batch many key-secret pairs and distribute them through the model to raise capacity and erase resistance
 - accuracy-coupled robustness testing: evaluate fine-tuning, pruning and adaptive erasure while recording both task accuracy and extracted-secret visibility
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "During these experiments, we use fine-tuning with 1/10 of the original learning rate as the default model modification approach."): checked all paper text, quotations, numbers, section and printed-page references, and technique steps against the study; corrected the publisher link, transposition and dropout descriptions, training sequence, references, numerical reporting, and unsupported inverse claim; added capacity details and distinguished Verus inferences; did not reproduce experiments, inspect source code, or verify Rust/Verus proposals.

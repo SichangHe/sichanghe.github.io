@@ -60,17 +60,9 @@ The paper's OR example shows the limitation: output `true` can come from input c
 
 Verus form: Inference: use proof lemmas to establish that each Boolean branch is reachable under a stated environment model, and use ordinary generated tests only as witnesses for the selected coverage metric. Verus proves universal contracts, not coverage; coverage instrumentation and test generation remain external. Do not treat passing generated vectors as proof of the requirement.
 
-## trusted boundary, contradictions, and VL implications
-
-Inference: the formal semantics, grammar, exporters, backend verifiers, Simulink model, generated C, and signal connection procedure all sit in the trusted chain. Inference: a Verus implementation would shift the core proof obligation to the Rust model/code correspondence, but would not remove trust in the parser, exporter, Rust compiler, Verus verifier, or assumptions about plant inputs. The paper states no theorem that its exporters preserve semantics across backends; it describes a prototype and reports case-study pattern distributions.
-
-What VL should not redo (Inference): a specification-once architecture with pattern compilation and coverage annotations is established engineering ground. VL should concentrate on verified Rust contracts and a checked correspondence from textual requirements to those contracts, rather than inventing another backend-specific requirement notation. Inference: the threat to agent-written verified Rust is moderate: agents could produce a plausible contract whose temporal scope or initial-state convention is wrong, and a successful Verus proof would not expose that requirements mismatch. The paper's own mitigations are an explicit MTL semantics and generated textual requirements for review (Sections 3, 5.3); it does not claim to detect a wrong scope or initial-state convention.
-
 ## techniques for the catalog
 
 - constrained pattern requirements — restrict scopes, invariants, responses, events, and durations to a grammar with metric-temporal semantics
 - specification-once compilation — export one checked requirement to SLDV, BTC, C, and readable text while preserving timing conventions
 - block-level temporal encoding — implement scope, duration, delay, and implication as composable verification blocks
 - requirement-derived test objectives — annotate the same formal requirement model to generate condition and decision test vectors
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Annotating the specification library allows the flexibility of adding/removing test objectives without adapting the source code of the specification tool."): read the whole paper text (main text, references, Appendices A and B) and checked every quotation, the Table 1 numbers, section and page references, and each technique step against it; changed the BTC name and the "compiler" wording, Table 1 totals (now marked as my sums), the 90% coverage sentence, the operator quotation attribution, step wording for sections 4, 5.3, 5.4 and 6, the OR/MC/DC paragraph (added an inconsistency between Section 6 and Appendix B.3), and unsupported claims about the paper's mitigations; marked own conclusions as Inference. Not checked: figures' pictorial content beyond captions and text, the semantics formulas in Fig. 3 and Appendix A beyond their prose description, and the cited earlier papers [2,19]. Link kept from the fetch record (arXiv link matches the arXiv stamp on the paper).

@@ -46,14 +46,9 @@ what it is: separate autoformalization from proof search so either model can be 
 
 Inference: a possible Verus adaptation would expose a verifier service that accepts isolated Rust candidates, runs Verus concurrently under a fixed timeout, and returns diagnostics plus a Boolean. Keep model, formalizer, and proof-search components replaceable; cache only results keyed by source, toolchain, dependencies, and specification. Parallelism changes throughput, not proof semantics.
 
-## implications and limits for VL
-
-Demonstrated in the paper: checker-in-the-loop intermediate validation, goal/negation prover attempts, proof-step memory, modular formalizer/prover interfaces, and ablations of memory and prover modules. Inference: VL should measure Verus-specific contract equivalence, retrieval contamination, compiler/SMT cost, and repair success on unseen crates rather than repeat Lean benchmark claims. Inference: the translation audit and memory ablation motivate checking requirement translation and context continuity in agent-written Rust. They do not measure a threat level for Verus. A proof of a generated contract would still leave open whether that contract captures the intended requirement.
-
 ## techniques for the catalog
 
 - intermediate formalization — translate each critical informal step into Lean, compile it, and back-check semantic equivalence before proof search
 - goal and counter-proof search — attempt both a formal goal and its negation and feed proof, counter-proof, or failure status back to the model
 - verified proof memory — embed validated steps, retrieve top-k context, and reuse it as explicit hypotheses
 - modular verifier pipeline — allow replacement of formalizer and prover models while retaining Lean checking and feedback
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We also measured the density of tool calls to understand how Hermes is utilized across different difficulty levels."): checked all paper text, quotations, numbers, page and section references, and technique steps; corrected page references, audit-denominator claims, sampling-budget comparisons, memory contents, feedback semantics, and unsupported Verus assertions; did not reproduce experiments, inspect implementation, or validate proposed Verus adaptations.

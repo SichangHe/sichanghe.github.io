@@ -175,5 +175,3 @@ Inference: a pin-policy proof alone leaves origin ownership, certificate rotatio
 - certificate-based pin choice — select leaf or CA pinning from chain validation and ownership evidence
 - update-latency analysis — measure user rollout delay and consider remote pin configuration or separate origins for pin versions
 - pinning code generation — turn validated candidates into trust-manager scaffolds after developer confirmation
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We cannot track potential TLS connections in code that was dynamically loaded or when obfuscation was applied."): checked the entire paper, quotations, counts, technique steps, section and printed-page references, and publisher link; corrected quotations, references, survey recruitment wording, unsupported claims, and numerical discrepancies, and marked extrapolations as Inference; did not reproduce the experiments, test the web service or generated code, or verify the proposed Verus adaptations.

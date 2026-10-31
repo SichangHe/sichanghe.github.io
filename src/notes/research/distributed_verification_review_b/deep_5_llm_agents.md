@@ -24,8 +24,6 @@ A useful distinction when reading rates:
 
 **Inference:** evaluation must measure these separately. A syntax rate, bug count, lemma-completion rate, and whole-system proof rate are not interchangeable.
 
-## From system code or requirements to TLA+ specifications
-
 ### SysMoBench: real code exposes failures hidden by puzzle benchmarks
 
 **SysMoBench: Evaluating AI on Formal System Modeling**, Qian Cheng, Ruize Tang, Emilie Ma, Finn Hackett, Peiyang He, Yiming Su, Ivan Beschastnikh, Yu Huang, Xiaoxing Ma, Tianyin Xu; ICLR 2026, preprint 2025. [Paper](https://arxiv.org/abs/2509.23130), [artifact](https://github.com/specula-org/SysMoBench). Read the final local paper, rather than transferring numbers from its earlier preprint.
@@ -57,8 +55,6 @@ A weaker model exposes failure to follow reproduction controls: Sonnet 4.6 makes
 **2025 TLAi+ Challenge**, TLA+ Foundation, winners announced 2025; [official results](https://foundation.tlapl.us/challenge/index.html). First prize: Qian Cheng, Tianyin Xu, Yu Huang, the early Specula workflow; second: Andrew Helwer, constrained TLA+ token generation with LlamaCpp/GBNF and Guidance; third: Gregory Terzian, staged refinement from TLA+ toward multithreaded Rust. The page describes the latter as something that “could pave the way” to fully verified code. The challenge solicited TLAPS work, but that is not evidence that a submitted system completed it. Grammar constraints establish syntax and some symbol discipline, not semantic fidelity. The current 2026 Specula paper supersedes the early challenge demonstration.
 
 **From Informal to Formal – Incorporating and Evaluating LLMs on Natural Language Requirements to Verifiable Formal Proofs**, Jialun Cao, Yaojie Lu, Meiziniu Li, Haoyang Ma, Haokun Li, Mengda He, Cheng Wen, Le Sun, Hongyu Zhang, Shengchao Qin, Shing-Chi Cheung, Cong Tian; ACL 2025, pp.26984–27003. [Proceedings paper](https://aclanthology.org/2025.acl-long.1310/). The local full text was read. It separates six tasks across Coq, Lean, Dafny, ACSL, TLA+; abstract: “18k high-quality instruction-response pairs”. GPT-4o supplies distilled training examples. This helps isolate specification-writing skills, but its task-level benchmark does not establish faithful models of real distributed implementations. Use it as language/task coverage, not a system-scale result.
-
-## TLAPS, PlusCal, Quint: protocol specifications and proofs
 
 ### TLAPS proof generation grew beyond the January 2025 toy study
 
@@ -145,10 +141,6 @@ Four 100-theorem subsets come from CoqGym, Wigderson graph-coloring, PnVRocqLib 
 
 §3.5, p.10 describes a successful agent proof of `votesWithLog_update_elections_data_timeout` from Verdi-Raft's `RefinementSpecLemmas.v`, with a human-premise oracle. The often-quoted 58% is an oracle-assisted combined result on Wigderson100, not autonomous distributed-systems performance. Failures include long proofs and steps that make useful progress without splitting goals. A Verdi-Raft failure is `request_VoteReply_term_sanity_client_request` from `RequestVoteReplyTermSanityProof.v` (§3.6). **Inference:** preserve all useful partial progress, including progress outside goal decomposition; compare against prover-only and same-budget whole-proof baselines.
 
-
-
-## Agents constructing distributed implementations
-
 ### IDS: changing code and abstractions makes otherwise hard proofs tractable
 
 **Inductive Deductive Synthesis: Enabling AI to Generate Formally Verified Systems**, Shubham Agarwal, Alexander Krentsel, Shu Liu, Mert Cemri, Audrey Cheng, Rui Meng, Tomas Pfister, Chun-Liang Li, Sylvia Ratnasamy, Aditya Parameswaran, Matei Zaharia, Ion Stoica, Mohsen Lesani; arXiv, 22 May 2026. [Paper](https://arxiv.org/abs/2605.23109), [artifact](https://github.com/skydiscover-ai/skydiscover).
@@ -172,8 +164,6 @@ The code/proof sizes are unusually concrete. Appendix B, p.15: “All seven arti
 All rows: Agarwal et al., Appendix B/Table 4, [paper](https://arxiv.org/abs/2605.23109), [repository](https://github.com/skydiscover-ai/skydiscover). Sizes are whole generated artifacts, not proof-only LOC. Safety follows within the supplied execution model. The paper reports no evaluation of termination, eventual delivery, or fairness guarantees.
 
 **Inference:** a partial artifact with `Admitted` is useful search state, not evidence that a completion exists. The trusted acceptance boundary must be the final hole-free artifact. The historical human-effort comparison in the paper is not a controlled experiment against contemporary human teams. For our end goal, IDS demonstrates the implementation-and-proof half; specification discovery remains outside its input boundary.
-
-## Practitioner accounts: specifications, intent checks, and shared application cores
 
 #### lemmafit: Claude Code writes the specification, implementation, and proof
 
@@ -245,8 +235,6 @@ Examples are selection sort, run-length encoding, longest increasing subsequence
 
 Harmonic, **Running Lean at Scale**, 11 September 2025. [Primary article](https://www.harmonic.fun/news/lean-at-scale/). It describes tactic-tree exploration through a Lean REPL: run code, run tactic, export state, import state; explore branches in parallel. Exact evidence: “scales to hundreds of thousands of CPUs”; “semantically stateless”; compressed state “about 8% of their original sizes” (20 words). The final design removes backend state affinity, allowing work on preemptible compute. Early WebSocket/gRPC designs suffered pinning, disconnects and load imbalance. This is proof-search infrastructure for model training, not evidence that hundreds of thousands of CPUs were needed for the VERINA run or that distributed code was verified.
 
-### Industry claims that need careful attribution
-
 #### AWS: production proofs exist; published accounts do not attribute them to autonomous agents
 
 Bryan Parno, **Developing provably correct Rust code with Verus**, Amazon Science, 31 August 2026. [Primary article](https://www.amazon.science/blog/developing-provably-correct-rust-code-with-verus). It reports Verus use in Nitro Isolation Engine primitives and other Amazon infrastructure, and explains fast automated feedback as useful for AI proofs. Exact evidence: “they also help AI agents develop Verus proofs”; “we've used Verus to prove the correctness of key primitives” (20 words). The account gives no agent model, rate, intervention count, or autonomous proof-production attribution for Nitro. Do not rewrite it as agents proving Nitro.
@@ -297,10 +285,6 @@ The 17 solver-instability cases mainly involve quantified, nonlinear index arith
 | ReLU, matrix/scalar multiplication and other simple element-wise operations | 14/100: safety plus equivalence to the PyTorch-derived mathematical specification; human checked Rocq-to-VerCors lowering | No per-kernel LOC or review time reported; [paper §6.5](https://arxiv.org/pdf/2511.12294) |
 | MSELoss, HuberLoss, HingeLoss | Element-wise first kernel proved; subsequent shared-memory reduction unproved | Partial equivalence on 3/100 programs; [paper §6.5](https://arxiv.org/pdf/2511.12294) |
 
-
-
-## Existing systems proofs as agent benchmarks
-
 ### VeruSAGE: high overall rates hide controller-invariant difficulty
 
 **VeruSAGE: A Study of Agent-Based Verification for Rust Systems**, Chenyuan Yang, Natalie Neamtu, Chris Hawblitzel, Jacob R. Lorch, Shan Lu; arXiv 2025, v2 April 2026. [Paper](https://arxiv.org/abs/2512.18436). The local paper and its benchmark design were read.
@@ -348,8 +332,6 @@ Table 1, p.8: Mistral `77.6` percent overall, versus Sledgehammer `40.3`, rerun 
 Models: GPT-4o mini/4o, Gemini 1.5 Flash/Pro. Endpoint versions in the artifact are `gpt-4o-mini-2024-07-18`, `gpt-4o-2024-11-20`, `gemini-1.5-flash-002`/`gemini-1.5-pro-002`. A best-first search uses cumulative tactic log probabilities, generates eight candidates per state, checks them through Coq/SerAPI, and stops at 128 queries. Hinted prompts include half the existing human proofs. Due to cost, larger models evaluate only 5% of all theorems (§§3–4).
 
 Table 2, PDF p.5: GPT-4o succeeds on `29.2%` without hints and `38.1%` with hints; hinted Gemini Flash/Pro reach `16.3%`/`25.7%`. Table 1, p.4 separates hinted GPT-4o utilities `57.8%`, Crash Hoare Logic `51.7%`, actual file-system lemmas `20.8%`. The aggregate headline therefore overstates performance on the system-specific reasoning. No model solves a theorem whose human proof exceeds 512 tokens (§4.1).
-
-Most failures exhaust candidate states, not query budget: hinted GPT-4o `57.9%` stuck versus `4.0%` budget exhausted (Table 2). Manual context reduction fixes selected short failures. A million-token Gemini window does not outperform 128k. Historical public proofs create leakage risk; edit-distance differences do not remove that risk. No prover-only baseline, full-system reproduction, new specification, lemma-discovery, or liveness evaluation is reported. **Inference:** retrieve relevant premises and measure system-specific obligations separately; simply increasing retries/context is insufficient. [Detailed source notes and concrete lemmas](/ssd1/sichangheagent/verus_distributed/lit_b/research_verified/05_fscq.md).
 
 ### Coq: CompCert and Verdi lemmas, not newly built complete compilers/protocols
 
@@ -463,5 +445,3 @@ Unresolved: evaluated agents writing **P or Ivy** distributed specifications; au
 ### Collection accounting
 
 The review includes 36 distinct paper records, plus benchmarks, tools, repositories, challenge results, and first-party reports. Six missing PDFs were saved after checking the collection: Stepwise/Neuro-Symbolic Proof Generation, Cobblestone, TraceFix, Velvet, ProofWright, and the FSCQ HotOS paper. Every saved file was checked for `%PDF`; concurrent additions by other review slices were treated as existing papers. Existing papers were read from the collection rather than downloaded again.
-
-Research evidence and extracted text: [local sources](/ssd1/sichangheagent/verus_distributed/lit_b/research_verified/05_sources/), [TLAPS/Quint notes](/ssd1/sichangheagent/verus_distributed/lit_b/research_verified/05_missing_specs.md), [industry notes](/ssd1/sichangheagent/verus_distributed/lit_b/research_verified/05_industry.md), [FSCQ notes](/ssd1/sichangheagent/verus_distributed/lit_b/research_verified/05_fscq.md). These supporting notes retain details that the synthesis compresses.

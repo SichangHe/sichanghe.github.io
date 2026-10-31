@@ -39,8 +39,6 @@ The result is a useful negative signal: high iteration count can mean a vacuity 
 
 The pipeline proves only the generated SVA properties over the modeled RTL and reachable state space. Trusted elements include the natural-language specification, Property IR interpretation, Yosys/SBY translation, Z3, k-induction assumptions, clock/reset modeling, and the absence of unmodeled environmental behavior. The paper’s bind experiment shows that tooling can create false positives before solving begins.
 
-Inference: the threat to agent-written verified Rust is high when agents can repair code by weakening specifications or when liveness and reachability are omitted. VL should adopt typed contract generation, preserve contracts across repairs, parse solver counterexamples into structured state, and require explicit vacuity checks. It should not claim that a bounded pass is a proof, nor infer general repair ability from one ALU family.
-
 ## techniques for the catalog
 
 - typed property IR: separate LLM property reasoning from compiler-generated assertion syntax
@@ -48,4 +46,3 @@ Inference: the threat to agent-written verified Rust is high when agents can rep
 - counterexample-guided repair: analyze formal traces, make a localized code edit, review it, and re-prove
 - prove-plus-cover acceptance: require k-inductive safety and reachable cover properties before PASS
 - multi-run feasibility evaluation: run each benchmark independently several times and report pass denominators and API exclusions
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

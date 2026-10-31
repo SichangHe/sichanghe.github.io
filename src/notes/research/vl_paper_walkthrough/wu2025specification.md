@@ -6,7 +6,7 @@ Tag: `wu2025specification`, [paper](https://arxiv.org/abs/2507.03659v3)
 
 The paper presents an automated program-repair tool for arithmetic faults in Dafny. Its central design is to use the Dafny specification as the correctness oracle, use Hoare-logic entailments for static fault localization, ask an LLM for a replacement line, and accept a replacement only after Dafny verification. The abstract states: “In this paper, we present an APR tool for Dafny, a verification-aware programming language that uses formal specifications — including pre-conditions, post-conditions, and invariants — as oracles for fault localization and repair.” (Abstract, p. 1)
 
-The reported benchmark is DafnyBench. The abstract reports “89.7% fault localization success rate and GPT-4o mini yields the highest repair success rate of 74.18%.” (Abstract, p. 1) The body separates two datasets and gives more specific denominators. Inference: VeruLaw could reuse the architecture, but the Dafny syntax and verifier integration must be replaced by Verus-compatible Rust and Verus proof checking.
+The reported benchmark is DafnyBench. The abstract reports “89.7% fault localization success rate and GPT-4o mini yields the highest repair success rate of 74.18%.” (Abstract, p. 1) The body separates two datasets and gives more specific denominators.
 
 The paper identifies this version as “arXiv:2507.03659v3 [cs.SE] 8 Sep 2025” (p. 1). The method assumes one bug per input and a correct specification. The approach section says: “We assume that each program contains a single bug and that the formal specification is correct.” (Section 4, p. 6) Inference: an agent-written Verus product needs an independent basis for trusting its specification; a provable specification can still misstate the intended behavior.
 
@@ -65,15 +65,9 @@ The acceptance criterion is successful Dafny verification of the patched program
 
 Inference: verification can reject patches that violate the written specification, but it cannot establish that the contract captures the intended behavior or environment assumptions. This evaluation does not establish effectiveness for multiple faults, concurrency, ownership, unsafe code, or dependency failures in Verus. The authors also identify possible training exposure: “the LLM may have seen the correct code versions during training, which may positively influence the results” (Section 6.2, p. 16).
 
-## what VL should not redo
-
-The paper already implements and evaluates the basic loop of localization with formal entailments, LLM patch generation, verifier checking, and retries. Inference: VL should not claim this pipeline, bounded retries, or specification-as-oracle validation as new contributions. Inference: a useful VL extension would measure the same design on Verus-specific obligations, ownership and borrowing, loop invariants, proof-only code, and multi-line proof repairs, while recording the exact contract and verifier configuration.
-
 ## techniques for the catalog
 
 - specification-guided Hoare localization: propagate states, encode state-to-specification entailments as verifier lemmas, and rank statements whose entailments fail
 - verifier-in-the-loop LLM repair: prompt an LLM for a marked-line replacement, insert it, verify it, and make at most three attempts per line and model before moving on
 - strict output prompting: assign a formal-methods role, provide full marked context, cap output length, and require only the replacement line
 - mutation-based verification evaluation: filter verified benchmark programs, inject arithmetic operator/coefficient/variable mutations, and score localization and verified repair by explicit denominators
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each generated fix is inserted into the original program and verified using the Dafny verifier."): checked all paper text, study quotations, numbers, page and section references, assumptions, and technique steps; changed the paper link to its arXiv version, corrected a page reference and the interpretation of Table 1, recorded numerical and stopping-rule inconsistencies, clarified loop-exit reasoning and retry behavior, and marked analysis as inference; did not check the implementation, reproduce experiments, or validate the proposed Verus adaptations.

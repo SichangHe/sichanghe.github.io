@@ -52,19 +52,9 @@ When to use it. Use an independent design context when tool traffic and local re
 
 Evidence. Removing external assistance on Putnam2025 and a 48-problem PutnamBench subset changed average improvement from +0.31 to −0.55, reduced win rate from 39.1% to 30.4%, and produced losses on 69.6% rather than 52.2% of shared problems (Table 2, p. 8). Structure fell −1.34, human readability −1.17, and signature quality −0.98. These denominators are the ablation's shared problems and the paper reports the scores as differences from the original proof (Sec. 5.3, p. 8).
 
-## evaluation, trust, and threat to VL
-
-The corpus is 96 generated PutnamBench proofs (mostly 50–500 lines, median about 160) and 12 generated Putnam2025 proofs (Sec. 5.1, p. 5). Every candidate had to pass Lean; correctness was therefore a precondition, not a scored dimension. A separate LLM judge scored five dimensions, and human review on 28 valid problems agreed with the judge's pairwise winner 75.0% of the time (Sec. 5.1, p. 5). Word reduction was secondary: PutnamBench improved from 4.0% baseline to 6.5% (+2.5 percentage points), while Putnam2025 decreased from 8.3% to 4.5% (−3.8 points) (Table 1, p. 6).
-
-Trusted components include Lean's kernel, Mathlib, the baseline/generated proofs, the extraction implementation, and the LLM judge's rubric. Inference: judge scores are evidence about perceived maintainability, not a formal theorem about readability. Inference: Verus should retain verifier acceptance as a hard gate and use human or model review only for modularity and naming. The setting is self-contained Lean files whose environment only adds declarations; no result establishes project-scale or library-scale integration.
-
-Inference: threat to VL is moderate to high for proof maintenance. The method directly addresses a product risk—agent-written proofs that compile but become monolithic and difficult to repair—but it does not verify that a helper's abstraction matches an unstated requirement. VL should adapt the four phase artifact protocol, extraction dependency rule, and ablation measurement; it should not assume that Lean's tactic extractor or LLM rubric transfers unchanged to Rust ownership, mutable state, or cross-crate specifications.
-
 ## techniques for the catalog
 
 - staged proof refactoring — extract fragments, design helpers, prove them, then repair the owner proof in separate verifier-checked phases
 - scaffold extraction — turn a tactic block into a standalone theorem with only used variables and an implication when the post-goal differs
 - reasoning–interaction separation — use an independent model context for fragment and signature design while a verifier agent edits and checks code
 - rubric-plus-ablation evaluation — require compiler validity, score structure and reuse separately from length, and measure the effect of removing design assistance
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

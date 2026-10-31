@@ -6,8 +6,6 @@ Tag: `neuper2019technologies`, [paper](https://doi.org/10.4204/EPTCS.290.6)
 
 Neuper surveys a theorem-proving-based architecture for educational mathematics software built around four formal language layers (terms, specifications, proofs, programs) plus interactive next-step guidance. The paper's central design is a “complete, transparent and interactive model of mathematics” (Abstract, p. 76). It uses Isabelle and the ISAC prototype as technical examples. This is a technology and research-position paper, not a controlled classroom evaluation: the abstract says the paper “cannot give a serious description of effects on educational practice”, and effects are posed as ?U (usability) and ?R (educational research) questions. The only field-test evidence is a mention that “early field tests were successful” with references to earlier reports (Section 1, p. 77; Section 7, p. 92).
 
-Inference: The formal-verification value for VL is the separation between executable algorithms, explicit specifications, proof steps, and interaction, plus the idea of exposing machine-checked justifications at different levels.
-
 ## technique 1: typed terms with linked definitions
 
 What it is. The term layer contains propositions, predicates, and algebraic expressions. Terms are typed using simple typed lambda calculus, and definitions are reachable from displayed syntax. The paper states: “Definitions are reachable by mouse-click (as well as types mentioned above)” (Section 2.1, p. 78). In Isabelle/jEdit (Fig. 1), a click on `int` leads to its definition, a click on `+` leads to the definition near algebraic structures such as `semigroup_add`, and a click on the theorem `distrib_left` used by the simplifier leads to the formula in the context of a semiring; colours distinguish constants, free variables, and bound variables (p. 78).
@@ -20,9 +18,9 @@ How to apply it. The paper shows the outcome (Fig. 1), not a procedure; the step
 3. Prospect, not implemented: render terms in two-dimensional mathematical notation while keeping the semantic links. The paper says Isabelle/jEdit presentation “is still fixed to lines” and calls for formula editors combining both; a feasibility study [17] “indicates, that development efforts to combine the two features are manageable” (p. 79).
 4. On a click, show the definition, type, or theorem used by simplification (p. 78).
 
-Verus form. Inference: expose Rust/Verus `spec fn` definitions and contract clauses as navigable source links in VL. Preserve whether a symbol is executable or specification-only. Verus does not provide this educational UI; the links are a product layer over its source and diagnostics.
+Verus form.
 
-Evidence and limits. The evidence is the existing Isabelle/jEdit implementation and screenshots, not a user study. The paper notes that not all definitions are reachable yet because not all of Isabelle's knowledge fits in memory (“The current Isabelle version requires 16GB RAM”), and plans a database referenced over networks, so such software “can only be available as a cloud service” (pp. 78–79). Inference: a VL browser should pin exact library revisions so a link cannot silently change meaning.
+Evidence and limits. The evidence is the existing Isabelle/jEdit implementation and screenshots, not a user study. The paper notes that not all definitions are reachable yet because not all of Isabelle's knowledge fits in memory (“The current Isabelle version requires 16GB RAM”), and plans a database referenced over networks, so such software “can only be available as a cloud service” (pp. 78–79).
 
 ## technique 2: formal specification as an explicit problem object
 
@@ -74,7 +72,7 @@ How to apply it.
 
 Verus form. Inference: write executable pure Rust methods with `requires`/`ensures`, and separate UI interaction from proof code. Verus can verify termination and functional contracts for supported loops, but a product must not silently treat an `external_body` or unproved partial function as verified.
 
-Evidence and limits. The paper says “generality of most programs does not allow simple termination proofs; so this issue is bypassed by implementing partial_functions without proof” (p. 88), so this portion is trusted rather than proved. It also says prototyping “already started to shift programmes into Isabelle [22]” (p. 88). Inference: VL should label such methods as assumptions and avoid using them as evidence of end-to-end verification.
+Evidence and limits. The paper says “generality of most programs does not allow simple termination proofs; so this issue is bypassed by implementing partial_functions without proof” (p. 88), so this portion is trusted rather than proved. It also says prototyping “already started to shift programmes into Isabelle [22]” (p. 88).
 
 ## technique 5: Lucas-Interpretation next-step guidance
 
@@ -89,7 +87,7 @@ How to apply it.
 
 The paper says the present prototype “only uses a simplifier and, nevertheless, shows good results.” (Section 6.1, p. 90). This is a qualitative report with no stated task count or success denominator. For tactics, “Difficulties here only arise with partial equivalence of tactics or with algebra rules not contained in a rule set” (p. 90).
 
-Verus form. Inference: a VL assistant can synthesize the next proof hint from failed Verus obligations, candidate lemmas, and the current invariant. It must distinguish a suggested step from a Verus-checked step; only the latter supports a correctness claim. Verus proof functions and `assert`/`assert forall`-style facts can serve as the checked backend, with explanations generated from the proof trace.
+Verus form.
 
 Assumptions and limits. The paper's next-step interpreter is domain-specific (“a specific class of engineering problems”, p. 90) and depends on a user model and dialogue rules still to be designed (Sections 4.1 and 6.2, pp. 85, 90–91). It does not establish that suggestions are pedagogically effective or complete. Inference: agent-written hints can mislead if the UI presents them as proof certificates before rechecking.
 
@@ -97,7 +95,7 @@ Assumptions and limits. The paper's next-step interpreter is domain-specific (�
 
 The paper describes formal specifications, proof-assistant foundations, pure functional authoring, and an interactive prototype. It does not report a controlled educational evaluation, a count of verified examples, or a measured reduction in proof errors. The paper names Isabelle's “trusted kernel” (p. 85, footnote 18) and states that partial functions are accepted without termination proof (p. 88). Inference: the trusted base also includes the tactic implementations, the specification and method libraries, and the prototype interaction code. The paper says the Fig. 2 specification-arranging panel is “not yet existing” (p. 82).
 
-Paper-stated status (Section 7, p. 91–92: “A major part of the features has been implemented and demonstrated during prototyping (in the ISAC-project and others, references are given), other features are in a concrete stage of planning”). Implemented in prototypes or Isabelle/jEdit per the text: clickable definitions and types, a tree of specifications for types of equations, calculations with hidden sub-derivations, functional programs, and simplifier-based next-step guidance. Prospects: all definitions reachable via a network database, a two-dimensional formula editor with semantic links, drag-and-drop specification arrangement, and the dialogue-rule layer. Inference: VL's opportunity is a Verus-specific implementation that keeps executable Rust, `spec fn`s, proof functions, and generated explanations connected and versioned.
+Paper-stated status (Section 7, p. 91–92: “A major part of the features has been implemented and demonstrated during prototyping (in the ISAC-project and others, references are given), other features are in a concrete stage of planning”). Implemented in prototypes or Isabelle/jEdit per the text: clickable definitions and types, a tree of specifications for types of equations, calculations with hidden sub-derivations, functional programs, and simplifier-based next-step guidance. Prospects: all definitions reachable via a network database, a two-dimensional formula editor with semantic links, drag-and-drop specification arrangement, and the dialogue-rule layer.
 
 Threat to agent-written verified Rust. Inference: medium to high for user-facing trust. The architecture can make proof obligations and definitions visible, but a polished next-step explanation can still hide untrusted assumptions or a weak specification. The product should label which steps Verus checked, which solver facts were assumed, and which external code remains trusted.
 
@@ -111,5 +109,3 @@ Threat to agent-written verified Rust. Inference: medium to high for user-facing
 - separation of mathematics and interaction — keep functional algorithms independent from dialogue and user-model logic
 - Lucas-Interpretation next-step guidance — execute a method to suggest the next step and prove user-entered terms against the current context
 - inspectable justifications at several levels — let users open sub-derivations and tactics behind each step, down to elementary steps where implemented (Section 4.2, p. 86)
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Proof assistants got their name, because they serve interactive proof construction, where a mathematician constructing a proof has justifications at different levels of abstraction in mind."): read the whole paper text (pp. 76–93 plus references) and the whole study; checked every quotation word for word, page and section references, the Given/Where/Find/Relate example, the guard and subproblem description, the Lucas-Interpretation steps, and the DOI link (from the paper header). Changed: Abstract page 76 not 77; Lucas-Interpretation quote page 89 not 90; page ranges for Sections 3 and 4; removed unsupported claims (overloaded-operator resolution, parse-tree link storage, per-step proof-assistant recheck, "some panels" unimplemented, "already done" for features the paper lists as prospects); labelled prospects and my own steps as Inference; reworded the last catalog item; replaced the semanticscholar link with the DOI. Not checked: the cited external works [1]-[32], the Isabelle or Verus claims in the Verus-form paragraphs (Inference only), and the Fig. 1, 2, 3 images beyond their captions and text.

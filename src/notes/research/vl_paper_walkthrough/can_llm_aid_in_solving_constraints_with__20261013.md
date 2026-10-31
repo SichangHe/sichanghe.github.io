@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `feng2026llm`, [paper](https://arxiv.org/abs/2603.03668)
 
-Audit: audited 2026-10-13 against the paper; checked all numbers in Tables 1-5, the sums, algorithm steps, both prompt templates, appendices A-E, page references and quotations; changed trust claim to marked inference, prompt-pool order and conjecture limit wording, quant-ind configurations, filter scope, unsupported cvc5 remark, benchmark age; Verus code and fuel remark checked only against the Verus paper.
-
 source: Weizhi Feng, Shidong Shen, Jiaxiang Liu, Taolue Chen, Fu Song, Zhilin Wu, arXiv:2603.03668v2 (12 Mar 2026), 26 pages with appendices A–E. The tool is called LLM4Ind. Page numbers are the PDF's running page numbers.
 
 ## the problem, the result, the trust
@@ -205,13 +203,9 @@ Inference: the single-run differences between models in Table 2 (514 to 525 for 
 
 ## done here, and left open
 
-Done here, for solver-level goals over small data types: sufficiency-before-truth ordering, recursive sub-goaling to depth 3, a consistency filter, two prompt templates printed in full (Appendix E), measurements over four LLMs, four temperatures and two solvers, at about $4 per 706 tasks. Inference: VL can take the loop, the taxonomy and the two templates as given and need not re-derive them.
+Done here, for solver-level goals over small data types: sufficiency-before-truth ordering, recursive sub-goaling to depth 3, a consistency filter, two prompt templates printed in full (Appendix E), measurements over four LLMs, four temperatures and two solvers, at about $4 per 706 tasks.
 
 Open (Inference): every goal here is a closed first-order statement about pure recursive functions, 706 of them from benchmark suites whose sources date from 1996 to 2013 (CLAM, IsaPlanner, HipSpec; references 21, 11, 7) and likely in the models' training data; the paper does not discuss this. Nothing is said about lemmas that need a precondition found from program context, about loop invariants, or about goals where the definitions themselves must be chosen. The paper's related-work section places itself apart from verifier-assisting work: “These approaches primarily aim to enhance user productivity or guide interactive proof search, rather than enable fully automated reasoning.” (Section 5, p.17)
-
-## threat to VL's product
-
-Inference: low as a competitor, useful as a component. LLM4Ind proves benchmark lemmas for SMT and first-order solvers; it writes no code and no specification. If a solver with built-in induction and this loop were placed under a Rust verifier, part of the lemma-writing work that a Verus agent does today for recursive `spec fn`s would move into the solver; the paper does not attempt that, and Verus's solver does not do induction.
 
 ## techniques for the catalog
 

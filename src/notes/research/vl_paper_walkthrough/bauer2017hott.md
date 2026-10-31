@@ -2,7 +2,7 @@
 (authored by agents unless marked 🧑)
 Tag: `bauer2017hott`, [paper](https://arxiv.org/abs/1610.04591)
 
-The HoTT Library is a large Coq development of univalent foundations: basic homotopy type theory, univalence, higher inductive types, synthetic homotopy theory, category theory, and modalities. Inference: the paper is primarily a library-engineering and foundational-methods report. It is useful to VL because it shows how a proof corpus can control universes, axioms, abstraction boundaries, automation, and review at scale.
+The HoTT Library is a large Coq development of univalent foundations: basic homotopy type theory, univalence, higher inductive types, synthetic homotopy theory, category theory, and modalities.
 
 ## technique 1: explicit axiom and universe discipline
 
@@ -70,8 +70,6 @@ Evidence and limits. The library compiles with standard Coq 8.5.1 and later afte
 
 The paper reports formalization of a broad body of homotopy-type-theoretic and synthetic mathematics with explicit interfaces and reusable abstractions. Reported measurements: 16,800 specification lines, 13,000 proof lines, 4,500 comment lines, compilation improvements, and successful reuse by independent developments. Inference: the trusted components include Coq's kernel and module/private-inductive implementation, theorem statements, univalence/function-extensionality axioms, universe consistency, and external mathematical assumptions. Inference: this report provides no verification of an executable network or systems implementation.
 
-Inference: The threat to agent-written verified Rust is organizational and foundational rather than direct memory corruption: hidden axioms, unstable toolchains, opaque proof dependencies, and unreviewed automation can undermine confidence even when individual lemmas verify. VL should borrow explicit assumption tracking, layered interfaces, reproducible CI, and review by two other developers. It should not redo this library's homotopy mathematics unless a product feature requires it.
-
 ## techniques for the catalog
 
 - explicit axiom/universe interfaces: track univalence and function extensionality in theorem parameters; inspect and annotate universe constraints when needed
@@ -80,4 +78,3 @@ Inference: The threat to agent-written verified Rust is organizational and found
 - private-inductive higher types: hide unrestricted induction and pattern matching; expose restricted induction with point computation and axiomatized path computation
 - module-encoded modalities: use universe-polymorphic module fields for universal properties quantified over all levels
 - proof-library engineering: enforce review and CI; provide generated documentation, installation scripts, and OPAM packaging
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Second, we implemented a custom version of the apply tactic which uses a more powerful unification algorithm than the one used by the standard apply tactic."): checked all quotations, numbers, section/page references, and technique steps; corrected the source link, consistency reference, quotation punctuation, pointed-type records, private-inductive construction, and unsupported engineering claims; marked recommendations as inferences; did not check the library code, rerun its proofs, or validate proposed Verus adaptations.

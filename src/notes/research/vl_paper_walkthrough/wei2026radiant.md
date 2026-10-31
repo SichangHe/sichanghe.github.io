@@ -131,16 +131,6 @@ Six participants performed manual and automated AUV modelling in a crossover stu
 
 The paper measures artefact validity, semantic similarity to hand-authored references, traceability, change-impact sets, development time, and transfer to SRanger. FDR checks deadlock freedom and convergence for generated behaviour models. It does not prove that LLM outputs are generally correct, that traceability is complete for arbitrary domains, or that the method scales beyond its cases. Trusted components include the manually authored requirement model, expert reference artefacts, Clang static analysis, EMF/Epsilon transformations, RoboTool translation, and FDR. Generated behaviour guards are abstracted to booleans for verification, and manual model edits cannot propagate backward.
 
-Inference: In VL, Verus, its solver, Rust compilation and erasure, external specifications, and the requirement model become analogous trusted components. A passing proof establishes the encoded contract, not that the requirement model, generated trace, or dependency assumptions are correct.
-
-## what VL should not redo
-
-RADIANT already supplies a staged requirement-to-model pipeline, check-gated multi-agent roles, executable element-level traceability, content-hash impact analysis, and a counterexample-driven formal repair loop. VL should reuse these patterns rather than invent another one-shot agent architecture or document-level trace convention. Evidence is limited to AUV/SRanger cases, three LLMs, and six participants.
-
-## threat to agent-written verified Rust
-
-Inference: The paper presents a high process threat and a useful design pattern for VL. Agent-written Rust can pass Verus while generated requirements, omitted trace links, or abstraction changes hide semantic errors. Check gates and executable traces expose syntax, proof, and impact failures earlier, but measured gains do not establish security or correctness of a Verus product. The strongest transferable idea is to make every generated contract and proof dependency traceable to an atomic requirement and to repair from machine feedback while retaining failed attempts.
-
 ## techniques for the catalog
 
 - check-gated multi-agent generation: generate, check, refactor, trace, and repair each formal artefact before accepting it
@@ -148,5 +138,3 @@ Inference: The paper presents a high process threat and a useful design pattern 
 - executable traceability: emit element-level versioned links that support automated cross-model impact analysis
 - counterexample-guided formal repair: feed checker traces to a repair agent and repeat verification until pass or cap
 - model-dependent evaluation: measure syntax, execution, semantics, traces, and effort over repeated runs with denominators
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

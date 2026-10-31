@@ -6,8 +6,6 @@ Tag: `hattrori2025translation`, [paper](https://arxiv.org/abs/2509.09726)
 
 This paper translates Lean 4 formal proofs into readable natural-language proofs. Its method combines a premise library, rule-based templates for each tactic, LLM slot filling, dependency analysis, and recursive summarization (Sections 1 and 4, pp. 1–5). The input is an existing formal proof. The authors state: “The generated natural language proofs must accurately reflect the logical structure expressed in the formal proofs, and furthermore, must correctly capture the essential points of the proof to avoid logical leaps or breakdowns.” (Section 1, p. 2.)
 
-Inference: this is useful for VeruLaw when an agent has produced a verified Rust/Verus proof but a reviewer needs a structured explanation. Inference: the generated prose must remain subordinate to the checked proof because the paper evaluates correspondence to formal steps, not whether an explanation itself is a proof artifact.
-
 ## technique 1: build a premise library from the formal library
 
 What it is. The method first converts definitions and theorems in Lean and Mathlib into natural-language descriptions. The library is generated module by module: extract declarations, compute module dependency levels, and prompt an LLM to explain declarations in increasing level order while supplying already-generated explanations for dependencies and three same-module or same-field few-shot examples (Section 4.1, pp. 3–4). The paper’s example describes the absolute-value triangle inequality as: “This theorem states that in a linearly ordered additive group, the absolute value of the sum of the two elements is less than or equal to the sum of their absolute values, embodying the triangle inequality.” (Section 4.1, p. 4.)
@@ -83,7 +81,7 @@ The paper’s Mathlib demonstration translates a proof of infinitely many primes
 
 The paper assumes formal proofs already exist and are structurally extracted. It does not measure whether prose can be compiled back into a proof, whether explanations preserve every side condition, or whether an adversarial model can make a checked proof sound wrong. Inference: threat to agent-written verified Rust is moderate for review quality: misleading explanations can cause a human to miss a specification gap, while the formal proof itself remains checked. The threat is higher if downstream automation treats generated prose as an authority.
 
-The paper presents premise-aware extraction, tactic templates, AST dependency trees, and recursive proof summarization. Inference: VL should not claim these as new generic ideas. Inference: a useful Verus contribution would measure whether the same pipeline preserves ownership, borrowing, loop invariants, and external API assumptions, with independently checked links from each sentence to a proof-state transition.
+The paper presents premise-aware extraction, tactic templates, AST dependency trees, and recursive proof summarization.
 
 ## techniques for the catalog
 
@@ -92,4 +90,3 @@ The paper presents premise-aware extraction, tactic templates, AST dependency tr
 - template-constrained informalization: select operation-specific templates and fill premise and goal slots with an LLM
 - recursive dependency summarization: summarize proof subtrees bottom-up so each parent receives coherent child summaries
 - manual explanation audit: assign ordered step-error categories and score summary key points as correct, partial, or absent/incorrect
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To verify the effectiveness of recursive summarization, we generated two sets of summaries, with and without the dependency structure analysis and recursive summarization."): checked the entire paper text, study quotations, numbers, section and page references, method steps, evaluation design, limitations, and arXiv link; corrected page references, the template-error explanation, average criterion count, evaluation attribution, the infimum example discrepancy, and the scope and denominator of the 86% result; did not run the authors’ code, reproduce experiments, or independently check the Lean or proposed Verus proofs.

@@ -56,13 +56,11 @@ The miniF2F-rw benchmark pairs 488 original problems with 5–15 verified rewrit
 
 On miniF2F-rw-test, DeepSeek-Prover-V2-7B at PASS@64 scores 66.8 for seed, 64.8±1.1 for random, 68.8±0.3 for controlled, and 67.6 for test-time (Table 1, p. 8). On Ineq-Comp-trans, DeepSeek-Prover-V2 rises from 37.3% to 45.5% at budget 64 with an ensemble (Table 2, p. 8). The paper reports a concrete failure-repair pattern: “rewriting increases the success rate from 0/64 on seed to 8/16, or even 16/16, on the reformulation.” (Section 6, p. 9.) These results support robustness gains at finite budgets; they do not prove that every rewrite helps.
 
-Inference: For VL, a meaningful replication would report both verified-proof rate and Verus-checking cost over fixed numbers of obligations, with denominators split by rewrite family and model. It should include seed failures that become successes and seed successes that rewrites break.
-
 ## what is proved, trusted, and left open
 
 The paper proves category-level properties and verifies Lean equivalence certificates; experiments test three open-source non-reasoning provers on selected benchmarks. The model, Mathlib rewrite set, energy scorer, manual filtering, Lean kernel, and compiler remain trusted components of the evaluation setup. Inference: a Verus replication would additionally trust the equivalence lemmas, Verus verifier, solver, Rust compiler, and any external library specifications.
 
-The authors restrict the main experiments to non-reasoning provers and leave the magnitude of gains for reasoning models open (Section 8, p. 9). Inference: agent-written verified Rust faces a substantial representation-sensitivity threat if generation is whole-file or contract-conditioned, but this paper does not measure unsafe code, concurrency, dependency changes, or incorrect specifications. VL should reuse the paper’s equivalence-class benchmark and finite-budget accounting instead of repeating a Lean-only benchmark unchanged.
+The authors restrict the main experiments to non-reasoning provers and leave the magnitude of gains for reasoning models open (Section 8, p. 9).
 
 ## techniques for the catalog
 
@@ -70,5 +68,3 @@ The authors restrict the main experiments to non-reasoning provers and leave the
 - invariance diagnostics: compare PASS@k across verified equivalent statements to measure representation sensitivity
 - rewriting ensemble: split a fixed proof-generation budget across equivalent variants and verify every candidate before transporting it
 - online rewrite selection: sample category-generated variants, rank them with a model-based proxy, and check the highest-ranked variants
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

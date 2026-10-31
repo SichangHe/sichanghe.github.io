@@ -71,14 +71,9 @@ The implementation requires a consistent SAT model for error diagnostics and rej
 
 Inference: Applying this to Verus requires trusting or validating the translation, selector transformation, solver results, and final verifier. The paper provides no Verus evaluation or quantitative risk estimate. Keep the complete Rust verification as the acceptance criterion; a reduced function can otherwise hide a missing statement.
 
-## what VL should reuse or avoid
-
-Inference: Reuse minimal failing slices to localize failed `requires`, `ensures`, and loop-invariant obligations, and use preserving slices to explain which lemmas are essential. The paper already supplies generic core/MUS/SMT search; VL should adapt the selector encoding rather than inventing another minimizer. It should not treat a reduced proof as a replacement for checking the complete Rust function.
-
 ## techniques for the catalog
 
 - error-witnessing slicing: delete statements while preserving a failing counterexample relation to localize errors
 - verification-witnessing certificates: retain a reduced program whose successful verification implies the full program verifies
 - verification-preserving hints: minimize a verified program to statements sufficient to preserve its specification
 - core/MUS/SMT slice search: compute minimal or fast slices with unsatisfiable cores, MUS enumeration, or direct SMT encoding
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While the exists-forall strategy is often competitive with the mus and sus strategies, it is limited to reasoning about verification tasks without uninterpreted functions."): read all 54 pages, including references and appendices; checked quotations, definitions, technique steps, numerical claims, section/page references, and the arXiv link against the paper; corrected page references and search descriptions, distinguished minimal from globally smallest slices, and recorded runtime exceptions and the prose/table discrepancy; did not rerun Brutus, reproduce experiments, independently prove the theorems, or validate the Verus inferences.

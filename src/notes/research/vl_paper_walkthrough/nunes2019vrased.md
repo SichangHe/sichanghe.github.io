@@ -54,8 +54,6 @@ NuSMV verified all required hardware properties. The composed HW-Mod check used 
 
 The full LTL-equivalence proofs are machine-checked with Spot 2.0, which the paper calls a proof assistant, and the authors provide the proofs publicly (Appendix A, p. 1444). Trusted components still include the MCU's implementation of axioms A1–A5, the compiler assumptions A6–A7, HACL*'s verified translation boundary, and the absence of physical attacks. The design targets low-end single-core MCUs; it does not verify a general-purpose processor or an MSP430 compiler, and its guarantees depend on the assumed signal semantics and exclusion of physical attacks.
 
-Inference: VRASED illustrates a possible risk for VL. Agent-written Rust can be functionally proved while the compiler, machine model, memory isolation, interrupts, DMA, and cryptographic assumptions remain outside the proof. Its reusable proof pattern is contract-first decomposition: state the end-to-end property, prove small hardware and software obligations, then prove their composition. Inference: VL could reuse an appropriate verified cryptographic implementation while focusing on the target Rust-to-machine boundary and on explicit assumptions about interrupts, aliasing, DMA-like concurrency, and secret erasure.
-
 ## techniques for the catalog
 
 - end-to-end LTL contract — define remote-attestation soundness and a cryptographic security game before implementation proofs
@@ -64,4 +62,3 @@ Inference: VRASED illustrates a possible risk for VL. Agent-written Rust can be 
 - access-control and atomicity FSMs — reset on illegal key reads, interrupts, entry, or exit behavior
 - exclusive-memory and DMA modeling — protect stack and result regions and model non-CPU memory accesses explicitly
 - composition theorem — derive temporal consistency and unforgeability from component properties and HMAC security
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "While stack erasure in HACL* would integrate nicely with the overall proof of SW-Att, the assurance would be at the language abstraction level, and not necessarily at the machine level."): checked the entire paper, including appendices and PDF pages 1433, 1434, and 1439 omitted by text extraction, against all study quotations, numbers, references, and technique steps; corrected page references, security-game wording, functional-correctness conditions, composition and reset steps, stack alternatives, and compiler-cleanup qualification; did not reproduce proofs, compile the implementation, run FPGA experiments, or validate the Verus/VL inferences.

@@ -6,8 +6,6 @@ Tag: `lopezmiguel2025formal`, [paper](http://arxiv.org/abs/2502.19150v1)
 
 The paper describes a service in which an independent verification team checks PLC code against requirements, and a method for modeling proprietary, time-dependent PLC functions whose internals are hidden. Its abstract states: “This paper introduces a formal verification service for PLC (programmable logic controller) programs compliant with functional safety standards, providing external expertise to organizations while eliminating the need for extensive internal training.” (Abstract, p. 1). The case study verifies the Personnel Access System (PAS) of the FAIR accelerator at GSI with CERN’s PLCverif (Sect. 3, p. 6).
 
-Inference: For VeruLaw, the paper is mainly an operating model and boundary-modeling recipe. It does not verify Rust or establish a Verus result. The transferable parts are independent review, explicit requirements, black-box behavioral reconstruction, and contracts at module boundaries.
-
 ## technique 1: separate requirements, implementation, and independent verification
 
 What it is. The service has three independent teams: requirement engineers know the physical system and write requirements; PLC developers implement them; verification engineers check that the PLC behaves exactly as specified (Sect. 2.1, pp. 2–3). The paper says, “It is important to highlight the iterative nature of this process.” (Sect. 2.1, p. 3).
@@ -52,14 +50,6 @@ Evidence and limits. These examples demonstrate diagnosis patterns, not a statis
 
 The PAS prevents personnel from entering areas exposed to particle beams and radiation; its configurability makes exhaustive testing impractical and its TIA Portal code uses proprietary functions (Sect. 3, p. 6). CERN and GSI used the three-team process. The reported outcomes are formalized requirements, a PLC program aligned with those requirements after discrepancies were amended, and added PLCverif support for FDBACK, CTUD, ESTOP1, and FDB_TIME (Sect. 3, p. 6). The paper claims this is the first complete real-world safety-critical PLC project verified through an organization trusted by another, while distinguishing earlier work that verified specific modules (Sect. 4, p. 7).
 
-Inference: For VL, this is a competing verification-as-a-service organizational pattern. A product that generates Verus Rust still needs independent requirement review, handling of proprietary or external components, and an escalation loop for counterexamples. The paper has no price, schedule, defect denominator, or comparison against in-house verification, so those business claims remain unmeasured.
-
-## trust, reuse, and product threat
-
-The paper reports PLCverif checks of the reconstructed function against generated assertions (Appendix A.5, pp. 16–19) and PAS alignment with formal requirements (Sect. 3, p. 6). Appendix B provides illustrative requirement repairs from multiple PLC projects, rather than additional PAS verification results (pp. 19–23). The process acknowledges possible verifier bugs (Sect. 2.1, p. 3). Inference: trust also rests on the simulation tool, proprietary-function documentation, manually created timing diagrams, and the correspondence between modeled and hidden behavior.
-
-Inference: the threat to agent-written verified Rust is high at specification and integration boundaries, and low as a direct technical threat because the paper does not automate Rust proof generation. VL should reuse explicit stakeholder separation, timing-trace reconstruction, cycle-by-cycle assertions, and assume-guarantee contracts. VL should not redo a generic service-process proposal without a measured Verus deployment or new evidence.
-
 ## techniques for the catalog
 
 - independent service verification — separate requirement, implementation, and verification teams and iterate until code and requirements agree
@@ -67,4 +57,3 @@ Inference: the threat to agent-written verified Rust is high at specification an
 - black-box timing reconstruction — simulate proprietary functions, record cycle traces, generate assertions, model transparently, and verify iteratively
 - cycle-bounded checking — choose loop unwinding as the maximum of timer-trigger cycles and timing-diagram length
 - assume-guarantee boundaries — constrain shared-module inputs with producer guarantees and conditional consumer requirements
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Since PLCSIM does not provide a timing diagram as such, from the manual simulations, a timing diagram was created manually (cf. table from Figure 11)."): checked the entire paper, study quotations, numerical claims, section/page references, modeling steps, case-study scope, and arXiv link; corrected team responsibilities, page references, the simultaneous-request example, appendix scope, and timing inconsistencies, and marked model-equivalence limits as inference; did not rerun PLCverif, inspect external artifacts, or validate the proposed Verus adaptations.

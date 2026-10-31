@@ -79,13 +79,7 @@ Inference: in Verus, use compiler diagnostics to select a contract clause, invar
 
 ## evidence, assumptions, and limits
 
-The experimental setup uses Lean 4 toolchain v4.15.0, LeanScorer with DeepSeek-V3.2 and threshold 0.6, and a global budget of four calls (§4.2, p. 6). The authors report average DSR calls of 2.9 on ProverBench, 3.5 on ProofNet, and 3.9 on PRIME (§4.2, p. 6). PRIME's 156 theorem statements come from undergraduate and graduate textbooks and were manually formalized by Lean experts (§4.1, p. 6). The paper reports LeanScorer agreement with human labels on PRIME: kappa 0.766 versus 0.603 for a prompt LLM judge, with denominators the full 156-example PRIME set (Table 4, p. 13). LeanScorer's DSR pass rate is 67.95%, versus 71.15% human and 76.92% LLM judge on PRIME (Table 5, p. 13); these are evaluator pass rates, not theorem-proving success.
-
 The main assumptions are explicit decomposition correctness, reliable OPT construction, and meaningful compiler localization. Appendix A says success is “heavily predicated on the initial semantic decomposition” and that a bad partition makes the operator tree flawed. It also reports hallucinated Mathlib identifiers as a primary failure cause and proposes retrieval augmentation during repair (Appendix A, p. 12). The paper does not measure repair cost beyond call budgets, does not prove that LeanScorer is sound, and does not report complete proof construction for the theorem statements.
-
-Inference: for VeruLaw, the useful transferable pattern is a staged generate–compile–localize–repair loop, while the product threat is that a compiling repaired specification can preserve the wrong intent. DSR itself warns of “automation bias, where users might overly trust a successfully compiled statement without verifying if the model preserved their original semantic intent.” (Impact Statement, p. 9.) In a Verus product, this threat applies to `requires` and `ensures` that are too weak or encode a mistaken requirement; Verus verification establishes the written contract, not the user's unwritten intent.
-
-Inference: VL should not redo the already-demonstrated idea of hierarchical local repair for Lean statement syntax. It can still study whether the same repair boundaries work for Rust ownership, loop invariants, and external-body assumptions, which this paper does not evaluate.
 
 ## techniques for the catalog
 
@@ -94,4 +88,3 @@ Inference: VL should not redo the already-demonstrated idea of hierarchical loca
 - complexity curriculum with replay: stratify tree depth, width, and node count and mix earlier tiers into later LoRA phases
 - structure-first assembly: reconstruct code from tree leaves, falling back to linear fragments when the tree is malformed
 - tree-guided repair: map compiler coordinates to a node, repair bottom-up through subcomponent, component, and statement scopes, then run a semantic check
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

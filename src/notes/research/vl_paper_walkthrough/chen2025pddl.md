@@ -5,8 +5,6 @@ Tag: `chen2025pddl`, [paper](https://arxiv.org/abs/2508.18507)
 ## problem and core method
 Chen, Zenn, Cinquin, and McIlraith use language models to generate Python programs for generalised planning over PDDL domains. Their abstract says: "our approach synthesises policies that are provably sound relative to the PDDL domain without reliance on external verifiers." (Abstract, p. 1.) The input is a domain, two training problems, and prompts containing PDDL and a Gripper code example; the LM emits a value function or policy once per domain, then a planner instantiates it for each test problem (§3, pp. 4–5). The program example teaches syntax and class structure, not the solution (§3.1, p. 4).
 
-Inference: the useful pattern for VL is to constrain an agent's generated code behind an interface whose outputs are legal in the current state, then prove the wrapper's safety independently of the model's algorithmic quality.
-
 ## technique 1: sound reactive policies by applicable-action restriction
 what it is and when to use it
 A policy receives state s and applicable actions A(s), and must return π(s) ∈ A(s). The implementation wraps generated code: if an error or mistake produces π(s) ∉ A(s), the wrapper chooses a random applicable action (§3.2.a, p. 5). The authors state: "Furthermore, a plan is only returned when the goal is reached so any returned action sequence reaches the goal." (Theorem 1 proof sketch, §3.2.a, p. 5.)
@@ -44,17 +42,8 @@ For each of 10 domains, each LM is called 10 times for value and policy programs
 
 On 900 test problems (90 in each of 10 domains), 1,800 seconds and 8 GB per problem, πLM solved 563, VLM 397, πLM⊕VLM 424, and portfolio πLM⊗VLM 630 (Table 2, p. 7). LAMA solved 557. πLM was sound but incomplete; VLM and πLM⊕VLM were sound and complete (Table 2). These denominators are the table's 900 problems, with each domain's maximum 90.
 
-Inference: for VL, validation can choose among generated proof-oriented components, but the training score is a performance heuristic, not a correctness proof. A Verus CI prerequisite check must still verify every selected component against its contract.
-
 ## technique 5: symbol-ablation test
 The authors replace every type, predicate, function, schema, and object name with symbols such as p1, a1, and o1, then rerun generation and planning (§4, pp. 7–8). The abstract reports that models "sometimes plan more effectively over PDDL problems written in meaningless symbols" (Abstract, p. 1). Table 3 (p. 8) reports total value-function coverage rising from 397 with semantic names to 406 with symbols, but policy coverage falling from 563 to 424. Symbolic policies still solve all 90 problems in Ferry, Miconic, and Spanner. Section 4 (p. 6) cautions: "more experimentation is required to draw conclusive results." Inference: the results weaken an assumption that semantic names are necessary, but do not establish symbolic reasoning or rule out prompt and distribution effects.
-
-## evidence, trust, and product threat
-The implementation uses Python for heuristic evaluation, C++ data structures, and SQLite for applicable-action queries (§4, p. 6). Models were DeepSeek-R1, Gemini 2.0 Flash, and Gemini 2.5 Flash Preview 04-17 (§4, p. 6). Coverage does not measure plan quality: the authors report policy plans sometimes up to 100 times worse than LAMA's on several Transport problems, and attribute unnecessary actions to random choices that undo previous actions (§4, Limitations, p. 8).
-
-Inference: applying the soundness argument requires trusting the PDDL model and the code that computes applicable actions, applies transitions, checks goals, and extracts plans. The argument constrains generated policy outputs; it is not a proof of arbitrary generated Python behavior or correspondence between PDDL and the real world. The benchmark evidence does not establish performance outside the ten tested domains.
-
-Inference: for agent-written verified Rust, an LM can propose actions while a Verus-checked wrapper enforces legality and a checked search loop preserves reachability. The paper compares complete and incomplete sound approaches; it does not experimentally isolate the benefit of soundness because all its proposed approaches are sound (§4, question 2, p. 7).
 
 ## techniques for the catalog
 - applicable-action wrapper: restrict policy outputs to actions legal in the current state and replace invalid outputs
@@ -62,4 +51,3 @@ Inference: for agent-written verified Rust, an LM can propose actions while a Ve
 - dual-queue search: combine policy proposals with exhaustive heuristic expansion while retaining completeness
 - training validation: select generated programs by timed performance on small training problems
 - symbol ablation: replace semantic identifiers with symbols to test dependence on lexical meaning
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Each approach is run on Intel Xeon Platinum 8268 cores for 1800 seconds and with a memory budget of 8GB for each problem."): checked all paper text, quotations, numbers, section and page references, technique steps, tables, and appendices; corrected the proof quotation, search page reference, algorithm line range and action/state ambiguity, portfolio selection, model version, validation description, and unsupported trust and performance claims; did not check source code, rerun experiments, or verify the proposed Verus adaptations.

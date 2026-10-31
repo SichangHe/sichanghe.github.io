@@ -46,16 +46,6 @@ They sample 280 games: 220 to test false positives (10 from each vulnerable cate
 
 Inference: dynamic confirmation is an external validation harness, not a Verus theorem. Contracts can ensure that a test runner's reported transaction state and product delivery correspond to the same game instance, but virtualization hooks, Frida, app-store behavior, and server responses remain outside the proof boundary.
 
-## evidence, assumptions, and product threat
-
-The corpus contains 39,121 Unity games. After filtering out games that never use in-app purchasing APIs, the authors analyze 10,640 IAP games: 8,233 no-verification, 721 local-verification, and 1,686 classified as remote-verification; 597 of the last group use both local and remote verification (Sec. 6.2, p. 3102, PDF image). Inference: 8,954/10,640 ≈ 84.15% of the IAP subset were flagged, while the abstract’s 22.89% uses the full Unity corpus. The scan used 24 parallel Ghidra instances, took 669 hours total (665 hours for P-Code preprocessing and 4 hours for payment-aware analysis), and consumed 5.8 TB for Ghidra projects (Sec. 6.2, p. 3103). Inference: payment-aware analysis took much less time than Ghidra preprocessing in this experiment.
-
-The stated assumptions are that games use APIs for common operations such as logging and networking, and that global-metadata.dat is neither encrypted nor hidden (Sec. 3.1, p. 3097). Indirect flows through conditions or files can cause false positives; type-based over-tainting and unresolved container use can cause false negatives (Sec. 7.2, p. 3106, PDF image). The authors note that receipts sent to a server may be used only for logging, which the detector cannot confirm without server code (Sec. 6.3, p. 3105). Automatic analysis covers Android Unity binaries. Exploratory manual tests find two of five UE4 games and both tested iOS games vulnerable; automatic support for other engines and platforms remains future work (Sec. 7.3, pp. 3106–3107).
-
-Inference: the direct lesson for VL is to treat untrusted input reaching a security sink as a fixed-point data-flow proof obligation. Verus can verify the transfer and classification engine over an explicit intermediate representation, while engine metadata, dynamic dispatch, server behavior, and Ghidra/P-Code correctness must be trusted or separately validated. The vulnerable games show why client-side verification is insufficient under this attacker model. Missed vulnerabilities in the remote-verification sample show why a static result must preserve an unknown category.
-
-Inference: VL could verify the transfer and classification rules rather than repeat the existing detector design. The corpus rate and the proportion of missed vulnerabilities in sampled remote-verification games use different denominators and sampling procedures, so they cannot be combined into one prevalence estimate.
-
 ## techniques for the catalog
 
 - metadata-guided native analysis: recover source-level function and field types from IL2CPP metadata and index them by address and offset
@@ -64,4 +54,3 @@ Inference: VL could verify the transfer and classification rules rather than rep
 - base-class-field resolution: backward-slice a native address, resolve its class recursively, then taint the exact field offset
 - sink-policy classification: distinguish no-verification, local-verification, and unknown remote-verification by tainted paths
 - dynamic exploit confirmation: hook payment callbacks or local validation and attempt a cancelled purchase on sampled binaries
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Being a vulnerability detection tool, we consider this is acceptable, as we cannot guarantee to detect all the vulnerabilities."): checked the full paper text and PDF-only pages 3094, 3102, and 3106, quotations, counts, references, and technique steps; corrected the publisher link, page references, IAP denominator, false-positive limitations, platform scope, and the reported 29% versus 14/51 discrepancy; marked proposed Verus work as Inference; did not inspect implementation code, reproduce experiments, or validate the proposed Verus proofs.

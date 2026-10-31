@@ -1,21 +1,12 @@
 # Stop Means Stop and the limits of verified agent controls
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-13 against the paper; slips corrected in place; details in the last line.
 
 - paper
   - Sajjad Khan, *Stop Means Stop: Measuring and Repairing the Enforcement Gap in Agent-Framework Control Primitives*
   - [arXiv preprint 2607.14166v3](https://arxiv.org/abs/2607.14166v3), August 8, 2026
-  - [saved PDF](</hdd1/sichanghe/paper_collection/Stop Means Stop: Measuring and Repairing the Enforcement Gap in Agent-Framework Control Primitives, arXiv, 2026.pdf>)
   - evidence below comes from the saved full paper
   - results are author reports
     - not independent reproductions
-
-central lesson for VL
-- a verified decision model gives useful assurance only when deployed actions follow its decisions
-  - the paper states the mediation condition in section 5.1
-    - “if every side-effecting operation performs its external action only after receiving release for its identity (run, key), then every execution satisfies P1–P4”
-  - inference for VL
-    - distinguish proving a model from proving deployed code and enforcing its assumptions
 
 what it does
 - probes approval, replay, cancellation and timeout behavior in six released agent frameworks
@@ -120,40 +111,8 @@ additional evidence limits
   - unresolved
     - the paper alone does not establish whether this is a typo or different tested versions
 
-what VL could adopt
-- inference and recommendation
-  - report model proof, code proof, conformance tests and confinement separately
-  - test the behavioral contract around verified code
-    - action replay
-    - cancellation while work continues
-    - approval racing with execution
-    - admitted actions continuing after cancellation
-    - forgotten wrappers and identity changes
-  - retain counterexamples as regression tests
-  - evaluate complete deployed changes
-    - verifier acceptance alone misses model-to-code and deployment gaps
-  - apply these lessons to VL orchestration design
-    - no VL runtime change or experiment follows automatically from this note
-
-product threat
-- inference
-  - adjacent infrastructure overlap
-    - the paper provides a Rust admission component backed by model proofs and code-conformance checks
-    - it may compete with a feature that promises enforceable agent approval or cancellation
-  - the paper does not demonstrate general autonomous Rust-to-Verus conversion or repository-scale proof generation
-    - it is not evidence that VL's whole proposed capability already exists
-  - threat size remains uncertain without a current precise VL product scope
-    - the useful lesson is a concrete example of how assurance can stop short of deployed behavior
-
-first reading assignment
-- read section 5.1 on page 12 and figure 3 on page 17
-  - compare the mediation condition with the model-to-code evidence
-- question
-  - for a VL-generated verified component, what evidence would convince you that deployed actions obey the proved model
-
 study status
 - uploaded the full saved PDF to ChatGPT and obtained its full-paper analysis
-  - [saved answer](/ssd1/sichangheagent/vlpw/chatgpt_stop_means_stop_answer.md)
   - checked material findings against the saved primary text
   - retained the independently reviewed initial synthesis
   - integrated the cancellation-contract tension, naturalistic denominator, task-reward boundary and version discrepancy

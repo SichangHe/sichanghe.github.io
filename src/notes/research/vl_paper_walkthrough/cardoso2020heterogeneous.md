@@ -80,16 +80,9 @@ Verus form. Inference: Verus can prove a monitor’s transition logic against a 
 
 Evidence and limits. The paper states that monitors check current executions and are not exhaustive. No runtime false-positive/false-negative rate, execution count, or overhead is reported. Inference: a monitor can detect only violations visible in observed messages and cannot establish behavior between samples.
 
-## what is proved, trusted, and relevant to VL
-
-The paper verifies modeled agent formulas, Dafny interface contracts, CSP communication properties, and runtime checks of selected assumptions. It gives no single end-to-end theorem connecting Gazebo physics, ROS transport, GWENDOLEN, action servers, and monitors; future work “seeks to link the results of these heterogeneous techniques in a holistic framework” (Sect. 4, p.7). Inference: trusted elements include the simulation, model-to-code correspondence, ROS/Gazebo behavior, sensor assumptions, and each verifier’s implementation. Inference: for VL, the main transferable lesson is a verification portfolio: choose a method per component and explicitly connect each model to the implementation boundary.
-
-Inference: this is a moderate threat to a product that generates Verus-verified Rust. It does not automate Rust proof generation, but it shows that one proof language is insufficient when systems include agents, asynchronous protocols, and physical assumptions. VL should not redo the paper’s exact ROS rover case study; it should reuse the decomposition pattern and require explicit contracts for external components. The paper reports no quantitative assurance denominator, so product-level risk reduction cannot be estimated from it.
-
 ## techniques for the catalog
 
 - AJPF agent model checking — express ground LTL properties over GWENDOLEN beliefs, actions, and intentions and exhaustively check the agent model
 - Dafny interface contracts — verify initialization, environmental classification, and loop safety with postconditions and invariants
 - CSP/FDR4 protocol checking — model client–server event sequences and check goal routing, completion, and readiness properties
 - ROSMon runtime verification — synthesize monitors from formal assumptions and check live ROS messages at deployment
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our Dafny model has functions for accessing the environmental conditions at a given waypoint e.g. getEnvironment() and getWind()."): read all 8 pages and checked every quotation, section/page reference, the formulas, Dafny contracts, CSP properties and RML snippet, and the technique steps; changed one page reference (MAHLI, p.2), the arm-goal CSP example description, the RML backslashes, the AJPF arm-protection example (now marked as illustrative), added Inference labels on unsupported limit statements, and added Sect. 4 citations; did not check the linked repository or cited works, nor the Verus-form adaptations (own inferences).

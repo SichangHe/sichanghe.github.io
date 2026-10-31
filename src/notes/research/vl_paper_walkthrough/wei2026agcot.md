@@ -5,8 +5,6 @@ Tag: `wei2026agcot`, [paper](https://doi.org/10.22331/q-2021-11-16-580)
 ## problem and verification boundary
 The paper studies OpenQASM generation for Clifford state preparation. A prompt gives signed Pauli stabilizer generators for a target state; a model must emit a circuit from |0⟩. The verifier parses QASM, converts it to a Clifford object, simulates its tableau, and checks the target. The paper states: “A stabilizer state |ψ⟩ can be specified by n independent commuting signed Pauli generators S1 , . . . , Sn such that Si |ψ⟩ = |ψ⟩ for every generator index i.” It distinguishes strict saved-label equality (`Exact`) from basis-insensitive state equivalence (`StateEq`). “StateEq@1 hence removes generator-basis sensitivity while preserving the same parsing, Clifford-conversion and state-preparation boundary as Exact@1lab.”
 
-Inference: for VL, the transferable idea is to make a cheap executable semantic oracle a training filter and evaluation gate, while keeping representation-level and semantic-level metrics separate.
-
 ## technique 1: verifier-checked algorithmic-trace supervision
 What it is: expose the deterministic Aaronson–Gottesman reduction that constructs each circuit, then train on the trace plus the final circuit. The paper says, “AG-CoT completions contain the Aaronson–Gottesman reduction steps from which each circuit is constructed, so the supervision covers the synthesis procedure as well as its output.”
 
@@ -33,8 +31,6 @@ Steps: initialize from the AG-CoT adapter; generate completions; require one com
 
 Evidence: Qwen RFT versions solved 213/3,661 (5.82%), 215/3,661 (5.87%), and 210/3,661 (5.74%), versus 201/3,661 for AG-CoT. Mistral RFT solved 322/3,661 (8.80%) versus 316/3,661. The paired gains were 19, 21, and 18 targets, with losses of 7, 7, and 9; only version 2 remained below 0.05 after Holm adjustment (p=0.038). In the 32B direct study, RFT-v1 had the highest StateEq@1, 6.14%, and Exact@1 saved-label, 3.13%, among reported variants.
 
-Inference: a VL pipeline can retain only Verus-compiling, contract-satisfying candidate Rust proofs for later supervised continuation. The filter must include the exact project build and specification checks; compilation alone is the analogue of syntax validity, not semantic success.
-
 ## technique 3: separate terminal criteria and search budget
 The verifier records syntax, Clifford validity, strict labels, and state equivalence separately. For 64 sampled candidates per target, Basic AG-CoT achieved strict saved-label Pass@64 4.42% but StateEq-Pass@64 10.07%; the same candidate pool had estimated StateEq-Pass@1 4.65%. RFT had estimated saved-label Pass@1 3.18% and observed Pass@64 5.19%. These denominators and candidate budgets matter: the paper warns that Pass@64 is finite-budget coverage, not direct one-output reliability.
 
@@ -43,10 +39,7 @@ Inference: report Verus compile rate, exact postcondition success, and multi-sam
 ## what is proved, trusted, and assumed
 The Qiskit tableau simulator and exact state checks establish the paper’s chosen Clifford-state criterion. They do not prove arbitrary quantum unitaries, non-Clifford states, or that the saved-label convention is the user’s intended semantics. The paper itself says, “An extension to generic state preparation would require a representation for non-stabilizer states and a state-fidelity threshold fixed before evaluation.” Inference: a Verus adaptation likewise trusts Verus, its solver, Rust compilation/erasure, and any external specifications; it proves only the stated contracts.
 
-Inference: threat to VL is medium. The method directly threatens any workflow that trains on plausible proof text without verifier filtering, but the reported absolute semantic success remains 5.49–8.80% in the controlled one-output setting. VL should reuse the verifier-filtered-data pattern and metric separation, not assume trace supervision solves proof generation.
-
 ## techniques for the catalog
 - verifier-checked algorithmic traces — train on deterministic derivations paired with final programs retained only after exact semantic verification
 - verifier-filtered continuation — fine-tune on the model’s own verifier-accepted completions
 - criterion-separated evaluation — report syntax, representation equality, semantic equivalence, and finite-budget Pass@N independently
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

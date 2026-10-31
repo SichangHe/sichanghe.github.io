@@ -37,10 +37,6 @@ The paper also implements a native Blackwell `tcgen05` backward for the gated-li
 
 Verus form (inference): specify the recurrence transition and backward equations as mathematical `spec fn`s, prove each scan and triangular-inverse step against the oracle equations, and wrap `unsafe` tensor-memory operations with contracts for allocation and release. Hardware lifecycle assumptions remain trusted unless separately modeled.
 
-## what is proved, what remains trusted, and threat to VL
-
-The verifier establishes that tested executions satisfy its twelve contracts. It does not prove all inputs, all shapes, compiler correctness, GPU hardware correctness, or that the PyTorch reference is the intended specification. Its audit also depends on fixed seeds, applicability rules, and artifact filters. Inference: for VeruLaw, the main product threat is high whenever agent-written Rust is accepted by narrow tests that omit exceptional values, aliasing, determinism, shape changes, or precision. The reusable lesson is a contract battery with exact checks, derived numerical bounds, independent positive controls, and per-row evidence. Existing VL work should not redo the general observation that `allclose` is weak; it should adapt the gate pattern to Rust memory safety, panic behavior, resource bounds, and external-library contracts.
-
 ## techniques for the catalog
 
 - adversarial contract battery: test values, shapes, gradients, precision, ordering, determinism, exceptional values, device placement, and resource limits
@@ -49,4 +45,3 @@ The verifier establishes that tested executions satisfy its twelve contracts. It
 - positive-control validation: require broken-kernel rejection and independently correct-kernel acceptance before auditing a corpus
 - differential benchmark audit: join the benchmark verdict with the stronger verifier in a 2x2 table and preserve denominators
 - oracle-backed systems verification: establish an independent high-precision oracle and run the same contract battery on native code
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

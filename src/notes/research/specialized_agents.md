@@ -146,7 +146,6 @@ Google Scholar discovery record
 
 local artifacts
 
-- [paper-collection source map](</hdd1/sichanghe/paper_collection/Specialized agent systems - source map, 2026-08-03.md>)
   - added PDFs and same-stem Marker extractions: JARVIS, ChatEDA, ChipNeMo, Don't Stop Pretraining, ReAct, LEVER, and ToolLLM
   - reused existing collection artifacts: SWE-agent and ScribeAgent
   - the source map records official sources, status, scope, local paths, byte counts, page counts, and SHA-256 checksums

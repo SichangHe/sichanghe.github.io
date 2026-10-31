@@ -1,7 +1,6 @@
 # Tunable Automation in Automated Program Verification
 (authored by agents unless marked 🧑)
 Tag: `bai2025tunable`, [paper](https://arxiv.org/abs/2512.03926v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
 
@@ -59,7 +58,7 @@ Apply it as follows:
 6. import ambient facts and repeat
 7. compare assertions removed by the facts
 
-The authors caution that asserts also document proof structure and that the tool ignores lemma calls, so the count is only a proxy. Inference: this technique could carry to VL for measuring proof burden, but an agent should report proof readability and lemma dependencies separately.
+The authors caution that asserts also document proof structure and that the tool ignores lemma calls, so the count is only a proxy.
 
 ## technique 4: choose automation levels for collection libraries
 
@@ -73,15 +72,13 @@ Quantifiers instantiate when a trigger expression syntactically matches a term i
 
 Verus's `#![all_triggers]` selects all valid non-redundant trigger sets instead of its conservative defaults. In IronKV, the authors removed manual triggers where possible, added 206 `all_triggers` annotations to 261 quantifiers, and reduced minimized assertions from 268 to 235, a 33 (12.3%) reduction. One proof broke. The approach did not scale to the other projects: pervasive use produced many failures, likely from enlarged search and misguided matching loops.
 
-The paper's sequence-length axiom illustrates the risk. A trigger on `s1.add(s2).len()` is relevant only when `.add()` appears. The paper says the second trigger set would instantiate the axiom once on each pair of `.len()` calls in the program and proof context, which is excessive. Inference: in VL, trigger selection should be an explicit repair step: inspect the target term, choose a trigger that appears when the lemma is needed, and test runtime before enabling all triggers.
+The paper's sequence-length axiom illustrates the risk. A trigger on `s1.add(s2).len()` is relevant only when `.add()` appears. The paper says the second trigger set would instantiate the axiom once on each pair of `.len()` calls in the program and proof context, which is excessive.
 
 ## evidence and limits
 
 With ambient collection facts, approximately 2% of functions took twice their original verification time; worst slowdowns ranged from 3x to 19x. The extreme examples rose from 34 ms to 669 ms (19.1x) in Splinter and 3508 ms to 43563 ms (12.4x) in Anvil. In failure-time experiments that removed 20 sampled assertions per project, 78% of failed functions still reported failure within twice the original verification time. For IronKV, 98.20% of functions stayed within 2x successful-verification time with ambient facts. With `all_triggers`, 97.22% of IronKV functions stayed within 2x, but the experiment was only one project.
 
 What is proved: Verus checks each program under its selected quantifier context and trigger strategy. What is measured: assertion-count proxy, successful verification time, failure-report time, and selected-project case studies. What stays trusted: Verus, SMT solver, broadcast proof bodies, axioms, UNSAT-core interpretation, and the assumption that fewer asserts measures automation. The datasets are openly available codebases, not randomized programs; the authors explicitly warn that assertion minimization does not capture all proof effort.
-
-The threat to VL is high for proof orchestration and performance tuning (inference). This paper already supplies a concrete mechanism for context management, usage reporting, minimization, and trigger repair. VL should not claim novelty for simply adding more lemmas or increasing solver timeouts. It should adopt scoped imports, usage-based context trimming, and trigger-aware retrieval. The remaining product work is intent recovery, safe default policies, and maintaining these choices across generated code changes.
 
 ## techniques for the catalog
 
@@ -90,5 +87,3 @@ The threat to VL is high for proof orchestration and performance tuning (inferen
 - assertion minimization — remove hints one at a time and rerun verification to estimate automation gain
 - trigger-guided instantiation — choose syntactic patterns that occur at the proof obligation and avoid matching loops
 - selective all-triggers mode — broaden trigger sets for user quantifiers only after measuring proof and runtime effects
-
-Audited 2026-10-12 against the paper: checked every number (assertion tables and percentages, 206 of 261, 33 and 12.3 percent, lemma counts 25/2/10/12/49, timing extremes, 98.20, 97.22, 78, 2 percent, 3x to 19x), section and page references, both code examples and the Verus forms. Changed: the page 6 quotation now verbatim (it had been reworded); step 3 of technique 3 no longer says affected verification only (the paper reruns whole verification and notes why not narrower); the .len() trigger sentence now matches the paper; marked as inference the agent, VL, emulation and override sentences. Not checked: the Mariposa appendix and GitHub artifacts (not used by the study). The findings file lists nothing for this study.

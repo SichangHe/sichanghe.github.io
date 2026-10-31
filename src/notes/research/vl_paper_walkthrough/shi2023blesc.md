@@ -42,11 +42,8 @@ Verus form: Inference: model the added computation and confirmation as explicit 
 ## what is proved, measured, and trusted
 Reported: verified and falsified symbolic trace properties for the original and patched models (Tables 4 and 6, pp. 46 and 48), with 29 original BLE-SC configurations and 112 rules per specific model (§3.3.2, p. 43). Assumptions: secure OOB, honest devices supporting high-entropy maximum key sizes, specified user behavior, and a low-entropy key oracle (§3.2, p. 41). Inference: a Rust verification effort could reuse this configuration coverage and event-property structure, but would need to justify the mapping from implementation behavior to the symbolic model.
 
-Inference: VL could reuse the paper’s all-association-model decomposition, attacker oracle for low entropy, event-property style, 29-instance coverage plan, and patch/reverification workflow as specification patterns, while retaining the unresolved KeyboardOnly–KeyboardOnly cases as residual vulnerabilities.
-
 ## techniques for the catalog
 - multiset-rewriting model: encode concurrent protocol and attacker steps as linear and persistent facts
 - parameterized expansion: generate every configuration from one protocol schema
 - trace-property checking: state secrecy and agreement as quantified event formulas and inspect counterexample traces
 - patch-and-reverify: bind mutable fields to the transcript, then rerun all properties
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The security mechanism in the BLE-SC pairing protocol cannot detect the disparity of the key sizes."): checked all paper text, study quotations, numbers, section and printed-page references, model assumptions, attack descriptions, and patch steps; corrected quotations, page references, configuration parameters, patch scope, and unsupported Verus claims, and replaced the link with the publisher page printed in the paper; did not run Tamarin, inspect the model repository, validate Bluetooth implementations, or verify the proposed Verus adaptations.

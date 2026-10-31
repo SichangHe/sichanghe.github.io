@@ -38,16 +38,9 @@ The Boolean encoding was materially faster. On a Windows 10 64-bit laptop with I
 
 Inference: a Verus proof could check whether the Boolean encoding preserves the policy properties needed for a bounded domain. The pairwise string constraints need particular scrutiny when patterns contain `?`. Checking a returned trace would establish that trace’s validity within the model, not the absence of other attacks.
 
-## evidence, trust, and relevance to VL
-
-The qualitative test used approximately 100 financial-institution accounts averaging around 300 IAM resources each. Of 141 requests, 42 had no result up to depth 10 and 99 returned traces; the authors report: “All of the results were classified as correct − none were affected by extra-IAM conditions.” (section 8.2, proceedings p. 6036) Sixty percent of results were one-step vectors, only two were length five, and the authors estimated approximately 50% of findings should be fixed (section 8.2, proceedings pp. 6035–6036). The 42 “no result” responses were explicitly not proofs of safety. The authors explicitly state: “Our formal depiction of AWS IAM is neither complete, as the modeling of all the vulnerable AWS elements is a long process, nor sound, as we consciously abstract away certain elements while risking false positives.” (section 10, proceedings p. 6037)
-
-Inference: for agent-written verified Rust, this paper’s main threat lesson is specification drift: a perfectly verified transition relation can omit an API, cross-service effect, or environmental condition. VL should reuse the explicit abstraction boundary, replay traces against a real system, and label bounded non-reachability clearly. It should not redo this AWS-specific exploit inventory.
-
 ## techniques for the catalog
 
 - Boolean IAM state abstraction — encode policies, resources, and attacker credentials as a finite Boolean transition system
 - adversarial action semantics — model selected IAM APIs and known non-IAM exploits as state transitions
 - Boolean-only bounded checking — unroll transitions to a target depth and replace strings with Boolean arrays for SAT performance
 - trace replay validation — execute each model-found attack in a test AWS environment to check semantic fidelity
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Furthermore, to enhance the validity and confidence in our model, we simulated each detected attack vector as a script in a testing AWS environment to ascertain that it indeed produces the expected outcome."): checked all paper text, quotations, numbers, section and proceedings-page references, technique steps, and stated limitations; corrected the publisher link, quotations, page references, session-policy handling, and unsupported run-count assertion; added finite-state bounds and the string-encoding procedure and limitation; did not independently reproduce experiments, inspect implementation code, or verify the Verus inferences.

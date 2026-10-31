@@ -32,8 +32,6 @@ Inference: place a Verus contract on each executable Rust operation, prove loop 
 
 The review reports a developer shift toward “orchestrating generation and validation,” with trust calibration and adaptive reliance in 23 of 34 RQ3.1 sources (68%). Checkpoints, version-control discipline, and validation are described as safeguards against drift and overtrust. Human-in-the-loop review appears in 16 of 33 safeguard sources (48%). Apply this when generated changes cross a commit or deployment boundary: inspect the diff, run the contract and tests, and retain a rollback point.
 
-Inference: a VL workflow should require proof and test artifacts before accepting a change, record the exact specification and dependencies, and make review a gate for assumptions that Verus cannot model. This is a product design inference; the review reports recommendations rather than an evaluated protocol.
-
 ## technique: constrain execution and preserve provenance
 
 Sandboxing and constrained execution appear in 5 of 33 safeguard sources (15%). The review quotes one multi-tier design: “Apple’s Seatbelt confines all operations to a read-only jail” and “Docker-based isolation combined with iptables firewall rules” confines Linux operations. Provenance and traceability appear in 1/33 sources (3%); explicit guidance to avoid vibe coding in safety-critical settings appears in 1/33 (3%). Use these when generated code can access files, network, credentials, or production state.
@@ -46,11 +44,8 @@ Across the full 47-source corpus, hallucinated or incorrect generation is report
 
 The review also finds short-term productivity or time-to-prototype gains in 21 of 47 sources (45%), while evidence for maintainability, long-term quality, and safeguard effectiveness is weak. Its evidence streams mix peer-reviewed and grey sources; many safeguard recommendations are Tier 2 practitioner material. It does not test Verus, prove generated Rust properties, or establish that any loop catches a specified class of defect.
 
-Inference: threat to a product that produces agent-written verified Rust is high at the workflow boundary and moderate inside formalized functions. A Verus proof can rule out counterexamples to a precise contract, but context drift, wrong requirements, dependency assumptions, deployment behavior, and access control remain. Existing vibe-coding literature has already catalogued iterative validation, testing, linting, review, sandboxing, and provenance; VL should measure Rust-specific proof and repair outcomes rather than repeat a generic recommendation survey.
-
 ## techniques for the catalog
 
 - evaluation–repair loop — run checks after generation, feed concrete failures into a patch or prompt, and repeat before reliance
 - trust checkpoints — retain versioned diffs and human review at commit or deployment boundaries while calibrating reliance to evidence
 - constrained execution and provenance — sandbox generated code and record source, model, dependency, and artifact lineage
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

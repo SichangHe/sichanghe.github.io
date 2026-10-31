@@ -58,7 +58,7 @@ The benchmark scores parameter, type, strategy, assertion, and dependency covera
 
 Inference: for Verus, retain separate metrics for compilation, complete proof, residual trusted axioms, contract coverage, and semantic faithfulness. Passing `verus` alone does not show that the generated contract matches the PBT or product requirement.
 
-Known weaknesses. Structural faithfulness is heuristic; the paper gives a 0.75-scoring sample whose theorem is true but wrongly models an alert dictionary as an append-only list because dependency resolution missed the real state and a `Nodup` precondition (§5, p.8). Dependency coverage is 1.0 whenever no dependencies are resolved, affecting 3,793 samples (40.3%) (§5, p.8). Difficulty labels come from Claude Haiku and are not human-calibrated (§5, p.8). Inference: VL should treat these labels as triage, never as evidence that a Verus proof captures behavior.
+Known weaknesses. Structural faithfulness is heuristic; the paper gives a 0.75-scoring sample whose theorem is true but wrongly models an alert dictionary as an append-only list because dependency resolution missed the real state and a `Nodup` precondition (§5, p.8). Dependency coverage is 1.0 whenever no dependencies are resolved, affecting 3,793 samples (40.3%) (§5, p.8). Difficulty labels come from Claude Haiku and are not human-calibrated (§5, p.8).
 
 What has already been done. FVSpec already provides the real-PBT-to-Lean pipeline, LSP repair loop, artifact filtering, side-effect abstraction, and large-scale baseline evaluation. Inference: rebuilding this same Lean-only benchmark would add little. The unfilled opportunity is a Rust/Verus version with ownership-aware translation, executable semantic tests, explicit external-contract accounting, and a stronger checker for specification equivalence.
 
@@ -71,4 +71,3 @@ What has already been done. FVSpec already provides the real-PBT-to-Lean pipelin
 - side-effect abstraction — model relevant state while threading infrastructure as explicit opaque parameters
 - structural faithfulness scoring — measure parameter, type, strategy, assertion, and dependency preservation
 - proved and partial metrics — score complete builds separately from fractions of discharged obligations
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

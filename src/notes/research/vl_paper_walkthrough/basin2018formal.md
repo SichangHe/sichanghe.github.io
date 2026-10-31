@@ -28,10 +28,6 @@ The prior-work discussion says sequence numbers were “abstracted away by nonce
 
 Section 4.4.2 explains why default automation fails even on full executability. The helper lemmas establish that the subscriber’s sequence number is “strictly increasing” and the home network’s is “monotonically increasing” (section 4.4.2, PDF p. 10). The model represents natural numbers with multisets and comparisons with pattern matching, enabling induction. Use these helper lemmas in the security proofs and Python oracles to guide proof search. The authors report “dedicated and involved proof strategies (∼1000 LoC of Python)” and say, “The effort of writing such generic proof strategies represents several person-months.” (section 4.4.2, PDF p. 10). Oracles guide the search without changing which proof steps are sound (section 4.2). Inference: for Verus, first prove monotonic-state lemmas, then use them in protocol invariants; the Tamarin oracle code itself is not a Rust proof.
 
-
-## limitations and threat to VL
-Section 4.3 (PDF p. 9) omits bit lengths, counter wraparound protection, key identifiers, optional 5G-GUTI pseudonyms, and token expiration. For example: “Authentication tokens do not expire in our model as is usual in symbolic models.” Inference: symbolic cryptography abstracts computational probabilities and implementation side channels; the formalization may misinterpret an evolving standard. Inference: Tamarin proves only encoded goals under encoded assumptions. Inference: the method poses a low direct threat to VL's verified-Rust product but a high methodological requirement: agent-written protocol code needs a separately reviewed model, explicit threat assumptions, and trace-based counterexamples before implementation proofs can be trusted.
-
 ## techniques for the catalog
 - standards-to-model extraction — turn prose specifications into explicit roles, states, messages, assumptions, and goals
 - Tamarin multiset rewriting — model protocol transitions and Dolev-Yao scheduling with symbolic facts and rules
@@ -39,5 +35,3 @@ Section 4.3 (PDF p. 9) omits bit lengths, counter wraparound protection, key ide
 - attack-trace repair — use counterexample traces to revise state transitions or message protection and rerun proofs
 - assumption minimality — prove each goal and disprove versions with one assumption removed
 - inductive helper lemmas — prove counter monotonicity and guide search with reusable strategies
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We do this by disproving all versions of the previous lemma where the set of assumptions is reduced by just one assumption."): read the full paper including appendices; checked quotations, numbers, section and page references, technique steps, result scope, and the arXiv link; clarified attack and privacy assumptions, proof-search limits, repair details, and model omissions; did not check external artifacts, rerun Tamarin proofs, or inspect implementations.

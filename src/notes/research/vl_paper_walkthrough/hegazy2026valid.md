@@ -8,8 +8,6 @@ Hegazy, Jordan, and Dieuleveut study an inference-time loop in which a generator
 
 The paper summarizes the setting as “A large class of inference-time systems operates as generator–verifier loops.” (Section 1, p. 1). The target is trajectory-level false discovery rate (FDR): the expected fraction of accepted proposals that the oracle would reject, at every stopping time up to the time when `κ` proposals have been accepted. The paper explicitly permits the generator to depend arbitrarily on previous verifier feedback (Section 1, pp. 1–2; Section 2, p. 2).
 
-Inference: for VL, this is a statistical guard around a Verus acceptance loop, not a replacement for Verus. A Verus proof checker can establish whether a specific candidate meets a specification; this paper addresses how many checker-positive candidates to accept when the checker is only a proxy for a more expensive truth oracle.
-
 ## technique 1: score-window testing with index-betting e-values
 
 What it is. At round `t`, define a score window `W_t` from the most recent `K+1` verifier scores. Historical runs contain labels `Y_t`; the deployment run does not. The local null is that the deployment window has the distribution of incorrect proposals (`P0,t`), versus the alternative distribution of correct proposals (`P1,t`). An e-value is a nonnegative statistic with null expectation at most one (Section 2, p. 3).
@@ -109,8 +107,6 @@ The conclusion states, “The resulting procedure controls stopped FDR up to the
 
 Trusted elements include the likelihood-ratio fitting rule, feature windows, score and loss definitions, exchangeability between historical and deployment runs, the ground-truth oracle, and numerical implementations of e-BH and CRC. The verifier is expressly a proxy whose failures can accumulate under adaptive search. Inference: threat to agent-written verified Rust is high if a Verus compile result is treated as the ground-truth label while specifications or external contracts are wrong; medium for the statistical stopping wrapper if its assumptions are audited; and low only for the deterministic obligations actually checked by Verus.
 
-Inference: VL should reuse index-betting normalization, online e-BH, robust-core calibration, independent data splits, and explicit stopped-FDP accounting. It should not present this paper's statistical guarantees as a new proof-generation technique. A useful adaptation is to log every generated Rust candidate, Verus result, specification hash, external assumptions, and later independent behavioral test; calibrate acceptance thresholds on held-out projects and report denominators separately for generated, compiled, verifier-clean, and oracle-passing artifacts.
-
 ## techniques for the catalog
 
 - index-betting e-values — normalize learned likelihood-ratio scores over a permuted null batch to preserve finite-sample validity
@@ -122,5 +118,3 @@ Inference: VL should reuse index-betting normalization, online e-BH, robust-core
 - stopped-FDR guarantee — control every stopping time up to the κ-acceptance time
 - proxy-versus-oracle evaluation — measure cheap-verifier exploitation against a withheld expensive correctness oracle
 - Verus adaptation — Inference: wrap checker acceptance in an audited statistical layer without treating it as a universal Rust proof
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

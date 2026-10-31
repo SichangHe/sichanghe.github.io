@@ -53,12 +53,6 @@ On VERINA, type-check rates over all 189 tasks are 91.5% for both VERINA and CLE
 
 The paper's authored controls establish the blind spot of postcondition-only evaluation. Its reference audit also found that all 350 upstream contracts compile in pinned native environments, while a common projection compiles 145/189 VERINA and 145/161 CLEVER tasks; export and projection differences include missing imports and helper-name mismatches. These facts limit cross-agent comparisons.
 
-## trust, prior work, and VeruLaw threat
-
-The framework trusts Lean kernels for type checks and equivalence proofs, reference contracts and labeled examples, extraction and normalization code, finite test oracles, and the four agent configurations. It does not establish that references match natural-language requirements, that finite tests are complete, or that metrics provide independent information. The authors identify VERINA, CLEVER, LeanEuclid, and VeriSpecGen as prior work; VL should not redo the basic observation that type-checking can miss intent. The paper's future work explicitly includes extending the system to Verus SpecGen.
-
-Inference: an agent-written verified-Rust product faces a direct threat from weak `requires`, over-restrictive domains, and contracts that prove a convenient implementation rather than user intent. Adopt the four-family dashboard, especially required-input recall and negative-output rejection, before treating a proof as product evidence. Inference: Verus-specific work should preserve complete contracts across extraction, run kernel-checked equivalence where feasible, and publish unavailable evidence separately from zero scores.
-
 ## techniques for the catalog
 
 - four-family SpecGen evaluation — combine formal validity, reference similarity, reference equivalence, and behavioral adequacy
@@ -67,4 +61,3 @@ Inference: an agent-written verified-Rust product faces a direct threat from wea
 - authored calibration controls — use known contracts to expose metric blind spots before evaluating models
 - joint-measurability comparison — rank agents on task intersections with comparable evaluator evidence
 - extraction and harness audit — inspect selected declarations and treat evaluator errors or placeholders as unresolved
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

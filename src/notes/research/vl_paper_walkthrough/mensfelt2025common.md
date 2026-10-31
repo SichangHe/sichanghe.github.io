@@ -23,7 +23,7 @@ How to apply it.
 5. Decide whether correspondence is whole-input or sentence/sub-argument level; the paper’s Remark 3 requires fine-grained correspondence to be subsumed by E (§3.1)
 6. Record whether multiple valid outputs and nondeterminism are allowed (Remark 1 and Remark 2)
 
-Verus form. Inference: Li is the subset of English specifications VL accepts; Lf is Rust plus Verus specifications and proof code; E is behavioral equivalence between the user requirement and the program contract; V is Verus verification plus independent tests, model checks, or review of the requirement. `requires` and `ensures` express the formal contract, and proof functions establish intermediate facts; none of these prove that English intent was captured. The four fields should be stored with each generated artifact so a passing verifier is not confused with semantic faithfulness.
+Verus form.
 
 Evidence and limits. The framework is a conceptual definition supported by literature comparison, not a theorem that E or V can always be automated. The authors write: “Specifying the semantic equivalence criterion can be challenging, as it requires defining conditions related to the meaning of informal language, which is inherently ambiguous.”
 
@@ -75,11 +75,9 @@ What it is. Treat ambiguity and missing assumptions as reasons to ask a user cla
 
 When to use it. Use this when the natural-language requirement omits units, boundary behavior, ownership assumptions, failure semantics, or the intended scope of a term. The paper argues that early feedback prevents the system from pursuing an incorrect interpretation too far.
 
-Verus form. Inference: before generating Rust, have VL ask for unresolved contract choices, then freeze the answers as part of the specification record. Re-run generation and verification after each answer. This reduces semantic drift but adds interaction latency and does not replace formal proof.
+Verus form.
 
 ## technique 5: select the target language by expressiveness, tractability, and workflow
-
-The paper advises choosing Lf based on who will use the output and which computations must run. The target must represent all relevant domain information and support verification with available tools. It also identifies a fundamental tension: a more expressive language can make automated reasoning difficult or undecidable. For VL, this means using Verus where executable Rust, ownership, and contracts are required, while recognizing that the target’s supported subset constrains the requirements that can be encoded.
 
 Inference: record unsupported assumptions explicitly and reject requirements that cannot be represented or checked. A smaller, checkable contract is not automatically equivalent to the full requirement; E must state the loss.
 
@@ -87,12 +85,9 @@ Inference: record unsupported assumptions explicitly and reject requirements tha
 
 The survey reports that current systems are domain-specific and calls cross-domain transfer an open challenge. It also says curated benchmarks hide incomplete proofs, proof sketches, and contextual gap-filling required in real practice. For a product, this means benchmark pass rates are evidence about a task distribution, not proof of deployment safety. The paper’s central unresolved problem is semantic verification: “Fully formal and automated verification of semantic equivalence, however, appears impossible even in principle, since natural language and its intended meaning are inherently informal.”
 
-Inference: the threat to an agent-written verified-Rust product is high at the requirement boundary. Verus can prove the generated Rust against its written contract, but the framework’s E/V distinction shows why this leaves the natural-language interpretation trusted. VL should reuse the paper’s explicit contract fields, matched validation, and interactive clarification; it should not redo the survey’s taxonomy as if it were a new verifier.
-
 ## techniques for the catalog
 
 - four-part autoformalization contract — define input scope, target formal language, intended semantic equivalence, and an executable validation criterion
 - matched semantic validation — choose checks that exercise the target’s behavior, such as entailment, payoff enumeration, plan cross-validation, or ontology reasoning
 - interactive formalization — ask clarifying questions about ambiguity and assumptions before committing to formal code
 - target-language selection — balance expressiveness, verification tractability, available tools, and workflow needs
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

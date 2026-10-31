@@ -7,8 +7,6 @@ SecSMT characterizes contention channels across an SMT pipeline, then evaluates 
 
 The threat model assumes two threads in separate processes, prohibited from direct communication but able to execute any non-privileged instruction on the same SMT core. It considers mutually untrusted threads, asymmetric trust, and mutually trusted threads. With asymmetric trust, information may flow from the untrusted thread to the trusted thread, but not in reverse. The authors delimit the scope: “Therefore, this work does not consider power, voltage/frequency, and thermal channels.” (Section 3, p. 3168)
 
-Inference: for VeruLaw, this suggests resource-accounting and noninterference specifications. The paper supplies no Rust or Verus proof to reuse; the possible Verus encodings below are proposed translations, not paper results.
-
 ## technique 1: systematically characterize contention channels
 The characterization method isolates a pipeline resource with assembly microbenchmarks, then varies contention while measuring the sibling thread. The paper states four requirements: “(1) it should saturate the structure-under-test, (2) the amount of saturation should be controllable, (3) it must not create high contention on any other pipeline resources/structures, and (4) it should put the contention on the critical path, so the effect of the contention is exposed via performance.” (Section 4.1, p. 3169)
 
@@ -56,19 +54,8 @@ For trust levels, Section 5.3.6 (p. 3175) proposes either using existing privile
 
 Inference: a Verus model could encode trust order, ownership, borrowed capacity, and reclamation. To prove that no low-trust observation depends on high-trust state, the model must include the costs and timing of reclamation, squashing, and cache writeback. An abstract one-step return alone would not justify that hardware claim.
 
-## evidence, trust, limits, and VL relevance
-Section 6 (pp. 3175–3176) models mitigations in gem5 v20 with a Skylake-like baseline, except that all pipeline resources are dynamically shared and functional-unit port assignments more closely resemble AMD. It uses SPEC CPU2017 C/C++ benchmarks compiled with LLVM at `-O3`, representative Simpoints, and paired runs that each complete 100 million instructions from the measured thread. The asymmetric performance results combine adaptive partitioning with borrowing and account for both threads.
-
-Section 7.2 and Figure 7 (p. 3177) report average performance losses of 10% for static partitioning and 2% for adaptive partitioning relative to the shared baseline. Excluding lbm, the adaptive loss is 5%. Asymmetric SMT gives a 2% average speedup with lbm included and almost restores shared performance with it excluded. The paper attributes lbm's benefit to partitioning a store queue that it otherwise exhausts without useful gain.
-
-The security experiment uses a spy repeatedly timing one instruction type while a trojan varies instructions. Its qualification is explicit: “For adaptive partitioning, all measurements are within one adaptation period.” (Section 7.1, p. 3176) The paper also cautions: “Also, these are the results of simulation (the only way to evaluate most new hardware mitigation techniques), and a real processor may contain other leaks not simulated.” (Section 7.1, p. 3177) The test does not cover every shared resource, particularly undocumented structures.
-
-Inference: a verified Rust partition-policy controller could establish properties of its abstract allocation rules. Hardware isolation would still depend on the hardware contract, simulator fidelity, and the completeness of modeled observations; this paper's measurements do not supply that proof.
-
 ## techniques for the catalog
 - contention characterization — isolate each SMT resource with controlled microbenchmarks, classify sharing, and measure covert-channel bandwidth and errors
 - static partitioning — assign fixed resource entries or time slots independently of sibling demand
 - adaptive partitioning — update hard partitions at interval boundaries using demand counters and reset those counters across domains
 - asymmetric SMT — let a higher-trust thread borrow lower-trust capacity only when it can return it immediately, using resource-specific reclamation
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Asymmetric SMT requires knowledge of the trust level of active threads running on the SMT processor."): checked all study quotations, numbers, section/page references, technique steps, and scope against the complete paper including appendix and references; corrected altered and unsupported quotations, page references, characterization requirements, adaptive leakage scope, cache borrowing, unsupported reset steps, and performance context; used the publisher link printed on the paper; did not reproduce experiments, inspect implementation artifacts, or verify the proposed Verus encodings.

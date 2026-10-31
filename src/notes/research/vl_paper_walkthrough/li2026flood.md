@@ -32,7 +32,7 @@ The paper states: “With the verifier 1_F, the generator G_n = F \ S_n achieves
 
 Verus form (Inference:): implement the safe envelope as a verified filter that emits only candidates carrying a proof of the formal predicate F. A ghost set of seen statements can model S_n; a loop invariant can maintain that every emitted item satisfies F. This does not make enumerating all F computationally feasible, and it does not prove H membership. Verus syntax must use ordinary `requires`, `ensures`, loop invariants, and proof functions; no `invariant(...)` call or run-time proof invocation is implied.
 
-Evidence and limits: the theorem guarantees soundness for arbitrary countable pair models under the paper’s ideal oracle. It does not give a finite-time algorithm, a complexity bound, or a criterion for mathematical value. Inference: a VL product that treats proof acceptance as its only quality gate inherits the triviality flood.
+Evidence and limits: the theorem guarantees soundness for arbitrary countable pair models under the paper’s ideal oracle. It does not give a finite-time algorithm, a complexity bound, or a criterion for mathematical value.
 
 ## technique: race enumeration to establish unavoidable coverage caps
 
@@ -72,14 +72,6 @@ The paper uses a macro dictionary model as a worked formal-language substrate. I
 
 Verus form (Inference:): model dictionary expansion and wrapped length as pure/spec functions, prove monotonicity and parsing uniqueness as lemmas, and keep generated proofs separate from executable compression code. The paper’s combinatorial counting is not a Verus implementation.
 
-## evidence, trusted parts, and product threat
-
-The main evidence is theorem-level: Theorems 3.1, 3.2, 3.6, 3.7, and Corollary 3.10; the only empirical check is a simulation appendix. For α=1/3, Table 3 reports fixed-prefix, grown-horizon coverage 0.8317 for G* at truth K′ versus predicted 5/6≈0.8333, 0.1702 for a pure conjunction race versus α/2≈0.1667, and 0.6667 for a naive sweep versus 1−α=0.6667 (Table 3, p.46). The table’s denominator is the fixed prefix size N and the reported horizon T; these are limit-set estimates, not theorem proofs. Table 4 reports α=0.7 measured 0.644 versus 0.65, α=0.99 measured 0.503 versus 0.505, and α=0.01 measured 0.994 versus 0.995 at N=10^3 (p.46). The paper warns that fixed N must be held while T grows and that exact rational arithmetic avoids a floating-point boundary error (Section F, p.46).
-
-What is proved: the information-theoretic role of an ambient verifier, sound-coverage separation, tight trivia-count dichotomy on H_α, and compression-model examples. What remains trusted: the membership oracle, canonical enumeration protocol, non-effective adversary convention, density definitions, and the external definition of “valuable.” Contradictions or caveats: the paper explicitly limits 1−α/2 tightness to the candidate-intersection core C⊆K; general cores can be capped at 1/2 (Remark 3.8, p.17). Proposition 4.3 brackets precision between different polynomial exponents and says the exact exponent is open (Appendix D.6.3, p.43).
-
-Inference: the threat to VL is high for systems that equate successful Verus checking with useful theorem selection. A verifier can guarantee absence of false Rust specifications while leaving a potentially unbounded stream of valid, irrelevant lemmas. The paper’s sweep/race design suggests a product architecture with (1) a formally checked validity layer, (2) explicit value examples or a learned selector, and (3) a controlled exploration budget that records the number of valid-but-unselected outputs. The results do not show that real Verus corpora have adversarial densities or that the asymptotic generators are computationally practical.
-
 ## techniques for the catalog
 
 - nested validity/value model — represent formally valid outputs F and valuable outputs H separately, classifying hallucination, triviality, and value
@@ -88,4 +80,3 @@ Inference: the threat to VL is high for systems that equate successful Verus che
 - sparse sweep — reserve infinitely many density-zero rounds to eventually claim every unenumerated valuable item
 - race-plus-sweep generator — combine intersection racing with union sweeping to attain 1−α/2 on the tight family
 - compression-model instantiation — realize density interfaces with macro dictionaries and count precision of exhaustive generation
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

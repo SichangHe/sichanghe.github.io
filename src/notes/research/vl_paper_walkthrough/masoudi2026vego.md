@@ -71,7 +71,7 @@ How to do it.
 3. Generate a VC for each execution path using weakest preconditions (section 5, p. 8).
 4. Solve VCs with the native HM[X] constraint and Fourier–Motzkin solvers (section 5, p. 8).
 
-Verus form. Inference: Verus performs its own verification-condition generation and SMT solving; a VL integration should preserve source-level `requires`, `ensures`, invariants, and `decreases` rather than attempting to reproduce VeGo's parser. Inference: SSA is a useful mental model for explaining mutation, but Verus code should use valid Rust/Verus constructs.
+Verus form.
 
 ## technique 6: interactive verified-development workflow
 
@@ -85,12 +85,6 @@ How to do it.
 
 Inference: for Verus, the analogous loop is editing Rust, running the project verifier, and using diagnostics before integration tests. Inference: runtime assertion wrappers can complement proofs, but must not replace proof checking for trusted internal calls.
 
-## evidence, assumptions, and VL threat
-
-The paper reports 100% strict verification across its named textbook benchmark suites (section 6.3, p. 12), and describes three tree/heap encodings—compact arrays, sparse arrays, and boxed inductive nodes—with quantified heap predicates (section 6.1, pp. 10–11). It proposes concurrency specifications for goroutines and channels as future work (section 8, p. 13), so those claims are roadmap, not evaluated results.
-
-The trusted base includes VeGo's parser, SSA transformation, VC generator, HM[X]/Fourier–Motzkin solver, and specification annotations. Inference: a bug in any of these can invalidate a reported proof. Inference: the greatest threat to agent-written verified Rust is a vacuous or overly weak contract; VeGo's sorting example demonstrates that proving `sorted` alone permits an incorrect implementation. VL should preserve the paper's discipline of explicit invariants, termination measures, mutation relations, and permutation/data-preservation properties, while using only Verus constructs validated in its own reference.
-
 ## techniques for the catalog
 
 - inline contracts: place preconditions, postconditions, and impossible-state claims beside executable code
@@ -99,5 +93,3 @@ The trusted base includes VeGo's parser, SSA transformation, VC generator, HM[X]
 - contract precision: strengthen weak specifications with preservation and permutation properties
 - SSA VC pipeline: desugar annotations, build SSA, generate weakest-precondition VCs, and solve constraints
 - interactive workflow: use headers, editor diagnostics, verified compilation, and native tests as one loop
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

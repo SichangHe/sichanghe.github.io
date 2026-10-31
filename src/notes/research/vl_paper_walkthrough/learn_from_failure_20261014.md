@@ -8,8 +8,6 @@ The paper studies neural tactic generation for intuitionistic propositional logi
 
 The abstract states: “The current model, while trained solely on successful proof paths, faces a discrepancy at the inference stage, as it must sample and try various tactics at each proof state until finding success, unlike its training which does not incorporate learning from failed attempts.” (Abstract, PDF p. 1.) The authors hypothesize that failed paths should discourage similar tactics. Their inference system uses Lean to calculate the next state after each executable tactic (Section 4.2, PDF p. 6).
 
-Inference: For VL, the transferable idea is to record failed Verus proof attempts as training context and to make the verifier check every emitted step; the paper does not evaluate Rust or Verus, so this transfer is a proposed adaptation.
-
 ## technique 1: trial-and-error traces as training data
 
 What it is. The training example contains a proof search history rather than only a successful path. A trace records states, tactics, failed branches, and explicit backtracking instructions. It does not include Lean error messages: the authors describe their method as using “the complete past proof history without using the error message from the proof assistant” (Section 2, PDF p. 3). Figure 2 contrasts training on correct paths with training on proofs containing trial-and-error (PDF p. 3). The introduction gives this proof text:
@@ -51,7 +49,7 @@ How to apply it. (1) Assign polarities to connectives; Section 3.1 describes con
 
 Inference: In Verus, this suggests separating deterministic simplification of a proof goal from a branching lemma-search phase. A controller could try `assert` or `assert forall` lemmas, retain successful proof contexts, and revisit them after a failed solver call. The exact polarization rules and atom-termination criterion do not carry over because Verus specifications are Rust expressions and solver obligations, not intuitionistic sequent trees.
 
-Evidence. Figure 4 gives the same theorem with and without a backtracked `Or.inl` branch (PDF p. 5). During model inference, Lean calculates the next state after an executable tactic (Section 4.2, PDF p. 6). Inference: a VL adaptation should likewise require verifier acceptance of the resulting proof artifact; the paper does not establish Verus’s trust assumptions.
+Evidence. Figure 4 gives the same theorem with and without a backtracked `Or.inl` branch (PDF p. 5). During model inference, Lean calculates the next state after an executable tactic (Section 4.2, PDF p. 6).
 
 ## technique 4: greedy checked inference and DFS baseline
 
@@ -75,5 +73,3 @@ The paper’s limitations include context truncation, no general-mathematics eva
 - uniform formula enumeration: encode and decode bounded proposition trees through Catalan-ranked shapes and mixed-radix labels to obtain representative benchmark formulas
 - focused proof search: separate inversion from branching/chaining, preserve failed branches, and backtrack to try alternatives
 - checker-mediated greedy inference: use one candidate action at a time, obtain tactic results from Lean or restore a previous state for backtracks, and count Lean calls as search cost
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We note that the 1500-word limit is stricter for our method since it produces entire proof paths including trial-and-error and thus would be easier to hit the limit."): read the entire paper and study; checked quotations, numbers, PDF page and section references, technique steps, tag, and arXiv identifier; corrected error-message inclusion, page references, Lean-call counts, stopping rules, and unsupported Verus claims; recorded inconsistent length units and short-proof selection descriptions; did not reproduce experiments or inspect external code, datasets, or Verus documentation

@@ -84,15 +84,11 @@ The last-entrant contradiction has four steps (§7.6, PDF pp.19–20):
 
 The paper's summary states, “The formal structure mirrors the informal proof, but the logic forces a clean separation: knowledge is used only to justify the pre-state guard fact (3), whereas stability (rely/guarantee) transports flag-facts across unbounded environment interference.” (§7.6, PDF p.20).
 
-Inference: In Verus, encode each thread's transition relation and ownership facts in a concurrency state-machine proof. Prove the deterministic postconditions as `ensures`; prove the mutual-exclusion contradiction as a `proof fn` over the abstract state and event history. The exact representation of `K_i`, histories, and scheduler interleavings is a design obligation for VL, not a result supplied by this paper.
-
 ## evidence, trust, and limits
 
 The paper describes its proof-system scope: “The system is intended to support paper-and-pencil proofs (and, ultimately, automation); it is not meant as a complete axiomatization of all validities of temporal–epistemic logic.” (§5, PDF p.8). Its Theorem 1 states soundness for every model and run point satisfying the assumptions (§5.4, PDF p.10). It also provides a partial Isabelle/HOL mechanization at the repository named on PDF p.2. The paper's Peterson proof is a proof sketch, not a reported benchmark with success percentages or runtime denominators. Its evidence is the formal semantics, soundness argument, derived lemmas, and worked case study.
 
 Trusted assumptions include the interleaving operational semantics, locality/frame behavior, read instrumentation, perfect-recall observation model, initial-state assumptions, and ownership guarantees (§3, §7.3, PDF pp.3–5, 16–17). The paper explicitly limits scope to sequentially consistent interleaving with single-access micro-steps. It does not address read–modify–write atomics, fences, or weak-memory reorderings, and dedicated termination and liveness proof rules have not been developed (§9, PDF p.22). It also notes that a fully formal development would add explicit predicates for each instruction and discharge local control-flow facts with Hoare reasoning (§7.6, PDF p.21).
-
-Inference: The threat to agent-written verified Rust is concentrated in the abstraction boundary. A Verus proof can establish mutual exclusion for an abstract transition system while the executable scheduler, atomicity, read instrumentation, or ownership API differs. VL should reuse the four-step per-thread rely/guarantee recipe and the separation of knowledge from stability. It should not redo the paper's logic design; it should validate the chosen Verus concurrency encoding against concrete Rust operations and treat liveness separately.
 
 ## techniques for the catalog
 
@@ -102,4 +98,3 @@ Inference: The threat to agent-written verified Rust is concentrated in the abst
 - epistemic persistence: separate knowledge retained between own steps from ordinary invariant stability
 - compositional invariant proof: prove per-thread preservation, rely/guarantee compatibility, then global safety
 - ownership-based Peterson proof: combine flag ownership, victim-write guarantees, and a last-entrant contradiction
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "A classic rely–guarantee proof assigns to each thread A a guarantee describing what A may do in one step and a rely describing what the environment may do."): checked the full text, quotations, formulas, technique steps, section and page references, scope, and the arXiv identifier supporting the existing link; corrected last-step and write-event meanings, formula parentheses, page references, and quotation punctuation; added the closed-program knowledge convention and limits on stability and memory models; marked adaptation advice as inference; did not inspect the Isabelle/HOL repository, execute Verus, or independently mechanize the proofs.

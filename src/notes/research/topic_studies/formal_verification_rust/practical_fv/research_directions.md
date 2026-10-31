@@ -128,7 +128,6 @@ ChatGPT Extra High consultation
 - consultation failed after two submissions on 7 October 2026
     - helper diagnostics confirmed Extra High selection and submission
     - both ended with `account_ui_retry_required` and no captured response
-    - local diagnostic records: `/tmp/practical_fv/chatgpt_opinion.md.private.json` and `/tmp/practical_fv/chatgpt_opinion_retry.md.private.json`
     - no ChatGPT opinion is available to quote
 - additional topic-specific attempts also failed or expired
     - manager notified of the unavailable consultation route

@@ -6,8 +6,6 @@ Tag: `polikarpova2012strong`, [paper](https://arxiv.org/abs/1208.3337) (arXiv:12
 
 The paper evaluates model-based contracts (MBC): executable preconditions, postconditions, framing clauses, and class invariants used as testing oracles. Its abstract says: "We introduce a methodology that extends Design by Contract to write strong specifications of functional properties in the form of preconditions, postconditions, and invariants." (abstract, p.1) The work is empirical rather than a soundness proof: the same implementations are tested with ordinary and strong contracts.
 
-Inference: For VL, the transferable lesson is how to choose specifications that expose missing behavior and unchanged-state obligations before attempting full Verus proofs. The experiments do not establish that MBC contracts are sufficient for formal verification or that their Eiffel/C# results transfer quantitatively to Rust.
-
 The motivating example is EiffelBase `merge_right`. The standard contract checks counts and cursor position but omits the exact sequence and unchanged state. The paper reports: "Using the strong postcondition in Tab. II, completely automatic testing with the AutoTest tool [6] detected the error that occurs in merge right when the cursor is before." (Section II, p.2) The strong contract defines the resulting sequence as the old prefix, the other sequence, and the old suffix, and adds `modify sequence` so only that model query may change (Table II, p.2).
 
 Inference: In Verus, this means writing an abstract sequence `spec fn` and stating both the transformation and frame facts in `ensures`; use `old(...)` for pre-state values where supported by the local Verus reference. Verus ownership and borrowing rules do not map one-to-one onto Eiffel's object invariant machinery, so the correspondence is an inference.
@@ -78,8 +76,6 @@ How to apply it:
 
 The Eiffel protocol used 30 sessions of 80 minutes per class, with fresh random seeds but matching seeds between EiffelBase and EiffelBase+, for 21 classes. Across these sessions, AutoTest generated nearly 87 million test cases over 1,680 hours (Section IV-B, p.6). The C# experiment used nine DSA classes and Pex; only DSA+ was tested, and Pex found 9 unique faults in it (Section IV-C, p.7; Section V-F, p.10). The authors could not get the original developers to evaluate these 9 faults (Section V-F, p.10).
 
-Inference: VL can use this as a pre-proof workflow: execute strong contracts to discover missing functional properties, then convert the surviving model and frame obligations into Verus specifications. Runtime checks are evidence for test coverage, not proof of all inputs.
-
 ## what the measurements support
 
 The headline result is specific to the EiffelBase comparison. The paper states: "Testing with strong specifications detected 55 more (twice as many) unique real faults than testing with standard, partial contracts." (Section V-B, p.9) This is in Section V-A, p.8. The underlying counts are 103 real faults for EiffelBase+ and 48 for EiffelBase, with 41 common; 103 minus 48 is 55 (Table IV, p.7). The paper further reports "62 (56%) of the faults are detected only with strong specifications" (Section V-A, p.8); Inference: the 56% is 62 of 110, the union of real faults found. The significance claim is a Mann-Whitney U test with U = 0 and p = 2·10^-11 overall (Section V-A, p.8).
@@ -90,14 +86,6 @@ Runtime overhead was measured by test cases generated in equal time. The authors
 
 Writing cost for EiffelBase+ was about one person-month plus one person-week of preliminary testing; the authors put the benefit/effort ratio at about four defects detected per person-day (Section V-E, p.10). The specification-token total rose from 8,432 to 19,281, a 2.29x increase, and the specification-to-code ratio rose from 0.20 to 0.46 (Table VI, p.9). For DSA+ the paper reports about 50 person-hours plus 8 hours of learning, and a ratio of 0.9 attributed largely to the verbose Code Contracts syntax (Section V-F, p.10). Inference: the ratio is useful for planning annotation effort, but it is not a Verus proof-to-code ratio because proof lemmas and solver interaction are different artifacts.
 
-## trust, limitations, and VL threat
-
-The study trusts the manually authored models, the testing tools, and the judgment classifying faults. Its authors explicitly identify randomized testing as an internal-validity threat and data-structure focus as an external-validity threat (Section V-G, p.10). No theorem proves that the strong Eiffel or C# contracts capture developer intent; the evidence is the observed fault yield and developer confirmation.
-
-What VL should not redo: the paper already gives a concrete methodology for abstract models, complete postconditions, frame specifications, invariant categories, and incremental runtime checking. Inference: a VL study should reuse these categories and measure which Verus contracts catch which seeded or historical defects instead of inventing another taxonomy.
-
-Threat to agent-written verified Rust: Inference: medium. Strong abstract contracts can expose omissions that a narrow safety proof would miss, especially unchanged-state and representation-link properties. The paper does not address Rust ownership, unsafe code, solver-based proof, or a trusted computing base for Verus. Inference: adopting MBC ideas improves specification quality but does not show that an agent-written Rust program is fully functionally correct.
-
 ## techniques for the catalog
 
 - abstract model queries — represent concrete structures with mathematical sequences, sets, bags, maps, or relations and specify behavior through those values
@@ -105,5 +93,3 @@ Threat to agent-written verified Rust: Inference: medium. Strong abstract contra
 - invariant categories — combine model constraints, attribute definitions, linking invariants, and selected internal representation constraints
 - temporary invariant control — use dependency and opening annotations to avoid spurious checks while restoring consistency at public boundaries
 - executable strong-contract testing — compile model specifications into runtime oracles and compare fault yield, overhead, and effort against partial contracts
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Model-based postconditions and invariants can be checked at runtime and used in testing out of the box: with the same tools and user experience as standard Eiffel contracts."): I read the whole paper text (738 lines) and the whole study, and checked every quotation, number, table figure, section reference and technique step; page numbers checked against the PDF page breaks (12 pages); the link now points to the arXiv page (arXiv:1208.3337v4 appears in the paper text). I changed section and page references for the fault counts (Section V-A, p.8, not V-B p.9), the invariant-violation example (V-B, p.9), C# results and threats (V-F, V-G, p.10), Table VI (p.9) and IV-B counts (p.6); fixed the denominator of the 62 strong-only faults (110, not 103); corrected the framing step (only model queries are listed in modify) and the invariant step (internal representation constraints are not representation-independent); and added several paper details. I did not check the Verus-related Inference statements against any Verus reference, the cited related work, or the paper's web resources.

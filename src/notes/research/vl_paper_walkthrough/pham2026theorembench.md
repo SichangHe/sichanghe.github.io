@@ -6,8 +6,6 @@ Tag: `pham2026theorembench`, [paper](https://www.semanticscholar.org/paper/66bf9
 
 TheoremBench evaluates Lean4 theorem provers on classical theorems embedded in longer developments. The paper's motivation is that existing benchmarks emphasize standalone contest problems, while real developments contain definitions, namespaces, typeclass assumptions, and intermediate lemmas. It introduces two aligned views: plain-main, one final theorem per parent; and premised, a group containing the final theorem plus extracted supporting subtheorems. The abstract says the premised version “expands each theorem into a structured family of related proving tasks” and that it exposes “partial progress through the internal proof structure of a theorem” (Abstract, p. 1).
 
-Inference: VL should evaluate agent-written Verus code with structured proof obligations, not only final compile success. The benchmark does not measure Verus or Rust, so transfer requires replacing Lean's declaration and premise machinery with Verus specifications and proof functions.
-
 ## technique 1: dependency-aware premised dataset construction
 
 What it is. The authors parse Lean source files into theorem groups, reconstruct enough context for independent compilation, convert earlier declarations used in each proof into explicit premise binders, and retain only snippets that Lean accepts. The paper's pipeline says, “For every theorem or subtheorem, earlier results used in its proof are converted into explicit premise binders” (Section 3.1, p. 6).
@@ -55,13 +53,9 @@ Verus form. Inference: strip comments from Rust/Verus files, tokenize proof func
 
 The authors compare plain-main and premised forms on shared theorem units at pass@64. Explicit premises improve DeepSeek-Prover-V2-7B from 0.053 to 0.263 and Goedel-Prover-V2-8B from 0.053 to 0.123; Kimina rises from 0.053 to 0.070; Goedel-Prover-SFT stays at 0.035 in both settings (Section 4.3, pp. 9–10). Each number is a fraction of theorem instances solved within 64 samples in the shared comparison. The paper concludes that premises help only models able to exploit them.
 
-Inference: VL should run the same agent with and without retrieved Verus lemmas, keeping model, sampling budget, and theorem units fixed. The difference estimates the value of explicit proof context. A high subtheorem pass rate with low parent completion indicates search bias toward easy obligations; TheoremBench reports exactly that bias (Section 4.3, p. 12).
-
 ## what is proved, measured, and trusted
 
 The benchmark proves only that retained Lean snippets compile and that reported metrics follow accepted verifier outcomes. Measured are pass@k, full-parent completion, coverage, average subtheorems, and token efficiency across four Lean4-capable models, with `k_max=64`. Trusted are Lean's kernel, mathlib and imported declarations, the source formalizations, dependency-extraction transformation, tokenizer, and sampling protocol. The benchmark does not prove semantic adequacy of the original informal mathematics or minimality of extracted premises. Inference: the threat to a product of agent-written verified Rust is evaluation blind spots. A final Verus check gives a strong local guarantee, but without group coverage, premise accounting, and compactness metrics, the product can still hide incomplete or needlessly brittle proofs.
-
-Inference: VL should reuse dependency-aware extraction, explicit premise ablations, parent-level completion, and denominator-aware proof-length metrics. Inference: VL should add Rust compilation and Verus verification outcomes, trusted-base manifests, specification-change detection, and separate counts for executable code, `spec fn`s, and `proof fn`s.
 
 ## techniques for the catalog
 
@@ -69,5 +63,3 @@ Inference: VL should reuse dependency-aware extraction, explicit premise ablatio
 - theorem-level coverage — measure partial and complete progress over all subtheorems in a parent theorem group
 - token-efficiency analysis — compare accepted generated proof length with checked reference proofs and report selective-solve bias
 - premise ablation — compare identical theorem units with and without explicit context to diagnose proof-agent use of dependencies
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

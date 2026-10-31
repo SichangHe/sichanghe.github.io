@@ -8,7 +8,6 @@ Page numbers below are the paper's printed page numbers (the PDF has a cover pag
 
 Beyer et al. make abstraction precisions persistent between model-checking runs. A precision is the information that guides abstract-state construction (for predicate analysis, a set of predicates; for explicit-value analysis, a set of variables). Saving it after one revision and loading it for the next revision avoids rediscovering facts through CEGAR (counterexample-guided abstraction refinement). The paper evaluates CPACHECKER on 4,193 verification tasks from 1,119 revisions of 59 Linux device drivers (16,772 verification runs: each task is run with explicit-value and predicate analysis, each with and without reuse). Its abstract identifies the core result: “We experimentally show the impact of precision reuse on industrial verification problems, namely, 59 device drivers with 1 119 revisions from the Linux kernel.” (Abstract, p. 1).
 
-
 ## technique 1: define and persist a program precision
 
 What it is. A precision π is the information an abstract domain tracks. For predicate analysis it is a set of predicates; for explicit-value analysis it is a set of program variables. A program precision maps each program location to a precision, which lets lazy abstraction use different facts at different locations.
@@ -83,8 +82,6 @@ Measured: CPU totals, refinements, abstraction computations, solved-task counts,
 
 Inference (not stated in the paper): the verdicts rest on trusting CPACHECKER, MathSAT, the abstract-domain implementations, CIL preprocessing, LDV monitor weaving and the specification encoding. The paper does not examine whether revisions are semantically related beyond the line-difference counts, and the study excludes unsafe tasks from its main set.
 
-Inference: for VL, the threat is stale proof state. Reusing a Verus lemma or solver context across agent edits can conceal an invalid dependency if cache invalidation is unsound, especially after contract weakening, unsafe representation changes, or dependency upgrades. The safe adaptation is replay: cache facts only to reduce search, invalidate conservatively on semantic fingerprints, and require Verus to recheck every proof obligation. Inference: because related work such as extreme model checking [20] already reuses CEGAR/lazy-abstraction results for regression verification, a generic incremental-verification speed result would not be new for VL; a Rust-specific contribution would measure cache invalidation precision, proof repair time, and missed invalidations on real Verus revisions.
-
 ## techniques for the catalog
 
 - persistent abstraction precision: export predicates or tracked variables from one abstract-analysis run and import them as the next run's initial precision
@@ -92,5 +89,3 @@ Inference: for VL, the threat is stale proof state. Reusing a Verus lemma or sol
 - CEGAR warm start: reuse previous facts to eliminate refinements while allowing new spurious counterexamples to add missing facts
 - lazy refinement reuse: preserve unaffected abstract-reachability states and re-explore only portions invalidated by new facts
 - tool-independent precision files: store analysis-specific facts in a common text format with explicit scope selectors and headers
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Thus the change between two revisions incorporates not only the changes of the actual device-driver source files, but also the changes to all other kernel (header) files since the last revision."): I read the whole paper text (all 12 printed pages plus tables and references) and the whole study; checked every quotation, number, table and page reference, and technique step. Changed: page numbers now printed pages (the old PDF-page labels were wrong, e.g. Table VI is on p. 8 and the size figures on p. 8); replaced a non-verbatim quote about the format with the Contributions sentence; fixed Table III numbers (58-60 s, 10 refinements, totals 290 s/10 vs 75 s/10, previously garbled as refinements); deleted the unsupported claim that function/global scope was used in the experiments and the claim that the baseline needs over 20 s per task (that is a driver selection criterion); rewrote the soundness statement to the paper's wording; labeled my deployment advice, Verus remarks, trust list and the related-work remark as Inference. Not checked: the supplementary web page, Tables IV and V beyond the rows cited, the cited references, and Verus's actual interfaces. Link from the paper's arXiv header (arXiv:1305.6915v1).

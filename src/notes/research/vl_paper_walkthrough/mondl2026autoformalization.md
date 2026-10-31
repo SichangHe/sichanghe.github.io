@@ -6,8 +6,6 @@ Tag: `mondl2026autoformalization`, [paper](https://arxiv.org/abs/2606.26649)
 
 Inference: The paper translates agent instructions, MCP tool schemas, and natural-language policies into Cedar policies, then enforces them with an external deterministic policy engine. Its architecture is called the Verification Sandwich. “We propose a layered autoformalization architecture, termed the Verification Sandwich, to translate natural language agent instructions into formal policy languages.” (§1.1, p.1) The generator is an LLM; a hard critic checks Cedar syntax, schemas, contradictions, and vacuity; a soft LLM critic checks semantic alignment. The resulting policies run outside the model context.
 
-Inference: the direct VeruLaw lesson is a generator-critic pattern for writing contracts, followed by deterministic enforcement or proof. The paper's target is Cedar authorization, not Rust or Verus, and its evaluation measures policy blocking rather than theorem proving of generated programs.
-
 ## technique 1: grounding layer from tool schemas
 
 Inference: What it is. The grounding layer extracts entities, tool schemas, and a principal-resource-action ontology. It generates a Cedar schema programmatically from MCP tool definitions. “The grounding layer (bottom) serves as the foundation for constraining candidate generation.” (§1.1, p.1)
@@ -46,8 +44,6 @@ Inference: What it is. The study compares Raw, Baseline MCP, and Guardrail condi
 
 Inference: How to do it. (1) Keep the same trajectories across conditions. (2) Report numerator and denominator for every rate. (3) State each policy's implemented-rule scope. (4) Split trajectories by whether they attempted a write. (5) Recompute rates on the eligible denominator. Table 2 reports Original Raw 89 POST trajectories and 100.0% blocked (89/89), Baseline 84 and 94.0% (79/84), Guardrail 86 and 98.8% (85/86); Adversarial Raw 34 and 100.0% (34/34), Baseline 33 and 100.0% (33/33), Guardrail 32 and 100.0% (32/32) (Table 2, p.3).
 
-Inference: Evidence interpretation. The paper explains that Hong et al. hand-coded 23 of 88 rules, whereas Cedar covers more, so the columns are not directly equivalent (§3, p.3). It also reports seven Adversarial Guardrail trajectories that Cedar “missed”; all had no POST writes—five had no tool calls and two were GET retrievals (§3, p.4). Inference: the apparent 85.7% is not a failure on attempted writes; denominator choice changes the conclusion, so VL evaluations must publish eligible actions and rule scope.
-
 Inference: Verus form. Inference: report proof coverage by explicit denominator: functions with complete contracts, reachable call paths, and assumptions about external calls. Separate compile success from behavioral tests and from policy/specification coverage.
 
 ## technique 5: temporal and memory-aware extension
@@ -62,12 +58,6 @@ Inference: Verus form. Inference: represent session state as a Rust struct and d
 
 Inference: The paper uses Cedar's formally verified, human-readable policy language and deterministic checks, but it does not give a theorem that autoformalized policies are equivalent to source instructions. It measures trajectory-level blocking on MedAgentBench: the original split has 300 trajectories, 89–86 with POST depending on condition; the adversarial split has 50, 34–32 with POST. The policy corpus contains 88 synthetic rules, while the comparator implements 23 (§3, p.3). Inference: trusted elements include MCP schema correctness, Cedar implementation and static analysis, the policy generator's coverage, the soft critic, trajectory replay, and the source policy's correctness.
 
-Inference: threat to agent-written verified Rust is high for specification translation and moderate for enforcement architecture. A Verus proof can guarantee a generated function meets a predicate, just as Cedar can deterministically enforce a generated rule, but neither establishes that the predicate captures the user's intent. The paper's denominator analysis is a useful warning for VL product claims.
-
-## what VL should not redo
-
-Inference: The paper already implements an external policy engine, schema-grounded generation, hard/soft generator-critic iteration, lineage annotations, and denominator-separated replay evaluation. Inference: VL should adapt these patterns to Rust contracts and Verus diagnostics, then test semantic specification fidelity and stateful histories rather than rebuild Cedar's authorization machinery.
-
 ## techniques for the catalog
 
 - Inference: schema grounding: derive formal action/resource types from MCP tool definitions before generation
@@ -75,4 +65,3 @@ Inference: The paper already implements an external policy engine, schema-ground
 - Inference: fail-closed enforcement: keep deterministic policy evaluation outside the model and deny on engine errors
 - Inference: denominator-separated replay: compare policy conditions with explicit rule scope and eligible-action denominators
 - Inference: temporal policy extension: model prerequisites and persistent trajectory state for multi-turn authorization
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

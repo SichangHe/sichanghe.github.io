@@ -45,10 +45,6 @@ The AIS predicts only a shape, such as `Ax + By + Cz + Dxy + Eyz + Fxz + Gxyz + 
 
 Verus form. Inference: use the predicted polynomial as a candidate `spec fn` and prove it with arithmetic lemmas; Verus is the checker, while quantifier elimination is an external synthesizer. The paper does not provide complexity or failure rates for quantifier elimination. Its future work asks “whether there are classes of programs for which a linear combination of individual program fragment invariants might not generate the invariant for the entire program” (Sect. IX, p. 5).
 
-## evidence, trust, and VL relevance
-
-The paper says the algorithm “was tested on non-trivial benchmark programs [8] and was found to correctly generate the general form of the program invariant” (Sect. IX, p. 5). The two programs shown are the gcd/lcm program and the `z := 1` program, both taken from [8] (Kapur). These are demonstrations, not a statistically sized evaluation. Inference: trusted elements include training invariants, the feature encoding and distance metric, mutation policy, quantifier-elimination implementation, and the final proof method. Inference: for agent-written verified Rust, AIS is a possible invariant-hint generator that may reduce human search effort, but it does not threaten Verus’s proof guarantees because every candidate still needs a machine-checked preservation proof. The paper cites existing invariant-generation work [8], [9] for the deterministic completion step; Inference: VL should reuse the idea of learning shapes from analogous code rather than treating AIS as a verifier.
-
 ## techniques for the catalog
 
 - immune-memory invariant hints — remember fragment/invariant pairs and reuse them for similar code
@@ -56,4 +52,3 @@ The paper says the algorithm “was tested on non-trivial benchmark programs [8]
 - shape-space similarity — encode fragments and invariants as vectors and use distance for retrieval
 - linear invariant assembly — combine fragment invariants into a whole-program polynomial shape
 - quantifier-elimination completion — solve a predicted shape into an exact invariant and check the resulting program
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "When a program similar to a stored one is presented, the time taken to generate the invariant will be shorter than the time taken to generate the original invariant (secondary response)."): read all five pages; checked every quotation, section and page reference, the six algorithm steps, the P1/P2, gcd/lcm and second-program examples, and the numbers; changed the misattributed abstract quote (it is from Sect. I), the page numbers (the paper has 5 pages, not 7), the claim that the tested programs were gcd/lcm and multiplication (the second tested program is the `z := 1` one; multiplication is only an illustration in Sect. III), and marked unsupported claims as Inference; did not check the rendered exponents in formulas, the references, or the arXiv link (link from the fetch record).

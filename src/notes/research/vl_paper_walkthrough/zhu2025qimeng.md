@@ -6,8 +6,6 @@ Tag: `zhu2025qimeng`, [paper](https://arxiv.org/abs/2505.24183)
 
 QiMeng-CodeV-R1 trains a Verilog generator with reinforcement learning from executable equivalence checks. The abstract identifies three obstacles: “the lack of automated and accurate verification environments, the scarcity of high-quality NL–code pairs, and the prohibitive computation cost of RLVR.” The proposed answer is an automated testbench, round-trip data synthesis, and a two-stage distill-then-RL pipeline with adaptive DAPO.
 
-Inference: the paper's testbench is simulation-based equivalence checking, not a proof of arbitrary hardware properties. For VeruLaw, its transferable idea is to make generated Rust/Verus artifacts earn rewards only from a concrete checker; the Verus verifier remains the acceptance authority.
-
 ## technique 1: structure-aware rule-based testbench
 
 What it is. The framework parses a golden Verilog module with Yosys, extracts I/O widths, clock edges, and reset synchrony/polarity, then generates randomized edge-triggered simulations comparing candidate and golden outputs. The authors state: “For each golden reference, the framework first performs circuit-structure analysis to extract information such as input/output (I/O) ports and reset/clock signals.” (Introduction, p. 2)
@@ -46,10 +44,6 @@ Inference: for Verus RL, preserve the distinction between an eligible prompt gro
 
 Evidence. The paper reports 1.25× overall speedup, with 1.44× after step 150 and 1.04× before step 150 (Figure 4, p. 9). CodeV-R1-7B achieves 68.8% pass@1 on VerilogEval v2 specification-to-RTL, 69.9% on code completion, and 68.0% on RTLLM v2 (Table 2, p. 7); §3.1 states that “20 responses are generated per query to estimate the pass@k score for both VerilogEval and RTLLM.” (p. 6) On RTLLM v1.1, pass@1 rises from 57.4% for the distilled model to 72.9% after RL (Table 1, p. 7). Inference: benchmark pass rates measure generated-code tests, not universal hardware correctness.
 
-## what is trusted and threat to VeruLaw
-
-Inference: trusted components include Yosys parsing, simulators, random-input generation, golden reference correctness, LLM-generated descriptions, reward code, and benchmark harnesses. The paper notes “potential inconsistencies between the golden code” and generated instructions (§2.3.1, p. 4), motivating its equivalence filter. Inference: for VL, the major risk is a false specification or incomplete test oracle: generated Rust can pass selected checks while violating an unstated safety property. Inference: this paper supplies precedents for structure-aware testbenches, round-trip filtering, adaptive sampling, and distill-then-RL; VL could adapt these to Verus contracts.
-
 ## techniques for the catalog
 
 - structure-aware randomized equivalence — parse ports, clocks, and resets, then compare candidate and golden outputs across controlled simulations
@@ -57,4 +51,3 @@ Inference: trusted components include Yosys parsing, simulators, random-input ge
 - difficulty filtering — retain tasks both Qwen baselines fail in all five attempts, then exclude tasks the distilled model solves in all five attempts
 - distill-then-RL — supervised reasoning cold start followed by verifier-rewarded optimization
 - adaptive DAPO — estimate the fraction of eligible mixed-outcome prompt groups and resize generation batches
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Conducting multiple runs for each experimental condition to gather data for robust statistical significance analysis was deemed prohibitively expensive."): checked all quotations, numbers, section/page references, technique steps, and the tag/link against the full paper including appendices; corrected page references, completed difficulty filtering, clarified theorem assumptions, distinguished eligible prompt groups from correct candidates, and corrected RL batch/length/reward details; did not reproduce experiments, inspect released code/data, or independently validate the theorem proof.

@@ -1,7 +1,6 @@
 # Neuro-Symbolic Software Verification: Hyper-charging Local Language Models with Symbolic Reasoning at Scale
 (authored by agents unless marked 🧑)
 Tag: `pirzada2026neurosymbolic`, [paper](https://arxiv.org/abs/2606.16886)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior notes
 
@@ -77,14 +76,6 @@ A supplementary Combined strategy sends LLM1's raw proposal plus P/D/U to LLM2, 
 Proved: each accepted invariant is discharged by ESBMC; the symbolic P store contains individually inductive atoms; whole-program success establishes the encoded postcondition under the chosen arithmetic semantics. Measured: solve counts, iteration distributions, phase contributions, wall-clock times, and comparisons against other tools. Trusted (inference, not stated in this form by the paper): ESBMC, its parser and SMT back-end, the C-to-GOTO transformation, benchmark specifications, and the host code that parses and recombines formulas. The LLM is not trusted for correctness. The headline 431/499 result includes integer-relaxed successes and therefore does not establish bit-precise C safety.
 
 The tables contain a denominator issue readers must preserve: experiments start with 520 problems, exclude 21 unavoidable-overflow cases, and report rates over 499; Table 1 totals add an IR column, while Appendix Table 7 reports standard-semantics phase counts. The paper also reports 431/499 for the best single cell and 437/499 for the union of four strategies, then 440/499 in the dual-LLM supplement; these are different configuration unions, not additive independent solves.
-
-## what VL should reuse and avoid redoing
-
-VL can reuse the architecture: local model proposals, a deterministic predicate floor, structured verifier feedback, formula decomposition, and proof-gated recombination. A Verus adapter should preserve the separation between proposal generation and trusted checking, record unknown/timeouts distinctly, and attach every surviving clause to a concrete loop invariant. In my reading (inference), the paper's strongest practical result is that symbolic Phase 1 helps weak models at negligible runtime cost; this is worth implementing before elaborate ToT search.
-
-VL should not redo a generic claim that larger models solve more. This paper already shows model-driven variance dominates strategy variance by 3–7× on shared suites, and dual-LLM gains mostly reflect the stronger second model. It also shows ToT's fixed heuristic score can spend 1.40× the time while reducing solves. A Verus study should instead measure bit-precise arithmetic, Rust ownership/borrowing, quantified collections, mutable aliasing, and multi-function proof obligations, which this C scalar benchmark largely omits.
-
-Product threat (inference). The architecture is a moderate threat to any product whose differentiation is only LLM proposals followed by verifier checks: the generate–check loop, atom filtering, and local deployment are demonstrated at scale. It is a smaller threat to VeruLaw if its value includes Rust/Verus semantics, ownership-aware proofs, end-to-end specifications, and reliable engineering around verifier failures; none are evaluated here. The paper's soundness boundary also means an untrusted LLM cannot by itself falsify a proof, while arithmetic-model mismatches and specification bugs remain product risks.
 
 ## techniques for the catalog
 

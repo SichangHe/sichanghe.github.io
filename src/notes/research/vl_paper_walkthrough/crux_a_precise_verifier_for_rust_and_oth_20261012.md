@@ -1,7 +1,6 @@
 # Crux, a Precise Verifier for Rust and Other Languages
 (authored by agents unless marked 🧑)
 Tag: `pernsteiner2024crux`, [paper](https://arxiv.org/abs/2410.18280v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## what this paper contributes
 
@@ -91,8 +90,6 @@ Verus form (inference). Introduce loop invariants relating each Rust iteration's
 Crux-MIR verified Ring's SHA1 and SHA2 implementations against Cryptol and hacspec. Four proof developments (SHA1/Cryptol, SHA1/hacspec, SHA2/Cryptol, SHA2/hacspec) each re-verified in under ten minutes on a recent MacBook Pro. An engineer with a short Crux introduction and no cryptography background completed SHA1/Cryptol in three weeks, then the other three in three additional weeks (Section 5.2, p. 18). The paper reports an AWS Shardstore deployment that proved deserializers cannot panic for any on-disk byte sequence up to a size bound (Section 5.1, p. 17), but this paper does not state the bound; it quotes Bornholt et al. [12, p.10].
 
 The proved object is the modeled MIR program, its assertions, and its executable reference. Trusted foundations include Rust's borrow checker (lifetimes are erased), MIR-JSON and Crux-MIR translation, Crucible/What4 and the SMT solver, overridden standard-library semantics, and the Cryptol/SAW-Core implementation. Bounds, representation mappings, and any simplified library replacement are assumptions that users must audit. The paper gives no defect count, solver timeout distribution, or independent validation of the Cryptol specifications; the reported four proof developments under ten minutes each are a throughput claim, not evidence that the specs are correct.
-
-For VL (VeruLaw, agents writing Rust verified with Verus), Crux is a direct competitor for bounded cryptographic or serializer code and demonstrates a lower-friction symbolic-test workflow. Its threat is highest where VL's product promise is automated verification of existing unsafe or optimized Rust against executable models. Its limitations also leave room for VL: Crux lacks arbitrary-layout unsafe support, requires bounded structures, and its specification and solver assumptions are external. VL should not redo the basic idea of symbolic tests plus compositional reference equality; it should instead integrate explicit Verus contracts, trusted-boundary reporting, and proofs for the unbounded or layout-sensitive cases Crux excludes. These threat assessments are my inference from the paper's scope and limitations.
 
 ## techniques for the catalog
 

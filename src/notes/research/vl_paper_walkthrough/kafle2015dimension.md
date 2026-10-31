@@ -22,7 +22,7 @@ What it is. A trace finite tree automaton (FTA) has predicate symbols as states,
 
 How to apply it. (1) Give each source clause a unique ranked identifier whose arity equals its body-atom count. (2) Unfold every `H≤d ← H=d` epsilon clause into copies of the underlying linear or nonlinear clauses. (3) Assign each unfolded clause the identifier of its source clause. (4) Build the trace FTA for the original and at-most programs. (5) Form the language difference by standardizing predicate names, taking the union, determinizing, and deleting states containing an accepting state of the at-most FTA. (6) Convert the resulting transitions back to CHCs using the inverse identifier map (§4.2, pp. 6–9). The determinisation uses an optimised algorithm [10] that returns a compact "product form" (§4.2.1, p. 8). The Fibonacci construction yields a program with predicates `fib_0`, `fib_1` and `fib`, in which derivations rooted at `false` have dimension at least 1 (Example 2, p. 8; Fig. 8, p. 9).
 
-Verus form. Inference: a Verus proof generator could use an FTA to partition recursive call trees before emitting lemmas. The FTA and determinization are outside Verus; resulting predicates can become ghost tags or `spec fn` cases. The paper notes that "determinisation of FTAs is often considered prohibitively complex even for small FTAs" (§4.2.1, p. 8). A VL implementation should use it only when the residual proof is easier than the original.
+Verus form.
 
 ## technique 3: dimension instrumentation
 
@@ -38,11 +38,8 @@ The exploratory evaluation uses 16 nonlinear CHC benchmarks and an abstract-inte
 
 The conclusion (§8, p. 12) reads: "We presented a program transformation approach to Horn clause verification using the notion of tree dimension to decompose the verification problem by separating dimensions." Inference: this describes a proof transformation, not a replacement for the underlying solver.
 
-Inference: threat to agent-written verified Rust is low to moderate. Dimension partitioning can organize proofs of recursive, branching data structures and help parallelize residual obligations, but it does not prove that the Rust implementation matches the CHC model. A wrong dimension relation or omitted recursive branch can make a residual proof vacuous. The paper cites existing tree-automata refinement [19], CHC solvers [12, 19, 18, 17, 6] and Ganty and Iosif's dimension-based summaries [11] (§6, p. 11); VL should reuse such tools as proof-search infrastructure rather than claim a new decomposition principle.
-
 ## techniques for the catalog
 
 - tree-dimension decomposition — split CHC derivations into at-most-k and residual at-least-k fragments and prove both
 - FTA language difference — construct the residual derivations by subtracting the at-most fragment's trace automaton
 - dimension instrumentation — add a ghost dimension argument and recurrence relations so CHC solvers can prove dimension bounds
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We use a recent optimised FTA determinisation algorithm [10], returning a compact form of the determinised called product form, which can be used directly in constructing the resulting clauses."): I read the whole paper text and checked the quotations, definitions (Definitions 1-3, 9), Algorithm 1 control flow, FTA steps, examples, Table 1 counts and averages, section and page references, and the tag and link; I corrected the nonlinear-clause rule of Definition 2, the Algorithm 1 return rule, the page range of Table 1, the Fibonacci Fig. 3 and Fig. 8 descriptions, and the link (now the DOI printed in the paper); I added the paper's own cautions and marked my conclusions as Inference. I did not check the proofs (Lemma 2, Theorem 1 are only sketched in the paper), the cited references, or the Verus-side suggestions, which are the study's own inferences.

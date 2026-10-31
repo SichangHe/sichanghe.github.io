@@ -57,12 +57,9 @@ Section 5.1 lists crash-idempotence of replica `main()`, safe reconfiguration fo
 
 The performance setup uses eight CloudLab servers: up to three replicas, four clients, and one configuration-service server. Each has an Intel Xeon E5-2630v3, eight cores, 64 GB RAM, an SSD, and a gigabit network card (Section 7, p. 18). YCSB uses uniformly random keys and 128-byte values; measurements follow 20 seconds of warmup and last one minute (pp. 18–19). The introduction reports 95%-read throughput rising from 463,491 requests/s on one server to 816,252 on three (p. 2). The Redis comparison uses one core and no backups for vKV, with Redis configured to make writes durable before replying (p. 19). These measurements do not establish liveness.
 
-Inference: for VL (VeruLaw), the transferable lesson is to check whether network, clock, persistence, and crash assumptions capture the intended system before relying on a successful proof. The configuration-service replacement suggests that stable component contracts can reduce later proof changes. This paper does not evaluate VL or verify a Verus implementation.
-
 ## techniques for the catalog
 - owned distributed resources — assign exclusive per-node state and duplicable ghost knowledge, then prove functions compositionally
 - time-bounded lease invariants — guard reads and reconfiguration with an expiry proof tied to a bounded clock interval
 - crash obligations — relate durable files to ghost logs and reconstruct volatile state after crashes
 - exactly-once escrow and read prophecy — transfer write resources once and select a matching read execution
 - verified RPC contracts — prove unreliable communication once and compose clients from stable specifications
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "To deal with such ownership transfer challenges, Grove allows proofs to use an escrow pattern [43]."): read the entire extended paper, including references; checked quotations, numbers, section/page references, technique steps, title, tag, and arXiv link; corrected lease linearization, replication acknowledgements, escrow/read-prophecy separation, page references, and trusted-library attribution; removed unsupported Verus claims; did not inspect artifacts, independently verify proofs, run benchmarks, or validate the proposed Verus adaptations.

@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `henniger2026djinnlang`, [paper](https://arxiv.org/abs/2609.23954)
 
-Audit: audited 2026-10-13 against the paper; checked every number in Tables 1 to 3 and the sums, ratios and counts derived from them, page and section references (each quotation located on its PDF page), the steps of the obligation list, the tamper checks, procedures and the bootstrap, and the Verus forms; corrected the page count (14, not 15), three section references, one step placed in the wrong command, evidence that the paper does not tie to the unambiguity or redundancy techniques, and several unmarked inferences.
-
 source: Henniger, Chong, Amin (Harvard), arXiv:2609.23954v1, 21 Sep 2026, preprint; 14 PDF pages, no appendix. The preprint prints no page numbers; p.N below is the N-th PDF page.
 
 ## what it is
@@ -195,7 +193,7 @@ evidence:
 - cost (Table 3, p.11; list API prices, not actually paid since subscriptions were used): Claude Fable 5.1 with Claude Code, implementation $51 + $236 + $73 = $360, optimization $36 + $84 + $546 = $666, total $1026 in 2,823 turns; the paper's summary: “Codex compiled all three programs in 33 minutes of elapsed time for an estimated $47, against 21 hours and $1026 for Claude Code — it is roughly thirty times faster and twenty times cheaper.” (Section 7.2, p.9)
 - the table's caption warns the two costs are not directly comparable, because the Claude figure is dominated by cache writes that the Codex logs do not record
 
-Verus form. Inference: this is VL's setting already (an agent, a verifier command, error text). The transferable parts are the written guide per obligation kind, one acceptance command that includes the tamper checks, and partitioning declarations among agents with a merge step.
+Verus form.
 
 ## specification patterns shown in the benchmarks
 
@@ -223,12 +221,6 @@ Inference: each is a way to meet the unambiguity obligation for a problem that n
 - shown on three seeded mistakes that redundancy lets the verifier catch specification slips, and reported four drafting bugs caught by undischargeable obligations of unstated kind
 - shown a pinned-stub and substring-scan protocol that lets an unmodified agent be used without trusting it
 - named Verus as a target, not built
-
-Inference: open for VL: the same obligations in Verus over machine integers and views; diagnosis when an obligation cannot be discharged; any evidence on specifications written by people who are not the tool's authors; performance contracts; concurrency.
-
-## how close this comes to VL's product
-
-Inference: high. This is the same product idea as agent-written verified code, stated more radically: humans write specifications, an agent writes code and proofs, the verifier is the gate, the code is disposable. It differs from VL in target (Dafny compiled through C#, not Rust), in asking for unique-output proofs, and in hiding the implementation language. Its measured weaknesses are VL's openings: the output is slow or even unusable unless a second pass is run, it has no concurrency or performance story, and the trusted glue is Dafny-specific. Its strongest idea, the unambiguity obligation, is cheap to adopt in Verus and removes the weak-specification objection to agent-written verified code for input-output behaviour. The stated plan for a Verus variant makes direct overlap likely.
 
 ## techniques for the catalog
 

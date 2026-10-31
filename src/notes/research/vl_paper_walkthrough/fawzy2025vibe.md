@@ -25,7 +25,7 @@ How to apply it, as specified by the paper:
 
 The final search and backward snowballing produced 154 sources (Section 3.2.5). After screening and quality thresholds, 101 remained; 53 were excluded, including 40 below the quality threshold and 13 failing inclusion or exclusion criteria (Sections 3.3–3.5). The paper’s inclusion requirements were English, 2022–2025 publication, identifiable author or publisher, public full text, relevance to the research questions, and behavioral evidence such as accepting generated code as-is or with light edits, prompting or reprompting, and minimal testing or review. Critical reflections must be based on firsthand experience. Sources describing experienced developers applying critical oversight without skipping QA are excluded (Section 3.3).
 
-Verus form. Inference: This is a literature-harvesting procedure rather than a Verus proof. A VL implementation could represent each candidate source as a Rust record with fields for URL, date, author, query term, and behavioral evidence, then use ordinary Rust code to enforce deterministic inclusion predicates. The Verus-relevant part is proving bookkeeping properties such as the predicate that every retained record has a nonempty author and a quality score at least 10; source credibility and semantic relevance remain trusted inputs.
+Verus form.
 
 Evidence and limits. The reported counts have explicit bases: 100 results per pilot stage, 154 collected sources, 101 retained, and 53 excluded (Sections 3.2–3.5). The authors acknowledge search bias and self-selection: the 101 sources are practitioners who chose to publish, so findings are indicative patterns rather than population estimates (Section 6). They cannot claim to have captured all relevant sources (Section 6).
 
@@ -59,7 +59,7 @@ How to apply it:
 
 The QA themes and denominators are: skipped QA 48/132 (36%), manual testing or edits 38/132 (29%), uncritical trust 24/132 (18%), delegated QA to AI 13/132 (10%), reprompting instead of debugging 6/132 (5%), run-and-see validation 2/132 (2%), and QA breakdown or confusion 1/132 (1%) (Table 5). Inference: The percentages sum to 101% because of rounding; the underlying frequencies sum to 132. The quality-perception themes are fast but flawed 78/114 (68%), fragile or error-prone 22/114 (19%), sloppy or low maintainability 5/114 (4%), prototype-ready only 5/114 (4%), high quality and clean 3/114 (3%), and misleading confidence 1/114 (1%) (Table 4); Inference: these rounded percentages sum to 99%.
 
-Verus form. Inference: Thematic coding can guide a VL telemetry taxonomy, but a theme label is not a proof. A Verus model could prove that every event has exactly one QA category and that category frequencies equal the event count; it cannot prove the analyst’s interpretation of a quote. A useful product design is to emit machine-checkable evidence (tests run, specifications discharged, counterexamples) alongside a human-readable theme.
+Verus form.
 
 ## technique 4: lightweight verification guardrails for AI-generated code
 
@@ -67,13 +67,9 @@ The paper recommends that code-generation tools include “lightweight verificat
 
 Inference: A proposed Verus adaptation is to require a specification and a successful verifier run before accepting generated Rust, and to record which obligations were checked and which assumptions remain trusted. This is a design proposal, not a technique evaluated by this paper.
 
-Inference: The paper’s “delegated QA to AI” finding implies that VL should separate generation from checking: an LLM may propose Rust and proof text, but Verus’s verifier and independently recorded diagnostics must decide acceptance. The paper does not test Verus or any formal prover, so no Verus success rate can be claimed from its data.
-
 ## what is proved, trusted, and left undone
 
 The study measures coded reports, not software correctness. Its evidence is 101 selected sources and 518 behavioral units, with the four denominators above. The authors use cross-validation and a standardized extraction template, but coding was mainly performed by the first author and remains subjective (Sections 3.4, 3.6, and 6). Inference: These coded reports do not establish program correctness or comparative defect rates; the review contains no controlled defect-rate comparison.
-
-Inference: For VL, the threat is behavioral: a user may accept generated Rust because it runs, ask the same model to review its own output, or become unable to debug a failed proof. The review’s 36% skipped-QA and 18% uncritical-trust units are coded-report frequencies, not prevalence among all developers. Existing work already documents these adoption and QA patterns; VL should avoid redoing a broad motivation survey and instead evaluate whether its verification workflow changes them.
 
 The paper identifies a “new class of vulnerable developers” who can build applications but cannot diagnose failures (Section 5.1). It recommends guided debugging, safe templates, escalation paths, and matching task complexity to skill (Section 5.1). It also says future research should test which review practices work under vibe-coding conditions and how practices vary by experience (Section 5.2). Those questions remain open.
 
@@ -84,4 +80,3 @@ The paper identifies a “new class of vulnerable developers” who can build ap
 - behavioral-unit extraction: store verbatim quote, attribution, question mapping, interpretation, and metadata for each distinct behavior
 - thematic QA analysis: code units, cluster and review themes, then report frequency with its denominator
 - verification guardrails (recommendation, not evaluated): add tests, code review, and decision records before production; provide static or dynamic checks and lightweight verification feedback in tools
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This process highlighted the emergence of prompt engineering skills, where users learned to craft, adapt, and even collect effective prompts as reusable patterns to improve their results."): read the full paper text, including references; checked all study quotations, numbers, section references, and technique steps; corrected the paper link, behavioral-evidence scope, pilot-search description, search and snowballing steps, extraction example, and recommendation scope; marked analytic conclusions as inferences and removed unsupported Verus construct details; did not check the original grey-literature sources, replication dataset, or proposed Verus adaptations experimentally.

@@ -6,8 +6,6 @@ Tag: `kabra2025kinematics`, [paper](http://arxiv.org/abs/2509.21840v1)
 
 The paper tests whether an LLM can turn a natural-language undergraduate kinematics problem into a differential game logic (dGL) model. Its abstract says, “The model is (1) syntax checked and iteratively refined based on parser feedback, and (2) semantically evaluated by checking whether symbolically executing the dGL formula recovers the solution to the original physics problem.” The benchmark has 20 problems, each with an expected symbolic solution and a minimum number of variables that must be written.
 
-Inference: this is a model-generation and checker-feedback loop, not a Verus proof of Rust. It supplies a useful pattern for VL when an agent must turn requirements into a formal model before proving code.
-
 ## technique 1: parser-feedback repair loop
 
 What it is. The system first asks the LLM for a dGL game, sends it to the KeYmaera X parser, converts parser errors into short feedback, and asks for a repair. The method section says the system uses “two types of LLM queries: one is Propose Formalization, and the second one is Revise Formalization.” The initial prompt includes up to four solved examples and common syntax mistakes with remedies. A failed proposal plus parser feedback is stored in the history. The repair prompt supplies up to two repair examples, the original question, and the failed proposals with feedback. The repair loop runs at most three times (Section III, p. 3).
@@ -44,11 +42,8 @@ The authors sample each benchmark five times at temperature 1 and report the bes
 
 The success denominator is 20 problems and the reported 70% is best-of-five sampling, not one-shot accuracy. The authors state, “The main cause of failure is checker limitations for the most complex problems.” (Section I, p. 1.) Inference: a checker rejection is not proof that every rejected formalization is wrong. The expected solution, write-count threshold, parser, symbolic executor, and manual interpretation are trusted components; unstated physical assumptions can also change equivalence.
 
-Inference: for VL, the product threat is high when agents can produce a vacuous but verifiable contract, and moderate for syntax repair because verifier diagnostics are concrete. VL should reuse the anti-stasis and reference-equivalence ideas, but measure them on Rust state and Verus contracts. Existing work has already shown checker-feedback repair and semantic post-checking; a new VL contribution should target ownership, libraries, and product requirements rather than repeat generic retries.
-
 ## techniques for the catalog
 
 - parser-feedback repair: store failed formalizations and concise parser diagnostics, then retry under a fixed repair cap
 - symbolic reference checking: execute the formal model and compare its result with an expected symbolic solution
 - anti-stasis validation: require a benchmark-specific minimum number of variables written to, rejecting empty games that encode only the desired answer
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The LLM replies with a new, repaired dGL game, which is again passed to the parser for checking."): checked all quotations, numbers, section and page references, technique steps, tag, and arXiv link against all six pages; restored a truncated quotation, completed the repair-prompt details, clarified Model 2’s equivalence and the write-count limitation, added implementation and failure-category details, and marked the trust analysis as inference; did not inspect the online artifact, reproduce the experiments, or validate the proposed Verus adaptations.

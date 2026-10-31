@@ -48,8 +48,6 @@ On biased first-success groups, a ranker reaches 100% top-1, but simply choosing
 
 Verus form
 
-Inference: For VL proof-repair data, enumerate all candidate proof edits in a declared menu or generate a complete candidate pool, then verify each candidate with Verus. Store unknown/timeouts separately. Train rankers only against the shortest or best verified candidate, and include a menu-order baseline to detect leakage.
-
 ## technique 3: iterate symbolic compression to a fixed point and verify neural hybrids
 
 A single pass can enable later deletions, so LeanPolish reruns its output until no file changes, with every round freshly verified (section 3, p. 4). On whole files, a clean symbolic run raises PutnamBench reduction from 6.1% to 11.9%; fixed-point iteration reaches 16.1% on PutnamBench and 29.8% on miniF2F-99 (27.5% on all 351 miniF2F files) (section 5.1, p. 8). These are whole-file token reductions, not sums of local edits.
@@ -60,12 +58,6 @@ Verus form
 
 Inference: Iterate Verus proof simplification to a fixed point, then optionally propose neural edits at remaining proof sites. Verify each edit independently and the combined file, because individually valid edits can interfere. Measure whole-file reduction on identical source files and toolchain versions; never infer it by adding local savings.
 
-## what is trusted, what is learned, and product threat
-
-Lean's kernel and fresh compilation establish that accepted edits preserve theorem statements. The authors caution that “We do not claim that outputs are length-minimal or more readable to humans.” (section 3, p. 4) The method trusts the theorem statements, imported libraries, Lean toolchain, specificity policy, and search menu. It does not prove minimal length, readability, or that learned edits improve beyond the symbolic search space. One self-training round worsens held-out tactic success from 74.9% to 72.9% or 70.7% depending on filtering (section 5.2, p. 9).
-
-Inference: For VL, this is a substantial engineering opportunity for proof compression and repair data, but search-order leakage and unchecked assumptions can make an agent appear better than it is. Product acceptance should run Verus on every candidate and report separate symbolic fixed-point, frozen-model, and trained-model baselines.
-
 ## techniques for the catalog
 
 - checker-gated local edits — propose proof-body changes at saved states and retain only fresh compiler/verifier passes
@@ -73,5 +65,3 @@ Inference: For VL, this is a substantial engineering opportunity for proof compr
 - leakage-resistant ranking — evaluate against complete pools and compare with menu-order controls
 - fixed-point compression — rerun symbolic edits until no verified file change remains
 - jointly verified hybrids — verify each neural edit and the combined file before counting savings
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

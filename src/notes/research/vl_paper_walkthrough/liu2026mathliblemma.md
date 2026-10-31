@@ -38,8 +38,6 @@ The bypass screen is essential because kernel checking alone permits imported ax
 
 Verus form
 
-Inference: construct a per-candidate Rust module whose imported specifications are fixed and whose generated proof code is separately scanned. Reject `assume`, `admit`, or unverifiable external bodies when they would add an untrusted fact. The exact policy must follow VL’s accepted Verus subset; the paper’s Lean policy transfers as a trust-boundary principle, not as Rust syntax.
-
 ## technique 3: compile-feedback repair loops
 
 Formalizer repairs only statement syntax: diagnostics include the current code and errors, and the prompt forbids proving. Prover repairs proof terms: each failed attempt and compiler message is appended to a history buffer, with at most two repair rounds. This isolates namespace/implicit-argument errors from logical failures. Inference: in Verus, preserve this distinction by compiling contracts before proof search, then passing verifier diagnostics to a proof-repair loop; classify failures as type, contract, trigger, or solver failures so the model does not rewrite a valid specification unnecessarily.
@@ -48,7 +46,7 @@ Formalizer repairs only statement syntax: diagnostics include the current code a
 
 The evaluation compares GPT, GPT-Reasoning, Kimina, Goedel, DeepSeek-32B, DeepSeek-70B, and Qwen under Success@2. Table 3 reports total success rates: GPT 15.69%, GPT-Reasoning 19.39%, Kimina 10.70%, Goedel 17.70%, DeepSeek-32B 6.98%, DeepSeek-70B 6.68%, and Qwen 2.46%. The union of all models reaches 37.39%, showing complementary failures. The paper calls this “the massive gap between the best individual model (19.39%) and the Union performance (37.39%).” (Section 5.2, p. 7)
 
-A seed-stratified human audit found 78% of model-unsolved residuals provable; a held-out audit found experts proved 79/94 (84.0%), with a Wilson 95% interval of 75.3–90.1%. These are audit samples, not proof rates for all 4,028 statements. The dominant unproven failure was missing hypotheses, such as integrability or non-emptiness conditions (Appendix D, p. 18). Inference: VL should preserve rejected candidates and diagnose omitted preconditions rather than treating every failed proof as a false lemma.
+A seed-stratified human audit found 78% of model-unsolved residuals provable; a held-out audit found experts proved 79/94 (84.0%), with a Wilson 95% interval of 75.3–90.1%. These are audit samples, not proof rates for all 4,028 statements. The dominant unproven failure was missing hypotheses, such as integrability or non-emptiness conditions (Appendix D, p. 18).
 
 ## verified library and limits
 
@@ -63,5 +61,3 @@ What remains trusted includes Lean’s kernel, imported Mathlib declarations, th
 - closed-book evaluation: benchmark models with only the self-contained context and statement to measure internal formalization ability
 - model-union proving: combine diverse prover outputs because union coverage can substantially exceed the best single model
 - residual human audit: sample model-unsolved statements to distinguish false claims from current prover limitations
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

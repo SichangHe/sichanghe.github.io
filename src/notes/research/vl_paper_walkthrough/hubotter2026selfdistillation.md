@@ -61,10 +61,6 @@ The paper gives a derivation that SDPO is a policy-gradient algorithm (Propositi
 
 Inference: The strongest transferable pattern is propose, obtain concrete feedback, re-score the same artifact under feedback, and update locally. It reduces the information bottleneck but cannot repair an unsound oracle or an incorrect contract.
 
-## prior work VL should not redo
-
-The paper already supplies the self-teacher construction, KL loss with `stopgrad`, the token-level advantage, the rollout template, the Algorithm 1 loop, and the comparison with GRPO. A VL implementation should reproduce these only as an adaptation to Verus diagnostics, then evaluate against verifier-specific baselines rather than rerunning the paper’s benchmark claims.
-
 ## threat to agent-written verified Rust
 
 Inference: The threat is medium for proof-generation throughput and low for formal soundness when every candidate is independently checked. SDPO may make an agent converge faster on recurring verifier errors, but it can also amplify an incorrect contract, exploit diagnostics without establishing the intended theorem, or overfit to a fixed Verus version. The acceptance gate must remain the verifier and specification, not the learned reward.
@@ -78,5 +74,3 @@ Inference: The threat is medium for proof-generation throughput and low for form
 - dense SDPO advantages — replace rollout-level reward advantages with the teacher/student log-probability ratio for each token
 
 - feedback-backed test-time specialization — repeatedly apply the same self-distillation update to one hard question to compress successful context into model weights
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

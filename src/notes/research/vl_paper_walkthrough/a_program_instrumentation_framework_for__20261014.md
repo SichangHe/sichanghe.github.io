@@ -77,21 +77,13 @@ proof and threat assessment
 
 Lemma 2 establishes that a returned instrumentation proves both programs correct, `Incorrect` demonstrates original incorrectness, and the search finds a correct instrumentation if one exists in its finite space, under the assumed correctness oracle (section 6, p. 22).
 
-Inference: VL could reuse the separation between original assertion failures and instrumentation failures. Any implementation must preserve that distinction and establish operator correctness; the paper supplies no measured risk rating for a Rust or Verus adaptation.
-
 ## what is proved, measured, and trusted
 
 Theorems 1–2 establish the array operators' correctness under Definition 1. Theorem 3 establishes soundness and weak completeness for every operator satisfying that definition. Theorems 4–5 establish completeness for specified program classes, and Lemma 2 covers search correctness (sections 3.2, 5, and 6).
 
 Inference: The formal guarantees depend on the rewrite constraints, array and integer semantics, and correctness oracle. The experiments measure verification results and runtime; they do not validate a Rust ownership or machine-overflow model. The core presentation uses unbounded integers and functional arrays; section 3.3 separately discusses C-native-array adaptations.
 
-## what VL should reuse or avoid
-
-Inference: Reuse operator proofs independently of each application, explicit checks relating ghost state to program state, and candidate elimination justified by counterexamples. Treat incomplete verification and confirmed original assertion failures separately. A Verus adaptation still needs its own implementation and validation.
-
 ## techniques for the catalog
 
 - ghost instrumentation: rewrite quantifiers and aggregates into ghost updates plus a proved instrumentation invariant
 - counterexample-guided instrumentation search: eliminate candidate rewrites using counterexamples to introduced assertions
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The operators described in this article, i.e., operators for the (extended) quantifiers listed in Table 1 and the operator in Figure 4, have been verified in the verification tool Frama-C [15]."): checked all paper text, quotations, numbers, section and page references, operator constraints, and search steps; corrected references, ghost-array description, soundness versus weak completeness, search exhaustion and timeout handling, and benchmark denominators; marked proposed Verus applications as Inference; did not inspect the artifact, rerun experiments, reproduce proofs, or validate Verus syntax.

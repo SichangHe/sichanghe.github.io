@@ -24,7 +24,7 @@ What it is. NLRuleAgent separates candidate extraction from rule classification.
 
 How to apply it. (1) Give the agent an entity declaration and attached description. (2) Extract every candidate clause, splitting sentences with multiple requirements while retaining a condition with its consequence. (3) Exclude definitions, examples, rationale, summaries, and parameter descriptions. (4) Normalize source and candidate text (case, whitespace, quotes, dashes, backticks), then require each candidate to occur as a substring; discard altered, fabricated, duplicate, or contained clauses. (5) Score each remaining clause twice with a label `rᵢ` and confidence `cᵢ`. (6) Compute `score(s) = 1/(1 + exp(-Σ rᵢcᵢ / 2))` and retain scores above 0.5 (section 4.2, p. 6).
 
-The paper states, “Finally, a Python tool computes a score using the following formula and treats a clause with a score greater than 0.5 as a rule” (section 4.2, p. 6). Inference: In VL, retain the exact comment sentence that motivates each Verus contract and reject model paraphrases before formalization. A substring check protects provenance, but a copied sentence can still be ambiguous or wrong; Verus must check the resulting contract against code.
+The paper states, “Finally, a Python tool computes a score using the following formula and treats a clause with a score greater than 0.5 as a rule” (section 4.2, p. 6).
 
 ## technique 3: fixed-template grammar induction
 
@@ -48,13 +48,13 @@ What it is. Use generated rules to instrument real code with ghost variables and
 
 How to apply it. (1) Select implementations or clients of the APIs. (2) Pair each source file with generated rules. (3) Instrument code with ghost variables and assertions representing predicate observations. (4) Run symbolic execution and record concrete violating sites. (5) Count true positives and false alarms. (6) Compare with LLM-on-docs, LLM-on-rules, SymGPT, Semgrep, LockBud, Prusti, Rudra, MIRAI, and MirChecker baselines.
 
-Evidence. The paper reports 142 true violations and 21 false alarms for Doc2Spec; on Rust it finds 24 violations with no false alarms, while six specialized tools together find 13 true positives and 90 false alarms (section 5.3, p. 9). The denominator for the 142/21 totals is all analyzed sites in 220 programs, not the six-document rule count. LLM-on-docs and LLM-on-rules produce 324 and 602 false alarms respectively. Inference: For VL, ghost state can expose API obligations around unsafe pointers or ownership, but generated instrumentation must be treated as a hypothesis until Verus proves its relation to real memory and control state.
+Evidence. The paper reports 142 true violations and 21 false alarms for Doc2Spec; on Rust it finds 24 violations with no false alarms, while six specialized tools together find 13 true positives and 90 false alarms (section 5.3, p. 9). The denominator for the 142/21 totals is all analyzed sites in 220 programs, not the six-document rule count. LLM-on-docs and LLM-on-rules produce 324 and 602 false alarms respectively.
 
 ## evaluation, trust, and failures
 
 Ablation removes one agent at a time and replaces it with a one-shot prompt. Precision falls to 0.26, 0.12, 0.06, and 0.23 without EntityLocalizer, NLRuleAgent, GrammarAgent, and FormalAgent; recall falls to 0.13, 0.04, 0.05, and 0.07 (Fig. 3, p. 8). These denominators are the same six benchmark rule sets. Backbone variation gives precision 0.70–0.78 and recall 0.74–0.89.
 
-Trusted components include LLM extraction, human gold labels, regex and parser tools, ghost instrumentation, symbolic executors, and the semantic interpretation of induced predicates. The paper’s formalized rules are not directly checked by the execution engine; instrumentation bridges that gap. The authors state, “The formalized rules cannot be checked directly: a symbolic execution engine needs to know when a violation occurs” (section 5.3, p. 9). Inference: Product threat to agent-written verified Rust is high at the specification boundary: a syntactically valid, parser-accepted rule can still omit a safety condition or assign the wrong sort. Verus reduces downstream implementation risk only after the generated rule has been translated into a complete contract and proved. Existing work already demonstrates staged grammar induction, verbatim provenance checks, and symbolic execution; VL should reuse these stages rather than rely on one-shot contract generation.
+Trusted components include LLM extraction, human gold labels, regex and parser tools, ghost instrumentation, symbolic executors, and the semantic interpretation of induced predicates. The paper’s formalized rules are not directly checked by the execution engine; instrumentation bridges that gap. The authors state, “The formalized rules cannot be checked directly: a symbolic execution engine needs to know when a violation occurs” (section 5.3, p. 9).
 
 ## techniques for the catalog
 
@@ -63,4 +63,3 @@ Trusted components include LLM extraction, human gold labels, regex and parser t
 - staged grammar induction: split rules into atoms, infer predicates and sorts, then build a fixed EBNF vocabulary
 - parser-constrained formalization: fill extracted logical structure with typed arguments and reject invalid DSL syntax
 - ghost-instrumented symbolic execution: add state observations and assertions before checking real API implementations
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

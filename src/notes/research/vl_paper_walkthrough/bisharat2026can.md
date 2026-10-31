@@ -58,8 +58,6 @@ Model size does not consistently predict success. DeepSeek r1:8b has 14/26 progr
 
 Inference: Do not extend the size result to every metric or strategy. Table 5 gives DeepSeek r1:8b only one half-completion SANY pass versus three for r1:70b, and both have three fill-in-middle passes. It also gives both LLaMA 3.3 variants 18 progressive SANY passes, contradicting Section 4.3's claim that LLaMA 3.2:1b has the highest LLaMA rate with 12. Use the tabulated comparisons with these limits.
 
-Inference: VL should choose models using proof outcomes on its own Verus tasks. Parameter count and code-specialization labels alone do not establish suitability. These TLA+ results motivate measuring that question rather than answering it for Verus.
-
 ## what is proved, trusted, and still missing
 
 The authors run each model–specification pair once per strategy. They acknowledge incomplete measurement of stochastic variation, a community benchmark that may not represent industrial use, varying comment density, finite-state TLC bounds, and uncertain transfer to other formal languages (Section 5, p. 11).
@@ -73,5 +71,3 @@ Inference: Parser and finite model-checker outcomes do not independently establi
 - completion baselines — compare half-completion and fill-in-middle with stated context proportions and target-segment metrics
 - hallucination taxonomy — distinguish lexical, cross-language, reasoning, length, and structural failures; treat proposed repairs as unevaluated recommendations
 - model selection by checked outcomes — compare models using per-strategy pass counts and explicit denominators
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Within DeepSeek R1, the 8B model achieves 14 TLC passes under Prog. while the 70B model achieves none."): checked the complete paper, study quotations, counts, denominators, section and page references, prompting descriptions, limitations, and paper identifier; corrected page references, separated open-weight and proprietary results, removed unsupported procedural details, and marked analytical conclusions as Inference; did not inspect released code or data, rerun experiments, or independently validate the authors' training-data explanations.

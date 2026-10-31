@@ -105,14 +105,6 @@ How to do it (the steps are the study’s elaboration; the paper does not run th
 
 Appendix C.2 illustrates why this can matter: the model fails the easy theorem `trans_incl` even though `auto.` proves it, and the authors suggest “adding a prompt that favors very simple proofs that do not use any lemmas”. Verus form (Inference): generate diverse candidates such as direct `assert` chains, auxiliary `proof fn`s, and induction with explicit `invariant`s, then let Verus perform the final selection.
 
-## what is trusted and what VL should reuse
-
-The paper does not state in prose how a proof was judged correct. It mentions that Coq “responds with an error” for failing outputs (Appendix C.4) and says that “the criteria of whether or not the target theorem is proved is close-ended to a certain extent” (Appendix B). Inference: Coq acceptance is the criterion behind “#Correct Proof” and “#Proven Theorems”, but the paper never says this outright. The LLM, prompt construction, retrieved context, and the human expert annotation behind Figure 1a remain outside any kernel-level guarantee. The study covers one example Coq project; it does not establish performance on Verus or production Rust.
-
-Inference: the direct product threat is context omission. An agent can produce plausible Rust proof text while missing a field invariant, imported contract, or current verifier obligation. The paper’s measured 19.5% proof-state and 20.7% dependency error shares make this risk concrete, although those percentages come from GPT-4’s 740-output annotation and do not predict VL’s rate.
-
-Inference: VL should reuse the paper’s state-and-feedback architecture, but implement it around Verus diagnostics, exact dependency retrieval, and a bounded repair loop. VL should not redo the paper’s basic Coq failure taxonomy or its random-versus-similar six-shot comparison unless a Rust-specific baseline is needed.
-
 ## techniques for the catalog
 
 - proof-assistant information queries: let the model request missing definitions through commands such as Coq `Print` during generation
@@ -121,4 +113,3 @@ Inference: VL should reuse the paper’s state-and-feedback architecture, but im
 - preceding-proof retrieval: select theorem-proof examples randomly or by a fine-tuned similarity retriever
 - verifier-error repair: feed exact prover diagnostics into iterative candidate generation
 - prompt diversity: sample varied demonstrations and tactic styles, then retain candidates accepted by the prover
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "In particular, this model has been trained on code corpus and has certain level of code-understanding capabilities."): read all 8 pages of the text and viewed the Figure 1a pie chart in the PDF; checked every quotation, Table 1 numbers, Appendix A.2-A.4 and B details, section and page references; changed the Introduction quote (was misquoted), swapped the proof-state (19.5%) and dependency (20.7%) shares and corrected the other small categories in Figure 1a (sum is 100.1%, not 100.0%), added the missing GPT-4 ZS result and the A.4 settings, fixed the claim that few-shot examples come from the same file (they come from the training set of other projects), fixed page and quote details for A.3, removed the unsupported claim that a theorem counts as proven only when Coq accepts it, and marked step lists and ranking as study elaboration or Inference; link changed to the arXiv page given in the paper text; did not check the cited references, the GitHub data, or the Verus-form suggestions (Inference), and the five smallest Figure 1a labels were read from wedge positions and may be misassigned.

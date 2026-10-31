@@ -60,5 +60,3 @@ Related work includes Lean theorem proving, autoformalization, proof-assistant f
 - autoformalization: translate the NL existence problem into a Lean4 statement for a formal reasoner
 - mixed NL/FL reasoning: give the prover the original QA problem and the formal existence statement together
 - answer extraction with fallback: extract a boxed NL answer from the prover’s reasoning, or randomly drop FL output and answer directly with the NL model
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This indicates that the improvement observed with NFL-HR does not come from the problem reformatting alone, but from integration of the unique capability of the FL reasoner."): checked the full paper, quotations, numerical results, section and PDF-page references, and technique steps; corrected page references, quotation wording, unsupported proof-checking steps, fallback behavior, ablation scope, and Verus inferences; did not run the models, reproduce experiments, or independently verify Lean or Verus code.

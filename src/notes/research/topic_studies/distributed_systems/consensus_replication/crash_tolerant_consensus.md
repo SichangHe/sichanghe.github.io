@@ -46,8 +46,6 @@ scope and how to read
 - my best bet for a project (details in the ideas section)
   - a Verus-verified core for the part that fails in practice: config change plus lease or read-index reads plus the apply-index/persist contract, tested against a Rust library
 
-## the landscape
-
 ### classic protocols and what each one is for
 
 - Paxos and Multi-Paxos
@@ -331,7 +329,6 @@ scope and how to read
 
 ## sources
 
-papers and documents (title, authors, venue, year, URL); "saved" = in /hdd1/sichanghe/paper_collection
 - Making Democracy Work: Fixing and Simplifying Egalitarian Paxos, Ryabinin, Gotsman, Sutra, arXiv 2511.02743, 2025, https://arxiv.org/abs/2511.02743 (saved)
 - On the correctness of Egalitarian Paxos, Sutra, Information Processing Letters 2020 / arXiv 1906.10917, https://arxiv.org/abs/1906.10917 (abstract only)
 - State-Machine Replication for Planet-Scale Systems (Atlas), Enes, Baquero, Rezende, Gotsman, Perrin, Sutra, EuroSys 2020, https://arxiv.org/abs/2003.11789 (abstract)

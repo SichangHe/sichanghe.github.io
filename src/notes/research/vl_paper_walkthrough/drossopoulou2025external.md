@@ -25,7 +25,7 @@ How to apply it.
 3. For call-free internal statements, use the protection rules in Figure 6 (p. 18). `Prot-1` requires a proof that the expression still denotes the same object. `Prot-2` and `Prot-3` address variable assignments and field reads; `Prot-4` preserves relative protection across a field write when the capability is also protected from the stored value.
 4. Treat method calls with the call rules in Figure 7 (p. 19), rather than assuming the call-free rules cover them. Module-wide preservation must also rule out leakage through callbacks and return values (Figure 8, pp. 20–21).
 
-Verus form (Inference: proposed modeling work, not a checked implementation). A VL model could represent references and external objects using ghost state, define the protection predicate, and prove that each modeled public operation preserves it. A caller-supplied precondition alone would not establish the paper's guarantee against arbitrary clients: section 2.2, Example 2.2 (p. 7), warns that a public method "can be invoked by external code that ignores all specifications". The public implementation and its module-wide proof must justify the guarantee.
+Verus form (
 
 Evidence and limits. The model depends on encapsulation and reference unforgeability. Inference: applying the idea to Rust with unsafe code or FFI requires a separate argument that those boundaries obey the modeled access rules.
 
@@ -41,8 +41,6 @@ How to apply it.
 2. For an account, use the conditional assertion `⟨a.key⟩⟩ ∧ a.blnce ≥ b`, quantifying `a:Account` and `b:int` (Example 2.1, p. 6).
 3. For every public method, prove a quadruple whose precondition includes `A` and its adaptation for the receiver and arguments, whose postcondition includes `A` and its adaptation for the result, and whose mid-condition is `A` (Figure 8, p. 20).
 4. Keep the temporal boundary explicit. An older frame can regain access after return, so preservation during the call does not imply preservation afterward (section 5.3, pp. 16–17).
-
-Verus form (Inference). A proposed VL encoding could use an explicit model of call frames, external observations, and callbacks. Ordinary preconditions and final postconditions would need additional obligations for intermediate external states. This study does not establish an encoding or a corresponding Verus feature.
 
 Evidence and limits. Soundness uses deep satisfaction: an assertion must hold when viewed from every frame starting at a selected frame through the top frame (section 7, p. 22; Definition H.3, pp. 51–52). Inference: a sequential proof does not establish correctness under concurrent scheduling or crashes.
 
@@ -60,17 +58,7 @@ How to apply it.
 
 For `buyer.pay`, the proof uses `S3` and establishes that the key is protected from the buyer, account argument, and scalar price. The buyer condition is a precondition; the other two follow from the example's type information. Adaptation then gives protection at entry to `pay`, allowing the scoped invariant to preserve the balance bound (section 2.3.2, p. 8; Example 6.4, p. 20).
 
-Verus form (Inference). A possible VL design would prove capability non-leakage and effects at each callback boundary using an explicit external-execution model. Assuming an external function contract would leave that contract trusted; it would not reproduce this paper's quantification over arbitrary external modules. No Rust implementation or Verus proof is checked here.
-
 Evidence and limits. Theorem 7.3 (p. 23) states soundness for quadruples and specification adherence. Its proof combines external steps that preserve encapsulated assertions with summaries of internal public-method executions (section 7, pp. 22–23). Section 6.4 reports the Coq example proof separately from the general soundness argument. The paper reports no performance benchmark or experimental success rate.
-
-## what is proved, trusted, and relevant to VL
-
-The reported formal results cover protection preservation and soundness of the triples, quadruples, and specification rules. Their assumptions include sound assertion and underlying Hoare logics: "We require a sound logic of assertions" (Axiom H.1, p. 51). Section 6.4 (p. 21) states that the example mechanisation assumes properties of those logics and of the type system: "All assumptions are clearly indicated in the associated artifact." This study did not inspect or rerun that artifact or independently validate the metatheory.
-
-The supplied version has conflicting example claims. Example 2.3 (p. 7) says `Mgood` and `Mfine` satisfy `S2` and `S3`, and none satisfies `S1`. Appendix E, Example E.3 (p. 36), instead lists `Mfine ̸ |= 𝑆 3` and lists all three modules as satisfying `S1`. The study follows the main text's explanation of the intended invariants; it does not resolve these conflicting statements by checking Coq.
-
-Inference: VL could use this specification pattern for Rust APIs that invoke callbacks or foreign code. The useful distinction is between protection of a capability, preservation during external observations, and a final functional postcondition. An overly permissive external contract would weaken that guarantee. Establishing compatibility with Rust's actual access and execution rules remains separate work.
 
 ## techniques for the catalog
 
@@ -79,5 +67,3 @@ Inference: VL could use this specification pattern for Rust APIs that invoke cal
 - Hoare quadruples: prove final postconditions and conditions at intermediate external states
 - adaptation and deep satisfaction: relate protection across caller and callee frames and require satisfaction from a selected frame onward
 - module adherence: prove method specifications and preservation of scoped invariants by every public method
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Rule types-2 generalizes types-1 to any statement, provided that there already exists a triple for that statement."): checked quotations, definitions, technique steps, example claims, page and section references, and reported proof scope; corrected the DOI, Shop payment condition, protection definition, adaptation, call and module proof obligations, references, and unsupported Verus claims; noted conflicting example claims; did not inspect or rerun the Coq artifact, independently validate the metatheory, or implement the proposed Verus model.

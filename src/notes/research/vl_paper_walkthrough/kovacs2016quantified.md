@@ -108,13 +108,9 @@ Inference: 4. separate algebraic-only, co-algebraic-only, and mixed cases, becau
 
 Verus form (Inference:)
 
-Inference: Build a corpus of representative Verus datatype lemmas and record verification outcomes by datatype family, quantifier shape, and arithmetic theory. Keep proof time and timeout policy fixed. This gives VL an evidence base analogous to the paper's solver comparison, but it is a proposed evaluation protocol.
-
 evidence, trust, and implications
 
 On the 6282 Isabelle problems, Table 3 (p. 9, Vampire with a combination of strategies, 120 seconds total) reports 1785 solved by Vampire, 1712 by CVC4, and 1663 by Z3. The rows are 3457 datatype-only, 1301 co-datatype-only, and 1524 mixed problems. Vampire uniquely solves 50 (23, 16, 11 across the rows), CVC4 four, and Z3 zero. Table 2 (p. 9, Vampire with a single best strategy) reports 1720 for Vampire, 1711 for CVC4, and 1665 for Z3. The paper says its implementation required “about 2,500 lines of C++ code.” (Section 7.1, p. 7) The paper cautions that Sledgehammer problems are not all provable, because “the lemmas selected by Sledgehammer are not sufficiently strong to prove the goal” in many cases (Section 7.4, p. 8), so solved counts are not a correctness rate.
-
-Inference: the trusted objects are the term-algebra semantics, the sound superposition calculus, the datatype axioms/rules, and the translation from source verification goals. Inference: for VL, the paper is directly relevant to quantified `Seq`, `Map`, and recursive datatype proofs, but it does not verify Rust or establish a Verus performance result. Inference: threat to agent-written verified Rust is medium for datatype-heavy specifications, because solver search can fail or time out even when the property is true; constructor lemmas and smaller quantified obligations are practical mitigations.
 
 ## techniques for the catalog
 
@@ -122,4 +118,3 @@ Inference: the trusted objects are the term-algebra semantics, the sound superpo
 - superposition saturation: prove quantified datatype goals by fair clause saturation with redundancy deletion
 - datatype simplification rules: use constructor distinctness, injectivity, and acyclicity rules to shrink proof search
 - benchmarked solver configuration: compare datatype proof strategies on fixed corpora with explicit denominators and time limits
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "One of the criteria of behaving well in practice is to have a method that is complete for pure term algebra formulas, that is, without uninterpreted functions."): read the whole paper text (pdftotext, both layouts) and viewed the Table 1 page image; checked every quotation, number (Tables 1-4, 4170/2869/2825/2112/6282, 2,500 lines, 8.19 s, 262 problems and 90,000 runs), axiom names, theorem and section references, and PDF page numbers; changed the section reference for Theorem 3 (Section 5, not 4.3), several page and section references (Sections 3.1, 6.1-6.4), the description of the motivating example, the claim that all solvers were run in one environment (Z3 and CVC4 Isabelle numbers were taken from earlier work), added the CVC4 text-versus-table discrepancy, the note that the acyclicity rule plays no role in the game problem, the incompleteness of the rules, and the Table 2 and Table 4 numbers, and relabelled unsupported statements as Inference; did not check the cited external works, the Vampire implementation or benchmark files, or any Verus claim beyond marking it as Inference.

@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `cebeci2026deeper`, [paper](https://arxiv.org/abs/2609.26345)
 
-Audit: audited 2026-10-13 against the paper; checked every number and percentage in Table 1 and the text, page and section references, quotations, the worked examples and definitions, and the Verus sketch; changed 55 unstable queries to 55 queries of which 27 were unstable, none is machine-checked to unsupported, the technique cross-reference, the bisimulation step 8 mapping, ideal generation not computable, z3-C-enode no regression, and marked unmarked inferences; the Verus sketch was not run (no Verus here).
-
 source: Can Cebeci, Nikolaj Bjørner, George Candea, Clément Pit-Claudel, arXiv:2609.26345v1 (22 Sep 2026), 19 pages with appendices A and B. Page references use the numbers printed on the pages.
 
 ## the point in one paragraph
@@ -184,17 +182,6 @@ Where it fails. 55 queries, mostly Dafny. No Verus, F* or Boogie breakdown is gi
 - The contribution list says “We prove, through bisimulation, that each solver is confluent and no more permissive than Id with quantifier instantiation.” (§1, p.2) A few lines below, the paper says part of this is conjectured.
 - Inference: timeouts are the larger failure in this set. 1,813 of 5,500 baseline runs (33.0%) time out against 489 (8.9%) unknown, and the fix leaves timeouts about where they were (1,779, 32.3%). The headline 94% is of the smaller category.
 - The abstract's "reduces outcome instability by 94%" is, by §8 (p.16), the unknown-mutant count; by queries it is 85%.
-
-## not to redo in VL
-
-Inference:
-- the generation bookkeeping is fixed upstream in Z3 5.0; VL has no reason to work around this cause by hand once the Z3 it runs has the fix, and should check which Z3 version its Verus toolchain uses before attributing a flaky proof to it
-- the Mariposa method (mutants by seed, shuffle and rename) already exists and is reused here; VL can adopt it as is for a proof-stability check
-- what the paper leaves open, and VL would have to handle itself, is timeout instability and anything involving multi-patterns, nested quantifiers and theories
-
-## threat to VL's product
-
-Inference: none as competition; this is solver infrastructure that helps every Z3-based verifier equally. It lowers one cost of agent-written proofs, since an agent's repair loop wastes attempts on proofs that fail for order-dependent reasons. It also weakens any product claim built on handling flaky proofs better than others, because part of that problem goes away for everyone with a solver upgrade.
 
 ## techniques for the catalog
 

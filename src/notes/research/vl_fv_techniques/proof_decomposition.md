@@ -68,8 +68,6 @@ A piece that verifies alone can still be useless or too weak for the parent.
 9. Keep a retry cap and a search budget.
 Splitting widens the search.
 
-## variants by paper
-
 ### case and postcondition splits: ProofSaX
 
 Study: [proof sharding](../vl_paper_walkthrough/synthesizing_proofs_using_proof_sharding_20261012.md).

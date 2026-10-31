@@ -8,8 +8,6 @@ DeepSeek-Prover builds a large Lean 4 training corpus by translating informal co
 
 The pipeline has four stages: autoformalization, model scoring and hypothesis rejection, statement proving, and iterative enhancement (section 3, PDF page 3). A distinctive scalability device proves a statement and its negation concurrently, terminating when either succeeds. Lean 4 v4.7.0-rc2 is the verifier (footnote in section 3, PDF page 3).
 
-Inference: for VL, the transferable idea is a data loop in which natural-language requirements become Rust/Verus contracts, detected contradictions are rejected, verified proof bodies become training data, and the model is retrained on artifacts replayed by Verus. Passing the contradiction check does not establish that a contract is valid.
-
 ## technique 1: autoformalize natural-language problems
 
 What it is. DeepSeek-Prover converts an informal problem with answers into only the core Lean declaration. The authors initialize from DeepSeekMath-Base 7B and fine-tune on MMA, whose Lean 4 mathlib statements were back-translated into natural-language descriptions by GPT-4 (section 3.1, PDF page 4). The paper gives the prompt shape:
@@ -22,7 +20,7 @@ How to apply it. (1) Collect and clean a broad natural-language problem set. (2)
 
 Verus form. Inference: prompt a model to emit a Rust function signature plus `requires` and `ensures`, or a `spec fn` for pure mathematical content. Require the contract and executable skeleton separately so that generated prose cannot silently become an assumption. Run Verus immediately and retain the exact source and dependency revision. Lean notation and typeclasses do not carry over; Rust integer widths, ownership, and overflow behavior must be explicit.
 
-Evidence and failure. The source contains 869,659 natural-language problems; filtering yields 712,073 formal statements (sections 3.1–3.2, PDF pages 4–5). The paper's autoformalization can encode a different theorem. In a matrix determinant example, a universal hypothesis over all nonzero `a`, `b`, and `c` was inconsistent; the authors derive `False` by instantiating the hypothesis at two triples and simplify the determinants (case study 5.2, PDF page 9). Inference: compiling syntax does not establish that a generated VL contract matches the requirement.
+Evidence and failure. The source contains 869,659 natural-language problems; filtering yields 712,073 formal statements (sections 3.1–3.2, PDF pages 4–5). The paper's autoformalization can encode a different theorem. In a matrix determinant example, a universal hypothesis over all nonzero `a`, `b`, and `c` was inconsistent; the authors derive `False` by instantiating the hypothesis at two triples and simplify the determinants (case study 5.2, PDF page 9).
 
 ## technique 2: score statements and reject vacuous hypotheses
 
@@ -54,7 +52,7 @@ Evidence and limits. The authors write: “Each proof search stream attempts up 
 
 What it is. Valid theorem-proof pairs from one cycle fine-tune the same DeepSeek-Prover, which then generates better formal statements and proofs in the next cycle. The authors write: “This iterative process continues until no further gains are observed.” (section 3.4, PDF page 5). The model is DeepSeekMath-Base 7B with global batch size 512, learning rate 1 × 10−4, and 6,000 warmup steps (section 4.1, PDF page 6).
 
-How to apply it. (1) Generate and filter statements. (2) Generate proofs and verify them in Lean. (3) Fine-tune on the verified theorem-proof pairs. (4) Use the updated model for the next autoformalization and proof round. (5) Repeat until no further gains are observed (sections 3–3.4, PDF pages 3–6). Section 4.3.1 separately describes expert iteration for the dataset comparison in Table 2. Inference: a VL adaptation should use held-out obligations to measure progress between rounds.
+How to apply it. (1) Generate and filter statements. (2) Generate proofs and verify them in Lean. (3) Fine-tune on the verified theorem-proof pairs. (4) Use the updated model for the next autoformalization and proof round. (5) Repeat until no further gains are observed (sections 3–3.4, PDF pages 3–6). Section 4.3.1 separately describes expert iteration for the dataset comparison in Table 2.
 
 Evidence. At pass@128 on miniF2F-test, iteration 0 reaches 34.0%, then iterations 1–4 reach 39.3%, 41.4%, 45.1%, and 46.3% respectively (Table 4, PDF page 8). A model trained on 3.108B tokens of autoformalized statements reaches 42.6% miniF2F-test, versus 31.2% for 0.238B tokens of Mathlib data (Table 2, PDF page 7). Increasing synthetic data from 1,000 to 8,066,621 examples raises miniF2F-test pass@128 from 24.18% to 40.16% (Table 5, PDF page 8).
 
@@ -76,12 +74,6 @@ Lean's formal verifier checks the accepted theorem-proof pairs. The experiments 
 
 The paper fixes Mathlib commit 64528268b3c2cf578639bc479828882a9ecd3a82 (footnote in section 3.1, PDF page 4). Appendix A.4, PDF pages 16–17, lists the Lean imports and options used for verification. Inference: accepted proofs depend on the Lean environment; semantic fidelity additionally depends on interpretation and autoformalization of the source problem. Model-generated filtering labels select training examples but do not certify semantic fidelity. A Lean proof alone does not establish that the natural-language problem was formalized faithfully.
 
-Inference: VL should review generated `requires`/`ensures` against the intended requirements and use Verus to check proofs of those contracts. Contradiction checks and dual proving can expose some contract errors; they do not establish semantic fidelity. Preserve detected contradictions and negation proofs as diagnostics.
-
-## what VL should reuse and avoid redoing
-
-Inference: VL should reuse quality scoring as triage, contradiction-based hypothesis rejection, dual positive/negative search where a meaningful negation model exists, verified expert iteration, and pass@k reporting. It should not redo a Lean miniF2F benchmark or claim the 52.0% result transfers to Rust systems. The next useful VL measurement is a corpus of real Rust contracts with independently reviewed requirements, where the system reports how often it detects inconsistent preconditions before proof search and how much verified proof data each iteration adds.
-
 ## techniques for the catalog
 
 - autoformalization: translate natural-language problems into core formal declarations with a structured prompt
@@ -90,4 +82,3 @@ Inference: VL should reuse quality scoring as triage, contradiction-based hypoth
 - dual positive and negative proving: search for a statement and its negation concurrently to save work and augment data
 - iterative expert enhancement: fine-tune on verifier-accepted theorem-proof pairs and repeat until gains level off
 - pass@k proof evaluation: count a problem solved when one of k generated proofs passes Lean verification
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Successive iterations not only refine the model’s ability to handle complex proofs but also significantly increase the quality and quantity of the synthetic data produced."): read all 950 lines, including references and appendices; checked quotations, numbers, section and PDF page references, technique steps, tag, and arXiv link; corrected the Table 3 page reference, distinguished proposed steps from reported methods, removed unsupported procedural claims and risk ratings, and clarified limits of contradiction checks and cumulative results; did not reproduce experiments or execute Lean or Verus proofs.

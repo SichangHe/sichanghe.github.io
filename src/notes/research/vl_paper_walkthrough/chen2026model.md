@@ -77,8 +77,6 @@ Bad cases are classified by TLC outcome: compilation error, runtime error, or as
 
 Measured: TLC runnability, state similarity, average fix count, prompt-setting effects, transformation effects, and correlations with syntactic complexity. The main denominator is 400 retained Python programs, with three samples per setting and `k` in {1,2,3}. Inference: the trusted components include the GPT-4o-derived and human-refined oracle models; the deterministic source transformer; Python execution used to validate benchmark files; TLC and its semantics; model APIs and sampling; and the benchmark assertions. The paper's oracle process is described, but it does not provide a formal proof that every oracle exactly matches Python.
 
-Inference: the threat to a product that generates agent-written verified Rust is high for semantic translation and contract omission, but lower for syntax-only generation. The paper reports TLC-passing models with limited state similarity; Verus users therefore need reference tests, explicit contracts, and review of trusted assumptions. Existing work already covers theorem proving, retrieval-augmented proof generation, and natural-language-to-specification benchmarks (Section 2, pp. 2–3); VL should avoid rebuilding a generic benchmark without a Verus-specific gap.
-
 ## techniques for the catalog
 
 - benchmark filtering and execution prerequisite check — normalize source programs, remove unsupported dependencies and types, rewrite difficult constructs, then execute and retain only valid cases
@@ -88,4 +86,3 @@ Inference: the threat to a product that generates agent-written verified Rust is
 - state-set similarity metric — compare oracle and generated execution states with a variable-value matching threshold θ = 1.0
 - specification post-processing — add built-in imports, null values, and unchanged-variable assignments before running TLC
 - complexity-stratified failure analysis — correlate runnability with cyclomatic complexity, loop depth, variable count, and classify checker failures by compilation, runtime, or assertion cause
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Although we explicitly mentioned this in the prompt, LLMs still get lost in the middle of long contexts."): checked the full text, quotations, numbers, page and section references, and technique descriptions; corrected quotations and references, removed an unsupported solved-program count, and identified the inconsistent state-matching example and model-specific transformation results; did not inspect code, reproduce experiments, or independently verify oracle correctness.

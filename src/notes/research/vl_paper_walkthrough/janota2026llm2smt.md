@@ -81,8 +81,6 @@ Inference: In Verus, represent a solver result with a datatype and prove a model
 
 The benchmark measures solved-instance counts and timeout-bounded runtime, not a formal proof that the C++ solver is correct. The certification experiment reports no erroneous Lean proofs among 285 certified cases, but the table lists 2,244 `grind` failures, 1,314 timeouts, 240 heartbeat limits, and 86 stack overflows; it does not state a single certification-attempt denominator beyond those row counts. The paper itself concludes, “Proof-generation capabilities appeared to be rather hard to achieve for the agent” (Section 5, PDF p. 7). It trusts the SMT-LIB benchmarks, CaDiCaL and reference solver, C++ compiler, Lean kernel and tactics, generated tests, and the QF-UF semantic model.
 
-Inference: For VeruLaw, the strongest reusable lesson is the feedback loop: precise interfaces, differential tests, minimized counterexamples, resource limits, and proof certificates. Agent-written verified Rust remains threatened by omitted cases and unsound external assumptions; a fast checker can reject many errors but cannot establish that the contract is the product requirement. The paper already demonstrates LLM-generated reasoning-tool scaffolding and checker-backed proof export, so VL should build on those patterns rather than redo a generic “LLM writes a solver” demonstration.
-
 ## techniques for the catalog
 
 - specification-first agent scaffolding: constrain language, interfaces, builds, tests, and resource limits before coding
@@ -92,5 +90,3 @@ Inference: For VeruLaw, the strongest reusable lesson is the feedback loop: prec
 - model certification: re-encode SAT models and validate them with an independent solver
 - proof-certificate export: split theory lemmas from propositional closure and check each in a proof assistant
 - regression discipline: commit each fix with a reproducing test and bisect later changes
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

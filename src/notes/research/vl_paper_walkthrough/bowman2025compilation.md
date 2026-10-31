@@ -45,5 +45,3 @@ Inference: the paper offers a proof structure for compiler interoperability. It 
 - define AOT compilation as normalization under translation reductions, including irreducibility of the result
 - model JIT with a relation combining source execution, translation, and target execution
 - derive type preservation from subject reduction and compiler correctness and part of full abstraction conditionally on confluence
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Note that terms already in the heap are not translated, which corresponds to an assumption that the language memory models are identical."): checked all three pages, quotations, numbers, references, and technique steps; corrected the tag year, quotations, translation notation and normal-form condition, heap behavior, conjecture status, and full-abstraction limits; removed unsupported implementation advice; did not check external references, an implementation, or mechanized proofs.

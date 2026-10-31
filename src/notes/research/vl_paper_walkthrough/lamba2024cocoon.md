@@ -53,16 +53,6 @@ Servo. Wrap the HTTP response body in `Secret`, expose it through `Response::get
 
 Verus form. Inference: a similar retrofit could use a Verus wrapper with a confidentiality invariant and a proof that `get_body` returns data only under an origin predicate. A proof would need to justify the release policy and any unsafe operations or external calls it uses. Cocoon describes its own `declassify_transmute` implementation as safe because the wrapped and unwrapped values have the same layout (§5.2, PDF p.21).
 
-## evidence, trust, and VL implications
-
-Performance experiments ran on a 16-core Xeon Gold 5218 with 187 GB RAM (§5, PDF p.17). Spotify and Servo were compiled ten times; Servo tests ran twenty times. Table 2 reports compile times and run times with 95% confidence intervals, and executable sizes in bytes (PDF p.19). Spotify compile time was 14.395 ± 0.031 s original versus 14.395 ± 0.053 s with Cocoon; Servo was 312.579 ± 4.354 s versus 309.983 ± 4.262 s. Battleship, a smaller case, incurred 2.068 ± 0.003 s versus 2.321 ± 0.002 s. These are compile times, not run times. Spotify run-time measurements cover only configuration and authentication, with 100,000 trials per version (§5.1, PDF p.20); Servo run time covers its tests (§5.2, PDF p.21). The paper reports no added run-time overhead for these applications and Battleship, with unexplained speedups for Spotify and Battleship (§5.1, PDF p.20; §5.3, PDF p.23).
-
-The authors explicitly limit the security claim: “Cocoon’s general guarantee (which we have not proved) is termination-insensitive noninterference in the absence of declassify operations and unsafe Rust code (§3.2).” (§4.4, PDF p.16) The evaluation measures retrofit effort, declassification counts, compile time, run time, and executable size; it does not prove noninterference.
-
-The performance-focused evaluation wraps primary calculations in secret blocks for nine of ten Benchmarks Game programs. It excludes reverse-complement because it concurrently modifies a shared mutable buffer, and uses unsafe blocks to bypass macro transformation of external-crate calls (§5.4, PDF p.23). The paper reports compile-time overhead of 7–16% except for n-body at 53%, and describes run-time overhead as negligible or nonexistent (§5.4, PDF pp.23–24). Table 3 nevertheless lists k-nucleotide at 1.539 ± 0.007 s versus 1.559 ± 0.007 s and regex-redux at 0.957 ± 0.003 s versus 0.967 ± 0.003 s. Inference: those central estimates increase by about 1.3% and 1.0%, respectively, so the prose claim of less than 1% overhead should not be read as a bound on every measurement.
-
-Inference: for VL, Cocoon suggests explicit secrecy labels, constrained access, and audited declassification as design ideas for agent-written Rust that handles secrets. The paper provides no evidence about Verus or VL; proving that a proposed Verus integration enforces noninterference remains separate work.
-
 ## techniques for the catalog
 
 - labeled Secret wrapper — encode a secrecy policy in a Rust type and prevent ordinary access to the inner value
@@ -70,4 +60,3 @@ Inference: for VL, Cocoon suggests explicit secrecy labels, constrained access, 
 - macro-enforced effect system — use procedural expansions, traits, and auto traits to reject explicit and hidden side effects
 - declassification audit — make every intentional release an explicit operation at a trusted boundary
 - application retrofit — protect existing secrets by wrapping sources, mediating access, and changing only release points
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "It is generally unsafe to allow this generated code to execute; generating it in the nonexecuted version means it only aﬀects whether the code compiles."): checked the full paper, quotations, numbers, section and PDF page references, technique steps, limitations, and evaluation scope; corrected the unproved security claim, nightly requirement, block returns, call checking, calendar and validation descriptions, and performance interpretation; added panic handling and benchmark qualifications; did not check source code, reproduce experiments, or validate the proposed Verus/VL integration.

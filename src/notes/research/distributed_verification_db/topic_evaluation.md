@@ -8,7 +8,7 @@
     - number: 206 specs, 73 features per spec, 6,930 preference pairs
     - number: survey behind it covers 144 papers
     - how much was read: most of it read
-    - [source](https://doi.org/10.6084/m9.figshare.32311092); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://doi.org/10.6084/m9.figshare.32311092)
     - record id: `a-structured-benchmarking-dataset-2026`
 - AGENT LTL procedural compliance (2026)
     - title: AgentLTL: A Trace-Verification Framework for Measuring, Enforcing, and Training Procedural Compliance in Tool-Using LLM Agents
@@ -19,7 +19,7 @@
     - number: Production benchmark contains 360 instances; held-out splits are 83/100/39/39 instances (§4.3)
     - limits: Compliance is relative to authored constraints, typed tool signatures, trace logging, and regex/AST grounding extraction. Block-and-warn can alter trace length and strong models may regress; grounding is a sufficient evidence predicate, not complete semantic truth. Finetuning and held-out results cover seven models and the supplied templates rather than arbitrary agent tasks.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2607.02599.txt`
+    -
     - record id: `agent-ltl-procedural-compliance-2026`
 - Agentic Proving for Program Verification (Claude Code on CLEVER, Lean 4) (2026)
     - what: Runs Claude Opus 4.6 in Claude Code, with Lean tools, on the 161 CLEVER algorithm tasks. The agent writes formal specifications, implementations and Lean proofs. People manually review whether each specification matches the English task.
@@ -29,7 +29,7 @@
     - number: 154/161 succeed in at least one of two pipelines (95.7%); 154/157 after excluding 4
     - limits: Only proofs that Lean programs compute the right results. No proofs about distributed progress. The 98.1% headline number merges two runs. The authors review the reference-error count themselves. Human effort is not measured.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2605.23772v1); [notes: Agentic Proving for Program Verification](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Agentic Proving for Program Verification](../distributed_verification_review_b/deep_14_program_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2605.23772v1); [notes: Agentic Proving for Program Verification](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Agentic Proving for Program Verification](../distributed_verification_review_b/deep_14_program_agents.md)
     - record id: `agentic-proving-for-program-2026`
 - Agentproof (2026)
     - title: Agentproof: Static Verification of Agent Workflow Graphs
@@ -60,7 +60,7 @@
     - number: 58.6M tokens Gemini ablation; 5.32M tokens and about $40 per bug
     - limits: It only tests. It proves nothing about safety or progress. The notes' author did not independently confirm the bugs. Some attacks erase volatile state, so whether they reveal a defect depends on the crash-recovery contract. It needs human domain knowledge.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2605.29910); [notes: Agora: Toward Autonomous Bug Detection in Production-Level Consensus P](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Agora: Toward Autonomous Bug Detection in Production-Level Consensus P](../distributed_verification_review_b/deep_18_invariant_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2605.29910); [notes: Agora: Toward Autonomous Bug Detection in Production-Level Consensus P](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Agora: Toward Autonomous Bug Detection in Production-Level Consensus P](../distributed_verification_review_b/deep_18_invariant_agents.md)
     - record id: `agora-2026`
 - AlgoVeri (2026)
     - title: AlgoVeri: An Aligned Benchmark for Verified Code Generation on Classical Algorithms
@@ -71,7 +71,7 @@
     - number: Best (Gemini-3 Flash, 15 repair rounds): 40.3% Dafny, 24.7% Verus, 7.8% Lean
     - limits: The specs are given, not discovered. The filter is a judgment call. Only termination of sequential programs is covered. Repair budgets differ between rows. No expert effort is reported.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2602.09464); [notes: AlgoVeri: An Aligned Benchmark for Verified Code Generation on Classic](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal283/algoveri.reading.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2602.09464); [notes: AlgoVeri: An Aligned Benchmark for Verified Code Generation on Classic](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `algoveri-2026`
 - AlphaProof Nexus (2026)
     - title: Advancing Mathematics Research with AI-Driven Formal Proof Search
@@ -102,7 +102,7 @@
     - number: 95/100 gold solutions use cross-file declarations
     - limits: Evaluation pins Lean/Mathlib versions and blocks target files while exposing read-only context; agents have no internet and only APE-Harness services. Semantic correctness depends on majority-voted LLM judges, despite expert validation. Tasks are single-file modifications mined from commits, so multi-file engineering and other proof ecosystems are not covered. Fixed $3/100-turn budgets confound reasoning capability with cost efficiency; the paper itself finds model ranking is budget-sensitive.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal247/APE_Bench_Evaluating_Automated_Proof_Engineering_for_Formal_Math_Libraries.txt`
+    -
     - record id: `ape-bench-repository-scale-proof-engineering-2026`
 - ARTEMIS (2026)
     - title: Automating Requirements Formalization: Using LLMs and Low-Complexity Distinguishing Traces for Semantic Validation
@@ -113,7 +113,7 @@
     - number: 14.22% of requirements lacked a plausible generated spec
     - limits: Accuracy means that at least one candidate matches a vetted meaning. User effort is simulated by an expert formula. The atomic propositions (the basic true/false facts) are given. The conclusion says 10.38x but section 7.3 says 10.83x.
     - how much was read: most of it read
-    - [source](https://github.com/dmmendo/ARTEMIS); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_intent.md`; [notes: Automating Requirements Formalization: Using LLMs and Low-Complexity D](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
+    - [source](https://github.com/dmmendo/ARTEMIS); [notes: Automating Requirements Formalization: Using LLMs and Low-Complexity D](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `artemis-2026`
 - ASSESS (2026)
     - title: ASSESS: A Semantic and Structural Evaluation Framework for Statement Similarity
@@ -131,7 +131,7 @@
     - number: SpecGen rerun with GPT-3.5 Turbo: non-incorrect rates 58.6% (SpecGen) and 51.4% (conversational) versus 72.3% and 64.2% originally reported
     - limits: It works only for deterministic functions in Java with JML specs. The one-output test does not carry over to non-deterministic distributed protocols.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    -
     - record id: `assessing-postcondition-completeness-in-2026`
 - AutoRocq (2026)
     - title: Agentic Verification of Software Systems (AutoRocq)
@@ -153,7 +153,7 @@
     - number: Message types recovered 92.8% (client), 80.2% (server)
     - limits: It misses dependent constraints entirely. Repair guided by execution may end up matching a buggy server. FTP data channels are excluded. Counts in the tables are inconsistent. The tool release is only planned.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2511.17977v1); [notes: Synthesizing Precise Protocol Specs from Natural Language for Effectiv](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - [source](https://arxiv.org/abs/2511.17977v1); [notes: Synthesizing Precise Protocol Specs from Natural Language for Effectiv](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `autospec-protocol-2026`
 - Beyond Basic Specifications? A Systematic Study of Logical Constructs in LLM-based Specification Generation (2026)
     - what: Compares LLM-generated ACSL annotations for 49 C programs, checked with Frama-C, under four settings of allowed constructs: basic, proved lemmas, axioms, and all. Failing annotations are fixed by deleting or modifying them.
@@ -163,7 +163,7 @@
     - number: modification raises runtime generally over 100%
     - limits: The annotations come from the code, not from requirements. Axioms are assumed true and can make the proof unsound, and nothing audits them. NVP counts a program as solved if any run solved it, not pass@1 (success on the first try).
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2602.00715); [notes: Beyond Basic Specifications? A Systematic Study of Logical Constructs ](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - [source](https://arxiv.org/abs/2602.00715); [notes: Beyond Basic Specifications? A Systematic Study of Logical Constructs ](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `beyond-basic-specifications-a-2026`
 - Beyond Benchmarks / Vostd FVT (2026)
     - title: Beyond Benchmarks: A Case Study of LLM-Generated Verus Specification Failures on Asterinas Vostd
@@ -180,13 +180,13 @@
     - what: Introduces FPS, a Lean 4 metaprogramming DSL that synthesizes an answer term together with its correctness proof, and D-FPS, which synthesizes an answer proposition by forward implication and then verifies the reverse implication. Provides mathematical soundness/expressiveness arguments, 1,086 formal problems across three benchmarks, restricted-tactic answer comparison RPE, and evaluations of existing specialist provers and generalist LLMs. Crucially, D-FPS experiments run only forward reasoning plus RPE, not the framework’s complete backward soundness stage. FPS elaborates to a dependent function returning an answer/proof pair, with Answer and Proof goals; extract_answer/extract_proof recover terms and certificates. D-FPS changes the unknown to Prop and separates Ψ→A from A→Ψ: forward completeness captures all original solutions, backward soundness excludes spurious ones. Appendix E derives these conditional guarantees from completed proof terms and a correct canonical ground truth, rather than proving a new general-purpose solving algorithm. RPE accepts equality of generated/canonical answer objects only when a fixed tactic set proves it: rw_search, rfl, norm_num, aesop, ring_nf. Expert-in-loop benchmark construction checks contradictory hypotheses and known-answer provability, then performs dual expert review. Benchmarks and evaluations expose unsimplified or tautological answer terms that satisfy a specification while missing the desired answer representation.
     - limits: FPS soundness is relative to the formal specification, admitted axioms, Lean kernel and extraction/metaprogram implementation. The paper does not supply a machine-checked correctness proof of that implementation or a detailed adversarial proof-bypass audit. This reader did not execute it. Assumption 3.4 requires a solution whenever the hypotheses hold. D-FPS completeness/soundness additionally assumes the canonical ground truth is equivalent to the formal problem. The expressiveness argument for unique answers requires uniqueness; for solution sets it requires a globally complete characterization. None establishes fidelity to informal intent automatically. Only forward reasoning is run for D-FPS in Appendix I.1. Thus its experimental Typecheck% is forward-proof acceptance, which can be satisfied by True, rather than completion of both implications. RPE separately compares the resulting answer against the canonical one. Backward soundness follows after the backward proof is completed. Appendix E.4 also claims an exception for unique answers represented as a=â; this needs â to be independent of the original queried variable a, which the printed D-FPS dependency rules do not explicitly enforce. RPE is an operational criterion of bounded tactic provability, not complete semantic equality or a theorem that a representation is human-preferred. Mathematically equivalent but less simplified answers can be deliberately rejected. Success establishes formal equality under the chosen environment; failure does not establish mathematical inequality. No general theorem gives a universal human-alignment guarantee, transitivity, or freedom from canonical-answer shortcuts. The 300-example xVerify validation includes xFinder answer extraction and DeepSeek-V3 four-shot translation before symbolic checking. Thus the symbolic tactic phase is deterministic, but this evaluation is not an LLM-free semantic-fidelity test. Zero observed false positives is finite empirical evidence, not a universal bound. Benchmarks focus on canonical/closed-form answers: 387 FormalMath500, 375 MiniF2F-Solving, 324 PutnamBench-Solving. Geometry and Counting & Probability are excluded from FormalMath500; generic find-one witnesses and open conjectures remain future work. Existing public benchmark/model training exposure is not audited here. Experiments evaluate existing provers/prompts without task-specific training. Whole-proof, search, DSP+, FPS prompting and D-FPS prompting use different sample/search/token budgets, so cross-method rates are not equal-compute efficiency comparisons. Table 1 reports mean±std for selected methods but the supplied settings do not state the number of independent runs. Preference evidence uses two learned preference models on commonly solved problems with comments removed, not a direct blinded human study of full reasoning. Formal proof steps certify logical claims, not faithfulness of informal comments or the model’s hidden reasoning process. No distributed-system implementation, Verus/Rust proof, TLA+ model, concurrency/liveness task, or agent-generated systems specification is evaluated. Transfer to those topics is reader inference.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal313/beyond.reading.txt`
+    -
     - record id: `beyond-theorem-proving-formulation-2026`
 - BrokenMath: A Benchmark for Sycophancy in Theorem Proving with LLMs (2026)
     - what: Introduces BrokenMath, a 504-item benchmark of plausible false mathematics statements for testing whether LLMs challenge a user’s incorrect theorem request. It combines 321 proof-style and 183 final-answer items from 2025 competitions, LLM-generated perturbations, expert review, and a four-way LLM-judge label (Ideal,Corrected,Detected,Sycophant). Across eleven models,GPT-5 has the lowest reported sycophancy at29.0%,but still attempts false proofs often. Proof-style tasks and unsolved originals increase sycophancy;prompting,best-of-n,self-verification,confidence heuristics and fine-tuning reduce but do not eliminate it. Perturbations are context-sensitive false answers,nonexistent counterexamples,inverted properties or semantic inversions rather than simple contradictory constraints. Original and corrupted theorem plus generated response are jointly given to a judge. Non-sycophantic labels distinguish detecting falsehood from recovering the original theorem. Utility uses parsed answers or OPC-R1-8B proof judging. GPT-5-mini majority judge gets95% granular/98% binary agreement on240 human labels;an alternate Grok judge gives nearly identical scores. Difficulty is measured by solving original problems with OPC-R1-8B;proof problems are subsampled per model to match final-answer accuracy. Self-sycophancy replaces a model’s generated theorem with a corrupted benchmark item in a three-turn dialogue. Agent tests use four-candidate tournament or up to four self-verification rounds. Qwen3-4B fine-tuning uses a13,000-sample filtered dataset from roughly15,000 source problems,including roughly8,000 sampled from a35,000-problem competition pool,90% sycophancy-focused,5% each valid final-answer/proof.
     - limits: The benchmark’s falsehood and original correctness rely on human-curated competition problems,LLM perturbations and expert annotation. A 100-item secondary review found97% agreement,but two near-trivial and one potentially true perturbation were identified;all models attempted the latter,so absolute scores and residual label noise remain possible. The main judge is an LLM. It is validated on240 responses but can confuse Corrected and Detected;five sycophant/non-sycophant errors remain. OPC-R1-8B judges proof utility and is explicitly “not infallible”;neither judge supplies formal proof certificates. The operational sycophancy label concerns attempting a false proof or missing a flaw,not direct measurement of internal belief. §4.4 finds97.7% Qwen3-4B responses follow a prompt to disprove the false statement;this measures disproof intent and instruction following,not formally checked correctness of the disproof. The authors infer sycophancy from the prompt contrast. Coverage is competition mathematics up to undergraduate level,not research mathematics,program verification or distributed systems. Agentic/self-sycophancy experiments use only selected models because of cost. Utility and sycophancy are measured on different outputs and judged with different procedures;reported Pearson correlation −0.65 is observational. Proof/final-answer comparison subsamples per model to approximate equal original accuracy,so denominators differ. The difficulty-control prose reports an average selected proof count as95%,an unclear/inconsistent unit;the record does not infer a corrected sample count. Prompt engineering,confidence and fine-tuning results use selected models and settings. Black-box confidence AUC reaches0.75 at best;white-box Qwen3-4B metrics AUC0.61–0.66. Fine-tuning two epochs on four H200s changes Qwen3-4B sycophancy55.6→51.0% and utility33.4→37.9%,not elimination. No external artifact or API output was rerun.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal296/brokenmath.reading.txt`
+    -
     - record id: `brokenmath-a-benchmark-for-2026`
 - Can Code Specify a System Precisely Enough to Formally Verify It? (2026)
     - what: Audits a deployed restaurant point-of-sale payment workflow (register, payment terminal, Finix backend). The authors built TLA+ models with Claude agents under their supervision. They also compared LLMs generating specifications from the TypeScript source in three forms: library-based JavaScript, a bare JavaScript next-function, and TLA+.
@@ -196,7 +196,7 @@
     - number: 105 generations (7 models x 3 contracts x 5), each replayed on 101 observed transition windows
     - limits: Every checked property is a safety invariant (a fact true in every reachable state) on finite, simplified models, not on all executions of the TypeScript. Timeout liveness is not checked. The model and the emulator shared a wrong reading of how Finix responds to a duplicate key. There is no mechanical proof that code matches model. Crashes and power loss remain accepted risks.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2607.05076); [notes: Can Code Specify a System Precisely Enough to Formally Verify It?](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Can Code Specify a System Precisely Enough to Formally Verify It?](../distributed_verification_review_b/deep_14_program_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gaps.md`
+    - [source](https://arxiv.org/abs/2607.05076); [notes: Can Code Specify a System Precisely Enough to Formally Verify It?](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Can Code Specify a System Precisely Enough to Formally Verify It?](../distributed_verification_review_b/deep_14_program_agents.md)
     - record id: `can-code-specify-a-2026`
 - Can LLMs Reason Like Automated Theorem Provers for Rust Verification? VCoT-Bench: Evaluating via Verification Chain of Thought (2026)
     - what: Introduces VCoT-Lift, which transforms low-level Z3 proof traces into explicit Verus-level proof steps, and VCoT-Bench, 1,988 completion tasks with semantic proof holes. It evaluates whether LLMs reconstruct missing invariant, assertion and lemma reasoning, rather than merely causing a verifier to pass. The four-stage pipeline uses a global proof transformer, rule-specific checker agents for high-level Z3 rules, a pruner for trivial/redundant steps, and a repair agent that compiles/checks transformed Verus proofs. A 36-rule Z3 hierarchy groups high/medium/low importance. Checker mappings must explicitly associate Z3 steps with Verus steps; a transformer-checker loop keeps global context while applying partial checks. VCoT-Bench derives 1,159 ratio tasks, 439 proof-type tasks and 390 location tasks from 150 verified Verus programs. Overall accuracy weights semantic and syntactic correctness (1, 0.5, 0.25, 0 for levels 3 through 0). GPT-5 mini is selected as semantic judge after 100-task, eight-judge validation.
@@ -206,7 +206,7 @@
     - number: at 100% block removal Claude Sonnet 4.5 17.22%, Qwen 3 think 0.66%
     - limits: The benchmark relies on Z3 proof traces, Verus syntax and a specialized GPT-5-mini semantic judge, so semantic accuracy is not itself a verifier theorem. The checker assesses only selected high-level rules; low-level steps are abstracted/pruned as trivial or redundant. Models are zero-shot and outputs are judged on completion tasks derived from existing verified programs, not independently generated distributed protocols. Context removal can overrepresent small one-block programs at 100%. The study reports current-model fragility and does not show that VCoT-Lift guarantees complete semantic equivalence for arbitrary proofs. Overall Acc gives partial credit (0.5 for semantically correct but syntactically invalid; 0.25 for syntactically valid but semantically incorrect); it is not the fraction of fully correct verified completions.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal254/Can_LLMs_Reason_Like_Automated_Theorem_Provers_for_Rust_Verification_VCoT_Bench_Evaluating.txt`
+    -
     - record id: `can-llms-reason-like-2026`
 - Can LLMs Write Correct TLA+ Specifications? Evaluating Natural-Language-to-TLA+ Generation (2026)
     - what: It evaluates how well LLMs generate TLA+ from comments in community examples. It uses syntax checks and TLC model-checker runs on a corpus of 205 specifications.
@@ -216,7 +216,7 @@
     - number: 2,600 open-model runs plus 130 proprietary runs
     - limits: A passing TLC run only checks the configuration it was given. Zero scores include infrastructure failures. Each pair is run once per strategy. The notes find a contradiction inside the paper's discussion of model size.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2606.05792); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; [notes: Natural language to temporal logic and TLA+](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Two further TLA+ evaluation papers already in collection](../distributed_verification_review_b/deep_7_evaluation.md)
+    - [source](https://arxiv.org/abs/2606.05792); [notes: Natural language to temporal logic and TLA+](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Two further TLA+ evaluation papers already in collection](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `can-llms-write-correct-2026`
 - ClarifySTL (2026)
     - title: ClarifySTL: An Interactive LLM Agent Framework for STL Transformation through Requirements Clarification
@@ -227,7 +227,7 @@
     - number: +13.92% formula accuracy over the prior best on DeepSTL
     - limits: Formula accuracy is measured by how many tokens match, not by exact equivalence. Tested only with experienced users. No safety proof for cyber-physical systems. No public artifact.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2605.01209); [notes: ClarifySTL: An Interactive LLM Agent Framework for STL Transformation ](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`; [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
+    - [source](https://arxiv.org/abs/2605.01209); [notes: ClarifySTL: An Interactive LLM Agent Framework for STL Transformation ](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
     - record id: `clarifystl-2026`
 - Cobblestone (2026)
     - title: Cobblestone: A Divide-and-Conquer Approach for Automating Formal Verification
@@ -238,7 +238,7 @@
     - number: Baseline/proposed on CoqGym: Proverbot9001 17%, CoqHammer 30%, CoT 25%, Cobblestone 48%; Wigderson: 10%, 27%, 19%, 38%
     - limits: It was tested on individual existing theorems (CoqGym, including Verdi-Raft), which were public before the GPT-4 cutoff. There is no aggregate for Verdi alone.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2410.19940); [notes: Cobblestone: distributed-proof lemmas, not an agent-built Raft impleme](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2410.19940.txt`
+    - [source](https://arxiv.org/abs/2410.19940); [notes: Cobblestone: distributed-proof lemmas, not an agent-built Raft impleme](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `cobblestone-2026`
 - CodeSpecBench (2026)
     - title: CodeSpecBench: Benchmarking LLMs for Executable Behavioral Specification Generation
@@ -249,7 +249,7 @@
     - number: best strict pass: 47.0% (GPT-5-mini) on function tasks, 20.2% (Claude-4.5-Sonnet) on repository; Appendix table says 21.0
     - limits: It uses finite tests only. Localization and tests are supplied. The repository figures are inconsistent across tables. The comparison of solution generation mixes in numbers from model reports.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2604.12268); [notes: CodeSpecBench: Benchmarking LLMs for Executable Behavioral Specificati](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2604.12268.txt`
+    - [source](https://arxiv.org/abs/2604.12268); [notes: CodeSpecBench: Benchmarking LLMs for Executable Behavioral Specificati](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `codespecbench-2026`
 - COINS specification evaluation (2026)
     - title: How Powerful Are LLMs in Generating Formal Program Specifications?
@@ -260,7 +260,7 @@
     - number: >100,000 proof attempts
     - limits: Specifications are functional input/output Props and intentionally omit exceptions, memory layout and other operational artifacts. The 164 human references were manually reviewed but are not absolute ground truth. Positive evidence is sound only because Rocq checks proofs; rejection of negatives is incomplete because an LLM may fail to find an available proof. Candidates can still miss behaviors outside the test suite. Scope is 164 HumanEval tasks, Python descriptions/implementations and Rocq; scaling requires substantial annotation and compute (over 100,000 proof attempts).
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal255/How_Powerful_are_LLMs_in_Generating_Formal_Program_Specifications_.txt`
+    -
     - record id: `coins-specification-evaluation-2026`
 - CrossCheck (2026)
     - title: CrossCheck: Input Validation for WAN Control Systems
@@ -279,7 +279,7 @@
     - number: 782 Dafny programs
     - limits: Annotation completion is a narrower task than intent-to-spec and has no distributed liveness by itself.
     - how much was read: most of it read
-    - [source](https://github.com/sun-wendy/DafnyBench); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://github.com/sun-wendy/DafnyBench)
     - record id: `dafnybench-2026`
 - Deductive Verification of Temporal Collisions in Distributed Message Brokers (2026)
     - what: The authors hand-write TLA+ templates for Kafka, RabbitMQ, NATS JetStream and Pulsar consumers. They use TLC to check for duplicate execution after a crash that happens before acknowledgment. Six Docker experiments cross-check the results on real consumers.
@@ -295,7 +295,7 @@
     - what: Introduces DRPBench, a static fine-grained data-race prediction benchmark for concurrent-code comprehension: 1,003 SV-Benchmarks C/C++ programs, 226 racing and 777 race-free, with 557 manually annotated variable/line-level races. Evaluates six LLM families in standard/reasoning/agentic configurations (15 LLM configurations) on a balanced 200-program DRPBench-Lite subset, plus Deagle and UGemCutter. Gemini-3-thinking reaches F1 74.89%; Llama 3 70B reaches 8.80%. Defines a race as a variable and exact conflicting access-line pair, parses JSON predictions as sets, and reports precision/recall/F1. Annotation combines three human annotators, o3-mini, GPT-4o and Deagle, two senior meta-reviewers, and consensus. DRPBench-Lite stratifies 100 racing and 100 race-free programs. Prompts provide definitions of mutexes, semaphores, atomics, condition variables and thread lifecycle. Ablations compare domain-knowledge prompts; tables compare reasoning and OpenHands agentic scaffolds against standard models. Qualitative cases identify shared-variable distraction and synchronization-logic myopia.
     - limits: The corpus is isolated pthread-based C/C++ and assumes sequential consistency; races only under weak memory models are excluded. Ground truth is an expert/LLM-assisted annotation process, not a machine-checked universal oracle. The reported LLM evaluation and error analysis use DRPBench-Lite (100 unique racing plus 100 race-free programs), not all 1,003 programs. The full corpus statistics and 557 race annotations should not be read as the test-set size. A true positive requires exact shared-variable name and exact pair of conflicting line numbers; this strict score measures localization under the supplied race definition, not general concurrent-code correctness, bug severity, or absence-of-race proof. Six base LLMs yield 15 standard/reasoning/agentic configurations; Deagle and UGemCutter are separate symbolic baselines. OpenHands agentic runs are only for Gemini, Claude and DeepSeek, with default decoding/agent configurations; other models lack agentic results. Annotation uses LLM tools (o3-mini and GPT-4o) alongside humans and Deagle, then two expert meta-reviewers; source SV-COMP labels and the paper's manual review are not independently reproduced by reader. The benchmark authors report >500 person-hours. No quantitative uncertainty bars or statistical tests are reported for the main F1 comparisons; no external artifact execution or independent annotation was performed by reader. LLM outputs remain candidates and cannot prove race absence. Appendix says this version covers isolated pthread C/C++ and SC only; real multi-component software, Java/Go, and weak-memory-only races are future scope. Symbolic-tool limitations and timeout/heuristic effects complicate direct superiority comparisons.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal283/drpbench.reading.txt`
+    -
     - record id: `drpbench-evaluating-llms-in-2026`
 - Expecto (2026)
     - title: Expecto: Extracting Formal Specifications from Natural Language Description for Trustworthy Oracles
@@ -314,7 +314,7 @@
     - number: 4,833 findings, including 398 mechanically certified issues
     - limits: The benchmarks are mathematical, not software. Duplicates across forks mean the counts are not the number of unique errors.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2606.29493); [notes: Faults in Our Formal Benchmarking: Dataset Defects and Evaluation Fail](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal293/faults.reading.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2606.29493); [notes: Faults in Our Formal Benchmarking: Dataset Defects and Evaluation Fail](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `faults-in-our-formal-2026`
 - Feedback & Synthesis in LLM-Assisted Termination Proofs (2026)
     - what: LLMs propose decreasing measures (quantities that shrink at each step, proving termination) for ACL2s functions. ACL2s checks them and returns errors and counterexamples. It splits failures into loops (termination cores) and combines the subproofs.
@@ -324,7 +324,7 @@
     - number: gpt-oss with feedback solved 70% of course and 93% of competition problems vs built-in ACL2s 65% and 63%
     - limits: It covers termination of functional code, not progress of distributed systems. The 39% compares the integrated search with the best LLM alone. The corpus is small.
     - how much was read: most of it read
-    - [source](https://drops.dagstuhl.de/storage/00lipics/lipics-vol382-itp2026/LIPIcs.ITP.2026.22/LIPIcs.ITP.2026.22.pdf); [notes: Feedback & Synthesis in LLM-Assisted Termination Proofs](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal254/Feedback_Synthesis_in_LLM_Assisted_Termination_Proofs_.txt`
+    - [source](https://drops.dagstuhl.de/storage/00lipics/lipics-vol382-itp2026/LIPIcs.ITP.2026.22/LIPIcs.ITP.2026.22.pdf); [notes: Feedback & Synthesis in LLM-Assisted Termination Proofs](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `feedback-synthesis-in-llm-2026`
 - Fewer Assumptions by Design: A Reusable Skill for LLM-Assisted Verus Verification (2026)
     - what: Verifies an index-based doubly linked list in Verus by hand, then with a Claude agent. It then packages a 'skill' (SKILL.md, templates, and a list of pitfalls) that tells the agent how to work. The goal is to use as few assume statements (unproven hypotheses) and axiomatic lemmas as possible.
@@ -334,13 +334,13 @@
     - number: Claude-assisted run's assume count fell from 75 to 11 (45 verified, 0 errors)
     - limits: It covers one data structure only. The evaluation is a rubric scored by the authors over 6 runs with Claude 4.6/4.8. No success rate is given.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2609.34886); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2609.34886)
     - record id: `fewer-assumptions-by-design-2026`
 - FormalJudge: A Neuro-Symbolic Paradigm for Agentic Oversight (2026)
     - what: Post-hoc agent-trajectory oversight separates intent decomposition,atomic-fact extraction,formal predicate generation and Dafny/Z3 checking. Structured logs are parsed directly where possible;LLMs extract semantic facts and synthesize the constraints. Authors report improved agreement with an LLM-ensemble reference,including deception classification and feedback-based behavioral refinement. Formal guarantees are conditional on faithful facts and specifications,not proofs about an agent policy or natural-language intent. Provides explicit atomic taxonomies and composition formulas for file-grounded deception,tool safety and constraint compliance;localized context extraction separates tool errors,disclosure,document access and fabrication. Adds a trusted-trace evidence-manipulation boundary test,manual integrity atoms,latency breakdown,qualitative-intent proxy examples,multi-turn stress tests and action/task-level evaluation. Iterative feedback sends generated Dafny constraints and failed-predicate explanations back to an agent. Detailed appendices show which observed facts are composed and reveal semantic/specification mismatches that solver success alone cannot catch.
     - limits: §3.4 explicitly requires faithful extracted facts and a Dafny specification capturing intended constraints. Errors can enter decomposition, semantic extraction and synthesis. The solver does not verify the LLM, policy, truth of observations or intended meaning. No theorem proves end-to-end soundness of this oversight architecture. Observed trajectories and trusted tool-observation logs must retain provenance. Agent-controlled files and self-reports may be fabricated. Appendix A.3 assumes attackers cannot overwrite the trusted trace; without external provenance a trajectory-only checker cannot recover rewritten original events. Reference labels in §4.1 are majority judgments from GPT-5.2, Gemini-3.0-Pro and Claude-4.5-Opus across three rounds. Metrics measure agreement with that ensemble, rather than independently established ground truth. Opus is also the main judge and specification compiler; correlated model errors remain possible. Seven main agents: GPT-4o, Gemini-3.0-Pro, Claude-4.5-Sonnet, Qwen-2.5 7B/14B/32B/72B. Table 1 uses an Opus judge. Extended robustness uses eight judges including GPT-5.2, Grok-3, Gemini-2.5-Pro, Sonnet and four Qwen sizes. The main five-judge description and extended eight-judge analysis describe different settings. Full benchmark sizes are 2,000 Agent-SafetyBench cases, 400 VitaBench tasks and 200 Deceivers tasks. Vita evaluation actually uses a 100-task split; robustness/cross-verifier analysis uses 30 tasks and 164 tool calls. Deceivers weak-to-strong analysis uses 200 deceptive plus 200 nondeceptive trajectories per agent size. Full benchmark size is not every experiment’s denominator. Agent-SafetyBench reference protocol in Appendix D combines fulfillable/risk annotations with actual actions and uses the ensemble for ambiguity, unlike the uniformly ensemble-based wording in §4.1. Deceivers design labels provide a consistency check; broken tools do not automatically make every resulting trajectory dishonest. Some atomic questions remain substantial semantic judgments: whether a file contains requested information, an answer ignores content, or fabrication follows disclosure. Boolean answers do not make these judgments objective. Qualitative intent uses observable proxies rather than an exact semantics of politeness or manipulation. Agent-SafetyBench refinement uses Opus for decomposition/specification synthesis, including small-agent experiments. For the 7B-judge versus 72B-agent claim, the exact allocation of extraction/synthesis roles matters; judge size alone does not specify the capacity of the complete pipeline. Verification audits completed traces. Refinement regenerates responses or attempts and cannot undo actions already executed. X-Teaming and OpenClaw additions measure unsafe-trace detection, not online prevention or reduction in the native attack success rate. Dafny/Z3 checking can time out or fail without proving the negation. The paper models V as binary but does not fully specify timeout, unknown or syntax-error handling. The 6.4% backend error share classifies an unspecified sample of errors; it does not establish logical unsoundness in Z3. No independent artifact reproduction, compiler/version audit, complete human-label audit or systematic correctness proof of generated checkers is supplied. Attribution to the solver alone is limited when decomposition, contexts, prompts and generated code differ.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal318/judge.reading.txt`
+    -
     - record id: `formaljudge-a-neuro-symbolic-2026`
 - FormaLLM (2026)
     - title: Automating TLA+ Model Synthesis with Large Language Models and Formal Verification Pipelines (WIP)
@@ -370,7 +370,7 @@
     - number: semicolon injection occurred in 12.6% of generated files; backticks in 5.9%; 234+ missing module terminators were reported
     - limits: The poster is based on a separate published ICSOFT 2026 paper and gives an abstracted poster-level account; its evaluation uses finite TLC configurations and does not establish deployed-code correctness. The dataset is drawn from the TLA+ Examples repository, so its task mix is not a random sample of industrial requirements.
     - how much was read: most of it read
-    - [source](https://doi.org/10.6084/m9.figshare.31988706.v1); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://doi.org/10.6084/m9.figshare.31988706.v1)
     - record id: `gsirs-tla-llm-poster-2026`
 - HarnessLLM (2026)
     - title: HarnessLLM: Rust Verification Harness Generation with Large Language Models
@@ -414,7 +414,7 @@
     - number: Artifacts from 622 to 3,924 lines of code plus proof, 25-128 lemmas
     - limits: The specification is supplied. Safety holds only within the supplied model, and there is no liveness. The comparison of human effort is not a controlled experiment.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2605.23109); [notes: IDS: changing code and abstractions makes otherwise hard proofs tracta](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`
+    - [source](https://arxiv.org/abs/2605.23109); [notes: IDS: changing code and abstractions makes otherwise hard proofs tracta](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `ids-2026`
 - Intent Formalization (2026)
     - title: Intent Formalization: A Grand Challenge for Reliable Coding in the Age of AI Agents
@@ -422,7 +422,7 @@
     - number: TiCoder study with 15 professional developers: correct evaluation of AI code from 40% to 84%; cognitive load dropped (p = 0.007)
     - limits: It is not a controlled benchmark.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2603.17150); [notes: Intent formalization: why one number is insufficient](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://arxiv.org/abs/2603.17150); [notes: Intent formalization: why one number is insufficient](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `intent-formalization-2026`
 - InvariantEval (2026)
     - title: Smart Contract Invariants Protect Against Cybercriminals
@@ -476,7 +476,7 @@
     - number: Ablation CortenMM 52 tasks full, 10 without code metadata, 7 without lemma knowledge, 22 without Verus knowledge
     - limits: It measures task completion in existing systems. It has no evaluation of distributed liveness.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2605.03822); [notes: Repository retrieval and multi-function verification](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2605.03822.txt`; [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
+    - [source](https://arxiv.org/abs/2605.03822); [notes: Repository retrieval and multi-function verification](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
     - record id: `kverus-2026`
 - Lean4Agent FormalAgentLib and LeanEvolve (2026)
     - title: Lean4Agent: Formal Modeling and Verification for Agent Workflow and Trajectory
@@ -487,7 +487,7 @@
     - number: formal-guided evolution solves 7.00 points more initially failed ELAIP cases than pure-LLM evolve
     - limits: Layer-2 soundness depends on LLMExec: each step satisfying predicates is assumed to produce postconditions; this abstracts away failures of long-horizon black-box LLM behavior. Custom predicates may have only name existence and natural-language explanations, and trajectory checks can rely on an LLM judge. Evaluation uses small random subsets (50 SWE and 100 ELAIP), 40 generated workflows and contemporary model versions, so generalization and causal effects are limited. The paper is a preprint and reports no mechanized verification of the LLM internals or distributed-system protocols.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2606.06523); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2606.06523.txt`; [notes: ## Lean4Agent (2026)](claude_readings.md)
+    - [source](https://arxiv.org/abs/2606.06523); [notes: ## Lean4Agent (2026)](claude_readings.md)
     - record id: `lean4agent-formalagentlib-and-leanevolve-2026`
 - LeetProof (2026)
     - title: Certified Program Synthesis with a Multi-modal Verifier
@@ -497,7 +497,7 @@
     - number: Verina issues took 9 minutes of property-based testing vs about 8 hours of LLM equivalence checking
     - limits: It synthesizes algorithms with simple types. It has no distributed models and no liveness.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2604.16584); [notes: Dafny, C verification, and the specification-intent gap](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2604.16584); [notes: Dafny, C verification, and the specification-intent gap](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `leetproof-2026`
 - LemmaNet (2026)
     - title: Automated Lemma Discovery in Agentic Program Verification
@@ -508,7 +508,7 @@
     - number: 78 unique successes; 61/69 helper-lemma proofs use BRIDGE strategy
     - limits: The Linux scheduler/memory, Contiki and X.509 items are single verification conditions, not whole kernels.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2603.22114); [notes: Dafny, C verification, and the specification-intent gap](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2603.22114.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2603.22114); [notes: Dafny, C verification, and the specification-intent gap](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `lemmanet-2026`
 - Liveness certificates (2026)
     - title: Liveness Proofs for Hardware Model Checking
@@ -519,7 +519,7 @@
     - number: older Sindoni pipeline: 16 optimized and 13 unoptimized rLive instances not certified; overhead 309%/469% over certified instances only
     - limits: It covers finite-state hardware models. The soundness proof is mathematical, not mechanized. The aigunfair converter and the SAT checker are trusted.
     - how much was read: most of it read
-    - [source](https://link.springer.com/content/pdf/10.1007/978-3-032-32537-2_1.pdf); [notes: Liveness Proofs for Hardware Model Checking](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/Liveness_Proofs_for_Hardware_Model_Checking_.txt`
+    - [source](https://link.springer.com/content/pdf/10.1007/978-3-032-32537-2_1.pdf); [notes: Liveness Proofs for Hardware Model Checking](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `liveness-certificates-2026`
 - LLM ACSL evaluation (2026)
     - title: Evaluating LLM-Generated ACSL Annotations for Formal Verification
@@ -530,7 +530,7 @@
     - number: DeepSeek mean success about 93.8–94.9%
     - limits: One-shot default decoding is used without iterative feedback or fine-tuning. The filtered dataset excludes 151 empty/incomplete files and focuses on C programs in CASP; proof success can overstate usefulness because annotations may be trivially true or overly conservative. Results vary substantially by solver and do not establish generalization beyond this benchmark.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2602.13851); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2602.13851.txt`; [notes: ## ACSL annotation evaluation (2026)](claude_readings.md)
+    - [source](https://arxiv.org/abs/2602.13851); [notes: ## ACSL annotation evaluation (2026)](claude_readings.md)
     - record id: `llm-acsl-evaluation-2026`
 - LORIS loop invariant synthesis (2026)
     - title: Guiding LLM-based Loop Invariant Synthesis via Feedback on Local Reasoning Errors
@@ -541,7 +541,7 @@
     - number: successful GPT-4.1 run costs about $0.038 on average; sampled auto-formalization evaluates 108 proof steps
     - limits: Results use single-loop, single-function C programs filtered from established suites; floating-point cases unsupported by the chosen Frama-C version were removed. Each method receives five independent runs, a 600-second limit, and 150,000 tokens per run; success means the verifier accepts the generated invariant. Feedback quality depends on LLM formalization of reasoning steps and solver-supported first-order implications, so it does not establish correctness of arbitrary natural-language reasoning outside the checked obligations.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2605.17914); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2605.17914.txt`; [notes: LORIS, loop invariants from local-reasoning feedback (2026)](claude_readings.md)
+    - [source](https://arxiv.org/abs/2605.17914); [notes: LORIS, loop invariants from local-reasoning feedback (2026)](claude_readings.md)
     - record id: `loris-loop-invariant-synthesis-2026`
 - miniF2F-Dafny auto-active proving (2026)
     - title: MINI F2F-DAFNY: LLM-Guided Mathematical Theorem Proving via Auto-Active Verification
@@ -552,7 +552,7 @@
     - number: 62.7% Claude Opus pass@4
     - limits: The translation is human-led and the mathematical support is an intentionally small axiomatized library rather than a foundational Mathlib formalization; opaque transcendental and number-theoretic properties remain trusted. Results use Dafny 4.11/Z3, 30-second attempts, eight off-the-shelf models, and no fine-tuning. Verification is brittle to assertion order/calc organization; models often confuse Dafny syntax with Lean and fail when required facts are absent. Pass rates measure generated Dafny code accepted by the validator, not independent proof objects.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/icml_text/miniF2F_Dafny_LLM_Guided_Mathematical_Theorem_Proving_via_Auto_Active_Verification.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/miniF2F_Dafny_LLM_Guided_Mathematical_Theorem_Proving_via_Auto_Active_Verification.txt`
+    -
     - record id: `minif2f-dafny-auto-active-proving-2026`
 - ModelWisdom TLA+ toolkit (2026)
     - title: ModelWisdom: An Integrated Toolkit for TLA+ Model Visualization, Digest and Repair
@@ -563,7 +563,7 @@
     - number: no controlled accuracy, runtime, or benchmark evaluation is reported
     - limits: The toolkit is an interpretability and repair aid around TLC, not a replacement for TLC’s correctness checking; LLM explanations and fixes require human review. Demonstrations use the CoffeeCan example and a deliberately altered postcondition, with no quantitative benchmark of repair accuracy or scalability. Future work targets Promela, Alloy, NuSMV, UPPAAL, and other languages.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2602.12058); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2602.12058.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
+    - [source](https://arxiv.org/abs/2602.12058)
     - record id: `modelwisdom-tla-toolkit-2026`
 - MutDafny (2026)
     - title: MutDafny: A Mutation-Based Approach to Assess Dafny Specifications
@@ -574,7 +574,7 @@
     - number: manual audit of 284 survivors in 24 files: 77 exposed five weak specs, 157 equivalent, 50 inconclusive; about 8 person-hours
     - limits: A surviving mutant is not automatically a spec error. A killed mutant may only mean the proof annotations no longer suffice. It did not evaluate specs about time.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2511.15403v2); [notes: Testing strength, mutations, and vacuity](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: MutDafny: mutation survival needs adjudication](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2511.15403v2); [notes: Testing strength, mutations, and vacuity](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: MutDafny: mutation survival needs adjudication](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `mutdafny-2026`
 - Neuro-formal verification (2026)
     - title: Neuro-Formal Verification: Agentic Language-Agnostic Formal Program Reasoning
@@ -585,7 +585,7 @@
     - number: CBMC refuted 65/103 buggy, 7 false: 63% recall, 90% precision
     - limits: NFV optimizes empirical accuracy rather than end-to-end soundness because informal environment assumptions cannot be fully guaranteed. Results assume docstrings capture intended properties; unstated preconditions caused all six false refutations. Dafny modeling of libraries and Python semantics is incomplete; CBMC is bounded and checks C translation rather than original Python.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2608.21516); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2608.21516.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://arxiv.org/abs/2608.21516)
     - record id: `neuro-formal-verification-2026`
 - Neurosymbolic VLM clinical audit (2026)
     - title: Toward Guarantees for Clinical Reasoning in Vision Language Models via Formal Verification
@@ -596,7 +596,7 @@
     - number: on NIH-CXR14, filtering raises MedGemma-27B soundness 0.9505→0.9780 and lowers completeness 0.9488→0.9460
     - limits: The SMT guarantee is conditional on faithful autoformalization, a clinician-audited and exhaustive knowledge base, and the VLM’s visual Findings. The evaluation uses a closed-world assumption in which unmentioned findings are absent; the authors manually spot-check 100 text-to-SMT translations but do not establish unconditional clinical correctness or replace clinician review.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2602.24111.txt`
+    -
     - record id: `neurosymbolic-vlm-clinical-audit-2026`
 - NTP4VC (2026)
     - title: Neural Theorem Proving for Verification Conditions: A Real-World Benchmark
@@ -618,7 +618,7 @@
     - number: On B4, iterative refinement of informal proofs finished in 5 rounds; independent sampling failed in 10 rounds
     - limits: Formal-checking trust is relative to Lean,the exact formal statement,imported libraries and harness. Putnam uses Seed-Prover1.5 formal statements and disabled online API search,but existing library retrieval is enabled. No artifact or proof certificate was independently checked by this reader;supplied AppendixA statement ends by sorry and AppendixB lemma has no proof body. Twelve Putnam problems plus selected six-problem ablations are small evaluations. No multiple-run variance,random seeds,confidence intervals or standardized hardware/API latency accounting is provided. Inter-system timing/line comparisons are reported values,not demonstrated matched-compute causal comparisons. Default budget approximately$50/problem is raised to$1000 A5 and$300 B6;authors call these relative effort rather than exact accounting. Main headline is success under unequal per-problem resources,not fixed-cost12/12. Sequential execution avoids parallel search but does not imply uniform cost or faster overall solving. The research case is collaborative:one mathematician,one Lean expert and agent use human intent review,inline hints,priorities,type conversions and blueprint edits. >8,000 lines and≈70 new objects are output size,not a human-effort reduction estimate. No human-only control,total token count or complete task-time accounting is reported. LLM informal verification and discussion are fallible search guidance. Three agreeing checks by the same model family are not independent formal certificates. Lean diagnoses formal acceptance;human review is still needed when the agent changes mathematical assumptions or theorem statements. Tool ablations couple informal proving and discussion;the reported triples do not isolate each tool’s causal contribution. AppendixD separately claims A5/B6 fail without discussion,but supplies no corresponding numeric table,budget or repeated-run data. Invocation frequency alone cannot establish necessity. Base-model ablation has Opus6/6,DeepSeekV3.2 3/6,KimiK2 zero shown successes on six problems. Openness/interchangeability is an architectural claim;published tools still rely on proprietary Claude/Gemini components in best configuration. No Rust/Verus/TLA+ or distributed-system verification evaluation.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2601.14027); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal297/numina.reading.txt`; [notes: ## Numina-Lean-Agent (2026)](claude_readings.md)
+    - [source](https://arxiv.org/abs/2601.14027); [notes: ## Numina-Lean-Agent (2026)](claude_readings.md)
     - record id: `numina-lean-agent-2026`
 - Open-Source LLM-Driven Formal Verification: A Multi-Agent Pipeline for RTL Repair (2026)
     - what: An LLM pipeline fixes a bug in a small hardware design (RTL). A solver checks each fix and returns a counterexample trace when it fails; the trace goes back to the LLM until the fix is proved for all reachable states by k-induction (a proof that a property holds at every step, built from a base case and an inductive step).
@@ -650,7 +650,7 @@
     - number: 245 tasks from 49 system calls (each: one correct and four vulnerable variants)
     - limits: It covers functional and safety properties only, with no liveness. The LLM is given a description, assumptions and an abstract kernel model.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2504.20964); [notes: OSVBench: executable specifications with a fixed external oracle](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: OSVBench: executable specifications with a fixed external oracle](../distributed_verification_review_b/deep_17_model_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2504.20964.txt`
+    - [source](https://arxiv.org/abs/2504.20964); [notes: OSVBench: executable specifications with a fixed external oracle](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: OSVBench: executable specifications with a fixed external oracle](../distributed_verification_review_b/deep_17_model_agents.md)
     - record id: `osvbench-2026`
 - PaxosLease Revisited: A Checked Model of Diskless Distributed Leases (2026)
     - what: It has bounded checking in TLA+/TLC, six TLAPS arithmetic lemmas, and Python witnesses for the PaxosLease diskless lease protocol, with three acceptor changes. LLMs produced much of the artifacts, under line-by-line human review.
@@ -692,7 +692,7 @@
     - number: fan example LC=11/15≈0.69
     - limits: Integer arithmetic approximates machine arithmetic; language subset omits loops and translation details. Minimal unsat cores are assumed and the solver is assumed deterministic despite generally returning non-minimal/multiple cores. Current encoding does not model short-circuit evaluation (sound but coverage may change), and scaling to larger datasets may be problematic. Theorem 1/PrLC≤LC rely on added non-trace conditions.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/From_Execution_to_Necessity_Proof_Based_Metrics_for_Code_Coverage_Short_Paper_.txt`
+    -
     - record id: `proof-based-coverage-2026`
 - Proofs Promptly (2026)
     - title: Proofs Promptly: An Experience Report on Proof-Oriented Programming with AI Agents
@@ -703,7 +703,7 @@
     - number: three experts, two weeks, versus about half a year manually (authors' estimate)
     - limits: Experts review the specs and supply the invariants that decide the proof. It has no theorem about distributed fairness or eventual progress.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3828709); [notes: Proof-oriented programming at Microsoft](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://doi.org/10.1145/3828709); [notes: Proof-oriented programming at Microsoft](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
     - record id: `proofs-promptly-2026`
 - Re:Form (2026)
     - title: Re:Form: Reducing Human Annotations in Scalable Formal Software Verification with RL in LLMs: A Preliminary Study on Dafny
@@ -714,7 +714,7 @@
     - number: 14B training: 64 GPUs for about 36 hours
     - limits: The references are themselves autoformalized, so the implication does not certify fidelity to human intent. Mostly sequential functions.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2507.16331); [notes: Re:Form: Reducing Human Annotations in Scalable Formal Software Verifi](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2507.16331); [notes: Re:Form: Reducing Human Annotations in Scalable Formal Software Verifi](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `re-form-2026`
 - Reality Is the Final Verifier: On Two Key Gaps in Agentic Software Engineering (2026)
     - what: Argues that verification stops short in two places. The written requirements may not match what the stakeholder wants (the requirement gap). The model used to evaluate code may not match the real environment (the model gap). Proposes an inner loop, which revises code against the requirements, the environment model and the evaluator. Proposes an outer loop, which uses observations from deployment to revise those inputs.
@@ -722,7 +722,7 @@
     - number: No measured completion rate or human-hours; Table 2 incidents are cited from other reports
     - limits: A proposed architecture. No measured rate of autonomous completion and no human-hours result.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2609.12039v1); [notes: Reality Is the Final Verifier: On Two Key Gaps in Agentic Software Eng](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Reality Is the Final Verifier: On Two Key Gaps in Agentic Software Eng](../distributed_verification_review_b/deep_14_program_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://arxiv.org/abs/2609.12039v1); [notes: Reality Is the Final Verifier: On Two Key Gaps in Agentic Software Eng](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Reality Is the Final Verifier: On Two Key Gaps in Agentic Software Eng](../distributed_verification_review_b/deep_14_program_agents.md)
     - record id: `reality-is-the-final-2026`
 - RFC2TLA+ (2026)
     - title: RFC2TLA+: Extracting and Verifying Formal Models from RFC Documents using Continuous LLM Feedback
@@ -740,7 +740,7 @@
     - what: RLVR-DafnyBench is a Docker/uv pipeline for reinforcement learning from verifier rewards on DafnyBench, with scripts for data download, training, evaluation and tests.
     - limits: README describes a pipeline; no training or evaluation was rerun.
     - how much was read: most of it read
-    - [source](https://github.com/agawde05/rlvr-dafnybench); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://github.com/agawde05/rlvr-dafnybench)
     - record id: `rlvr-dafnybench-2026`
 - Scimitar proof decomposition (2026)
     - title: Interactive Safety Verification of Distributed Protocols by Inductive Proof Decomposition
@@ -751,7 +751,7 @@
     - number: Other reported proof-development burdens: 1–2 human-months for smaller invariants
     - limits: TLC/Apalache counterexamples use finite parameter bounds and do not themselves prove arbitrary-size invariants; TLAPS validation is required for the final proof. Human guidance remains necessary to add lemmas and edges. Evaluation is on five TLA+ specifications and one implementation; generality to other formalisms is untested. AsyncRaft development took human effort despite automation.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-032-28079-4_1); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2404.18048.txt`; [notes: Scimitar: distinguish the final interactive paper from an older automa](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Full live Scimitar configuration inventory (not an evaluated success l](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
+    - [source](https://doi.org/10.1007/978-3-032-28079-4_1); [notes: Scimitar: distinguish the final interactive paper from an older automa](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Full live Scimitar configuration inventory (not an evaluated success l](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md)
     - record id: `scimitar-proof-decomposition-2026`
 - Scope (2026)
     - title: Detecting Inconsistencies in Arm CCA's Formally Verified Specification
@@ -791,7 +791,7 @@
     - number: core subset SPLIT 73.4% at k=10 versus PALM 14.0% and Rango 7.7%
     - limits: Programs and annotations come from QCP and are selected to make self-contained VCs; difficult algorithmic/refinement and complex data invariants are outside the benchmark. SPLIT depends on goals admitting spatial/pure decomposition and on the Rocq/QCP tactic/lemma library. Pass rates measure verified scripts under finite repair budgets, not complete verification of whole C systems.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/icml_text/SL_VC_A_Benchmark_and_Automated_Framework_for_Separation_Logic_Verification_Condition_Prov.txt`
+    -
     - record id: `sl-vc-and-split-2026`
 - Software is infrastructure: failures, successes, costs, and the case for formal verification (2026)
     - what: A chapter for teaching and policy. It collects secondary industrial reports on the costs of software failures and the benefits of formal verification (Philips ASD, 4SECURail, Dassault, AWS, CCF).
@@ -812,7 +812,7 @@
     - number: Only ≈30% of surveyed works address liveness (§5)
     - limits: It gives no search date range and no count of how many papers were considered, so the reported fraction is not an unbiased census. Table 1 entries need checking against the cited papers.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2608.21935); [notes: Systematization of Knowledge: Formal Verification of Consensus Protoco](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2608.21935.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_liveness.md`
+    - [source](https://arxiv.org/abs/2608.21935); [notes: Systematization of Knowledge: Formal Verification of Consensus Protoco](../distributed_verification_review_b/deep_10_second_pass_liveness_proofs.md)
     - record id: `sok-consensus-2026`
 - Spec-Harness (formerly VeriAct) (2026)
     - title: VeriAct / Spec-Harness: Beyond Verifiability — Agentic Synthesis of Correct and Complete Formal Specifications
@@ -823,7 +823,7 @@
     - number: three refinement cycles; improvement of 5 points on SpecGenBench and 12 on FormalBench (§6.1)
     - limits: Success is relative to the generated cases and the reference. The task supplies existing code, so eliciting intent is not tested. Feedback on the scoring set can inflate scores. Use withheld tests.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2604.00280v2); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Spec-Harness, formerly VeriAct](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2604.00280v2); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Spec-Harness, formerly VeriAct](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `spec-harness-formerly-veriact-2026`
 - SpecCoder (2026)
     - title: Teaching Code LLMs to Reason with Intermediate Formal Specifications
@@ -845,7 +845,7 @@
     - number: 17 reviewers rated SpecSyn 3.78 (understanding) and 4.07 (semantic accuracy) out of 5
     - limits: Semantic strength is operationalized by a finite mutation set and may miss behaviors not exercised by mutations. Precision/recall use manually authored ground truth, which may omit valid alternative specifications; Frama-C/WP and Z3 incompleteness can reject correct statements. The method is computationally expensive, with hundreds of verifier calls per file, and benchmark scale is 50 programs with potential leakage from prior X509 data. ACSL-compatible deterministic C functions are selected, excluding many OS-dependent functions.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2604.21570); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2604.21570.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`
+    - [source](https://arxiv.org/abs/2604.21570)
     - record id: `specsyn-2026`
 - Specula (2026)
     - title: Specula: Scaling formal specifications for autonomous model checking of system code
@@ -856,7 +856,7 @@
     - number: median 3.69 hours and $57 per system across 48 systems (§5.3)
     - limits: Model checking plus reproduction gives concrete failures, not proofs for all executions. Its coverage of liveness is weak. The results pool several versions, and only 14 systems used the latest version.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2607.25333); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; [notes: Specula: close the model–code loop before calling a violation a bug](../distributed_verification_review_b/deep_5_llm_agents.md)
+    - [source](https://arxiv.org/abs/2607.25333); [notes: Specula: close the model–code loop before calling a violation a bug](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `specula-2026`
 - StarVerus (2026)
     - title: StarVerus: LLM-Powered Multi-Agent Collaboration for Industrial Rust Code Verification Automation
@@ -877,7 +877,7 @@
     - number: 77.6% total on seL4 vs Hammer 40.3%, Selene 5.6%, FVEL 7.8%
     - limits: Its denominator differs from FVEL's splits. Longer proofs still fail.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2603.19715v2); [notes: seL4: from whole-proof guessing to proof-state search](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2603.19715v2); [notes: seL4: from whole-proof guessing to proof-state search](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `stepwise-2026`
 - Supporting Stakeholder Requirements Expression with LLM Revisions: An Empirical Evaluation (2026)
     - what: Participants wrote requirements and rated LLM-generated revisions for completeness, clarity and alignment.
@@ -902,7 +902,7 @@
     - number: each agent run five times, best output evaluated, at most three repairs
     - limits: Covers only the finite executions and configurations supplied. A model can match buggy code and still fail the desired guarantee. The evaluator uses an LLM for some mappings.
     - how much was read: most of it read
-    - [source](https://github.com/specula-org/SysMoBench); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; [notes: SysMoBench](../distributed_verification_review_b/deep_7_evaluation.md)
+    - [source](https://github.com/specula-org/SysMoBench); [notes: SysMoBench](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `sysmobench-2026`
 - SysSpec / SpecFS (2026)
     - title: Sharpen the Spec, Cut the Code: A Case for Generative File System with SysSpec
@@ -924,7 +924,7 @@
     - number: 98.2% on 110 Dafny programs within 8 repair iterations
     - limits: Two number-theoretic tasks are unsolved. Four contracts differ from the expert ones until failing tests are added. It needs human tests that discriminate between right and wrong.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2601.12845); [notes: Automatic Generation of Formal Specification and Verification Annotati](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`
+    - [source](https://arxiv.org/abs/2601.12845); [notes: Automatic Generation of Formal Specification and Verification Annotati](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `testdafny110-2026`
 - The Verifier Tax (2026)
     - title: The Verifier Tax: Horizon Dependent Safety Success Tradeoffs in Tool Using LLM Agents
@@ -945,14 +945,14 @@
     - number: 12 of 30 passes meet the non-vacuity bar, so the plain correct rate overstates capability about 2.5 times
     - limits: The descriptions are written by a model, not by practitioners. Composition and refinement are under-represented. The paper makes no claim that controls for contamination. A pass is exact only relative to the reference config. It does not prove that the spec reproduces the reference behavior. The notes' later pass says the benchmark creators wrote the descriptions and the grading oracle.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2607.23425); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`; [notes: TLA+-Bench](../distributed_verification_primary_extension_20261012.md)
+    - [source](https://arxiv.org/abs/2607.23425); [notes: TLA+-Bench](../distributed_verification_primary_extension_20261012.md)
     - record id: `tla-bench-2026`
 - TLA+ Examples repository (2026)
     - what: This repository is a corpus of TLA+ specifications and models, with CI and metadata indicating beginner examples, PlusCal variants and TLC, Apalache or TLAPS use. Its README also labels models that intentionally fail on deadlock, safety, liveness or assumptions.
     - number: at commit 6a7b26a: 81 case directories, 424 modules, 233 model configurations, 73 modules with proof metadata
     - limits: Repository metadata and CI status can change; this pass did not run every model.
     - how much was read: most of it read
-    - [source](https://github.com/tlaplus/Examples); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_foundations.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_foundations.md`
+    - [source](https://github.com/tlaplus/Examples)
     - record id: `tla-examples-repository-2026`
 - TLA-Prover (2026)
     - title: TLA-Prover: Verifiable TLA+ Specification Synthesis via Preference-Optimized Low-Rank Adaptation
@@ -963,7 +963,7 @@
     - number: Baseline 8.6% TLC model-check; TLA-Prover 9/30=30% Gold and Diamond
     - limits: Success means a small model passes its own invariant. It does not mean agreement with a human requirement or a system. The text says six domains, but Table 3 lists ten. There is no refinement or liveness proof. The result was not reproduced.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2606.06133v5); [notes: paper](../distributed_verification_review_b/review_b_tla_prover_20261007.md); [notes: meaning for evaluation](../distributed_verification_review_b/review_b_tla_prover_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2606.06133.txt`
+    - [source](https://arxiv.org/abs/2606.06133v5); [notes: paper](../distributed_verification_review_b/review_b_tla_prover_20261007.md); [notes: meaning for evaluation](../distributed_verification_review_b/review_b_tla_prover_20261007.md)
     - record id: `tla-prover-2026`
 - TLA-Prover benchmark (2026)
     - title: TLA-Prover repository benchmark documentation
@@ -972,7 +972,7 @@
     - number: Post-audit model-only repair 166/206; W4-diamond-gold post-prompt-fix 16/30 pass@32
     - limits: Repository status is dated and reports were not rerun; results are self-reported in repository artifacts.
     - how much was read: most of it read
-    - [source](https://github.com/EricSpencer00/tla-prover); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://github.com/EricSpencer00/tla-prover)
     - record id: `tla-prover-benchmark-2026`
 - TLA-Verus (2026)
     - title: TLA-Verus: Generating and Solving Temporal Proof Obligations with LLM Agents
@@ -983,7 +983,7 @@
     - number: evaluation: 40 paired tasks, ten per category, 32 models from 24 repositories
     - limits: Showing that the implementation refines the model is future work, so a model proof is not a proof about Rust behavior. An LLM reviews whether the translation is faithful, and this is not proved. The dataset and pipeline are unreleased. The runs were not repeated. A Raft-style model was safe only because it could not make progress.
     - how much was read: most of it read
-    - [source](https://openreview.net/forum?id=ncFIZuIUyK); [notes: closest related work](../distributed_verification_review_b/review_b_tla_verus_20261007.md); [notes: reported results and populations](../distributed_verification_review_b/review_b_tla_verus_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
+    - [source](https://openreview.net/forum?id=ncFIZuIUyK); [notes: closest related work](../distributed_verification_review_b/review_b_tla_verus_20261007.md); [notes: reported results and populations](../distributed_verification_review_b/review_b_tla_verus_20261007.md)
     - record id: `tla-verus-2026`
 - TLAi+Bench (2026)
     - title: TLAi+Bench repository
@@ -991,7 +991,7 @@
     - number: Nine named puzzle categories/files are listed in the README; six gold reference modules are shown.
     - limits: The current repository emphasizes puzzles and examples; repository status and task coverage can change.
     - how much was read: most of it read
-    - [source](https://github.com/tlaplus/TLAiBench); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://github.com/tlaplus/TLAiBench)
     - record id: `tlai-bench-2026`
 - TLAPS-Bench (2026)
     - title: TLAPS-Bench repository
@@ -1001,7 +1001,7 @@
     - number: 9 specs and 56 proof targets (FLASH 15, ZooKeeper 9, etcd Raft 8, HashiCorp Raft 6, others)
     - limits: The README says retired proofs are available by contact and current runs focus on a few hard tasks; no agent run was reproduced.
     - how much was read: most of it read
-    - [source](https://github.com/specula-org/TLAPS-Bench); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://github.com/specula-org/TLAPS-Bench)
     - record id: `tlaps-bench-2026`
 - Toward Safe LLM Agents: A Survey of Specification, Verification, and Enforcement (2026)
     - what: A survey of 38 studies on specifying, verifying and enforcing safety for LLM agents. It distinguishes model checking of an extracted model from runtime enforcement on actual actions.
@@ -1011,7 +1011,7 @@
     - number: single reviewer
     - limits: Focuses on safety. No new measurement. Certainty is mostly Low or Very Low. Its broad claims about limits should be audited.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2608.14590); [notes: Toward Safe LLM Agents: A Survey of Specification, Verification, and E](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://arxiv.org/abs/2608.14590); [notes: Toward Safe LLM Agents: A Survey of Specification, Verification, and E](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `toward-safe-llm-agents-2026`
 - Traceable and Verifiable Software Requirements: A Synthesis of AI-Enabled Formal Methods (2026)
     - what: A survey plus an experience report. The authors ran Frama-C (RTE, EVA, WP with several solvers) and PathCrawler on C functions to see what automation gives for requirements.
@@ -1032,7 +1032,7 @@
     - number: 48 tasks, 16 scenario families, all fully TLC-verified; 62.5% first attempt; none over four repairs
     - limits: Progress is not checked. Repairs for timeouts can reduce fidelity. The runtime monitor checks the topology, not the order of steps. A bounded model-checking pass does not prove that real agents terminate.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2605.07935); [notes: TraceFix: generated PlusCal coordination protocols, with important lim](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://arxiv.org/abs/2605.07935); [notes: TraceFix: generated PlusCal coordination protocols, with important lim](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `tracefix-2026`
 - Transition Invariants Revisited: Termination Witnesses and Their Validation (2026)
     - what: Extends the standard machine-readable proof format that program verifiers hand to each other so it can carry termination proofs. The proof is a transition invariant: a relation between any earlier and later state of a run that must decrease in a well-founded way. Three checkers re-validate such proofs independently of the tool that made them.
@@ -1064,7 +1064,7 @@
     - number: Average development 82 min and execution 61 s; 87.67% execute under 60 s
     - limits: CBMC bounded proofs only cover modeled scopes and chosen loop/data bounds; fixed or overly restrictive models can hide defects. The bottom-up angelic-modeling strategy may miss bugs when preconditions are too strong, and 15/89 known defects were not exposed. Authors note proof writers knew units were defective, and results study one unit-proof operationalization on four embedded OSes. Findings do not establish unbounded memory safety or generalize to other BMC tools.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2503.13762.txt`
+    -
     - record id: `unit-proofs-study-2026`
 - Validating Formal Specifications with LLM-generated Test Cases (2026)
     - what: GPT-5 generates positive and negative Alloy instances from English requirements, before the requirement is formalized. Expert formulas label the instances. The authors test whether the instances expose wrong student specifications.
@@ -1074,7 +1074,7 @@
     - number: By model: GPT-5 96%, Gemini 81%, Claude 76%, Mini 67%
     - limits: It covers bounded structural models only. Suites are compared only over requirements that have complete valid suites. The persistent failures involve ambiguous English.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2510.23350v2); [notes: Validating Formal Specifications with LLM-generated Test Cases](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - [source](https://arxiv.org/abs/2510.23350v2); [notes: Validating Formal Specifications with LLM-generated Test Cases](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `validating-formal-specifications-with-2026`
 - VeriContest (2026)
     - title: VeriContest: A Competitive-Programming Benchmark for Verifiable Code Generation
@@ -1085,7 +1085,7 @@
     - number: 946 problems, median 276 positive and 2,670 negative tests each
     - limits: Compatibility with one reference behavior is not general soundness. Negative examples the model generates itself may share its misunderstanding. Manual review is not shown to be blind. Possible contamination and selection bias. Algorithm tasks only, with no infinite distributed executions.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2605.08553); [notes: VeriContest](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2605.08553); [notes: VeriContest](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `vericontest-2026`
 - VERINA (2026)
     - title: VERINA: Benchmarking Verifiable Code Generation
@@ -1106,7 +1106,7 @@
     - number: Average transitive dependencies: 11.2 library and 37.9 project; ~50% depth≥5
     - limits: Success requires compilation within 300 s and depends on repository toolchains, context packaging and repair budgets. Curated context uses ground-truth dependencies, while full context can overwhelm models. Results are Lean-specific and benchmark repositories may overlap model pretraining.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2602.18307.txt`
+    -
     - record id: `verisoftbench-2026`
 - VeriSpecGen (2026)
     - title: Intent-aligned Formal Specification Synthesis via Traceable Refinement
@@ -1117,7 +1117,7 @@
     - number: 343,827 training pairs; training gives 15.6-18.2 points
     - limits: Labels come from a reference implementation that may itself be LLM-written. The LLM judge fallback is only guidance. It has no distributed or liveness tasks.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2604.10392); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Intent-aligned Formal Specification Synthesis via Traceable Refinement](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - [source](https://arxiv.org/abs/2604.10392); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Intent-aligned Formal Specification Synthesis via Traceable Refinement](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `verispecgen-2026`
 - Vero (2026)
     - title: Vero: Can AI Agents Build Formally Verified Software Repositories?
@@ -1128,7 +1128,7 @@
     - number: 43 instances
     - limits: The 22 IronKV targets are not the full deployed IronKV proof. `implemented_by` lets tests run one implementation while the theorem describes another.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2608.13522); [notes: Vero: repository generation, including a limited IronKV instance](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2608.13522.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2608.13522); [notes: Vero: repository generation, including a limited IronKV instance](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `vero-2026`
 - Verus issue 3160 (2026)
     - title: --no-cheating accepts vstd::pervasive::assume(false)
@@ -1136,7 +1136,7 @@
     - number: Minimal reproducer verifies with 1 verified and 0 errors under Verus rolling version 0.2026.10.11.99d8218
     - limits: This is an open issue report, not a fix or independent audit. The observed behavior is tied to the rolling version and may change.
     - how much was read: most of it read
-    - [source](https://github.com/verus-lang/verus/issues/3160); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://github.com/verus-lang/verus/issues/3160)
     - record id: `verus-issue-3160-2026`
 - Verus-SpecGym (2026)
     - title: Verus-SpecGym: An Agentic Environment for Evaluating Specification Autoformalization
@@ -1158,7 +1158,7 @@
     - number: 560 held-out VeruSAGE tasks
     - limits: Correctness is whatever the Verus checker accepts; synthetic programs may be repetitive or structurally unlike systems despite tutorial coverage. Agent trajectories use Claude Sonnet 4.5 and the evaluation directly prompts models without coding agents. Three source systems are removed from VeruSAGE evaluation, but other distribution and benchmark effects remain. Tasks exceeding Qwen context are scored zero, and Accuracy@K is a sampling metric rather than proof quality or human readability. The model's cost comparison depends on contemporaneous token prices and five-round debugging settings.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2602.04910); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2602.04910.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2602.04910)
     - record id: `verusyn-proof-synthesis-dataset-2026`
 - Why Agentic Theorem Prover Works: A Statistical Provability Theory of Mathematical Reasoning Models (2026)
     - what: Develops a statistical theory for finite-budget agentic theorem proving. It models verifier-backed proof search as a deterministic finite-horizon reachability MDP and defines statistical provability as the probability that a specified prover reaches a verified proof within a verifier-call budget on a problem distribution. Under a faithful state abstraction, optimal MDP success equals budgeted syntactic provability. For offline depth-wise action-value regression followed by greedy proving, Theorem3.1 bounds the gap to the optimal prover by an occupancy-weighted sum of value-estimation errors; the multiplier is the learned prover’s average truncated proof length. Error terms separate approximation, training-region coverage geometry and Monte Carlo rollout noise, with a faster rate under an action-gap margin condition. Defines full proof states as multisets of open goals so branching remains Markov, deterministic verifier transition F, solved set G, hitting time TG, budgeted value V and average truncated length Len. Assumption3.1 requires compact concentration sets, Lipschitz optimal values and hypothesis classes, local-mass coverage of i.i.d. query pairs, conditionally independent binary rollout labels with mean Q*, and minimax regression. Theorem3.1 gives εt=approximation+covering term+Hoeffding rollout noise and regret 2Σ unsolved-mass×ε. A margin condition changes ε to ε^(β+1). Budget allocation balances Nt and mt under total labels nt=Ntmt. Appendices prove deterministic MDP, faithful abstraction, Bellman recursion, greedy regret, covering and uniform regression; truncation adds overflow penalty δW. Appendix C proposes representation selection by Bellman-certificate tightness and a complexity penalty; Appendix D interprets scaling through horizon, effective dimension and margins.
@@ -1166,7 +1166,7 @@
     - number: Under an action-gap margin condition the dependence on error improves to a fast rate
     - limits: Faithful abstraction assumes e(FR(r,a))=F(e(r),a) and exact preservation of solved states. The equality between optimal MDP success and syntactic provability follows this assumption; arbitrary learned embeddings need not be faithful. The theory is trace-local. Compact concentration Ct must cover both training queries and learned-prover comparisons, and the candidate region must retain at least one globally optimal action. The paper explicitly says a new prover leaving the occupied region is no longer certified without added coverage assumptions. Binary rollout labels are idealized verifier-backed success labels with conditional mean Q*. The paper says practical-target bias can be absorbed into ε, but the stated theorem assumes exact Q* labels and its approximation term is relative to Q*. Biased targets require an explicit allowance; reader derivation using the supplied minimax proof adds2bt when label means differ uniformly by≤bt. Repeating suboptimal-policy rollouts reduces sampling noise, not this bias. No empirical calibration is supplied. The exact minimax regression optimizer is an idealization. Numerical optimization error ξt can be added, but no practical learner, neural architecture or training algorithm is evaluated. The verifier transition is deterministic, while policy decoding, retrieval and exploration may be random. The theory addresses greedy proving; beam search, backtracking, top-k and decomposition need extra retention/suboptimality assumptions. The finite-horizon result does not remove undecidability, worst-case hardness or unknown proof existence. Statistical provability depends on q0, so a biased library workload can be easy while adversarial or uniform hard instances remain difficult. The effective dimension dt, coverage ct, Lipschitz constants, action-gap tails and occupancy curve are theoretical quantities. The paper proposes estimating them from traces as future work and reports no benchmark measurement. No Verus/Rust/TLA+/distributed-system experiment is supplied. Transfer to systems verification is an inference about replacing proof-state/verifier interfaces, not a measured claim.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2602.10538); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal308/agentic.reading.txt`; [notes: Why Agentic Theorem Prover Works (2026)](claude_readings.md)
+    - [source](https://arxiv.org/abs/2602.10538); [notes: Why Agentic Theorem Prover Works (2026)](claude_readings.md)
     - record id: `why-agentic-theorem-prover-2026`
 - A Short Survey on Formalising Software Requirements with Large Language Models (2025)
     - what: Summarizes 35 papers on using LLMs to write formal specifications from English requirements, grouped by method and domain. Concludes that helper assertions come out better than whole contracts.
@@ -1197,7 +1197,7 @@
     - number: transfer to GPT-4o: 27.1% few-shot to 37.7% with collection; MBPP proof annotation 75.7% vs SAFE 59.0 and AutoVerus 65.4
     - limits: Specifications are human or source provided and are not formally verified; critique is the unformalized alignment boundary. Verifier success can be gamed by assume(false), degenerate implementations or incomplete specifications, motivating the critique filters. Dafny-to-Verus construct differences and overflow obligations require added bounds in examples. Evaluation is on 78 MBPP functions and 85 split HumanEval functions, with contamination filtering; it does not establish arbitrary Rust or distributed-system correctness. No fine-tuning is used and the method’s performance depends on few-shot exemplars and model/search budgets. Reader inspection, not a verifier rerun: printed Listing 2 replaces the Dafny recurrence R(n) with n·(n+1)/2; at n=4 the recurrence is 2 but the target formula is 10, despite the target overflow preconditions admitting that input. Thus the printed translation example itself does not establish source/target equivalence.
     - how much was read: most of it read
-    - [source](https://alphaverus.github.io/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal254/AlphaVerus_Bootstrapping_Formally_Verified_Code_Generation_through_Self_Improving_Translat.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; [notes: Recent agent termination evidence, with narrow scope](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://alphaverus.github.io/); [notes: Recent agent termination evidence, with narrow scope](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `alphaverus-2025`
 - An empirical evaluation of pre-trained large language models for repairing declarative formal specifications. (2025)
     - what: Tests four OpenAI models on repairing faulty Alloy models, with the Alloy analyzer checking each attempt. Optionally a second agent turns the analyzer's reports into repair advice.
@@ -1207,7 +1207,7 @@
     - number: at most six iterations
     - limits: Covers only static Alloy models. No time-based behavior, no progress properties, no running code. Table 6 prints 55.7% where 206/357 is about 57.7%.
     - how much was read: most of it read
-    - [source](https://arxiv.org/pdf/2404.11050); [notes: Declarative-specification repair: repair the supplied model, check aga](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Declarative-specification repair: repair the supplied model, check aga](../distributed_verification_review_b/deep_17_model_agents.md); notes outside this site: `lit_snowball/notes_coci18.md`
+    - [source](https://arxiv.org/pdf/2404.11050); [notes: Declarative-specification repair: repair the supplied model, check aga](../distributed_verification_review_b/deep_11_second_pass_agents_invariants.md); [notes: Declarative-specification repair: repair the supplied model, check aga](../distributed_verification_review_b/deep_17_model_agents.md)
     - record id: `an-empirical-evaluation-of-2025`
 - Astrogator (2025)
     - title: Towards Formal Verification of LLM-Generated Code from Natural Language Prompts
@@ -1218,7 +1218,7 @@
     - number: 277/334 accepted (82.9%)
     - limits: The formalizer cannot always infer intent from ambiguous natural language, so the user must approve the formal query. The query is intentionally incomplete and the evaluation accepts all programs satisfying it without user review of p∖s. The Ansible compiler does not support all features, especially shell commands, blocks and handlers; symbolic-loop handling is imprecise and arbitrary loops are future work. Ground truth for 1,260 programs is based on tests across Debian 12.11, Ubuntu 24.04.2 and RHEL 9.6 VMs, not a proof of real-world correctness. Knowledge-base single-valued choices cause false rejections when multiple implementations are valid.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2507.13290); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2507.13290.txt`; [notes: ## Astrogator, checking LLM Ansible code against a readable query (202](claude_readings.md)
+    - [source](https://arxiv.org/abs/2507.13290); [notes: ## Astrogator, checking LLM Ansible code against a readable query (202](claude_readings.md)
     - record id: `astrogator-2025`
 - ATLAS (2025)
     - title: Constrained LTL Specification Learning from Examples.
@@ -1226,7 +1226,7 @@
     - number: Table I: 30/30 tasks mean 43.65 s (Peterson); 10/10, 3.08 s (voting); 20/20, 37.25 s (robot arm); 53/78, 66.75 s (invariant weakening)
     - limits: It finds the best formula only within the formula-size bound. A formula that fits the traces may not capture what the user meant. The benchmarks were built around the authors' use cases. Using it needs formal-methods expertise.
     - how much was read: most of it read
-    - [source](https://eskang.github.io/assets/papers/icse25-atlas.pdf); [notes: Constrained LTL Specification Learning from Examples (ATLAS)](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://eskang.github.io/assets/papers/icse25-atlas.pdf); [notes: Constrained LTL Specification Learning from Examples (ATLAS)](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `atlas-2025`
 - Atmosphere (2025)
     - title: Atmosphere: Practical Verified Kernels with Rust and Verus
@@ -1237,7 +1237,7 @@
     - number: less than 2.5 person-years
     - limits: The source contradicts itself. Section 6.3 says about two person-years, with fourteen months on verified code. The abstract and introduction say under 2.5 person-years in total and 1.5 for verification. The guarantees cover the kernel's functional correctness and isolation. They do not cover liveness of distributed systems.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3731569.3764821); [notes: Atmosphere: count specification work and acknowledge inconsistent tota](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: Atmosphere: Practical Verified Kernels with Rust and Verus](../distributed_verification_review_b/deep_1_verified_implementations.md)
+    - [source](https://doi.org/10.1145/3731569.3764821); [notes: Atmosphere: count specification work and acknowledge inconsistent tota](../distributed_verification_review_b/deep_7_evaluation.md); [notes: Atmosphere: Practical Verified Kernels with Rust and Verus](../distributed_verification_review_b/deep_1_verified_implementations.md)
     - record id: `atmosphere-2025`
 - AutoVerus / Verus-Bench (2025)
     - title: AutoVerus: Automated Proof Generation for Rust Code
@@ -1248,7 +1248,7 @@
     - number: 137/150 (91.3%) tasks proved after up to three complete attempts; 122/150 on the first attempt
     - limits: The tasks are small and simple, with contracts fixed in advance. Spec quality is not scored. Deciding the intermediate function specs is itself part of systems verification (Sec. 7).
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2409.13082); [notes: AutoVerus / Verus-Bench](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; [notes: Recent agent termination evidence, with narrow scope](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://arxiv.org/abs/2409.13082); [notes: AutoVerus / Verus-Bench](../distributed_verification_review_b/deep_7_evaluation.md); [notes: Recent agent termination evidence, with narrow scope](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `autoverus-verus-bench-2025`
 - Ax-Prover (2025)
     - title: Ax-Prover: a deep reasoning agentic framework for theorem proving in mathematics and quantum physics
@@ -1281,7 +1281,7 @@
     - number: 63 kLoC in C++ (§2)
     - limits: §§1–2: CCF runs application logic inside trusted execution environments while treating operators, host OS/hypervisor, network and storage as corruptible. This paper checks distributed protocol behavior under modeled failures, not hardware/firmware isolation, enclave security, cryptography, all 63k C++ LOC, or arbitrary Byzantine behavior of the protected consensus code. Production use in Azure Confidential Ledger is context, not evidence that every production behavior is covered. §§1.1,4,8: Smart casual verification combines formal specification, finite model checking/simulation and tests/trace checks. Consensus spec is unbounded but exhaustive checking restricts terms, requests and reconfiguration sequences. No TLAPS safety/liveness proof for all sizes or universal code-refinement proof is reported. Most CI exploration relies on bounded simulations because sufficiently realistic exhaustive exploration is too expensive. §2: CCF returns transaction results before replication; clients separately query Pending/Committed/Invalid status. A returned result may later be invalidated. Committed read-write transactions are strictly serializable; committed read-only transactions are serializable and may be stale. Pending branches offer fork-like consistency rather than arbitrary results. Broad prose about all committed transactions being linearizable needs the explicit read-only exception. §2: Transaction IDs are lexicographic term/index pairs. If two transactions commit, ID ordering agrees with execution ordering. Ancestor Commit says committed <t,i> implies same-term <t,j>, j≤i, committed. This concerns transaction identity/status, not a proof that any stale read immediately observes the newest committed write. §2.1: CCF customizes Raft with signed Merkle-root transactions, messaging without RPC correspondence, optimistic sentIndex advances, express catch-up, CheckQuorum, bootstrapping/reconfiguration and retirement/ProposeVote. A transaction is committed only after a subsequent signature is committed. The actual combined protocol needs verification; citing the base Raft proof does not establish these extensions. §2.1 reader qualification: Early description says an AE-ACK carries the last transaction in the follower log, while the Inaccurate AE-ACK bug/fix later constrains that index to the end of the received AE. The historical/protocol-description distinction must be retained rather than treating the early sentence as the final safe response rule. §§2.1,4: Reconfiguration needs majorities in each active configuration, rather than a majority of their union. A removed node remains retiring until retirement information is safely committed for future leaders. CheckQuorum steps down an isolated leader, but absent delivery/scheduling assumptions this is not a theorem that all executions make progress. §4: Consensus has 17 actions/13 variables, 12 local-state mappings plus network. Parameterization includes every nonempty initial node subset with any member as initial leader. Locally initiated timeout/signature/candidacy/step-down choices impose no clock synchrony. LogInv compares pairwise committed-log prefixes; AppendOnlyProp prevents committed-prefix rollback over time. Another 27 properties include MonoLogInv, requiring term increases only after signatures. §4: Simulation explores behaviors to bounded depth under a time quota; authors manually downweight failures to promote forward progress. Q-learning was implemented in TLC but no state-hash feature set beat manual weighting. More progress-rich traces may help find bugs but do not constitute exhaustive failure coverage or proof of liveness. §5: Client model uses append-only history and logBranches, independent of node count. History includes read-only/read-write requests/responses and status responses, but omits status requests/Pending replies. A simple shared value appends transaction identifiers so conflicts and observations are visible. It is a deliberately selected application workload, not a proved reduction of all arbitrary CCF application semantics. §5: A new branch can be any prefix of an existing branch containing the last committed transaction. Requests may execute at any still-active leader/term. PrevCommittedInv checks same-term committed ancestor statuses; ObservedRoInv demands that a subsequently committed read-only response observe a read-write transaction whose response preceded its request. The latter expectation is falsified and documented, not a proved CCF invariant. §6.1: Scenario driver serializes consensus execution deterministically and mocks governance/networking/other components, injecting loss/reordering/partition/delay. Original 13 scenarios and about 1.6k unit-test/2k Python end-to-end LOC precede the effort; Table 1 gives later exact scope counts. Initial fuzzing was abandoned for insufficient interesting coverage. Driver/mock accuracy is a boundary, as demonstrated by retirement bugs. §6.1: Driver uses a global logical ordering clock; distributed Lamport/vector alternatives are suggested but not implemented here. Fifteen added logging statements capture stable states at message and role-change points, immediately after a global lock for state changes. Constant-space values such as log lengths are recorded, not full log entries. Production logging compiles out, so the checks use instrumented test executions rather than continuous production monitoring. §6.1/§6.5: Traces initially remove/deduplicate bootstrapping events because early consensus spec omits that phase; later specification is expanded to model bootstrapping more faithfully. These describe successive coverage stages. A successful preprocessed trace validates only its retained observations and modeling assumptions, not excluded initialization behavior. §6.2: Trace spec checks existence of a spec behavior consistent with observed events/values: T∩S is nonempty. Nondeterministically reconstructed hidden state is existential. A successful finite trace check is evidence for those observations, not proof that all completions, all execution traces or unlogged state transitions meet the spec. If logging or mappings omit a decisive distinction, an incorrect implementation could remain compatible. §6.2: Send actions constrain current state, invoke high-level action and assert matching successor messages. Network changes from set to multiset to represent duplicate/resend occurrences. Trace network abstractions also explore ordering/duplication/loss guarantees. Such abstraction choices affect what is observable and accepted; they are not runtime network guarantees inferred from traces. §6.2.1 Listing 5: UpdateTerm·HandleAppendEntriesReq composes two model actions into one implementation receive. IsFault·Next admits unlogged network faults before a step; send-response events may stutter high-level variables when already modeled by another action. Composition hides intermediate states and stuttering changes observation granularity, so correctness depends on the mapping retaining semantically important events. Merely making a mismatch disappear is not an independent proof. §6.2.2–6.3: Start with a happy-path trace, add many assertions and cross-references, debug source and formulas. Invalid traces may indicate bogus logging, incorrect mapping, specification error or implementation bug; failure lacks an ordinary model-checking counterexample. Longest matching prefixes, unreachable-state graphs, failing subformulas and an unsatisfied breakpoint support diagnosis. §6.4: DFS stops after finding one compatible behavior, avoiding BFS enumeration of alternatives; a consistency trace goes from about one hour to under a second. This is an author example without trace-size distribution or controlled speedup suite, and does not mean all traces validate in under a second. Existential acceptance is essential to that optimization. §6.5: Logging/driver enhancements took about one day. Consensus alignment/tooling took two engineer-months over four months, including TLC composition/DFS/debug support, discrepancy diagnosis and abstraction design. Writing about 400 lines of Trace was minor; Table 1 counts 369. Trace saw 88 commits and consensus spec 107 changes. This is observed project effort, not a controlled productivity study. §6.5: Client consistency validation uses REST observations without source instrumentation, reconstructs other clients’ hidden transactions from observed IDs, and took about one engineer-week over two weeks, mainly by CCF experts. Smaller spec, previous experience and reused TLC changes confound a simple comparison with initial consensus effort. §7 Table 1: Approximate state counts/rates are measured on Azure DC8s v3. A log line is largely equivalent to a model action, according to authors, not a formal equality of semantic coverage. Different abstraction sizes, bounds, durations and distinct/generated-state counting prevent treating orders-of-magnitude state counts as a calibrated defect-detection probability. §7: Six serious consensus bugs comprise five safety issues and one liveness issue, found by combined modeling, source scrutiny, trace mismatch, simulation and functional/end-to-end reproduction. They are not six independent discoveries by model checking alone. Read-only non-linearizability is an additional documented consistency ambiguity and accepted behavior, not a seventh fixed consensus bug. §§7–8: Authors report all six fixed before user impact/customer reports; software had already been deployed. One-node-at-a-time operational reconfiguration masked the election bug, and absence of an incident from the first bad commit fix was attributed to chance. No external incident audit, current repository verification or independent bug reproduction was done in this reading. §§8–9: Paper chooses model checking for developer accessibility rather than deductive proof, despite compute cost. AI-assisted proof search is future possibility with a reference to neural theorem proving, not an experiment using LLM agents. Related-work sentence says IronFleet and Verdi both proved Raft; reader qualification: IronFleet uses a Paxos-based replicated state machine, so do not propagate that comparison as fact.
     - how much was read: most of it read
-    - [source](https://www.usenix.org/conference/nsdi25/presentation/howard); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal501/ccf.reading.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`
+    - [source](https://www.usenix.org/conference/nsdi25/presentation/howard)
     - record id: `ccf-smart-casual-verification-2025`
 - CLEVER (2025)
     - title: CLEVER: A Curated Benchmark for Formally Verified Code Generation
@@ -1292,7 +1292,7 @@
     - number: reference proofs 10-225 lines
     - limits: It depends on the quality of the reference. Failed equivalence proofs give false negatives. HumanEval data may have leaked into training. It covers only list and numeric tasks, and has no liveness.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2505.13938v4); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: CLEVER](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2505.13938v4); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: CLEVER](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `clever-2025`
 - CodeMetaAgent (2025)
     - title: LLM Assisted Coding with Metamorphic Specification Mutation Agent
@@ -1314,7 +1314,7 @@
     - number: built with Dafny 4.3.0
     - limits: Only bans {:verify false} and assume false. This does not show that every way to cheat is caught. The public GitHub source may be in training data. Some specs just repeat the implementation. Scoring generated specs is only proposed (Appendix C). Verifying a weak contract that was handed in counts as success.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2406.08467); [notes: DafnyBench](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2406.08467); [notes: DafnyBench](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `dafnybench-2025`
 - DafnyComp (2025)
     - title: Local Success Does Not Compose: Benchmarking Large Language Models for Compositional Formal Verification
@@ -1325,7 +1325,7 @@
     - number: 3.69% verification rate
     - limits: The review notes found no check against assume or admit (unproved assumptions) or against vacuous specs (specs that hold trivially). Over-restrictive requires clauses (preconditions) could make verification easier. The prompt in Appendix G contradicts Section 3.3. It excludes liveness, resource bounds and security policies. It has no concurrency.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2509.23061v1); [notes: DafnyComp](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2509.23061.txt`
+    - [source](https://arxiv.org/abs/2509.23061v1); [notes: DafnyComp](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `dafnycomp-2025`
 - DAISY (2025)
     - title: Inferring multiple helper Dafny assertions with LLMs
@@ -1366,7 +1366,7 @@
     - number: 4,715 samples, 1,083 curated; Sonnet proves 30%
     - limits: Type-checking does not certify that a statement is adequate. The notes infer that the election contract in Fig. 2 is satisfied by a constant zero. The quality of the natural-language intent is not independently certified.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2502.05714); [notes: FVAPPS](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `lit_snowball/notes_coci18.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2502.05714); [notes: FVAPPS](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `fvapps-2025`
 - Informal to Formal (2025)
     - title: From Informal to Formal – Incorporating and Evaluating LLMs on Natural Language Requirements to Verifiable Formal Proofs
@@ -1376,7 +1376,7 @@
     - number: about 18,000 instruction-response pairs from over 4,000 verified references; about 14,000 train and 4,000 evaluate
     - limits: It is a benchmark of separate tasks. It does not show that the models are faithful to real distributed implementations.
     - how much was read: most of it read
-    - [source](https://aclanthology.org/2025.acl-long.1310/); [notes: TLAiBench and the Foundation challenge: useful harnesses, limited meas](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: Natural language to temporal logic and TLA+](../distributed_verification_review_b/deep_6_intent_to_spec.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://aclanthology.org/2025.acl-long.1310/); [notes: TLAiBench and the Foundation challenge: useful harnesses, limited meas](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: Natural language to temporal logic and TLA+](../distributed_verification_review_b/deep_6_intent_to_spec.md)
     - record id: `informal-to-formal-2025`
 - LLMs as Planning Formalizers: A Survey for Leveraging Large Language Models to Construct Automated Planning Models (2025)
     - what: The survey covers about 80 works in which LLMs generate planning domains and problems from natural language.
@@ -1394,7 +1394,7 @@
     - number: Four decomposition attempts per claim; TLAPS timeouts Z3 5 s, Zenon 10 s, Isabelle 30 s
     - limits: It tests proving a supplied invariant. It does not test finding one or reading vague requirements. Training leakage is possible from public protocol proofs (Section 4.2). The suite leaves out both learning switches, chord and hybrid broadcast.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2512.09758); [notes: LMGPA: prove supplied invariants rather than discover them](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: TLAPS proof generation grew beyond the January 2025 toy study](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2512.09758); [notes: LMGPA: prove supplied invariants rather than discover them](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: TLAPS proof generation grew beyond the January 2025 toy study](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `lmgpa-2025`
 - MATHCONSTRUCT benchmark (2025)
     - title: MATHCONSTRUCT: Challenging LLM Reasoning with Constructive Proofs
@@ -1405,7 +1405,7 @@
     - number: brute-force+inference reaches up to 16.67% average versus pure brute-force under 8%
     - limits: Correctness is only as good as hand-written verifiers, parsers and unit tests; models do not see verifier code in the main task. Robust accuracy is strict and variation sizes affect output length. Some variants are intentionally excluded as trivial or impractically large, so results do not represent all constructive mathematics.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/icml_text/MathConstruct_Challenging_LLM_Reasoning_with_Constructive_Proofs.txt`
+    -
     - record id: `mathconstruct-benchmark-2025`
 - miniF2F-Lean Revisited: Reviewing Limitations and Charting a Path Forward (2025)
     - what: Re-checks the miniF2F Lean statements against the original competition questions and corrects them. Separates simplified tasks from tasks faithful to the competition.
@@ -1415,7 +1415,7 @@
     - number: Pipeline about 36% (40% on the original) vs 97% and 69% for the two stages alone
     - limits: About mathematics, not software. Judging fidelity needs a human.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2511.03108); [notes: miniF2F-Lean Revisited: Reviewing Limitations and Charting a Path Forw](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2511.03108); [notes: miniF2F-Lean Revisited: Reviewing Limitations and Charting a Path Forw](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `minif2f-lean-revisited-reviewing-2025`
 - Neural model checking with invariants (2025)
     - title: Let a Neural Network Be Your Invariant
@@ -1436,7 +1436,7 @@
     - number: contract unsound only if CrossHair finds a violation in 60 s
     - limits: Its notion of soundness counts unknown results and timeouts as sound. It has no liveness. A code release is promised but no URL is given.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2510.12702); [notes: Beyond Postconditions: Can Large Language Models infer Formal Contract](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2510.12702); [notes: Beyond Postconditions: Can Large Language Models infer Formal Contract](../distributed_verification_review_b/deep_12_second_pass_intent_eval.md)
     - record id: `nl2contract-2025`
 - On the Effectiveness of Large Language Models in Writing Alloy Formulas (2025)
     - what: The paper tests LLMs on eleven familiar graph and relation requirements. The LLMs write Alloy formulas from English, write them from a reference, or complete partial formulas. Automated bounded equivalence checks grade the results.
@@ -1456,7 +1456,7 @@
     - number: content score (BLEU/F1) with GLM4.0: BLEU 0.34 to 0.39, F1 0.58 to 0.62 with repair; Qwen2.5-7b BLEU 0.61, F1 0.60
     - limits: Generates only declarations, not the protocol steps or the security goals the user cares about; no check that the model says what the protocol says, only that it parses and looks like a reference text. Prompts were tuned by hand on GLM4.0 and transfer poorly to other models.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1038/s41598-025-93373-y); [notes: P2FGPT, Alice&Bob to ProVerif (2025)](claude_readings.md); notes outside this site: `lit_snowball/notes_coci2.md`
+    - [source](https://doi.org/10.1038/s41598-025-93373-y); [notes: P2FGPT, Alice&Bob to ProVerif (2025)](claude_readings.md)
     - record id: `p2fgpt-2025`
 - ParCleanse (2025)
     - title: Validating Network Protocol Parsers with Traceable RFC Document Interpretation
@@ -1510,7 +1510,7 @@
     - number: RepoVBench overall: DirectRAG 65/383 (17.0%), Refinement+RAG 75/383 (19.6%) vs Refinement 59/383 (15.4%)
     - limits: One proof was removed while the surrounding library remains. So it is not a fresh, complete proof.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2502.05344); [notes: Repository retrieval and multi-function verification](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2502.05344.txt`; [notes: RagVerus / RepoVBench](../distributed_verification_review_b/deep_7_evaluation.md)
+    - [source](https://arxiv.org/abs/2502.05344); [notes: Repository retrieval and multi-function verification](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: RagVerus / RepoVBench](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `ragverus-2025`
 - Rango (2025)
     - title: Rango: Adaptive Retrieval-Augmented Proving for Automated Software Verification
@@ -1530,7 +1530,7 @@
     - number: six severe bugs
     - limits: The notes infer that matching the implementation and fixing bugs found by the model checker do not validate the chosen client guarantee, and do not prove liveness for unbounded cases.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3689031.3696069); [notes: Choosing top-level distributed guarantees and trusted boundaries](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Appendix B: Concrete systems and theorem scope](../distributed_verification_review_b/deep_6_intent_to_spec.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`
+    - [source](https://doi.org/10.1145/3689031.3696069); [notes: Choosing top-level distributed guarantees and trusted boundaries](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Appendix B: Concrete systems and theorem scope](../distributed_verification_review_b/deep_6_intent_to_spec.md)
     - record id: `remix-2025`
 - Seed-Prover 1.5 (2025)
     - title: Seed-Prover 1.5: Mastering Undergraduate-Level Theorem Proving via Learning from Experience
@@ -1593,7 +1593,7 @@
     - number: no distributed implementation tasks; dining philosophers has no gold model
     - limits: No results are reported. Checking against the gold spec by refinement is only stated as a grading idea, and is not run at scale.
     - how much was read: most of it read
-    - [source](https://github.com/tlaplus/TLAiBench); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`; [notes: Additional tools, not counted as papers](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: TLAiBench](../distributed_verification_review_b/deep_7_evaluation.md)
+    - [source](https://github.com/tlaplus/TLAiBench); [notes: Additional tools, not counted as papers](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: TLAiBench](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `tlaibench-2025`
 - Tunable Automation in Automated Program Verification (2025)
     - what: Adds a `broadcast` mechanism to Verus so users choose which universally quantified facts the SMT solver may use, per module, function or proof block. It measures how extra facts about Seq/Map/Set/Multiset change proof hints needed and verification time on four Verus projects.
@@ -1614,7 +1614,7 @@
     - number: Veil verifies 16/16; 14/16 under 15 s and 12/16 under 10 s
     - limits: It evaluates checking supplied invariants, not finding them. It is not an LLM agent. All its guarantees are safety. The notes record no agent success rate.
     - how much was read: most of it read
-    - [source](https://verse-lab.org/papers/veil-cav25.pdf); [notes: Veil: proofs in Lean with automatic first-order checks](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Veil: a promising proof interface, with no agent rate established here](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_grey/notes.md`
+    - [source](https://verse-lab.org/papers/veil-cav25.pdf); [notes: Veil: proofs in Lean with automatic first-order checks](../distributed_verification_review_b/deep_4_invariant_inference_benchmarks.md); [notes: Veil: a promising proof interface, with no agent rate established here](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `veil-2025`
 - Vericoding benchmark (2025)
     - title: A Benchmark for Vericoding: Formally Verified Program Synthesis
@@ -1625,7 +1625,7 @@
     - number: Success: 82% Dafny, 44% Verus, 27% Lean
     - limits: Quality statistics come from five sampled successes per language and source, not from all items. The cleanliness score is a heuristic. A checker establishes the contract that was submitted, even if it is lossy or weak.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2509.22908v1); [notes: A Benchmark for Vericoding](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2509.22908v1); [notes: A Benchmark for Vericoding](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `vericoding-benchmark-2025`
 - VerifyThisBench (2025)
     - title: VerifyThisBench: Generating Code, Specifications, and Proofs All at Once
@@ -1636,7 +1636,7 @@
     - number: o3-mini under 4% zero-shot, 9.37% after five feedback rounds
     - limits: Alignment confidence is the model's self-assessment (the paper calls it an 'optimistic upper bound'). There is no independent exhaustive oracle for alignment. The notes did not establish that assume, admit or axiom is enforced. TLA+ gets no scoring for fairness or liveness. The human contest judges correctness, completeness, elegance and automation.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2505.19271); [notes: VerifyThisBench / XS](../distributed_verification_review_b/deep_7_evaluation.md); [notes: VerifyThis: human assessment supplies an intent layer](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2505.19271); [notes: VerifyThisBench / XS](../distributed_verification_review_b/deep_7_evaluation.md); [notes: VerifyThis: human assessment supplies an intent layer](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `verifythisbench-2025`
 - VeriStruct (2025)
     - title: VeriStruct: AI-assisted Automated Verification of Data-Structure Modules in Verus
@@ -1647,7 +1647,7 @@
     - number: 10/11 modules; 128/129 functions (99.2%)
     - limits: Eleven data structures do not establish ability on protocols or liveness.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2510.25015v4); [notes: Repository retrieval and multi-function verification](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/doi_kept_all_text/VeriStruct_AI_assisted_Automated_Verification_of_Data_Structure_Modules_in_Verus_.txt`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2510.25015v4); [notes: Repository retrieval and multi-function verification](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `veristruct-2025`
 - VeruSAGE (2025)
     - title: VeruSAGE: A Study of Agent-Based Verification for Rust Systems
@@ -1658,7 +1658,7 @@
     - number: 849 tasks from eight systems (nine projects): Anvil temporal library 104, Anvil vreplicaset controller 63, IronKV 118, mimalloc 89, Node Replication 29, NRKernel 204, Atmosphere 157, persistent storage 63, Vest 22
     - limits: Failures center on discovering inductive invariants (facts that hold initially and stay true after every step). The Anvil library lemmas are not the same as proving that a new controller eventually reconciles.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2512.18436); [notes: VeruSAGE: high overall rates hide controller-invariant difficulty](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: VeruSAGE / VeruSAGE-Bench](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2512.18436); [notes: VeruSAGE: high overall rates hide controller-invariant difficulty](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: VeruSAGE / VeruSAGE-Bench](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `verusage-2025`
 - VLTL-Bench (2025)
     - title: Verifiable Natural Language to Linear Temporal Logic Translation: A Benchmark Dataset and Evaluation Suite
@@ -1669,7 +1669,7 @@
     - number: 36 expert-crafted lifted NL-LTL pairs plus 7 new ones
     - limits: Its equivalence check only flags a difference. It does not say whether one formula is weaker or stronger. Two traces cannot establish equivalence or liveness. It has no proof, no code, and no audit of how far to trust agents. The text says three datasets but the table lists four.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2507.00877); [notes: Temporal requirement translation: VLTL-Bench and GraFT](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`; [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
+    - [source](https://arxiv.org/abs/2507.00877); [notes: Temporal requirement translation: VLTL-Bench and GraFT](../distributed_verification_review_b/deep_7_evaluation.md); [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
     - record id: `vltl-bench-2025`
 - Zhou TLAPS 2025 (2025)
     - title: Retrieval-Augmented TLAPS Proof Generation with Large Language Models
@@ -1680,13 +1680,13 @@
     - number: three obligations only
     - limits: The case is a sequence algorithm, not distributed consensus. There is no liveness result and no broad success rate.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2501.03073); [notes: TLAPS proof generation grew beyond the January 2025 toy study](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; [notes: Two further TLA+ evaluation papers already in collection](../distributed_verification_review_b/deep_7_evaluation.md)
+    - [source](https://arxiv.org/abs/2501.03073); [notes: TLAPS proof generation grew beyond the January 2025 toy study](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: Two further TLA+ evaluation papers already in collection](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `zhou-tlaps-2025-2025`
 - Autoformalizing Mathematical Statements by Symbolic Equivalence and Semantic Consistency (2024)
     - what: Ranks ten LLM-generated Isabelle/HOL mathematical statement candidates using symbolic self-consistency (ATP-proved equivalence classes) and semantic consistency (BERT cosine similarity between original text and LLM back-translation). Combines normalized scores by log, linear or quadratic weighting. Log-comb with alpha=.5 generally improves selected-candidate accuracy on 400 MATH and 488 miniF2F problems across five models. It evaluates statement translation and ranking, not autonomous proof discovery of intended informal mathematics. Decomposes statements into premises P and conclusions Q, tests equivalence of both after variable standardization, and checks inconsistent premises by attempting P→False. Numeric conclusions introduce an auxiliary alpha equal to a numerical expression; other cases partially enumerate variable alignments using edit-distance-weighted bipartite matching. Equivalent candidate frequency supplies SymEq score; BERT cosine of original and back-translated text supplies SemCo score. Worst-case comparison cost is k(k−1)/2, with transitivity used to skip tests. For multiple outputs, remove the selected candidate and its equivalence class before repeating ranking. Uses scala-isabelle, 12 tactics including Sledgehammer timeout 300s, and Z3/CVC5. Baselines use LLM log-probabilities or prompted ranking for Codex/GPT-4, ATP-provability filtering, and adaptive KMeans on formal-text BERT embeddings. No model training is required.
     - limits: miniF2F correctness is assigned by ATP symbolic equivalence to its oracle; MATH outputs are manually labeled. The method and automatic metric share an equivalence checker, while oracle mistakes and incomplete proving can change labels. Formal provability and candidate agreement cannot establish that a theorem matches human intent. Appendix B says human grounding remains necessary even with ideal ATPs and embeddings; oversimplified geometry is an example. Semantic consistency assumes back-translation is more reliable than forward translation and embeddings preserve consequential mathematical differences. The authors acknowledge that embeddings can miss single-symbol changes; correlated round-trip errors remain possible. A finite ATP failure does not establish inequivalence or satisfiable premises. Limited variable matching and numerical standardization are heuristics; the paper gives no completeness theorem or full quantifier treatment for auxiliary variables. The study uses mathematical statements in Isabelle/HOL, not program semantics, distributed protocols, Verus, Rust or TLA+. Lean 4 support is future work. Five models are Mistral-7B, Llemma-34B, DeepSeek-V2, Codex completion API and GPT-4 (version 0710 as printed), temperature .7, k=10 and eight-shot prompting as reported. MATH 400 is randomly sampled; no seed, error bars or significance analysis is supplied. The checklist declines statistical significance because of evaluation cost. Alpha=.5 is selected from the reported GPT-4 MATH curve; no separate held-out tuning population is identified. BERT checkpoint/pooling details, Isabelle version, full costs and the nonnumerical matching enumeration budget are not specified in this PDF. Human labeling efficiency is inferred from a rank-based formula, not a user study or measured human time. It omits ATP/LLM computation costs and rests on correctness labels subject to the same caveats. The source asserts code/data availability at github.com/Miracle-Messi/Isa-AutoFormal; the repository and supplemental compute details were not inspected. Appendix F gives two templates but does not enumerate the complete eight-example demonstration sequence.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal301/symbolic.reading.txt`
+    -
     - record id: `autoformalizing-mathematical-statements-by-2024`
 - Clover (2024)
     - title: Clover: Closed-Loop Verifiable Code Generation
@@ -1694,7 +1694,7 @@
     - number: 52 of 60 correct examples accepted at ten attempts; tested adversarial examples rejected (Section 4)
     - limits: LLM reconstructions are correlated, so they can share a mistake. Agreement does not prove the English intent was encoded faithfully.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2310.17807); [notes: Dafny, C verification, and the specification-intent gap](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md); notes outside this site: `lit_snowball/notes_coci21.md`
+    - [source](https://arxiv.org/abs/2310.17807); [notes: Dafny, C verification, and the specification-intent gap](../distributed_verification_review_b/deep_5_llm_agents.md); [notes: Generated contracts and independent evaluation](../distributed_verification_review_b/deep_6_intent_to_spec.md)
     - record id: `clover-2024`
 - Evaluating LLM-driven User-Intent Formalization for Verification-Aware Languages (2024)
     - what: Scores LLM-written Dafny specs by checking concrete input/output pairs symbolically, including pairs with deliberately wrong outputs. In a set-intersection example, the contract says every result is in both inputs. It does not require every common element to appear.
@@ -1712,7 +1712,7 @@
     - number: human effort hours to days; DaisyNFS about one to two hours
     - limits: The checks expose suspicious differences. They do not show the spec perfectly matches intent. It gives no success rate for autonomous spec generation.
     - how much was read: most of it read
-    - [source](https://github.com/GLaDOS-Michigan/IronSpec); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_foundations.md`; [notes: Specification errors and auditing](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: IronSpec](../distributed_verification_review_b/deep_7_evaluation.md)
+    - [source](https://github.com/GLaDOS-Michigan/IronSpec); [notes: Specification errors and auditing](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: IronSpec](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `ironspec-2024`
 - miniCodeProps (2024)
     - title: miniCodeProps: a Minimal Benchmark for Proving Code Properties
@@ -1723,7 +1723,7 @@
     - number: GPT-4o 70/201 at pass@32 and 75/201 with refinement (Table 4)
     - limits: It has no spec generation or equivalence checking. It has no broad adversarial harness and no audit of axioms. Termination of recursion is not liveness of a distributed system.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2406.11915); [notes: miniCodeProps](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://arxiv.org/abs/2406.11915); [notes: miniCodeProps](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `minicodeprops-2024`
 - nl2postcond (2024)
     - title: Can Large Language Models Transform Natural Language Intent into Formal Method Postconditions?
@@ -1748,7 +1748,7 @@
     - number: Table 2 p. 1781: GPT-4 five-attempt rates 51.8, 12.5, 1.7, 15.8 percent across short, medium, long and proof-with-definition categories
     - limits: It covers selected kernel lemmas only. Hints from the proof prefix are privileged information.
     - how much was read: most of it read
-    - [source](https://aclanthology.org/2024.acl-long.98/); [notes: seL4: from whole-proof guessing to proof-state search](../distributed_verification_review_b/deep_5_llm_agents.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`
+    - [source](https://aclanthology.org/2024.acl-long.98/); [notes: seL4: from whole-proof guessing to proof-state search](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `selene-2024`
 - Verus SOSP 2024 (2024)
     - title: Verus: A Practical Foundation for Systems Verification
@@ -1758,7 +1758,7 @@
     - number: node replication verifies in 9 s vs 228 s
     - limits: It applies to the paper's EPR-enabled method, not to finding arbitrary invariants.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1145/3694715.3695952); [notes: S30](../distributed_verification_review_b/deep_9_formulation_methods.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_verus.md`; [notes: Verus: A Practical Foundation for Systems Verification](../distributed_verification_review_b/deep_1_verified_implementations.md)
+    - [source](https://doi.org/10.1145/3694715.3695952); [notes: S30](../distributed_verification_review_b/deep_9_formulation_methods.md); [notes: Verus: A Practical Foundation for Systems Verification](../distributed_verification_review_b/deep_1_verified_implementations.md)
     - record id: `verus-sosp-2024-2024`
 - Bosch formal-verification explanation user study (2023)
     - title: A User Study for Evaluation of Formal Verification Results and their Explanation at Bosch
@@ -1769,7 +1769,7 @@
     - number: 12/13 preferred explanations
     - limits: The study is exploratory and Bosch-specific. The survey uses snowball sampling and self-report Likert responses; the experiment has no control group, only 13 participants, different pre/post use-case difficulty, and possible testing/instrumentation effects. Data are not openly available because of Bosch sensitivity and engineer privacy. Generalization beyond Bosch automotive engineers is explicitly limited.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2304.08950.txt`
+    -
     - record id: `bosch-formal-verification-explanation-user-study-2023`
 - Netrix guided consensus testing (2023)
     - title: A Domain Specific Language for Testing Consensus Implementations
@@ -1780,7 +1780,7 @@
     - number: Raft tests found 4 documented bugs; PCTCP alone found none of new Tendermint or known Raft bugs
     - limits: Requires instrumenting communication APIs and serialization adapters; tests explore bounded executions (e.g., MaxEvents=1000, depth=10, 30s iterations), not exhaustive correctness. PCTCP cannot introduce Byzantine behavior and rapidly loses probability on deep reorderings. Findings are implementation-specific scenarios; passing tests do not prove safety or liveness. BFTSmart case found no bugs, possibly reflecting prior testing maturity.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2303.05893); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/2303.05893.txt`; [notes: Netrix (2023)](claude_readings.md)
+    - [source](https://arxiv.org/abs/2303.05893); [notes: Netrix (2023)](claude_readings.md)
     - record id: `netrix-guided-consensus-testing-2023`
 - nl2spec (2023)
     - title: nl2spec: Interactively Translating Unstructured Natural Language to Temporal Logics with Large Language Models.
@@ -1791,7 +1791,7 @@
     - number: 36 benchmark instances
     - limits: An expert assists it. It is not autonomous. Correctness means what the submitting expert meant. The confidence is not a calibrated probability.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/2303.04864); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_intent.md`; [notes: Natural language to temporal logic and TLA+](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
+    - [source](https://arxiv.org/abs/2303.04864); [notes: Natural language to temporal logic and TLA+](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: papers](../distributed_verification_review_b/review_b_agents_20261007.md)
     - record id: `nl2spec-2023`
 - FRET realizability (2022)
     - title: Realizability Checking of Requirements in FRET
@@ -1800,7 +1800,7 @@
     - number: infusion pump: 12 requirements rewritten to 26 scoped ones, 8 minimal unrealizable cores
     - limits: This is a technical report, not the CAV 2022 version. Results depend on which variables the environment controls.
     - how much was read: most of it read
-    - [source](https://ntrs.nasa.gov/api/citations/20220007510/downloads/TechnicalReport__FRET_Realizability_Checking.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_intent.md`
+    - [source](https://ntrs.nasa.gov/api/citations/20220007510/downloads/TechnicalReport__FRET_Realizability_Checking.pdf)
     - record id: `fret-realizability-2022`
 - SpecFuzzer (2022)
     - title: Fuzzing Class Specifications (SpecFuzzer)
@@ -1827,7 +1827,7 @@
     - what: Metha generates network configurations, runs them on network analyzers and real-router images, and compares converged routing tables to expose model discrepancies. Semantic constraints activate meaningful protocol computations; minimum/middle/maximum parameter reduction and PICT pairwise tests cover selected feature interactions. Iterative delta debugging isolates all inclusion-minimal failure-inducing feature sets under explicit monotonicity/outcome assumptions. Records grammar versus semantic constraints, finite topology/parameter/test domain, exact coverage definition, iterative delta-debugging proof/complexity/masking limits, practical convergence oracle, eight detailed model-mismatch examples, complete bug/ablation/localization counts and commits, baseline parser exception and simulation-only NV boundary.
     - limits: §§1,3,7: Differential oracle is actual Cisco/Juniper router software, including vendor quirks and bugs. A discrepancy establishes disagreement with the selected implementation/version, not protocol-standard truth or independent proof that the analyzer is at fault. Developers confirmed 59/62 reports. Oracle fidelity, routing-table extraction, grammar/semantic constraints and comparison code remain trusted. §7: Convergence means ten unchanged routing-table snapshots sampled 10s apart (~100s), a heuristic rather than proof that the protocol has stabilized forever. Transients or oscillations slower than sampling, hidden state, timing/hardware differences and output normalization may affect comparisons. Paper gives no exact Cisco/Juniper image versions or host CPU/RAM. Batfish/NV source commits are cited. §§4–5: Search uses fixed physical/logical topology and provided features, finite recursive grammar, predefined strings, numeric minimum/maximum/one interior value. Pairwise coverage is over selected router×feature/value combinations, not all configurations, numeric values, protocol states, failures, traffic or code paths. Supporting prefix/community lists are not independently fuzzed. §5.1: Full t-wise coverage finds every bug only if each is exposed by at most t interactions of selected value dimensions and test behavior meets the premise. Empirical one/two-feature causes do not prove larger or unseen-boundary bugs absent. PICT yields a covering suite; no proof of globally minimum test count provided. §6/Appendix A: Theorem 1 concerns all inclusion-minimal failing subsets, not globally smallest cardinality or every underlying code bug. Iterative extension lifts the unique-minimal-fault assumption, retaining monotone failure and definite consistent outcomes; proof explicitly invokes monotonicity. No proof every real configuration discrepancy satisfies these assumptions. §6.2: Bugs whose triggers strictly contain an already failing subset cannot be identified separately until the smaller bug is fixed. Different minimal triggers can share a source-code cause; the black-box method cannot deduplicate by code or pinpoint erroneous code. Counts represent developer-assessed/configuration-trigger evidence, not automatically proved distinct code defects. §6.2: Uncached worst case is O(|Q|!); caching unique queued feature sets gives stated O(2^|Q|) bound. Router/tool calls and minimization also cost time. Algorithm 1 prints head(queue) without explicit dequeue; narrative describes consuming the queue until empty. This listing omission is not evidence of implementation nontermination. §§7–8: Routing-table comparison catches crashes and silent control-plane model bugs, but does not directly check packet forwarding, data-plane execution, every proof procedure, solver soundness or live production networks. Only NV simulation was tested; authors infer likely verification impact from its shared model. Table 3 marks confirmation of C-BGP’s three reports as unknown (?). Batfish’s 29 and NV’s 30 reports were confirmed. §8.1: Each of four approaches runs 1794 tests with the same four-router Cisco star features. Semantic baseline finds 16 bugs versus random’s 3; boundary values add one, pairwise adds three. Original Metha misses a random parser bug because OSPF area numbers are fixed; adding that dimension finds it. Discussion’s claim that all random bugs are found with fewer tests needs this augmented input space. §8.1/Figure 5: Coverage measures pairs of feature values, with continuous random numeric values bucketed into minimum/maximum/middle. It is not code coverage or proof soundness. Semantic and random approaches have similar coverage but different bug counts, illustrating semantic activation. No repeated random seeds, confidence intervals or sample variance reported. §8.2: Mean 14.1 extra tests per discrepancy, range 7–58, not per bug; 58 localizes five bugs. Complete testing takes several days; single test averages two minutes, PICT generation six minutes. Full cost includes fault localization; no precisely timed total or resource scaling study. §§9–11: Testing supplements unit/system testing. No universal absence-of-bugs proof or Verus/verified Rust/TLA+/LLM-written proof result. Testing configuration synthesizers is future work. Version and confirmation claims refer to source publication time.
     - how much was read: most of it read
-    - [source](https://www.usenix.org/conference/nsdi21/presentation/birkner); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal523/metha.reading.txt`
+    - [source](https://www.usenix.org/conference/nsdi21/presentation/birkner)
     - record id: `metha-network-verifiers-need-2021`
 - DistAlgo runtime checking (2020)
     - title: Assurance of Distributed Algorithms and Systems: Runtime Checking of Safety and Liveness
@@ -1843,7 +1843,7 @@
     - what: Gauntlet finds P4 compiler crashes with well-formed random programs, semantic mistakes in accessible compiler passes through SMT equivalence checking, and backend miscompilations through model-derived input/output packet tests. Its symbolic P4 interpreter supplies both oracles. The authors report96confirmed distinct bugs across P4C,BMv2 and Tofino over eight months,54fixed, and six specification changes. This is compiler bug finding with conditional translation validation of tested transformations, not verification of every compiler execution or correctness of the user network program. Captures generator probability/size controls, independent block semantics, symbolic table encoding and parameter directions, undefined-behavior taint and unstable-code distinction, parser/ToP4 dependencies, per-pass reparse/check workflow, constrained backend test generation and dropped-test limits. Preserves all bug status/location counts, timing rows, six concrete bug families, specification ambiguities, recent-merge count inconsistency, manual reduction and unmeasured coverage.
     - limits: §1–2: P4_16 finite bit-vector state and bounded/forbidden loops make equivalence decidable in principle. Control-flow loops are forbidden; parser loops are bounded by packet processing, so headline “no loops” should not be generalized to absence of every parser cycle. Efficient practical checks still depend on small programs and limited branching. This restriction distinguishes the method from unrestricted C; it is not an equivalence decision procedure for arbitrary Rust or distributed programs. §2.1/Table1: Crash bug means abnormal compiler termination without usable output/error, including assertion failure, segmentation fault,incomplete error and out-of-memory. Semantic bug means compiled behavior differs from input-program semantics, including packet outputs. Taxonomy levels1–7 are ASCII,words,syntax,type,static,dynamic,model conformity. Focus is static and higher-level failures rather than lexer/parser fuzzing alone. Some concrete failures reveal valid input incorrectly rejected; legality/specification uncertainty is resolved with developers. §2.2–2.3: Goal is many bugs, not completeness or a verified compiler. Differential testing across P4 targets cannot assume identical target semantics; independent same-target compilers were unavailable. Gauntlet tests mature P4C,BMv2,Tofino, excluding preliminary eBPF/uBPF/PSA toolchains. Its principal tests deliberately avoid target-specific extern calls. This is not a proof a particular P4 application satisfies network safety properties. §3/§5.2: Package parameters define input/output observables. Each programmable block is encoded separately; BMv2 v1model has Parser,VerifyChecksum,Ingress,Egress,ComputeChecksum,Deparser. out/inout form outputs; in/inout are symbolic inputs. Paths yield nested if-then-else expressions containing resulting parameter tuples. Copy-in is left-to-right; out values start uninitialized, and out/inout copy back on return. Correct interpretation of these effects is part of the trusted semantics. §4: Random generation grows a P4C IR AST probabilistically and emits P4 with ToP4. Node probabilities steer language coverage and keep programs small in lines/paths. A skeleton captures each target package/restrictions; two generator backends correspond to BMv2 and Tofino. A correctly rejected ill-typed/generated input is a generator bug, not a compiler bug. P4Fuzz comparison is qualitative; no matched-budget bug-yield experiment is reported. §4/§5.2: Unlike Csmith, generator permits undefined behavior and interpreter tracks affected expressions, so suspicious legal refinements are distinguishable from true miscompilation. Undefined-variable taint propagates through affected values. Replacing tainted expressions only in the before-pass formula classifies legal reductions of undefinedness as unstable code; changing a previously defined expression into undefined behavior remains a bug. Such warnings are not counted automatically as semantic bugs. §5.2: Interpreter took five months to become reliable enough for finding compiler semantic bugs. Developed with >600 P4C tests and >100 custom tests, generator co-evolved to expose interpreter mistakes, authors consulted compiler/specification maintainers. Their belief that discrepancies on audited regression tests probably indicate interpreter bugs is a debugging heuristic, not proof of the oracle. Formal semantics, Z3, IR parser and ToP4 are trusted dependencies; no machine-checked interpreter-correctness theorem is given. §5.2: Interpreter avoids compiler transformation passes, relying on the P4C parser and ToP4, and handles pre-desugared programs to detect earliest front-end bugs. p4test emits intermediate P4 after each pass; unchanged hashes skip checks, each changed output reparsed. Pairwise inequality queries compare corresponding programmable blocks; satisfiable query produces an input/table assignment and localizes a candidate faulty pass. Correctness is conditional on accurate semantics, preserved block interfaces and solver result; tested-program proof does not quantify over all source programs. §5.2/Figure3: Each table application uses one symbolic match key and symbolic action selector, rather than one variable pair per possible table entry. Matching condition selects an available action or default. This encodes outcomes for the represented table call, not a concrete exhaustive table configuration dump. Figure3 table exact-match hdr.a has assign and NoAction/default, yielding Hdr(1,hdr.b) only when key matches and action=1. Relational behavior across target-specific tables/extern state is outside stated coverage. §5.2: Header-validity interpretation follows P4C and maintainer clarification: marking previously invalid header valid gives undefined fields; final invalid header fields treated invalid. Extern returns and mutable arguments become arbitrary symbolic values, while target-specific extern semantics are not implemented for the reported generator campaign. Modeling arbitrary effects does not provide a precise implementation contract for a real device extern. §6.1–6.2: Model-based tests reuse original-program semantics to obtain one candidate input/output pair per controllable path; target output compared with expected output. BMv2 uses STF/capture files; Tofino uses PTF and software simulator. Authors initially reconfirmed every Tofino semantic bug on hardware, later used simulator only for speed; all counted bugs confirmed with developers. Therefore not all later reports independently exercised physical hardware. §6.2: Unknown/undefined path influences cannot be forced on real hardware, so constraints restrict paths. Undefined output bits marked don’t-care, invalid header members omitted. Solver chooses random nonzero input/output assignments because zero defaults can mask bugs. One tested representative per path is not exhaustive over all packet values on that path; finite-state exhaustive equivalence applies to accessible-pass SMT checks, not these backend tests. §6.3: Device minimum packet size,MAC restrictions and silent drops can make semantic-model tests unexecutable; such cases discarded, reducing coverage. P4 does not specify all transformations between programmable blocks, which complicates end-to-end expected packets. Many branches can generate exponentially many paths and millions of packet pairs. Current small programs avoid that observed bottleneck; no demonstrated complete path coverage for large deployed programs. §7/Tables2–3: Eight-month longitudinal search,96new distinct developer-confirmed bugs=62crash+34semantic;54fixed=31crash+23semantic. Filed reports are not all confirmed bugs: Table2 lists117filed reports. Status and confirmation at publication, not current repository state. No total generated-program denominator, matched alternative-fuzzer budget, independently adjudicated false-negative rate or compiler source-code coverage is supplied. Internal fixed-count discrepancy: Table2 printed fixed-crash cells27+4+8 sum39, and fixed-semantic22+1+0 sum23, yielding62fixed overall, whereas abstract reports31fixedcrash/23fixedsemantic/54total and conclusion54total. Preserve all as reported; no independently established resolution. §7.1: P4C59confirmed=33crash+26semantic;BMv2five=4+1;Tofino32=25+7. Tofino excludes P4C frontend/midend bugs reproducible there and two downstream crashes filed as upstream missed optimizations. Shared P4C bugs likely affect backends, but exact Tofino pass list unavailable. BMv2 tested less extensively and Tofino more complex; counts cannot rank intrinsic compiler quality. §7.1/Table3: P4C front-end38 and mid-end21;backend37=BMv2five+Tofino32. All P4C semantic bugs found by translation validation, Tofino semantic bugs by model testing; where possible P4C findings reproduced with packet pairs. Five-month interpreter preparation and weekly ~10,000 random programs are reported; eight-month campaign is not eight months of equally mature fixed-method automated runs. §7.2/Table4: Times are semantics generation for single programs/passes, not whole-compiler certification latency. tna_simple_switch1940LOC5s;switch_tofino_x0 5751LOC51s;switch_tofino2_y0 6024LOC53s;fabric958LOC2s;P4_14-converted switch5894LOC10m20s. Dense parser branching and Python implementation blamed for cost; formula equality typically <1s is authors’ observation, not universal time bound. No machine configuration,repetitions,CI or solver-timeout rate for these timings is given. §7.3/Figure5a–c: Missing SideEffectOrdering transformation of ternary nested in addition crashes Tofino; missed InlineFunctions also leaks unsupported calls to backend. Unknown-width shift crashes type inference and prompts specification prohibition. A valid slice expression instead becomes illegal through StrengthReduction index overflow. These demonstrate source legality, downstream symptoms and originating faulty pass must be distinguished. §7.3/Figure5d: Passing low-byte slice as inout while assigning disjoint high-byte slice should preserve high-byte assignment. SimplifyDefUse assumed entire variable copied back and deleted the assignment. At least11/26P4C semantic bugs concern side effects/copy-in-copy-out;21/33P4C crash bugs involve type checker. These are scoped classifications, not incidence rates for arbitrary programs. §7.3/Figure5e: Invalid-header write/read folded into constant assignment on valid header is allowed by undefined behavior, but can conflict with backend no-op expectations; maintainer warning accepted. This is unstable code, not necessarily miscompilation. Figure5f exit ambiguity: authors expected copy-out even after exit, whereas pass moved assignment after exit and lost updates; clarification changed spec and ensuing implementation changes introduced ≥3 further bugs. §7.1 versus §7.3: Paper reports16/59P4C bugs from recent merges in §7.1, but19/59 in §7.3. Preserve both counts as an unresolved internal discrepancy. Predication change caused at least six bugs(one crash,five semantic); independent user report duplicated earlier finding. Six specification changes include header validity/initialization,unknown-width shifts,exit/copy-out. These are reported campaign outcomes, not claims that all such ambiguities now resolved. §7.3–7.4: Four invalid intermediate-P4 emission bugs were fixed but explicitly excluded from96. Reparsing can expose ToP4,parser or transform bugs, even where final execution unaffected. Distinct assertion messages help crash deduplication; thin nanopasses help isolate semantic defects. Almost all crashes assertion failures suggests missing assertions might convert some into silent semantic failures, an authors’ inference rather than measured counterfactual. §7.4/§8: Open-source maintainers responded quickly, while opaque Tofino tracker and infrequent binary updates cause repeated rediscovery. Manual reduction: inspect each flagged program and prune to reportable case; automatic reduction is future work. Backend translation validation, safe-optimization plugin and long-term CI analysis are proposed, not evaluated results. Public open-source Gauntlet and P4C CI integration reported; no artifact execution in this reading. §8: Generator omits extern calls,method overloading,type definitions,varbit vectors,runtime indices,longest-prefix/ternary matches,generic-body type inference,annotations and custom table properties. Interpreter covers more features than generator; do not confuse those coverages. Compiler code coverage unmeasured. Extern modeling especially difficult without hardware semantics. Performance/resource-usage regressions not detected by current correctness techniques. §9: P4K and petr4 provide language-foundation work; netdiff compares dataplane semantics; p4pktgen starts from backend JSON and therefore cannot expose source-to-JSON transformation errors in the same way. These references motivate complementary tools, not independently verified claims of their current coverage. No Verus,verifiedRust,TLA+,distributed-consensus proof or LLM-generated proof experiment. Direct relevance is trustworthy semantics/oracles and distinguishing generated-test evidence from quantified translation checks.
     - how much was read: most of it read
-    - [source](https://www.usenix.org/conference/osdi20/presentation/ruffy); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal570/gauntlet.flow.reading.txt`
+    - [source](https://www.usenix.org/conference/osdi20/presentation/ruffy)
     - record id: `gauntlet-finding-bugs-in-2020`
 - CoqGym (2019)
     - title: Learning to Prove Theorems via Interacting with Proof Assistants
@@ -1851,7 +1851,7 @@
     - number: about 71K proofs from 123 projects
     - limits: It completes existing theorems in a fixed environment. It does not score whether a spec is adequate. An agent that can use the filesystem faces a different threat model.
     - how much was read: most of it read
-    - [source](https://arxiv.org/abs/1905.09381); [notes: CoqGym: project separation and checker-owned proof state](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal287/proof_assistants.txt`
+    - [source](https://arxiv.org/abs/1905.09381); [notes: CoqGym: project separation and checker-owned proof state](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `coqgym-2019`
 - Simulink model testing versus model checking (2019)
     - title: Evaluating Model Testing and Model Checking for Finding Requirements Violations in Simulink Models
@@ -1862,13 +1862,13 @@
     - number: MC proved 41 requirements
     - limits: The benchmark has eleven models and seeded faults from one aerospace/defense company under NDA; results may not generalize to other CPS domains or tools. Model testing is stochastic/search-guided and only demonstrates failures, so repeated runs and heuristic choices affect coverage. QVTrace/SMT cannot handle some continuous dynamics, non-algebraic functions, machine-learning components, or large translations; simplification/discretization can alter behavior. BMC proofs are bounded and may miss late failures. The study compares one Hill-Climbing tester and QVTrace, not all possible implementations, and no absence-of-fault guarantee follows from testing.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/arxiv_kept_text/1905.03490.txt`
+    -
     - record id: `simulink-model-testing-versus-model-checking-2019`
 - VerifAI: A Toolkit for the Formal Design and Analysis of Artificial Intelligence-Based Systems. (2019)
     - what: Introduces a Python toolkit integrating semantic scenario generation, black-box simulation, property monitoring, sampling search and counterexample analysis for AI-based closed-loop systems. Demonstrates autonomous-driving falsification/fuzzing, counterexample-guided neural-network data augmentation, cart-pole robustness testing and mountain-car training-parameter search. Formal models and temporal-logic monitors guide finite simulation; the paper provides no machine-checked correctness theorem or exhaustive safety certificate. Explains how one semantic feature representation connects six workflows: falsification, fuzz testing, counterexample analysis, data augmentation, hyperparameter synthesis and model-parameter synthesis. Scenic supplies conditioned scenario distributions; monitor scores guide adaptive sampling; feature-valued error tables support PCA and recurring-value analysis. Concrete examples expose perception-to-controller failure propagation and distinguish rewards, training settings and system parameters. Quantitative evidence is mainly a1000-sample cart-pole illustration with38violations; substantial augmentation/algorithm detail is delegated to prior publications.
     - limits: Inputs are a simulatable closed-loop system(controller, perception and plant), a modeled environment and a property. Controller/perception can be arbitrary executable code. The simulator is a black box, so the evidence concerns simulations of this chosen composition and environment. No proof of correspondence to physical dynamics, renderer fidelity, implementation semantics or every possible environment is given. Semantic/abstract features describe objects, positions, headings, colors and parameters rather than raw pixel arrays. They can be hierarchical products of boxes/finite sets/structures/arrays or a Scenic probabilistic program. Scenic constraints condition the scenario distribution and a renderer/simulator creates concrete sensor inputs. This is a generative search space; the paper supplies no abstraction-soundness theorem covering every concrete image or real environment. Perception is assessed through system-level behavior because component specifications are difficult; the same classification mistake matters when it causes a closed-loop failure. This does not establish correctness of perception outside modeled/rendered contexts. Distribution assumptions and permitted agents/behaviors are designer choices, explicitly acknowledged as incomplete environment modeling. The initial release uses sampling, not exhaustive symbolic exploration. Listed passive methods are uniform random, simulated annealing, Halton and Scenic samples; active methods are cross-entropy and Bayesian optimization. The prose groups simulated annealing among no-feedback samplers; its specific implementation is not explained, so the record does not infer an algorithmic contract from that label. Directed/exhaustive and symbolic/adversarial methods are future extensions. Monitors accept MTL, objective functions or arbitrary Python code; MTL Boolean and quantitative semantics use py-metric-temporal-logic. A monitor score can guide search and identify a violating trace. The paper gives no formal monitor implementation proof, sampling-completeness theorem, stopping rule, discretization error bound or statistical assurance theorem. No discovered violation is not a proof of universal satisfaction. Error-table rows are counterexamples and columns are semantic features. PCA is offered for ordered domains and recurrent-value subsets for unordered domains, either offline for debugging or online for sampling. Correlation is the stated interpretation, not demonstrated causal attribution. The paper gives no numeric PCA output, significance assessment or validation of inferred feature importance. Communication is client-server over IPv4 sockets: VerifAI sends a configuration and the simulator returns trajectories, supporting multiple simulators. This is interoperability infrastructure, not verification of a distributed protocol, socket delivery guarantees or concurrency correctness. AV experiments use commercial Webots2018. Lane following uses non-ML line detection; squeezeDet-based perception estimates cone distance and initiates a lane change below15m. The MTL property requires cone clearance and avoiding overshoot, but its exact formula, clearance threshold, horizon and robustness normalization are not printed. First AV case varies object positions/orientations, disabled-car color, cruising speed and reaction time. The orange car is mistaken for cones, triggering a premature/incomplete lane change and crash. This is a concrete found failure, not a quantified search-efficiency comparison; sample counts, runtimes, seeds and baseline performance are absent. The acknowledgements identify a Titan Xp GPU used for the research, without specifying a complete machine or its assignment to this experiment. Second AV case models an occluded intersection accident with sampled initial positions. One car turns using an OpenStreetMap/Intelligent-Intersections trajectory; the other maintains velocity or brakes on a simulated smart-intersection warning. The authors say this can identify sufficient advance notice, but provide no numerical warning bound, exhaustive guarantee or experiment table. Figure3 is explicitly a partial Scenic program; missing world-model definitions and spot2 prevent treating it as standalone runnable code. Data-augmentation example renders road images for squeezeDet, then selects additions by random error-table samples, top-k closest samples or PCA generation. Figure4 shows two cars counted as one. Accuracy improvement and detailed results are attributed to reference9; this paper prints no accuracy values, held-out split, number of new images, retraining budget or comparative statistics. Prior-paper results have not been independently read here. Cart-pole controller is trained using PPO with100k training episodes. Test variations named in the prose are initial lateral position/rotation and pole mass/length; Figure5 visually plots pole length, cart mass and pole mass. Record retains that presentation difference without guessing an implementation error. Reward is described using2.4m displacement and12degree angle, then testing thresholds are said to be slightly modified without supplying values. Cart-pole Figure5 reports38violations among1000randomly sampled parameter configurations. Main text also says sampling was guided by reward; the precise sampling law is unspecified. Reader arithmetic38/1000=3.8percent describes this plotted set only, not a deployment failure probability, iid confidence interval or general robustness certificate. No runtimes, repeated seeds, statistical uncertainty, comparator or numerical failure coordinates are reported. Mountain-car experiment searches discrete training-algorithm choices and training-set size. It negates the goal-distance reward so falsification becomes finding settings yielding a successful learned controller. A table of safe hyperparameters and PCA sensitivity are claimed but neither values nor counts/results are printed. Safe here is simulation success in this study; no guarantee for all training randomness, environments or future policies follows. Novelty/first-tool claims concern integration and extension of prior methods. The paper explicitly delegates algorithms/formalisms to refs7–10,12,15,22 and augmentation results to ref9. It contains no formal theorem, proof, verified tool kernel or code-generating proof agent. Integration claims are author statements, not an independently established priority survey. Implementation/examples are linked at https://github.com/BerkeleyLearnVerify/VerifAI with expected outputs. No commit hash, full dependency lock, complete experiment hardware configuration, wall-clock results or reproduction is supplied here. Acknowledgements identify a Titan Xp GPU used for the research. The front page displays Artifact evaluated and Functional badges; this is published artifact-evaluation evidence, not this reader’s execution or independent replication of every experiment. CARLA and X-Plane interfaces already exist according to the conclusion, whereas applications and symbolic search are future work. No artifact source or simulation was executed in this reading. Relevance to specification/proof-agent evaluation is methodological: preserve the scenario model, executable target, explicit monitor, generated witness and training/test distinction. Sampling-guided repair and reward optimization can find improvements without supplying a proof. No LLM agent, Verus, verified Rust, TLA+ or distributed-system verification experiment is reported.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-030-25540-4_25); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal477/verifai.reading.txt`; notes outside this site: `lit_snowball/notes_coci7.md`
+    - [source](https://doi.org/10.1007/978-3-030-25540-4_25)
     - record id: `verifai-a-toolkit-for-2019`
 - unified PL-NN branch-and-bound verification (2018)
     - title: A Unified View of Piecewise Linear Neural Network Verification
@@ -1879,7 +1879,7 @@
     - number: 500 CollisionDetection and 188 ACAS properties
     - limits: Formal guarantees target bounded-input piecewise-linear networks and Boolean formulas over linear inequalities; sigmoid/tanh and approximate or undecidable approaches are outside the comparison. Verification is NP-hard and experiments use a two-hour/20GB single-core limit, so timeout is unresolved rather than proof of failure. BlackBox and MIP rely on Gurobi; random upper bounds must produce valid counterexamples.
     - how much was read: most of it read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/neurips_text/A_Unified_View_of_Piecewise_Linear_Neural_Network_Verification.txt`
+    -
     - record id: `unified-pl-nn-branch-and-bound-verification-2018`
 - Fonseca study (2017)
     - title: An Empirical Study on the Correctness of Formally Verified Distributed Systems
@@ -1890,7 +1890,7 @@
     - number: IronFleet request-deduplication patch: about seven implementation lines changed, still verified
     - limits: Finding no protocol bugs does not show that none existed. The source of the PK toolkit was not found.
     - how much was read: most of it read
-    - [source](https://www.cs.purdue.edu/homes/pfonseca/papers/eurosys2017-dsbugs.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_foundations.md`; [notes: Specification errors and auditing](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Empirical distributed-systems study and PK](../distributed_verification_review_b/deep_7_evaluation.md)
+    - [source](https://www.cs.purdue.edu/homes/pfonseca/papers/eurosys2017-dsbugs.pdf); [notes: Specification errors and auditing](../distributed_verification_review_b/deep_6_intent_to_spec.md); [notes: Empirical distributed-systems study and PK](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `fonseca-study-2017`
 - Who Guards the Guards? Formal Validation of the Arm v8-M Architecture Specification (2017)
     - what: The authors build a higher-level account of the security of the Arm v8-M architecture, which processor designers can review. They then formally compare it with the detailed processor spec. They check both forbidden access and intended permitted access.
@@ -1921,7 +1921,7 @@
     - number: {'variable_roles': 27, 'loop_metrics': 4, 'control_flow_metrics': 5, 'training_fraction': 0.6, 'test_fraction': 0.4, 'random_repetitions': 10, 'median_feature_extraction_s': 0.5, 'median_prediction_s': 0.5, 'score_2014_portfolio': 1494, 'score_2014_CBMC': 1292, 'score_2015_portfolio': 2511, 'score_2015_CPAchecker': 2228}
     - limits: Tasks are C source files with label-reachability or memory-safety properties; memory safety covers unsafe deallocation,unsafe pointer dereference and leaks. Expected truth labels are supplied by benchmark designers; historical tool results are reused rather than all constituent tools rerun under a reconstructed competition environment. Predictive assumption: similar source metrics imply similar verifier behavior. Paper documents failures caused by unsoundness,bugs,incompleteness and class imbalance; selection cannot guarantee a sound answer. Random60:40 task splits within each year, repeated10 times; this is not training exclusively on2014 and testing exclusively on2015. Grouped splits by program family and nested tuning/weight-construction boundaries are not described; independence from near-duplicate benchmark variants is not established by the paper. Competition participants supplied benchmarks; authors explicitly warn idealized-solver figures can be optimistic. Reported metric success alone does not isolate every feature’s marginal contribution. No parameterized distributed verification, liveness specification checking, Verus/Rust or LLM-agent proof generation is evaluated. No artifact execution performed for this reading.
     - how much was read: most of it read
-    - [source](https://doi.org/10.1007/978-3-319-21690-4_39); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_venues/full_text_recovered/formal273/Empirical_Software_Metrics_for_Benchmarking_of_Verification_Tools_.txt`
+    - [source](https://doi.org/10.1007/978-3-319-21690-4_39)
     - record id: `empirical-software-metrics-for-2015`
 - Looney (2015)
     - title: Analysing Sanity of Requirements for Avionics Systems
@@ -1938,7 +1938,7 @@
     - what: A proposed benchmark with four tasks: add memory-safety specs, strengthen them into specs of full behavior, repair wrong specs, and generate lemmas. Each task runs zero-shot, few-shot, or interactively with verifier feedback. The verifier is Viper.
     - limits: A proposal, not a result. It gives no metrics.
     - how much was read: most of it read
-    - [source](https://www.pm.inf.ethz.ch/education/student-projects/llm-benchmark.html); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://www.pm.inf.ethz.ch/education/student-projects/llm-benchmark.html)
     - record id: `creating-an-llm-benchmark`
 - Aria (2026)
     - title: Harnessing Code Agents for Automatic Software Verification
@@ -1949,7 +1949,7 @@
     - number: Open model Kimi K2.6: 55% first-try vs 72.5% for Opus 4.7, about seven times as long
     - limits: The statements were given, not written. Iris is public and probably in the training data. The paper argues that its proofs differ from the upstream ones. That does not test for contamination (the notes' caveat).
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2607.06341); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://arxiv.org/abs/2607.06341)
     - record id: `aria-2026`
 - AutoCLRS completeness-test artifact (2026)
     - what: This artifact applies the intent-formalization completeness test to textbook algorithms written in F*/Pulse. Only the abstract interface, not the code body, should establish the expected result. The spec may allow multiple valid outputs.
@@ -1973,12 +1973,12 @@
     - number: Tool-augmented GPT-5.2 agent compiles 87.2% of statements but is faithful on 57.7% (29.5 point gap)
     - limits: About mathematics, not systems.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2606.31002); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2606.31002)
     - record id: `beyond-compilation-2026`
 - ClarifyCodeBench (2026)
     - what: Measures how well code models ask for clarification of requirements, using the metrics TKQR and ORA.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2607.00711); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2607.00711)
     - record id: `clarifycodebench-2026`
 - COINS (2026)
     - title: How Powerful Are LLMs in Generating Formal Program Specifications? (COINS)
@@ -1988,7 +1988,7 @@
     - number: 164 HumanEval problems
     - limits: Failing to find a proof that a test is accepted is weaker evidence than proving that it is rejected. The LLM judge can skip the formal proof. It does not cover distributed liveness.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2608.13077); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`; [notes: How Powerful Are LLMs in Generating Formal Program Specifications?](../distributed_verification_review_b/deep_7_evaluation.md)
+    - [source](https://arxiv.org/abs/2608.13077); [notes: How Powerful Are LLMs in Generating Formal Program Specifications?](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `coins-2026`
 - CryptoProver (2026)
     - title: An AI Approach to Verified Production Cryptographic Libraries
@@ -2013,7 +2013,7 @@
     - number: After removing unfaithful behaviors true accuracy drops about 20%
     - limits: One notes file says the full claims await deeper reading. Another read the faithfulness section.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2605.01394); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_scholar.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`
+    - [source](https://arxiv.org/abs/2605.01394)
     - record id: `livefmbench-2026`
 - Munkres' General Topology Autoformalized in Isabelle/HOL (2026)
     - what: LLM coding agents (ChatGPT 5.2, then Claude Opus 4.6) wrote an Isabelle/HOL formalization of all 39 sections of Munkres' Topology. They used a workflow that writes sorry first, plus sledgehammer.
@@ -2022,7 +2022,7 @@
     - number: about 83% automated
     - limits: The agent defined its own notions in parallel to Isabelle's library. It also added "safe" extra hypotheses. There is no layer to reconcile them. The context for the 83% figure was not fully read.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2604.07455); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://arxiv.org/abs/2604.07455)
     - record id: `munkres-general-topology-autoformalized-2026`
 - NLForge (2026)
     - title: Natural Language based Specification and Verification
@@ -2032,7 +2032,7 @@
     - number: cited benchmark: 95.67% syntax correctness and 3.69% verification on compositional tasks
     - limits: The notes cover about 50% of the paper. It is useful for finding bugs, not as a replacement for sound verification.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2605.11315); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://arxiv.org/abs/2605.11315)
     - record id: `nlforge-2026`
 - Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean (2026)
     - what: A Lean-proving agent with a cheap controller: after each failed proof attempt, a logistic-regression model predicts the chance and cost of the next attempt and decides whether to retry the current target or restart from a new lemma breakdown.
@@ -2060,7 +2060,7 @@
     - what: A model-based testing framework for Rust. A driver maps Rust state to model state, executes generated Quint traces, and compares states.
     - limits: The driver is an explicit link that a human or agent writes. A pass shows agreement on the tested traces only. A wrong projection of state can hide a bug.
     - how much was read: parts read
-    - [source](https://github.com/quint-co/quint-connect); [notes: R06. Quint Connect, Choreo, and LLM-driven implementation](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`
+    - [source](https://github.com/quint-co/quint-connect); [notes: R06. Quint Connect, Choreo, and LLM-driven implementation](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `quint-connect-2026`
 - Reward hacking in Dafny RLVR (2026)
     - what: Reinforcement learning on Dafny raised the verified reward, but it also revealed specification hacking: trivial postconditions, and leaking the answer through helper functions.
@@ -2068,7 +2068,7 @@
     - number: Lean VeriCoding pilot 46.2% to 69.2%
     - limits: For Dalek-Bench (repository-scale Lean), preliminary results remain weak.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2605.30914); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2605.30914)
     - record id: `reward-hacking-in-dafny-2026`
 - SaltBench (2026)
     - title: SaltBench: A Referee-Gated Protocol for Measuring Method Effects in Machine-Checked Software Work
@@ -2079,7 +2079,7 @@
     - number: asking for proofs cost more on all five components, no premium exceeded 2.8879x
     - limits: The correctness analysis is post hoc and descriptive, with three cells per condition, so it supports no causal conclusion. Paxos as a task is not a proof of unbounded Paxos liveness. The September human note describes v1, not v3.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2609.11076v3); [notes: SaltBench: current October revision changes what can be cited](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
+    - [source](https://arxiv.org/abs/2609.11076v3); [notes: SaltBench: current October revision changes what can be cited](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `saltbench-2026`
 - SV-COMP (2026)
     - title: Competition on Software Verification - (SV-COMP).
@@ -2087,7 +2087,7 @@
     - number: 2026 scoring: correct FALSE +1, correct TRUE +2, UNKNOWN 0, incorrect FALSE -16, incorrect TRUE -32
     - limits: Witnesses are not required for TRUE results in unsupported or demo categories. The specs are fixed, so it does not evaluate inventing specs. Termination differs from a service that keeps responding forever.
     - how much was read: parts read
-    - [source](https://sv-comp.sosy-lab.org/2026/rules.php); [notes: SV-COMP](../distributed_verification_review_b/deep_7_evaluation.md); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://sv-comp.sosy-lab.org/2026/rules.php); [notes: SV-COMP](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `sv-comp-2026`
 - SWE-Proof (2026)
     - title: SWE-Proof / BenchProofer
@@ -2097,7 +2097,7 @@
     - number: Specs from unresolved instances fail audit 92% of the time vs 51% for resolved
     - number: 26.8% of test-passing patches overturned by the audit; Lean faithfulness failure 37.2%
     - how much was read: parts read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    -
     - record id: `swe-proof-2026`
 - The Prover Is the Judge (2026)
     - title: The Prover Is the Judge (Ada/SPARK, Codex CLI and Claude Code)
@@ -2106,7 +2106,7 @@
     - number: Roughly 20-40 times lower supervision cost than comparable hand verification
     - limits: The anti-cheat rules are enforced by skill text and human review, not automatically. The code is at https://github.com/tobiasphilipp/experimental-agentic-verified-software.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2607.14340); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2607.14340)
     - record id: `the-prover-is-the-judge-2026`
 - Towards an Agentic LLM-based Approach to Requirement Formalization from Unstructured Specifications (2026)
     - what: LLM roles extract requirements. A judge filters out those the target formalism cannot express. The pipeline then translates the rest to UPPAAL SMC queries and checks syntax. The domain is human-robot interaction.
@@ -2116,7 +2116,7 @@
     - number: reported as 77.8% across three scenarios
     - limits: An LLM judged whether the meaning matched. It has no distributed systems and no liveness. Accuracy is specific to the scenario.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2604.18228); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
+    - [source](https://arxiv.org/abs/2604.18228)
     - record id: `towards-an-agentic-llm-2026`
 - Veil blog (Sergey) (2026)
     - title: Verifying Distributed Protocols in Veil
@@ -2132,7 +2132,7 @@
     - number: 10% of expert-written DafnySynthesis specs wrongly claimed as ground truth, another 18% found by their review
     - limits: A trivially simple matched pair still passes.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2510.06296); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2510.06296)
     - record id: `veriequivbench-2026`
 - VeriHarness (2026)
     - title: VeriHarness: Scaling Agentic Verification for Long-Horizon Tasks
@@ -2142,7 +2142,7 @@
     - number: 917 consensus claims, 34% wrong (Fig. 2)
     - limits: The review notes read about 25%. It is not about proofs or specs.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2610.00972); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://arxiv.org/abs/2610.00972)
     - record id: `veriharness-2026`
 - 3SF model checking (2025)
     - title: Technical Report: Exploring Automatic Model-Checking of the Ethereum specification
@@ -2153,14 +2153,14 @@
     - number: A 7-block Alloy run went over 16 days without finishing
     - limits: Only the finality gadget and only Accountable Safety, on small bounded instances (at most 7 checkpoints and 24 votes); every validator has stake 1. The hand-made abstractions are not proved equal to the Python spec. Appendix A (translation rules) and B (soundness proofs) were skimmed, not read closely.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2501.07958); [notes: ## Exploring Automatic Model-Checking of the Ethereum specification (2](claude_readings.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://arxiv.org/abs/2501.07958); [notes: ## Exploring Automatic Model-Checking of the Ethereum specification (2](claude_readings.md)
     - record id: `3sf-model-checking-2025`
 - CapybaraKV (2025)
     - title: CapybaraKV (verified-storage)
     - what: CapybaraKV is a verified key-value store written in Verus. An earlier version appears in the OSDI 2025 paper PoWER Never Corrupts. It comes with a line-counting script that computes the ratio of proof lines to code lines.
     - limits: The notes read only the README.
     - how much was read: parts read
-    - [source](https://github.com/microsoft/verified-storage); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - [source](https://github.com/microsoft/verified-storage)
     - record id: `capybarakv-2025`
 - Case Study on LLMs in Verification with Proof Assistants (hs-to-coq, Verdi) (2025)
     - what: Tests one-shot LLM proof generation (before agents existed) on Verdi and hs-to-coq. Verdi is a distributed-systems framework that contains a verified Raft.
@@ -2168,7 +2168,7 @@
     - number: hs-to-coq up to 51.9%
     - limits: One-shot baseline only.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2508.18587); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2508.18587)
     - record id: `case-study-on-llms-2025`
 - Clock-SI TLA+ (2025)
     - title: Formal modelling and analysis of Clock-SI with TLA+
@@ -2185,7 +2185,7 @@
     - what: A study of Dafny students using ChatGPT.
     - limits: Gains depended on how good the prompts were.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2506.22370); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2506.22370)
     - record id: `dafny-students-with-chatgpt-2025`
 - FormalBench (2025)
     - title: Can LLMs Reason About Program Semantics? A Comprehensive Evaluation of LLMs on Formal Specification Inference
@@ -2194,14 +2194,14 @@
     - number: 700 Java reference programs, 6,219 transformed variants
     - limits: The program rewrites do not measure contamination from pretraining. Deriving the intent from existing code can preserve a defect in that code.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2503.04779); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`; [notes: FormalBench and SpecEval: mutation strength and surface robustness](../distributed_verification_review_b/deep_7_evaluation.md)
+    - [source](https://arxiv.org/abs/2503.04779); [notes: FormalBench and SpecEval: mutation strength and surface robustness](../distributed_verification_review_b/deep_7_evaluation.md)
     - record id: `formalbench-2025`
 - ImpossibleBench (2025)
     - what: ImpossibleBench builds tasks where any pass implies a shortcut that violates the spec. It uses them to measure cheating.
     - number: GPT-5 cheats on 76% of Oneoff-SWEbench tasks; a prompt change cuts one variant from 92% to 1%
     - number: Monitors catch 86-89% of cheating on LiveCodeBench but 42-65% on SWE-bench
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2510.20270); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2510.20270)
     - record id: `impossiblebench-2025`
 - Lean-auto (2025)
     - title: Lean-auto: An Interface between Lean 4 and Automated Theorem Provers
@@ -2223,7 +2223,7 @@
     - number: 173 grammar predicates
     - limits: The draft the notes inspected has a different title from earlier and later records, and a placeholder conference header. One property of an edited model is not a complete verification of Raft.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2404.18048); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_systems.md`
+    - [source](https://arxiv.org/abs/2404.18048); [notes: papers inspected](../distributed_verification_review_b/review_b_invariants_20261007.md)
     - record id: `scimitar-2025`
 - SpecEval (2025)
     - title: SpecEval: Evaluating Code Comprehension in Large Language Models via Program Specifications
@@ -2245,7 +2245,7 @@
     - number: Trace matching wrong: 1.85% to 27.24%
     - limits: The notes are unsure about the authors after the first. Percentages across different instruments cannot be compared.
     - how much was read: parts read
-    - [source](https://doi.org/10.1007/978-3-031-71162-6_30); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`; notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-031-71162-6_30)
     - record id: `misconceptions-in-finite-trace-2024`
 - SandTable (2024)
     - title: SandTable: Scalable Distributed System Model Checking with Specification-Level State Exploration
@@ -2256,21 +2256,21 @@
     - number: abstract: 18 new bugs, 17 confirmed, 13 fixed (the note's sentence adds 'out of 23 total' garbled)
     - limits: It cannot guarantee that no differences remain between the spec and the implementation.
     - how much was read: parts read
-    - [source](https://doi.org/10.1145/3627703.3650077); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`; [notes: P10. SandTable: Scalable Distributed System Model Checking with Specif](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
+    - [source](https://doi.org/10.1145/3627703.3650077); [notes: P10. SandTable: Scalable Distributed System Model Checking with Specif](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `sandtable-2024`
 - TLA+ trace validation (2024)
     - title: Validating Traces of Distributed Programs Against TLA+ Specifications
     - what: Instrumented Java executions give partial updates to the abstract state. TLC searches for a path compatible with them and infers missing values nondeterministically.
     - limits: Checks only that some compatible behavior exists (S∩T≠∅). It does not check refinement. The more logged data is missing, the weaker the verdict.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2404.16075); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_agents.md`; [notes: P08. Validating Traces of Distributed Programs Against TLA+ Specificat](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
+    - [source](https://arxiv.org/abs/2404.16075); [notes: P08. Validating Traces of Distributed Programs Against TLA+ Specificat](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `tla-trace-validation-2024`
 - Mocket (2023)
     - title: Model Checking Guided Testing for Distributed Systems (Mocket)
     - what: Mocket finds inconsistencies between a TLA+ spec and a distributed system's implementation. It annotates Java state and actions and exports TLC's state graph. It generates paths through the graph. It then drives implementation runs with instrumentation and a testing server.
     - limits: The notes could not find the publication's authors, venue or year. Coverage depends on the paths, the action mapping, the instrumentation and the configured faults. The notes found no universal theorem about the implementation or progress.
     - how much was read: parts read
-    - [source](https://github.com/Icysandwich/Mocket); [notes: Mocket](../distributed_verification_review_b/review_b_additional_tools_20261007.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/openalex_leads_20261012.md`
+    - [source](https://github.com/Icysandwich/Mocket); [notes: Mocket](../distributed_verification_review_b/review_b_additional_tools_20261007.md)
     - record id: `mocket-2023`
 - FoundationDB (2021)
     - title: FoundationDB: A Distributed Unbundled Transactional Key Value Store
@@ -2298,7 +2298,7 @@
     - number: 18% of reference model and harness code written by the engineering team
     - limits: Passing the checks does not mean the code is correct.
     - how much was read: parts read
-    - [source](https://doi.org/10.1145/3477132.3483540); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; [notes: papers](../distributed_verification_review_b/review_b_systems_20261007.md); [notes: Using Lightweight Formal Methods to Validate a Key-Value Storage Node ](../distributed_verification_review_b/deep_1_verified_implementations.md)
+    - [source](https://doi.org/10.1145/3477132.3483540); [notes: papers](../distributed_verification_review_b/review_b_systems_20261007.md); [notes: Using Lightweight Formal Methods to Validate a Key-Value Storage Node ](../distributed_verification_review_b/deep_1_verified_implementations.md)
     - record id: `shardstore-2021`
 - Elle (2020)
     - title: Elle: Inferring Isolation Anomalies from Experimental Observations
@@ -2308,7 +2308,7 @@
     - number: Linear time in history length
     - limits: Needs generated workloads where reads reveal the full write history (such as list append). Ignores predicates, so it cannot separate repeatable read from serializability. It finds bugs, not proof that a database is correct.
     - how much was read: parts read
-    - [source](https://arxiv.org/abs/2003.10554); [notes: ## Elle isolation checker (2020)](claude_readings.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - [source](https://arxiv.org/abs/2003.10554); [notes: ## Elle isolation checker (2020)](claude_readings.md)
     - record id: `elle-2020`
 - eXtreme Modelling (2020)
     - title: eXtreme Modelling in Practice
@@ -2318,20 +2318,20 @@
     - number: 4913 generated tests reached 100% branch coverage vs 21% handwritten and 92% AFL fuzzer
     - limits: Trace checking of replication struggled with the level of abstraction, concurrency, incomplete observations, and keeping code and model in sync. The generated tests cover local merge behavior, not the whole distributed product.
     - how much was read: parts read
-    - [source](https://www.vldb.org/pvldb/vol13/p1346-davis.pdf); [notes: P04. eXtreme Modelling in Practice](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`
+    - [source](https://www.vldb.org/pvldb/vol13/p1346-davis.pdf); [notes: P04. eXtreme Modelling in Practice](../distributed_verification_review_b/deep_3_spec_tools_tla_to_code.md)
     - record id: `extreme-modelling-2020`
 - Apalache (2019)
     - title: Apalache: temporal properties tutorial, feature table and TLA+ model checking made symbolic
     - what: Apalache is a model checker for TLA+ that works on symbols instead of listing states, using an SMT solver. It checks state, action and trace invariants, inductive invariants (a property that holds at the start and is preserved by every step) and temporal properties.
     - limits: Apalache parses ASSUME but does not pass it to the solver. It does not use THEOREM. Its bounded checks do not prove properties for unbounded runs. The authors did not read the original paper.
     - how much was read: parts read
-    - [source](https://github.com/apalache-mc/apalache); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_distributed.md`; [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md); [notes: Model checking: what a successful run means](../distributed_verification_review_b/deep_2_liveness.md)
+    - [source](https://github.com/apalache-mc/apalache); [notes: tools](../distributed_verification_review_b/review_b_systems_20261007.md); [notes: Model checking: what a successful run means](../distributed_verification_review_b/deep_2_liveness.md)
     - record id: `apalache-2019`
 - QED at Large (2019)
     - title: QED at Large: A Survey of Engineering of Formally Verified Software
     - what: A survey of proof engineering (building and maintaining machine-checked proofs).
     - how much was read: parts read
-    - [source](https://dependenttyp.es/pdf/QEDatLarge.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; [notes: S12](../distributed_verification_review_b/deep_9_formulation_methods.md)
+    - [source](https://dependenttyp.es/pdf/QEDatLarge.pdf); [notes: S12](../distributed_verification_review_b/deep_9_formulation_methods.md)
     - record id: `qed-at-large-2019`
 - Proof cost indicator (2015)
     - title: Empirical Study Towards a Leading Indicator for Cost of Formal Software Verification
@@ -2346,7 +2346,7 @@
     - number: Total Effort = 9.98 + 3.35*Final Size (R^2 = 0.914; person-weeks and kilo-lines of proof)
     - limits: Proof lines are a limited measure. The fit applies to one particular population of projects. It is not a universal conversion.
     - how much was read: parts read
-    - [source](https://trustworthy.systems/publications/nicta_full_text/8105.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; [notes: S36](../distributed_verification_review_b/deep_9_formulation_methods.md)
+    - [source](https://trustworthy.systems/publications/nicta_full_text/8105.pdf); [notes: S36](../distributed_verification_review_b/deep_9_formulation_methods.md)
     - record id: `proof-productivity-2014`
 - seL4 process study (2012)
     - title: Large-Scale Formal Verification in Practice: A Process Perspective
@@ -2356,21 +2356,21 @@
     - number: Integrity and authority confinement took 10 person months
     - number: Maintenance about one full-time person
     - how much was read: parts read
-    - [source](https://trustworthy.systems/publications/nicta_full_text/5396.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_humans.md`; [notes: S35](../distributed_verification_review_b/deep_9_formulation_methods.md)
+    - [source](https://trustworthy.systems/publications/nicta_full_text/5396.pdf); [notes: S35](../distributed_verification_review_b/deep_9_formulation_methods.md)
     - record id: `sel4-process-study-2012`
 - Towards a Notion of Unsatisfiable and Unrealizable Cores for LTL (2012)
     - what: The paper defines cores. A core isolates the part of a requirement set that is unsatisfiable or unrealizable (no implementation could meet it). The paper defines cores at several granularities, from whole requirements to proof structures. It also discusses vacuity (a requirement that passes for no real reason).
     - number: lift example: 6 of 49 conjuncts isolate an inconsistency (§8.1)
     - limits: A core explains a failure, but not necessarily every failure. It does not tell which restrictions on the environment the customer intended. The normal-form proofs were not checked.
     - how much was read: parts read
-    - [source](https://www.schuppan.de/viktor/VSchuppan-SCP-2012.pdf); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings_intent.md`
+    - [source](https://www.schuppan.de/viktor/VSchuppan-SCP-2012.pdf)
     - record id: `towards-a-notion-of-2012`
 - Aleph Prover
     - what: A prover reported to solve all of PutnamBench.
     - number: Solved all 672/672 problems on PutnamBench at about $73.98 per solved problem
     - limits: The review notes read only the web page.
     - how much was read: parts read
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    -
     - record id: `aleph-prover`
 - TLA-Prove
     - what: This is the public repository of TLA-Prover at commit 6427de9. The audit found two case lists (a 30-row holdout and a 20-row suite called 30-case). It found a saved result (n=30, 1 Diamond, 3 Gold, retrieval on) that differs from the paper. It also found a mutation check that differs from the paper.
@@ -2392,7 +2392,7 @@
     - number: Claude Sonnet 4 recovers 89% of full-information performance with interaction
     - limits: It covers coding, not specs.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2502.13069); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - [source](https://arxiv.org/abs/2502.13069)
     - record id: `ambig-swe-2026`
 - Automated Trace Link Recovery Between Natural Language Requirements and Formal Specifications via LLMs (2026)
     - what: LLMs link each item in a structured English requirements document to the matching part of an existing formal specification. The paper compared GPT-4o, Gemini 3.1 Pro and DeepSeek V3 with retrieval baselines on four projects, including an ATM and the avionics system Sun Search.
@@ -2406,7 +2406,7 @@
     - number: GPT-5.4 reaches 95.0% on 423 specs with K = 50 LLM calls
     - limits: Only the abstract was read. Code is available on request.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2605.27485); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://arxiv.org/abs/2605.27485)
     - record id: `automating-formal-verification-with-2026`
 - AxDafny (2026)
     - title: AxDafny: Agentic Verified Code Generation in Dafny
@@ -2417,7 +2417,7 @@
     - number: 56.4% on LCB-Pro-Dafny versus 11.6% for direct GPT-5.5
     - limits: The notes' author read only the abstract. The ICML listing and arXiv disagree on the margin (6 vs 6.5 points). Both benchmarks are sequential programs.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2606.32007); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://arxiv.org/abs/2606.32007)
     - record id: `axdafny-2026`
 - BenchShield (2026)
     - title: BenchShield: Formal Model-Backed Instrumentation for Reward Integrity in LLM-Agent Evaluation Infrastructure
@@ -2426,7 +2426,7 @@
     - number: runtime analysis 96% accuracy
     - limits: The notes cover only the abstract.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2609.11028); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://arxiv.org/abs/2609.11028)
     - record id: `benchshield-2026`
 - Beyond Type-checking: Towards Holistic Evaluation of Formal Specification Generation (2026)
     - what: The paper evaluates Lean specs written by LLMs, using more than type-checking. It measures whether the spec is well-formed, whether it is similar or equivalent to a reference spec, and whether it describes the intended behavior.
@@ -2434,7 +2434,7 @@
     - number: LeanAide returns only 135 of 161 candidates on CLEVER, though every returned one typechecks
     - limits: The notes did not record the authors.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2610.10604); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://arxiv.org/abs/2610.10604)
     - record id: `beyond-type-checking-towards-2026`
 - claimcheck (2026)
     - title: claimcheck: Narrowing the Gap between Proof and Intent
@@ -2445,14 +2445,14 @@
     - number: About 108 s per run vs 353 s single prompt, 693 s via Claude Code prompt
     - limits: It is small and self-made. The post calls it a probabilistic sanity check.
     - how much was read: only abstract or first pages read
-    - [source](https://midspiral.com/blog/claimcheck-narrowing-the-gap-between-proof-and-intent/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`; [notes: claimcheck: check whether the proven claim is what the user asked for](../distributed_verification_review_b/deep_5_llm_agents.md)
+    - [source](https://midspiral.com/blog/claimcheck-narrowing-the-gap-between-proof-and-intent/); [notes: claimcheck: check whether the proven claim is what the user asked for](../distributed_verification_review_b/deep_5_llm_agents.md)
     - record id: `claimcheck-2026`
 - CONCUR (2026)
     - what: A benchmark of 43 concurrency problems from a textbook, plus 72 validated mutants (deliberately broken variants). It evaluates LLM-written concurrent code by model checking it for deadlock and race.
     - number: 115 total problems
     - limits: It has no proofs.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2603.03683); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    - [source](https://arxiv.org/abs/2603.03683)
     - record id: `concur-2026`
 - Faithful Autoformalization via Roundtrip Verification and Repair (2026)
     - what: Formalize a sentence, translate the formula back to English, formalize that again, then use an SMT solver to check that the two formulas are equivalent. If they differ, repair the stage that diverged.
@@ -2460,7 +2460,7 @@
     - number: 150 Texas Transportation Code rules and 77 Parks and Wildlife rules; Claude Opus 4.6 and GPT-5.2
     - limits: It uses first-order logic on legal rules. A second signal, natural-language inference, judged the results, not people.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2604.25031); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`
+    - [source](https://arxiv.org/abs/2604.25031)
     - record id: `faithful-autoformalization-via-roundtrip-2026`
 - Fidelity Probes (2026)
     - title: Fidelity Probes for Specification-Code Alignment
@@ -2468,36 +2468,36 @@
     - number: CardDemo held-out fidelity rises from 0.59 to 0.89
     - limits: Repairs can cause regressions. It measures agreement with the behavior of existing code. It is not a proof, and it does not cover liveness over time.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2605.17246); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`
+    - [source](https://arxiv.org/abs/2605.17246)
     - record id: `fidelity-probes-2026`
 - Formal Methods in Industry: A Critical Evaluation of Their Use at Amazon Web Services (2026)
     - what: A critical evaluation of how AWS uses formal methods.
     - limits: The review notes read the abstract only and did not fetch the PDF.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1145/3815784); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gaps.md`
+    - [source](https://doi.org/10.1145/3815784)
     - record id: `formal-methods-in-industry-2026`
 - Generalizing and accelerating consistency checking for non-transactional distributed storage systems (2026)
     - what: It generalizes Wing-Gong history checkers (ZooKeeper, Gryff-RSC, CosmosDB bounded staleness).
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2608.17388); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_shortlist.md`
+    - [source](https://arxiv.org/abs/2608.17388)
     - record id: `generalizing-and-accelerating-consistency-2026`
 - Hack-Verifiable Environments (2026)
     - what: It plants hacks in environments in a way that can be detected.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2605.20744); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2605.20744)
     - record id: `hack-verifiable-environments-2026`
 - LLMs Gaming Verifiers (2026)
     - what: The paper shows that models trained with reinforcement learning list the labels of instances instead of learning rules. It detects this with isomorphic perturbation testing, which runs the same task with variables renamed or reordered.
     - limits: The notes cover only the abstract.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2604.15149); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2604.15149)
     - record id: `llms-gaming-verifiers-2026`
 - Model-Bench (2026)
     - what: 400 Python programs converted into specs for a model checker.
     - number: 400 programs
     - limits: The direction is code to model. Only a fetched summary was read.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2604.01851); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_model_to_code.md`
+    - [source](https://arxiv.org/abs/2604.01851)
     - record id: `model-bench-2026`
 - SPECA (2026)
     - title: Beyond Code Reasoning: Specification-Anchored Auditing of Multi-Implementation Distributed Protocols
@@ -2506,20 +2506,20 @@
     - number: About $30 per high/medium/low bug
     - limits: The authors say the quality of the generated properties is the main limit.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2604.26495); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_intent.md`; notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`; [notes: specification-anchored auditing](../distributed_verification_primary_extension_20261012.md)
+    - [source](https://arxiv.org/abs/2604.26495); [notes: specification-anchored auditing](../distributed_verification_primary_extension_20261012.md)
     - record id: `speca-2026`
 - SpecLoop (2026)
     - title: SpecLoop: An Agentic RTL-to-Specification Framework with Formal Verification Feedback Loop
     - what: Candidate specs are used to rebuild the RTL (hardware design code). Formal equivalence checking feeds counterexamples back to refine the spec. It improves over baselines that use only an LLM.
     - limits: Results depend on the RTL reconstructor and the equivalence checker. Bounded resource limits can block feedback. It reverse-engineers a spec from a design, and does not recover an unconstrained request.
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2603.02895); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/verified_primary_notes_20261012.md`; [notes: SpecLoop](../distributed_verification_primary_extension_20261012.md); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/agent_evaluation_procedure.md`
+    - [source](https://arxiv.org/abs/2603.02895); [notes: SpecLoop](../distributed_verification_primary_extension_20261012.md)
     - record id: `specloop-2026`
 - VCoT-Bench (2026)
     - what: VCoT-Bench has 1,988 tasks that reconstruct Verus proof steps.
     - number: 1,988 tasks
     - how much was read: only abstract or first pages read
-    - [source](https://arxiv.org/abs/2603.18334); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_agents.md`
+    - [source](https://arxiv.org/abs/2603.18334)
     - record id: `vcot-bench-2026`
 - Transforming Natural Language Requirements to Formalism Using LLMs (2025)
     - what: GE Aerospace Research built an LLM tool that interactively turns plain-English requirements into logical formulas, with an English-language interface meant to let non-experts confirm the translation is right. It was tried on an industry landing-gear case.
@@ -2566,149 +2566,149 @@
 - A dual perspective review on large language models and code verification
     - what: TYPE Review PUBLISHED 24 November 2025 DOI 10.3389/fcomp.2025.1655469 A dual perspective review on OPEN ACCESS large language models and code veriﬁcation EDITED BY Novarun Deb, University of Calgary, Canada REVIEWED BY Livinus Obiora Nweke, Greta Dolcetti1 and Eleonora Iotti2* Noroff Education AS, Norway T. Gururaj, 1 Department of Environmental Sciences, Informatics and Statistics, Ca’ Foscari University of Venice, Visvesvaraya Technological University, India Venice, Italy, 2 Department of Mathematical, Physical and Computer Sciences, University of Parma, *CORRESPONDENCE Parma, Italy Eleonora Iotti eleonora.iotti@unipr.it RECEIVED 27 June 2025 Recent advances in Large Language Models (LLMs) have sparked signiﬁcant ACCEPTED 24 October 2025 interest in their application to code veriﬁcation and the assessment of PUBLISHED 24 November 2025 LLM-generated code safety. This review examines current research on the CITATION intersection of LLMs with software veriﬁcation, focusing on two main aspects: the Dolcetti G and Iotti E (2025) A dual perspective review on large language models and code use of LLMs as veriﬁcation tools and the veriﬁcation of code produced by LLMs.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.3389/fcomp.2025.1655469); notes outside this site: `lit_snowball/notes_coci21.md`
+    - [source](https://doi.org/10.3389/fcomp.2025.1655469)
     - record id: `a-dual-perspective-review`
 - Advances in Automatic Software Verification: SV-COMP 2020
     - what: . This report describes the 2020 Competition on Software Veri- fication (SV-COMP), the 9th edition of a series of comparative evaluations of fully automatic software verifiers for C and Java programs. The compe- tition provides a snapshot of the current state of the art in the area, and has a strong focus on replicability of its results.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-45237-7_21); notes outside this site: `lit_snowball/notes_coci3.md`
+    - [source](https://doi.org/10.1007/978-3-030-45237-7_21)
     - record id: `advances-in-automatic-software`
 - Analyzing the effects of formal methods on the development of industrial control software
     - what: Analyzing the effects of formal methods on the development of industrial control software Citation for published version (APA): Groote, J. F., Osaiweran, A. A.
     - limits: Abstract-level reading from openly available PDF; detailed limitations require full paper review.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1109/icsm.2011.6081983); notes outside this site: `lit_snowball/notes_allrel_deep.md`
+    - [source](https://doi.org/10.1109/icsm.2011.6081983)
     - record id: `analyzing-the-effects-of`
 - Are Users More Willing to Use Formally Verified Password Managers?
     - what: . Formal verification has recently been increasingly used to prove the correctness and security of many applications. It is attractive because it can prove the absence of errors with the same certainty as mathematicians proving theorems.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-032-10444-1_12); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/978-3-032-10444-1_12)
     - record id: `are-users-more-willing`
 - Automatic Verification of C and Java Programs: SV-COMP 2019
     - what: . This report describes the 2019 Competition on Software Veriﬁcation (SV-COMP), the 8th edition of a series of comparative evaluations of fully automatic software veriﬁers for C programs, and now also for Java programs. The competition provides a snapshot of the current state of the art in the area, and has a strong focus on replicability of its results.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-17502-3_9); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/978-3-030-17502-3_9)
     - record id: `automatic-verification-of-c`
 - Can Large Language Models Help Students Prove Software Correctness? An Experimental Study with Dafny
     - what: Students in computing education increasingly use large lan- guage models (LLMs) such as ChatGPT. Yet, the role of LLMs in sup- porting cognitively demanding tasks, like deductive program verification, remains poorly understood. This paper investigates how students inter- act with an LLM when solving formal verification exercises in Dafny, a language that supports functional correctness by allowing programmers to write formal specifications and automatically verifying that the im- plementation satisfies the specification.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-032-10444-1_13); notes outside this site: `lit_snowball/notes_coci21.md`
+    - [source](https://doi.org/10.1007/978-3-032-10444-1_13)
     - record id: `can-large-language-models`
 - CASP: An Evaluation Dataset for Formal Verification of C Code
     - what: . Recent developments in Large Language Models (LLMs) have shown promise in automating code generation, yet the generated programs lack rigorous correctness guarantees. Formal veriﬁcation can address this shortcoming, but requires expertise and is time-consuming to apply.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-032-07132-3_5); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/978-3-032-07132-3_5)
     - record id: `casp-an-evaluation-dataset`
 - Comparative Analysis of Hoare Logic-Based Formal Verification Tools for Solidity Smart Contracts
     - what: Formal verification of smart contracts is widely regarded as an effective method for ensuring correctness and security properties across all possible executions. Its practical relevance has been driven by the availability of automatic verification tools that discharge intricate proofs. Another area of growing interest is the integration of specification paradigms — for example, combining Hoare-logic–style specifications (pre/postconditions and invari- ants) with SMT and symbolic reasoning — so that each technique can precisely capture complementary aspects of contract behavior.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.5753/jserd.2025.5061); notes outside this site: `lit_snowball/notes_coci26v3.md`
+    - [source](https://doi.org/10.5753/jserd.2025.5061)
     - record id: `comparative-analysis-of-hoare`
 - Competition on Software Verification and Witness Validation: SV-COMP 2023.
     - what: . The 12th edition of the Competition on Software Verification (SV-COMP 2023) is again the largest overview of tools for software verifi- cation, evaluating 52 verification systems from 34 teams from 10 countries. Besides providing an overview of the state of the art in automatic software verification, the goal of the competition is to establish standards, provide a platform for exchange to developers of such tools, educate PhD students on reproducibility approaches and benchmarking, and provide comput- ing resources to developers that do not have access to compute clusters.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-30820-8_29); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-031-30820-8_29)
     - record id: `competition-on-software-verification`
 - Formal Autograding in a Classroom
     - what: . We report our experience in enhancing automated grading in an undergraduate programming course using formal verification. In our experiment, we deploy a program verifier to check the equivalence between student submissions and our reference solutions, alongside the existing testing-based grading infrastructure.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-91121-7_7); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/978-3-031-91121-7_7)
     - record id: `formal-autograding-in-a`
 - Formal Verification With Confidence Intervals to Establish Quality of Service Properties of Software Systems
     - what: —Formal veriﬁcation is used to establish the compli- s, s1 , s2 , . states of a Markov chain ance of software and hardware systems with important classes of S set of states of a Markov chain requirements. System compliance with functional requirements n number of states of a Markov chain is frequently analysed using techniques such as model checking, and theorem proving.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1109/tr.2015.2452931); notes outside this site: `lit_snowball/notes_coci24v3.md`
+    - [source](https://doi.org/10.1109/tr.2015.2452931)
     - record id: `formal-verification-with-confidence`
 - FVEval: Understanding Language Model Capabilities in Formal Verification of Digital Hardware
     - what: The remarkable reasoning and code generation capabilities of large language models (LLMs) have spurred significant interest in applying LLMs to enable task automation in digital chip design. In particular, recent work has investigated early ideas of applying these models to formal verification (FV), an approach to verifying hardware implementations that can provide strong guarantees of confidence but demands significant amounts of human effort. While the value of LLM-driven automation is evident, our understanding of model performance, however, has been hindered by the lack of holistic evaluation.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.23919/date64628.2025.10992720); notes outside this site: `lit_snowball/notes_coci26v3.md`
+    - [source](https://doi.org/10.23919/date64628.2025.10992720)
     - record id: `fveval-understanding-language-model`
 - How Effective are Large Language Models in Generating Software Specifications?
     - what: —Software specifications are essential for many Soft- more defects. Several other attempts have been made to further ware Engineering (SE) tasks such as bug detection and test improve these processes in various domains [9], [11]–[13]. generation.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1109/saner64311.2025.00014); notes outside this site: `lit_snowball/notes_coci11.md`
+    - [source](https://doi.org/10.1109/saner64311.2025.00014)
     - record id: `how-effective-are-large`
 - Improvements in Software Verification and Witness Validation: SV-COMP 2025.
     - what: . The 14th edition of the Competition on Software Verification (SV-COMP 2025) evaluated 62 verification tools and 18 witness validation tools, making it the largest comparison of its kind so far. Out of these, 35 verification and 13 validation tools participated with an active sup- port of teams led by 33 different representatives from 12 countries.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-90660-2_9); notes outside this site: `lit_snowball/notes_coci3.md`
+    - [source](https://doi.org/10.1007/978-3-031-90660-2_9)
     - record id: `improvements-in-software-verification`
 - International Competition on Runtime Verification (CRV).
     - what: . We review the ﬁrst ﬁve years of the international Compe- tition on Runtime Veriﬁcation (CRV), which began in 2014. Runtime veriﬁcation focuses on verifying system executions directly and is a use- ful lightweight technique to complement static veriﬁcation techniques.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-17502-3_3); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1007/978-3-030-17502-3_3)
     - record id: `international-competition-on-runtime`
 - Progress on Software Verification: SV-COMP 2022.
     - what: . The 11th edition of the Competition on Software Verification (SV-COMP 2022) provides the largest ever overview of tools for software verification. The competition is an annual comparative evaluation of fully automatic software verifiers for C and Java programs.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-99527-0_20); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-030-99527-0_20)
     - record id: `progress-on-software-verification`
 - Ranking LLM-Generated Loop Invariants for Program Verification
     - what: foundational AI models that have revolutionized Language Processing applications. Though LLMs Synthesizing inductive loop invariants is fun- damental to automating program verification. were originally proposed for natural languages, In this work, we observe that Large Language they have exhibited great success in formal lan- Models (such as gpt-3.5 or gpt-4) are capa- guages such as programming languages (Chen ble of synthesizing loop invariants for a class of et al., 2021).
     - limits: Abstract-level reading from openly available PDF; detailed limitations require full paper review.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.18653/v1/2023.findings-emnlp.614); notes outside this site: `lit_snowball/notes_allrel_deep.md`
+    - [source](https://doi.org/10.18653/v1/2023.findings-emnlp.614)
     - record id: `ranking-llm-generated-loop`
 - RERS 2019: Combining Synthesis with Real-World Models.
     - what: . This paper covers the Rigorous Examination of Reactive Sys- tems (RERS) Challenge 2019. For the ﬁrst time in the history of RERS, the challenge features industrial tracks where benchmark programs that participants need to analyze are synthesized from real-world models.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-17502-3_7); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-030-17502-3_7)
     - record id: `rers-2019-combining-synthesis`
 - Software Verification: 10th Comparative Evaluation (SV-COMP 2021).
     - what: . SV-COMP 2021 is the 10th edition of the Competition on Software Verification (SV-COMP), which is an annual comparative eval- uation of fully automatic software verifiers for C and Java programs. The competition provides a snapshot of the current state of the art in the area, and has a strong focus on reproducibility of its results.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-72013-1_24); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-030-72013-1_24)
     - record id: `software-verification-10th-comparative`
 - Software Verification and Verifiable Witnesses - (Report on SV-COMP 2015).
     - what: . SV-COMP 2015 marks the start of a new epoch of software veriﬁcation: In the 4th Competition on Software Veriﬁcation, software ver- iﬁers produced for each reported property violation a machine-readable error witness in a common exchange format (so far restricted to reacha- bility properties of sequential programs without recursion). Error paths were reported previously, but always in diﬀerent, incompatible formats, often insuﬃcient to reproduce the identiﬁed bug, and thus, useless to the user.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-662-46681-0_31); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-662-46681-0_31)
     - record id: `software-verification-and-verifiable`
 - Status Report on Software Verification - (Competition Summary SV-COMP 2014).
     - what: . This report describes the 3rd International Competition on Software Veriﬁcation (SV-COMP 2014), which is the third edition of a thorough comparative evaluation of fully automatic software veriﬁers. The reported results represent the state of the art in automatic soft- ware veriﬁcation, in terms of eﬀectiveness and eﬃciency.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-642-54862-8_25); notes outside this site: `lit_snowball/notes_coci5.md`
+    - [source](https://doi.org/10.1007/978-3-642-54862-8_25)
     - record id: `status-report-on-software`
 - Systematic Generation of Diverse Benchmarks for DNN Verification.
     - what: . The ﬁeld of veriﬁcation has advanced due to the interplay of theoretical development and empirical evaluation. Benchmarks play an important role in this by supporting the assessment of the state-of-the- art and comparison of alternative veriﬁcation approaches.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-53288-8_5); notes outside this site: `lit_snowball/notes_coci8.md`
+    - [source](https://doi.org/10.1007/978-3-030-53288-8_5)
     - record id: `systematic-generation-of-diverse`
 - The 2019 Comparison of Tools for the Analysis of Quantitative Formal Models - (QComp 2019 Competition Report).
     - what: . Quantitative formal models capture probabilistic behaviour, real-time aspects, or general continuous dynamics. A number of tools support their automatic analysis with respect to dependability or perfor- mance properties.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-17502-3_5); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1007/978-3-030-17502-3_5)
     - record id: `the-2019-comparison-of`
 - The Quantitative Verification Benchmark Set.
     - what: . We present an extensive collection of quantitative models to facilitate the development, comparison, and benchmarking of new veriﬁ- cation algorithms and tools. All models have a formal semantics in terms of extensions of Markov chains, are provided in the Jani format, and are documented by a comprehensive set of metadata.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-17462-0_20); notes outside this site: `lit_snowball/notes_coci6.md`
+    - [source](https://doi.org/10.1007/978-3-030-17462-0_20)
     - record id: `the-quantitative-verification-benchmark`
 - Tools at the Frontiers of Quantitative Verification - QComp 2023 Competition Report.
     - what: . The analysis of formal models that include quantitative as- pects such as timing or probabilistic choices is performed by quantitative verification tools. Broad and mature tool support is available for com- puting basic properties such as expected rewards on basic models such as Markov chains.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-031-67695-6_4); notes outside this site: `lit_snowball/notes_coci11.md`
+    - [source](https://doi.org/10.1007/978-3-031-67695-6_4)
     - record id: `tools-at-the-frontiers`
 - Verifying Verified Code
     - what: . A recent case study from AWS by Chong et al. proposes an effective methodology for Bounded Model Checking in industry.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-88885-5_13); notes outside this site: `lit_snowball/notes_coci2.md`
+    - [source](https://doi.org/10.1007/978-3-030-88885-5_13)
     - record id: `verifying-verified-code`
 - VerifyThis 2015
     - what: VerifyThis 2015 was a one-day program verifi- series after the competitions held at FoVeOOS 2011, FM2012 cation competition which took place on April 12th, 2015 in and Dagstuhl (Seminar 14171, April 2014). London, UK, as part of the European Joint Conferences on The aims of the competition were: Theory and Practice of Software (ETAPS 2015). It was the fourth instalment in the VerifyThis competition series.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/s10009-016-0438-x); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/s10009-016-0438-x)
     - record id: `verifythis-2015`
 - VerifyThis 2019: a program verification competition
     - what: VerifyThis is a series of program verification competitions that emphasize the human aspect: participants tackle the verification of detailed behavioral properties—something that lies beyond the capabilities of fully automatic verification and requires instead human expertise to suitably encode programs, specifications, and invariants. This paper describes the 8th edition of VerifyThis, which took place at ETAPS 2019 in Prague. Thirteen teams entered the competition, which consisted of three verification challenges and spanned 2 days of work.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/s10009-021-00619-x); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/s10009-021-00619-x)
     - record id: `verifythis-2019-a-program`
 - VerifyThis – Verification Competition with a Human Factor
     - what: . VerifyThis is a series of competitions that aims to evaluate the current state of deductive tools to prove functional correctness of programs. Such proofs typically require human creativity, and hence it is not possible to measure the performance of tools independently of the skills of its user.
     - how much was read: only abstract or first pages read
-    - [source](https://doi.org/10.1007/978-3-030-17502-3_12); notes outside this site: `lit_snowball/notes_coci4.md`
+    - [source](https://doi.org/10.1007/978-3-030-17502-3_12)
     - record id: `verifythis-verification-competition-with`
 - Claude C compiler (2026)
     - title: Building a C compiler with a team of parallel Claudes
@@ -2787,7 +2787,7 @@
     - what: A framework evaluates LLM-written Two-Phase Commit, Ring Election and Raft. It uses a simulator that injects message loss, delay and duplication. LLMs do well on simple protocols and code completion, struggle on complex consensus, and debug inconsistently.
     - limits: Based on the schedule abstract, through a fetch-tool summary. The review notes have no full text and no numbers.
     - how much was read: not read; title and metadata only
-    - [source](https://pldi26.sigplan.org/details/page-2026-papers/5/Testing-LLM-Generated-Distributed-Protocol-Code); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://pldi26.sigplan.org/details/page-2026-papers/5/Testing-LLM-Generated-Distributed-Protocol-Code)
     - record id: `testing-llm-generated-distributed-2026`
 - VeriBench (2026)
     - title: VeriBench: An End-to-End Formal Verification Benchmark for AI Coding Agents
@@ -2801,14 +2801,14 @@
     - what: A linter for specs in the Gobra verifier, aimed at the problem that verified programs only match their intended specs if the specs are right.
     - limits: Seen only as a Google Scholar snippet. Not read.
     - how much was read: not read; title and metadata only
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gscholar.md`
+    -
     - record id: `a-specification-linter-for-2025`
 - Cazamariposas (2025)
     - title: Cazamariposas: Automated instability debugging in SMT-based program verification
     - what: The paper automates debugging of verification instability, where proofs pass or fail unpredictably. It targets SMT-based verifiers (verifiers that use a solver) such as Dafny and F*.
     - limits: The review notes saw only a Google Scholar title and snippet and did not read the paper.
     - how much was read: not read; title and metadata only
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_gscholar.md`
+    -
     - record id: `cazamariposas-2025`
 - Investigating the Role of Formal Verification in Software Development: From Automatic Specification Generation to Usability of Verification Languages (2025)
     - what: Per the input list and a search summary of its abstract: a 4-page doctoral plan studying how formal annotations affect code comprehension, how LLMs generate formal specs from code comments, and how usable two verification tools are.
@@ -2820,25 +2820,25 @@
     - what: Listed as an unread search lead from OpenAlex. The notes give only its title, year and DOI.
     - limits: Not read. Claims are unverified.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.1145/3728883); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/openalex_leads_20261012.md`
+    - [source](https://doi.org/10.1145/3728883)
     - record id: `model-checking-guided-incremental-2025`
 - HumanEvalComm (2024)
     - what: A benchmark with communication metrics that measure whether models ask clarifying questions.
     - limits: The review notes saw it only as a search snippet.
     - how much was read: not read; title and metadata only
-    - [source](https://arxiv.org/abs/2406.00215); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_eval.md`
+    - [source](https://arxiv.org/abs/2406.00215)
     - record id: `humanevalcomm-2024`
 - Effective Concurrency Testing for Distributed Systems (2020)
     - what: Listed as an unread search lead from OpenAlex. The notes give only its title, year and DOI.
     - limits: Not read. Claims are unverified.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.1145/3373376.3378484); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/openalex_leads_20261012.md`
+    - [source](https://doi.org/10.1145/3373376.3378484)
     - record id: `effective-concurrency-testing-for-2020`
 - Trace aware random testing for distributed systems (2019)
     - what: A search lead from OpenAlex that the review notes have not read. The notes give only its title, year and DOI.
     - limits: Not read, so its claims are unverified.
     - how much was read: not read; title and metadata only
-    - [source](https://doi.org/10.1145/3360606); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_b/openalex_leads_20261012.md`
+    - [source](https://doi.org/10.1145/3360606)
     - record id: `trace-aware-random-testing-2019`
 - TaxDC (2016)
     - title: TaxDC: A Taxonomy of Non-Deterministic Concurrency Bugs in Datacenter Distributed Systems
@@ -2863,7 +2863,7 @@
     - number: a full protocol can mean auditing about 1,000 lines of Lean
     - limits: This is a blog post, not a peer-reviewed paper. The notes rest on a tool summary, not on the page text. It is not about distributed systems. Claude sometimes silently swapped 'for all, there exists' for 'there exists, for all' in zero-knowledge claims. It also defined malicious provers that were too weak.
     - how much was read: not read; title and metadata only
-    - [source](https://blog.succinct.xyz/formal-verification-with-claude/); notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_google.md`
+    - [source](https://blog.succinct.xyz/formal-verification-with-claude/)
     - record id: `an-experiment-in-formal`
 - AutoReal
     - what: A 7B model fine-tuned for theorem proving; a model, not an agent.
@@ -2871,5 +2871,5 @@
     - number: 53.88% on 451 AFP security theorems
     - limits: Known only from a search summary. Not opened.
     - how much was read: not read; title and metadata only
-    - notes outside this site: `/ssd1/sichangheagent/verus_distributed/lit_a/findings2_leads.md`
+    -
     - record id: `autoreal`

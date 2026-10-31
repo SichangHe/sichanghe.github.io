@@ -75,15 +75,9 @@ The metric is `BEq@k = (1/N) Σ_i max_j 1(y_{i,j} ~ ŷ_i)`, so BEq@1 is single-
 
 Verus form (Inference). Use compilation and proof-check outcomes as binary or graded rewards for generated Rust. A candidate receives reward only when Verus verifies the intended postcondition; orchestration may group candidates, but Verus itself does not expose a GRPO API. The reward remains conditional on the supplied specification and imported axioms. Inference: add negative examples for compiling but semantically wrong specifications, because BEq to a flawed reference would reinforce the flaw.
 
-## what VL should reuse and avoid
-
-Inference: VL should reuse candidate generation plus compiler filtering, explicit requirement-to-code reasoning templates, staged training, and a verifier-backed RL reward. The paper already studies Lean autoformalization datasets, BEq metrics, selection ablations, and template-versus-direct distillation; VL need not repeat those generic comparisons. VL-specific work should measure Verus compile rate, proof maintenance, specification adequacy, and behavior under hidden tests. Threat to a product is moderate to high: the model can learn formal syntax and proof patterns, but BEq or compilation only checks equivalence to the chosen statement, not whether that statement matches product intent.
-
 ## techniques for the catalog
 
 - Lean-filtered knowledge distillation: generate 16 formal candidates, syntax-check them, BEq-cluster them, and filter contradictions
 - template-guided formalization reasoning: require explicit restatement, concept/object mapping, Lean issue analysis, and final code review
 - two-stage SFT fusion: train first on formal pairs and then on structured informal-to-formal trajectories
 - BEq-reward RL: use proof-assistant equivalence as a binary reward with GRPO and multiple rollouts
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

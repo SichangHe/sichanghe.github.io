@@ -86,11 +86,10 @@ The mechanised results the paper reports are lemmas proved sound with respect to
 
 ## contradictions, omissions, and product implications
 
-No numerical contradiction appears in the paper; “over half” of 258 being discharged is consistent with 91 remaining, although the exact number discharged is not stated. Inference: a Verus-based agent product should reuse the separation between structural concurrency obligations and memory-model lemmas, because agents can generate proof outlines while a fixed library checks transitions. Inference: the main threat is specification error—an agent can produce a plausible outline with an unsound or mismatched memory model unless the operational semantics, well-formedness predicates, and lemmas are themselves fixed and reviewed. Existing Isabelle work means VL should not redo generic Owicki-Gries rules or the basic RC11-RAR assertion library without first checking whether equivalent Verus libraries already exist.
+No numerical contradiction appears in the paper; “over half” of 258 being discharged is consistent with 91 remaining, although the exact number discharged is not stated.
 
 ## techniques for the catalog
 
 - weak-memory Owicki-Gries embedding — encode C11 state as a special variable and translate annotated reads/writes into atomic transitions while reusing compound-command rules
 - high-level C11 assertions — express viewfront observations, release/acquire transfer, write order, value occurrence, and covered writes as reusable predicates and lemmas
 - staged proof automation — run `oghoare`, simplify predicate representations, then discharge residual weak-memory goals with solver automation
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Finding such a timestamp is always possible since timestamps are rational numbers (i.e., are dense)."): read the whole paper text and the whole study; checked every quotation, the obligation counts (29; 258 and 91; at most 6), section and page references, the translation and verification-strategy steps, and the tag and arXiv link; changed the SWAP translation description, the release-sequence page reference (p. 6, not p. 9), several page ranges, the soundness and trusted-base claims (now marked Inference where the paper is silent), and the Section 1 quote's trailing citation; did not check the Isabelle ancillary files, the cited literature, or the Verus-form inferences against any tool.

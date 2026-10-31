@@ -75,14 +75,6 @@ Rule application is reported as generally under 0.15 ms per application on an In
 
 The logic also omits concurrency, higher-order fiction, higher-order ghost state, later modality, address-of for locals, `goto`, loose expression evaluation ordering, and first-class function pointers (Sections 10.1 and 10.3, PDF pp. 23–27). Side-condition automation can assume a condition is false after timeout; if the condition is actually true, reasoning may fail until the user proves and registers it (Section 10.3, PDF p. 27). Inference: treating an unresolved condition as false can lose a valid proof route; this is a completeness limitation, not evidence of an unsound accepted proof.
 
-## what VL should learn and threat assessment
-
-The paper reports an Isabelle/HOL formalization and successful partial-correctness case studies (Sections 1 and 10). Its semantics simplify pointer behavior: “These simplifying assumptions mean that we do not grapple with complex questions of pointer provenance that are raised by program logics over a fully-faithful C semantics with undefined behaviour [64].” (Section 10.1, PDF p. 23). Inference: transferring the results to Rust requires justifying the resource model and its connection to Rust semantics. Algebraic instances and side conditions require proofs; they are not merely unchecked user assertions.
-
-Inference: the strongest lesson for VL is to separate a generic proof-rule library from structure-specific models. A Verus library could provide reusable sequence, map, tree, and slice lemmas whose contracts expose algebraic laws; a generator could select those lemmas based on a data-structure interface. Inference: the relevant risk for agent-written verified Rust is a mismatch between the proved abstract model and the intended program behavior. Requiring proofs of the algebraic laws and side conditions does not itself establish that connection.
-
-Inference: VL should not redo generic notions of functorial container lifting, separation homomorphism, frame/anti-frame bi-abduction, or wp-to-entailment reduction as if they were novel. Possible new contributions include a Verus implementation evaluated on Rust programs, or extensions to concurrency or total correctness.
-
 ## techniques for the catalog
 
 - algebraic predicate laws — characterize containers and modalities with functor, homomorphism, associativity, distributivity, identity, and transitivity properties
@@ -91,4 +83,3 @@ Inference: VL should not redo generic notions of functorial container lifting, s
 - wp-to-SL entailments — derive program-correctness entailments backward from generic weakest-precondition rules
 - compositional property derivation — unfold a new predicate once, reuse proved component laws, and apply induction for recursive definitions
 - compositional data-structure automation — preserve predicate abstractions during transformation reasoning while requiring explicit program-verification folding and unfolding annotations
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "At this point, the algorithm assumes that all reasoning processes about induction have been completed."): checked all study quotations, numbers, section/page references, technique steps, and limitations against the complete paper including appendices; corrected quotations, Tr/IE descriptions, bi-EP reduction order, the scalar-associativity/distributivity limitation, wp versus sp implementation, evaluation scope, and the completeness interpretation; added compositional property derivation and marked transfer recommendations as inferences; did not rerun the Isabelle artifact, reproduce measurements, or validate the proposed Verus transfer.

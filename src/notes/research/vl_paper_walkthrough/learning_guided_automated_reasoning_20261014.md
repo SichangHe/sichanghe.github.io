@@ -51,7 +51,7 @@ Inference: maintain a candidate lemma index outside the verifier, then have an a
 
 evidence and limits
 
-The survey attributes considerable gains to MePo, SInE, and MaLARea in large theories (Section 2, p. 3), but gives no common cross-system denominator. Inference: restricting premises can prevent a proof from being found, even when the original theory entails the goal. VL can use selection to reduce solver context while preserving soundness if every accepted proof is rerun by Verus.
+The survey attributes considerable gains to MePo, SInE, and MaLARea in large theories (Section 2, p. 3), but gives no common cross-system denominator.
 
 ## technique 3: guide saturation-based ATP clause selection
 
@@ -74,7 +74,7 @@ Inference: treat clause prioritization as a search policy for generating Verus p
 
 evidence and limits
 
-The survey reports a recurring speed/quality tradeoff: neural models can be more accurate but too slow to replace a tightly optimized selection loop (Section 5, pp. 11–12). Deepire's layered selection and iProver's neural guidance are cited as successful alternatives (Section 5, p. 13). Deepire uses derivation history independently of the problem signature, but still relies on a fixed initial axiom set (Section 5, p. 13). Inference: for VL, an expensive proof-ranking model can reduce total verified throughput even when it improves per-step choices.
+The survey reports a recurring speed/quality tradeoff: neural models can be more accurate but too slow to replace a tightly optimized selection loop (Section 5, pp. 11–12). Deepire's layered selection and iProver's neural guidance are cited as successful alternatives (Section 5, p. 13). Deepire uses derivation history independently of the problem signature, but still relies on a fixed initial axiom set (Section 5, p. 13).
 
 ## technique 4: guide tableaux, instantiation, and tactic-level proof search
 
@@ -98,14 +98,6 @@ evidence and limits
 
 The survey cites rlCoP solving 40% more test problems than default leanCoP and TacticToe proving 66% of its HOL4 library (Section 6–7, pp. 15–16). These results have different systems, corpora, and baselines. Tactic sets may be incomplete; overlapping tactics, long-running actions, and new definitions make representation and scheduling difficult (Section 7.3, pp. 17–18). Graph2Tac's 50% improvement over no-background-definition baselines shows the value of representing definitions, but it is not a Verus result (Section 7.3, p. 18).
 
-## what remains trusted, contradictions, and product threat
-
-Inference: when the underlying prover or proof assistant checks every proposed proof, soundness depends on its proof-checking mechanism, logic, and assumptions. Feature extraction and training data affect search quality without needing to establish proof validity. The survey's reported percentages cannot be combined: “40% more,” “66%,” “90%,” and “50% improvement” use different denominators and baselines. Its conclusion says LLM ATP performance in fair-resource evaluations has been questionable compared with signature-independent GNNs, and identifies conjecturing and autoformalization as promising uses (Section 9, pp. 19–20). Inference: an agent-written Verus product faces search-cost and proof-maintenance threats more than direct unsoundness, provided Verus checks every generated proof; an overconfident model can still waste resources or select a missing lemma.
-
-## what VL should not redo
-
-The survey covers feature engineering, premise selection, clause and tactic guidance, model-based counterexamples, reinforcement loops, and signature-independent embeddings (Sections 2–7, pp. 2–18). Inference: generic learned premise ranking or proof search alone would not distinguish VL from this literature. A possible contribution would measure these policies on Verus proof states with reproducible solver-time, timeout, repair, and dependency-upgrade denominators; the survey reports no Verus experiment.
-
 ## techniques for the catalog
 
 - structural proof-state features — extract normalized terms, paths, counts, hashes, and name-invariant graphs for learned guidance
@@ -113,5 +105,3 @@ The survey covers feature engineering, premise selection, clause and tactic guid
 - clause-selection guidance — prioritize saturation clauses using proof-derived labels while mixing learned and classical queues
 - tactic and policy guidance — rank tableaux extensions, SMT instantiations, or ITP tactics and let the kernel check the result
 - iterative learning loop — retrain guidance from newly discovered proofs while checking proposed proofs with the underlying prover or proof assistant
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Once we train a model that successfully improves the performance of the base prover, we can collect even more proofs to train on and further improve our guidance in a subsequent iteration."): read the full paper and study; checked quotations, reported numbers, section/page references, and technique steps; corrected quotations, k-NN dependency scoring, clause ordering, tableaux methods, tactic orthogonalization, and proof-trust claims; replaced the link with the paper’s arXiv identifier and marked extrapolations as Inference; did not independently check cited papers, reproduce experiments, or validate Verus adaptations.

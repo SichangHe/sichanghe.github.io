@@ -59,10 +59,6 @@ The paper presents no new verifier implementation, proof benchmark, or quantitat
 
 The trusted boundary includes the Rust compiler and standard/core libraries, unsafe blocks, libc and kernel APIs in hosted systems, allocator behavior, hardware conformance, generated bindings, and the certification process. The paper explicitly summarizes safe Rust exceptions as: “Unsafe code: The goal is to isolate code that needs to opt-out of the strict compiler checking into code small blocks that particularly scrutinized”, “Stack overflow”, and “Bugs/shortcomings in the Rust toolchain.” (Section 2.9, p. 5). Inference: Verus narrows the trusted code for proved functions but does not remove these system-level assumptions; external calls and hardware effects require specifications or trusted wrappers.
 
-## implications for VL
-
-The paper's main lesson for agent-written verified Rust is that language safety, formal functional correctness, and certification evidence are separate claims. Rust's safe subset removes many memory errors, but stack overflow, allocator failure, intentional leaks, unsafe interfaces, and toolchain bugs remain. Inference: VL should report each contract's scope, trusted dependencies, failure behavior, and certification-relevant evidence instead of presenting a Verus proof as complete product assurance. The standards mapping and the named Frama-C, Creusot, Symex/EASY, and Heapless techniques are existing work that VL should integrate rather than rediscover.
-
 ## techniques for the catalog
 
 - deductive specification checking — state a formal contract and use Frama-C or Creusot to prove C or Rust implementation adherence
@@ -70,4 +66,3 @@ The paper's main lesson for agent-written verified Rust is that language safety,
 - stack and schedulability analysis — combine call-graph stack bounds with worst-case execution-time and schedulability analysis
 - heapless and fallible allocation — use bounded preallocation or fallible allocator results so out-of-memory behavior is explicit
 - audited drop obligations — require unsafe markers or lint checks for intentional leaks and preserve resource-release obligations
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

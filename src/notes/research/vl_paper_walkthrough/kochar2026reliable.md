@@ -36,12 +36,8 @@ Stage 3 extracts shared transistor and capacitor parameters, writes an optimizat
 
 Verus form (Inference): prove only parameter-range and structural invariants around the optimizer interface; treat Bayesian optimization and Spectre as trusted external functions and record their returned metrics. A postcondition can require reported power and ENOB fields to be internally consistent, but cannot establish transistor physics without a formal circuit model.
 
-## what VL should reuse and threat
-Inference: VeruLaw can reuse the staged architecture: retrieve verified specification patterns, select constrained Rust templates, run compile-time/proof checks, then execute only artifacts whose proof certificates pass. The paper's explicit checker and simulation feedback are analogous to Verus diagnostics and test execution. It does not provide a method for proving generated Rust semantics, memory safety, or refinement, so VL must supply those proofs and trusted-base accounting. Existing template and verifier studies should provide the Rust proof details; redoing the analog-specific ADC workflow would not help VL. Product threat is medium: unconstrained agent output can be structurally invalid, while a template-plus-proof gate can reject it, but the paper shows that external simulation and human testbench correction remain trusted.
-
 ## techniques for the catalog
 - retrieval-grounded planning: select similar expert designs and summarize them before planning generation
 - checker-in-the-loop repair: iterate generation using rule violations as feedback
 - template-constrained fallback: choose and minimally edit curated component templates
 - staged integration and simulation: connect components, size parameters, simulate, and debug until execution succeeds
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

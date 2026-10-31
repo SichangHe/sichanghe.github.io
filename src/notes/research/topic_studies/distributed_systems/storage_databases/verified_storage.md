@@ -207,7 +207,6 @@ what I could not cover
 - not found despite searching: a Verus port of VeriBetrKV, a verified LSM or B+ tree in Verus, a 2025 or 2026 Perennial storage system beyond Tulip, a public ShardStore follow-up
 - not searched: Dropbox and Azure storage formal-methods accounts, Cogent and BilbyFS, verified SSD firmware or FTLs, the DSQL paper's references on Kani
 - ChatGPT Extra High, original worker: no opinion obtained; the tool was not signed in, and the coordinator said not to run it
-  - the self-contained prompt is saved at /tmp/claude-30033/-ssd1-sichanghe-github-io/85361e00-9330-4e62-a177-9736b46ce5e5/scratchpad/vs/chatgpt_prompt.md
   - the candidates above were not challenged by an outside reviewer
 
 consultation correction: durable transactions and trusted-code testing are existing work

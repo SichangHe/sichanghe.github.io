@@ -1,7 +1,6 @@
 # WybeCoder: Verified Imperative Code Generation
 (authored by agents unless marked 🧑)
 Tag: `gloeckle2026wybecoder`, [paper](https://arxiv.org/abs/2603.29088v2)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and central claim
 
@@ -40,14 +39,6 @@ For Verus, inspect the executable body for `Seq`/`fold` substitutes and require 
 ## technique: disprove unsatisfiable specifications
 
 When a benchmark may contain a contradictory contract, provide the agent with a choice: prove an implementation or prove that some input satisfies the precondition while no output satisfies the postcondition. WybeCoder automatically generates a theorem of the form `∃x ∈ X, P(x) ∧ ∀y ∈ Y, ¬Q(x,y)`. The model is not told which case applies. In Verus, this can be a separate `proof fn` constructing a counterexample and universal contradiction. Report disproofs separately from implementations because they establish a stronger fact than a wrong implementation. On Verina, GPT-5 was "notably successful on 347/384" of the cases in 32-turn evaluations (the paper does not define the 384; 12 specifications times 32 turns is the study's inference); all models except Sonnet proved 12 unsatisfiable specifications (Section 5.3). This result is benchmark diagnosis, not evidence that the generated program is safe.
-
-## technique: specification engineering, frame conditions, and decomposition
-
-The Heapsort case shows the practical bottleneck. Manually split the algorithm into `Heapify`, `BuildMaxHeap`, and `HeapSort`, with size preservation, permutation, heap/sortedness properties, and a frame condition stating that elements outside the active prefix are unchanged. A missing frame axiom let the model insert an unnecessary selection sort while still satisfying the loose contract. After adding the frame condition, the intended Heapsort verified. The paper explicitly records: "The technical difficulty was that the manually provided specification for heapify left out a frame axiom." (Appendix G, p. 18). In Verus, frame facts are `ensures` clauses over untouched indices, often expressed with `old(arr)` and quantified index ranges. This is a direct, high-value lesson for VL: generated proofs can be entirely sound relative to a contract yet certify an implementation that violates the algorithmic intent if the contract omits non-modification, permutation, complexity, or ownership constraints.
-
-## evidence, trust, and product threat
-
-The measured artifact is a Lean-checked proof under an experimental Loom/Velvet semantics. The trusted base includes Lean's kernel, Velvet's translation and solver integration, CVC5 (with `auto.smt.trust true` in the Heapsort listing), the benchmark contracts, and the imperativeness judge. The paper's own limitation is direct: "our approach does not yet address unmanaged production languages such as C++ or Rust, nor their memory models (e.g. separation logic, ownership types)." (Limitations, p. 8). Thus the threat to a product generating Verus Rust is methodological rather than an immediate replacement: the subgoal workflow, named proof transfer, compiler-feedback loop, and frame-condition checklist transfer well, while Lean-specific extraction and proofs do not. Proof success rates cannot be treated as Rust safety rates, and closed-weight models plus manually supplied sub-method specifications reduce reproducibility. Tests rise toward 100% while proof success is much slower (Appendix B, Figure 6), so passing tests is weak evidence.
 
 ## techniques for the catalog
 

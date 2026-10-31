@@ -83,13 +83,9 @@ Evidence. Table 3 shows the verifier improves different bases. ORLM rises from 8
 
 The paper defines the two consistency/validity scores and measures solving accuracy, verification precision/recall, time, agent calls, and token use. It does not prove that LLM judgments are sound, that high SA means every model is semantically faithful, or that refinement terminates. It trusts the original natural-language descriptions, conventional OR structures, GPT4o-mini agents, solver execution (Gurobi in efficiency comparisons), manually labeled/synthetic evaluation sets, and the evaluation prompts. Table 2 shows both sides matter: removing structure-side gives 91.5/55.2/68.4/29.0 and removing solution-side gives 91.8/53.1/68.4/41.0 on NL4Opt/Mamo/ComplexOR/IndustryOR, while full gives 96.5/66.7/78.9/45.0 (p. 7).
 
-Inference: VeruLaw can reuse this dual pattern. One checker compares generated Rust/Verus obligations with a requirement-derived structure; another examines verified behavior and diagnostics in context; a refinement agent proposes edits; Verus is the mechanical acceptance gate. The product threat is high for omitted or misread requirements and moderate for implementation errors once Verus checks pass. The paper's work VL should not redo is the general multi-agent split, back-translation consistency test, solution interpretation, dual comments, ablation methodology, and efficiency accounting. VL-specific work is defining a trustworthy obligation schema, handling assumptions and `assume` blocks, and proving that the requirement-to-contract mapping is adequate.
-
 ## techniques for the catalog
 
 - structure distillation: classify a problem coarse to fine and record standard plus special obligations before generation
 - back-translation consistency: interpret a generated artifact back into structure and compare it with the requirement-derived structure
 - solution interpretation check: translate computed outputs into context and critique them for logical violations
 - dual-feedback refinement: regenerate the artifact from both structural and solution-side comments, then rerun both checks
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

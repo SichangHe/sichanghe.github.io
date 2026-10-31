@@ -8,8 +8,6 @@ Lean Refactor rewrites already-proved Lean 4 proofs to reduce length, compilatio
 
 The released bank contains 9,237 unique strategies distilled from 481,567 raw extractions over 200,000 verified long-short proof pairs (Sect. 3.1 and Appendix B, pp. 3, 14–18). Evaluation uses 194 miniF2F theorems, 75 PutnamBench theorems, 66 Putnam2025 theorems, and 45 theorems from each of Analysis, FLT, PFR, and PhysLean, plus 15 generated Verina solutions (Sect. 4, p. 6). Unless stated otherwise, runs use Gemini 3 Flash, Lean v4.24.0, and a 30-call budget (Sect. 4, p. 6).
 
-Inference: this matters to VL when an agent's verified Rust proof is correct but bloated, slow, or sensitive to Verus and Rust revisions. The paper is about Lean, so any Verus mapping below is an inference and needs Rust-specific evaluation.
-
 ## technique: construct a grounded strategy bank
 
 Use this when examples are too sparse for a model to learn stable refactoring patterns and when a proof change must be tied to a concrete source region. Each strategy record has six fields: title, description, when-to-apply precondition, sequential application guide, before/after abstract example, and categorical potential reduction (Appendix B.5, p. 16). The paper states: "Each entry is a reusable refactoring pattern distilled from a raw long–short proof pair, organized into six fields." (Sect. 3.1, p. 3.)
@@ -54,8 +52,6 @@ On Gemini 3 Flash, Table 1 reports average relative proof-length reduction for 1
 
 Dependency counts provide a second check. Reduced dependencies occur in 99/194 miniF2F (51.0%), 48/75 PutnamBench (64.0%), 29/66 Putnam2025 (43.9%), and 30/45 Analysis (66.7%) (Table 7 and Table 8, pp. 20–21). Increased dependencies occur in 11/194, 11/75, 12/66, and 8/45, respectively. These denominators matter because the percentages are not pooled across benchmarks.
 
-Inference: for VL, a length reduction should be reported with the number of verified functions, proof obligations, and unchanged contracts, not token reduction alone. A shorter Verus proof that relies on a larger trusted specification is a different outcome from a self-contained simplification.
-
 ## evidence: compilation cost and an internal inconsistency
 
 Table 4 compiles each miniF2F, PutnamBench, and Putnam2025 proof five times and reports means across proofs, excluding import time. Cost-aware reranking reduces compilation by 30.17% on miniF2F, 42.62% on PutnamBench, and 60.14% on Putnam2025; the absolute reductions are 3.14, 10.01, and 6.05 seconds (Table 4, p. 7). The denominator for each mean is the theorem set named in Table 4, and the five runs supply the displayed standard deviations.
@@ -76,7 +72,7 @@ Inference: a Verus strategy should carry compatibility sets for Verus, Rust, and
 
 Each long-short pair is independently verified by Lean, and successful agent outputs compile under the selected toolchain. The study does not prove that a shorter proof is semantically easier for humans, that metadata causally belongs to one strategy, or that compatibility on non-Mathlib proofs transfers to pinned research projects. Strategy metadata is a cluster median of joint refactorings; the authors identify marginal attribution as open (Appendix C, p. 18).
 
-Trusted elements include Lean's kernel, Mathlib and project dependencies, the frozen LLM, embedding model, LLM judges, compiler timing environment, and the strategy extraction and aggregation code. Inference: the threat to agent-written verified Rust is high for maintenance claims and moderate for proof generation. Lean Refactor demonstrates that retrieval keyed to version and objective can outperform generic agents, so VL should not redo a generic retrieval bank or compiler-in-the-loop refactoring study. The opportunity is Rust-specific: measure whether Verus proofs survive crate upgrades, whether ownership changes dominate strategy matching, and whether specification weakening can be detected.
+Trusted elements include Lean's kernel, Mathlib and project dependencies, the frozen LLM, embedding model, LLM judges, compiler timing environment, and the strategy extraction and aggregation code.
 
 ## techniques for the catalog
 
@@ -86,5 +82,3 @@ Trusted elements include Lean's kernel, Mathlib and project dependencies, the fr
 - dependency-grounded rewriting: annotate invoked declarations and anchor extracted strategies to source locations
 - version compatibility sets: intersect toolchains on which all strategy instances compile
 - multi-metric evaluation: report length, compile time, dependency counts, and cross-version survival with explicit denominators
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

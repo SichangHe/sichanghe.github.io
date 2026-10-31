@@ -6,8 +6,6 @@ Relational network verification checks a planned network change by comparing pre
 
 The abstract reports fewer than 10 terms for 93% of changes and validation within 20 minutes for 80%. The network has over 10³ routers; the introduction gives approximate scale of 10⁴ routes per router and 10⁶ flow classes with distinct forwarding paths (Abstract and §1, p.1). These are reported measurements, with the evaluation limits described below.
 
-## techniques
-
 ### specify changes relationally with zones and modifiers
 
 What it is: define a change zone as a regular expression over network locations and attach a modifier describing path behavior between snapshots. A location may be an interface, router, or router group (§4, p.4). The syntax is `zone : modifier`; modifiers include `preserve`, `add`, `remove`, `replace`, `drop`, and `any` (Figure 2, p.6).
@@ -48,12 +46,6 @@ Finer location granularity costs more: interface analysis was about 10 times slo
 
 The worked change took engineers four iterations over three weeks (§2.1, p.2). Rela identified both the incorrect T1 path and collateral T2 changes in the second iteration, allowing the authors to skip the original third iteration; the final implementation validated automatically (§8.1, pp.10–11). This is a case study, not a randomized comparison.
 
-## trusted boundary and VL implications
-
-Inference: the result depends on the forwarding simulator, snapshot data, location database, compiler and automata libraries, and the engineer’s specification. Validation covers the supplied flow classes. The operational workflow uses flows observed over the last hour, supplied by NetFlow, rather than all possible flows (§2.3, pp.3–4, footnote 1). The authors explain: “Engineers prefer it over considering all possible flows (i.e., symbolic analysis) because it reduces information they need to inspect and helps focus on flows that matter.” (§2.3, p.4, footnote 1). The tool does not support path-count constraints, and historical experiments used a recent snapshot because precise historical data-plane states were unavailable (§9.2, p.11).
-
-Inference: for VL, relational reasoning suggests checking a code change against an old verified behavior while preserving all unspecified behavior. This could catch agent-written Rust regressions that satisfy local postconditions but alter unrelated cases. A Verus implementation needs an explicit relational model and lemmas; Rela’s automata equivalence is not a Verus construct. The relation’s specification still needs human review.
-
 ## techniques for the catalog
 
 - relational change specification — describe changed paths between old and new snapshots and preserve everything else
@@ -63,5 +55,3 @@ Inference: for VL, relational reasoning suggests checking a code change against 
 - automata equivalence checking — compile path sets/relations to FSA/FST and decide compliance
 - counterexample flow diagnosis — aggregate violating paths into classes and report the failed sub-spec
 - snapshot-scale validation — simulate both states, process all flow classes in parallel, and refine underspecified specs
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "For each violating flow, we generate a reason to help understand why it failed the spec."): read the complete 15-page paper text, including references and Appendix A, and the whole study; checked quotations, numbers, references, modifier semantics, automata steps, workflow, and evaluation scope; corrected quotations, any/preserve semantics, source locations, scale attribution, and percentage interpretation, and added DAG construction and evaluation limits; did not execute Rela, inspect its implementation, reproduce measurements, verify cited works independently, or visually check the PDF.

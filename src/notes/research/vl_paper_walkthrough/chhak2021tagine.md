@@ -77,12 +77,6 @@ Inference: In Verus, optimization correctness should be a lemma relating pre/pos
 
 Evidence and limits: CSE is implemented but not verified; ConstProp is designed but not implemented (Section 1, p. 2). Thus only RTLgenT and DeadcodeT provide completed formal evidence.
 
-## trust, omissions, and VL relevance
-
-Coq checks the compiler proofs, but Tagine’s current policy model treats rule signatures—not rule definitions—as parameters. The compiler therefore relies on externally supplied flag settings as axioms (Section 6.2, p. 12). The paper envisions modelling the policy rule language in detail as future work (Section 6.2, p. 12). Inference: PIPE hardware and rule caches are outside the theorem, as is any Rust-level compiler. The source language omits memory, pointers, and I/O; the paper presents Tagine as a first step toward Tagged C.
-
-Inference: The threat to VL is substantial for any product claim involving verified security-sensitive compilation: policy preservation requires provenance metadata, fail-stop preservation, and optimization side conditions that ordinary functional refinement omits. The direct implementation threat is low because Tagine targets Coq and PIPE, but its proof architecture is reusable. VL should expose policy effects in specifications and treat optimizer assumptions as explicit contracts.
-
 ## techniques for the catalog
 
 - high-level monitoring points: attach policy rules to source operations, branches, calls, and joins
@@ -90,4 +84,3 @@ Inference: The threat to VL is substantial for any product claim involving verif
 - simulation matching: relate source states to target CFG intervals and prove forward simulation
 - guarded dead-code removal: require non-fail-stop and PC-pure rules before deleting instructions
 - tag-aware optimization: adapt CSE and constant folding to PC sensitivity and fail-stop behavior
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Since expressions are pure, we make the assumption that no policy will ever need expression evaluation to change the PC tag."): I read the whole paper text (pp. 1–15) and compared every quotation, number, section and page reference, and technique step against it; the two quotations (Abstract p. 1, Section 1 p. 2; and the I-tags sentence, Section 4 p. 5) match word for word. I changed the page of the proof-size numbers (Section 7 is on p. 13, not p. 12), the pages of the DFS/PCP definitions (p. 12, not p. 11) and of the ConstProp section (p. 13, not pp. 13–14), the section reference for RTLT (Section 5.2, p. 8), the forward-simulation reference (Section 5.4, p. 10), and the CSE value-numbering condition, which the study had stated loosely; I also added the three ConstProp concrete-output cases, the fail-stop state definition, and marked the claim about what the theorem does not cover as Inference. I did not check the Verus-related Inference paragraphs or the VL-relevance assessment beyond confirming they are labeled as inferences, and I did not check the external Coq sources or the cited related work.

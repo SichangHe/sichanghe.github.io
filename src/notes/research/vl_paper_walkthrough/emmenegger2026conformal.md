@@ -25,12 +25,9 @@ The paper reports that both methods attain valid factuality at all targets (Sect
 
 What is proved is the idealized known-normalizer rule (Proposition 3.1), the empirical-posterior CRC theorem and the uniform-convergence route to population risk. What is measured is risk and downstream utility on two tasks. What remains trusted is the LLM, score model, labels, execution/sampling implementation and the exchangeability model. Inference: this is a threat to agent-written verified Rust only at the boundary where an agent confuses a mechanically verified sampler with a truthful scorer or distributional guarantee.
 
-Inference: the paper's posterior, mixture and monotonicization ideas look complete enough that VL could reuse them rather than redo basic conformal derivations.
-
 ## techniques for the catalog
 - claim-product posterior: sample only completions whose sequential claim-score product exceeds a calibrated threshold
 - abstention mixture: add a fixed factual zero-loss atom so every threshold has normalizing mass
 - particle off-policy calibration: estimate thresholded posterior risk from base-model particles
 - path monotonization: upper-envelope the non-monotone empirical risk before conformal selection
 - empirical-to-population transfer: use uniform threshold-class convergence as particle count grows
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Its main role is to ensure that the posterior remains well-defined by assigning fixed mass to an always-factual abstention atom, guaranteeing that the normalization constant is bounded away from zero."): I read the whole paper text including appendices A to E and checked every quotation, equation, algorithm step, theorem and page reference, the experimental setup and the tag and arXiv link (2606.03731). I changed "exceeds" to "at least" for the threshold, fixed the Algorithm 1 formula, equation and page references (Eqs. 7-9 on p. 5, Section 4 on p. 7), restored the capital T in one quotation, added the scorer details, Proposition 3.1, the continuity assumption, the baseline re-implementation, the plug-in evaluation, the FActScore result where the method underperforms MH, and the D.4 caveat, and marked two own conclusions as Inference. I did not check the figures in detail beyond their captions, the page numbers of the PDF layout beyond the text file, or the cited related work.

@@ -67,14 +67,8 @@ JSON-Mode-Eval has 100 zero-shot problems (Section 5). Table 1 reports zero synt
 
 For SQL, Spider has 1,034 problems: 250 easy, 440 medium, 174 hard, and 170 extra hard (Section 6.2). With Llama-3.2-3B, SynCode raises execution success from 67.4% to 81.4% and execution accuracy from 28.6% to 34.9%; averages are over all 1,034 queries (Table 2). For GPL generation, each model generates 20 samples per HumanEval problem and one per MBXP problem, yielding 4,154 samples per language for each model (Section 6.3). Table 3 shows syntax-error reductions generally above 90%; for LLaMA-7B Python, 291 to 2 errors (99%), and Go, 725 to 10 (99%) on HumanEval. Functional correctness changes are small: LLaMA-7B Python pass@1 is 11.2% standard versus 11.5% SynCode, and Go 3.8% versus 4.25% (Table 4). Inference: syntax validity is a necessary filter but explains little of the remaining semantic gap.
 
-## trusted boundary and VL implications
-
-Inference: a verification boundary would include the grammar, lexer/parser, tokenizer vocabulary, DFA construction, and mask application. The LLM chooses among retained tokens, which may include invalid tokens with the practical short sequences. Applying SynCode to Rust could reduce malformed output, but syntax acceptance cannot establish proof acceptance. A relevant VL experiment would measure compilation and Verus-proof success after masking, separately counting syntax-valid, compile-valid, and proof-valid outputs. The paper evaluates JSON, SQL, Python, and Go, not Rust or Verus (Sections 5–6).
-
 ## techniques for the catalog
 - remainder-aware incremental parsing — retain only the potentially changing lexical suffix and compute parser accept sequences
 - DFA mask store — precompute vocabulary masks for DFA states and terminal lookahead sequences
 - conservative masked decoding — union masks for accept sequences, retaining all valid tokens while potentially allowing extra tokens
 - grammar-backed language integration — compile EBNF/LR grammars, including indentation extensions, into reusable token constraints
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Thereafter, the mask store can be efficiently loaded into memory and used for repeated inference."): checked all quotations, numbers, section/page references, technique steps, and inference labels; corrected soundness/completeness direction, practical token-validity claims, DFA matching cases, generation-loop steps, sample denominators, and the paper link using its arXiv identifier; did not reproduce experiments, inspect implementation code, independently verify proofs, or validate the proposed Verus applications.

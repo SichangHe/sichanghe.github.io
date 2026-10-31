@@ -13,7 +13,7 @@ How to apply it. (1) Collect an informal statement and require a statement-only 
 
 Evidence. On Batch B, the rule agrees with human majority on 54/59 cases (91.5%), confirms 44/46 positives (95.7%), and confirms 10/13 negatives (76.9%) (Tables 1–2, p.3). The paper reports, “humans confirm 95.7% of the outputs it accepts and 77–81% of the outputs it rejects” (abstract, p.1). LeanScorer agrees on 45/59 (76.3%) (Table 2, p.3). BEq certifies 116/189 accepted-output pairs (61.4%); 67/140 pairs with different normalized encodings are certified (47.9%), while the remaining pairs are unresolved by bounded search (Table 4, p.4).
 
-Verus form. Inference: apply a parallel criterion to VL by requiring Verus verification plus two semantic checks against the natural-language requirement, followed by human calibration. `ensures` proves the generated postcondition; it does not establish that the postcondition is the requirement. A reference-free criterion is useful when multiple Rust implementations satisfy one behavior, but semantic judges remain a measurement layer rather than a proof.
+Verus form.
 
 ## technique 2: factorial tool ablation of drafting, search, and verifier feedback
 
@@ -33,14 +33,8 @@ How to apply it. (1) Log every tool call and intermediate declaration. (2) Stop 
 
 Verus form. Inference: treat `cargo verus` success as validity and a separately reviewed contract check as faithfulness. Persist verifier diagnostics and specification edits. Early stopping on the first proof pass is unsafe if later semantic auditing is omitted; long repair chains should be measured for contract drift.
 
-## trust, limitations, and VL threat
-The criterion is a proxy, not proof of equivalence; proprietary judges and family overlap with the orchestrator remain limitations (§5, p.7). BEq certifies only pairs resolved by bounded proof search, and the benchmark has no research-level mathematics (§5, p.7). The paper concludes, “Autoformalization systems should therefore report validity and faithfulness separately and pair verifier-driven repair with semantic auditing, routing, and stopping” (§6, p.8).
-
-Inference: this is a direct warning for agent-written verified Rust. A Verus proof can make a malformed or weakened requirement fully trusted. VL should adopt separate validity/faithfulness metrics, independent semantic review, and per-item routing experiments. Existing systems already demonstrate verifier feedback and retrieval; the missing product discipline is to prevent compile/proof success from standing in for requirement fidelity. The paper’s numbers do not establish that every long trajectory is bad, only that pooled long runs in this benchmark had lower faithfulness.
-
 ## techniques for the catalog
 - human-calibrated semantic criterion: combine compilation and two LLM judges, then calibrate positives and negatives against blinded human review
 - factorial verifier ablation: toggle drafting, search, and feedback across all tool combinations while holding prompts fixed
 - validity-faithfulness split: report compile/verify rates separately from semantic faithfulness and their gap
 - trajectory churn analysis: log per-item transitions and repair length to expose regressions hidden by aggregate averages
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

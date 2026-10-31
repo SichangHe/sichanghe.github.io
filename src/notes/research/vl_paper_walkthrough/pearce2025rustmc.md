@@ -27,7 +27,6 @@ how to do it
 The paper describes the backend precisely: "It operates by systematically exploring possible program executions whilst accounting for relaxed memory behaviours permitted by different models (e.g., RC11, IMM, LKMM)." (GenMC background, §2.2, p. 3). GenMC represents events with program-order, reads-from, and coherence relations and uses optimal dynamic partial-order reduction (DPOR) to explore one execution per equivalence class (§2.2, p. 3).
 
 Verus form
-Inference: a VL pipeline could run RustMC on a supported executable concurrent harness and use Verus contracts for an abstraction of its behavior. The paper does not establish how to connect the two tools or transfer guarantees between them.
 
 evidence and limits
 - Figure 1's Rust caller invokes a C `inc_C_counter`; two spawned calls race on the C global `counter`. The paper says RustMC "successfully identifies the race condition" (§2.1, p. 2).
@@ -132,7 +131,7 @@ evidence and limits
 ## what is proved, trusted, and left open
 The paper describes exhaustive stateless model checking of supported transformed LLVM programs, reusing GenMC's verifier (§3, p. 4). It supplies no new soundness proof, fixed exploration bound, or Verus contract proof. Inference: interpreting a successful run requires trusting Rust compilation, the customised standard library, LLVM transformations, and GenMC's execution semantics and DPOR, including the handling of undefined and mixed-size accesses. Its unsupported standard-library functions and mixed-size patterns limit applicability. Inference: RustMC is a candidate additional bug finder for a product generating verified Rust, especially around FFI, atomics, and raw pointers; this paper alone does not establish the reliability or integration of that workflow.
 
-The authors state: "Our future work will focus on applying RustMC to verify concurrent code in Rust projects and their dependencies." (§6, p. 10). Inference: VL could reuse the LLVM/GenMC integration, selective threading inlining, aligned-copy lowering, and explicit-undef workaround. Connecting them to Verus specifications or evaluating larger Rust/Verus projects would require work beyond this paper.
+The authors state: "Our future work will focus on applying RustMC to verify concurrent code in Rust projects and their dependencies." (§6, p. 10).
 
 ## techniques for the catalog
 - LLVM mixed-language lowering — compile Rust and C/C++ dependencies to LLVM IR and exhaustively explore GenMC execution graphs
@@ -141,5 +140,3 @@ The authors state: "Our future work will focus on applying RustMC to verify conc
 - explicit undefined stores — insert `store undef` so uninitialized loads satisfy GenMC's read-from requirement
 - stateless concurrency checking — use weak-memory execution exploration and DPOR to report concrete races, assertion failures, and panic schedules
 - targeted reproducer checking — apply the checker to FFI, atomics, unsafe `Sync`, bounds-check, and raw-pointer examples
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To handle uninitialized loads while meeting GenMC’s verification requirements, we implement an LLVM pass that explicitly writes undefined values into each stack allocation."): checked all paper text, quotations, numbers, references, technique steps, examples, and limitations; corrected the example locations, unsupported pass ordering and allocation detection, the claimed bounded proof, and aggregate detection-rate wording; qualified the appendix panic report and Verus integration as inferences; did not run RustMC, inspect its implementation, or independently validate Verus capabilities.

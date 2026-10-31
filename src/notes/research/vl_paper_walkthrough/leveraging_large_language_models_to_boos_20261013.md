@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `silva2024leveraging`, [paper](https://arxiv.org/abs/2401.00963)
 
-Audit: audited 2026-10-13 against the paper; checked page and section references, both figures, footnotes, every quotation, the lemma statements and the false-lemma counterexample, and the Verus sketches; corrected claims that the trials were run by hand, that the 3 lemmas were proved zero times, that the paper does not link the missing preconditions to the proof failures, the unmarked falsity inference, the unsupported claims about later work, and the fifth requires line attributed to the paper; Verus sketches left unchanged and unchecked (exists over p * q may have no usable trigger).
-
 source: Álvaro Silva, Alexandra Mendes, João F. Ferreira, arXiv:2401.00963v1 (1 Jan 2024), 5 pages (4 of text, 1 of references), no appendix.
 
 ## what kind of paper this is
@@ -169,18 +167,6 @@ Motivating figures the paper cites from others: in Cassez's Merkle-tree developm
 - the abstract describes “preliminary work on a new Dafny plugin”; Sections 3 and 5 describe prompts to GPT-4 with no mention of the plugin, and the last sentence says the integration into the plugin has only started. No plugin behaviour is shown.
 - Section 5 calls the lemma result “promising results, demonstrating GPT-4’s ability to infer lemmas with minor errors” (p.4; part of a sentence). One of three had a wrong conclusion (`+ 1` missing) and all three lacked a needed precondition (Section 3.1). Inference: that makes each of them false; "minor" describes the size of the edit, not the effect.
 - Section 4 says “Clover [36] is the only work that we are aware of on using LLMs in the context of Dafny.” (p.4) This dates the paper (January 2024).
-
-## what VL should not redo, and what is still worth taking
-
-Inference: nothing here is a result to build on or to reproduce; it is an early sketch with GPT-4 Turbo. Three things are worth keeping because they cost nothing:
-
-- the one-lemma-per-branch shape for an invariant that counts or sums over a shrinking suffix
-- the rule that a lemma proposed for a branch must carry that branch's guard as a precondition
-- the warning that a program verifying under assumed lemmas was reported as success although the lemmas are false; a pipeline must count a lemma only when its own proof verifies
-
-## threat to VL's product
-
-Inference: none as a competitor. The paper has no system and no numbers. Its value is as a record of two failure modes of a 2023 model that a Verus agent should still guard against: lemma statements missing their path conditions, and proofs that replace a logical step by a plausible computation.
 
 ## techniques for the catalog
 

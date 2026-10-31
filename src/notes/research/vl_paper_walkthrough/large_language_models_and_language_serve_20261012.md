@@ -1,11 +1,6 @@
 # Large Language Models and Language Server Protocol: a match made in context
 (authored by agents unless marked 🧑)
 Tag: `schena2026large`, [paper](https://arxiv.org/abs/2609.03086v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
-
-## scope and relation to earlier notes
-
-The shortlist already records this paper, but no full walkthrough was found in the research notes. This study extracts the paper's Eiffel-tools workflow for VeruLaw (VL), whose target is agent-written Rust checked by Verus. Statements labelled inference are my mapping to Verus; the paper itself evaluates Eiffel and AutoProof.
 
 ## what the paper builds
 
@@ -35,8 +30,6 @@ Verus mapping (inference): generate a replacement body in a temporary module or 
 
 Use feature-by-feature correction for batch repair. Parse the whole project and select classes or features. For every failing feature, send a two-message prompt: a system task plus Eiffel syntax guide, then a user message containing available identifiers, feature code, class invariant, and the AutoProof counterexample or compilation error. Replace the backed-up feature with the parsed candidate and rerun AutoProof. Restore the backup after failure and retry until success or a fixed limit. The paper states, “If verification still fails, the original is restored and another candidate is tried” (Section 4.2, p. 9). A class-level command applies the same protocol to an entire class, allowing specifications and bodies to change together; it is the only command that asks for a large, consistent output in one step (Section 4.2, p. 9).
 
-Verus mapping (inference): use a transaction per function or module, include the exact Verus error and counterexample-like model in the next prompt, and reset the transaction on failed proof. Function granularity limits blast radius; module granularity can repair mutually dependent specs but increases review and hallucination risk. Never let a failed candidate become the next baseline unless explicitly intended; the Eiffel batch feature does continue from the previously suggested fix during evaluation, so VL should choose and document its baseline policy.
-
 ## technique 5: bounded retries, prompt ablation, and measurement
 
 The evaluation fixes 539 bugs from two public Eiffel datasets—513 translated BuggyJava+JML examples and 26 Maple examples—with three models, two prompt variants, and at most ten attempts per feature. Each attempt verifies the current version, includes the result in the next request, parses a candidate, and verifies it. The “full” prompt supplies a syntax guide, a verbatim feature template, available variable names and types, and the concrete error. “Minimal” omits these and merely says there is a problem. The full prompt improves the average success rate by 6.4 percentage points; Sonnet 4.6 fixes 513/539 (95.2%) full and 486/539 (90.2%) minimal, GPT-5 Nano 443/539 (82.2%) and 415/539 (77.0%), and Laguna XS 458/539 (85.0%) and 410/539 (76.1%) (Section 6, pp. 14–15). Among features that are eventually fixed, the first attempt accounts for 67.9% to 83.5% depending on model and prompt. Figures 8–9 report means per feature run, including successful and unfixed features after all attempts: wall-clock time ranges from 35 seconds (Sonnet full) to 195 seconds (Laguna minimal), while Sonnet costs $0.0307 full and $0.0261 minimal per run and GPT costs $0.0080 and $0.0061 (Figures 7–10, pp. 15–17).
@@ -46,10 +39,6 @@ Verus mapping (inference): measure verified-function rate as successes/attempted
 ## what is proved, trusted, and assumed
 
 AutoProof proves functional correctness of the submitted Eiffel body relative to the submitted model-based contracts. Inference: the verifier, Boogie translation, and SMT checker are soundness-critical trusted components; the LLM, prompt construction, parser, and source index affect candidate quality and completeness but are not proof of user intent. The authors assume contracts are correct in the feature-correction command; this is not the same as proving the datasets correct by construction. Public benchmarks may have leaked into model training: the paper says, “It is possible that those benchmarks leaked in the training data of some LLMs” (Section 7, p. 17). The paper measures repair success, time, token use, and cost, not production defect rates or specification adequacy. The figures are internally consistent for 539 tasks, but “vormal verification” in the conclusion is a typographical error, not a separate method.
-
-## implications for VL and threat to the product
-
-The paper demonstrates a design VL can reuse: LSP-style editor integration, parser-gated candidate extraction, verifier diagnostics in repair prompts, transactional rollback, and retry-budget measurements. VL should add Rust-specific ownership/type context and preserve human review for new specifications. Threat assessment (inference): this is a credible blueprint for an agent-plus-Verus repair loop and could reduce the product's implementation advantage for routine contract-preserving fixes. It does not remove VL's harder problems: choosing sound specifications, handling unsafe code and external crates, proving concurrency properties, and maintaining a trusted Verus/Rust toolchain. The 539-task Eiffel benchmark is small and potentially contaminated, so its 76.1–95.2% rates should not be treated as a forecast for VL.
 
 ## techniques for the catalog
 

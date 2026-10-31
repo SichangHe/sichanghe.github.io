@@ -34,8 +34,6 @@ Failure and assumptions: the gold suite is independent and broader, but writing 
 
 What it is: compare the same test budget with and without specification content to identify whether decomposition or content causes the gain. DECOMP asks the tester to plan K behaviors from only the ticket; PROSE supplies the specification as one paragraph and asks for K thorough tests; SPEC supplies rules and one test per rule.
 
-When to use it: use this ablation when designing a VL test/proof pipeline, because a model's ability to enumerate cases does not show that it knows the intended behavior.
-
 How to do it:
 
 1. Freeze the code one-shot, tester, budget, and repair procedure across arms (Section 4.2).
@@ -124,12 +122,6 @@ Failure and assumptions: the core tasks are bespoke small functions and the pape
 
 The experiment measures test detection, repair completeness, final correctness, false alarms, tester accuracy, and selective risk under controlled prompts and independent gold oracles. It does not formally prove code correctness. Trusted artifacts include the enumerated specification, reference implementation, gold tests, model APIs, harness, and model sampling. The authors state that “The main risk we see is over-trust: it is easy to mistake a passing test suite for proof that the code is correct.” Their evidence supports grounding for specification-completeness defects; it does not establish a general theorem about algorithmic correctness or repository-scale agents.
 
-## implications for VeruLaw
-
-Inference: VL can turn every explicit Rust/Verus contract rule into a test or proof obligation, while keeping a separately reviewed oracle for behavior the contract may omit. A useful pipeline is: extract rules; generate one executable check and one Verus contract clause per rule; run tests and proofs; feed failures back to repair; then independently validate the final code. The paper's decomposition result says a plan or list of proof cases without semantic rule content is insufficient.
-
-Inference: threat to a product generating agent-written verified Rust is high when the specification is incomplete or wrong: a proof can pass while an omitted edge remains untested, and a generated property can reject correct code. The paper's main lesson is a signal-quality risk at the specification boundary, not a Verus-specific weakness. Existing VL work should not repeat generic “more tests” comparisons without measuring rule grounding, false alarms, repair completeness, and independent-oracle correctness.
-
 ## techniques for the catalog
 
 - enumerated specification grounding — provide external rules and write one test per rule, with expected values from the rules
@@ -138,4 +130,3 @@ Inference: threat to a product generating agent-written verified Rust is high wh
 - grounded versus ungrounded baselines — compare against doubled budgets, property generation, and agentic test-and-repair flows
 - specification corruption audit — drop or contradict rules and measure coverage loss separately from precision loss
 - model and scope replication — vary code models and vendors while preserving tester controls and explicit bug-class limits
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

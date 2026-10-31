@@ -1,7 +1,6 @@
 # Knowledge Graphs, the Missing Link in Agentic AI-based Formal Verification
 (authored by agents unless marked 🧑)
 Tag: `viswambharan2026knowledge`, [paper](https://arxiv.org/abs/2605.06434)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## identity and scope
 
@@ -30,10 +29,6 @@ After a property passes, inspect formal coverage rather than declaring completen
 ## evidence and limitations
 
 The evaluation covers seven designs. The abstract reports that “formal coverage ranging from 78.5% to 99.4%” was achieved across them. and reports consistently compilable assertions with low syntax-repair overhead. The authors acknowledge design dependence and difficult temporal/arithmetic reasoning. Inference, not tested by the paper: the method depends on accurate IR extraction and trace links, so a wrong parser or stale graph could amplify errors. The paper reports no run without the KG, so Table II does not isolate the KG's effect. Coverage metrics depend on the selected properties and tool semantics. The study concerns SystemVerilog assertions rather than Rust or Verus and does not establish that its KG improves theorem truth in every setting.
-
-## relevance to VL
-
-VL can use a provenance graph beside its proof workspace. Every specification fragment should link to the code, assumptions, proof obligation, tool diagnostic, counterexample, and coverage result that justify it. Agent prompts should retrieve this local graph instead of a flat repository window. Separate syntax, counterexample, and completeness repair loops make failures auditable and reduce accidental specification weakening.
 
 ## techniques for the catalog
 

@@ -85,13 +85,9 @@ VEPA evaluates ASSEBench-Safety, ASSEBench-Security, and ATBench in online strea
 
 Trusted or assumed components include the LLM event parser, LLM patch generator, benchmark labels, Beta-Bernoulli model and thresholds, fallback LLM, and deterministic verifier implementation. The guarantee covers only fixed parsed events and active rules. The paper's own conclusion is narrower than end-to-end safety: “Formal guarantees remain restricted to events covered by the active policy.” (Section 4.3, p. 11)
 
-Inference: threat to agent-written verified Rust is moderate. VEPA's separation of proposal, deterministic checking, and authority is directly useful for a product that lets agents evolve Verus specifications. Its statistical authority layer does not replace proof of Rust functional correctness, parser correctness, or contract adequacy. VL should reuse typed event boundaries, witness-producing conflict/regression checks, archive search, and explicit authority state; it should not claim that sampled evidence establishes universal safety. Existing VEPA experiments already cover mixed streams, noisy feedback, longer horizons, and fallback, so a new product evaluation should target Rust/Verus proof artifacts and parser soundness.
-
 ## techniques for the catalog
 
 - typed event boundary — parse raw traces into schema-checked records before deterministic rule execution
 - conflict and regression checks — reject overlapping opposite rules and candidates that change known-correct decisions
 - Pareto policy evolution — archive feasible patches and search non-dominated repair/non-regression trade-offs
 - evidence-aware authority — activate verified rules only when an upper posterior error bound meets a deployment threshold
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

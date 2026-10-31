@@ -6,8 +6,6 @@ Tag: `ayoun2026soteria`, [paper](https://doi.org/10.1145/3808306)
 
 The paper presents Soteria, an OCaml library for implementing symbolic-execution engines directly over source-language semantics. The abstract states: “We present Soteria, a lightweight OCaml library for writing SE engines in a functional style, without compromising on performance, accuracy or feature support.” (abstract, p. 1). It argues that an intermediate language (IL) can lose source-level behavior and require a difficult compiler. “Claim 1: IL-design is a trade-off between performance, accuracy, and comprehensive support for language features, and one cannot maximise all aspects of this trio at once.” (section 1, p. 2). “Claim 2: A trustworthy interpreter for L is not harder to write than a trustworthy L-to-IL compiler.” (section 1, p. 2).
 
-Inference: for VeruLaw, the transferable idea is a source-semantics interpreter whose path conditions and state model retain Rust behavior that an IL may erase. This is a testing and bug-finding architecture, not a replacement for Verus contracts and proofs.
-
 ## technique: build a symbolic interpreter with the Symex monad
 
 Inference: Use this when the target language has semantics that an IL would obscure, or when one wants reusable symbolic execution with either over-approximate (OX) verification or under-approximate (UX) bug finding. The paper's tutorial gives these steps:
@@ -48,8 +46,6 @@ The unbiased data-structure suite has 72 tests. Soteriarust passes 72/72 in 6.6 
 
 The paper says of its suites: “both Kani and Miri suites are biased towards their respective tools.” (section 4.2.1, p. 14). Of the finetime tests it says they “were written for Kani, and they may thus be biased towards its strengths.” (section 4.2.3, p. 16). It also says the Collections-C tests are “subject to bias (towards Gillian-C)” (section 5.2, p. 17).
 
-Inference: these denominators and settings matter for any VeruLaw evaluation. The measurements show comparative behavior on the stated suites, not universal superiority.
-
 ## technique: compositional bi-abduction for C bug finding
 
 Soteriac parses C to Cerberus AIL, recursively interprets the source AST, and combines the state monad with Symex. Its fix-from-error bi-abduction first runs bi-abductive symbolic execution to generate function summaries, then applies a manifest-bug criterion to summaries with erroneous postconditions (section 5.1, pp. 16–17). On 159 Collections-C WPST tests, Soteriac passes 159/159 in 74.54 seconds; Gillian-C passes 156/159 in 111.41 seconds; CBMC passes 124/159, with 30 timeouts, one crash, two false positives and two false negatives; the timeout is 30 s per test (section 5.2, pp. 17–18, Tables 1–2). The paper says: “all bugs found by Gillian-C and CBMC were also found by Soteriac ; that is, to our knowledge Soteriac has no false negatives” (section 5.2, p. 17). On automatic bug finding in Collections-C, Soteriac takes 2.57 s and Pulse 2.52 s, and both find the same one bug (section 5.2, p. 18, Table 3). The paper reports about three person-months to build Soteriac and eight person-months for Soteriarust by a first-year PhD student (sections 5.2 and 4.2.1).
@@ -64,8 +60,6 @@ Inference: the result does not prove Rust's semantics, the ULLBC frontend, intri
 
 The paper's key limitation is path explosion. In a BTreeSet experiment with three nondeterministic integers, Soteriarust explores 13 paths in 2.09 seconds while Kani solves one approximately 50-million-variable SAT instance in 691 seconds; with six integers Soteriarust explores 4,683 paths in 456 seconds and Kani exceeds two hours (section 7.1, pp. 20–21). The paper also records a Kani-friendly `ctpop` test with 2^128 paths for Soteriarust and shows that replacing a branch with `wrapping_add` makes it pass in 1.1 seconds (section 4.2.1, pp. 14–15).
 
-Inference: VL should not redo a generic build-a-symbolic-executor proposal without measuring source-level Rust semantics, solver behavior, and maintenance costs; Soteria already supplies that architecture and artifact. A distinct Verus opportunity is to connect source-level symbolic bug finding to contract proofs and to measure which generated proof obligations remain after symbolic counterexample discovery.
-
 ## techniques for the catalog
 
 - source-level Symex monad — lift a concrete interpreter with `bind`, `if%sat`, symbolic variables, path conditions, fuel, and OX/UX modes
@@ -74,4 +68,3 @@ Inference: VL should not redo a generic build-a-symbolic-executor proposal witho
 - direct Rust semantics — interpret ULLBC with symbolic state and Tree Borrow transitions to detect aliasing UB
 - compositional bi-abduction — generate function summaries by fix-from-error symbolic execution and report manifest erroneous postconditions
 - evidence discipline — report pass/fail/unsupported/timeout counts with suite denominators, settings, timeout, and test bias
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Thanks to Soteria, a first-year PhD student developed a competitive SE engine for Rust in merely eight person-months."): I read the whole paper text and compared every quotation, number, page and section reference, the Symex tutorial steps, the six optimisations, the suite counts and the Collections-C tables against it; I changed the O5 and if%sat quotes (case, spacing, page 10 not 11), the Theorem 6.1 quote (it was not in the paper) and the claim that the proof is in this paper (it is in the extended version), the page of the no-false-negatives quote (p. 17), and a bias quote that was attributed to the wrong suites; I added the 19 timeouts, the Pulse comparison and the person-month figures; I did not check the extended version [59], the cited artifact, the references, or the Verus-analogue inferences, which are not paper claims.

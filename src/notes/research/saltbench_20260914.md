@@ -6,8 +6,6 @@
     - Jason Hickey, [SaltBench: A Referee-Gated Protocol for Measuring Method
       Effects in Machine-Checked Software Work](https://arxiv.org/abs/2609.11076),
       arXiv:2609.11076v1, September 2026
-    - [local PDF](</hdd1/sichanghe/paper_collection/SaltBench- A Referee-Gated Protocol for Measuring Method Effects in Machine-Checked Software Work, Jason Hickey, arXiv, 2026.pdf>)
-    - [local ChatGPT OCR](</hdd1/sichanghe/paper_collection/SaltBench- A Referee-Gated Protocol for Measuring Method Effects in Machine-Checked Software Work, Jason Hickey, arXiv, 2026/SaltBench- A Referee-Gated Protocol for Measuring Method Effects in Machine-Checked Software Work, Jason Hickey, arXiv, 2026.md>)
     - status: single-author preprint; treat the protocol and instrument failures
       as useful design evidence, not as an independently replicated result
 
@@ -77,40 +75,6 @@
         - a registered rule without a checked result-path implementation is prose
     - absence claims must name the enumerated population and carry controls at
       the same layer as the claimed fence
-
-- implications for VL
-    - evaluate the VL seat, not only the base model
-        - pin model/client, prompt, verifier, dependency snapshot, tool policy,
-          retrieval state, and harness version per run
-    - keep three decisions distinct
-        - implementation behavior: hidden tests, traces, mutants, or models
-        - proof validity: Verus acceptance plus anti-cheating guards
-        - specification intent: examples, counterexamples, mutation adequacy,
-          or independent human/referee review
-    - use crossed arms to isolate where any benefit comes from
-        - plain coding
-        - agent writes and verifies its own specification
-        - both arms receive the same pre-supplied formal statement derived from
-          the withheld reference
-        - optionally add a process-length placebo that can only falsify the claim
-    - report cost and capability as separate registered outcomes
-        - never infer improved correctness from greater proof spend
-        - attach a referee verdict to every priced cell before claiming a
-          cost–quality tradeoff
-    - make the fence end-to-end
-        - deny sensitive paths in both subprocess sandboxing and harness-native
-          tools
-        - seed canaries through each read mechanism and fail closed before runs
-    - audit every gate for arm asymmetry
-        - helper placement, imports, generated annotations, proof-item shapes,
-          timeout handling, and parser rules can penalize verification arms
-    - publish a machine-readable declared-set manifest beside every scoreboard
-        - include condition dimensions, origin run, completion class, cap state,
-          referee verdict, price provenance, and exclusion reason
-    - prefer brownfield experiments for causal cost–quality claims
-        - the pre-change behavior supplies a baseline
-        - score repair, regression preservation, proof validity, and cost as
-          distinct outcomes
 
 - caveats that must travel with any citation
     - the five systems tasks and their test/mutant sets were authored under the

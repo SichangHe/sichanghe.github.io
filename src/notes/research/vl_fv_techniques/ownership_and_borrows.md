@@ -174,8 +174,6 @@ Steps marked (inference) are mine, carried over from another tool.
    - the Mendel study says this needs "explicit predicates and proof lemmas" (study wording, not the paper's)
 8. Record every trusted fact: the library annotation, the `external_body` function, the unsafe contract.
 
-## variants by paper
-
 ### Verus papers
 
 [Verus linear ghost types](../vl_paper_walkthrough/verus_linear_20261012.md).

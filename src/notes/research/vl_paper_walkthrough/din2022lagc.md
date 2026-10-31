@@ -8,8 +8,6 @@ LAGC (“locally abstract, globally concrete”) is a modular trace semantics fo
 
 The three-phase recipe is explicit: “1. Declare local evaluation rules for each syntax construct of the target language. 2. Declare composition rules that combine local evaluation and process creation into global traces. Scheduling is expressed declaratively as well-formedness constraints over traces. 3. Define the generation of all global traces with the help of the composition rules from a suitable initial configuration.” (Section 1, p. 1). This is a semantic framework, not an empirical verifier benchmark; its evidence is definitions, soundness propositions/theorems, examples, and instantiated language models.
 
-Inference: VL can use LAGC as a specification architecture for concurrent Rust, but Verus does not implement this semantics. A Verus proof would need explicit ghost state for symbolic inputs, events, task queues, and well-formedness, with executable Rust contracts proved against that model.
-
 ## technique 1: local symbolic evaluation and global concretisation
 
 what it is: a symbolic state maps variables to values or starred expressions. A starred value is an unknown parameter; local evaluation can therefore run without knowing the caller or message context. A concretisation mapping assigns values to all symbolic variables and substitutes them through states, path conditions, and events. Proposition 1 states that concretisation produces a concrete, well-formed trace (Section 2.4, p. 6).
@@ -171,8 +169,6 @@ The paper proves soundness of the WHILE dynamic-logic calculus relative to its t
 
 No experimental denominators, success rates, or timing numbers are reported. The evidence is formal: Proposition 1 (concretisation), Proposition 2 (concrete local evaluation), Theorem 1 (calculus soundness), Proposition 3 (one active task per object), and concrete trace examples. Case studies show expressiveness rather than measured coverage.
 
-Inference: LAGC poses a high design threat to any VL concurrency feature that relies on an implicit scheduler or informal message assumptions. VL should make task, event, and channel invariants explicit and retain independent Verus proofs for implementation contracts. Rebuilding a generic trace semantics is unnecessary if Verus state-machine specifications already cover a target API; the reusable contribution is the separation of local symbolic contracts from global well-formedness constraints.
-
 ## techniques for the catalog
 
 - local abstract/global concrete traces — evaluate constructs symbolically, then instantiate values when composing global executions
@@ -184,4 +180,3 @@ Inference: LAGC poses a high design threat to any VL concurrency feature that re
 - declarative channel models — obtain asynchronous, FIFO, bounded, causal, and synchronous semantics by adding trace predicates
 - actor isolation and futures — preserve owner-local state, match asynchronous calls, and restrict future reads to completed futures
 - guarded language instantiation — express ProMeLa guards, channel visibility, blocking, and consumption through events and well-formedness
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Message identifiers are used to avoid sending or receiving the same message (i.e. two messages with the same identifier) twice."): read the whole paper text (Sections 1–9, Figures 1–10, Examples 1–19, references) and compared every quotation, section, page and rule/definition reference, and each technique step against it; changed one wrong section reference (Section 1, not 2), several page references (Definitions 13–16, rules (7), (17), (34)–(36), (41), Definition 27, ProMeLa constraints, the p. 31–32 quotation), the tag link (now the arXiv abstract page named in the paper text), the claims that Propositions 1–2 are proved and that a richer event model gives more expressiveness (the paper says only that recording causality adds complexity), and added the paper’s statements on ProMeLa being only partly formalised, soundness covering only the sequential fragment, and the Isabelle/HOL mechanization of Sections 2, 3 and 5; Verus-form paragraphs are my own proposals marked Inference and were not checked against Verus; I did not check the cited related work, the Isabelle repository, or any claim about Verus itself.

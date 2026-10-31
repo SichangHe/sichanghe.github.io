@@ -81,19 +81,9 @@ Verus form: Inference: encode the analogous property as a proof lemma over pre-s
 
 Evidence and limits (Section 6, p. 10): “A potential threat to validity arises from our use of an LLM in the DV step to insert runtime checks, as errors in this instrumentation could affect exploitability judgments.” Inference: runtime evidence constrains the decision, but the action/state selection, instrumentation, and semantic sanity check remain potential sources of error.
 
-## measurements, trust, and product threat
-
-Section 5.2 (p. 7) reports benchmark recall of 84.17% (117/139) and 85.28% (365/428), with confirmation precision of 98.32% (117/119) and 98.65% (365/370) for SmartBugs-Vul and FORGE-Vul, respectively. These are distinct from the executable-PoC rates in Table 4: 98.56% (137/139) and 92.29% (395/428). Table 3's analyzer PPV/NPV values use manually audited samples; CCC's totals are 41/61 and 56/74.
-
-For Latest-114, Table 2 and Section 5.3 (pp. 8–9) report 236 confirmations from 545 findings. Of 85 audited confirmations, 64 were judged true positives, giving PPV 75.29% (64/85). The corresponding audited rejections give NPV 97.35% (110/113). Section 5.3 states, “Because manual validation is costly, we adjudicate a randomly sampled subset.” Inference: the abstract's 64 bugs should therefore be read as the verified true positives in this sample, not as an exhaustive count of true positives among all 236 confirmations. The abstract's “average cost of $0.03” is clarified in Section 5.2 as API cost per validation with DeepSeek-R1, rather than cost per true positive.
-
-Section 6 (p. 10) says, “DV is therefore execution-grounded rather than an LLM-as-a-judge mechanism.” Inference: that characterization needs qualification because Section 3.4 also specifies an LLM semantic sanity check. Trust still depends on the compiler/runtime, extracted interfaces, sanitizer, generated instrumentation, and interpretation of the finding. For VL, reuse context slicing, deterministic preflight, bounded repair, and explicit denominators; use runtime differential evidence for bug reproduction, and Verus verification for stated Rust properties. The paper does not evaluate Verus or VL.
-
 ## techniques for the catalog
 
 - bug-context extraction — slice around key functions and expand semantic, structural, and initialization dependencies
 - deterministic preflight — normalize versions/imports and prevent generated tests from replacing target behavior
 - generate-repair-execute — regenerate from current diagnostics until execution succeeds or a budget ends
 - action-state differential verification — compare matched pre/post observations and sanity-check the change against the finding with an LLM
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "When a state change is observed, we further query an LLM to sanity-check whether the change constitutes evidence for the reported vulnerability."): read the complete paper and study; checked quotations, numbers, section/page references, technique steps, tag and arXiv identifier; corrected BCE recursion, added DV's LLM semantic check, clarified sampled real-world counts and API cost, and marked extrapolations as inference; did not inspect implementation artifacts or reproduce experiments.

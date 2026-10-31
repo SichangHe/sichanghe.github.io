@@ -58,8 +58,6 @@ The evaluation uses Siemens C benchmarks on a 3 GHz Windows 7 machine with 16 GB
 
 What is proved is partial equivalence of matched procedures under the translated Boogie semantics when all generated wrappers verify. Inference: what stays trusted is the source-to-Boogie translator, configuration and matching, summaries for assumed-equivalent procedures, the Boogie verifier, Z3, and the adequacy of deterministic heap/external models. Inference: loops are bounded by unrolling or transformed to recursion, so the chosen model determines what behavior is covered.
 
-Inference: semantic diff poses a moderate threat to agent-written verified Rust because it can catch regressions that tests miss and focus review on paired traces, while an unsound translator or weak summary can still make equivalence appear true. VL should reuse modular equivalence wrappers, selective inlining, deterministic effect models, and counterexample presentation; it should not redo the basic Boogie algorithm without a Rust-specific reason.
-
 ## techniques for the catalog
 
 - intermediate-language normalization — translate multiple source languages into a common verification language
@@ -68,5 +66,3 @@ Inference: semantic diff poses a moderate threat to agent-written verified Rust 
 - deterministic effect modeling — model allocation, I/O, and externals with repeatable state transformers
 - semantic counterexample traces — report paired paths with source locations and expression values
 - SMT verification-condition checking — discharge equivalence wrappers with modular VC generation and Z3
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We provide an example of deterministic modeling of allocation for C programs in the next section."): read the whole paper (pp. 712-717) and checked every quotation, page and section reference, the Figure 2 steps, the inlining options, the allocvar model, the C front-end expression example and the Table 1 numbers quoted (tcas row, print tokens2 n6 row); changed the uninterpreted "procedures" wording to the paper's "uninterpreted functions", replaced a paraphrase of the syntactic-diff claim with the paper's sentence, replaced an unsupported claim about table averages, restated the opening in terms of partial equivalence, and marked trusted-base and loop remarks as Inference; the tag line is unchanged and the paper text carries no DOI or publisher URL, so the semantic scholar link is from the fetch record; did not check the Verus/Rust adaptation remarks (they are marked Inference and are not claims about the paper), the cited external works, or the other rows of Table 1 beyond the two named.

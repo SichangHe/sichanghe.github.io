@@ -28,7 +28,7 @@ How to apply it. The paper describes this only briefly ("Without going into deta
 3. Inference: solve the callee under that context and export `Sum_h` to callers.
 4. Propagate summaries back up the graph. `CallCtx_h` and `Sum_h` are mutually dependent, which forms a cycle in the dependency graph of Figure 1a; "The algorithm in [3] uses a greatest fixed point computation to resolve this dependency" (Section 3, p. 31).
 
-Verus form. Inference: use modular Rust contracts as summaries and explicit wrapper lemmas to transfer caller facts into callee preconditions. A recursive function requires a `decreases` proof; an invariant can carry the caller's context. Verus does not infer contracts by greatest fixed point, so a VL workflow could use this decomposition offline to propose contracts, then check each contract mechanically.
+Verus form.
 
 Evidence and limits. The introduction says interprocedural work that follows the procedural structure "has been shown to significantly increase efficiency in comparison with monolithic solving" (Section 1, p. 29), and the abstract says decomposing the termination encoding "can significantly increase efficiency", but this paper reports no timing or denominator for that claim. It says the greatest-fixed-point resolution "is very imprecise for recursive procedures" (Section 3, p. 31). Inference: recursive call summaries may therefore need expansion or a stronger domain.
 
@@ -64,8 +64,6 @@ Evidence and limits. The paper gives no absolute solver limits, speedups, or cas
 
 The paper presents a soundness recipe (Section 3, p. 30): sound analyses of individual subproblems, sound combination of the results, and induction over the decomposition hierarchy. It does not provide a mechanized artifact or numerical evaluation in these four pages. Inference: the trusted elements are the symbolic transition encoding, the synthesis engine's soundness, abstract-domain semantics, fixed-point computations, and the analyst's partition choices; the paper does not list them. Inference: for agent-written verified Rust, the threat is proof-scale and precision drift rather than an unsound Verus proof: splitting contracts can hide a missing relation, while over-inlining can make verification infeasible. A product should preserve explicit dependency graphs and check that each generated contract is actually strong enough for its caller.
 
-Inference: the paper already identifies the main decomposition failure modes and the expansion remedy, so VL should not redo a generic “split large proofs” proposal. A useful application is to measure these tradeoffs on real Verus projects: track solver time, contract strength, and repair effort as helper boundaries change, while keeping the final Verus proof unchanged.
-
 ## techniques for the catalog
 
 - transition-system encoding: describe each procedure with `Init`, `Trans`, and `Out`, then synthesize invariants, summaries, and termination relations
@@ -73,4 +71,3 @@ Inference: the paper already identifies the main decomposition failure modes and
 - dependency-aware partitioning: map cycles among invariants, summaries, and ranking arguments before choosing solver subproblems
 - sound composition: require sound subproblem analyses, sound result combination, and induction over the decomposition hierarchy
 - dynamic precision control: partition only when capacity is exceeded, and expand loops or recursive calls when abstraction loses needed precision
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We emulate the traversal of the call graph top-down analysing each procedure separately and propagating the summaries back up."): read all four pages (pp. 29-32) and checked every quotation, section and page reference, the formula (1) description, footnote 2, and the claims about efficiency and no measurements; changed the link to the DOI printed in the paper (the arXiv link was from the fetch record and is not in the paper text), fixed page references (call-context material is on p. 31, footnote 2 on p. 31, not 32), corrected the inaccurate descriptions of RR_f, formula (1) and "optimization problem" (paper: "maximisation problem"), split the footnote-interrupted quotation, and marked procedures and soundness assumptions that the paper does not state as Inference; did not check the cited works [1]-[7] or the Verus mappings beyond marking them as inference, and did not check the figure layout beyond the caption and text description.

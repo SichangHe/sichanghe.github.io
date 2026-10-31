@@ -93,14 +93,9 @@ Verus form
 
 Inference: Verus executable Rust can eliminate a separate PVS-to-C stage, but any FFI, serialization library, or C boundary requires contracts and refinement proofs. The translation tool and compiler remain trusted unless independently verified.
 
-## what is proved, what stays trusted, and product threat
-
-PVS proves the stated schema theorem for the PVS `transform`; experiments measure search success, generations, model selection, cost, and wall time. The paper does not prove that the JSON schemas capture clinical intent, that the deterministic C translator preserves semantics, or that the MIoT runtime and libraries satisfy assumptions. Inference: For VeruLaw, the main reusable pattern is evolutionary generation with an immutable formal contract and a checker in the loop. The main threat is contract drift or a translation boundary that is outside the proof. VL should reuse the checker-gated search pattern while adding explicit Rust refinement and dependency assumptions; it should not claim that a proved schema predicate establishes medical correctness.
-
 ## techniques for the catalog
 
 - schema-constrained theorem synthesis — define input/output predicates and prove every generated transform preserves the target schema
 - multi-island verifier-gated evolution — mutate candidates with LLMs, score them by theorem checking, and retain verified programs in a search database
 - Thompson-sampling model selection — adaptively choose LLMs from observed proof success while separately tracking cost
 - verified-theorem operationalization — deterministically translate a proven specification into deployment code and identify the translation as a trust boundary
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

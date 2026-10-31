@@ -153,7 +153,6 @@ relationship to existing notes
 evidence and collection
 - primary PDFs inspected on 2026-10-07
   - Qin PLDI 2020, Qin TSE 2024, Rudra SOSP 2021, Zhu ICSE 2022
-  - PDFs and text extractions saved under `/hdd1/sichanghe/paper_collection/`
     - directories start with each paper's full title
 - Xu TOSEM 2021 reviewed at publisher-abstract depth
 - coverage limit

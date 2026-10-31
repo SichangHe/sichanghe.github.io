@@ -6,8 +6,6 @@ Tag: `jin2025verilocc`, [paper](https://arxiv.org/abs/2506.17506)
 
 VeriLocc makes register allocation a sequence-to-sequence task. Input is tokenized machine-level intermediate representation (MIR), optionally augmented with static-analysis annotations; output is a JSON dictionary assigning virtual registers to physical registers. The allocation must be consistent, safe for overlapping live ranges, and realizable under the target GPU's hardware constraints. The paper's central design is explicit normalization followed by a verifier and regeneration loop: “Finally, a verifier-guided regeneration loop ensures that the generated allocations satisfy semantic correctness.” (Framework, §3, p. 4.)
 
-Inference: this is a concrete pattern for VeruLaw agents: normalize a representation to expose semantic structure, generate a structured candidate, check it with a sound tool, and regenerate until the candidate satisfies a contract. The paper verifies allocation constraints with an SMT encoding, not Rust or Verus, so the Verus mapping below is an inference.
-
 ## technique: recover semantic supervision with SSA and static analysis
 
 Why. NVIDIA's toolchain does not make allocation mappings readily available; VeriLocc intercepts the open-source ROCm toolchain to collect AMD mappings. VeriLocc therefore reconstructs labels by converting MIR and ISA to Static Single Assignment (SSA) form and running context-insensitive, path-insensitive, flow-sensitive global analysis. It follows both control-flow graphs, compares corresponding basic blocks, and consolidates mappings for the full function. SSA handles reordered instructions; heuristics address cases where lowering selects different instructions.
@@ -42,15 +40,9 @@ The average time to serve one inference is 945 ms; Z3 verification averages 31.7
 
 Verus form. Inference: use bounded regeneration around a Verus compiler invocation. Keep the best verified candidate and cap attempts; log whether failure is parsing, type checking, a failed postcondition, or a timeout. Backoff or candidate diversity can be added, but neither the paper nor Verus guarantees that sampling finds a proof. A verifier can reject unsound code, yet it cannot repair a missing requirement.
 
-## boundaries, trust, and threat to VL
-
-The paper describes checking candidate allocation constraints with Z3 (§3.4, p. 5). Inference: those checks alone do not establish correctness of the normalization implementation, GPU hardware, compiler behavior outside the model, or reconstructed training labels. Evaluation covers structured GEMM and MHA kernels: “generalizing to less regular or control-heavy programs remains future work.” (Limitations, p. 8.) Table 3 reports GEMM Pass@100 of 98.44% for Same-NV and 98.67% for Same-AMD with the normalized 3B model; §4.8 says “it consistently fails on MHA tasks.” (p. 7.) The authors propose constrained decoding (§4.5, p. 7), verifier feedback during fine-tuning, and reinforcement learning (§6, p. 8) as future directions. Inference: threat to a product that emits agent-written verified Rust is medium. The checker-loop pattern can reject invalid proof candidates, but it cannot establish that a Verus specification captures the product requirement or that trusted external code obeys its contracts. VL should not redo the paper's normalization-plus-verifier architecture; a distinct opportunity is measuring proof regeneration across real dependency upgrades and contract changes.
-
 ## techniques for the catalog
 
 - SSA label reconstruction: recover hidden compiler mappings by SSA conversion, flow analysis, control-flow matching, and consolidation
 - semantic normalization: canonicalize instructions, register classes, metadata, and names before model generation
 - SMT allocation verification: validate candidate mappings for consistency, liveness safety, and hardware constraints using Z3
 - bounded verifier-guided regeneration: resample structured outputs until a verifier accepts or an attempt budget is exhausted
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We randomly partition the dataset and use 80% / 20% of the data for training and testing, respectively."): checked the full paper text, quotations, numbers, section and page references, technique steps, and catalog entries; corrected token units, page references, dataset scope, verifier steps, sampling qualifications, the 3B results, and the paper link; marked trust-boundary conclusions as inference; did not reproduce experiments, inspect the implementation, or independently validate the Verus proposals.

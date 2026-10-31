@@ -37,5 +37,3 @@ The TCB includes the Low* toolchain, native hardware functions, bootloader, driv
 - platform-agnostic verified interface: constrain shared protocol logic through specified hardware operations
 - secret-lifetime sequencing: specify irreversible UDS disabling and final stack clearing, with trusted platform enforcement
 - parser/serializer inversion: combine secure format specifications with bounded backward serialization
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Instead of serializing messages forward from the beginning of the array, backward serializers serialize messages backward from the end of the array."): checked the entire paper and study, quotations, numbers, sections, printed pages, technique steps, and trust boundaries; corrected quotations and page references, explained the UDS-hashing distinction, corrected backward serialization order, qualified Verus inferences, and replaced the link with the publisher page printed in the paper; did not inspect implementation artifacts or reproduce proofs or measurements.

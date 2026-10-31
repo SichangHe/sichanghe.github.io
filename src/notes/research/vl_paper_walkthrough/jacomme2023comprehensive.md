@@ -79,7 +79,7 @@ Verus form: Inference: represent a threat model as a Rust phantom type or a spec
 
 evidence: the authors extract “the 50 maximal and minimal threat scenarios” from 273 single-threaded ProVerif calls, totaling 20.6 hours and less than one hour with 64-core parallelization (Section 4.2, p. 5891). The 50 scenarios account for 3 hours of accumulated ProVerif runtime. Tamarin then runs maximal secure scenarios with a 24-hour timeout (Section 4.1, p. 5890).
 
-limits and assumptions: Inference: monotonic pruning is valid only when adding a capability cannot remove attacker behaviors. Inference: a protocol defense that changes control flow may break simple monotonicity, so VL should prove the relation for each capability family.
+limits and assumptions:
 
 ## technique 5: single-source generation and multi-tool verification workflow
 
@@ -101,16 +101,6 @@ evidence: the authors use ProVerif and Tamarin for reachability properties and D
 
 limits and assumptions: DeepSec does not support DH exponentiation or unbounded sessions, so it checks bounded KEM anonymity first. ProVerif then checks unbounded KEM and DH anonymity, restricted to method 0 for efficiency, without advanced primitive models (Section 4.1, pp. 5890–5891). The paper notes that separate manually written models would be possible but harder to maintain (Section 4.1, p. 5891). Inference: multi-tool agreement increases confidence but does not make any backend a trusted implementation proof.
 
-## what is proved, what remains trusted, and product threat
-
-The symbolic tools prove or refute formulas in the applied pi-calculus models under selected equations, attacker capabilities, and boundedness restrictions. The paper's reproducibility claim is concrete: “All our formal models are available online at [15], along with the source code of the TAMARIN version that includes the S APIC+ platform needed to run them.” (Introduction, p. 5882.)
-
-Inference: the trusted base includes each verifier, its parser and semantics, the SAPIC+ translation, the symbolic cryptographic equations, and assumptions that the model matches EDHOC. Inference: a concrete Rust implementation, compiler, network stack, and hardware are outside the paper’s symbolic analysis. Inference: for agent-written verified Rust, the main threat is specification drift: an agent can generate a model that omits a message, compromise path, or concrete primitive behavior while Verus still proves the smaller model. Inference: independent model review and tests against wire traces would help detect this drift.
-
-The model omits cipher-suite negotiation, key updates, and the optional fourth message (Section 3.2.1, p. 5887). Implementation validation was unavailable: “Due to the lack of up-to-date implementations of the draft, we could not verify the presence of these weaknesses in a concrete implementation.” (Section 4, p. 5889.) The paper reports that most weaknesses were incorporated into draft 14 and that the revised model confirmed their mitigation (Section 4.8, p. 5894). Inference: VL should not redo a generic “one prover is enough” workflow; the reusable contribution is the modular, single-source model plus independent backends and threat-lattice pruning. Inference: applying these results to concrete Rust would require a Rust-to-specification refinement argument, which this paper does not provide.
-
-The reported numbers have different denominators and settings. The 273 calls and 20.6 hours are the initial draft-12 ProVerif batch, single-threaded accumulated runtime; the less-than-one-hour figure uses 64-core parallelization (Section 4.2, p. 5891). The 50 scenarios are maximal and minimal cases extracted from that batch, with 3 hours of accumulated ProVerif runtime (same section). The 13 strengthened Tamarin models and 82 hours refer to draft 14, eight cores per job, with many timeouts (Section 4.8, p. 5894). No percentage is reported for attack or proof success, so none is inferred.
-
 ## techniques for the catalog
 
 - applied pi-calculus protocol modeling — represent roles, messages, fresh secrets, attacker-controlled inputs, and cryptographic equations as communicating symbolic processes
@@ -119,4 +109,3 @@ The reported numbers have different denominators and settings. The 273 calls and
 - advanced primitive models — add symbolic capabilities for signature malleability, DH small subgroups, hash extension/collisions, XOR malleability, and AEAD rerandomization
 - threat-model lattice pruning — enumerate atomic capabilities and verify only minimal attack and maximal secure combinations using inclusion monotonicity
 - single-source multi-backend verification — generate protocol variants from shared templates, use SAPIC+ preprocessing, and assign ProVerif, Tamarin, or DeepSec to suitable properties
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The core idea is that the scenarios form a lattice ordered by inclusion, and proving that a property holds in a particular threat model implies that it also holds in all weaker scenarios."): checked every quotation, number, section and page reference, technique step, and stated limitation against the full paper, including appendices; corrected quotations, page references, anonymity compromise assumptions, hash-attack scope, and workflow details, marked recommendations as inferences, and replaced the link with the publisher page in the paper; did not rerun the protocol analyses or independently validate the Verus suggestions.

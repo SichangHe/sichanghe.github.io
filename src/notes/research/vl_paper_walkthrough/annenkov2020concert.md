@@ -67,9 +67,6 @@ what it is: parse Acorn source, print its AST as λsmart constructors, translate
 
 Verus form. Inference: define an abstract sequence model and prove `foldr`'s `ensures` relation to a trusted/specification fold; use a `proof fn` for concatenation. The generated implementation must still be checked by Verus, and the model's correctness is a separate assumption.
 
-## what remains trusted and product threat
-ConCert presents interpreter/translation theorems under explicit well-formedness and termination premises, plus contract properties, library equivalences, and trace safety properties. Theorem 2 depends on determinism of MetaCoq evaluation, whose proof was still under development (Section 2.4, p. 12). The AST printing procedure and MetaCoq unquote are trusted (Sections 2 and 2.4, pp. 3, 12). It does not prove the missing λsmart static semantics, arbitrary nontermination behavior, unquote correctness, or a deployed blockchain implementation. Inference: for agent-written verified Rust, ConCert is a high-value architecture for separating syntax-level validation, executable semantics, generated code, and refinement proofs. Inference: a product that accepts generated contracts without a trace-level model has a verification gap: local function proofs do not imply global balance or reentrancy safety. Inference: VL could reuse deep/shallow separation, generated-code soundness lemmas, and reachability invariants; it should not claim that a translated contract is safe until concrete Rust is connected to the model.
-
 ## techniques for the catalog
 - deep/shallow embedding — keep an AST interpreter for language proofs and a generated ordinary function for concrete-program proofs
 - fuel-bounded reference semantics — make recursive evaluation executable and terminating with explicit fuel and error results
@@ -77,4 +74,3 @@ ConCert presents interpreter/translation theorems under explicit well-formedness
 - Hoare-style contract invariants — prove local smart-contract state properties as pre/post conditions
 - trace-level blockchain safety — lift local contract invariants to reachable global states and interactions
 - standard-library correspondence — transfer library theorems through an automatically generated shallow embedding
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "Theorem 2 readily allows, for example, transferring program equivalence from MetaCoq derivations to the λsmart interpreter, provided that the values are not higher-order (i.e. not closures)."): checked all paper text, including Appendix A, against the study's quotations, numbers, section/page references, technique steps, and stated proof scope; corrected lemma pages, interpreter and translation descriptions, adequacy and block-boundary limits, unsupported proof steps, and the paper link; did not inspect the linked Coq artifact, rerun proofs, or validate the inferred Verus adaptations.

@@ -1,7 +1,6 @@
 # Combining Mechanical and Agentic Specification Inference for Move
 (authored by agents unless marked 🧑)
 Tag: `grieskamp2026combining`, [paper](https://arxiv.org/abs/2605.10005)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## what the paper contributes
 
@@ -87,10 +86,6 @@ The authors' skill-design lessons are operational techniques: minimize context; 
 ## what is proved, measured, and trusted
 
 The Move Prover proves each accepted contract against the transformed bytecode. The paper demonstrates examples spanning higher-order functions, arithmetic, loops, references, and global state, but reports no denominators, baseline comparison, token cost, or scalability measurement. Open questions include hybrid versus pure-LLM success rate, token cost, sample representativeness, model-version effects, and performance on larger systems. The trusted base includes Move's compiler and reference-elimination transformation, the WP implementation, Boogie, SMT solving, and the user's interpretation of high-level properties. The agent, its skills, and simplifier are not trusted for correctness; their output must pass the prover.
-
-## implications for VeruLaw (inference)
-
-The paper directly suggests a VL architecture: mechanically derive routine contracts from a normalized Rust/Verus intermediate form, reserve agent effort for loop invariants and domain properties, and feed verifier counterexamples into an iterative propose-observe-refine loop. This could reduce agent search and prevent boilerplate errors. The product threat is substantial if competitors package the same workflow into an interactive coding agent, but the evidence here is preliminary and Move-specific; there is no measured advantage over a pure LLM and no demonstrated large-system deployment. VL should reuse the separation and escalation discipline while measuring pass rates, time, token cost, and human edits on its own corpus before claiming benefit.
 
 ## techniques for the catalog
 

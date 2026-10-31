@@ -44,12 +44,8 @@ Evidence. Training-stage ablation on LCI-Test rises from 1/100 pass@1, 3/100 pas
 
 The RL stage estimates each goal's pass rate using rollouts, downsamples redundant easy clusters, excludes near-zero-pass-rate goals dominated by truncation or early failure, and applies DAPO to the resulting mixture of lemma and full-identity goals (Appendix C.3, p. 16). Inference: the same curation can target Verus proof trajectories, balancing short arithmetic obligations with long ownership/invariant proofs. It assumes pass-rate estimates and filtering do not remove rare but important cases.
 
-## evidence boundary and VL implications
-Lean kernel checks every retained proof; the reported successes are not claims that Sage, the LLM, or WZ theory is bug-free. LCI-Test's 34/100 headline is a pass@32 result on 100 identities (Table 1, p. 7), while CombiBench and PutnamBench-Comb report 16/100 and 3/36 for WZ-LLM (Table 3, p. 8). Inference: the product threat is high for certificate-to-proof automation if generated side conditions are silently weakened, but low for soundness when Verus compilation and explicit contracts remain mandatory. VL should not redo generic verifier-filtered SFT; the reusable work is decomposition into independently checkable obligations, two-route accounting, and denominator-precise evaluation.
-
 ## techniques for the catalog
 - certificate-guided decomposition: synthesize WZ certificates and compile recurrence, boundary, normalization, and non-vanishing obligations
 - queue-based proof assembly: deduplicate obligations, prove each fragment, and assemble only verifier-accepted fragments
 - verifier-filtered expert iteration: expand training data with repaired proofs that pass the Lean kernel, retaining denominator counts
 - difficulty-smoothed DAPO: curate rollout data by pass-rate bins before reinforcement refinement
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

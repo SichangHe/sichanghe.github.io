@@ -24,7 +24,7 @@ verus form
 Inference: In Verus, encode deterministic expectations as ghost `spec fn`s over a state and represent probabilistic choices by a ghost distribution or weighted relation. State boundary and preservation as `ensures` on proof functions. Verus does not provide a probabilistic `wp` primitive, so the transition expectation and almost-sure termination argument must be modeled explicitly or remain outside the Rust proof.
 
 evidence and limits
-Theorem 5 is a sufficient proof rule (“it suffices to find a loop invariant”), not a synthesis result. It assumes loop-free bodies and separately supplied soundness conditions. Inference: using this in VL applies naturally to deterministic abstractions only after probability is removed; probabilistic semantics would enlarge the trusted specification.
+Theorem 5 is a sufficient proof rule (“it suffices to find a loop invariant”), not a synthesis result. It assumes loop-free bodies and separately supplied soundness conditions.
 
 ## technique 2: Stengle-to-SOS-to-SDP synthesis
 what it is
@@ -44,7 +44,7 @@ verus form
 Inference: Verus can consume a candidate polynomial as a ghost `spec fn` and prove each SOS-derived inequality with arithmetic lemmas and `assert` statements. SDP solving and Gram decomposition are not Verus constructs; they are an external candidate generator. The final proof must recheck the exact rational coefficients, so floating-point multipliers cannot be trusted as proof facts.
 
 evidence and limits
-The random-walk example uses a quadratic template with ten coefficients (c0, c1, c2, c3, c11, c12, c13, c22, c23, c33) and obtains `I = z − x² + xy` after ignoring amounts below 10^-6 in the SeDuMi output; the paper then states this I “satisfies all constraints including (6) and (8)” (Example 11, pp. 10–11). The paper cautions: “we cannot be sure whether the resulting invariant is correct if the remaining coefficients are approximate.” (Section 4.3, p. 12) It therefore proposes symbolic checking with Cylindrical Algebraic Decomposition (CAD), run manually in Maple for the experiments (Section 4.3, p. 12; Section 5, p. 13). Inference: this exact recheck is mandatory before importing any generated lemma into VL.
+The random-walk example uses a quadratic template with ten coefficients (c0, c1, c2, c3, c11, c12, c13, c22, c23, c33) and obtains `I = z − x² + xy` after ignoring amounts below 10^-6 in the SeDuMi output; the paper then states this I “satisfies all constraints including (6) and (8)” (Example 11, pp. 10–11). The paper cautions: “we cannot be sure whether the resulting invariant is correct if the remaining coefficients are approximate.” (Section 4.3, p. 12) It therefore proposes symbolic checking with Cylindrical Algebraic Decomposition (CAD), run manually in Maple for the experiments (Section 4.3, p. 12; Section 5, p. 13).
 
 ## technique 3: refinement and degree backtracking
 what it is
@@ -78,12 +78,8 @@ The Introduction says the technique “usually solves the problem within one sec
 ## what is proved, measured, and trusted
 The paper proves the SOS sufficient conditions (Lemma 9, Appendix C.2), the nested-loop reduction (Lemma 12, Appendix C.3, assuming inner-loop termination), and sketches the Lemma 8 reduction (Appendix C.1). The loop-invariant rule (Theorem 5) is cited from [15], not proved here. Semi-completeness is argued informally (see technique 3). Measurements concern prototype runtime and tool feature coverage; they do not measure proof-kernel assurance. Inference: trusted components include SDP solvers, floating-point rounding, Maple CAD validation, probability semantics, and manually supplied termination arguments. Inference: threat to agent-written verified Rust is medium to high when numerical candidates are accepted without exact rechecking; low after rationalization and independent Verus proof of every obligation.
 
-## what VL should reuse
-Inference: VL should reuse the boundary/invariant split, SOS certificates as candidate generators, degree backtracking, and symbolic post-validation. It should not treat SDP feasibility or a small coefficient as a proof, and it should not omit almost-sure termination. The paper does not address Rust ownership or Verus syntax.
-
 ## techniques for the catalog
 - quantitative probabilistic loop invariant: prove boundary, guarded-body preservation and a separate termination/soundness condition for an expectation-valued invariant
 - Stengle-to-SOS synthesis: reduce polynomial implication obligations to semialgebraic emptiness, SOS multipliers and SDP feasibility
 - candidate refinement and degree backtracking: round and validate coefficients, refine failed constraints, then increase template degree by two
 - nested-loop composition: couple outer and inner polynomial templates through a verified inner pre-expectation
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The tools are executed on the same computer, LIP and TM under Linux and the other two under Windows."): read all 1094 lines of the paper text including appendices; checked quotations, numbers, page references (corrected many, now arXiv PDF pages), algorithm steps, Lemma 8/9/12 statements, Example 11, Table 1 rows and the Section 5.1 tool comparison; changed page numbers, the claim that the paper proves Theorem 5 (it cites [15]), the "14 programs" count (Table 1 has 15 rows), the "within one second" claim (nested loop is 1.6 s), the Algorithm 1 `d := 2` placement note, the semi-completeness wording, and labelled own conclusions as Inference; did not check the proofs' mathematical correctness, the cited works [6], [15], [21], the Verus-form paragraphs (my own inference), or the external prototype link.

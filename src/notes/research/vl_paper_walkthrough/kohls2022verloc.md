@@ -56,10 +56,6 @@ The protocol broadcasts 200 bytes per node at R=40 (5 bytes per RTT/reference id
 
 The design assumes committed keys, addresses and locations; an unpredictable common beacon; full network connectivity; and authenticated, available, unalterable broadcast information (Secs. 2.1, 3.2.1, pp. 2638–2641). Its robustness threshold is empirical and comes from the European simulation setup: false positives first appear at 30% malicious nodes, and false negatives increase at 20% (Sec. 5.5, p. 2648). Strategic adversarial positioning is left for future work (Sec. 5.6.2, pp. 2648–2649). Location strings in the prototype cause parsing errors, and the deployment lacks independently verified locations: “Furthermore, we have no access to ground truth information to check the correctness of the self-reported location.” (Appendix B, p. 2652). The comparison with GeoIP is a sanity check, not trusted ground truth.
 
-Inference: VerLoc offers VL a useful verified-protocol decomposition: prove deterministic sampling, nonce binding, score arithmetic, and set-intersection invariants in Verus, while treating network timing, cryptographic hashes, and optimization quality as assumptions or measured evidence. Its product threat is that the central security threshold is empirical: a change in network noise, beacon handling, or reference availability can invalidate the reported 20% tolerance without violating any Rust contract.
-
-Inference: VL should build on the paper's sampling design, RTT collection, trilateration, confidence scoring, simulations, and Nym prototype. The simulation and deployment medians describe different setups (1,000 simulated nodes versus 943 filtered European nodes), and the deployment uses self-reported locations as its reference.
-
 ## techniques for the catalog
 
 - beacon-derived reference sets: hash a fresh beacon and committed public keys to select pseudorandom references, then add reciprocal references
@@ -68,4 +64,3 @@ Inference: VL should build on the paper's sampling design, RTT collection, trila
 - speed-bound zone intersection: intersect circles derived from an upper propagation-speed bound to produce a feasible target area
 - confidence scoring: divide in-bound bidirectional reference pairs by the reference count and threshold the result
 - adversarial threshold analysis: sweep malicious fractions and report TP, FP, FN, and recall with the simulation denominator
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "We randomly pick fake claimed locations but ensure that the falsely claimed location is in a different country than the actual location of the adversarial node."): checked all quotations, numbers, section and page references, technique steps, and limits against the full paper; corrected selection order, confidence versus zone decisions, adversarial timing cases, page references, deployment assumptions, and the publisher link; did not inspect the implementation, reproduce experiments, or validate the proposed Verus proofs.

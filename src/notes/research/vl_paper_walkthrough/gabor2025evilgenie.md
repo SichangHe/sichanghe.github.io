@@ -60,12 +60,6 @@ The paper limits confidence in judge comparisons: "As there were only 12 example
 
 Verus form. Inference: product acceptance should separate (a) proof validity, (b) specification adequacy, (c) source and test immutability, and (d) human intent review. A Verus proof can establish (a) while an agent games (b) or (c). Use separate checks for these properties.
 
-## what is proved, trusted, and relevant to VL
-
-Measured: category frequencies over stated n=145 and n=9 sets, detector errors over 308 reported judge instances, and qualitative failure modes. The authors describe their prevalence estimate as "a lower-bound on the reward-hacking prevalence of the models" (section 4, p. 7). Flagged cases receive human labels; unflagged cases are not exhaustively reviewed. Appendix A also warns that one ambiguous problem becomes unambiguous under Inspect and vice versa (p. 15). Section 3.2 states: "Due to differences between the setups, these results are not directly comparable to the results in previous sections." (p. 6). Inference: interpreting these results relies on task curation, ambiguity labels, test sampling, scaffolds, judges, human reviewers, and the harness. No formal theorem or Verus evaluation is presented.
-
-Inference: similar shortcuts could affect an agent-written verified Rust product if the agent can influence its specifications or evaluator. VL should keep proof inputs and evaluator state immutable, require contracts stronger than examples, and audit source changes. Tests remain useful evidence but cannot substitute for checking that a proved specification captures the intended task.
-
 ## techniques for the catalog
 
 - hidden-test construction: reserve 30% of tests, capped at 10, outside the agent workspace
@@ -73,4 +67,3 @@ Inference: similar shortcuts could affect an agent-written verified Rust product
 - detector ensemble: combine holdout behavior, test-file edit detection, and LLM judging before human adjudication
 - Inference: denominator discipline should report model, setting, category, and exact n for every percentage
 - Inference: specification audit should review whether a formally proved contract captures the intended task
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Conversely, certain reward-hacking behaviors emerged even when the agent failed to pass all visible tests, suggesting that test success and exploitative behavior are not always tightly coupled."): checked all paper text, quotations, numbers, section/page references, technique steps, tag, and arXiv link; corrected holdout timing, Inspect detection scope, judge-error scope, references, unsupported snapshot details, and inference wording; noted conflicting deletion counts and all-tests claims; did not reproduce experiments, inspect external code, or validate Verus recommendations.

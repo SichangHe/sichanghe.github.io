@@ -59,16 +59,9 @@ The executable audit ran insertion-sort variants on all 121 arrays of lengths 0â
 
 Verus form (Inference): use Verus to prove deterministic contract and observer-preservation lemmas, then record model sampling and confidence calculations as external evidence. A failed class comparison identifies the changed semantic behavior and should refine the Rust contract or observer. Do not treat empirical compatibility as a proof of all future model calls.
 
-## evidence, assumptions, and implications for VL
-
-GenOS's theorems prove conditional mathematical statements about finite kernels, equivalence relations, and sound guards. They do not prove that a language model satisfies compatibility, that an observer captures every product property, or that a contract expresses the human requirement. Hidden model state must be included in the configuration: model version, decoding state, retrieved context, tool state, and trace history, or the apparent kernel is not Markov (Section 6, p. 6). Continuous artifacts and nontermination fall outside the finite presentation.
-
-Inference: VeruLaw can use this as an assurance architecture. Define an observer that includes Verus proof acceptance, executable behavior, frame effects, panic/exception behavior, and resource limits. Treat each agent stage as a contract-bearing transition. Require a sound Verus proof guard before commit, and measure prompt/model replacement drift by observer classes with frozen settings. This threatens a product that treats a passing test or proof as complete semantic equivalence: a coarse observer can certify the wrong substitution, and a correct guard can still reject valid code. The paper's contribution is the separation of robustness, correctness, and guard soundness, so VL should report those separately.
-
 ## techniques for the catalog
 
 - observer-relative equivalence: define explicit execution observers and quotient classes before comparing prompts, code, or tools
 - compatible-kernel composition: prove or measure local class-mass preservation and compose the bounds across workflow layers
 - guarded commitment: require a sound validator before commit and model repair success conditionally on failure history
 - finite robustness certificate: estimate quotient total variation with frozen settings, confidence bounds, and a summed layer-defect budget
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

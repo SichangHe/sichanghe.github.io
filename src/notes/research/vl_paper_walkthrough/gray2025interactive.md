@@ -67,13 +67,9 @@ Argus improves localization but has weaker evidence for fixing. Localization rat
 
 The authors report that several participants felt overwhelmed by the additional information and some “got lost in the data and ended up debugging non-issues” (§5.1.2, p.16). Localization is coded qualitatively: a participant has localized a fault “once they have identified the fault and started to work on a fix for the fault” (§5.1.1, p.14); the second author independently coded 20 randomly selected tasks, with correlation r = 0.998 and mean absolute deviation 34 s (§5.1.1, p.15). The motivating examples are a missing Diesel table join, an infinitely recursive AST trait bound, and an errant Bevy system parameter, with errors generated using Rust 1.82.0 (§2, pp.2–6).
 
-Inference: for agent-written verified Rust, Argus threatens little directly because it neither changes code nor claims proof. It can reduce time spent understanding Verus diagnostics, especially when quantified facts or trait bounds obscure the failing `ensures`, but it may also encourage a plausible local fix that weakens the specification. VL should require the original contract and a successful verifier result after every suggested repair.
-
 ## what is proved, measured, and trusted
 
 Argus measures human localization and fix time/rate, heuristic rank distance, and tree-normalization cost. It does not prove the inference-tree model equivalent to rustc’s trait solver; the authors say a formal semantics for LTrait is “beyond the scope of this paper” (§3.1, p.8). Inference: trusted parts include rustc’s extracted predicates, the extraction heuristics of §4, the idealized model, manually identified root causes, the human-decided category weights, and participant coding. Inference: a Verus integration would add trusted boundaries around the compiler plugin and UI but retain Verus’s proof checker as the acceptance mechanism.
-
-Inference: the contribution VL should not redo is an interactive Rust trait-inference visualizer with progressive expansion, contextual links, shortened types, and inertia ranking. A useful new direction would be to apply the same UI to Verus proof obligations while preserving `old` values, preconditions, postconditions, and loop invariants as typed, traceable facts. That extension would need a study with actual proof repair tasks; this paper provides no such result.
 
 ## techniques for the catalog
 
@@ -82,4 +78,3 @@ Inference: the contribution VL should not redo is an interactive Rust trait-infe
 - contextual diagnostic links — hide auxiliary paths by default but expose source definitions, full types, and impl candidates on demand
 - inertia ranking — normalize the tree to DNF, treat each conjunct as a minimum correction subset, and order by summed category weights of estimated fix cost
 - human-centered debugger evaluation — measure localization and fix rates and times with confidence intervals and a per-task time cap
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Note that both times are measured from the start of the task, so time-to-fix is always strictly greater than time-to-localize."): checked every quotation, number, section and page reference, and technique step against the paper text (all 23 pages); changed wrong page references (§4 is pp.12–13, Appendix A.1 is p.23, hardware is in §5.2.1), corrected the claim of 100 observations per condition to 100 in total, corrected the formal-semantics claim to LTrait, reworded technique steps to match the paper, added the §4 extraction-heuristic limitation, and marked the agent's own conclusions "Inference:"; did not check figures or screenshots in the PDF, the Zenodo artifact, or the Argus source code.

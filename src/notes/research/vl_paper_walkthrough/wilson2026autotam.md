@@ -114,10 +114,6 @@ Verus form: Inference: use Verus contracts on parsing functions to prove slice b
 
 Evidence and limits: KLEE reports zero errors on all four roles; the WireGuard responder explores 4,120 paths in 16 minutes 33 seconds (Table 8, p. 10). WireGuard transport is limited to one message for this analysis, and the search space is finite because packet size is capped at 512 bytes (Section 7.5, p. 10). Zero exceptions therefore supports the tested bound, not arbitrary unbounded inputs.
 
-## what remains trusted and threat to VeruLaw
-
-Inference: the trusted base includes the AutoTam parser/interpreter, C implementations of predefined functions, HACL cryptographic library assumptions, translation functions, Tamarin and KLEE, the symbolic cryptographic model, and manually supplied sources lemmas. The paper uses formally verified HACL packages for cryptographic operations, but its own interpreter and protocol code are not proven in Verus. The threat to VeruLaw is medium: the architecture is a strong model for writing protocol code against an explicit abstract machine, yet unsupported features and omitted security properties can leave large gaps. Verus could strengthen memory safety and functional contracts of the executable Rust, while Tamarin remains appropriate for unbounded protocol secrecy and authentication.
-
 ## techniques for the catalog
 
 - state-machine protocol DSL — express executable roles as output/input states and cyclic transitions under two soundness restrictions
@@ -126,4 +122,3 @@ Inference: the trusted base includes the AutoTam parser/interpreter, C implement
 - automatic security lemmas — generate weak-secrecy, injective-agreement, and reachability properties from event annotations
 - sources-lemma guidance — add a manual Tamarin invariant when generated WireGuard proofs need partial-deconstruction facts
 - KLEE symbolic execution — explore symbolic network inputs and cryptographic abstractions for bounded memory safety
-Checked 2026-10-14 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

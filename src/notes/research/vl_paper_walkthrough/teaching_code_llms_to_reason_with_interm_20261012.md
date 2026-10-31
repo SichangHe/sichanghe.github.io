@@ -1,14 +1,11 @@
 # Teaching Code LLMs to Reason with Intermediate Formal Specifications
 (authored by agents unless marked 🧑)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and central result
 
 This paper studies executable checkpoint specifications: Boolean assertions inserted at meaningful internal program points, rather than only preconditions or final postconditions. It introduces SPEC CODER, a verification-guided fine-tuning pipeline, and HumanExec, a benchmark of Codeforces problems with reference solutions, test suites, and human buggy submissions. The paper's premise is operational: an assertion is useful when it holds on correct executions and rejects behavior-changing executions that reach the same checkpoint. The authors state the criterion explicitly: “A checkpoint specification is useful only when it satisfies two properties: it should hold on correct executions, and it should reject faulty executions that reach the same checkpoint.” (Section II-C, p. 3.)
 
 The model is trained from accepted annotated programs, not trusted merely because an LLM produced plausible text. On HumanExec, SPEC CODER raises average inline correctness from 0.4778 to 0.6306, completeness from 0.2112 to 0.7459, and executable validity from 0.8387 to 0.9667 across Qwen2.5-Coder 7B/14B/32B. It also improves correctness checking and top-ranked repair. These are execution- and mutant-based measurements, not proofs of universal program correctness.
-
-## technique 1: use executable intermediate checkpoints instead of only postconditions
 
 ### what it is
 
@@ -37,8 +34,6 @@ The direct Verus analogue is a loop `invariant` or a ghost `assert`/`assert fora
 
 Base prompting produces syntactically valid but weak assertions. Qwen2.5-Coder-32B has 0.8989 executable validity, 0.6313 correctness, and only 0.2604 completeness before fine-tuning (Table I, p. 3; the paper's Table II and text give 0.2640 for the same model). A valid assertion is therefore not sufficient evidence. Test coverage bounds what faults can be rejected; a mutant that does not reach a checkpoint is excluded from its completeness denominator.
 
-## technique 2: construct supervision from validated references and non-trivial mutants
-
 ### what it is
 
 SPEC CODER's data-construction pipeline has four stages: select a reference program that passes its tests, generate behavior-changing mutants, obtain candidate checkpoints through multi-turn refinement, and retain only annotations meeting correctness and completeness thresholds. This makes the teacher's output an execution-validated target.
@@ -62,8 +57,6 @@ Use compiling, test-passing Rust functions as references, then generate mutants 
 ### evidence and limits
 
 The training-data selection requires a test suite with more than 30 tests; this is a separate dataset from HumanExec, whose Codeforces tasks have 48–279 tests (mean 79.53). A reference that passes all tests is treated as trusted for data construction; the paper does not prove that it is correct for all inputs. Mutant quality depends on the teacher and test suite, and equivalent mutants are only filtered operationally.
-
-## technique 3: multi-turn Explore–Submit refinement with executable feedback
 
 ### what it is
 
@@ -89,8 +82,6 @@ Use Verus diagnostics as the feedback channel: failed invariants, counterexample
 
 The process is a data-generation procedure, not an inference-time proof guarantee. The authors do not train students to reproduce exploratory dialogue; only accepted annotated programs become instruction-response targets. If no candidate passes within the maximum turns, the trajectory contributes no accepted supervision.
 
-## technique 4: train two specification-aware tasks
-
 ### what it is
 
 Accepted annotations produce two supervised tasks. Specification generation takes a problem and existing program (reference or mutant) and inserts checkpoints. Code generation takes only the problem and produces a complete solution with checkpoints. The target is an annotated program, not a dialogue. The loss is ordinary autoregressive language modeling over target tokens.
@@ -103,15 +94,9 @@ Accepted annotations produce two supervised tasks. Specification generation take
 4. Fine-tune a code model on the union of specification and code tasks.
 5. (Study's addition, not the paper's.) At inference, strip or execute assertions according to the desired checking workflow.
 
-### Verus form (inference)
-
-The first task maps to adding Verus contracts or proof blocks to existing Rust. The second maps to generating a complete verified Rust function from a specification. Training targets should include compilable Verus syntax and proof obligations, with a post-generation verifier gate. The paper's shared goal—code plus intermediate specifications—fits VL's agent workflow, but Verus proof scripts are more solver-sensitive than Python assertions.
-
 ### evidence and limits
 
 The authors train Qwen2.5-Coder 7B, 14B, and 32B against zero-shot versions of the same backbones. Fine-tuning improves assertion quality, but the data is derived from LeetCode-style references and filtered mutants; it does not establish performance on arbitrary software.
-
-## technique 5: evaluate validity, correctness, completeness, and downstream use separately
 
 ### what it is
 
@@ -136,12 +121,6 @@ Measured: execution-level checkpoint quality, model likelihood on held-out asser
 Base models often produce syntax-invalid, trivial, unreachable, or too-strong assertions. A tautology such as `len(intervals) >= 0` accepts faulty and correct traces; an assertion that intervals are already non-overlapping can reject correct inputs. The paper's strongest gains target discriminative completeness, not universal proof. HumanExec contains 150 tasks, 48–279 tests per task (mean 79.53, median 70), and a mean of 53.19 retained mutants (median 44). These denominators matter when interpreting percentages.
 
 The model can overfit accepted annotation style; fine-tuning does not guarantee understanding. The paper reports no proof that mutants cover all fault classes, and held-out evaluation uses execution rather than a theorem prover. The benchmark is competitive-programming Python-style code, so its syntax and state visibility differ from Rust/Verus.
-
-## reuse boundary for VL
-
-VL should reuse the checkpoint concept, mutant-guided data construction, multi-turn verifier feedback, and separate validity/correctness/completeness metrics. A Verus agent can generate candidate invariants at loop boundaries, run the verifier, retain only proof-valid and behavior-preserving targets, and train or prompt against those examples. The distinction between “holds on correct traces” and “rejects faulty traces” is a useful guard against vacuous specifications.
-
-VL should not copy the execution-only acceptance rule as formal assurance. Verus proofs must cover all inputs under their preconditions, and Rust ownership introduces obligations absent from the benchmark. A VL benchmark needs Rust-specific mutants, proof-success denominators, contract-drift checks, and explicit treatment of unsafe code and external functions.
 
 ## product risk assessment (inference)
 

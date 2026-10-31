@@ -3,4 +3,4 @@
 
 This program tests tracked natural-number budget transfer, splitting and an executable function consuming one unit. It does not seal minting, prevent dropping a token, account for allocator operations, implement a cost vector, check a loop, or prove a runtime bound. Budget construction is public in this toy. The missing binding between counted executable operations and credits is the research problem, not a result of this check.
 
-Use the pinned local binary. A negative control requests two units from one unit. Archive actual outputs and exit statuses. Parser checks remain separate supporting work from the screened alternative.
+A negative control requests two units from one unit.

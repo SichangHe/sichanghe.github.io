@@ -132,6 +132,5 @@ provenance and gaps
   - three existing collection PDFs; two official PBFT HTML sections
   - no new collection downloads
 - page references use inspected paper/PDF numbering
-- [full source audit](/ssd1/sichangheagent/verus_distributed/lit_b/consensus_assumptions.md)
 - four audited records; no new machine-checked implementation cases
 - gaps: reproduce separate mechanizations; connect deployment code/runtime to these premises

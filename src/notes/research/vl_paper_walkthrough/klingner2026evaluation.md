@@ -5,8 +5,6 @@ Tag: `klingner2026evaluation`, [paper](http://arxiv.org/abs/2606.05632v1)
 
 The paper evaluates automated Lean 4 proof generation. It fixes n=50 problems from each of miniF2F and miniCTX, and compares 14 general-purpose, open-weight, and Lean-specialized models using independent sampling (pass@k) and verifier-feedback repair (refine@k). The authors state: “We utilize both pass@k and refine@k metrics as the benchmark for our comparison and evaluate on subsets of both miniF2F and miniCTX datasets.” (Abstract, p. 1). The claimed headline results are Gemini 3.1 Pro at 92% on miniF2F refine@32 and Claude Opus 4.7 at 86% on miniCTX refine@32; these denominators are the 50-problem subsets and the k=32 protocol (Abstract, p. 1).
 
-Inference: For VeruLaw, the useful lesson is an evaluation design that measures executable proofs rather than text plausibility, but the reported percentages are Lean-specific and cannot be treated as Verus accuracy without a new benchmark.
-
 ## technique 1: representative, stratified benchmark sampling
 
 What it is: reduce evaluation cost while preserving dataset composition. miniF2F is sampled with proportional strata (IMO, AMC12, AIME, algebra, induction, number theory); miniCTX is sampled uniformly because its domains are described as homogeneous. The method says: “For miniF2F, we utilize proportional stratified sampling.” and “for miniCTX the problem domain is generally homogeneous and lacks explicit categorical distinctions, so we take a simple random sample across the total dataset.” (Section 2.1, p. 2).
@@ -19,7 +17,7 @@ How to apply:
 
 Verus form: Inference: create a fixed corpus of Rust/Verus tasks, stratify by API/domain or proof shape, and publish the sampled identifiers. No Verus construct implements sampling; this is harness code and data management outside verified functions.
 
-Evidence and limits: The paper calls the subsets “statistically representative snapshots” (Section 2.1, p. 2), but Section 4.2.2 concedes that particularly difficult or easy problems may still be over- or under-included. Inference: a VL score from only 50 tasks should therefore be reported with the exact task list and sampling rule, not as broad product reliability.
+Evidence and limits: The paper calls the subsets “statistically representative snapshots” (Section 2.1, p. 2), but Section 4.2.2 concedes that particularly difficult or easy problems may still be over- or under-included.
 
 ## technique 2: standardized zero-shot prompting
 
@@ -33,7 +31,7 @@ How to apply:
 
 Verus form: Inference: use a fixed prompt requesting a Rust function plus Verus specifications, with the same imports and tool instructions for every model. The prompt is external to Verus; the generated artifact must still compile under Verus. The paper's standardized prompt is unsuitable as a direct Verus prompt because Lean syntax, Mathlib names, and Markdown extraction differ.
 
-Evidence and limits: The authors say standardization “better represents a model’s capabilities when integrated into an agentic workflow” (Section 4.2.3, p. 7), while also noting it may understate models designed for specialized prompts. Inference: VL should publish both a controlled baseline and a production-agent setting; conflating them would hide prompt/tooling effects.
+Evidence and limits: The authors say standardization “better represents a model’s capabilities when integrated into an agentic workflow” (Section 4.2.3, p. 7), while also noting it may understate models designed for specialized prompts.
 
 ## technique 3: verifier-safe proof extraction and acceptance
 
@@ -45,7 +43,7 @@ How to apply:
 3. Isolate the proof body and combine it with the original theorem statement, preventing premise edits (Section 2.4, p. 2).
 4. Compile through LeanInteract and the Lean kernel; label Pass only on clean compilation (Section 2.4, p. 2).
 
-Verus form: Inference: extract only the Rust function body or proof blocks, splice them into an immutable benchmark harness, reject `external_body` and other trust escapes, and run `verus` to check the resulting program. Verus specifications belong on the benchmark's fixed function declaration; generated code must use supported constructs such as `requires`, `ensures`, `invariant`, and proof functions as documented in VL's Verus notes. The extraction and policy checks are untrusted harness code; the Verus verifier and compiler are the trusted checking boundary.
+Verus form:
 
 Evidence and limits: The paper's acceptance criterion is machine-checkable Lean compilation, not semantic equivalence beyond the stated theorem. Inference: a Verus harness needs an explicit trust inventory because compilation alone does not guarantee that unsafe or externally trusted bodies were excluded.
 
@@ -61,7 +59,7 @@ How to apply:
 
 Verus form: Inference: run 32 independent Rust/Verus generations per task, count verifier-clean proofs, and apply the same estimator. Independence is an experimental assumption; retries sharing context or cached repairs would violate it.
 
-Evidence: The study uses 50 tasks per dataset, so every aggregate accuracy denominator is 50 tasks. It reports that Gemini 3.1 Pro and Opus 4.7 lead at high k, while GPT-OSS is nearly as good as the leaders on miniCTX for k∈{1,2} (Section 3.1, p. 4). Inference: low-k results better approximate a single VL agent's budget than pass@32 alone.
+Evidence: The study uses 50 tasks per dataset, so every aggregate accuracy denominator is 50 tasks. It reports that Gemini 3.1 Pro and Opus 4.7 lead at high k, while GPT-OSS is nearly as good as the leaders on miniCTX for k∈{1,2} (Section 3.1, p. 4).
 
 ## technique 5: refine@k compiler-feedback loop
 
@@ -75,13 +73,11 @@ How to apply:
 
 Verus form: Inference: feed `verus` diagnostics, the unchanged Rust specification, and the prior body into each repair turn. Keep the theorem statement immutable and cap turns. Do not treat a proof function as runtime code; the verifier feedback loop is orchestration outside the verified program.
 
-Evidence and failure: Across all models the paper reports an average refine-minus-pass improvement of +3.14%; miniF2F's average Δ32 is +7.7%, while miniCTX's is −1.4% (Section 3.4, p. 6; Table 3.1, p. 7). The authors explain that smaller-context models lose information from verbose Lean errors and that refine@k is not statistical (Sections 3.4 and 4.2.4, pp. 6–7). Inference: VL should log every diagnostic and context truncation, and should not assume feedback repair always beats independent sampling.
+Evidence and failure: Across all models the paper reports an average refine-minus-pass improvement of +3.14%; miniF2F's average Δ32 is +7.7%, while miniCTX's is −1.4% (Section 3.4, p. 6; Table 3.1, p. 7). The authors explain that smaller-context models lose information from verbose Lean errors and that refine@k is not statistical (Sections 3.4 and 4.2.4, pp. 6–7).
 
 ## what is proved, trusted, and left open
 
 The measured claim is conditional: a model's generated Lean proof compiles in Lean 4 after policy filtering. LeanInteract, the extraction code, model APIs, benchmark statements, and pricing assumptions remain outside the theorem proof. Inference: the appendix gives 32,559 miniCTX failures and 23,884 miniF2F failures, with category percentages; these are failure-entry denominators, not task denominators (Tables A.3–A.5, p. 11). For example, miniCTX syntax errors are 6,074/32,559 = 18.7%, while miniF2F unsolved goals are 4,312/23,884 = 18.1% (Tables A.4–A.5, p. 11). Inference: these percentages diagnose failure modes, not probability that a random task fails.
-
-Inference: the abstract says Gemini 3.1 Pro reaches 92% miniF2F refine@32 and Opus 4.7 reaches 86% miniCTX refine@32, while Section 4.1 reports the same headline models without restating denominators. Preserve the abstract's 50-task denominator and label all table values by dataset, metric, k, and task count when importing this method into VL.
 
 Inference: threat to a product that emits agent-written verified Rust is medium. The verifier-in-the-loop design, structural statement protection, and error taxonomy transfer directly; Lean's ecosystem, benchmark difficulty, and model rankings do not. The study does not measure adversarial Rust, unsafe code, specification weakness, or Verus's trusted base, so product risk remains unquantified.
 
@@ -92,4 +88,3 @@ Inference: threat to a product that emits agent-written verified Rust is medium.
 - verifier-safe extraction — reject bypass tokens and compile an extracted body against an immutable theorem statement
 - pass@k — estimate at least one verifier-clean proof among k independent generations
 - refine@k — iteratively repair a failed proof using exact verifier diagnostics, with a fixed turn cap
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

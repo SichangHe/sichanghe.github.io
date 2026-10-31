@@ -8,8 +8,6 @@ Wang et al. define KRust, an executable operational semantics for a realistic su
 
 The authors report validation against 182 programs: 157 supported tests selected from the official Rust `run-pass` suite and 25 hand-crafted tests written according to the syntax in Table I and covering all primitive constructs (Section IV-A, pp. 6–7). They state that “KRust successfully parsed all of them and the results produced by the interpreter are same as the one produced by the compiled programs using the Rust compiler.” (Section IV-A, p. 7) The denominator is 182 tests, not all Rust programs or all 3,119 `run-pass` tests.
 
-Inference: this paper supplies a semantic foundation that VL can use to reason about Rust execution, but it is not a Verus proof system and does not establish equivalence to current full Rust. Its most useful lesson is to make state changes, ownership transitions, and contracts executable and testable before building higher-level verification automation.
-
 ## technique: executable rewrite semantics in K
 
 Inference: when to use it: use a rewrite-based executable semantics when one formal definition should support interpretation, debugging, symbolic execution, model checking, and deductive verification. K represents an executing program as nested cells and defines each atomic statement by a rewrite rule.
@@ -74,19 +72,13 @@ Verus form: Inference: maintain differential tests between reference Rust behavi
 
 ## technique: executable debugging from semantic states
 
-The same K configuration can drive a debugger. The paper runs `krun test.rs --debugger` on a loop that decrements a mutable integer and lets a user step through semantic rules and print state. After one iteration it displays `env`, `typeEnv`, `mutType`, and `store` cells (Section IV-B, p. 7). Inference: a VL assistant could expose failed proof states with the current Rust values, ownership facts, and contract assumptions, but any displayed state must be tied to a reproducible source and dependency snapshot.
+The same K configuration can drive a debugger. The paper runs `krun test.rs --debugger` on a loop that decrements a mutable integer and lets a user step through semantic rules and print state. After one iteration it displays `env`, `typeEnv`, `mutType`, and `store` cells (Section IV-B, p. 7).
 
 ## evidence, limitations, and trusted boundary
 
 KRust captures the listed subset and its generated interpreter, but it omits structs with reference fields, pattern matching, trait objects, explicit lifetime annotations, complex closures capturing outside variables, concurrency, crates/modules calling external libraries, and `unsafe` (Section VI, p. 8). The authors say, “KRust does not cover the full features of Rust, as Rust is being actively developed and some of these features are not stable so far.” (Section VI, p. 8) The 182-test result therefore supports the subset and test settings only.
 
 Inference: the trusted parts are the K framework and its generated interpreter/verifier, the compiler used for differential comparison, the modeled language rules, and the stated properties. Inference: for Verus, the trusted boundary additionally includes Verus, its solver, Rust compilation, external-library specifications, and the correctness of the written contracts. The semantics does not prove that a contract expresses product intent.
-
-Inference: threat to a product producing agent-written verified Rust is foundational rather than an immediate replacement threat. KRust shows that Rust semantics can be executable and can generate verification tools, while its exclusions show why full-language ownership, concurrency, unsafe code, and external crates remain hard. VL should use semantic models and differential tests to catch model drift, but should avoid claiming that KRust's 182 tests establish full Rust equivalence.
-
-## what VL should not redo
-
-Inference: KRust already provides an executable subset semantics, cell-based ownership/move/borrow rules, generated interpreter/debugger/verifier, and a 182-case differential test. VL should not repeat those as if they were new. A useful extension would measure Verus proof robustness when supported Rust features, dependencies, or semantic assumptions change, and would connect executable reference states to verified Rust contracts.
 
 ## techniques for the catalog
 
@@ -96,4 +88,3 @@ Inference: KRust already provides an executable subset semantics, cell-based own
 - contract instrumentation: add a resource or time cell and prove a Hoare-style bound with pre- and postconditions
 - differential conformance testing: compare the generated interpreter with compiled Rust over counted official and hand-crafted tests
 - semantic-state debugging: step rewrite rules and inspect configuration cells to explain program behavior
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Since a variable is either mutable or immutable in Rust, we add mutType cell to record whether the variable is mutable or immutable."): read the whole paper text (pp. 1-9) and checked every quotation, test count (3119, 195, 38, 157, 25, 182), section and page reference, the cell list and rule descriptions, the gcd and debugger examples, and the limitations list against it; changed page references (III-D.4 is p. 6, Section IV is pp. 6-7, K analysis tools p. 3), the wording of the 38 excluded tests, the 25 hand-crafted tests, the immutable-reference and move steps, the gcd quotation (now a prose sentence), the krun command, and added Inference labels; did not check the K source code, the Rust test suite or the Rust-language claims beyond the paper, and the arXiv link was kept as given (it matches the arXiv stamp in the paper text).

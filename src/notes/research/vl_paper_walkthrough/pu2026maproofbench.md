@@ -49,11 +49,7 @@ Verus form (Inference): use verifier diagnostics to distinguish missing lemma, f
 ## what is proved, trusted, and limited
 The benchmark proves only that accepted Lean terms compile under Mathlib 4.28.0 and satisfy the stated theorem. It measures model success rates under the sampled prompts. It does not prove that the formal statement faithfully captures the original exercise beyond the review process, nor that results transfer to Verus, Rust, other Mathlib versions, or unsampled models. The authors explicitly conclude, “Both general-purpose reasoning models and formal theorem provers struggle with MA-ProofBench, with Mathlib hallucinations and incomplete proofs as the main bottlenecks.” (Conclusion, p. 8)
 
-Inference: for VeruLaw, the strongest threat is workflow-level: an LLM can produce plausible but uncompilable or semantically misformalized specifications, especially for analysis-heavy obligations. The measured 16%/5% results are not a direct product-security probability because the benchmark is mathematics, uses Lean, and has 100 problems per level. VL should reuse the human reverse-translation review, fixed compiler gate, and explicit failure taxonomy instead of assuming generated Rust proofs are reliable.
-
 ## techniques for the catalog
 - human-led formalization and reverse-translation review: clean problems, iterate with compiler feedback, and require independent reviewers to validate Lean statements
 - compiler-gated proof sampling: compile sampled candidates in a fixed environment and reject errors, holes, missing prerequisites, or changed statements
 - verifier failure taxonomy: classify API hallucinations, type errors, and incomplete proofs from diagnostics and count them by model and denominator
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -38,12 +38,6 @@ For the main Majority Vote obligation, every method failed: native automation fa
 
 The intermediate proof is valid but verbose and expands unnecessary definitions; other LLM proofs remained invalid even after manual syntax correction (Sec. 4.2, p. 15). Zhou hypothesizes that scarce TLAPS-specific training data is the primary limitation (Sec. 4.2, p. 15). The component analysis qualifies the retrieval contribution: “While the RAG process provided useful premises selection guidance and syntactical hints, the proof generation relied significantly on the heuristics.” (p. 15). Inference: three obligations and no reported removal-of-RAG comparison do not establish broad success rates or isolate retrieval’s contribution. Appendix B additionally says “o1-mini takes more than 20 mins to response with the whole proof script” (p. 20), whereas Section 4.2 reports 20–60 seconds per attempt for o1/o1-mini (p. 14); the paper does not reconcile these timings.
 
-## what is trusted and implications for VL
-
-TLAPS mechanically checks both decomposition implication and each generated proof. Inference: the embedding model, LLM, retrieval database, and decomposition strategy propose candidates; acceptance depends on TLAPS verification. The evaluation does not test counterexample generation, and the main safety theorem remains unsolved.
-
-Inference: the failed main obligation cautions against assuming this architecture can automate complex Verus proofs; the paper evaluates TLAPS, not Rust or Verus. Inference: a corresponding Verus design could check every decomposition lemma and generated proof, with a hard attempt limit and explicit failure. Inference: existing work already establishes decomposition-check/retrieval architecture for TLAPS; VL should measure it on larger Verus crates and include negative/timeout cases rather than reusing this three-obligation result.
-
 ## techniques for the catalog
 
 - checked obligation decomposition: split a goal and verify that sub-obligations jointly imply it before proving them
@@ -51,5 +45,3 @@ Inference: the failed main obligation cautions against assuming this architectur
 - staged automation: try native provers first, then retrieval-guided LLM generation
 - recursive decomposition with bounded retries: decompose failed sub-obligations until success or an explicit limit
 - verifier-checked candidates: retain generated proofs only after TLAPS mechanically verifies every step
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "For the arithmetic property, while all LLM approaches showed improved syntax compared to their attempts on complex obligations, only our method achieved TLAPS-verified proofs."): checked the entire paper, including references and appendices, against the study’s quotations, numbers, section/page references, and technique steps; corrected the automation failure timing and evaluation provenance, qualified leakage and retrieval claims, noted inconsistent o1-mini timings, and marked extrapolations as inferences; did not reproduce experiments, inspect the external repository, or validate Verus adaptations.

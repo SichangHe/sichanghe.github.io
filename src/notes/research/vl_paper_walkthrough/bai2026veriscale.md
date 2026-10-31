@@ -73,8 +73,6 @@ Eight models are evaluated with Lean 4.24.0 on 80 physical CPU cores, using pass
 
 The ground-truth preconditions and reference implementations are required (Limitations, PDF p. 9). Unexpected-output quality is bounded by the red-team LLM's reasoning and Lean typing, and expansion is compute-intensive (Limitations, PDF p. 9). Inference: the evaluation depends on Lean, the reference implementations, the ground-truth preconditions, and the benchmark harness. The generated adversaries determine which flaws reduction preserves; covering them does not establish test-suite completeness.
 
-Inference: sparse examples alone would be weak evidence for VL evaluation. VeriScale provides an expansion/reduction design worth adapting to Verus, but the paper evaluates Lean tasks, so transfer to Rust remains untested. A Verus adaptation would need to address Rust ownership, panic/overflow behavior, unsafe boundaries, and specification review.
-
 ## techniques for the catalog
 
 - type-aware mutation — generate typed seeds and iteratively mutate one parameter with schema-specific perturbations
@@ -83,5 +81,3 @@ Inference: sparse examples alone would be weak evidence for VL evaluation. VeriS
 - boundary-preserving reduction — keep representative empty, zero, sign, length, and ordering boundary cases
 - adversary-killing set cover — greedily retain expected pairs that kill the most synthesized mutants
 - specification benchmark scaling — compare expanded and reduced suites with pass@1 scores and wall-clock evaluation times
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "First, the pipeline relies fundamentally on the availability of ground-truth preconditions and the reference implementations."): checked all paper text, quotations, numerical results, section/page references, and technique steps; corrected the paper link, quote attribution, page references, classifier explanation, reduction step, and unsupported conclusions; did not reproduce experiments, inspect source code, or validate the proposed Verus adaptations.

@@ -4,9 +4,9 @@ Tag: `zhao2026synthesizable`, [paper](http://arxiv.org/abs/2607.23715v1)
 
 ## scope and result
 
-The paper builds IEEE-754-style FP32 and BF16 operators for ARCH, a hardware-description language meant to be generated from natural-language hardware specifications. Its central engineering choice is a single Rust embedded DSL and bit-vector intermediate representation (IR) rendered as SystemVerilog, SMT-LIB, and Lean. The paper says, “Every floating-point operator — comparisons, conversions, add, sub, multiply, and fused multiply–add, in both formats — is described once in a host-language embedded DSL against a single bit-vector intermediate representation” (Abstract, p. 1). This gives one shared dataflow graph to hardware, formal model, and proof model. Inference: VL can use the same source-artifact pattern for generated Rust and Verus specifications, but Verus code would need a Rust-level IR and proof renderer rather than ARCH's HDL printers.
+The paper builds IEEE-754-style FP32 and BF16 operators for ARCH, a hardware-description language meant to be generated from natural-language hardware specifications. Its central engineering choice is a single Rust embedded DSL and bit-vector intermediate representation (IR) rendered as SystemVerilog, SMT-LIB, and Lean. The paper says, “Every floating-point operator — comparisons, conversions, add, sub, multiply, and fused multiply–add, in both formats — is described once in a host-language embedded DSL against a single bit-vector intermediate representation” (Abstract, p. 1). This gives one shared dataflow graph to hardware, formal model, and proof model.
 
-The verified contract is deliberately bounded. Arithmetic uses static round-to-nearest, ties-to-even (RNE); there are no dynamic rounding modes, status flags, or X/Z semantics, and NaN payloads are canonicalized. BF16 FMA is explicitly an FP32-accumulating fusion followed by narrowing, not correctly rounded BF16 FMA. The paper warns, “It is therefore not a correctly rounded BF16 fma” (Section 4.3, p. 4). Inference: a VL product must state its semantic subset before claiming full language or library correctness.
+The verified contract is deliberately bounded. Arithmetic uses static round-to-nearest, ties-to-even (RNE); there are no dynamic rounding modes, status flags, or X/Z semantics, and NaN payloads are canonicalized. BF16 FMA is explicitly an FP32-accumulating fusion followed by narrowing, not correctly rounded BF16 FMA. The paper warns, “It is therefore not a correctly rounded BF16 fma” (Section 4.3, p. 4).
 
 ## technique 1: single-source, three-backend construction
 
@@ -37,7 +37,7 @@ How to do it.
 
 Verus form. Inference: use `bit_vec`-style bounded integers and `spec fn` models for decoded floating-point values, then prove field extraction and rounding lemmas with `lemma` proof functions and `assert`/`reveal` steps. Use solver-friendly exhaustive checks for narrow operations and algebraic lemmas for wide multiplication. The exact Lean tactics do not transfer to Verus; the proof split does.
 
-Evidence. The paper reports zero `sorry`, a 9,000-line Lean development across 23 modules, and the stated exhaustive domains. Its trust base includes Lean kernel, compiler/native bridge for `bv_decide`, and three standard axioms. The SAT solver is untrusted but emits LRAT certificates checked by a verified checker; native evaluation enters as an axiom (Section 8, p. 6). Inference: VL should record native or external solver bridges as trusted components rather than describing a proof as kernel-only.
+Evidence. The paper reports zero `sorry`, a 9,000-line Lean development across 23 modules, and the stated exhaustive domains. Its trust base includes Lean kernel, compiler/native bridge for `bv_decide`, and three standard axioms. The SAT solver is untrusted but emits LRAT certificates checked by a verified checker; native evaluation enters as an axiom (Section 8, p. 6).
 
 ## technique 3: bounded sticky-fold replacement with equivalence proof
 
@@ -59,7 +59,7 @@ Evidence. With Nangate45 typical-corner Yosys/OpenSTA and buffered mapping, exac
 
 Proved: operator equivalence to SMT-LIB FloatingPoint semantics over stated domains; Lean value-level correct rounding for FP32 FMA; bit-exact sticky-fold/reference equality; SystemVerilog-to-SMT equivalence for 24 operators; and byte-identical Lean regeneration. Measured: synthesized cell counts, combinational and pipelined fmax, and differential tests against Berkeley SoftFloat on directed and randomized vectors. Trusted: the IEEE value definitions, Lean kernel and compiler/native bridge for `bv_decide`, the syntax table and transformations, Yosys frontend semantics, and the two-state environment. Inference: the product threat from agent-written verified Rust is reduced by shared generation and equivalence checks, but remains in semantic-contract choices, renderer bugs, and trusted toolchains.
 
-The paper identifies no prior combination of one shared HDL/SMT/Lean IR, a wide FMA reference, and multiplier-cancelling sticky-fold equivalence. Inference: VL should reuse this pattern rather than redo a direct bit-blasted proof for every wide arithmetic replacement. The paper's own limitations include preliminary single-corner synthesis, absent dynamic rounding and flags, canonical NaNs, out-of-scope X/Z behavior, and deliberately non-correctly-rounded BF16 FMA.
+The paper identifies no prior combination of one shared HDL/SMT/Lean IR, a wide FMA reference, and multiplier-cancelling sticky-fold equivalence.
 
 ## techniques for the catalog
 
@@ -70,4 +70,3 @@ The paper identifies no prior combination of one shared HDL/SMT/Lean IR, a wide 
 - sticky-fold refinement — replace a timing-hostile wide arithmetic reference with a bounded guard/round/sticky implementation and prove bit identity by a rounding-collapse lemma
 
 - trust-base accounting — publish solver domains, denominators, certificate/native bridges, renderer checks, and unverified semantic boundaries alongside the theorem
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

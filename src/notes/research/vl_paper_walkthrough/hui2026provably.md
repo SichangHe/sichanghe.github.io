@@ -84,13 +84,7 @@ Evidence. The verifier is exhaustive for the selected bound, while MCTS dominate
 
 The paper proves the finite-search completeness theorem for GGMS under its feasibility, finiteness, and unfreezing assumptions, and proves a group-freezing preservation theorem when the selected simulation has a definite decision and only one transition is frozen per (round, process) pair (Theorem 4.2, Section 4.3, p. 5). It measures success and wall-clock time for 10 runs per setting, comparing MCTS, MCTS+DFS, and GGMS (Table 1, p. 7). It reports a newly found synchronous atomic-commit protocol and FloodSet-like consensus protocols (Section 5, pp. 6–8).
 
-The trusted core includes the transition semantics, crash/message-loss model, correctness properties, scenario enumerator, and the model checker. The neural model, MCTS heuristics, Python implementation, hardware, and Keras training are not themselves verified. The paper does not prove arbitrary-n correctness, asynchronous correctness, Byzantine tolerance, point-to-point behavior, or correctness of a generated Rust implementation. Inference: for VeruLaw, GGMS can supply candidate finite protocol logic and adversarial test scenarios, but a product claim still needs a Rust-to-model correspondence proof and explicit contracts for external I/O, storage, timing, and failures.
-
-## what VL should not redo and product threat
-
-Known protocol synthesis and verification already cover the paper's bounded target: classic protocols are hand-designed and then proved or model-checked; IronFleet, I4, DistAI, and Basilisk start from a human protocol and prove it, often for arbitrary process counts (Section G, p. 21). The paper's distinct contribution is automated construction of a bounded global state machine using MCTS, DFS, and exhaustive checking. Inference: VL should not present bounded exhaustive checking of a finite protocol as a replacement for inductive distributed-system proofs, and should not claim that a neural proposal is a proof.
-
-Inference: the threat to agent-written verified Rust is moderate for small, finite protocol kernels. GGMS can discover transition tables and counterexamples that reduce manual design work. The threat is low for arbitrary Rust systems because the paper does not synthesize Rust, reason about memory ownership, or prove unbounded deployments. The main reusable pattern is a verifier-in-the-loop search that turns every failed execution into a targeted next test.
+The trusted core includes the transition semantics, crash/message-loss model, correctness properties, scenario enumerator, and the model checker. The neural model, MCTS heuristics, Python implementation, hardware, and Keras training are not themselves verified. The paper does not prove arbitrary-n correctness, asynchronous correctness, Byzantine tolerance, point-to-point behavior, or correctness of a generated Rust implementation.
 
 ## techniques for the catalog
 
@@ -100,5 +94,3 @@ Inference: the threat to agent-written verified Rust is moderate for small, fini
 - guided curriculum — begin with definite late-loss scenarios and progressively relax losses and initial states
 - exhaustive counterexample replay — enumerate bounded executions, retain failures, and bias later sampling toward them
 - group freezing — freeze one transition per round/process pair when a definite-decision scenario preserves completeness
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

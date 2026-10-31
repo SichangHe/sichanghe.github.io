@@ -38,9 +38,6 @@ The evaluation uses 194 miniF2F proofs (mean 334 tokens) and 75 PutnamBench proo
 
 The paper explicitly reports failure: repaired proofs are often longer, and a shorter proof can be slower when it replaces a fast algorithm with brute-force interval cases (section 5.2, p. 12). Longer proofs remain harder to simplify (section 4.3, pp. 10–11). For the IMO experiment, the authors state: “Finally, to ensure the correctness of our simplified proofs, we use SafeVerify to confirm that all four simplified proofs match the specification of the original proof without any environmental manipulation.” (appendix C.3, p. 29) They retain all original sub-theorem statements and simplify only their proofs, excluding structural simplifications and statement length from the metric (appendix C.3, p. 29). Inference: applying this approach to verified Rust requires preserving specifications and executable behavior; verifier acceptance alone cannot repair an incorrect specification. The paper provides no Verus evaluation or direct human-readability measurement.
 
-## what VL should reuse and avoid
-Inference: VL should reuse candidate search with verifier acceptance, proof-sketch obligation extraction, iterative shortening, and cost-aware objectives. It should avoid copying Lean-only prompts, tactic names, or `sorry` into Verus artifacts. Token count and verification cost should be treated as separate objectives, as the paper demonstrates shorter proofs that execute more slowly.
-
 ## techniques for the catalog
 - proof simplification with verifier acceptance — generate alternatives and retain only those compiled by the proof assistant
 - proof-sketch obligation extraction — split high-level sketches at unresolved subgoals to create scalable theorem data
@@ -48,4 +45,3 @@ Inference: VL should reuse candidate search with verifier acceptance, proof-sket
 - verifier-rewarded online RL — reward valid reductions with a normalized metric and verifier feedback
 - iterative shortest-candidate search — repeatedly sample, verify, and continue from the shortest candidate
 - cost-aware simplification — optimize heartbeat or execution cost when token length is not the product objective
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "When feeding a sub-theorem into ProofOptimizer, we include as context the theorem definition (but not proof) of all other theorems that occur in its proof."): checked the full paper text, quotations, numerical results, technique steps, section/page references, and arXiv identifier; corrected quotation capitalization and page references, clarified sampling budgets and reduction averages, flagged the printed RL reward sign, and removed unsupported trust and risk claims; did not reproduce experiments, inspect implementation code, or independently verify Lean or Verus proofs.

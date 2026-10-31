@@ -51,15 +51,8 @@ The replicated-log client illustrates application of the module. Track both the 
 
 Inference: the reusable pattern is to expose application preconditions and postconditions through a protocol module, then use shared logical agreement to prevent participants from choosing inconsistent updates. A Verus encoding needs its own sound model of fractional resources and asynchronous communication.
 
-## evidence limits and VL relevance
-The authors report: “The total work required to prove two-phase commit with replicated logging is 1,272 lines which is just half of the lines needed for proving the inductive invariant for TPC in other works [35]” (Section 8, p. 360). They immediately qualify the comparison: “However, extensive work has gone into Iris Proof Mode thus it is hard to conclude that Aneris requires less verification effort and does not just have richer tactics.” Table 1 reports implementation, specification, and proof sizes, rather than a runtime comparison.
-
-Inference: these are results for programs in the paper's formal language and network model. Applying the approach to deployed Rust requires relating actual sockets, serialization, and failure behavior to that model. The paper leaves extraction to runnable OCaml programs as future work (Section 7, p. 359). I did not inspect the linked appendix or Coq artifact, rerun proofs, or validate a Rust/Verus translation.
-
 ## techniques for the catalog
 - socket protocols — describe incoming payloads and logical resources through address-specific predicates
 - protocol ownership transfer — enforce mutual exclusion by requiring a non-duplicable key in the release protocol
 - node/thread composition — combine local proofs through frame, bind, thread-parallel, and node-parallel rules
 - fractional state agreement — retain partial ownership to tie responses and participant updates to an agreed request or state
-
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "To reason about sending a message on a socket z it suﬃces to show that z is bound, that the destination of the message is governed by a protocol Φ, and that the message satisﬁes the protocol."): read the paper text from first line to last and checked the whole study's quotations, numbers, section/page references, network assumptions, and technique steps; corrected the DOI link, adequacy reference, persistent binding knowledge, fractional update explanation, and TPC steps, and removed unsupported trusted-base and Verus claims; did not inspect the appendix or Coq artifact, rerun proofs, or check a Verus implementation.

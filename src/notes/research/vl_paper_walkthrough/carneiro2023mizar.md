@@ -62,8 +62,6 @@ Evidence. The checker found four exploitable soundness bugs and one non-critical
 
 Failure and assumptions. Differential agreement is not proof of correctness if both implementations share a design error or if the corpus omits adversarial cases. A close rewrite can also preserve algorithmic unsoundness, as Exhibit 4 did. The paper says this goal “does not seem like much of an improvement” for trusted-kernel size until proof export is achieved (Section 9, p. 24).
 
-Inference: For VeruLaw, an independently implemented checker or symbolic tester is valuable as a bug-finding oracle for generated proofs, but it should not replace Verus's proof obligations. Differential tests should include minimized counterexamples and malformed artifacts, with all acceptance paths tied to explicit contracts.
-
 ## technique 5: root-causing soundness bugs with minimal proofs
 
 What it is. The paper reduces checker defects to short Mizar articles that prove false statements, then traces each failure to a concrete implementation or algorithm issue. The four main exhibits are polynomial arithmetic overflow, negation loss in the schematizer, malformed flex-and unfolding, and unsound flex-and substitution.
@@ -81,10 +79,6 @@ Inference: In Verus, each minimized contradiction can become a regression lemma:
 The paper measures implementation size, full-MML processing time, parallelism, and corpus acceptance. It demonstrates concrete false proofs accepted by the old checker and fixed in later versions. It does not provide a formal soundness proof of mizar-rs, the Rust compiler, the parser, intermediate-file formats, requirement files, or the MML assumptions. The paper explicitly distinguishes its implementation from a small trusted kernel and says proof export remains future work. Its performance numbers are specific to the stated corpus and hardware: Figure 2 reports an average 4.93× speedup over the verifier, and Table 2 reports exact CPU-minute ratios.
 
 Inference: A product that generates agent-written verified Rust faces a threat from checker or translation defects analogous to Mizar's: a verifier can accept a false proof if preprocessing, elaboration, requirements, or the final checker disagree. Independent reimplementation, typed intermediate artifacts, minimized contradiction tests, and eventual proof export reduce this threat. They do not establish correctness of generated specifications or external libraries.
-
-## mizar lessons for a verified Rust checker
-
-The Mizar-specific artifacts worth carrying into VL are typed intermediate proof data, explicit checker phases, differential acceptance tests, and minimized false-proof regressions. Rebuilding mizar-rs itself would duplicate this paper's completed checker; VL should apply its audit pattern to generated Rust contracts, macro expansion, solver facts, and FFI models.
 
 ## techniques for the catalog
 

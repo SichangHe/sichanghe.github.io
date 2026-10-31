@@ -51,12 +51,9 @@ Proved by Solvent: encoded liquidity properties within the fragment, either for 
 
 Inference: trusting these results requires trusting the language model, SMT encoding, solvers, and ground-truth classification. Applying proofs to actual Solidity additionally requires justifying the transfer assumptions and omitted calls, reentrancy, loops, and gas behavior. Section 6 (p. 8) illustrates a transfer to an owner contract that fails, preventing a subsequent payment to the user even though liquidity holds in the fragment.
 
-Inference: for VL, the relevant idea is specifying whether a user can release resources through bounded actions. Solvent's property shape can guide a Rust/Verus transition model, but the paper does not establish its applicability or effectiveness for agent-written Rust. Counterexample traces and explicit bounded, unbounded, violation, and timeout results would make the scope of verification clearer.
-
 ## techniques for the catalog
 
 - liquidity specification: express that designated users have a bounded transaction sequence to achieve a desired asset transfer from every reachable state
 - SMT transition encoding: map methods, reverts, mappings, and intermediate states to constraints over current and next state
 - negated-property diagnosis: solve the existential counterexample form and replay the returned transaction trace
 - bounded checking with abstraction: combine bounded model checking for traces with predicate abstraction for proofs and report explicit bound or timeout statuses
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In our Solidity fragment, this property is true, since both transfers will succeed under the given hypotheses."): checked all paper text, study quotations, numbers, section and page references, technique steps, and model limitations; corrected the bound semantics, quotation attribution, counterexample explanation, references, solver version, and unsupported replay and Verus claims; did not run Solvent, inspect its implementation or external benchmark, or validate the proposed Verus model.

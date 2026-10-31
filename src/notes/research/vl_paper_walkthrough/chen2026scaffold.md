@@ -63,8 +63,6 @@ The paper states a formal implication from δmax=0 to non-increasing vulnerabili
 
 SSDR depends on Claude Opus 4.5 review; only the three representative cases are reported as manually confirmed. The authors write: “SSDR should therefore be interpreted as a trend indicator of latent-security quality change, not an exact count; our core claims rely on relative ranking and magnitude gaps across methods” (Section V-A, pp. 10–11). The benchmark uses 24 self-contained single-file samples, Python/Java, and 10 refinement rounds; industrial multi-file scalability requires further validation (Section IV-A, pp. 6–7; Section VI, p. 11).
 
-Inference: For VL, the principal threat is specification incompleteness: agent-written Rust can pass Verus while omitting the security invariant, using an unsound external-body boundary, or relying on an inaccurate model of a dependency. The paper's prerequisite checks suggest a process pattern for VL; they do not prove end-to-end security. The Verus mappings above are proposed adaptations, not techniques evaluated in this paper.
-
 The paper distinguishes two experimental stages: the introduction calls the observational study 96 GPT-4o chains, while the broader setup describes 288 chains across three models. These are different stages, not a single denominator (Sections I-A and IV-A, pp. 2 and 6–7). Table IV's DR/RDR percentages are per model/category rows over the corresponding chains; Table V is a separate GPT-5-Nano method comparison. Inference: Results must never combine these denominators.
 
 ## techniques for the catalog
@@ -73,4 +71,3 @@ The paper distinguishes two experimental stages: the introduction calls the obse
 - four-layer prerequisite checks — accept only candidates passing tests, non-increasing safety metrics, diff budgets, and anchor integrity, with retry or rollback
 - CEGIS failure assimilation — turn structured verification failures into reusable repair knowledge and feed it into subsequent candidate generation
 - latent-security evaluation — use an independent semantic reviewer to detect defensive-logic loss that SAST misses, while reporting the reviewer and benchmark limits
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The observational study uses DRall over all severity levels to increase sensitivity to early degradation signals."): checked the complete paper text, quotations, numbers, technique steps, section references, PDF page locations, and catalog entries; corrected page references, the Critical/High metric definition, Algorithm 1 versus detailed-check distinctions, Figure 3 descriptions, formal-guarantee scope, and experimental-stage wording; did not reproduce experiments or independently validate the proposed Verus adaptations.

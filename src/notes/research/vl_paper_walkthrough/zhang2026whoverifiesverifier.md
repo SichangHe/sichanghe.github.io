@@ -46,16 +46,9 @@ Evidence and limits. Double Ratchet retains 106% of reference-loop lift on MBPP+
 
 Verus form. Inference: failure capsules can contain Verus compiler diagnostics, unsatisfied postconditions, and minimized counterexamples; skill synthesis can propose proof repairs, but acceptance still requires a fresh Verus check and anchor/locked-set evaluation. Treat the outer judge as audit evidence, not as a proof oracle.
 
-## evidence boundary and VL implications
-The paper establishes verifier agreement and lifecycle behavior, not formal program correctness. Trusted components include hidden tests, live SQL execution, soft report rubrics, LLM detectors/judges, the anchor construction, environment, and the outer judge. The study itself calls its scope a mechanism study with three task families, one model family, low hundreds of rounds, and held-out sets of tens (conclusion, p. 9).
-
-Inference: threat to VL is high for any self-improving proof agent whose reward model can collapse to always-pass while training still improves. VL should retain immutable, independently checked anchor examples and a locked evaluation set; verifier validity must be measured directly, including fail-open and abstention rates. The work VL should not redo is a generic task-score comparison of verifiers without an independent validity audit.
-
 ## techniques for the catalog
 - typed drawback detectors: represent one failure class with `DRAWBACK`/`CLEAN`/`ABSTAIN` and compose inspectable expressions
 - anchor-gated evolution: synthesize from misses and gaps, birth-gate candidates, select against immutable anchors, and fail closed
 - detector lifecycle: classify active versus shadow detectors, promote by anchor agreement, and retire non-positive leave-one-out contributors
 - independent verifier audit: evaluate on locked references and use an outer judge without feeding its results into training
 - double ratchet co-evolution: alternate verifier evolution and skill synthesis while preserving rollback and held-out separation
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

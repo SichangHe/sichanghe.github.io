@@ -5,8 +5,6 @@ Tag: `crichton2022modular`, [paper](https://doi.org/10.1145/3519939.3523445)
 ## problem and contribution
 The paper defines Flowistry, a static information-flow analysis for safe Rust that remains modular across dependencies. “We demonstrate that ownership types can be used to soundly and precisely analyze information flow through function calls given only their type signature.” (Abstract, p. 1) “We prove the system’s soundness as a form of noninterference using the Oxide formal model of Rust.” (Abstract, p. 1) The analysis computes, for each variable in a function, a set of dependencies (program locations) at each program point; it is flow-sensitive and field-sensitive (Section 2, p. 2). In the evaluation the size of Θ(x) at the function exit is read as the size of the variable’s backward slice (Section 5.1, p. 8). It covers mutation, references, lifetimes, calls, and control flow.
 
-Inference: for VL, the useful pattern is to make ownership and borrowing part of a specification summary instead of requiring every dependency body to be opened. This is an analysis technique, not a Verus proof rule.
-
 ## technique 1: dependency contexts over places
 What it is. Flowistry labels each expression location ℓ and maps every memory place p to a set of labels Θ(p). “The computation of information flow is intertwined with type-checking, represented as a modified type-checking judgment.” (Section 2, p. 2) A node’s conflicts are its ancestors and descendants in the type tree, not its siblings (Section 2.1, p. 3), so a write to `t.1` updates `t` and `t.1` but not `t.0`.
 
@@ -42,7 +40,7 @@ The evaluation uses ten crates totaling 286,682 LOC, 435,979 variables, and 14,6
 
 The IFC checker is a Rust library and compiler plugin with `Secure` and `Insecure` traits; the Figure 5b caption says it checks for flows from data of a Secure type to insecure operations, and the Section 6 text words the direction as from Insecure to Secure variables. It is purely intraprocedural. The slicer is a VSCode extension for slices within one function (Section 6, p. 11). The paper states that 96% of cases crossed a crate boundary, and only 6.6% of those had a non-zero modular/whole-program difference; 4% did not cross a boundary and 0.6% of those differed (Section 5.4.2, pp. 10–11). These denominators are conditional subsets, so percentages must not be compared as if they shared one denominator.
 
-What is proved is noninterference for the Oxide model (Appendix A.2); precision is measured empirically on the ten selected crates. Inference: the paper presents no proof for the MIR implementation, so trusted inputs include the MIR translation, Rust’s lifetime constraints, and the no-unsafe assumption. Inference: the threat to agent-written verified Rust is moderate: modular summaries can hide real flows if contracts are weak, while ownership gives a useful mechanically checkable boundary. VL should reuse ownership-aware summaries and control-flow dependency tracking, but should not redo a whole-program analyzer when a checked contract suffices.
+What is proved is noninterference for the Oxide model (Appendix A.2); precision is measured empirically on the ten selected crates.
 
 ## techniques for the catalog
 - ownership dependency context — map each place to expression labels and update conflicts on mutation
@@ -50,5 +48,3 @@ What is proved is noninterference for the Oxide model (Appendix A.2); precision 
 - signature-only call summary — propagate readable inputs to returns and unique loans without callee bodies
 - MIR fixpoint analysis — join place dependencies across CFG edges and add control dependencies
 - ownership precision ablation — quantify precision loss by disabling mutability and lifetime information
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Importantly, due to the architecture of the Rust compiler, the only available definitions are those within the package being analyzed."): read all 17 pages including the appendix; checked every quotation, number, section and page reference, and the technique steps for Sections 2 to 4 against the text; changed page references (Theorem 3.1 is on p. 5, Section 4.3 on p. 7, the timing figures are in Section 5.1, Section 6 is on p. 11), the loan-propagation rule (a union over r′:>r, loan sets {l}), the borrow-checker claim (Rust does not build loan sets; Section 4.2 reconstructs them), the shrd-loans and uniq-loans names, the theorem summary, the IFC direction note, and the link (now the DOI from the paper text); did not check the Appendix A proofs step by step, the figures beyond their captions, the cited works, or any Verus analogy, which are marked Inference.

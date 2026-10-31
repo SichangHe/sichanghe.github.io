@@ -4,8 +4,6 @@
 
 🧑 Requested: "Extensively find related work on both how to formulate formal verification in general and for distributed system and for liveness proves and concrete example problems of those kinds. [...] I want how humans to these things, what existing problems are (almost like a DB of all cases that can be found), how agent systems have worked, anything that can help the end goal which is human just vaguely describe what they want guaranteed and agents figure out all the details and strong spec + proof. We also need to understand how to do eval."
 
-Checked 7 to 9 October 2026. I did not rerun any paper's proofs or benchmarks; numbers are the authors' own. Every quote here was matched by machine against the saved paper text, except the tla-rs README quote. Sentences starting with "I think" are mine, not the literature's.
-
 Words I use: *safety* means something bad never happens. *Liveness* means something good eventually happens. A *spec* is the precise statement of what is promised. A *model* is a small description of the system's possible steps, separate from the real code. *Verus* proves properties of real Rust code. *TLA+* describes and checks models, not code.
 
 ## The short answer

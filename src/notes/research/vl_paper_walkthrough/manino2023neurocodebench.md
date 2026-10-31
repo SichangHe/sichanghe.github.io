@@ -46,16 +46,9 @@ Run each verifier through BenchExec with two CPU cores, 6 GB RAM, and 900 second
 
 Inference: for Verus, use the same fixed resource budget and three-way verdict accounting when testing agent-written verified Rust. Record whether failures arise from unsupported libraries, timeout, parser/type error, or a genuine counterexample; otherwise an apparent pass rate hides tool incompleteness. Verus's proof checker is evidence for each accepted obligation, but benchmark verdicts still depend on the specification and translation.
 
-## proved, measured, trusted, and product threat
-
-The paper contributes benchmark construction and measurements, not a theorem that the six tools are unsound. Ground truth, C99/IEEE assumptions, conversion tools, and reproduced VNN-COMP counterexamples are trusted inputs. Figure 1's plotted per-tool verdict counts (out of the 607 properties) are the only evidence on tool behavior; the paper gives no per-category breakdown of verdicts. It does not evaluate Rust, Verus, LLM-generated code, or real deployment workloads.
-
-Inference: the threat to a product that emits agent-written verified Rust is high for numeric code and neural components if library semantics, finite precision, or timeout-induced unknowns are omitted. VL should reuse the benchmark's implementation-level categories and three-way verdict discipline. It should not redo the paper's six-tool C comparison; it should create Verus-native cases with explicit `requires`/`ensures`, loop invariants, and a stated floating-point abstraction.
-
 ## techniques for the catalog
 
 - independent-ground-truth benchmark: establish safe and unsafe verdicts by mathematics, exhaustive floating-point enumeration, or reproduced external counterexamples
 - implementation-sensitive NN taxonomy: test math libraries, activations, recurrent correction, approximation, density, and control networks in standalone code
 - conversion to verification harnesses: translate ONNX/VNN-LIB into C implementations with preconditions and postconditions
 - fixed-budget verifier evaluation: run tools under BenchExec resources and report correct, incorrect, and unknown outcomes with timeout causes
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "We keep our experimental setup as similar to SV-COMP as possible: we use the benchmarking tool BenchExec [6] with 2 CPU cores, 6GB of RAM and 900 seconds of total CPU time per verifier for each verification task."): read the whole 4-page paper text and the study; checked all five quotations, the Table 1 counts and sums (607), the Hopfield, polynomial and VNN-COMP parameters, the BenchExec budget, and the section and page references; changed page references for the math library, Hopfield and transfer-function paragraphs, the "balanced" wording (the paper says "reasonably balanced"; reinforcement learning is 103 safe vs 193 unsafe), the VNN-COMP ground-truth wording (only unsafe properties need reproduced counterexamples), the Figure 1 sentence (math warnings were reported for four of the six tools), and marked one conclusion as Inference. Did not check: the exact Figure 1 bar values (the text extraction is garbled), the cited references, or the released benchmark and Verus-side inferences. Link kept from the fetch record (arXiv 2309.03617v1 matches the paper header).

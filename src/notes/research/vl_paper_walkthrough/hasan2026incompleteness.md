@@ -65,9 +65,7 @@ Evidence: the appendix is self-contained and gives the inequalities and contradi
 
 The paper proposes augmenting the instance to (x=\langle z,y,\Pi,\pi\rangle), where π is a proof that (P(x)=1), so verification checks the certificate instead of characterizing every valid behavior (Section 5, pp. 10–11).  It states, “This paradigm shift avoids the need for universal characterization and instead ensures correctness on a per-instance basis.” (Section 5, p. 11).  Figure 1 depicts an AI model producing (y), a proof generator producing π, and a verifier accepting or rejecting the certificate (Section 6, Fig. 1, p. 12).
 
-Inference: in VL, a generated Rust result could carry a Verus-checked proof artifact or a proof-producing API whose checker is run independently; the artifact should identify the exact policy predicate and input state.  Inference: this does not remove trusted computing base assumptions: Verus, its solver, proof erasure, the Rust compiler, external libraries, hardware, and the policy specification remain outside the theorem unless separately modeled.  The paper itself says the limitation is “independent of computational resources” (Abstract, p. 1), so faster solver hardware cannot make one fixed sound verifier complete.
-
-What is proved: the theorem proves existence of true, sufficiently complex compliant instances that a fixed sound computably enumerable theory cannot prove in the specified form (Theorem 1, pp. 9–10).  What is measured: nothing empirical; all evidence is mathematical definitions, lemmas, and an appendix proof.  Inference: the threat to agent-written verified Rust is conceptual and high for claims of universal policy coverage, but lower for bounded, explicitly specified instances with independently checked certificates.  Inference: VL should not redo the paper's counting argument; it should use the result to state coverage boundaries and to prefer per-instance proof obligations where feasible.
+What is proved: the theorem proves existence of true, sufficiently complex compliant instances that a fixed sound computably enumerable theory cannot prove in the specified form (Theorem 1, pp. 9–10).  What is measured: nothing empirical; all evidence is mathematical definitions, lemmas, and an appendix proof.
 
 ## techniques for the catalog
 
@@ -75,4 +73,3 @@ What is proved: the theorem proves existence of true, sufficiently complex compl
 - richness counting: use a large compliant subset and program-counting to show that high-K compliant instances exist
 - proof-enumeration contradiction: enumerate hypothetical proofs to derive a short description and contradict (K(x)>n)
 - proof-carrying instances: attach an instance-specific certificate π and verify (\langle z,y,\Pi,\pi\rangle) instead of seeking universal completeness
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

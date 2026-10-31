@@ -62,13 +62,9 @@ The bounds restrict represented executions, but the algorithm checks for both al
 
 Inference: an implementation would need a correct program-to-CHC translation and sound CHC answers under the selected data theory. Finite bounds alone are not evidence of whole-program safety; the absence of `M` and `O` statuses is essential.
 
-Inference: the reusable idea for VeruLaw is the bounded log and local parent/child proof decomposition. Applying it to Rust would require separate ownership and memory-semantics arguments; this study does not establish a Verus implementation or a quantitative competitive threat.
-
 ## techniques for the catalog
 
 - knitted-tree execution encoding: record input, intermediate frames, and output in one bounded tree log
 - lace rewinding: resolve pointer aliases by backward traversal with update flags and explicit rewind events
 - local CHC composition: synthesize node-label invariants from internal, upward, and downward transition clauses
 - parameter-increment safety loop: distinguish errors, out-of-memory, and truncation, increasing bounds until a sound result is obtained
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Preconditions are easy to encode as they involve only the first frame of each node in the knitted-tree, while postconditions require more effort due to the complexity of encoding the output heap within the knitted-tree structure."): read the full paper including references and appendices; checked quotations, numbers, section/page references, and technique steps; corrected CHC satisfiability polarity, whole-program safety scope, frame bounds, pointer-field historical values, locality references, and termination claims; marked proposed Verus adaptations as inference; did not independently reprove the theorems, run a verifier implementation, or validate Verus code.

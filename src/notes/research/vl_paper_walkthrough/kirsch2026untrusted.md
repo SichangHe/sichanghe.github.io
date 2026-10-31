@@ -145,10 +145,6 @@ The Lean mechanization covers the compositional core, including directional squa
 
 Inference: Trusted components include language reference semantics, interpreters, route endpoints, shared libraries, the Lean axioms listed by the mechanization, and the user’s question and projection. The paper’s own MUL/ADD blind spot shows that agreement cannot remove common-mode errors.
 
-## what VL should not redo
-
-The paper already provides directional pairs, support-aware composition, contract meets, independent branches, witness replay, certificate tiers, demand books, human registration, and ratcheting. VL should adapt these ideas to Verus artifacts and contracts, then measure verifier-specific regressions and shared-specification failures rather than reproduce the paper’s ISA/BTOR2 counts.
-
 ## threat to agent-written verified Rust
 
 Inference: The threat to formal soundness is moderate when Verus checks every claim and high when agents or adapters share an incorrect contract. The architecture’s strongest lesson is to make loss, assumptions, route independence, and evidence explicit. A passing model-generated proof is trustworthy only within the exact source, specification, toolchain, and checker boundary recorded with it.
@@ -160,5 +156,3 @@ Inference: The threat to formal soundness is moderate when Verus checks every cl
 - independent branch corroboration — use disjoint translation routes to localize disagreements and strengthen agreement evidence
 - witness replay and certificates — replay existential models at the source and re-check universal certificates with trusted checkers
 - demand-and-ratchet evolution — record unmet questions, human-register new pairs, gate them, and preserve earlier verdicts
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `yu2026diversifying`, [paper](https://arxiv.org/abs/2607.09366)
 
-Audit: audited 2026-10-13 against the paper; checked every quotation and its page, Tables 3 to 7 and all sums and percentages in the study, the stage policies against Table 2 and Sections 4 and 6, the listing of Section 3, the Longest Turbulent Subarray account, and the stated gaps; corrected one quotation reworded inside quotation marks, one widened claim about Stage 2, one outside-knowledge statement and one overstatement about manual reading, and marked advice lines as inference; the Verus listing and the claim about Verus failure reports were not run or sourced, left as the reader's marked inference.
-
 source: Shirley Yu (Stanford), Ruben Martins (CMU), arXiv:2607.09366v1 (10 Jul 2026), 20 pages, no appendix. Artifacts: https://github.com/forge-lab/Diversify2Verify
 
 ## the claim and how it is tested

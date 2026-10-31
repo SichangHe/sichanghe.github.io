@@ -6,7 +6,7 @@ Tag: `manrique2026squeezebench`, [paper](http://arxiv.org/abs/2610.13461v1)
 
 SqueezeBench is a Lean 4 benchmark for mathematical progress on open extremal-combinatorics problems. Instead of deleting a problem after one proof, it maintains lower and upper records: computable functions with machine-checked proofs that bound an unknown function f(n). A submission must prove that its replacement remains valid, never regresses against the incumbent, and improves at one witness input. The benchmark is directly relevant to formal verification because it evaluates agent-generated definitions and proofs through a mechanically enforced admission pipeline.
 
-The abstract states: “A record is a computable Lean function with a machine-checked proof that it bounds f .” It also states: “A submission proposes a new function and proves that it bounds f , that it is no worse than the current record at any n, and that it is strictly better at some n.” (Abstract, p. 1.) Inference: this turns proof generation into an incumbent-preserving maintenance task, a useful model for VL libraries where verified APIs evolve over time.
+The abstract states: “A record is a computable Lean function with a machine-checked proof that it bounds f .” It also states: “A submission proposes a new function and proves that it bounds f , that it is no worse than the current record at any n, and that it is strictly better at some n.” (Abstract, p. 1.)
 
 ## technique 1: two-sided function records
 
@@ -14,7 +14,7 @@ What it is. Each problem defines an integer function f:N→N whose exact values 
 
 How to apply it. (1) Define f formally in Lean, usually as a finite maximum or minimum. (2) Publish an elementary seed lower and upper function. (3) For each candidate, write a computable Lean function and proofs of valid, improves, and strict. (4) Evaluate strict at a witness parameter. (5) Replace the record only after all checks pass. The paper’s running Golomb-ruler definition uses `IsSidon`, `RulerLengths`, and a noncomputable infimum for f (Section 4.2, p. 8); records may not compute f under another name.
 
-Verus form. Inference: model a VL library invariant as a record contract R(n), with a replacement requiring a proof of validity, refinement/non-regression, and strict improvement on a test input. Verus can express the obligations with `requires`, `ensures`, executable functions, and proof functions; unlike Lean’s shown `sInf`, the exact encoding depends on the Rust data type and finite model. The monotonicity obligation should quantify over the supported domain, not merely test examples.
+Verus form.
 
 Evidence. The benchmark contains ten problems and twenty initial records. The paper reports that frontier-model agents had 82 submissions accepted and improved every record; newer agents had 60 more accepted and improved 19 of 20 records (Abstract and Section 5, pp. 1, 9). These counts are accepted submissions across 20 tracks, not theorem-proving success percentages.
 
@@ -36,7 +36,7 @@ What it is. A computable record could trivially calculate f by exhaustive search
 
 How to apply it. (1) Bound the evaluator’s input range and heartbeat/time budget. (2) Execute the candidate function at every n in the range. (3) Reject non-computable, too-slow, or hidden exhaustive-search definitions. (4) Require a report describing how the bound was found. (5) Have a maintainer inspect larger-n search claims. (6) Re-run the full audit on merged records.
 
-Verus form. Inference: for VL, add bounded execution and resource checks for candidate verified functions, but keep these separate from semantic proof obligations. A Verus proof that a function is correct does not show that its runtime is acceptable or that it avoids hidden enumeration; a product gate must measure execution and inspect dependencies.
+Verus form.
 
 Evidence. In evaluation, one Ellenberg–Gijswijt formalization exceeded the budget from n=59 to 100 and was resubmitted with fewer than 100 heartbeats per n (Section 5, p. 9). One record passed earlier checks but was rejected after Gate 6 was added. These are concrete admissions failures, showing that resource checks changed outcomes.
 
@@ -46,13 +46,9 @@ The paper runs one agent per problem-direction track. Agents read current docume
 
 Evidence. All 20 records improved on their seeds. The first phase accepted 82 submissions in 18.9 hours; the second accepted 60 more and improved 19 of 20 records. The Golomb-ruler record gap fell from 49 at n=28 and 621 at n=100 after the runs, with 13 upper and 8 lower versions accepted (Section 5, p. 10). These denominators and starting snapshots define the result; the second phase was explicitly not a controlled model comparison.
 
-Inference: A VL deployment could treat a verified library revision as the incumbent, require each agent change to prove preservation and improvement obligations, and retain a history of accepted versions. This would make regression and proof-maintenance work measurable, but the paper does not test Rust, concurrency, unsafe code, or dependency upgrades.
-
 ## what is proved, trusted, and left open
 
 The Lean kernels check the submitted theorem proofs; Comparator fixes statements and rejects disallowed axioms; bounded computation checks executability and cost. The formal definitions, Mathlib, kernel implementations, checker, compiler, machine model, and maintainer’s interpretation remain trusted. Inference: the principal threat to agent-written verified Rust is specification drift or a trusted dependency whose contract no longer matches its implementation; SqueezeBench’s fixed challenge and non-regression pattern addresses evolution but not that entire trust boundary.
-
-The authors report that nearly all accepted proofs use general arguments and explicit constructions, and that none of the runs went beyond the published literature except a possible concrete Ruzsa–Szemerédi value (Section 5, pp. 9–10). They also note that exhaustive-search impossibility results cannot enter without a short certificate. Existing VL work should not redo a solved-problem benchmark with a fixed target; the transferable contribution is a mechanically checked, incumbent-beating record protocol with explicit resource and trust gates.
 
 ## techniques for the catalog
 
@@ -60,5 +56,3 @@ The authors report that nearly all accepted proofs use general arguments and exp
 - challenge/solution isolation: fix theorem statements in a trusted challenge and independently check untrusted definitions and proofs with an explicit axiom list
 - anti-search admission gates: evaluate candidates over a bounded range and budget, reject hidden exhaustive search, and audit reports for larger-n search
 - persistent agent records: use accepted verified versions as the next agent’s state and measure progress by record history rather than solved-problem count
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

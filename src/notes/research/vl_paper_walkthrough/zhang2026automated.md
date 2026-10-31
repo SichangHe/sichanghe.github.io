@@ -36,15 +36,8 @@ Inference: represent a Verus verification goal as executable Rust plus `requires
 
 Inference: the PGTS structure transfers as a checker-in-the-loop search policy, while Coq tactics, PrefixSpan token meanings, and the 600-second/300-step limits do not transfer without calibration. A proof function is erased from executable Rust, so generated proof code must remain in proof contexts; `invariant` is a loop declaration, not a call. The final Verus check, specification, and trusted library contracts remain authoritative.
 
-Inference: The threat to agent-written verified Rust is substantial for proof-search cost and stability: PGTS improves an existing search by 8.05% on this Coq benchmark, but it does not synthesize specifications, loop invariants, or models. The paper itself reports the boundary: “The search process is formally described in Algorithm 1, which integrates neural predictions with mined human expert proof patterns” (§6, p.11). Inference: VL should reuse the idea of mining successful proof transitions from its own Verus corpus; it should not claim the Coq percentages as Verus evidence.
-
-## what is trusted and what remains open
-The ITP checks each tactic transition, but theorem statements, imported Coq libraries, mined pattern labels, neural predictions, and benchmark setup remain outside the learned heuristic's proof. Search can fail because the budget expires even when a proof exists. The paper studies four baseline systems in the PGTS evaluation and does not establish superiority over all synthesis methods or all theorem distributions. It already covers pattern mining, backtracking, no-repeat goal detection, and restricted-pattern ablation; a VL study should measure transfer to real Verus proof diagnostics rather than repeat a generic pattern-ranking claim.
-
 ## techniques for the catalog
 - sequential proof-pattern mining — mine PrefixSpan tactic subsequences from human scripts and classify them into six proof roles
 - pattern-guided tactic ranking — reorder neural top-k candidates by parent-tactic transition frequencies, then fall back to model probability
 - checker-in-the-loop DFS — apply candidates in the ITP, skip errors and repeated goals, and backtrack when a branch exhausts
 - bounded synthesis evaluation — enforce explicit tactic and time budgets and report added-value fractions against the same DFS denominator
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

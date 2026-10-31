@@ -6,8 +6,6 @@ Tag: `cristia2022verified`, [paper](https://arxiv.org/abs/2209.10278) (arXiv:220
 
 The paper presents a translation of an existing Coq Android-permissions model into {log}, a finite-set and relation constraint solver. The target is an executable prototype whose same clauses can be run and queried for proofs. The authors state: “The present work aims at showing that {log} [9]—a satisfiability solver and a constraint logic programming language—can be used as an effective automated prover for the class of proofs that must be discharged in the formal verification of systems such as the one carried out by De Luca and Luna.” (section 1, PDF page 2). The source Coq development contains a 13-component abstract state, 22 operations, and 14 analyzed properties (section 2.2, PDF pages 4–9).
 
-Inference: For VL, the transferable pattern is to keep a high-level state-and-transition specification, but encode solver-friendly constraints so automation can discharge most obligations and leave a small residual set to a stronger prover.
-
 ## technique: encode a state machine with explicit validity invariants
 
 What it is. The Coq model represents `System` as `State` plus `Environment`; state contains installed apps, previously verified apps, granted permission groups, and per-application permissions, while environment contains immutable manifests and defined permissions (section 2.2.1, PDF pages 4–5). A valid state is a conjunction of 13 predicates, including uniqueness of user-defined permission identifiers and map well-formedness. The paper gives the rule: “The definition of the valid state property is the result of conjoining 13 different predicates, which are defined within 200 lines of code (file Estado.v).” (section 2.2.1, PDF page 5).
@@ -37,7 +35,7 @@ How to do it.
 4. Replace unrestricted Coq universal quantifiers with restricted universal quantifiers (RUQs) over finite sets. The paper’s rule is: “Therefore, as a general rule, we turn Coq’s universal quantifications into {log}’s RUQ.” (section 4.1, PDF page 14).
 5. Split a predicate with disjunctive cases into separate clauses; `notDupPerm` becomes three clauses, according to whether the two permission-defining entries are both from `defPerms`, both from `systemImage`, or one of each (section 4.1, PDF pages 14–15).
 
-Verus form. Inference: use Rust `Seq`/`Set` specifications only where the Verus library and existing VL patterns support them; otherwise represent maps with a sequence plus uniqueness invariant or a map abstraction already documented for Verus. State map-function properties as predicates and prove them with `requires`/`ensures`; use quantified `forall` in `assert` or invariant blocks, not {log}-specific RUQ syntax. The semantic warning carries over: changing list semantics to set semantics loses order and duplicates, so the invariant must state when that abstraction is sound.
+Verus form.
 
 Evidence and limits. The translation enables the exact same clause to execute as a prototype and to serve as a formula. However, the authors explicitly warn that formula-program duality “pays the price of reduced efficiency.” (section 2.3, PDF page 10). Inference: a Verus encoding should preserve executable data structures when runtime behavior matters instead of replacing them wholesale with mathematical sets.
 
@@ -85,15 +83,9 @@ Verus form. Inference: expose only relevant facts with local `assert` statements
 
 ## what is proved, measured, and trusted
 
-The proved claims are properties of the encoded Android abstract model: valid-state preservation and selected security properties. The measured claims are code size and solver time under one machine/tool setup. Inference: the trusted base (the paper does not discuss it) includes the semantics and implementation of Coq, {log}, SWI-Prolog, the translation, and the correctness of the model’s abstraction from Android. Inference: a VL product would additionally trust the Verus verifier, SMT solver, Rust compiler/runtime assumptions, and any external-body declarations; those are outside this paper.
+The proved claims are properties of the encoded Android abstract model: valid-state preservation and selected security properties. The measured claims are code size and solver time under one machine/tool setup.
 
-The paper’s central limitation is incomplete automation: 3 of 14 security properties were not discharged by {log}. The paper also notes that the Coq and {log} data types are only equivalent “in some sense,” and that formula-program duality “pays the price of reduced efficiency.” Inference: VL should reuse the pattern of solver-native encodings and counterexample queries, but should not claim that automatic proof of a model establishes correctness of Android or of generated Rust without a refinement proof.
-
-## what VL should not redo
-
-The paper already supplies a state-machine decomposition, a finite-set/relational encoding strategy, a negated-query proof pattern, and empirical accounting for an Android permission model (the full {log} code is only linked, not printed). Inference: VL should avoid re-deriving these generic patterns; effort should target a Verus-specific library for frame conditions, map invariants, witness construction, and controlled solver exposure.
-
-Inference: threat to agent-written verified Rust is moderate. The paper demonstrates that automated proof can cover about 89% of model properties, but the remaining properties, abstraction choices, and trusted toolchain show that automation does not remove specification or refinement risk.
+The paper’s central limitation is incomplete automation: 3 of 14 security properties were not discharged by {log}. The paper also notes that the Coq and {log} data types are only equivalent “in some sense,” and that formula-program duality “pays the price of reduced efficiency.”
 
 ## techniques for the catalog
 
@@ -102,4 +94,3 @@ Inference: threat to agent-written verified Rust is moderate. The paper demonstr
 - negated satisfiability proving — prove universal properties by asking the solver for a counterexample to their negation
 - staged fallback verification — discharge easy obligations automatically, then export the remaining model to a stronger interactive prover (proposed methodology, section 5, PDF pages 19–20: “we envision the following methodology”; the paper does not implement the {log}-to-Coq translation, and the authors call a literal translation “overwhelming” in the Coq-to-{log} direction)
 - hypothesis minimization and predicate delay — reduce automated-search cost by retaining only necessary assumptions and delaying expensive predicates
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Clearly, the Coq theorem based on proving a universal property becomes a {log} query attempting to satisfy the negation of that property."): read the whole paper text (arXiv:2209.10278v1) and checked every quotation, number (13 components, 22 operations, 14 properties, 13 predicates, 756/45/801 queries, 920/381/1,302 s, 24 of 27, under 500 LOC, about 2%), page reference and technique step against it; changed one misquoted passage (Section 3 type-equivalence quote), one altered opening word ("Hence"), several page references (Lemma 1 is on page 6, grantPerm and Figure 4 on page 7, the Section 3 encoding text on page 11, the 90% statement on page 18), the overstated claims about a "concrete" witness, "complete" decomposition, generated invariance statements, delay "expansion" and the staged Coq fallback (which the paper only proposes); marked the trusted-base statement as inference; replaced the Research Square DOI (not in the paper text) with the arXiv link printed in the paper. Did not check: the Verus-form paragraphs (my own inference, not claims of the paper), the reference list, the {log} code in the online archive, or the cited prior work.

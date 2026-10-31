@@ -1,13 +1,6 @@
 # Automating Formal Verification with Agent-Guided Tree Search
 (authored by agents unless marked 🧑)
 Tag: `yao2026automating`, [paper](https://arxiv.org/abs/2605.27485)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
-
-## identity and scope
-
-Leo Yao's MIT MEng thesis (arXiv:2605.27485v1, 26 May 2026) evaluates LLM-generated Lean proofs for verified-code specifications and adds two language-model-directed tree searches. The experiments use 423 Lean tasks: 62 bignum, 172 VerifiedCogen, and 189 Verina. The paper's practical object is an implementation plus proof that Lean checks. The thesis states the motivation plainly: "Formal verification offers a path to provably correct software, but writing verified code remains expensive enough that the technique is rarely used in production." (Abstract, p. 3). This study records procedures that can be applied to VeruLaw (VL), whose target is Rust verified with Verus. Statements about Verus below are my inference unless the paper explicitly says otherwise.
-
-The paper is about Lean, not Verus, so its rates measure proof-generation behavior in Lean and are transfer evidence rather than VL performance.
 
 ## technique 1: iterative replacement with compiler feedback (vericoder)
 
@@ -109,17 +102,9 @@ evidence, assumptions, and failure
 
 The final context orchestrator beats the state orchestrator by 20.4 percentage points for GPT-5.4 (88.2% versus 67.8%) and approaches the agent baseline through K=20, but the uninterrupted agent reaches 95.0% at K=50 (Sec. 4.2.5, p. 59; Conclusion, pp. 63–64). On bignum, the orchestrator leads through much of the token range and reaches 72.6% versus the agent's 87.1% at K=50; on easier subsets the agent catches up or wins. The authors infer a width/depth tradeoff: branching finds distinct strategies, while parent decisions interrupt deep iteration. My inference: this conclusion is limited to two models and three Lean subsets. Endpoint selection, parent reasoning, context truncation, provider caching, and benchmark contamination remain trusted or uncontrolled factors.
 
-## what is proved, measured, and trusted
-
-Lean's kernel checks each accepted proof, and the harness's anti-bypass validation rejects listed escape hatches. The experiments measure pass rate, unique-token trajectories, tool-call ratios, and provider-list-rate costs. They do not prove that the generated specifications describe intended behavior, that the benchmark is uncontaminated, or that a proof remains correct after translation to Rust/Verus. Reported costs idealize caching: the paper says, "In practice, actual cache hit rates vary depending on timing of requests, provider routing, and other uncontrollable factors" (footnote 3, p. 35). The 423 tasks are translated or curated Lean exercises, not deployed Rust systems. A VL deployment must separately review contracts, trust the Verus verifier and compiler integration, and prevent unsound external-code escape paths.
-
 ## contradictions and numbers that need care
 
 The abstract's 95.0% at K=50 is the GPT-5.4 persistent-agent result on all 423 tasks, not a tree-search result. The final context orchestrator's headline is 88.2%, so calling the latter saturation would be wrong. The state-search resume variant was intended to save search work but lowered solve rate and raised search/submit ratios; this is an observed regression, not evidence that resume is intrinsically harmful. GPT-5.4's bignum table has 54/62 solved at K=50 (87.1%), while the combined 423-task rate is 95.0% (402/423); these denominators refer to different subsets and should never be merged. Cost figures use published rates and perfect caching assumptions, while real cache reads are discounted rather than free.
-
-## what VL should not redo
-
-VL should not spend its first effort reproducing Lean's 423-task benchmark, its parser-specific chain-of-thought study, or a state tree that discards subagent histories. Those experiments already establish that persistent tool use and context retention dominate restart attempts, and they show the failure mode quantitatively. Reusing the design means building a Verus-native benchmark from recent Rust code, indexing project lemmas, preserving verifier diagnostics, and comparing a continuous agent with endpoint branching under identical token and wall-clock budgets. VL should not claim a 95% production result from this thesis: benchmark saturation, contract quality, and translation differences remain open.
 
 ## threat to a product of agent-written verified Rust (inference)
 

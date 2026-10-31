@@ -88,12 +88,6 @@ Each scatter plot includes tasks correctly solved by at least one compared confi
 
 Against DSS, the comparison restricts to 1,395 tasks correctly solved by both PAR-6-UA and DSS. DSS is faster on 915 of 1,395 (66%), by 7.1 seconds median; the authors say Ultimate Automizer’s startup time is about 4.7 seconds larger (Section 4.4, pp. 14–15). They write: “For these 915 tasks, DSS is faster by 7.1s in the median.” (Section 4.4, p. 14.) PAR-6 solves many more tasks and has fewer incorrect reports in Table 1, but it is not faster on this restricted subset.
 
-## what is proved, trusted, and risky for VL
-
-The paper establishes the algorithmic soundness argument for stale abstractions and reports empirical effectiveness and wall time. Its implementation is not proved bug-free. The authors say: “A more detailed manual inspection of the incorrect analysis result lets us believe that the unsoundness is caused by the reused Ultimate Automizer functionality and not our parallelization.” (Section 4.2, p. 11.) This is their belief, not an established cause. Section 4.5 (p. 15) identifies possible implementation bugs, benchmark representativeness, and resource limits as threats to validity.
-
-Inference: for VeruLaw, the candidate adaptation is coordinator-controlled scheduling of independent verification jobs with serialized collection of checked results. Its benefit for Rust proofs remains untested here. An evaluation could measure proof latency and successful verification as worker counts change, while checking each proposed lemma in Verus.
-
 ## techniques for the catalog
 
 - CEGAR trace abstraction: enumerate error traces, decide path feasibility with SMT, and remove infeasible languages using interpolant automata
@@ -102,5 +96,3 @@ Inference: for VeruLaw, the candidate adaptation is coordinator-controlled sched
 - diverse trace search: recursively prioritize transitions with fewer previously selected continuations
 - bounded non-emptiness search: cap heuristic trace search at five seconds while preserving sound final-result logic
 - Inference: Verus adaptation could schedule independent verification jobs and collect checked lemmas serially
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "One reason is that our new search strategy allows us to recover from exceptions that occur during trace processing."): read the complete paper, including references, and the complete study; checked quotations, numerical results, section and page references, algorithm steps, version date, and paper link; corrected the year tag, environment page, union-versus-intersection counts, reported percentage discrepancy, search details, and unsupported Verus claims; did not reproduce experiments, inspect implementation code, validate cited works, or test the proposed Verus adaptations.

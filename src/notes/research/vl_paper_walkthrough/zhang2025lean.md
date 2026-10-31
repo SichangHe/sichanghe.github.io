@@ -6,8 +6,6 @@ Tag: `zhang2025lean`, [paper](https://arxiv.org/abs/2508.15878v2)
 
 The supplied paper is arXiv:2508.15878v2, dated 18 May 2026; its workshop imprint gives copyright 2025 (p. 1). The paper presents a benchmark-construction method rather than a new verifier. Its central pipeline has three stages: a parameterized problem module, algorithmic ground-truth generation, and template-based synthesis of aligned Lean and Markdown tasks (section 3, p. 3). The authors state: “We propose leveraging theoretical computer science (TCS) as a scalable source of rigorous proof problems, where algorithmic definitions enable automated generation of arbitrarily many challenging theorem-proof pairs.” (abstract, p. 1). They instantiate it with Busy Beaver (BB) machines and mixed Boolean-arithmetic (MBA) identities. The formal object is checked by Lean; the natural-language object is generated from the same data.
 
-Inference: for VL, the reusable lesson is to generate verification tasks from executable parameterized models and to retain a machine-checkable oracle for every generated instance. The paper does not verify Rust or claim that its benchmark construction proves systems properties.
-
 ## technique 1: parameterized formal–informal synthesis
 
 What it is. A “Problem Module” defines a family with a tunable difficulty parameter; “Ground-Truth Generation” computes correct answers; and “Template-Based Synthesis” emits a Lean theorem plus a natural-language description from the same instance (section 3, p. 3). The authors write: “Our approach employs a systematic three-stage synthesis framework that generates infinite families of formally rigorous mathematical challenges with provable correctness.” (section 3, p. 3).
@@ -32,7 +30,7 @@ Inference: How to do it. (1) Generate candidate transition tables for N states; 
 
 Verus form. Inference: model the tape and configuration as Rust datatypes, define an executable `step`, and prove a bounded lemma that the simulator’s result agrees with a mathematical `spec fn`. For a non-halting theorem over all `n`, use a loop invariant or a recursive proof function establishing that every reachable configuration has a successor. Verus can express the invariant and transition contract, but the selected BB bounds and their maximality must be supplied as trusted specifications or separately proved lemmas.
 
-Evidence and failure. BB Pass@16 is reported over 50 instances per N and 200 total (Table 2, p. 6): DeepSeek-Prover-v2-671B succeeds on 115/200 (57.5%), QwQ-32B on 98/200 (49.0%), and OpenAI-o4-mini on 54/200 (27.0%). The denominator counts problem instances, with 50 at each N and 16 attempts per instance. Section 4 defines success as follows: “We report Pass@16 on various frontier models, which counts a case as successful if and only if at least one of the 16 attempts could pass Lean compiler verification, that is, no errors are reported and no ’sorry’ is used in the proof.” (p. 5). Unexpected timeout, memory, and API failures are retried without counting toward the 16 attempts (section 4, p. 5). The table’s percentages agree with their fractions. Inference: a demonstrated success proves only the generated Lean theorem; a failed proof says nothing about the theorem’s truth. BB instances could help VL test induction and state-machine invariants.
+Evidence and failure. BB Pass@16 is reported over 50 instances per N and 200 total (Table 2, p. 6): DeepSeek-Prover-v2-671B succeeds on 115/200 (57.5%), QwQ-32B on 98/200 (49.0%), and OpenAI-o4-mini on 54/200 (27.0%). The denominator counts problem instances, with 50 at each N and 16 attempts per instance. Section 4 defines success as follows: “We report Pass@16 on various frontier models, which counts a case as successful if and only if at least one of the 16 attempts could pass Lean compiler verification, that is, no errors are reported and no ’sorry’ is used in the proof.” (p. 5). Unexpected timeout, memory, and API failures are retried without counting toward the 16 attempts (section 4, p. 5). The table’s percentages agree with their fractions.
 
 ## technique 3: MBA normalization to W2DNF
 
@@ -52,13 +50,7 @@ The authors extract a step lemma whenever the Lean goal’s left- or right-hand 
 
 Verus form. Inference: expose each transformation as a separate `proof fn` or lemma with an explicit equality `ensures`, then call those lemmas in a top-level proof. Keep executable functions free of proof-only calls after erasure. Do not encode a proof function as runtime logic.
 
-Evidence and trusted boundary. Error counts across BB and MBA are 122,404 irrelevant hallucinations (67.27%), 42,247 tactic misuse (23.22%), 8,871 voluntary give-ups (4.88%), 8,136 type mismatches (4.47%), and 300 others (0.16%) (Table 5, p. 8); the displayed percentages sum to 100.00%. Inference: validation depends on Lean, Mathlib, Kimina’s server, and the parser. VL should treat compiler acceptance as necessary evidence, then separately test that generated contracts express the intended product property.
-
-## what VL should reuse and avoid
-
-Inference: Already done here: parameterized theorem generation, deterministic semantic oracles, formal–informal pairing, canonical bit-vector normalization, lemma-level scoring, and compiler-backed whole-proof grading. VL should not redo these as generic ideas. Inference: a new VL contribution would need a systems-specific generator, Rust/Verus proofs, or measurements of maintenance and threat impact beyond this paper.
-
-Inference: the product threat is indirect; these benchmarks expose hallucinated lemmas, blind automation, and failure to compose locally correct steps; the same failure modes could produce plausible but incomplete Verus contracts. The paper does not measure Verus, Rust, memory safety, concurrency, or deployment behavior, so no direct product vulnerability follows from its model scores.
+Evidence and trusted boundary. Error counts across BB and MBA are 122,404 irrelevant hallucinations (67.27%), 42,247 tactic misuse (23.22%), 8,871 voluntary give-ups (4.88%), 8,136 type mismatches (4.47%), and 300 others (0.16%) (Table 5, p. 8); the displayed percentages sum to 100.00%.
 
 ## techniques for the catalog
 
@@ -67,4 +59,3 @@ Inference: the product threat is indirect; these benchmarks expose hallucinated 
 - MBA W2DNF normalization: decide two-variable linear MBA equivalence by comparing four canonical weighted coefficients
 - lemma-library proof decomposition: turn each goal-changing rewrite into an independently scored Lean step
 - compiler-backed validation: parse model output and accept only Lean 4 proofs that compile without `sorry`
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The server itself handles multiple requests efficiently by spreading verification across multiple Lean REPL processes."): read the full paper, including appendices, and checked the study’s quotations, numbers, section and page references, technique steps, tag, and arXiv link; corrected quotation wording, removed the unsupported exhaustive-enumeration claim, clarified the Pass@16 denominator and tactic names, documented the step-count and automation-restriction inconsistencies, and qualified the Verus inferences; did not reproduce experiments, run Lean or Verus, inspect the dataset or implementation, or independently validate the paper’s mathematical claims.

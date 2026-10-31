@@ -72,8 +72,6 @@ HMT costs more tokens. Section 4.3.4 reports 111,081 tokens for basic Scenario 6
 
 The paper supplies mathematical relations, generated test tuples, partial-pass measurements, and comparisons across agent configurations. It does not give a formal proof of candidate tax software. Its reference code is manually checked and stress-tested, while LLM interpretation supplies rule data and test proposals.
 
-Inference: VL could reuse HMT to find errors that simple directional checks miss, then formalize reviewed relations as Verus lemmas. The useful extension is a relation library with explicit domains, arithmetic assumptions, and links to legal requirements. Generated tuples and repairs would remain proposals checked against those contracts. Empirical worst-case gains support further testing; they do not justify treating the remaining test failures as harmless.
-
 ## techniques for the catalog
 
 - schema-constrained specification extraction — parse legal text into tax-rule JSON, regenerate on schema failure, then produce structured function descriptions
@@ -84,5 +82,3 @@ Inference: VL could reuse HMT to find errors that simple directional checks miss
 - symbolic-execution oracle generation — generate evaluation cases from reference tax code and compare candidate outputs with reference outputs
 - counterexample-guided refinement — return triggering inputs, outputs, and implicated functions to the SeniorCoderAgent for repair
 - reference-oracle stress testing — check boundaries, breakpoints, caps, and saturation, then spot-check overlapping behavior against tax tools
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "These generated test cases are then used to evaluate the generated code by comparing its outputs against the ground-truth software."): read the full 12-page paper and study; checked quotations, numbers, technique steps, section/page references, tag year, and DOI; corrected the year, metric definitions, workflow, page references, and GPT-4o MT comparison, and marked interpretations as Inference; did not inspect implementation artifacts, independently validate tax law, or rerun the experiments.

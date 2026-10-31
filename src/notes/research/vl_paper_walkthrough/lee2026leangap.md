@@ -8,8 +8,6 @@ Lean-GAP formalizes graduate algebra exercises from Dummit and Foote in Lean 4. 
 ## technique 1: PDF-to-LaTeX preprocessing
 Use this when the source is a scanned mathematical textbook and the downstream formalizer needs machine-readable notation. The paper’s procedure is: render relevant PDF pages as images with `pdftoppm`; crop running titles, page numbers, and other bottom-margin material; send cropped images to Mathpix Convert; use its STEM OCR to obtain initial LaTeX (§3.1, p. 3). LaTeX is chosen because it preserves mathematical notation in a human-readable form (§3.1).
 
-Inference: For VL, the analogous boundary is converting requirements, code comments, or diagrams into a normalized intermediate specification before asking an LLM for Verus. Keep the original artifact and the normalized text together; Verus can check the resulting Rust specification but cannot prove that OCR preserved a symbol. OCR output therefore requires a review step for signs, bounds, quantifiers, and subscripts.
-
 ## technique 2: constrained LaTeX-to-Lean autoformalization
 Use this when a normalized mathematical statement must become a short theorem declaration. The prompt asks for Lean 4 code, leaves the proof as `by sorry`, forbids extra variables, assumes `import Mathlib`, fixes theorem naming as `DF_{sec}_{subsec}_{exercise_num}`, and requires separate names for subproblems (§3.2, p. 3). The paper says the prompt “enforces consistent naming, avoids unnecessary auxiliary definitions, and ensures compatibility with Mathlib.” (§3.2, p. 3)
 
@@ -46,12 +44,6 @@ The paper uses Claude Opus 4.7 and Aristotle to help correct autoformalized stat
 
 Inference: A Verus agent can independently challenge contracts with counterexamples or boundary values, but any repaired contract needs human acceptance against the source requirement.
 
-## evidence, assumptions, and product threat
-The evaluation’s highest elaboration number, `95.5%`, is Codex `any_pass`, not semantic correctness; its semantic table reports 51.2% faithful on 1,989 files. Only seven exercises were solved by every system and 60 were universally failed (§4.1, p. 5). Geometry, answer-enumeration, and definitions absent from Mathlib are the paper’s examples of hard-to-formalize exercises (§5.1, pp. 6–7). Inference: trusted components are Lean elaboration, pinned Mathlib, GitHub CI, and the two-person sign-off; untrusted components are OCR, LLM translation, and the LLM judge (the paper itself states the judge’s scores are uncalibrated, §4.2). Inference: agent-written verified Rust faces the same highest-risk failure: a verifier can prove a precise but unintended contract. Human semantic review and independent anti-vacuity checks are therefore product requirements, not optional polish.
-
-## what VL should reuse
-Reuse the source-to-intermediate-to-contract pipeline, compiler-grounded retries, pinned toolchains, independent semantic review, suspicious-pattern checks, and adversarial tests for circular specifications. VL should not redo benchmark comparisons that measure Lean elaboration unless it also measures whether the Verus contract matches the intended behavior.
-
 ## techniques for the catalog
 - OCR normalization — render and crop source pages, then obtain notation-preserving LaTeX
 - constrained autoformalization — prompt an LLM for a minimal, consistently named theorem statement
@@ -59,4 +51,3 @@ Reuse the source-to-intermediate-to-contract pipeline, compiler-grounded retries
 - compiler-grounded retries — repair candidates using concrete verifier errors within a fixed budget
 - semantic and anti-vacuity screening — use suspicious patterns, independent judges, and problem-specific checks
 - answer anti-hacking — separate answer discovery from proof and reject circular definitions
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Notably, we found a subtle case where an autoformalized statement had neither a syntax nor a semantic error, but an original informal statement was faulty."): read the whole paper text and checked every quotation, the counts (430 of 1,966; Tables 1 and 3 figures; 7 solved by all, 60 universally failed), the toolchain versions, the per-exercise workflow steps, section and page references, and the tag and arXiv link; changed the wording of the central finding, the §5.2 error examples (the n ≥ 2 counterexample came from Aristotle; the section is on p. 8 only), the §5.1 page range (pp. 6–7), the description of the 95.5% figure, added the paper's caveat that Codex is not comparable to the single-shot baselines, and labelled own conclusions as Inference; did not check the Verus analogies beyond marking them Inference, the PDF figures, the Kaggle dataset, or the cited works.

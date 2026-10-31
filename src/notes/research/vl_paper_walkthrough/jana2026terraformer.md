@@ -44,7 +44,7 @@ Verus form (Inference): the analogue is SFT on Rust/Verus examples that compile 
 
 The paper reports that TerraFormer 14B SFT+RL attains 100.00% linter pass rate on TF-Mutn Test and 67.89% security compliance (Table 3, p. 7; denominator 740). It reports 17-model comparisons, but no ablation that isolates each oracle's causal contribution beyond SFT versus SFT+RL. Dataset quality also depends on an LLM judge and a cloud-expert survey: 100 TF-Gen and 100 TF-Mutn instances were surveyed, while three raters independently assessed 25 instances per dataset for inter-rater agreement (Section 7, pp. 8–9). The authors note that mutation success decreases with configuration complexity (Section 7, p. 9), and the repair loop is capped at five turns.
 
-Trusted components include Terraform, provider behavior, OPA semantics, generated Rego policies, the LLM judge, and cloud credentials/runtime assumptions. The work does not prove Terraform configurations in a proof assistant; “formal verification” here means tool-backed oracle checks. Inference: threat to VeruLaw is medium. The staged feedback and dense reward transfer directly to verified Rust generation, but policy quality and verifier diagnostics can be wrong, and RL can optimize loopholes. VL should keep Verus as the acceptance gate and use verifier feedback only to guide repair and ranking.
+Trusted components include Terraform, provider behavior, OPA semantics, generated Rego policies, the LLM judge, and cloud credentials/runtime assumptions. The work does not prove Terraform configurations in a proof assistant; “formal verification” here means tool-backed oracle checks.
 
 ## techniques for the catalog
 
@@ -52,5 +52,3 @@ Trusted components include Terraform, provider behavior, OPA semantics, generate
 - certificate-driven repair: feed each oracle's error certificate back to an LLM for bounded multi-turn correction
 - policy unit tests: express natural-language intent as Rego rules evaluated over an execution DAG
 - verifier-guided GRPO: reward partial and complete verifier outcomes after SFT warm-start training
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

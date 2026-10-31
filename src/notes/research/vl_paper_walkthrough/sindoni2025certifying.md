@@ -53,17 +53,8 @@ Steps from the paper:
 
 Inference: a Verus adaptation would need to prove the emitted predicates satisfy the obligations, establish RL over encoded traces, and ensure that the encoded model matches the intended input. Translating a certificate does not by itself establish these facts.
 
-## measured evidence, limitations, and VL impact
-The evaluation selected 53 safe HWMCC instances that nuXmv could prove within 1200 seconds. PVS certified 41 within 3600 seconds and 8 GB; the remaining 12 exceeded memory (Section 5, pp. 398–399). The paper reports: “of the 53 total test cases, 41 in total were successfully proved by PVS within the allotted time and memory constraints, whilst remaining 12 cases exceeded the available memory resources.” (p. 399). These results concern that selected safe set. Translation time was excluded from the comparison because the authors describe it as negligible (p. 398).
-
-PVS proof time was generally higher than model-checking time (Figure 1, pp. 399–400). The authors identify the main bottleneck: “Our analysis reveals that PVS performance bottlenecks occur primarily within proof steps other than the Yices solver component.” (Section 5, p. 400). They attribute costs to LTL expansion, installing and rewriting definitions, typechecking, and bookkeeping. Multiple fairness conditions and infinite-state/SMT certification are future work (Section 6, p. 401).
-
-Inference: the relevant lesson for a VL liveness checker is to export search artifacts that support a proof of the original transition system's property. This paper establishes and prototypes that pattern in PVS; it does not establish a result about Rust functional verification or Verus performance.
-
 ## techniques for the catalog
 - shoal-based rlive search — iteratively block inductive regions that cannot yield infinitely many fairness violations
 - RL temporal rule — prove liveness from cumulative-shoal closure, descent, and a final invariant
 - PVS certificate generation — translate a model and invariants into a theory and discharge rule premises
 - untrusted-search trusted-checker split — prove the original model/property theorem independently of the search algorithm
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "These proofs give an alternative demonstration of the correctness of the rlive algorithm, when the property is proved correct, using the rule RL."): checked all paper text, study quotations, numbers, section and printed-page references, technique steps, and publication metadata; corrected quotations, search targets and reachability steps, RL obligations, trust-boundary wording, and the tag year, and labeled adaptations as inferences; did not execute the authors' toolchain, inspect its repository, or independently reprove the results.

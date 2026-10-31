@@ -6,8 +6,6 @@ Tag: `dantas2026esbmcplc`, [paper](https://arxiv.org/abs/2606.15461)
 
 ESBMC-PLC is an open-source frontend that accepts IEC 61131-3 Ladder Diagram (LD) programs in PLCopen XML, translates them to ESBMC's GOTO intermediate representation, injects YAML safety properties, and checks them with SMT-based bounded model checking (BMC) or k-induction. The paper's abstract reports 13 benchmarks, 8 bugs with actionable counterexamples, 7 unbounded safety proofs by k-induction, and all runs under 60 ms on Apple Silicon. These are the authors' reported results, qualified by the graphical-conversion limitation in §11.1 (p. 21), discussed below. The experimental protocol uses a 300-second timeout and the median of three repetitions (§8.3, pp. 13–14).
 
-Inference: the architecture transfers to VeruLaw when a Rust program has a cyclic or state-machine model and properties can be compiled to assertions. The transfer is an inference because ESBMC-PLC verifies a translated PLC model, whereas Verus verifies supported Rust/specification code.
-
 ## technique: five-stage translation pipeline
 
 The implementation is an ESBMC frontend with an `ENABLE_LD_FRONTEND=On` build and an `ld-verify` wrapper. The method (§7.1, p. 8) is operational:
@@ -85,8 +83,6 @@ The strongest qualification appears in §11.1 (p. 21): “As a result, the GOTO 
 
 The conformance experiment covers four safe textual-format benchmarks, with 50 random sequences of 10 scans each: 2,000 scans total, seed 42, zero property violations (Table 12 and §8.9.2, p. 17). The two graphical benchmarks are excluded. Its input generator constrains tank sensors never to be simultaneously true, whereas the SMT model finds the tank defect under simultaneous sensor activation (§8.6, p. 15). Inference: checking properties of a re-executed IR on constrained random traces is limited evidence; it is not a source-versus-translation equivalence test or a check of arbitrary sensor faults. Section 8.9.1's wording about every benchmark is narrower in Table 12 and §11 (pp. 16–17, 21).
 
-Inference: for agent-written verified Rust, the threat is medium. A typed property language, explicit transition model, counterexamples, and induction strategy are directly useful. The main untrusted surface moves to the translator, specification author, external libraries, and hardware assumptions. Verus's `external_body` contracts and unsupported Rust remain trusted assumptions; a proof of the wrong transition function does not prove the PLC or product. VL should not redo the basic BMC/k-induction split or the five-stage frontend pattern. A useful next experiment is a verified translation relation between a Rust state machine and the source control language, including timer-unit and latch semantics.
-
 ## techniques for the catalog
 
 - LD-to-IR frontend: parse PLCopen XML, build a rung graph, translate to an intermediate representation, inject properties, and invoke an SMT checker
@@ -94,4 +90,3 @@ Inference: for agent-written verified Rust, the threat is medium. A typed proper
 - YAML safety properties: express mutual exclusion, invariants, absence, bounded response, and reachability with explicit timing justification
 - BMC and k-induction: use incremental bounded search for counterexamples and induction for unbounded invariant proofs
 - source-level counterexamples: report original LD names, scan cycles, and violated properties so fixes are actionable
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "When ESBMC reports a violation, the counterexample trace uses the original LD variable names from the PLCopen XML file (not mangled IR names)."): checked the full paper, quotations, counts, section/page references, translation steps, property guarantees, and experimental limitations; corrected page references and synthetic-pair counts, distinguished proposed type mappings from supported types, and added the graphical-conversion, property-total, and conformance-test qualifications; did not run ESBMC-PLC, inspect its implementation or artifact, or independently validate Verus transfer proposals.

@@ -38,11 +38,7 @@ The quantitative setup uses 100 verified training samples, a maximum of 400 epoc
 
 Verus form: Inference: generate candidate Rust functions, verify them in CI, and add only proof-checking candidates to the supervised corpus. A Verus proof result is the acceptance filter; model training remains outside Verus. Inference: this creates a sound data-selection loop only if the verifier, specifications, and generated API model are trusted.
 
-## trust, gaps, and product threat
-The paper states a theorem about automaton trace inclusion under its join condition (section 4.2), and reports specification-satisfaction probabilities and training durations (section 6). It does not tabulate full pass counts for Figures 9–11. Section 6.2 describes the 30 percent out-of-domain improvement as an average; it does not establish a pooled success rate over all generated programs. Inference: applying the guarantee to real robots requires trusting the AST keyword processor, API-to-proposition map, environment model, model checker, and temporal specifications. VeruLaw could reuse the component-and-join pattern for modular Rust proofs, provided it establishes faithful state models and the join obligations.
-
 ## techniques for the catalog
 - AST-to-FSA abstraction: parse generated control flow, map API keywords to finite-state transitions, and model-check the product with an environment system
 - compositional safety theorem: compose individually safe automata only after checking every join against bad-prefix conditions
 - verification-guided refinement: use only model-checked programs as labels for supervised fine-tuning, preferably at component granularity
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "This enables the LLM to iteratively improve its ability to generate specification-compliant programs without human intervention."): read the entire supplied arXiv v2 paper, including references and appendices; checked quotations, numbers, section/page references, technique steps, and the arXiv link; corrected page references, the training quotation, next-position semantics, and the theorem’s join quantifiers; added the keyword-processor limitation and inconsistent training-duration reports; marked implementation suggestions as inferences; did not independently validate the theorem proof, experiments, code, or Verus suggestions.

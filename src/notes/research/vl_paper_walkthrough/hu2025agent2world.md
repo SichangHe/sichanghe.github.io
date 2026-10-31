@@ -6,13 +6,9 @@ Tag: `hu2025agent2world`, [paper](https://arxiv.org/abs/2512.22336)
 
 Agent2World generates executable symbolic world models from natural-language descriptions. A world model is either PDDL or code and represents predicates, actions, states, and a transition function. The paper's motivation is that “correctness is behavioral and execution-dependent, while large-scale, verifiable supervision is scarce.” (section 1, page 1). Its system is a three-stage workflow: Deep Researcher fills specification gaps; Model Developer writes the PDDL or executable code; Testing Team generates tests and simulations and feeds failures back for repair. The paper presents no formal proof of any generated model; its verifier accepts a model that executes and passes the generated unit tests and, where applicable, simulation checks (section 3.2.2, page 5).
 
-Inference: for VeruLaw, this is a useful front end for turning a prose system description into candidate state transitions and tests before writing Rust/Verus. Passing tests cannot replace a Verus proof because tests cover selected executions, while a proof must establish the stated contract for all modeled inputs.
-
 ## knowledge synthesis
 
 Step 1 extracts questions and missing details from the task specification. The Deep Researcher uses web search and retrieval, summarizes sources, and updates a structured intermediate representation until no questions remain or a preset research count is reached (algorithm 1, appendix B.2, page 16). This stage explicitly addresses underspecified commonsense rules. The agent's tools are `browser_search` and `browser_open` (table 5, appendix B.1, page 15). The experiment blocks benchmark and source repositories to reduce leakage (section 4.3, page 6).
-
-Inference: a VL implementation should turn research results into explicit assumptions and a reviewable model before code generation. External facts remain trusted inputs; Verus cannot prove that a web result is true. The research artifact should record source, assumption, and the transition or invariant it motivates.
 
 ## executable model generation
 
@@ -46,8 +42,6 @@ The paper describes the training data inconsistently. Section 4.1 (page 5) says 
 
 Inference: the tests and the LLM judges (GPT-4o evaluates ByteSized32, section 4.3, page 6) remain trusted components, since the paper reports no check of them beyond the contamination analysis in appendix J.
 
-Inference: the threat to a verified-Rust product is substantial in behavioral specification and test adequacy. Agent2World already demonstrates research, executable synthesis, adaptive unit testing, simulation, repair traces, and rejection-sampled training. VL should not claim these as new. A distinct contribution would connect adaptive failures to formally stated Verus invariants and measure which test-found bugs become proof obligations, which remain outside the model, and how many candidate proofs are rejected by an independent semantic checker.
-
 ## techniques for the catalog
 
 - specification research — use a retrieval agent to fill missing rules and produce an explicit intermediate representation
@@ -57,4 +51,3 @@ Inference: the threat to a verified-Rust product is substantial in behavioral sp
 - feedback refinement — merge unit and simulation diagnostics into bounded repair iterations
 - verifier-guided rejection sampling — keep only trajectories whose final artifact executes and passes the generated checks
 - behavior-aware training — fine-tune on multi-turn repair traces rather than isolated final programs
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This trajectory is consistent with the qualitative analysis in Section 5.4: the Testing Team first drives the Model Developer to resolve structural and specification-level issues, and then focuses on subtle dynamics and invariant failures, ultimately producing world models that are both syntactically robust and semantically faithful to the target environments."): read the whole text (main body and appendices A-L); checked both quotations, every number against tables 1, 2, 3, 7, 8 and figure 4, the technique steps against section 3 and algorithm 1, and page references against the PDF page breaks; changed one quotation (works, not methods), four page references (section 3.1.2 to page 4, table 1 to page 6, table 2 to page 7, appendix C.1 to page 16), the CWMB baseline (GIF-MCTS† versus GIF-MCTS⋆), the unsupported limitation sentence, and added the training-data inconsistency; did not check the Inference paragraphs for VeruLaw beyond marking them as inference, the figures 5-8 and tables 9-16 beyond what is cited, or the cited external papers. The link is the arXiv identifier printed on the paper text (2512.22336).

@@ -48,13 +48,11 @@ The theory turns engineering choices into measurable levers. Decomposition and l
 
 Appendix C proposes choosing an embedding by minimizing a Bellman certificate gap plus a complexity penalty. Appendix D gives a scaling heuristic: ignoring logarithms and approximation error, `epsilon_t ≈ n_t^{-1/(d_t+2)}`, improved to exponent `(beta+1)/(d_t+2)` under a margin (Appendix D, p. 17). These are design diagnostics, not measured guarantees for a particular prover.
 
-Verus form (Inference). A VL implementation can measure proof length as verifier calls, count active obligations, and report overflow or unproved assumptions. A state embedding may be used for retrieval, but it cannot replace the concrete Verus state needed for soundness.
-
 ## evidence, assumptions and implications
 
 The paper is theoretical: no benchmark table establishes a universal success percentage. Its evidence is the MDP correspondence, Bellman telescoping argument, coverage lemma, concentration of rollout averages and the stated high-probability theorem. The verifier is assumed deterministic; query pairs are iid with local mass; `Q*` and the hypothesis class are Lipschitz on occupied regions; labels are conditionally independent unbiased rollout outcomes; and greedy actions remain in the retained candidate set (Assumption 3.1, pp. 4–5). If these fail, the bound does not apply or needs an added error term.
 
-What is proved is a conditional statistical bound. What remains trusted is the proof assistant's verifier, the state encoding, the distributional assumptions and the data-collection process. The paper explicitly says that its MDP notation “does not replace the underlying logic” (Section 2, p. 4). Inference: the product threat to agent-written verified Rust is low for soundness once Verus checks the final code, but high for productivity if candidate retention, state representation or rollout labels mislead the agent. VL should not redo the paper's abstract theorem; it can reuse average verifier-call length, occupancy tails, candidate-retention checks and margin-aware evaluation.
+What is proved is a conditional statistical bound. What remains trusted is the proof assistant's verifier, the state encoding, the distributional assumptions and the data-collection process. The paper explicitly says that its MDP notation “does not replace the underlying logic” (Section 2, p. 4).
 
 ## techniques for the catalog
 
@@ -64,5 +62,3 @@ What is proved is a conditional statistical bound. What remains trusted is the p
 - occupancy-sensitive evaluation: weight local value errors by the learned prover's unsolved-state tail and average truncated length
 - geometry and margin engineering: use retrieval and representations to improve coverage, smoothness, dimension and action gaps
 - overflow truncation: cap variable-goal states and report the probability mass discarded by the cap
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

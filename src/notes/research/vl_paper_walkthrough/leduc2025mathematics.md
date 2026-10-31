@@ -48,5 +48,3 @@ Inference: reuse bounded revision, fresh contexts, saved artifacts, and human co
 - semantic conformance prerequisite check: compare formal premises and conclusion with the intended theorem before final checker acceptance
 - context isolation: discard each prover/verifier instance and save successful artifacts
 - research-mode agents: use literature, context, prediction, and refinement roles around proof search
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The TTVR loops deployed on each managed to settle 5 out of the 14 statements, and, more precisely, statements 3, 4, 5, 7, and 13."): checked the entire paper, study claims, quotations, counts, section and page references, and technique steps; corrected references and quotations, documented partial formalization and the inconsistent number-theory count, added research-mode verification limits, and changed the link to the paper's arXiv version; did not independently verify mathematical proofs, external references, or implementation code.

@@ -5,8 +5,6 @@ Tag: `ernst2021deductive`, [paper](https://doi.org/10.4204/EPTCS.338.11)
 ## scope and result
 Ernst, Blau, and Murray propose exposing deductive verification through the same interaction model used for ordinary debugging. Their abstract states: “Commands like step-forward and step-in are backed by steps of a symbolic structural operational semantics, and the different paths through a program are readily represented by multiple running threads of the debug target inside the user interface.” (abstract, p. 89) They implement the design for SecC, an auto-active verifier for C, using the Debug Adapter Protocol (DAP) and Visual Studio Code.
 
-Inference: the direct VL opportunity is an IDE/debug-server layer for inspecting Verus proof states and path conditions. The paper does not verify Rust or measure proof productivity at scale, so the product threat is architectural overlap rather than evidence that another tool can replace Verus.
-
 ## technique 1: represent proof search as a debuggable symbolic state
 A debug target is a configuration containing a symbolic assignment `s`, path condition `ϕ`, and residual program. Parallel composition stores multiple branches. A proof obligation is represented by `ϕ ∧ ¬ψ`; it is discharged when unsatisfiable. The paper's running example is `abs`: at a breakpoint on the negative branch, `y` is `−x₀`, and the synthetic variable `path` shows the negated branch test.
 
@@ -40,12 +38,9 @@ Verus form. Inference: implement a Verus language-server/DAP bridge in Rust or T
 ## evidence, trust, and limits
 The paper's evidence is a conceptual semantics, a SecC implementation, a small security example, and one competition experience. It explicitly reports no systematic evaluation: “While we have not done a systematic evaluation or larger case study in this new SecC IDE yet, the integration was useful for the second challenge of the VerifyThis 2021 competition.” (Sec. 3, p. 94) The main technical limitation is path explosion from nondeterministic execution when branches are not joined. The authors suggest selective stepping and note that zippers can avoid repeatedly traversing configuration trees.
 
-Inference: the formal model, SecC symbolic executor, DAP/LSP implementations, SMT solver, and the user's contracts remain trusted; the paper does not discuss this. The paper does not show that DAP interactions improve correctness or that the UI preserves every internal verifier detail. Inference: threat to VL is moderate for developer experience and low for verification soundness. The useful product lesson is to make failed proof states inspectable through existing IDE protocols; the already-done work means VL should not claim the general idea of symbolic proof debugging as novel.
-
 ## techniques for the catalog
 - symbolic proof state: represent assignments, path conditions, residual code, and obligations as a small-step configuration
 - invariant debugging: expose loop initialization, preservation, and exit obligations as separate navigable branches
 - DAP proof navigation: map launch, thread, variable, step, continue, back, and evaluate requests to symbolic transitions
 - verifier retrofit: add a DAP server and LSP/IDE extension around an existing symbolic verifier
 - branch-aware inspection: show path, heap, security labels, and solver-backed expression evaluations at proof states
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our implementation supports Next only so far, but e.g. KIV and KeY support both interactions in their respective GUIs."): read the whole paper (pp. 89-96) and checked every quotation, page reference, the loop and DAP request descriptions, the SecC implementation numbers and the VerifyThis claim against it; changed one misquote ("400 LoC of TypeScript"), added the six-month thesis duration, the Next-only limitation, the path-explosion remark, the loop-obligation wording, labelled one unmarked conclusion as Inference, and replaced the arXiv link with the DOI printed in the paper (doi:10.4204/EPTCS.338.11); did not check the Verus-specific Inference sections against Verus itself, the cited references, or the PDF figures beyond the text.

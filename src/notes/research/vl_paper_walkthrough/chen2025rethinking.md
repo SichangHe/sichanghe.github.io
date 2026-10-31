@@ -62,8 +62,6 @@ Verus form. Inference: harvest only complete candidates that Verus verifies, ver
 
 The paper proves analytic lemmas about the relation between confidence and pass@N under calibration assumptions, and measures benchmark coverage and proof success. Inference: those mathematical statements about sampling do not establish generated-program safety. Inference: interpreting the experiments relies on the benchmark labels, verifier behavior, independent sampling, and implementation accuracy. The paper notes that an error in Theorem 4.2 was corrected in the revised version (Acknowledgments, PDF p. 10), so theorem version and appendix matter.
 
-Inference: the direct threat to VeruLaw is operational rather than a soundness break. DCO can increase the number of verifier-accepted candidates found under a fixed search budget, but it does not validate specifications, model the environment, or eliminate gaps in external-body assumptions. Existing Verus systems already provide the final checking component; this paper’s contribution is how a generator allocates probability before that check. Inference: whether these effects transfer to VeruLaw requires evaluation on its own proof corpus and verifier budget.
-
 ## techniques for the catalog
 
 - verifier-aligned pass@N: sample N candidates and measure whether an executable verifier accepts at least one
@@ -71,5 +69,3 @@ Inference: the direct threat to VeruLaw is operational rather than a soundness b
 - step-wise DCO: regularize each proof-step confidence so N_eff controls proof-tree branching
 - approximate DCO: estimate final-answer confidence by Monte Carlo marginalization over reasoning traces
 - expert iteration: search previously untraced Mathlib theorems with pass@1k, then compare one further training round
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Additionally, while we have noted similar overconfidence phenomena in GRPO, a more comprehensive study of RL methods is beyond the current scope."): read all 27 pages, including references and appendices; checked quotations, numbers, section/page references, objectives, filtering, proof-search budgets, and expert iteration; corrected DCO’s name, the arXiv link, Figure 2 page references, gradient attenuation, Mathlib results, CoT comparisons and uncertainty wording; added omitted implementation details and marked transfer claims as Inference; did not rerun experiments, audit code, independently prove the lemmas, or validate Verus/VeruLaw transfer.

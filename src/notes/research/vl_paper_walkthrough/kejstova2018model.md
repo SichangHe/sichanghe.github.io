@@ -2,7 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `kejstova2018model`, [paper](http://arxiv.org/abs/1805.12428v1)
 
-
 ## purpose and contribution
 
 The paper turns an existing software model checker into a runtime verifier by allowing one controlled execution to use the host operating system, then records that interaction so the model checker can replay it and explore alternative internal behaviors. The abstract states: “We describe a novel approach for adapting an existing software model checker to perform precise runtime verification.” (Abstract, p. 1) The design is demonstrated by extending DIVINE 4 and its DiVM/DiOS components.
@@ -74,12 +73,6 @@ How to apply it. Generate sequences by repeatedly swapping adjacent commuting ca
 
 Verus form. Inference: encode a trace event relation and prove a commutation lemma stating that two events produce equal abstract states when their independence preconditions hold. A proof function can show that swapping adjacent independent events preserves the trace postcondition; a sequence invariant can then justify exploring a reduced partial order. Exact host causality cannot be proved from a trace alone, matching the paper’s warning that the approximation may order some actions too strictly.
 
-## measured results, trust, and product threat
-
-The source distribution had about 600 DIVINE tests. In passthrough evaluation, 595 passed, 3 timed out because of blocking calls, and 9 timed out because of infinite loops (Section 6.6, pp. 14-15). The denominator is the stated test set (600-plus cases; the reported categories sum to 607, so the paper’s “about 600” description and category total are inconsistent). Inference: percentages should therefore not be reported without choosing the explicit category denominator 607 or the approximate suite size 600. Four hand-written programs demonstrated passthrough and replay, but the paper gives no runtime or memory measurements and says “Quantitative assessment of the runtime and memory overhead is subject to future work” (Section 6.6, p. 15).
-
-Inference: the checker, stand-in OS, host kernel, libc, trace format, and model-checker implementation remain trusted components. The paper says the four programs “clearly demonstrate that the approach works” (Section 6.6, p. 15) and that it is “not yet possible to use our prototype with many complete, real-world programs”; Inference: this supports prototype feasibility, not complete host-environment correctness. Inference: for VeruLaw, the threat is high when verified Rust relies on unmodeled files, networking, clocks, blocking, or FFI; the transferable lesson is to isolate those effects behind explicit contracts and replayable traces, then prove pure state transformations around them. Existing work already supplies the passthrough/replay architecture, so VL should not redo that concept as a novelty claim; it can instead measure whether Verus contracts prevent stale or incomplete environment assumptions.
-
 ## techniques for the catalog
 
 - three-mode stand-in os — separate virtual modeling, host passthrough, and trace replay so one checker supports testing and exhaustive exploration
@@ -89,4 +82,3 @@ Inference: the checker, stand-in OS, host kernel, libc, trace format, and model-
 - trace capture and replay — record syscall inputs and observable outputs, then constrain model-checking runs to matching traces
 
 - causality-aware partial order — commute independent syscall actions to avoid unnecessary linear trace ordering
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "When the code that is specific to the host operating system resides in the stand-in operating system, it can be ported once and multiple model checkers can benefit."): I read the whole paper text and checked every quotation, number (200/1400/under 600 lines, 2500/5000 lines, 595/3/9 of about 600 tests), section and page reference, and the technique steps against it, and confirmed the arXiv link and tag. I changed several page references (e.g. mode list pp. 5-6, replay tests and results p. 15), one quotation that was not word for word (Section 5.2), the replay step that claimed arguments are compared, the unsupported remarks about unrecorded environment state and resource mutation, and marked own conclusions as Inference. I did not check the Verus forms beyond marking them Inference, the VeruLaw threat assessment, or the cited related work.

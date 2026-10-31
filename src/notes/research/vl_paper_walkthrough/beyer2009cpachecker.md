@@ -41,15 +41,11 @@ Evidence. On ten simplified Windows-driver programs, Table 1 reports processor-t
 
 Verus form. Inference: represent finite value facts as ghost state and discharge path conditions with `assert` and lemmas; use stronger invariants or abstraction lemmas when concrete values exceed a manageable case split. Inference: Verus does not automatically perform lazy predicate abstraction, so this strategy would be a proof-authoring or external search layer that proposes invariants, followed by Verus checking them. The threshold experiment transfers as a tuning study over invariant strength or case partition size.
 
-Limits. The benchmark is ten driver variants, all safety reachability tasks, on GNU/Linux (Ubuntu 8.10) x86 32, Intel Core 2 Duo, 2 GB RAM; the JVM memory limit is 1.8 GB and timeout 1200 seconds (Section 3, p. 5). These settings and the small benchmark do not establish general performance. Inference: VL should publish machine, solver, timeout, and benchmark denominators for every configuration.
+Limits. The benchmark is ten driver variants, all safety reachability tasks, on GNU/Linux (Ubuntu 8.10) x86 32, Intel Core 2 Duo, 2 GB RAM; the JVM memory limit is 1.8 GB and timeout 1200 seconds (Section 3, p. 5). These settings and the small benchmark do not establish general performance.
 
 ## what is proved, measured, and trusted
 
-Measured outputs are runtime, predicate counts, and refinement counts. The paper does not prove the implementation’s soundness, and the extracted paper gives no formal theorem that composition preserves it. Trusted components include the parser/CDT front end, CFA construction, CPA implementations, SMT solvers (Simplify and MathSAT), interpolation procedures, Java runtime, and benchmark classifications (Section 2, p. 3; Section 3, p. 5). Inference: for VL, Verus and its SMT backend, Rust compiler model, and any generated proof-search code must be named as trusted or checked components.
-
-## implications for VL
-
-Inference: CPAchecker’s most reusable lesson is an experiment architecture that keeps representations and analysis choices replaceable, so VL can compare invariant-generation or counterexample-guided strategies under one harness. Inference: VL should not redo CPAchecker’s Java/CFA parser or its threshold experiment; those are background designs. Inference: threat to an agent-written verified-Rust product is medium: modular proof search and reproducible tuning can improve reliability, but a wrong abstraction, unsound external assumption, or misconfigured solver can still yield a misleading result.
+Measured outputs are runtime, predicate counts, and refinement counts. The paper does not prove the implementation’s soundness, and the extracted paper gives no formal theorem that composition preserves it. Trusted components include the parser/CDT front end, CFA construction, CPA implementations, SMT solvers (Simplify and MathSAT), interpolation procedures, Java runtime, and benchmark classifications (Section 2, p. 3; Section 3, p. 5).
 
 ## techniques for the catalog
 
@@ -57,4 +53,3 @@ Inference: CPAchecker’s most reusable lesson is an experiment architecture tha
 - two-step analysis integration — register a component and implement every CPA operation interface
 - composite explicit-value and predicate abstraction — combine cheap value tracking with predicate refinement and tune the value threshold
 - reproducible precision tuning — report runtime, predicate/refinement counts, machine, memory, timeout, and benchmark denominator
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "In order to extend CPAchecker by integrating an additional CPA for a new abstract domain, only two steps are necessary."): read all 6 pages of the arXiv technical report; checked every quotation, the Table 1 and Table 2 numbers, the experiment setup (machine, 1.8 GB JVM limit, 1200 s timeout), section and page references (page numbers are the report's own), the technique steps, and the arXiv link and tag (author and year correct); changed "exactly two" to the paper's "only two steps", replaced "reproducibility" with the paper's comparability wording, removed the unsupported ordering of the registration steps and the unsupported "repeat until" loop (now marked Inference), added the Table 1 column-sum inference, and added the report identification; did not check the cited earlier papers [4], [5], the Verus-side Inference statements beyond their labelling, or the PDF figures beyond the extracted text.

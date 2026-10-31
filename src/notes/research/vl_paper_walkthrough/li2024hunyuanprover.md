@@ -59,10 +59,6 @@ Evidence. For HunyuanProver v16, BFS+DC reaches 68.44% versus BFS+PC 64.75% on M
 
 The paper uses the Lean engine from LeanDojo for tactic-data generation and evaluation (Section 4.1, p. 5). Inference: a successful Lean proof checks the formal statement; a tactic trajectory is not itself evidence that the statement matches a natural-language requirement. MiniF2F accuracy measures the share of 244 test problems solved under the stated model, search, and timeout budgets. Training-token counts and iteration curves measure data-generation scale. The paper's final conclusion is: “critic-guided tree search algorithms further enhance the overall effectiveness of the prover.” (Conclusion, p. 7.)
 
-Inference: Lean's kernel, environment, and formal statement determine what a checked proof establishes. Translation accuracy matters for correspondence with source requirements; data filters, critics, checkpoints, and search limits affect which proofs the system finds. The paper does not establish semantic faithfulness of generated natural-language-to-Lean translations, nor transfer from MiniF2F to Rust systems. Inference: applying this pipeline to VL requires checking generated contracts against the intended requirements.
-
-Inference: VL should not redo generic tree-search results as new science; it can reuse the practical pattern of verifier-backed candidate branching, critic-guided ranking, and iterative data synthesis. A useful new experiment would compare BFS/MCTS over Verus repairs on a fixed Rust benchmark, reporting exact denominators, wall-clock cost, proof stability under dependency changes, and contract-fidelity errors.
-
 ## techniques for the catalog
 
 - iterative verifier-backed data synthesis — generate many formal statements, retain checked tactic trajectories, and fine-tune across rounds
@@ -70,4 +66,3 @@ Inference: VL should not redo generic tree-search results as new science; it can
 - ηMCTS with UCB — revisit states and allocate expansion by critic importance while balancing exploration and exploitation
 - policy-confidence and process critics — rank tactics or states using token likelihood and +1/−1 reachability labels
 - coarse-to-fine distance critic — predict remaining proof length as a balanced-tree path and use it to guide search
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We initially see performance boosts in early iterations until version v8, and then minor improvements are observed by further increase the number of training tokens from roughly 2.75B (v8) to 4.25B (v12)."): checked all paper text, quotations, numbers, section and page references, and technique descriptions; corrected table and section pages, the training-token trend, MCTS comparison wording, unsupported search and distance-label procedures, and inference labels; did not reproduce experiments, run Lean proofs, or inspect external references.

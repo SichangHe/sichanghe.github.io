@@ -6,8 +6,6 @@ Tag: `li2026confidence`, [paper](https://doi.org/10.48550/arxiv.2609.37396)
 
 This paper inserts a human-auditable Protocol Intermediate Representation (IR) between a natural-language protocol description and generated SAPIC+/Tamarin code. The abstract identifies the bottleneck: “the main correctness bottleneck is the semantic accuracy rather than the syntactic validity of the intermediate protocol representation.” (Abstract, p.1). The IR records roles, value provenance, messages, cryptography, checks, events, proof goals, compromise assumptions, and expected counterexamples. The initial IR is untrusted; after review it becomes the semantic source for code generation. The paper states: “the initial IR is untrusted, but the reviewed IR becomes the trusted source for model generation.” (Section 1, p.3).
 
-Inference: the transferable idea for VeruLaw is a reviewed semantic contract between an LLM and a verifier. It does not prove that the IR-to-model translator is correct; the paper explicitly lists that as a limitation (Section 5.2, p.19).
-
 ## technique 1: construct an evidence-bearing Protocol IR
 
 What it is. Instead of asking an LLM for final Tamarin code, ask it for a structured semantic draft. Each field has a value plus evidence: a source quote when directly supported, an inferred marker when derived, or an assumption marker when unsupported. The IR separates fresh execution values from long-term setup, records sender and receiver derivability, and gives checks and events explicit locations.
@@ -64,16 +62,6 @@ The authors also inspect errors that bag-of-atoms metrics miss. EDHOC’s genera
 
 Verus form. Inference: use structural comparison as a pre-proof diagnostic for generated Rust, then add relational proof obligations for role order, ownership, and input provenance. A passing F1 score cannot replace a proof that a value came from a peer rather than local computation.
 
-## evaluation, trust, and product threat
-
-Setup: experiments ran on an Apple M5 Pro MacBook Pro (15-core CPU, 16-core GPU, 24 GB RAM, macOS 26.5); LLM calls were provider-hosted June 7–8, 2026; Tamarin was 1.12.0 and Maude 3.5.1 (Section 3, p.10). Table 1’s averages use UI-visible cells: GPT-4o EMR 51.9%, SA 77.4%, WFR 82.1%, and 19.7 repairs; GPT-5.5 EMR 36.1%, SA 99.96%, WFR 44.8%, and 0.1 repairs (Table 1, p.12). WFR’s denominator is provenance uses, whereas SA’s denominator is labeled cells; the paper explicitly says they measure different things (Section 3, p.11). GPT-5.5’s high SA therefore does not imply high provenance correctness.
-
-The 18-case totals in Table 2 report GPT-5.5 14/18 verification success and 12 total edits, while DeepSeek reports 9/18 and 1302 edits (Table 2, p.12). Generation times are outcome-conditioned; failed runs may stop before proof search, so totals must not be used as direct efficiency comparisons (Section 3.4, p.15). The text repeats the sentence “We also report model generation and verification time in Table 2.” (Section 3.4, p.15), but gives no variance.
-
-Proved or measured: field-level extraction metrics, case-level Tamarin acceptance and expected outcomes, structural alignment, UI edits, and wall-clock times. Trusted: the natural-language source, LLM extraction, reviewer judgments, reviewed IR, the IR-to-SAPIC+ translator, Tamarin/Maude, and the cryptographic model assumptions. The paper does not prove the translator correct (Section 5.2, p.19).
-
-Inference: threat to agent-written verified Rust is high if a passing proof is treated as semantic correctness. This workflow’s strongest safety contribution is forcing review of attacker capabilities, value provenance, and event order before proof. VL should reuse the semantic-checkpoint and repair-boundary design rather than redo Protocol IR; its open engineering task is a Verus-specific IR whose reviewed fields map to executable ownership and proof contracts.
-
 ## techniques for the catalog
 
 - evidence-bearing IR — capture protocol values, messages, checks, events, assumptions, and source evidence before code generation
@@ -82,4 +70,3 @@ Inference: threat to agent-written verified Rust is high if a passing proof is t
 - repair boundary — automate syntax repair but require renewed review for semantic changes
 - structural and causal comparison — compare generated models with references while inspecting role order and input provenance
 - counterexample classification — compare traces with expected attacks instead of assuming every failed lemma is a modeling error
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

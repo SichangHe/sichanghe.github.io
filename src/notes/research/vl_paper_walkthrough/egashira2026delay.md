@@ -29,13 +29,8 @@ Verus form (Inference). During RL of Verus code, run the full trusted verifier p
 ## what is proved, trusted, and limited
 The experiments prove causal effects in a controlled arithmetic environment, not correctness of any production verifier. The oracle implementation, trigger definitions, DAPO training, and model outputs are trusted. Systematic errors can interact in real code, depend on inputs, and lack an accessible V*, which the authors list as limitations. They conclude that “averaged a priori error rates are insufficient to predict whether a given verifier is reliable enough to attain reasonable performance.” (Section 5, p. 10)
 
-What VL should not redo: random independent verifier-noise experiments are already covered; new work should test systematic Verus-specific triggers and interactions.
-
-Inference: for VeruLaw, false-positive Verus rewards are a severe threat. A checker that accepts a recurring malformed proof or weak specification can induce plateaus or collapse even with low initial FPR. Conditional-advantage audits and sparse independent Verus checks should therefore accompany any RL pipeline; pass@1 or aggregate verifier accuracy is insufficient evidence.
-
 ## techniques for the catalog
 - systematic trigger injection — add deterministic output-dependent false positives or false negatives to study verifier dynamics
 - oracle versus verifier metrics — track true oracle reward, training reward, FPR, and FNR separately
 - conditional advantage — correlate trigger frequency and oracle advantage to predict plateau versus collapse
 - verifier alternation — periodically replace a cheap verifier with a trusted oracle to mitigate destructive reward bias
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

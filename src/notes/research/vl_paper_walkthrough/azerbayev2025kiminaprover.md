@@ -39,7 +39,7 @@ When to use it. Inference: use this format to train proof planning and case anal
 
 Verus form. Inference: interleave prose with candidate assertions, proof functions, loop invariants, and termination measures, followed by the complete program and proof. Inference: train on verifier-accepted outputs and filter for overlap between the intermediate proof fragments and the final artifact.
 
-Evidence and limits. Figure 4 and §3.2.4 (pp. 5–6) associate growth from 2,500 to over 10,000 output tokens with miniF2F pass@32 improving from 61.8% to nearly 69%. Inference: this correlation does not isolate the causal contribution of textual reasoning. Appendix F.2.1 (pp. 23–24) shows an incomplete case analysis whose generated Lean tactic fails. Inference: VL should retain verifier logs alongside reasoning traces.
+Evidence and limits. Figure 4 and §3.2.4 (pp. 5–6) associate growth from 2,500 to over 10,000 output tokens with miniF2F pass@32 improving from 61.8% to nearly 69%.
 
 ## technique 3: RL with Lean binary rewards and format stabilization
 
@@ -73,16 +73,6 @@ Verus form. Inference: a Verus service can cache parsed crates and run independe
 
 Evidence and limits. Inference: throughput measures checking capacity rather than proof quality. The paper reports correcting eight statements, not changing the benchmark's size (§3.1, p. 4). Inference: comparisons should account for benchmark statement and Lean-version differences; training-set decontamination does not change the evaluation denominator.
 
-## results, trust, and threat to VL
-
-Table 1 reports Kimina-Prover-Preview (72B) at 52.94% pass@1, 65.16% pass@8, 68.85% pass@32, 77.87% pass@1024, and 80.74% pass@8192 on miniF2F-test (p. 5). The 1.5B distilled model reaches 56.2% at 32 samples and 61.9% at 1,024; the 7B distilled model reaches 63.1% and 70.8% at those budgets (Table 1, p. 5). These smaller models receive SFT on 72B rollouts, starting from Qwen2.5-Math-Instruct models, with packing, cosine learning-rate scheduling, initial learning rate 2 × 10−5, and three epochs (§3.1, p. 4).
-
-Table 2 (p. 6) reports miniF2F pass@32 of 68.85% for Kimina, 37.70% for gemini-2.5-pro-preview-03-25, and 24.59% for OpenAI o3-mini. The prose says o3 in §3.2.2, but the table identifies o3-mini. At pass@32, the IMO/AIME subset scores are 20.00%/46.67% for Kimina, 5%/13.33% for Gemini, and 0%/6.67% for o3-mini. At pass@8192, Kimina reaches 80.74% overall, 40.00% on IMO, and 86.67% on AIME; the table has no corresponding 8192-sample results for the other models.
-
-Inference: trusting these results requires trusting the verification environment, benchmark statements, server, and evaluation implementation. Autoformalization and judging are additional sources of training-data error; Lean acceptance does not validate their semantic decisions. Inference: a Verus product should distinguish proving a generated contract from establishing that the contract captures the user's requirement.
-
-Inference: the relevant competitive pressure on VL is automated proof generation with verifier feedback. The reported size comparison combines distilled 1.5B/7B models with a 72B RL-trained model, so it does not isolate model size from training procedure. Rust ownership, unsafe code, external crates, concurrency, and system-scale invariants are not evaluated here. Inference: VL could adapt the reward design to Verus, add prerequisite checks for contract preservation and forbidden proof bypasses, and evaluate repair under dependency changes. Compiler-feedback repair and external library search are future directions in this paper, not demonstrated parts of its inference pipeline (§4, p. 6).
-
 ## techniques for the catalog
 
 - autoformalization with expert iteration — translate informal tasks into candidate Lean statements, judge them, and use accepted statements for prover training
@@ -91,4 +81,3 @@ Inference: the relevant competitive pressure on VL is automated proof generation
 - format-collapse filtering — require tactic-block coverage and discard unstable negative-gradient samples during RL
 - cached parallel checking — reuse import environments with LRU caching and parallel Lean workers to raise verification throughput
 - test-time scaling — sample independently at increasing pass@k budgets and measure the fraction of benchmark problems solved
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We note that this method required careful expert monitoring as we observe that the model would repeatedly make mistakes that the LLM judge model cannot catch, as long as it passed compilation."): checked the entire paper including appendices, all study quotations, numbers, section and page references, and technique steps; corrected author tag, paper link, search terminology, autoformalization procedure and metrics, SFT description, page references, benchmark comparisons, and unsupported conclusions; did not reproduce experiments, inspect released code or datasets, or validate the proposed Verus adaptations.

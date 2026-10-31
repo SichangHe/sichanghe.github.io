@@ -24,7 +24,7 @@ Inference: Verus form. A Rust/Verus specification can model the contract with a 
 
 Evidence. The paper’s Definition 2 gives the exact two winning conditions and requires negligible winning probability for every probabilistic polynomial-time adversary (section 4.1, p. 776). This is a security definition, not an implementation measurement.
 
-Limits. The authors state: “PoX schemes do not aim to check correctness and absence of implementation bugs in S.” They also exclude run-time attacks exploiting bugs in S itself (section 4.1, p. 775). Inference: VL must separately verify the Rust program’s functional and memory-safety properties before treating a PoX as evidence of a safe result.
+Limits. The authors state: “PoX schemes do not aim to check correctness and absence of implementation bugs in S.” They also exclude run-time attacks exploiting bugs in S itself (section 4.1, p. 775).
 
 ## technique 2: compose a hardware execution monitor with verified remote attestation
 
@@ -60,13 +60,9 @@ Inference: Verus form. A verified Rust sensor wrapper can expose a `spec fn` map
 
 Evidence. The proof-of-concept uses an 8 MHz APEX-enabled MSP430 synthesized on a Basys3 Artix-7 FPGA and communicates over ZigBee. Porting the open-source sensor code required about 30 additional C lines, mainly replacing shared `digitalRead/Write` APIs (section 7.3, p. 783). The authors state: “We do not observe any overhead for software’s execution time on the APEX-enabled P rv since APEX does not introduce new instructions or modifications to the MSP430 ISA.” Proof generation includes execution plus attestation. The reported 900 ms worst case is for `XProve`, when `ER+OR` occupies the full 8 kB program memory on an 8 MHz device; it excludes the program’s own execution time (section 7.1, p. 782).
 
-Inference: This authenticates a reported value’s origin in the specified execution; it does not establish sensor calibration or physical accuracy. VL should treat sensor-driver correctness and physical-model assumptions as separate proof obligations.
-
 ## what is proved, measured, and trusted
 
 The formal claim is that APEX sub-properties imply PoX security when composed with VRASED. NuSMV checks the RTL FSM invariants; SPOT assists the LTL implication proof. Appendix B separately gives the cryptographic reduction to VRASED security (section 6.2, p. 780; Appendix B, pp. 786–788). Measurements cover FPGA/RTL resource overhead, verification time and memory, proof-generation time, and a fire-sensor demonstration. Trusted assumptions include CPU conformance, cryptographic HMAC security/correctness inherited from VRASED, immutable ROM and hardware, and the exclusion of physical attacks. Inference: agent-written verified Rust could use the contract and invariant decomposition, but a Verus proof alone cannot establish the hardware monitor or cryptographic reduction.
-
-Inference: VL can reuse the separation between program correctness, hardware execution monitoring, and cryptographic authenticity. A proof that code ran still needs a correct program specification and explicit sensor and hardware assumptions.
 
 ## techniques for the catalog
 
@@ -75,4 +71,3 @@ Inference: VL can reuse the separation between program correctness, hardware exe
 - LTL hardware monitor composition — protect executable, output, and metadata regions and prove their conjunction implies end-to-end attestation security
 
 - authenticated sensing and actuation — bind memory-mapped physical I/O and returned outputs to a fresh, unmodified execution proof
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The resulting SMV is simultaneously verified against all LTL specifications, using the model checker NuSMV [12], to prove that the final Verilog of APEX complies with all necessary properties."): read the whole paper including appendices; checked quotations, protocol steps, assumptions, measurements, and section/page references; corrected the publisher link, request definition, memory-region instructions, violation conditions, overhead baselines, proof-time scope, proof-method description, and page references; marked proposed Verus/VL applications as Inference; did not reproduce proofs, run the implementation, or independently validate hardware or physical sensing.

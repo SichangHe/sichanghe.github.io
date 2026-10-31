@@ -44,14 +44,6 @@ Ablations remove context-premise or premise-premise graph edges and run without 
 
 The experiments used three NVIDIA A6000 GPUs (48 GB each), two Intel Xeon Silver 4410Y CPUs (24 cores, 48 threads each), and 512 GB RAM. Initial tuning took about a day, the second stage about 12 hours, and final ensemble training roughly one day; EMA added negligible time (Appendix C, PDF p. 7). Appendix B describes architecture tuning against first-batch training Recall@10, followed by regularization tuning against validation Recall@10, with 120 training epochs and selection by best validation Recall@10 (PDF pp. 7–8). Inference: the random split may share neighboring library patterns between training and test. The authors write: “Finally, the model will be evaluated on more realistic splits, such as the LeanDojo "novel" split or a split based on the creation time of premises.” (section 5, PDF p. 5)
 
-## Verus transfer, trusted boundary, and product threat
-
-Inference: in VL, graph extraction, tokenization, RGCN weights, InfoNCE training, ensemble averaging, and candidate ranking are untrusted search components. The Verus verifier and its trusted specification remain authoritative. The graph can also encode a wrong dependency or leak a future lemma; source-order filtering and held-out temporal splits reduce that risk but do not establish semantic relevance.
-
-Inference: premise selection is a direct product threat when an agent relies on a retrieved lemma whose statement is weaker, differently quantified, or tied to an unintended trait implementation. Require the agent to display the complete lemma signature and let Verus reject any mismatch. Cache retrieval by source revision and invalidate it when a lemma or specification changes.
-
-Inference: VL could reuse typed dependency extraction, visibility-aware candidate filtering, graph-aware ranking, and ablations that test which edges matter. It should not claim that graph augmentation alone caused the gains: the authors explicitly identify loss and sampling as confounders, and Table 2 omits the ensembling used in Table 1.
-
 ## techniques for the catalog
 
 - typed formal-library graph — extract premise and proof-state nodes with relation-typed references and source-order availability
@@ -59,4 +51,3 @@ Inference: VL could reuse typed dependency extraction, visibility-aware candidat
 - contrastive premise training — train with InfoNCE against valid premises and all other candidates as negatives
 - ensemble retrieval — average six independently trained retrievers and apply exponential model averaging
 - availability-aware evaluation — restrict candidates by imports and prior source position; temporal or novel splits are proposed future work
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Note that the edge directions prevent information flow from states to dependencies or future premises to prior dependencies."): checked all study quotations, numbers, section/page references, and technique steps against all eight paper pages; corrected the paper link, graph relations and state labels, training terminology, page references, and interpretation of results; removed unsupported denominator claims and marked transfer recommendations as Inference; did not inspect code, reproduce experiments, or verify the proposed Verus transfer.

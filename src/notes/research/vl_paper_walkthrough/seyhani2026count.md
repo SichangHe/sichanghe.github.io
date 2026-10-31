@@ -36,8 +36,6 @@ The paper reruns FPerf's search and verifies FPerf's candidate workloads in both
 
 Limits stated by the paper (§7): no direct per-packet metrics such as individual delay (delay queries are expressed as thresholds on summed backlogs); no PIFO-style priority queues; AQM that relies on per-packet metrics (e.g., CoDel) cannot be directly captured. Encoding size grows with the number of traffic classes. State machines were derived from Buffy programs by hand; automation is future work.
 
-Inference: Z3 and the hand-derived state machines are trusted. For VeruLaw, the modular boundary and conservation invariants are reusable, but class-count explosion and nondeterministic over-approximation threaten precision for agent-written networking code. VL could reuse this abstraction rather than reimplement exact slot-level buffers for every queue system.
-
 ## techniques for the catalog
 
 - vector-of-counts buffer — replace packet slots with per-class counts and conservation constraints
@@ -45,4 +43,3 @@ Inference: Z3 and the hand-derived state machines are trusted. For VeruLaw, the 
 - modular contention model — connect interchangeable buffer abstractions to a backlog-driven state machine
 - SMT workload query — prove a performance property by checking `P ∧ CP ∧ ¬Q` for unsatisfiability
 - routing-aware class reduction — remove traffic classes that can never reach a buffer before encoding a composed network
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "Consistent with this intuition, for all workloads in the case studies (§6), our abstract verification engine returned the same SAT/UNSAT result as FPerf’s for Eq. 2."): read the whole paper text and checked every quotation, number, section reference, and technique step; changed the link to the presentation page in the paper text, fixed two truncated quotations, corrected the meaning of UNSAT (all inputs satisfying P, not all workloads), rewrote the Buffy translation steps to match §4/§6.3, moved section references (§2.2, §3), added the W=C quote, spurious-SAT caveat, and the paper's 30-vs-50-packet inconsistency, and marked the step list and the trusted-base claim as Inference; did not check figure images or plotted values beyond the numbers stated in the text.

@@ -49,12 +49,10 @@ Evidence uses four protocols (NSSK, Kao-Chow v1, EDHOC, SPDM), three runs per ro
 ## what is proved, trusted, and still missing
 The paper measures extraction and structured-property generation; it does not prove any protocol implementation. Its primary extraction metric is EC-F1, the harmonic mean of extraction precision and property-level recall. GPT-5.4 with retrieval is used for AIFG, Gemma2-9B-FT for extraction, and the reported RQ2 gains are on held-out protocols: Gemma2-9B precision rises from 24.0% to 66.6%, recall from 87.9% to 97.6%, and EC-F1 from 35.9% to 77.8% (section 5.3, page 5). The before/after denominators are the same held-out test split.
 
-Trusted elements are expert labels, source specifications, supplied flows and schemas, retrieval embeddings, model outputs, and matching rules. The authors caution that completing a proof still needs “expert-written auxiliary lemmas, suitable proof strategies, and iterative model or query refinements.” (section 7, page 8) Inference: the threat to VeruLaw is over-trust in a high-recall extractor: unsupported goals can create false Rust contracts, while missed goals leave behavior unverified. VL should reuse provenance, negative sampling, protocol-level holdouts, and schema-grounded generation; it should not treat AIFG output as a certificate.
+Trusted elements are expert labels, source specifications, supplied flows and schemas, retrieval embeddings, model outputs, and matching rules. The authors caution that completing a proof still needs “expert-written auxiliary lemmas, suitable proof strategies, and iterative model or query refinements.” (section 7, page 8)
 
 ## techniques for the catalog
 - expert-vetted goal corpus: generate broad candidates, adjudicate them against protocol specifications, and split by protocol
 - context-preserving extraction: remove boilerplate, chunk by section, extract structured goals, then aggregate and deduplicate
 - randomized negative downsampling: control positive-to-negative examples to improve precision on sparse goals
 - AIFG formalization: retrieve context and condition property templates on a supplied protocol flow and typed schema
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

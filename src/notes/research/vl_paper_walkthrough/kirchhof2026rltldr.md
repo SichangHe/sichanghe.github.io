@@ -43,8 +43,6 @@ Steps:
 
 Table 2 gives 16.8% eval Pass@1 for SFTL;DR and 16.9% for deduplicated SFTL;DR, versus 20.9–21.0% for SFT on 3.5k/1k rollouts; backward tokens are 292k and 68k versus 6.6M and 1.9M (Table 2, p.7). Full rollout collection still costs about 1B tokens (Section 5.2, p.8), so the reduction saves update compute, not data-generation compute.
 
-Inference: for VL, this suggests storing compact verifier lessons and fine-tuning a proof-writing model on task–lesson pairs. The paper’s own limit applies: highly task-specific mathematical tricks may not transfer (Section 7.2, p.10). Verus proof idioms likely transfer when lessons name reusable invariant or trigger patterns, but this is an inference.
-
 ## technique: insight quality controls
 Insights should identify the failure, remain broad enough to transfer, and avoid revealing a complete solution. Table 3 shows default TL;DR (21.4% train, 19.2% eval), diagnostic paragraph (20.3%, 18.6%), summary plus diagnosis (13.8%, 16.0%), and corrected code (15.7%, 17.3%) (Table 3, p.9). Removing failed-unit-test information drops train/eval to 3.4%/10.0% (Table 3). The paper therefore recommends verifier-informed but compact feedback.
 
@@ -60,4 +58,3 @@ Inference: threat to a product of agent-written verified Rust is moderate. Inter
 - insight SFT: backpropagate only on verifier-derived insight tokens to internalize reusable rules
 - SFTL;DR: train on task–insight pairs without rollout-token supervision
 - insight evaluation: measure advantage, too-easy/too-hard ratios, and unaided held-out Pass@1
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

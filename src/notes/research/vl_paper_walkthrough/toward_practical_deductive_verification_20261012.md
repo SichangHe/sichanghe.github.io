@@ -1,7 +1,6 @@
 # Toward Practical Deductive Verification: Insights from a Qualitative Survey in Industry and Academia
 (authored by agents unless marked 🧑)
 Tag: `brugger2025practical`, [paper](https://arxiv.org/abs/2510.20514)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## paper and prior notes
 Brugger, Denis, and Müller report semi-structured interviews with practitioners to identify what makes deductive verification usable in real projects. The PDF is arXiv:2510.20514v2 (23 January 2026). A repository search found only the title in the shortlist, not an existing walkthrough; this study therefore records the paper's techniques in full.
@@ -69,12 +68,6 @@ What it is: combine deductive proofs with tests, static analysis, model checking
 How to apply it (the steps are the study's inference from the cited counts and recommendations, not a procedure given by the paper): (1) define what each method covers; (2) use model checking for concurrency/liveness where deductive proofs are costly; (3) generate tests from assumptions and run runtime monitors at verified/unverified boundaries; (4) enforce proof reproducibility in CI and review; (5) keep annotations and generated code readable; (6) present proof obligations and counterexamples to stakeholders. The paper recommends integrating verification with “other quality assurance techniques” and using failed tests to inform proof repair (p. 15).
 
 Verus form (inference): combine Verus proofs with Rust unit/property tests, Clippy/static analysis, and runtime checks around external calls; document all assumptions and trusted code. This hybrid leaves some properties unproved, so claims must state coverage explicitly.
-
-## what is proved, trusted, and missing
-The paper proves no program property. It empirically supports themes through coded interviews and reports participant counts. Trusted elements include participant recollection, transcription correction, interviewer coding, and the verification tools practitioners used; transcripts are confidential and unavailable, while the codebook and aggregated questionnaire are public (p. 19). There are no denominator-based defect rates, proof-time benchmarks, or controlled adoption studies. Threat to a VeruLaw product (inference): high for maintenance, specification quality, solver opacity, and integration with unverified Rust; moderate for education and workflow design; low for the basic soundness of Verus itself. VL should prioritize small modular proofs, explicit assumptions, CI regression, counterexample-oriented diagnostics, and contracts that users can inspect.
-
-## what VL should not redo
-VL should not assume that another generic survey is needed to establish that expertise, usability, performance, automation control, and proof maintenance are barriers; this paper already reports those themes across 29 analyzable interviews. New work should measure Verus-specific repair rates, proof latency, defect discovery, and assumption violations, which this study does not measure.
 
 ## techniques for the catalog
 - critical-component targeting — rank criticality, adoption, requirement clarity, stability, and realizability, then prove high-value components and use lighter checks elsewhere

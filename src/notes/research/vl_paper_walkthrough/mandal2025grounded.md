@@ -24,8 +24,6 @@ The paper says, “The final extracted snippet is annotated, giving the LLM a co
 
 The backend uses FastAPI and Ray Serve, a RabbitMQ queue for backpressure, an AMD MI210 GPU, and an on-demand six-bit GGUF model described as a fine-tuned Qwen2.5 32B variant (Section 3.3, p. 5). Table 1 instead labels its Qwen profile Qwen2.5-coder-23b; the paper does not resolve this discrepancy. The multi-tier cache has llama.cpp KV/prefix caching for shared prompt prefixes, Redis for complete responses for several hours, and PostgreSQL for persistent hashed request-response pairs. Algorithm 2 (p. 6) acquires a GPU lock before model loading and inference, releases it after success or failure, and resets the unload timer. Section 3.3 gives an example idle timeout of 30 minutes, cold loading of approximately 30–45 seconds, a client timeout of 300 seconds, and exponential-backoff retries. On an unrecoverable error or timeout, the system logs the failure and posts no comment.
 
-Inference: VL can cache verification explanations keyed by commit, diagnostic, model/spec hash, and tool version. It must invalidate entries when any of those inputs changes. Caching does not carry a proof of correctness; it only avoids repeated explanation generation.
-
 ## evidence and limits
 
 The offline benchmark used 10 C/C++ repositories, about 600,000 lines, 100 synthetic but replayable PR scenarios, and 314 atomic hunks. It ran on one MI210 with 64 GB HBM, 64 vCPUs and 512 GB RAM. For severity-level results, the authors define reduction as `(pre−post)/pre` for items with pre>0, record 1.0 as an introduction when pre=0 and post>0, and exclude pre=post=0 items (Section 4.1, p. 7). Table 1 (p. 8) reports recall proxies without precision because dismissals and false positives are unobserved offline. Developer acceptance is also unobservable in that benchmark (Section 3.5, p. 7).
@@ -34,10 +32,6 @@ For the profile labeled Qwen2.5-coder-23b with context and full report, reductio
 
 Adding context improved the reported weighted recall proxies: GPT-4o weighted recall rose from 0.493 without context to 0.576 with context, and Qwen2.5 rose from 0.409 to 0.493 (Section 5.1, p. 9). The internal survey had n=8 and is explicitly directional (Section 4.5, p. 9). No cache-hit rate, GPU-hour, energy, precision, or longitudinal drift was measured (Section 5.7, pp. 9–10). Quality is bounded by analyzer coverage; macro-heavy and multi-file cases can exceed context budgets. The authors also report that they did not validate compilation/runtime correctness beyond static-analysis deltas, so semantic regressions could escape detection (p. 10).
 
-## what remains trusted and threat to VL
-
-The deployed system offers suggestions for human acceptance; only the offline harness automatically applies candidate patches (Section 3.5, p. 7). Inference: VL would depend on the analyzer, rule registry, deviation policy, context extraction, prompt validation, cache keys, and patch acceptance process. The model's explanations should remain advisory. Inference: the product threat is that an agent produces a plausible explanation or patch while the underlying Verus obligation is misunderstood, or that stale cached advice survives a specification change. VL should make verifier output and rerun results the acceptance criterion, with grounded explanations as a review aid. The paper already covers analyzer grounding, structured prompts, and single-GPU serving; VL should reuse those patterns rather than build a free-form code reviewer.
-
 ## techniques for the catalog
 
 - finding anchored review: tie every LLM comment to a static-analysis rule and source location
@@ -45,4 +39,3 @@ The deployed system offers suggestions for human acceptance; only the offline ha
 - guarded structured prompting: require rationale, risk, remediation, citations, and no unsupported speculation
 - layered cache serving: combine prefix, short-term response, and persistent hash caches with on-demand model loading
 - deviation audit: suppress approved exceptions in comments while retaining them in compliance logs
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "All runs are performed on a single-GPU node (AMD MI210 with 64 GB HBM, 64 vCPUs, 512 GB RAM) to provide a stable hardware baseline."): checked all paper text, quotations, numerical claims, section/page references, technique steps, and the arXiv identifier; corrected quotations and references, clarified context extraction and serving, recorded the conflicting model labels and introduction fractions, and marked VL conclusions as inferences; did not reproduce experiments, validate implementation, or independently check cited works.

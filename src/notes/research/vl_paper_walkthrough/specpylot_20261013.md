@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `ayon2026specpylotb`, [paper](https://arxiv.org/abs/2604.16560)
 
-Audit: audited 2026-10-13 against the paper; checked every number, page and section reference, quotation, step list and Listing 1 against the text and per-page layout, and the Verus forms; changed 4 statements that were unmarked inference or assumed the Claude refinement pass count; could not check the claims about Verus witnesses and test generation or the ExVerus and AutoVerus comparisons.
-
 source: Ayon and Ahmed, arXiv:2604.16560v1 (17 Apr 2026), FSE Companion '26 tool demo, 5 pages, no appendix. Section 8 points to a Zenodo package and a video, which this study does not cover.
 
 ## what the paper does, in one paragraph
@@ -54,7 +52,7 @@ limits: the label PASSED depends on the budgets. The paper: “In our experience
 
 what it is: a repair loop fed by the concrete failing call, with a rule about when it may run and a rule about what it may edit.
 
-when to use: when the code is taken as the ground truth and the contracts are the thing being inferred. Inference: this is the opposite of the VL setting, where the contract is the ground truth and the code and proof are what get repaired; the loop fits VL only for the sub-task of describing existing, trusted code.
+when to use: when the code is taken as the ground truth and the contracts are the thing being inferred.
 
 steps (Section 3.3, p.3):
 1. enter only from a REFUTED run
@@ -113,12 +111,6 @@ The benchmark (Section 4, p.3): 16 programs picked at random from SpecGenBench a
 - Figure 3's bar label for Claude is 91.5 confirmed paths; the text says 91.
 - Section 4.2 describes a plot (“Each point summarizes the average per-issue cost in two dimensions”) that the paper does not contain. It has three figures and none is a scatter plot of runtime against tokens. No runtime number is given at all, though the section says GPT-4o is faster.
 - The abstract's phrase is “most programs”; the support is 16/20 and 15/20, one run each, on programs of textbook size.
-
-## what was already done, and threat to VL
-
-Already done, so not worth rebuilding: the propose, check, refine loop for contracts with a verifier in the middle. The paper itself places its loop after SpecGen (JML) and AutoReSpec (Java, same authors), and the filed studies of AutoVerus and ExVerus cover the Verus side with far larger evaluations. Inference (the paper does not claim novelty for these): what this paper adds to that line is small and specific: the refinement gate of Section 3.3 (do not spend an LLM call on a timeout), the three-way label, and the path-count report.
-
-Threat. Inference: low. The tool gives no proof, works on single Python functions of a few lines, and reports no contract-quality measure, so it does not compete with agent-written Rust that Verus has verified. Its weak point is also a warning for VL: a pipeline scored by checker acceptance alone rewards weak contracts, and the paper's 80% says nothing about whether the 16 contracts are as strong as Listing 1.
 
 ## techniques for the catalog
 

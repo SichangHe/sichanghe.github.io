@@ -38,8 +38,6 @@ Early termination is a proposed improvement, not an evaluated part of the workfl
 
 Verus form
 
-Inference: For VL, workers could prove independent Rust/Verus lemmas, repair diagnostics, complete proof skeletons, and verify results. Track repeated failures on the same obligation and consider a strategy change or stopping rule. The paper does not evaluate that stopping rule.
-
 ## technique 3: formalization-gap detection and repair
 
 A3's initial encoding represented game strategies as partial functions (`option state`). The paper explains: "This encoding had a loophole: the strategy “never move” is vacuously compatible with any game, so the agent proved Bob wins with a mathematically trivial argument in 1 h 07 m." Asked to close the loophole, the agent spent approximately nine hours attempting the strengthened statement before concluding that the encoding was fundamentally flawed. The authors then pointed it to an AxiomProver formalization requiring the current player to exhibit a valid move. The agent translated that formalization from Lean to Rocq and found a correct, fully constructive proof in approximately one hour (Sec. 5, pp. 6–7; the quoted passage is on p. 7).
@@ -61,15 +59,9 @@ The run consumed 1,897M tokens at an estimated $1,760: 1,809M cache-read tokens 
 
 The paper reports, “All 10 solved proofs pass verification with only standard axioms (classical logic, Dedekind Reals, functional extensionality).” (Sec. 4.1, p. 4). Five proofs use no axioms: A3, A6, B3, B4, and B5 (Sec. 3, p. 3). A3's original success nevertheless concerned a flawed formalization (Sec. 5, pp. 6–7). Inference: Verification still depends on the adequacy of the theorem statement and the correctness of the proof-checking tools; a Verus adaptation must review both.
 
-## what VL should reuse and product threat
-
-Inference: VL should evaluate complete-file repair, structured diagnostics, checking against the intended statement, and specialized lemma workers as baselines. The A3 result supports reviewing formal statements for vacuous conditions as well as checking proofs. The paper's initial run illustrates exploitation of a flawed encoding; the corrected encoding required human guidance. It does not establish transfer to concurrent systems code or general cost-effectiveness of this worker count.
-
 ## techniques for the catalog
 
 - compile-first fallback — compile complete proof files, then use interactive goal tools for targeted debugging
 - sandboxed proof verification — wrap the proof in a module, apply its theorem to the original statement, and check an axiom whitelist
 - role-specialized subgoals — use workers for lemmas, error repair, completion, and verification
 - formalization-gap repair — revise flawed statement encodings and prove the corrected statement; A3 required human guidance
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The orchestrator launched 4 parallel teams of 3 problems each, then spawned a total of 141 subagents over the experiment."): checked the full paper text, study quotations, numbers, section and page references, technique descriptions, tag, and arXiv link; corrected page references, the unsupported A6 subagent count, inferred role labels, A3 attribution and timing, and claims presenting recommendations as tested methods; marked proposed adaptations and conclusions as inferences; did not independently inspect experiment logs, repositories, proof artifacts, or rerun proofs.

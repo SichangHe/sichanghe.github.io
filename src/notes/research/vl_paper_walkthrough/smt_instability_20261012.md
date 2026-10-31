@@ -1,5 +1,4 @@
 # Quantifying SMT Solver Instability for Formal Verification
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 Tag: `evans2026quantifying`, [paper](https://arxiv.org/abs/2610.12649)
 
 ## identity and scope
@@ -29,10 +28,6 @@ The paper proposes, but does not implement, optimizing query structure for runti
 ## evidence, limits, and failure modes
 
 The authors find significant instability in all three domains, though in most categories the proportion of unstable queries is small, and they report that it increases with average query runtime (t = 10.5, df = 263, p < .001). They write that “future work should consider mitigating instability by optimizing query structure for runtime, rather than just success rate or variance”. The regression supports that more difficult queries tend to be more unstable; whether difficulty causes instability is not tested. Limits stated by the paper: only assertion shuffling is used, and variable names are normalized. Inference, not from the paper: other mutations, other solvers, and Verus workloads may behave differently; the experiments measure solver runtime, not developer productivity or theorem truth; a low CV does not prove a proof correct, and CV does not identify which axiom or trigger causes a problem.
-
-## relevance to VL
-
-VL should treat solver stability as a first-class proof-quality property. For important proofs, run a mutation stability check, record timeout policy, and preserve the solver version and query shape. When a proof is fragile, first search semantically equivalent formulations and inspect axioms, triggers, and declarations. Report stability separately from pass rate and correctness. This helps distinguish a missing invariant from a solver search accident.
 
 ## techniques for the catalog
 

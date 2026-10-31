@@ -83,12 +83,6 @@ Table 1 averages task-pass rates across the selected passing versus failing work
 
 LeanEvolve's Table 2 reports an average 7.47 percentage-point increase on the SWE hard subset, raising accuracy from 56.93% to 64.40% across the five models. Table 3 compares 20 initially failed ELAIP trajectories: formal-guided evolution solves 7.00 percentage points more on average than pure-LLM evolution. Removing graph-level predicates leaves 8 of 40 ELAIP workflows failing, versus 21 of 40 with the full Layer 2; this ablation counts workflows, not task accuracy. Removing pure-LLM evolution still gives a 5.07-point average SWE gain, 2.40 points below full LeanEvolve (Tables 3–4, pp. 8–9).
 
-## trust boundary, omissions, and VL implications
-
-Lean proves the modeled graph and predicate implications. Python validators, LLM judges, the LLMExec assumption, natural-language annotation, AgentSPEX execution, external environment feedback, and the correctness of the workflow specification remain trusted or partially trusted. The experiments show correlation between passing static checks and benchmark success; they do not prove that Layer 2 causes the gains, that all workflows are safe, or that the LLMExec assumption holds generally. The paper is about Lean and YAML, so a direct Verus performance claim would be an inference.
-
-Inference: for VeruLaw, the reusable architecture is contract-first workflow checking plus runtime trace localization. It threatens a product that only verifies final Rust functions if workflow-level errors (missing context, invalid retries, or a false “tests passed” step) can produce bad verified components. VL should not redo generic graph typing or Hoare-style pre/post propagation as novel ideas; it should measure whether those checks prevent specification drift and whether localized diagnostics reduce Verus proof repair time.
-
 ## techniques for the catalog
 
 - typed workflow graph checking — represent nodes, edges, variables, and execution modes in a dependent type system and reject structural inconsistencies
@@ -97,4 +91,3 @@ Inference: for VeruLaw, the reusable architecture is contract-first workflow che
 - trajectory verification — replay actual states with Lean, external validators, and judges to test step postconditions
 - failure localization — return the precise step and predicate that violated a trajectory contract
 - formal-guided evolution — revise a localized workflow step, rerun it, and retain only a successful repair
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

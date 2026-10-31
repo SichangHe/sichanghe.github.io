@@ -6,8 +6,6 @@ Tag: `li2021isarstep`, [paper](https://arxiv.org/abs/2006.09265)
 
 IsarStep mines human-written Isabelle/HOL proofs and asks a model to generate a missing intermediate proposition. The abstract defines the task: "In our defined task, a model is required to fill in a missing intermediate proposition given surrounding proofs." (Abstract, PDF p. 1). It is intended as a benchmark for reasoning rather than a complete prover. The source corpus combines 143K Archive of Formal Proofs lemmas with the Isabelle/HOL standard library to produce 204K formally proved lemmas (Section 1, PDF p. 2).
 
-Inference: For VeruLaw, this is a candidate generator for intermediate `assert` facts or lemma statements that can reduce a Verus proof search space. Every candidate still needs Verus checking; IsarStep's exact match and ATP checks are evidence of usefulness, not soundness for Rust.
-
 ## technique 1: formulate intermediate proposition synthesis
 
 Each example contains five parts (Section 2, PDF p. 3): F.1, the target proposition to synthesize; F.2, local propositions used to derive it; F.3, a proposition derived from F.1; F.4, other local propositions and library lemmas used for F.3; and optional F.5, library lemmas used to justify F.1. The model predicts F.1 from F.2–F.4, optionally receiving F.5. The paper says: "We want to synthesise F.1 given F.2 – F.4 with F.5 optional: the named lemmas in F.5 are common knowledge and can be used as additional hints." (Section 2, PDF p. 3).
@@ -44,8 +42,6 @@ Inference: Verus can use the same two-obligation criterion with `assert` or lemm
 
 The authors inspect token embeddings with principal component analysis and nearest neighbors in cosine space. Related concepts such as Borel measurability and measure-theory terms cluster together (Section 6, PDF p. 7). Attention visualization shows relevant tokens attending to each other in the last layer of the transformer encoder for an example with F.3 `x70 ∈ x39` and F.4 `x57 ⊆ x39`, where the model proposes `x70 ∈ x57` (Section 6, PDF pp. 7–8, Fig. 5). Swapping x57 and x39 in F.4 changes the output to `x70 ∈ x39`. The paper also reports that incorrect propositions "are usually a copy of parts of the source propositions" (Section 6, PDF pp. 7–8). They also identify multi-step reasoning, such as combining span-dimension and antisymmetry lemmas (Section 6, PDF p. 7).
 
-Inference: For VL, inspect whether generated lemma candidates attend to the facts that Verus uses, and manually audit multi-step examples. These analyses explain model behavior but do not establish correctness.
-
 ## what is proved, measured, and trusted
 
 The paper states that the AFP "is checked by the Isabelle proof assistant" (Section 1, PDF p. 2). The neural models are measured by exact proposition match (top-1, top-10), BLEU, and ATP-validated alternatives (Sledgehammer, 30s timeout; Appendix C, PDF p. 12). ATP failure gives only a lower bound on alternatives (Section 5.2). Inference: the benchmark does not show that every generated proposition is useful, and its trusted components include Isabelle's kernel, the parser/normalizer, the ATPs, dataset filtering, and the model implementation.
@@ -64,4 +60,3 @@ Inference: The threat is moderate for proof-search quality: a model can suggest 
 - theorem-prover validation: accept alternatives only when both upstream-to-candidate and candidate-to-goal implications are proved
 - leakage-resistant split: remove duplicate targets and examples from the same theorem as held-out data
 - reasoning diagnostics: inspect embeddings, attention, and multi-step examples alongside proof success
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "We found that the embeddings of related concepts in mathematics were close, indicating that the models have managed to learn the relations between mathematical concepts"): read the whole paper including appendices; checked every quotation, number, section and page reference, the five-part example format, the preprocessing and split figures, Tables 1 and 2, and the technique descriptions; changed the F.5 and alternative-proposition figures (Table 2 reports correct propositions including ATP-validated alternatives, not top-1 accuracy; Table 1 top-1 values added), the alternative-proposition definition, the attention example, page ranges, and marked the trusted-components conclusion as inference; did not check the PDF figures pixel by pixel, the linked GitHub repository, or the cited related work.

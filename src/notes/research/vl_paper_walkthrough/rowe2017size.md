@@ -107,10 +107,6 @@ Proved: global cyclic soundness from ordinal trace descent (Theorem 12); semanti
 
 Measured: nothing empirical. There are no programs, benchmark counts, timing results, or accuracy fractions. “Decidable” means an algorithm exists under the stated restrictions; it is not a claim of scalability.
 
-Inference: the threat to VeruLaw is indirect but potentially useful. The paper offers a recipe for proving termination or resource descent in cyclic ghost proofs, which could support verified recursive data-structure and protocol reasoning. It does not verify Rust memory safety, ownership, compiler behavior, or a concrete invariant. The risk is highest if an agent treats an unproved trace-size ranking as evidence of termination. A safe VL integration would make the rank, trace transition, and cycle conditions explicit Verus contracts and verify the finite checker.
-
-Inference: VL should not redo the paper's abstract weighted-automata reduction or its three-condition decidability theorem. A novel implementation would need a concrete Verus encoding, measurements on real cyclic proofs, and an accounting of which semantic assumptions remain trusted.
-
 ## techniques for the catalog
 
 - cyclic trace soundness: attach ordinal progress to trace pairs and require infinitely progressing left traces on every infinite path
@@ -118,5 +114,3 @@ Inference: VL should not redo the paper's abstract weighted-automata reduction o
 - descending model property: construct premise models whose ordinal sizes satisfy edge-wise antecedent and consequent bounds
 - weighted-automata reduction: encode trace progress as weighted language containment and decide it under finite ambiguity
 - finite-progress restrictions: enforce finitely progressing, dynamic, and balanced cycles to obtain a finite truncation bound
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Weighted automata [5] generalise finite-state automata by assigning to each word a value that is taken from a (usually infinite) set of weights, rather than simply a binary value indicating whether the word is included in the language or not."): read the whole paper text (pp. 1-22) and the whole study; checked every quotation, definition/lemma/theorem number, page number, the three restrictions, the formula for N and the decidability claims; changed several page references (Definitions 6-11 and Definition 9 are on pp. 3-4, Definitions 13-15 on p. 5, Definition 18 items on p. 7, the automata construction on pp. 10-14, no numbered sections exist), one quote word ("is strictly smaller"), the claim that Theorem 12 has a proof in the paper (it is stated without proof), the "termination arguments" claim (the paper says program verification), and the description of groundness, equating and Theorem 38; marked own conclusions "Inference:"; did not check the Verus encodings (all marked Inference), the proofs of Lemmas 24-26, 30, 32-35 and Theorem 28/38 line by line, or the cited references.

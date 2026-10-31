@@ -25,7 +25,7 @@ The evaluation reports 21.1% of generated invariants at protocol level and 78.9%
 
 Verus form. Inference: the same extraction stage can propose `requires`, `ensures`, loop `invariant`, and concurrency state-machine facts, but every proposed clause must retain a source pointer. A Verus driver should freeze human requirements and reject generated contracts that weaken them. The paper's evidence lineage transfers directly as metadata; TLA+ state variables become Rust/Verus ghost views or `spec fn`s. Transferring the model to Rust/Verus requires relating its abstract state and actions to code that satisfies Rust ownership rules.
 
-where it fails or assumes. The paper acknowledges: “Similarly, the invariants Specula extracts may not capture every property a system should hold.” (§6, p.14) Inference: VL should treat source evidence as provenance, not as proof of specification adequacy.
+where it fails or assumes. The paper acknowledges: “Similarly, the invariants Specula extracts may not capture every property a system should hold.” (§6, p.14)
 
 ## technique 2: reference and scenario-based models
 
@@ -84,7 +84,7 @@ The main 48-system evaluation found 249 bugs: 207 new and 42 previously known. O
 
 The loops repaired instrumentation errors within three rounds; 91.3% of invariant/model errors were fixed in one iteration and none took more than four. (§5.4, p.13) The conformance-loop mistake breakdown was 17.3% invariants, 22.2% instrumentation, and 60.5% models. (§5.4, p.13)
 
-Verus form. Inference: a VL loop can generate a Rust/Verus candidate, run `verus`, compile and execute public tests, then classify failures as contract, proof, runtime, or model mismatch. Counterexample traces can become concrete `proof fn` harnesses or executable regression tests. The anti-reward-hacking rules transfer: reject `assume`, `admit`, vacuous `ensures`, changed implementation logic, and private-state injection. Inference: unlike TLA+ simulation, Verus itself is not a bounded state explorer, so a separate state-machine or randomized harness is required for interleaving search.
+Verus form.
 
 ## comparative evidence, cost, and limits
 
@@ -96,12 +96,6 @@ End-to-end cost across 48 systems was 1.43–9.86 hours per system, median 3.69 
 
 Inference: trusted elements are the source artifacts, agent interpretation, TLA+ semantics, TLC, trace instrumentation, replay harness, and human judgment that a reproduced behavior is a bug. For agent-written verified Rust, the major threat is specification drift: an `ensures` clause or ghost model can be internally consistent while omitting a required behavior. Specula's bidirectional checks and evidence lineage are useful safeguards, but they do not replace requirement review or a proof of implementation-to-model refinement.
 
-## what VL should reuse and should not redo
-
-Inference: VL should reuse evidence-linked invariant extraction, reference models preserved during scenario projection, bidirectional trace/model checks, anti-overfitting repair rules, and staged reproduction. These techniques directly address the failure modes of agents generating verified Rust and can wrap Verus compilation and proof checking.
-
-Inference: VL should not redo the claim that LLMs can autonomously generate formal models and find bugs. Specula already evaluates 48 systems, gives denominators for 249 findings, compares agents, and measures repair and cost. A new VL result should target Rust ownership, Verus proof obligations, or requirement-to-contract adequacy.
-
 ## techniques for the catalog
 
 - evidence-linked invariant extraction — derive protocol and code invariants from repository artifacts while preserving source lineage and fault models
@@ -110,4 +104,3 @@ Inference: VL should not redo the claim that LLMs can autonomously generate form
 - controlled counterexample reproduction — replay model traces through public APIs with staged timing and fault controls, then encode successful reproductions as tests
 - self-evolving repair loops — feed model, invariant, instrumentation, and reproduction evidence back into bounded iterative repair
 - breadth-first plus simulation search — combine short exhaustive counterexamples with long random traces under explicit depth and fault bounds
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "In essence, trace validation checks that code-level actions can occur in the model, but it does not explore whether the model also admits illegal actions."): checked all paper text, quotations, numbers, section/page references, and technique steps; corrected replay-harness semantics, reproduction references, projection wording, evaluation scope, and the paper link; marked interpretations as Inference; did not check source code, artifacts, external reports, or reproduce experiments.

@@ -76,7 +76,7 @@ The authors state: “While Lean guarantees that external definitions will not a
 
 How to do it. Keep external definitions minimal. Define the mathematical sampler in Lean/SLang, prove it, map each primitive to a small external function, and check the generated samples. Appendix C reports: “We did, however, check the distributions of the generated samples using a Kolmogorov–Smirnov test.” (footnote 10, p. 34). Separately, benchmark alternatives. The paper compares three SampCert Gaussian variants with Canonne et al.'s `sample_dgauss` and Diffprivlib over varying σ (Section 4.2, Fig. 4, p. 20). It reports “more than a 2x difference in runtime” against Canonne et al. over the plotted range (p. 20). This comparison uses the extracted Python samplers. The authors also state: “The diffprivlib sampler is faster than ours for smaller values of the standard deviation.” (Section 4.2, p. 20).
 
-Verus form. Inference: state the assumptions about FFI, OS randomness, foreign libraries, and compilers explicitly. Test the executable sampler against its modeled distribution and record the toolchain used. This is a proposed application to VL, not a Verus result reported by the paper.
+Verus form.
 
 ## what is proved, trusted, and still missing
 
@@ -85,10 +85,6 @@ The paper establishes the abstract privacy laws for pure-DP and zCDP instances, 
 The abstract reports “over 12,000 lines of proof” (p. 1). The limitations include countable domains, plain-list databases that cannot express group privacy, difficulty proving floating-point samplers, and one real privacy parameter (Section 6, p. 22). The authors state: “All mechanisms and mass functions in SampCert take place in discrete probability spaces over countable types.” (Section 6, p. 22). Timing side channels are future work in the conclusion (Section 7, p. 22).
 
 The authors state: “In both cases, we rely on some trusted computing base, either the FFI implementation or the Dafny extraction, and all the toolchains needed to compile their respective output.” (Appendix C, p. 34). Section 4.1 additionally identifies `/dev/urandom` as the random-byte source (p. 19). Inference: trust also depends on the proof checker, its axioms, the randomness model, and the selected privacy specification; the AWS deployment report does not independently validate those assumptions. Deployment covers samplers: “While SampCert’s differentially private query implementations are also executable, we have not yet deployed them, in part because integrating these queries directly into existing, large-scale applications and libraries for differential privacy would be more challenging.” (Section 4, p. 18).
-
-Threat to VL. Inference: a claim of verified privacy-sensitive Rust would need to cover the randomness model and its connection to executable code. SampCert demonstrates that verified primitives can reach production, but also shows the engineering cost: the zCDP foundation is about 3000 lines and the external runtime boundary remains trusted. For VL, the reusable lesson is to separate abstract privacy contracts, exact mathematical models, executable samplers, and a minimal foreign boundary.
-
-What VL should not redo. Inference: VL should not redo generic DP composition or exact-sampler mathematics without a concrete Rust need; SampCert provides a Lean artifact and a reported sampler deployment. It should instead measure whether Verus can connect Rust implementations to a similarly explicit probability model, and report all trusted extraction and randomness components.
 
 ## techniques for the catalog
 
@@ -99,5 +95,3 @@ What VL should not redo. Inference: VL should not redo generic DP composition or
 - cut reachability and stability — calculate mass at finite cuts and its later behavior; the geometric sampler stabilizes, while rejection sampling uses exponential convergence
 - exact discrete samplers — verify Laplace and Gaussian algorithms over integers with closed-form distributions
 - minimal extraction boundary — deploy verified code through a small FFI while stating runtime trust explicitly
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The key step in the argument bounds the normalizing constant for a shifted discrete Gaussian function above by the normalizing constant for the discrete Gaussian with mean zero."): read the entire paper, including references and appendices, and the entire study; checked quotations, numbers, technique steps, section and page references, tag, and DOI; corrected the Gaussian-bound discrepancy, histogram induction base case, cut-stability scope, quotation boundaries, deployment reference, and proof-line scope; removed unsupported Verus capability claims and added appendix results and extraction-test evidence; did not inspect or execute the artifact, reproduce benchmarks, independently audit AWS deployment, or validate the proposed Verus adaptations.

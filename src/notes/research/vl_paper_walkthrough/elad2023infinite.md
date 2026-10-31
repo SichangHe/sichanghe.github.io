@@ -7,8 +7,6 @@ Elad, Padon, and Shoham address quantified first-order verification conditions (
 
 The paper has three technical parts: symbolic structures, model checking and symbolic search reduced to Linear Integer Arithmetic (LIA), and the Ordered Self Cycle (OSC) decidable fragment. It evaluates 21 distributed-protocol and linked-list examples (Section 7, pp. 23–25).
 
-Inference: the relevant VeruLaw lesson is a diagnostic fallback for quantified proof failures: produce a compact model showing why an invariant is not inductive, instead of waiting for an SMT timeout. The method is a model finder for a first-order encoding, not a proof of Rust code or a replacement for Verus's concrete semantics.
-
 ## technique 1: write the verification failure as a satisfiability problem
 
 What it is: encode invariant inductiveness as unsatisfiability of a transition VC. For invariant `INV` and transition `TR_i`, the paper checks `INV ∧ TR_i ∧ ¬INV'`; a satisfying model is a counterexample to induction (Section 2.2, pp. 5–6). The Echo Machine example has a strict linear order `≺`, a `prev_echoed` definition (an existential witness round that becomes a Skolem function `prev` in the counterexample, Section 2.3, p. 6), and a safety invariant.
@@ -116,8 +114,6 @@ Verus form: Inference: add a diagnostic command that exports a failed abstract o
 
 The paper proves the fixed-structure translation theorem, soundness of symbolic search, and decidability of OSC through a small symbolic model property (Sections 4–6). It measures runtime and solver outcomes on 21 examples. Inference: it trusts the correctness of its Python implementation, cvc5's LIA answers, the SMT-LIB encodings, and the abstraction from intended finite structures to first-order models; the paper does not discuss these as trust assumptions. The authors acknowledge that arbitrary satisfiable formulas need not have symbolic models and that multidimensional patterns exceed the implemented one-dimensional structures (Sections 2.5–2.7 and 4.3).
 
-Inference: threat to a product emitting agent-written verified Rust is medium for diagnosis and high for assurance. A compact infinite countermodel could explain why a quantified Verus invariant fails and suggest an induction or well-foundedness lemma. It cannot establish that the agent's abstraction preserves Rust ownership, aliasing, integer overflow, or unsafe behavior. VL should not redo a timeout-only baseline for quantified debugging; it should compare actionable model explanations against raw Verus diagnostics, record abstraction assumptions, and test whether developers repair the right invariant without weakening the specification.
-
 ## techniques for the catalog
 
 - first-order VC countermodeling — reduce invariant inductiveness to satisfiability of pre-state, transition, and negated post-invariant formulas
@@ -126,4 +122,3 @@ Inference: threat to a product emitting agent-written verified Rust is medium fo
 - template-based symbolic search — encode choices of bounds and interpretations with Boolean and integer auxiliaries, then extract a model
 - OSC completeness boundary — use a syntactic fragment with a small symbolic model property to obtain a decision procedure
 - finite diagnostic explanations — attach FEST's compact model to a timeout or unknown result to expose missing induction assumptions
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Current solvers do not detect infinite models, and prior work on SMT-based verification circumvented them in various ways."): read all of the paper text including appendices A-D; checked every quotation, the section and page references (article page numbers 33:1-33:38), Table 2 numbers (Echo Machine 0.18 ± 0.01 s, Paxos 79.69 ± 22.22 s), the 21-example count, Figure 6 template contents, the five OSC restrictions, and the step lists of techniques 1-6; changed the Z3/cvc5 and finite-model-property quotes (wrong location or citations stripped), the pseudo-quote of the strengthened invariant, the `prev` description, the single-dimension claim (paper-wide, not only implementation), the completeness claim (proved for OSC, not asserted as exclusive), and marked three unsupported statements as Inference; did not check the cited external works, the proofs in Appendix A beyond reading them, or the FEST tool itself (not open-sourced in this text); tag year 2023 kept (arXiv 2023, ACM version dated 2024); link kept (arXiv ID from the paper text).

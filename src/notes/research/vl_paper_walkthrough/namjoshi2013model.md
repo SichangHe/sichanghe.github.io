@@ -40,8 +40,6 @@ The iteration in Figure 3 (p. 409): set every `new_theta[i]` to the empty set; t
 
 On parallelism the paper says (section 6, p. 414): “The simultaneous fixpoint calculation lends itself to parallelization, as the individual components can be computed asynchronously so long as the computation schedule is fair [10].”
 
-Inference: A VL proof generator could use the same monotone iteration to propose local Verus predicates, then emit proof lemmas for each transition obligation. The generated predicates are candidates, not evidence; Verus still checks each `requires`/`ensures` relation and each loop `invariant`.
-
 ## technique 4: local symmetry and balance
 
 The paper says global symmetry reduction “works well only for fully symmetric state spaces, where it can result in an exponential reduction”; for ring, torus, hypercube and mesh networks “the state space reductions are usually at most linear” (section 3, p. 411). Split invariants depend on neighborhoods, so the paper uses a network groupoid (from [17]): its elements are triples `(m, β, n)`, where `β` is an isomorphism on the neighborhoods of `m` and `n` that preserves the direction of connectivity. Such a triple is a local symmetry. Local symmetries compose, have identities `(m, id, m)`, and have inverses. The paper says nodes that are locally symmetric need not have isomorphic compositional invariants, because the invariants at adjacent nodes must be symmetric as well.
@@ -66,10 +64,6 @@ The paper states Theorem 1 (assume-guarantee solutions are split inductive invar
 
 Inference: The transition relation, chosen auxiliary variables, abstraction functions, and fixpoint implementation would remain trusted inputs to the method. The product risk for agent-written verified Rust is moderate for local safety properties: split invariants can reduce proof search, but a poorly chosen decomposition or abstraction can miss a global invariant. The key engineering safeguard is to make each generated local predicate and its interference obligations explicit and machine-checked, then retain a counterexample path when the fixpoint is too weak.
 
-## what VL should not redo
-
-This is an overview of earlier work, not a source of new results: the paper says the fixpoint formulation “is implicit in the deduction system of [15] and is explicitly formulated in [24]”, the auxiliary-variable heuristic is from [6], balance comes from [17] and [25], and abstraction from [26]. Inference: VL should not present per-thread checking as a new method without the neighbor-interference conditions. A useful new study would test these ideas on a real Verus state machine with ownership permissions and measure proof obligations before and after abstraction.
-
 ## techniques for the catalog
 
 - split invariants — conjoin per-process predicates and check only local and pointing-neighbor transitions
@@ -78,4 +72,3 @@ This is an overview of earlier work, not a source of new results: the paper says
 - balance-based symmetry — compute one representative invariant for recursively matching neighborhoods
 - local abstraction — map irregular concrete neighborhoods to small abstract domains and prove abstract-to-concrete safety
 - parametric lifting — generalize a local invariant on a small abstract network to all process instances
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "It is the nature of compositional reasoning that the invariant of a process depends only on that of its neighbors."): read the whole paper text and the study; checked quotations, page and section references, the 3000-philosopher and SPIN figures, the complexity bound, the constraint forms, the Figure 3 iteration, the Theorem 1-3 statements, the auxiliary-variable example and the Dining Philosophers abstraction. Changed: link to the DOI from the paper text; auxiliary invariant is an equivalence, not an implication; fixpoint terms are post-conditions, not predecessors; parallelism reason now cites section 6 (asynchronous, fair schedule) instead of the study's own claim; the heuristic is attributed to [6]; balance recursion is over nodes pointing to m; "the paper proves" replaced by "states" with theorems 2 and 3 attributed to [25] and [26]; removed unsupported claims (hidden denominator, synchronous-only timing, "paper supplies" the foundations); marked procedure sentences as Inference. Not checked: the cited works ([6], [17], [24]-[26]), the PDF figures beyond the text of Figures 3 and 4, and any Verus claims.

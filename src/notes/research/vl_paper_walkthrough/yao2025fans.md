@@ -41,7 +41,7 @@ Inference: In Verus, generate candidate `proof fn` or contract bodies, run `veru
 
 Use this when formalization can produce false positives. The authors first majority-vote only answers whose formal proofs verify; if the winner's vote count is below a preset threshold, they discard the verified selection and return to ordinary majority voting (section 2.3, page 4). The stated purpose is “to mitigate the impact of false positives due to mis-translation.”
 
-The paper's limitation is explicit: “One major limitation of using formal language for answer selection is its high false positive rate and the inherent incompleteness of provers, which prohibits successfully verifying all factually correct statements.” (Limitations, page 9) Inference: VL should expose translation confidence and proof coverage separately instead of treating a successful proof as an unconditional answer truth.
+The paper's limitation is explicit: “One major limitation of using formal language for answer selection is its high false positive rate and the inherent incompleteness of provers, which prohibits successfully verifying all factually correct statements.” (Limitations, page 9)
 
 ## technique 4: fallback and external translation checking
 
@@ -61,10 +61,6 @@ The authors attribute stronger performance in algebra and number theory to libra
 
 The measured object is answer-selection accuracy on MATH500, AMC23, Minerva Math, and Olympiad Bench; the proof object is a generated Lean theorem. Training uses 162,181 records and Lean verification on CPUs with H200 model training/inference (section 3.2, pages 5–6). Inference: FANS does not establish semantic equivalence between the original natural-language question and the formal theorem. For agent-written verified Rust, the threat is substantial: a pipeline can make untrusted outputs look rigorous if contract translation is wrong, but the same pipeline is useful when requirements are explicit and independently reviewed.
 
-## what VL should not redo
-
-Inference: VL should not repeat the basic pattern of filtering generated answers by proof-checker acceptance or the warning that formalization can be vacuous. New work should measure prose-to-Verus contract fidelity, false-positive rates, and fallback behavior on systems specifications rather than math answers.
-
 ## techniques for the catalog
 
 - long-CoT formal translation: train on aligned prose/formal statements, elicit analysis at inference, and check translation fidelity
@@ -72,4 +68,3 @@ Inference: VL should not repeat the basic pattern of filtering generated answers
 - thresholded verified voting: use verified answers in voting but fall back when support is below a threshold
 - external translation checking: have a stronger model or independent checker inspect formalization before trusting a proof
 - fallback selection: use majority or reward-model selection when formal proving is incomplete; Inference: expose such results as unverified
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Errors in translation, such as misrepresenting an equation-solving problem as a tautology or mishandling extremum problems by misinterpreting constraints, often lead to vacuous proofs and incorrect answer selection."): checked all paper text, quotations, numbers, references, and technique steps; corrected page references, model attribution, relative-improvement comparisons, translation-check details, and the proof trust distinction; replaced the link with the paper's arXiv identifier; did not reproduce experiments, inspect code, or independently check Lean proofs or cited works.

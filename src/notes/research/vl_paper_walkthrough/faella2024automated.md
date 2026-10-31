@@ -79,5 +79,3 @@ Inference: applying the encoding to verified Rust would require a proved connect
 - staged memory-safety queries: check runtime errors, allocation exhaustion, and log overflow before claiming safety
 - SDTA preconditions: combine input-tree acceptance with exit-status queries
 - frame-bounded termination: exclude infinite executions by ruling out log overflow and allocation exhaustion
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Time is in mm:ss format and does not include the time to generate the system of CHCs."): read all 44 pages, including references and appendices; checked quotations, numbers, section/page/theorem references, encoding steps, query direction, preconditions, completeness, and reported experiments; corrected references and safety claims, clarified allocation and deallocation semantics, added runtime evidence, and removed unsupported Verus prescriptions; did not reproduce experiments, audit implementation, independently prove the theorems, or verify the fetch-record link externally.

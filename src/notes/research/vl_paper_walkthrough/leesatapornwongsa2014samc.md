@@ -44,13 +44,9 @@ For 12 old bugs, Section 5.1 reports about 40 seconds and 20–120 events per ex
 
 Reduction experiments run black-box DPOR for 3,000 executions and count how many are redundant under SAMC. For ZLE/ZAB with 1, 2, and 3 crashes and reboots, the reported overall ratios are respectively 37×/93×, 63×/107×, and 103×/166×; the denominator is the non-redundant execution count because the ratio is defined as 3000 divided by that count (Table 3, proceedings p. 410; Section 5.3, proceedings p. 409). Individual ZLE policies at 3 crashes/3 reboots yield LMI 37×, CMI 9×, CRS 9×, RSS 14× (Table 3, proceedings p. 410).
 
-## soundness, trust, and product threat
-The paper explicitly says: “SAMC policies only skip re-orderings and crash/reboot events that are redundant by definition, however currently our version of SAMC is not sound; the unsound phase is the manual extraction process.” (Section 6.3, proceedings p. 411). A wrong predicate can skip a behavior, so soundness depends on validating rules. The authors leave automated extraction and soundness proofs for future work (Section 6, proceedings p. 410). Inference: trusted components include SAMPRO, the target-system instrumentation, protocol predicates, safety assertions, and the execution environment. Inference: for agent-written verified Rust, SAMC is a test-space reduction and bug-finding aid rather than a proof of functional correctness; wrong semantic predicates are a direct threat if used to justify omission of executions.
-
 ## techniques for the catalog
 - local-message independence: classify message handlers by semantic effects and reorder only dependent messages
 - crash-message independence: avoid reordering crashes with outstanding messages when the crash has local impact
 - crash-recovery symmetry: canonicalize recovery abstract global states and skip duplicate crash recoveries
 - reboot-synchronization symmetry: reduce reboots that lead to symmetrical synchronization actions
 - semantic pattern extraction: encode protocol predicates over small abstract states and feed them to an implementation-level model checker
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "However, a reboot will not lead to a new scenario if the current state of the system is similar to the state when the node crashed."): checked the entire paper, study quotations, numbers, section/page references, technique steps, tag, publisher link, and catalog; corrected the crash/reboot mechanism, LMI constant condition, CRS steps and identifier treatment, and unsupported RSS algorithm; clarified reported speed-ups and experimental scope; did not check source code, external bug reports, or reproduce experiments.

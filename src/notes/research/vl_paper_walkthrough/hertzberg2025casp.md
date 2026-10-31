@@ -6,8 +6,6 @@ Tag: `hertzberg2025casp`, [paper](https://doi.org/10.1007/978-3-032-07132-3_5)
 
 CASP is a corpus of C functions paired with ACSL contracts, each checked by Frama-C. The abstract says: “We develop a multi-stage filtering process to carefully extract 506 pairs of C code and formal specifications from The Stack 1 and The Stack 2.” (abstract, p. 63). A pair is intended to be a self-contained implementation and specification that can support generation in either direction.
 
-Inference: for VeruLaw, CASP's main lesson is dataset construction with a checker-backed acceptance criterion, minimal dependencies, and explicit provenance. A Rust/Verus analogue would pair a Rust function with `requires`/`ensures`, loop `invariant` clauses, and any needed `spec fn` or proof lemmas, then rerun Verus on every pair.
-
 ## technique: mine and filter source code
 
 Inference: Use this when building a training or evaluation corpus from uncontrolled repositories. The paper's pipeline is:
@@ -48,8 +46,6 @@ Inference: a Verus benchmark should publish repository commits, deduplication ru
 
 The paper reports 506 deduplicated pairs, each verified by Frama-C as in section 5.1 after any manual post-fixing (section 6.2, p. 72), and the abstract says “a manual inspection is conducted to confirm the correctness of every pair” (p. 63). Inference: this does not prove that ACSL contracts capture the original programmer intent, that all C undefined behaviors are modeled, or that a passing pair is useful for production code. Frama-C WP and RTE, the three SMT solvers, Gemini's edits, manual post-fixing and inspection, regex and Gemini extraction, and standard-library assumptions remain trusted parts of the construction.
 
-Inference: for agent-written verified Rust, CASP exposes a serious threat: a large corpus can amplify incorrect or weak specifications while every generated pair still passes the verifier. The 177/888 repair success rate also shows that verifier feedback alone does not guarantee repair. VL should not redo a generic “large verified dataset” proposal without a distinct Verus corpus, exact commits, and tests of contract adequacy.
-
 Inference: the most direct new work is a CASP-style Verus benchmark with paired executable Rust and proof code, measured repair iterations, held-out repositories, dependency-change tests, and independent review of whether `ensures` states the intended behavior. The paper's artifact is a prior design to adapt, not evidence that Verus generation will reach the same 506-pair scale.
 
 ## techniques for the catalog
@@ -60,4 +56,3 @@ Inference: the most direct new work is a CASP-style Verus benchmark with paired 
 - paired extraction — combine regex and LLM extraction, reverify, deduplicate, and keep self-contained function-contract pairs
 - contamination analysis — embed source files, inspect t-SNE and nearest-neighbor similarity, and report overlap counts
 - benchmark accounting — preserve every filtering denominator, model/solver setting, timeout, and unresolved count
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Practically, the task of identifying, extracting, and verifying the complete context for functions with numerous dependencies from large codebases is often intractable."): checked every quotation, number, section and page reference, and pipeline step against the paper text; changed the filtering-step attribution of 2,958, the Table 1 inconsistency wording (marked as inference), page numbers for sections 5.1, 6.1, 7.1 and 8.2, the section 6.1 quotation's opening words, the repair-prompt and regex-extraction descriptions, the embedding description (no "tokens" unit in the paper), and the trust paragraph (added manual inspection, removed "parser", marked inference); did not check figures, the released datasets, or the Inference paragraphs' Verus claims.

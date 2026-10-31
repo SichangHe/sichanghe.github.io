@@ -72,12 +72,8 @@ The DSP evaluation used GPT-4o and GPT-o1-preview; Table 1 lists max tokens 2048
 
 Pantograph inherits Lean’s limits. The paper states, “Anything that cannot be expressed in Lean’s type system (e.g., Homotopy Type Theory (HoTT)) also cannot be expressed in Pantograph.” (Section 4.7, PDF p.14). It also reports that a tactic discarding a metavariable may remain undetected until proof completion, Lean major-version changes require non-trivial engineering, and Pantograph does not merge completed branches from different machines (Section 4.7, PDF p.14).
 
-Inference: the language model and search policy propose proof steps; final proof checking remains the basis for trusting a completed proof. Interface compatibility and specification correctness remain separate concerns. An adaptation for VL could reuse the ideas of explicit goal selection, coupling information, trace extraction, and sketch decomposition, but its implementation and effectiveness would require separate evaluation.
-
 ## techniques for the catalog
 - incremental proof-state API — execute expressions and tactics and expose resulting goals or errors
 - coupled-goal And-Or search — choose goals, track dormant siblings, and handle shared metavariables explicitly
 - tactic-trace extraction — emit before/after states, tactics, and command positions from compiled proofs
 - draft–sketch–prove — generate an outline with holes, extract goals, and attempt automation
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Pantograph provides a custom tactic called goal.tactic, which can partially execute a conv or calc tactic and provide feedback from this partial execution."): read the complete paper including references and appendix; checked quotations, numbers, PDF page and section references, and technique steps; corrected page references, replaced the fetch-record link with the paper’s arXiv link, qualified search and extraction behavior, and marked proposed Verus applications as inferences; did not run Pantograph, reproduce experiments, or independently verify Verus capabilities.

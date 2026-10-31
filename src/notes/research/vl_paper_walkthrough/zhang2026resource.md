@@ -6,8 +6,6 @@ Tag: `zhang2026resource`, [paper](http://arxiv.org/abs/2607.21530v1)
 
 The paper presents SyncPetri, a workflow for generating executable tests for concurrent, stateful Rust APIs. It models resources, lifecycle conditions, causal dependencies, conflicts, and boundary mutations in a colored Petri net. It then gives the model-produced scenario to an LLM as a constrained intermediate representation, repairs generated Rust structurally, shapes scheduler harnesses around model conflicts, and judges executions with structural, outcome, invariant, and liveness oracles. The authors state: “We present a Petri-net-guided methodology for test generation over concurrent stateful Rust APIs.” (Abstract, p. 1.) They explicitly position this as testing rather than automatic verification: “not fully automatic concurrency verification, but a testing architecture that trades some modeling effort for stronger semantic control over generated tests.” (Introduction, p. 2.)
 
-Inference: for VL, the useful lesson is a separation boundary: a formal model and executable oracle constrain what an agent may mean, while an LLM supplies Rust syntax and scaffolding. The paper does not prove the target library correct; it detects executions that violate a model supplied by a human.
-
 ## technique 1: colored resource-flow model
 
 What it is. The API abstraction is (A=(R,O,Σ,Ω)), where resources, operations, typed arguments/results, and observation classes are explicit. It is compiled to a colored Petri net (N_A=(P,T,F,χ,λ,g,u,M_0)). Places carry typed token multisets such as `LiveSender`, `Open`, `Permit`, `Cap`, `Buf`, and `Obs`. A transition is enabled only when its guard is true and all input tokens are present; firing consumes input tokens and applies its update. Table 1 gives the bounded MPSC places, including “Permit(s,c) Sender s holds a reserved permit on channel c” and “Cap(c,n) Channel c has n unreserved buffer slots.” (Section 2, Table 1, p. 2.)
@@ -23,7 +21,7 @@ How to do it.
 
 Verus form. Inference: represent the abstract marking as a ghost/spec state, with token counts and resource identities in `Seq`, `Set`, or maps; define `spec fn enabled` and transition functions; use `requires` for guards, `ensures` for token conservation and post-state updates, and `invariant` clauses in a loop or proof. A Rust adapter can update concrete Tokio objects, while a proof function relates a marked event to the abstract transition. The paper is not about Verus, so the exact encoding and any Tokio contracts are an inference. Do not treat the Petri net as a runtime verifier or call proof code from production code.
 
-Evidence and limits. The paper reports no theorem that the model is complete for an implementation. It requires manually authored resource models, adapters, and scenario invariants (Introduction, p. 2). The model can therefore omit a relevant resource or encode an incorrect contract. Inference: this is a specification-trust boundary for VL; the model and adapter remain trusted inputs unless separately verified.
+Evidence and limits. The paper reports no theorem that the model is complete for an implementation. It requires manually authored resource models, adapters, and scenario invariants (Introduction, p. 2). The model can therefore omit a relevant resource or encode an incorrect contract.
 
 ## technique 2: legal, near-legal, and partial-order scenarios
 
@@ -35,7 +33,7 @@ Running example. The seven events are reserve, spawn, permit-send, close, receiv
 
 Verus form. Inference: encode events and order as ghost sequences or relations, and prove that each generated prefix preserves the transition preconditions. A `proof fn` can establish that one abstract firing preserves a marking invariant; a loop invariant can establish that every emitted event has a predecessor-complete causal prefix. Partial-order enumeration itself is a generator concern; Verus can verify each concrete harness against its selected abstract linearization. The paper does not provide Verus code.
 
-Failure boundary. A near-legal test checks one specified boundary, not arbitrary invalid input. Inference: a VL generator should preserve the one-fault mutation rule so that a failure remains diagnosable.
+Failure boundary. A near-legal test checks one specified boundary, not arbitrary invalid input.
 
 ## technique 3: adapter and local-faithfulness contract
 
@@ -49,8 +47,6 @@ The LLM receives a typed prompt (P(S,A_d)=(Hdr,Res,Ev,Ord,Conf,Obs,Out,Ban)). It
 
 Algorithm 2 retries up to a bound: build the prompt, call the LLM, feed compiler diagnostics back on compilation failure, feed structural diagnostics back when marker coverage is incomplete, and return only an artifact that passes. The paper’s rule is: “the LLM may choose syntax, helper names, and local scaffolding, but it may not invent new semantic events, relax order constraints, or redefine the expected outcome classes.” (Section 5.1, p. 5.)
 
-Inference: for VL, this is a practical agent protocol. Give the model a typed scenario, force explicit markers and assertions, compile, and repair only compiler or structural defects. A Verus adaptation would add proof obligations and reject generated code until `requires`, `ensures`, loop invariants, and proof blocks compile. The scenario remains the semantic authority; generated Rust remains an implementation candidate.
-
 ## technique 5: conflict-first schedule shaping
 
 The model supplies a ready frontier of events whose predecessors have run. For each candidate, `prio` rewards the number of uncovered conflict partners and rare transitions and penalizes already seen prefixes. Algorithm 3 repeatedly chooses the highest-priority ready event, inserts yield or barrier hooks around conflicting incomparable pairs, and emits a bounded set of harness variants. Loom then explores micro-interleavings within each selected skeleton; the Petri layer chooses which skeletons receive budget. (Section 6, Algorithm 3.)
@@ -63,16 +59,6 @@ The trace records markers and observations. Four layers are conjoined: structura
 
 Inference: a Verus-oriented oracle can check ghost event traces and postconditions, but runtime observations, scheduler behavior, and Tokio internals remain outside a pure proof unless separately specified. The paper’s oracle depends on local faithfulness, immediate marker emission, and no spurious markers (Section 7); violating these assumptions invalidates its soundness intuition.
 
-## evidence, trust, and product threat
-
-The evaluation is preliminary and has one bounded Tokio MPSC subject, one seven-event scenario, and one repaired generated runner. Table 4 reports compilation passed, two legal schedules, three runtime executions, 14 records per execution, and no evaluator findings. The paper says each execution emits the same 14 records, split evenly across the two schedules (Section 8.2–8.3, Table 4). The authors report no mutant corpus, pure-prompt baseline, or schedule-exploration comparison (Section 8.6). Thus denominators are 2 schedules and 3 executions for this one scenario, not a broad benchmark.
-
-What is proved or measured is feasibility of carrying one modeled scenario through generation, compilation, execution, and oracle checking. What stays trusted is the Petri model, adapter, scenario invariants, expected classes, generated test harness assumptions, Tokio/Loom/runtime behavior, compiler, and LLM output until checked. Inference: the direct threat to a product that emits agent-written verified Rust is medium for test quality and specification drift, but low as evidence of proof automation: this paper supplies a testing architecture, not a proof that generated Rust satisfies a Verus contract. The strongest reusable idea is to make an agent produce code only from a typed semantic artifact and to classify structural generation failures separately from implementation failures.
-
-## contradictions and prior work VL should not redo
-
-The paper’s central claim is intentionally narrow: it does not replace Loom or eliminate modeling effort. Its evaluation supports feasibility, not statistical superiority. Inference: VL should not redo generic claims that Petri nets express causality/conflict, that LLMs can emit Rust, or that Loom explores interleavings. A new VL contribution would need a verified relation between a concrete Rust/Verus state machine and the model, plus evidence across multiple APIs or mutants.
-
 ## techniques for the catalog
 
 - colored resource-flow Petri net: model ownership, capacity, lifecycle, conflicts, and observations as typed token transitions
@@ -81,4 +67,3 @@ The paper’s central claim is intentionally narrow: it does not replace Loom or
 - constrained LLM concretization: compile and structurally repair generated Rust while forbidding invented events and weakened assertions
 - conflict-first schedule shaping: allocate Loom or deterministic scheduler budget to high-conflict partial-order harnesses
 - layered semantic oracle: separate structural concretization errors from outcome, invariant, and liveness failures
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

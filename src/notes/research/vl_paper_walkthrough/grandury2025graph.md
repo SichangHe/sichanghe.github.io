@@ -47,9 +47,6 @@ The paper presents union-find as a second benchmark: “The latter is sketched i
 
 `loops` is a PCM morphism, but `summits` has a conditional distribution law that subtracts the opposing component’s nodes: `summits (γ1 • γ2) = (summits γ1) \ nodes γ2 ∪ (summits γ2) \ nodes γ1`. Section 7 requires all cycles to be self-loops (p. 25). Appendix E defines this condition as `preacyclic` and uses its preservation under redirecting a unary node toward an external node before distributing `summits` in the `UNION` proof. When rejoining the mutated component with the other tree, the proof instead uses lemma E.3(2): equal summit sets imply that their join has that same summit set (pp. 36–40). Inference: a Verus port should preserve these conditions explicitly; treating `summits` as an unconditional PCM morphism would lose an essential premise.
 
-## what remains trusted and product threat
-The paper reports Coq/Hoare Type Theory proofs, not a Rust or Verus implementation. It also states: “The mechanization uses functional (non-mutable) variables in place of mutable ones used in the paper, but this is a technical variation with no impact on the results.” (section 9, p. 27) Inference: the reusable idea for VL is the algebraic ghost graph and its distributivity lemmas. A Rust implementation would additionally need proofs connecting that graph to concrete ownership and handling pointer reversal. The reported counts alone do not establish how much annotation or proof search a Verus port would require. This study checks the paper’s account, not the Coq artifact or its dependencies.
-
 ## techniques for the catalog
 - partial-graph pcm: represent graph pieces with dangling edges and combine them by disjoint map join
 - pcm morphism localization: prove node-local abstractions distribute over graph joins and rewrite them inside contexts
@@ -57,5 +54,3 @@ The paper reports Coq/Hoare Type Theory proofs, not a Rust or Verus implementati
 - higher-order graph map: apply a node-indexed transformation through a join-preserving combinator
 - schorr-waite invariants: verify pointer reversal with stack, mark, restoration, and frontier reachability invariants
 - union-find distribution: reason about unary parent forests with loops and conditional summit distribution
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The specification is given solely in terms of graphs to hide the internal low-level reasoning about pointers, and expose only the more abstract graph properties required in Fig. 10."): checked the whole paper including appendices, all study quotations, counts, references, definitions, and technique steps; corrected reversed proof/specification counts, the union-find quotation’s page, and the incomplete Schorr-Waite invariant list; replaced unsupported implementation advice with labeled inferences and described union-find’s conditional summit distribution; did not check the Coq artifact, cited works, or a Rust/Verus implementation.

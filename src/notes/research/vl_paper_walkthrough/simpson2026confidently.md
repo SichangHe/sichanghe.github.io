@@ -34,8 +34,6 @@ steps (Sections 5.3–5.4, pp.10–12):
 
 Verus form (Inference): encode the compiled Boolean relation as a `spec fn` over a typed applicant struct, then prove route independence with `ensures` and `assert` lemmas. Use `requires` to state field-domain assumptions. A Verus proof certifies execution of the encoded formula; source-to-formula fidelity remains an external specification question.
 
-The paper's formal execution guarantee is narrow: “The system guarantees correctness of execution given a correct specification; it does not guarantee correctness of the specification itself” (Section 5.5, p.12). This distinction is central for VL: the verifier can prove a wrong formalized policy exactly.
-
 ## technique 3: iterative authoring and SME test gate
 
 what it is: repeatedly synthesize rules, critique them, and refine until quality stabilizes, then gate deployment with subject-matter-expert (SME) test cases. The authors explicitly call iterative synthesis “a research-engineering component, not a correctness guarantee” (Section 7.1, p.34).
@@ -61,11 +59,7 @@ The controlled benchmark has 225 scenarios across four domains: life_uk 56, engl
 
 The adversarial construction extension has 20 scenarios. The abstract reports the deterministic engine 20/20; GPT-5.4 at low reasoning also 20/20, while three other frontier configurations each fail the same coverage-gap edge case (Abstract, p.1). External LegalBench validation covers nine tasks and 949 held-out cases; combined McNemar tests give p≤0.003 and margins up to +41 percentage points against Anthropic models (Abstract, p.1). The paper cautions that the GPT-5.4 aggregate is prompt-format sensitive (Section 6.10.4, pp.40–41), so it is not a general capability estimate.
 
-The paper records several corrections: a prior GPT-5.3 result of 3/11 was inflated by a harness error and corrected to 7/11 (63.6%) (Section 6.9, p.27); a low-reasoning GPT-5.4 claim was withdrawn after instrumented replication (Section 6.9, pp.26–27); and GPT-5.4's construction 96.6% cell later became 100% under drift. Inference: these contradictions show why a VL pipeline must version model, prompt, harness, and denominator with every result.
-
-## trusted boundary, failures, and VL implications
-
-What is proved is deterministic evaluation of the authored formula. Retrieval completeness, citation fallback, LLM formalization, and SME test coverage remain trusted assumptions. The paper's construction scenarios are author-constructed and not independently validated by a construction-insurance professional (Section 6.1, p.14). Inference: threat to agent-written verified Rust is high at specification boundaries: Verus can prove an incorrectly translated requirement, just as the module can deterministically execute a wrong rule. The reusable pattern is separating LLM authoring from a small, auditable, deterministic checker and retaining provenance plus regression fixtures. VL should not redo generic LLM reasoning or rely on prompt retries as evidence of correctness; it should focus on source-grounded specification review and Verus proofs of the resulting contracts.
+The paper records several corrections: a prior GPT-5.3 result of 3/11 was inflated by a harness error and corrected to 7/11 (63.6%) (Section 6.9, p.27); a low-reasoning GPT-5.4 claim was withdrawn after instrumented replication (Section 6.9, pp.26–27); and GPT-5.4's construction 96.6% cell later became 100% under drift.
 
 ## techniques for the catalog
 
@@ -75,4 +69,3 @@ What is proved is deterministic evaluation of the authored formula. Retrieval co
 - exception-chain material implication — compile nested UNLESS/override logic to a closed Boolean formula
 - SME test-driven gating — validate golden, edge, and corner cases with branch diagnostics and persistent regression suites
 - deterministic execution boundary — treat SMT evaluation as guaranteed only after retrieval and formalization quality checks
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

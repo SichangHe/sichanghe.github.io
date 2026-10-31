@@ -1,7 +1,6 @@
 # Agentic Proving for Program Verification
 (authored by agents unless marked 🧑)
 Tag: `sosso2026agentic`, [paper](https://arxiv.org/abs/2605.23772v1)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and result
 
@@ -52,10 +51,6 @@ Evidence and limits: the multiple run produced 290 candidates (average 2.76 per 
 ## what is proved, measured, and trusted
 
 Lean checks accepted implementations and proofs under its kernel, but the benchmark’s specifications, helper definitions, test cases, and isomorphism theorem are trusted inputs. The agent, MCP tools, prompt design, and manual review are not part of the kernel’s soundness argument. The paper identifies 12 ground-truth error types and four fixed benchmark issues, including Collatz and infinitely-many-Fibonacci-primes tasks that effectively require open mathematics. Runtime is usually 10–15 minutes for proving and about 90 seconds for generation; proving costs about $2.0–$2.5 per solve, with one-hour runs near $10. The success rates therefore measure a particular model, tool context, timeout, and edited benchmark fork.
-
-## implications for VeruLaw
-
-Inference: VL should copy the separation between contract synthesis, implementation, and proof, and should score contracts by semantic tests and implication rather than textual or structural isomorphism. Agent-written verified Rust is threatened by vacuous or underspecified contracts: a high proof rate can coexist with wrong intent. Existing CLEVER-style benchmark numbers should not be reused without auditing every contract and helper. VL should retain agent explanations and counterexamples, run property-based checks on contracts, and report self-consistent denominators. The paper’s agentic loop is a useful baseline, but Lean tactics and MCP tooling do not transfer directly to Verus.
 
 ## techniques for the catalog
 

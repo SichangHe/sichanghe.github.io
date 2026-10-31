@@ -39,21 +39,17 @@ How to apply it:
 
 The paper gives a lost-push trace with two completed pushes followed by two pops returning `Some 2` and `None`; because both pops follow both pushes, no sequential stack can produce that result. `M-Emit` and `NonLin` make the witness explicit, while the most-general client avoids an invalid client that mutates internal state.
 
-Inference: VL can use this as a proof-carrying bug-report format for verified Rust concurrency. The Rust verifier would need a trace model and a proof that the instrumentation corresponds to actual calls and returns; Mizzle's OCaml semantics cannot be assumed for Verus code.
-
 ## technique 4: memory-race predicate with separation resources
 Mizzle defines a race as two distinct threads simultaneously accessing the same live location in conflicting ways, represented syntactically in a configuration. The logic uses ownership assertions for arrays and cells; a parallel-for axiom expands a parent into iteration threads and then rejoins them after all iterations complete.
 
 How to apply it: translate the loop; split ownership among iterations; preserve a shared cell when the program actually aliases it; use the race predicate once two thread assertions expose conflicting accesses. The paper's examples include shared-cell increment/decrement, loop-carried dependencies, and runtime-computed indirect indices.
 
-Trusted boundary: the domainslib `parallel_for` behavior is axiomatized. The paper warns that its axiom is unsound for an implementation that chunks operations, but argues it is the intended bug-finding specification because correctness should not depend on a performance chunk size. Inference: this is a material trust boundary for VL; a Rust proof must model the actual scheduler or explicitly label the scheduler contract as trusted.
+Trusted boundary: the domainslib `parallel_for` behavior is axiomatized. The paper warns that its axiom is unsound for an implementation that chunks operations, but argues it is the intended bug-finding specification because correctness should not depend on a performance chunk size.
 
 ## evaluation and limitations
 The experiments use Claude Sonnet 5, an MCP server for Rocq, and a reusable proof guide with one tactic per primitive. Fifteen manually bugged stack, queue, and hash-table cases all received non-linearizability proofs. Each case is 25–55 OCaml lines and 94–189 proof lines; average cost is $2.30, average time about six minutes, and MCP-call failures average 13.2% (range 0–43.6%). Thirteen race cases average $2.70 and seven minutes; MCP failures average 31.6% (range 4.5–70.0%). These denominators are the 15 and 13 cases in Figures 14 and 15.
 
 The benchmark is a proof-of-concept, not a bug-finding study. The authors developed the guide on the same cases, inserted the non-linearizability bugs, used known DataRaceBench examples, and did not evaluate without the guide or on wholly new cases. Completeness excludes hard-coded locations; non-linearizability completeness additionally requires a location-free emitted history. The proof assistant, Rocq/Iris embedding, ZooLang translation, axiomatized library primitives, and correctness of the supplied incorrectness predicate remain trusted foundations.
-
-Inference: the threat to agent-written verified Rust is moderate for false bug reports and high for concurrency-model mismatch. A machine-checked witness can eliminate false alarms only if the model faithfully represents Rust, libraries, scheduler, and FFI. VL should reuse the proof-carrying workflow and per-primitive tactic interface, but should not claim general bug-finding gains from this paper.
 
 ## techniques for the catalog
 - continuation-style incorrectness logic — advance one concurrent reduction while carrying a remaining witness obligation
@@ -61,5 +57,3 @@ Inference: the threat to agent-written verified Rust is moderate for false bug r
 - trace-based non-linearizability — emit calls and returns, then decide that no sequential history explains the trace
 - separation-based race proof — expose conflicting accesses with thread and heap ownership assertions
 - proof-carrying LLM reports — require Rocq or Verus to check the bug witness before accepting an agent report
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

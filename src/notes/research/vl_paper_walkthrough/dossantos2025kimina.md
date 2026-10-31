@@ -32,7 +32,7 @@ Verus form. Inference: cache verified results by a key containing the Verus vers
 
 what it is. The Python package hides worker scheduling and caching. `check` accepts a list of Lean scripts and returns one structured result per script, including warnings/errors, environment ID, elapsed time, and an optional infotree (Section 2.2, p. 3). The Appendix's high-level `run_benchmark` example loads a dataset and submits batches with `batch_size=8` and `max_workers=10` (Appendix C.1, p. 7).
 
-when to use it. Inference: use a batch API when an RL loop, evaluator, or CI job needs many independent proof attempts and machine-readable acceptance/rejection rather than terminal output. Inference: an equivalent VL API should return proof status, diagnostics, verifier version, elapsed time, and a reproducible source/dependency identifier for every Verus attempt.
+when to use it.
 
 Verus form. Inference: expose a Rust or Python wrapper around `verus`, but preserve Verus's proof boundary: a successful process exit is evidence only for the exact source and specifications submitted. Store diagnostics as artifacts and never treat an LLM's claimed proof as acceptance.
 
@@ -50,12 +50,6 @@ The evaluation uses a filtered NuminaMath-LEAN subset: duplicate UUIDs removed, 
 
 The authors also validate operational use: Kimina served as the verification engine for Kimina-Prover RL training, whose models achieved state-of-the-art miniF2F results twice (Section 3, p. 4). Inference: this supports use in a real training workflow; it does not isolate a server-induced improvement in theorem-proving accuracy.
 
-## what is trusted and what VL should reuse
-
-Section 4 (p. 4) says: “Furthermore, the architecture is modular: with minor modifications to the process spawning logic, the server could be adapted to use alternative Lean proof checkers while retaining the same REST API.” Inference: extending this design to Verus is a further proposal, beyond the paper's claim about alternative Lean checkers. The reported experiments measure verification time; they do not independently test soundness or cache isolation.
-
-Inference: a parallel server cannot make an incorrect Verus specification correct, and stale caches could report a result for the wrong environment unless keys are complete. The reusable lesson is infrastructure: isolate verifier processes, cache only environment-determined imports, return structured diagnostics, and record denominators and toolchain settings with every throughput number. VL should not redo generic proof-server research; it should adapt these mechanisms to Verus's supported Rust subset and its dependency/specification boundaries.
-
 ## techniques for the catalog
 
 Inference: reusable forms of the paper's mechanisms and evaluation procedure:
@@ -65,4 +59,3 @@ Inference: reusable forms of the paper's mechanisms and evaluation procedure:
 - batch verification API — submit script lists through one call and return structured diagnostics and timing
 - infotree tactic extraction — convert proof execution traces into non-overlapping tactic/state training records
 - reproducible verifier benchmarking — fix toolchain, dataset filtering, hardware, and denominator before comparing throughput
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "With its direct use of the official Lean REPL, our server is compatible with any Lean version supported by the REPL."): checked quotations, numbers, section/page references, technique steps, and the arXiv identifier; corrected page references, removed unsupported cache-miss details and startup-dominance wording, added the LeanInteract reuse limitation, and marked conclusions as inferences; did not inspect the implementation, run benchmarks, or independently validate proof soundness.

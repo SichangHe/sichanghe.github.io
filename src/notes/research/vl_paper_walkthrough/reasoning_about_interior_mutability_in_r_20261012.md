@@ -1,7 +1,6 @@
 # Reasoning about Interior Mutability in Rust using Library-Defined Capabilities
 (authored by agents unless marked 🧑)
 Tag: `poli2024reasoning`, [paper](https://arxiv.org/abs/2405.08372)
-Audit: audited 2026-10-12 against the paper; slips corrected in place; details in the last line.
 
 ## scope and prior coverage
 
@@ -90,10 +89,6 @@ Proved or measured by the paper: Mendel discharges the expected client assertion
 Trusted or assumed: library capability annotations, method contracts, ghost methods, the Viper/Boogie backend, Rust compiler borrow information, and the soundness of unsafe libraries. Mendel itself has no completed formal soundness proof: “Although a formal proof of soundness does not accompany Mendel, we present the intuitions justifying its underlying reasoning (and soundness) in this section.” (Section 6, PDF p. 14) The Arc model assumes weak count zero; the imported Mutex-with-invariant model assumes no poisoning; Verus-style pointer clients must respect declared preconditions (Section 8.1.1, p. 20).
 
 The paper reports no arithmetic contradiction in its tables. A substantive limitation is explicit: two evaluation cases are incomplete for Arc (non-one count, and one count with weak count zero while immutably shared) and AtomicI32 when borrowed by local references (Section 8.2, PDF p. 22). The headline claim of “zero client-side annotations in many” is consistent with Table 2, where arc.rs, atomic.rs, mutex.rs, rc.rs, box.rs, mutex_inv.rs, and verus_cell.rs have zero contract lines, while other clients need contracts.
-
-What VL should not redo. VL should not treat ordinary Rust borrow types as a complete model of interior mutability, nor rebuild a generic rely-guarantee protocol for every standard-library client. The paper already provides a compact vocabulary for library facts, conditional state, purity footprints, address identities, and framing. VL should instead decide which trusted boundary it accepts, prove or review its library annotations, and add Verus lemmas for the remaining capability gaps. It should not claim soundness merely because a client proof succeeds under unproved annotations.
-
-Threat to agent-written verified Rust (inference). The threat is high whenever agents use `Cell`, `RefCell`, `Arc`, atomics, locks, or custom `UnsafeCell` wrappers: a verifier may reject valid code (incompleteness), or a convenient but false contract may make the proof meaningless (unsound trust boundary). Mendel’s measured clients are short sequences, so they show feasibility, not resistance to complex agent-generated protocols. A VL workflow should require explicit capability contracts, provenance for each unsafe-library fact, and a test that the contract’s assumptions (thread locality, borrow state, poison state, counters) hold in the generated code.
 
 ## techniques for the catalog
 

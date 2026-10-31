@@ -8,8 +8,6 @@ De Angelis et al. address a common verification failure: a program's supplied co
 
 The worked example is a Scala list-reversal program with `rev` and `snoc`. Stainless cannot prove `rev` from the original contracts (it reports `=> TIMEOUT case Cons(x, xs) => snoc(rev(xs),x)` within a 100 s timeout, Section 2, p. 26), although the contracts are valid; after the derived postconditions are added, Stainless proves both contracts (Abstract, p. 23; Section 4, pp. 28–30). The paper's claim is a technique for contracts over algebraic data structures (ADTs), especially when contracts are specified by catamorphisms. It does not report a broad benchmark or a percentage of programs solved.
 
-Inference: the transferable idea for VL is contract repair through an auxiliary verifier: infer missing relational facts from a proof model, add them as explicit postconditions or lemmas, then rerun Verus. The CHC machinery is not a Verus feature, so any Verus integration would need a sound translation from Rust/Verus state and a way to express the extracted facts in supported Verus specifications.
-
 ## technique: translate contract verification to CHC satisfiability
 
 Inference: when to use it: use this when a verifier cannot prove a function contract because callers need facts that are not present in the callee's postcondition, especially for recursive ADT programs.
@@ -57,7 +55,7 @@ The paper emphasizes that “the strengthened contracts provide a more detailed 
 
 The extracted model can be used partially. The authors show a second `rev` postcondition that retains only the implication derived from formula (3.2), omitting formula (3.1). Stainless proves the contracts with this shorter postcondition and “does take for that proof less time with respect to the time taken for the more complex postcondition” (Section 4, p. 31; Figure 7). The tradeoff is less behavioral information and weaker documentation. The paper leaves computation of minimally strengthened postconditions for future work.
 
-Verus form: Inference: generate several candidate `ensures` clauses from model facts, then rank them by proof success, verification time, and specification usefulness. Every accepted contract must be checked by Verus and reviewed against intended behavior. Inference: minimizing a postcondition by solver convenience can remove facts needed by downstream callers, so a VL system should measure whole-call-graph repair rather than only one function.
+Verus form:
 
 ## soundness conditions and evidence
 
@@ -67,12 +65,6 @@ On trust, the conclusion says the CHC-level proof "should rely on the correctnes
 
 Inference: in Verus, the corresponding trust boundary includes the Rust-to-CHC translation, ownership abstraction, solver, generated specification, Verus, and external-library contracts. A valid stronger `ensures` clause still proves only the encoded behavior. The product must review whether the strengthened contract states the intended API guarantee.
 
-Inference: threat to agent-written verified Rust is medium to high for proof-authoring cost. Contract strengthening could automatically expose missing relational facts and reduce manual lemma design, but the paper's soundness assumptions and manual translation steps are precisely where a Rust integration could introduce unsoundness. VL should first test list, tree, and map APIs with intentionally weak contracts and measure caller-proof repair, model extraction time, specification size, and false strengthening candidates.
-
-## what VL should not redo
-
-The paper already demonstrates, on one example and with steps (i) and (iv) done by hand, the four-step CHC pipeline, ADT elimination for catamorphisms, SPACER model extraction, partial model use, and the Scala `rev`/`snoc` example. VL should not repeat the same demonstration without a Rust-specific soundness question. A useful extension would compare extracted Verus lemmas against hand-written lemmas under ownership, mutable borrowing, and dependency changes.
-
 ## techniques for the catalog
 
 - contract-to-CHC translation: encode function behavior and contract violations as constrained Horn clauses whose satisfiability implies validity
@@ -81,4 +73,3 @@ The paper already demonstrates, on one example and with steps (i) and (iv) done 
 - partial model strengthening: keep only a sufficient subset of model facts to reduce proof time while documenting the precision tradeoff
 - cross-verifier contract repair: use CHC/SPACER to derive contracts that a primary verifier such as Stainless can prove
 - soundness-conditional extraction: require valid original contracts, sound transformation, and a satisfiable model before accepting strengthened contracts
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "The need for those strengthened contracts comes from the software engineering requirement of having a single framework (Scala, in our case) where one specifies programs and contracts, and also proves contract validity"): read the full paper text (pp. 23–34) and checked every quotation, figure/section/page reference, and the four technique step lists against it; changed the link to the DOI from the paper text, fixed page references for Tcata termination (p. 27), M3/M7 (p. 29), Figure 7 (p. 31), replaced the claims of a list of trusted boundaries and of a soundness proof with what the paper says (two trusted translations; a soundness argument), removed one unsupported sentence, and added the manual-translation and single-example limits; did not check the cited external papers, the clause-level correctness of Figures 2–3, or the Stainless/SPACER results by rerunning them.

@@ -68,8 +68,6 @@ The paper finds that exploit-blocking patches can be over-restrictive: three his
 
 The paper’s numbers are internally consistent when denominators and conditioning are retained: 36/36 detection, 25/36, 19/36, and 11/36 in ablations; 23/26, 24/26, 23/26, 22/26, and 14/26 Bulkhead success rates in Table III. The average 81.5% is an unweighted mean, not a pooled 106/130 ratio.
 
-Inference: threat to agent-written verified Rust is high for filesystem and boundary logic, because a plausible patch can miss a cross-function invariant. Bulkhead already demonstrates the needed pattern: semantic localization, explicit attacker models, checker-generated counterexamples, and iterative repair. VL should reuse these ideas around Verus proofs and ownership invariants. It should not redo generic LLM patch generation; the unsolved work is modeling Rust-specific boundaries and proving that the checked object remains the one used.
-
 ## techniques for the catalog
 
 - semantic entry localization: map documented interfaces to high-risk privileged functions before deep analysis
@@ -78,4 +76,3 @@ Inference: threat to agent-written verified Rust is high for filesystem and boun
 - PoC confirmation: instantiate exploitation steps and execute them in isolation to validate reachability
 - counterexample-guided repair: compile-filter patches, model-check invariants, and feed counterexamples into the next synthesis round
 - conditioned patch metrics: report success and vulnerability rates with their denominators and conditioning
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

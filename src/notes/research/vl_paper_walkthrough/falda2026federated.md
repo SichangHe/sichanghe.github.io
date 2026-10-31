@@ -39,8 +39,6 @@ The paper's strongest negative result demonstrates why the matrix matters. Apala
 
 The coordinator surveys open obligations, maps structural signals to backends, dispatches specialists in waves with disjoint file zones, and cross-routes a `NEGATIVE_RESULT` to a different axis. Recursive operators route to Coq `Fixpoint`; bounded quantifiers to Z3/Why3; high-arity clauses to SPASS/Vampire; randomized scheduling to PRISM (section 3.3.1, PDF pp. 17–18). When several backends are capable, they race from time zero and commit the first kernel-confirmed `PROVED`. Every specialist has a four-to-eight-hour budget and must return a structured negative rather than claim success (sections 3.3.1–3.3.3, PDF pp. 17–20). The paper's campaign used 20 specialists in four waves, with six-to-seven concurrent tasks before shared Gradle and version-control contention reduced throughput (Figure 4, PDF pp. 18–19).
 
-Inference: for VL, an agent may propose Verus proof text and classify the obstacle, but CI must accept only a successful Verus verification and should preserve a machine-readable failure. Route nonlinear arithmetic, quantifier triggers, and recursive invariants to different proof-search policies; do not let an agent self-certify. Inference: the useful unit is a disjoint Rust module or proof file per worker, merged only after `verus` checks the result.
-
 The measured campaign reduced its own five-to-seven-person-month serial estimate for 26 axioms to 17 active hours, about 50–60×, but the estimate was same-team and author-generated (section 5.2.1, PDF pp. 28–29). Against a 30–40-hour-per-axiom ghost-composition estimate, Coq's 34.4-second verifier median and roughly 30-minute port-authoring median yielded an approximately 60× headline, with the caveat that authoring dominated (section 5.2.2, PDF p. 29). The paper also reports 635× or 453× against IronFleet's 3.7 person-years under two hour conversions, explicitly warning that this is cross-protocol, cross-scope, and cross-rigour rather than like-for-like (section 5.2.3, PDF pp. 29–30).
 
 ## technique: specification-to-runtime invariant code generation
@@ -51,12 +49,6 @@ Inference: in Verus, generate or include Rust invariant predicates from a canoni
 
 The runtime layer caught an AMM partial-fill pricing bug and a 10^12 perp-funding over-charge on real fixtures; CBMC found three native-library bugs that prior sanitizers and fuzz corpora had not observed (sections 4.3–4.4 and 5.4, PDF pp. 24–26, 33–34). These findings show implementation monitoring value, but they do not establish absence of other bugs.
 
-## what VL should reuse and what it should not redo
-
-Inference: VL should reuse the paper's separation of untrusted agent search from kernel authority, explicit negative-result routing, capability-aware verdicts, source-hash drift checks, and scope-qualified performance reporting. The paper already supplies a concrete pattern for CI evidence and correspondence-mismatch detection. VL should not claim that multiple agreeing backends prove semantic equivalence, or that an AI-generated proof is trusted. The unresolved correspondence certificate, larger runtime/build trusted base, bounded model-checking limits, and shared assumptions between Coq and Lean are material.
-
-Inference: threat to a product that emits agent-written verified Rust is high if correspondence, generated-code translation, or runtime/spec linkage is silently trusted; moderate if every Verus proof is kernel-checked in CI with immutable source hashes and explicit external-body accounting; and lower for narrowly scoped lemmas whose entire statement and implementation are in one Verus crate. The paper's measured speedups suggest a substantial throughput opportunity, but its numbers depend on this campaign, hardware, authoring estimates, and a larger trusted base.
-
 ## techniques for the catalog
 
 - cross-backend citation — keep a host obligation while CI checks a named theorem under an independent kernel and closure directive on every commit
@@ -64,4 +56,3 @@ Inference: threat to a product that emits agent-written verified Rust is high if
 - shape-routed proof dispatch — classify proof shape, race capable backends, and cross-route structured negatives while kernels decide success
 - honest-negative protocol — require workers to report machine-checkable failure modes instead of plausible unverified success
 - specification-to-runtime codegen — hash canonical specs, generate invariant checks, and run them at configured production or test tiers
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

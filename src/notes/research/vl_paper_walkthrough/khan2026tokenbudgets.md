@@ -64,12 +64,6 @@ Verus form. Inference: model each child’s reservation as a distinct ghost capa
 
 The artifact cross-checks the abstract six-variable budget ledger in TLA+ with TLC model checking and a TLAPS proof, and supplies Coq and Dafny re-encodings plus a preliminary Verus source mechanization. A randomized stress harness and bounded Loom model checking exercise concurrency (Appendix B, p. 23). These checks target internal consistency of the abstract specification; the paper explicitly says they are not a binary-level refinement proof. Inference: for a Verus implementation, this layered workflow is useful: first check transition invariants in a small model, then prove Rust contracts, then run bounded scheduler tests. The layers should remain separate in the trust argument because agreement between models does not establish that the compiled Tokio binary implements either model.
 
-## what is proved, trusted, and relevant to VL
-
-The paper proves an abstract integer ledger proposition under explicit assumptions, checks source-level ownership with compile-fail tests, and reports runtime experiments. It does not prove the running Tokio binary’s cap soundness, provider charge truthfulness, hidden-token accounting, or correctness of all 63 incident classifications. The Verus 0.18 mechanization has 66 obligations and zero reported errors but is explicitly unaudited and does not close the binary-level conjecture (Section 4.4, p. 13).
-
-Inference: threat to VL is direct if agent-written Rust can duplicate a capability, reuse delegated state, or bypass a runtime budget. The affine pattern is a useful product control for resource ownership, but it must be combined with Verus contracts for ledger transitions and with trusted-boundary review for minting, provider reports, and async execution. VL should not redo the paper’s incident catalog or claim that a 0/30 experiment proves production safety; a useful extension is a verified budget API whose Rust implementation and binary refinement are both checked, with assumptions recorded in the product trust model.
-
 ## techniques for the catalog
 
 - affine owned budgets — make split, spend, merge, and delegation consume non-cloneable values so aliasing and stale use fail to compile
@@ -78,4 +72,3 @@ Inference: threat to VL is direct if agent-written Rust can duplicate a capabili
 - compile-fail ownership tests — use targeted trybuild cases and rustc diagnostics to mechanically demonstrate forbidden clone, double-spend, and post-split use
 - specification cross-checking — combine TLA+/TLAPS/TLC, Coq or Dafny encodings, Verus obligations, and bounded Loom schedules as consistency evidence while keeping binary refinement open
 - delegation race experiment — compare racy, locked, affine-split, and shared-mutex conditions with explicit trial denominators and cap settings
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

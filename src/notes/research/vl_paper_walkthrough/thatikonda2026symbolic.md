@@ -47,13 +47,9 @@ How: (1) generate `P̂`; (2) check each predicate's argument count and consisten
 
 Inference: Verus form: use Rust parsing and Verus compilation as the final verifier; a lightweight pre-check can enforce unique function arities and declaration names. Keep the checker independent from the model that proposes code. A verifier that only checks arity cannot detect a wrong predicate meaning.
 
-## what remains trusted and threat to VL
-The measured result is better symbolic translation and solver execution on four datasets, with denominators stated above. Trusted components include GPT-4o-generated silver data, Prover9's parser and theorem prover, benchmark labels, and the human interpretation of natural-language meaning. Inference: the approach lowers the threat from malformed agent-written Verus specifications but leaves a high residual threat from semantically wrong or vacuous contracts. VL should reuse staged generation and independent checking; it should not redo parser-only verification as evidence of requirement correctness.
-
 ## techniques for the catalog
 - error taxonomy — classify translation failures so data filters and repairs target concrete causes
 - tool-filtered synthesis — generate symbolic training data and retain only parser- and solver-checked records
 - structured fine-tuning — train small models on natural language, predicates, and FOL as one structured target
 - incremental inference — generate predicates first and formulas second to limit error propagation
 - arity verification — check predicate signatures between generation stages before solver execution
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

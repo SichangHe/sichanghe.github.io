@@ -63,11 +63,6 @@ Steps from Sec. 8.2 (pp.26–27): strengthen or specialize preconditions with at
 
 Inference: for Verus, property specialization corresponds to narrower `requires` predicates and separate lemmas; marker fields can make a postcondition structurally identifiable. These are specification-design changes, not evidence that the original broad claim holds.
 
-## evidence, trust, and product threat
-The evaluation contains 29 transformations and 899 properties: 552 proved, 345 concrete counterexamples, and 2 undecided within timeout (abstract and Table 2, pp.1, 22). The 345 includes intentional negative tests and boundary properties, so it is not a bug count. The UML-to-Java running example has six layers, 22 rules, and 29 properties (Sec. 2, p.4). The implementation uses a Python prover with Z3, a parser/model layer, cutoff analysis, and SMT-direct encoders (Sec. 6.1, pp.19–20). A web IDE and concrete execution engine support test-driven authoring (abstract, p.1).
-
-What is proved is completeness of bounded checking for F-LNR × G-BPP and soundness/composability of the stated optimizations. Trusted assumptions include the DSLTrans semantics, finite abstraction preserving property observables, implementation correctness, and Z3's verdict. Concrete attribute proofs lift only when the abstraction preserves the distinctions used by the property (Lemma 3.9, p.10). Inference: the threat to VeruLaw is moderate and conditional: the paper demonstrates a strong pattern for finite, additive specifications and counterexample-guided proof search, but it does not verify Rust memory safety, ownership, arithmetic overflow, or arbitrary agent-written code. VL should reuse cutoff-style domain restriction and CEGAR property refinement; it should not redo path-condition enumeration, which the paper reports as exponential and unable to scale beyond roughly 15–20 rules (Sec. 1.1, p.2).
-
 ## techniques for the catalog
 - cutoff theorem — derive a finite complete bound for local monotone transformations and bounded positive properties
 - direct SMT encoding — check `world ∧ rules ∧ precondition ∧ ¬postcondition` with Z3
@@ -76,4 +71,3 @@ What is proved is completeness of bounded checking for F-LNR × G-BPP and soundn
 - trace-aware pruning — retain rules by source-to-target provenance and backward-link dependencies
 - factored postconditions — split independent existential witnesses into equisatisfiable component formulas
 - tractability property refinement — specialize preconditions, add markers, and decompose postconditions to reduce search
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

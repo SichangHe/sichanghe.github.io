@@ -104,14 +104,6 @@ evidence: Hermes identifies 7 implementation deviations also found by DIKEUE; DI
 
 limits and assumptions: manual keyword typing, DSL extension, property definition, and counterexample analysis remain necessary (Section 10, p. 4459). Inference: the system reduces model construction effort but does not remove expert review.
 
-## what is proved, what remains trusted, and product threat
-
-Hermes checks LTL properties of generated finite-state models with nuXmv and manually models remaining counterexamples in ProVerif to assess cryptographic feasibility (Section 8.4, p. 4455). Inference: these checks do not establish sound extraction, complete coverage of standards, or correctness of arbitrary implementations. For end-to-end assurance, the dependencies include the grammar, annotation quality, CellulaRoBERTa/NEUTREX predictions, DSL and context heuristics, FSMSynthesizer, model-checker semantics, manually chosen LTL properties, and the human validation process.
-
-The paper distinguishes its evaluation gold FSMs from an official standard: “However, 3GPP does not provide any such FSM for cellular protocols.” (Section 10, p. 4459.) Inference: for agent-written verified Rust, Hermes’s central product threat is specification extraction error: an agent can omit a transition, infer an argument from context incorrectly, or encode an optional requirement as mandatory, after which Verus may prove the wrong model. Inference: keep extraction untrusted, review the abstract model, and prove that concrete Rust transitions refine it. This proof still depends on the reviewed model representing the intended requirements.
-
-Inference: VL need not recreate the cellular NLP pipeline unless it needs that domain. Reusable ideas are typed intermediate representations, explicit treatment of “may/should/can” as nondeterminism, adversary-instrumented model checking, and counterexample-guided model repair. Inference: VL should adapt these as a front end for Rust protocol specifications only when it can preserve exact source spans and require a human-reviewable mapping for every transition.
-
 ## techniques for the catalog
 
 - nested transition extraction — parse natural-language conditions, states, and actions with a domain grammar and constituency model
@@ -120,4 +112,3 @@ Inference: VL need not recreate the cellular NLP pipeline unless it needs that d
 - adversary-instrumented checking — add Dolev–Yao drop, modify, inject, and replay actions and check LTL properties
 - counterexample-guided refinement — validate traces against specifications, repair transitions, and repeat model checking
 - implementation conformance comparison — compare extracted FSM traces with implementations and manually classify deviations
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "A counterexample from nuXmv is basically a trace of message exchanges and internal variable updates leading to the violation of the property."): checked the full paper, quotations, numbers, references, technique steps, and limitations; corrected the abstract quote, page and section references, accuracy interpretation, training description, synthesis steps, timing claims, and inference labels; did not reproduce experiments or inspect external artifacts.

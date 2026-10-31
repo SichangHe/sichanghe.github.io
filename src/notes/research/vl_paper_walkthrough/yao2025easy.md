@@ -6,7 +6,7 @@ Tag: `yao2025easy`, [paper](https://www.usenix.org/conference/usenixsecurity25/p
 
 This paper evaluates age-verification mechanisms in adult-oriented Android apps and introduces GUARD, a static-plus-dynamic detector built on Soot with about 2,000 lines of Java (Section 5, p. 25). The abstract says, “GUARD determines relevant components (e.g., those that can accept the user’s age or birthdate) based on the spatial relationships of the components in a layout” (p. 21). It analyzes 31,750 adult-only apps identified from metadata of 693,334 Android apps in the Androzoo dataset (May 2024 snapshot), using Google Play's adult-only tags (Section 7.1, pp. 29–30). The abstract, introduction, and conclusion report 1,165 apps with age verification (3.67%); Q5 (p. 31) reports “1,165 (3.75%)”. 1,165 / 31,750 = 3.67%; the paper does not explain the 3.75% figure.
 
-The detector is a security-analysis workflow rather than a proof of an app's policy. Inference: for VeruLaw, the useful lesson is source-to-sink tracking and adversarial test generation; the Android UI, remote backend, and emulator remain outside a Rust proof unless modeled.
+The detector is a security-analysis workflow rather than a proof of an app's policy.
 
 ## technique 1: static UI processing
 
@@ -55,7 +55,7 @@ Shopping apps “had the highest vulnerability rate (91%)”, with 52% relying o
 
 Accuracy evidence conflicts. Section 7.1 (p. 30) samples 100 apps with and 100 without detected age verification, verified manually, and reports three false positives and two false negatives. Section 8 (p. 34) says “our static sampling and analysis of the apps revealed zero false positives”. The paper does not reconcile the two.
 
-The limitations in Section 8 (p. 34): taint analysis may miss data flows in complex or obfuscated apps; dynamic exploration may miss paths that require valid input; the remote end is a black box, so back-end manipulation may not be detected. Section 8 calls OAuth abuse “Attack A4”, while Section 6 numbers it A3. Inference: what stays trusted is Android parsing, Soot's dependency model, Appium exploration, backend enforcement, and Google Play's 17+ and category tags. Inference: the threat to a product that generates verified Rust is indirect but real: agents can produce a formally checked local age predicate while leaving OAuth, API, and server paths unenforced. Existing GUARD work already covers UI-context inference, source/sink tainting, dynamic path exploration, and a six-attack taxonomy; VL should not redo these as novel detection ideas.
+The limitations in Section 8 (p. 34): taint analysis may miss data flows in complex or obfuscated apps; dynamic exploration may miss paths that require valid input; the remote end is a black box, so back-end manipulation may not be detected. Section 8 calls OAuth abuse “Attack A4”, while Section 6 numbers it A3.
 
 ## techniques for the catalog
 
@@ -63,4 +63,3 @@ The limitations in Section 8 (p. 34): taint analysis may miss data flows in comp
 - static source-to-sink taint analysis — follow age values from Android input controls to comparisons, network calls, and result displays
 - dynamic path exploration — load runtime layouts, recursively click reachable controls, and feed discovered IDs back into taint analysis
 - attack-oriented verification assessment — classify age methods and test false-age, fake-ID, OAuth, spoofing, downgrade, and interception attacks
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "To this end, we analyzed all app developers and found that many are already experienced in creating adult apps."): read all 1,238 lines of the text and the PDF page with Table 5; checked every quotation, number, and section/page reference; changed the link to the publisher page in the paper text, fixed page numbers (abstract p. 21, Sections 5.1–5.3 and 8), the truncated abstract quote and the misquoted Section 5.3 sentence (the paper says the backend, not remote backends), the inverted reading of Table 5, the count of 21+ apps (the paper says 152, not 21), the unsupported claims that GUARD inspects the online request path and omits inputs on purpose, the A4/A5 limitation claim, and the denominator claims; added the 3-versus-0 false-positive conflict, the 101.08% sum, and the A3/A4 numbering mismatch; renamed the paper's term for the self-declaration method per the human wording rule; did not check the figures' bar values or Tables 7–8 cell by cell.

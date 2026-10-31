@@ -55,10 +55,6 @@ A generic `pbc` and `lj_p` use type classes for subtraction, multiplication, div
 Verus form
 Inference: a candidate Verus adaptation needs an explicit relation between mathematical operations and the executed numeric operations. Any unproved correspondence remains an assumption. The paper’s generic code does not itself prove bounds on floating-point error.
 
-## evidence, trusted boundary, and product threat
-
-The setup is Lean 4.16.0-rc2, Mathlib commit e1a3d4c, and VS Code 1.96 (§2, p.4). Table 2’s four particle counts are the complete reported benchmark denominator. The authors explain that proofs concern pure functions, while CSV parsing and terminal parameters remain exposed: “if an incorrect value for σ were input, Lean would not catch it.” (§5.3, PDF p.20) They report that an early CSV reader failed to read all atoms and that tests caught the bug, whereas proofs did not (§5.3, p.20). They list further trust in Mathlib/core axioms, `RealLike` links, accidentally executing a Float function, user parameters, and the operating system (§7, p.21). Inference: this is directly relevant to VL’s spec-to-exec boundary. A proposed Verus product should connect the proved contract to the exact executed implementation and validate parsing/configuration; numerical agreement alone is insufficient. A possible follow-up is to evaluate numeric assumptions, I/O validation, and proof maintenance in a Verus implementation; the paper reports no such evaluation.
-
 ## techniques for the catalog
 
 - idealized-then-optimized specification — define a direct real-valued function, optimize it, and prove the two forms equal
@@ -66,4 +62,3 @@ The setup is Lean 4.16.0-rc2, Mathlib commit e1a3d4c, and VS Code 1.96 (§2, p.4
 - analytic-to-closed-form proof — prove a long-range integral equals its real-valued closed form before linking execution
 - recursive pair-count invariant — enumerate interaction pairs and prove the exact `n(n−1)/2` cardinality
 - polymorphic proof/execution bridge — share generic numeric code while separately proving Real behavior and executing Float instances
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The RealLike type class manually links certain Real-typed and Float-typed functions, and mistakes in RealLike won’t be flagged by Lean."): checked the full text, quotations, numbers, page and section references, and technique descriptions; corrected references and benchmark precision, qualified inconsistent theorem listings and pair-count guarantees, and marked proposed adaptations as inferences; did not check the repository, execute Lean proofs, reproduce benchmarks, or validate Verus adaptations.

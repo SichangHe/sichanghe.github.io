@@ -8,8 +8,6 @@ Carreira, Silva, Abreu, and Mendes study how master’s students use ChatGPT whi
 
 Fourteen students each solved a Queue and a Tree problem, one with access to a custom ChatGPT interface and one without. Problem order and ChatGPT access were randomized with bucketed balancing; each problem had a 30-minute limit (Section 3.1, pp. 5–6). The interface used gpt-4_1-2025-04-14 with default parameters and logged all 103 student prompts and 103 model responses (Sections 3.1 and 5, pp. 5, 10). The problems were a circular-buffer queue and binary-search tree. Each had one implementation subproblem with contracts supplied and one subproblem requiring specification and implementation from natural language (Section 3.1, p. 5).
 
-Inference: for VL, this is evidence about human-agent interaction around formal proof, not evidence that ChatGPT or any other model can replace a verifier. The outcome measure is researcher-assigned grades for student work, including partial credit; a high grade does not necessarily mean the solution verified (Sections 3.2 and 4, pp. 7–10).
-
 ## technique: controlled paired evaluation with decomposed correctness grading
 
 What it is. Every participant serves as their own comparison between assisted and unaided work. The authors divided each subproblem into expected tasks, weighted tasks by effort and difficulty, allowed at most a one-point penalty for harmful extra steps, classified each code line by task, and assigned a 0–20 grade (Section 3.2, pp. 7–8). They separated specification work from implementation work because Dafny's contracts, invariants, and ghost updates define expected behavior while implementation provides functionality (Section 3.2, p. 8).
@@ -70,15 +68,9 @@ Evidence and limits. The paper describes a student who scored zero unaided and 1
 
 ## what is proved, measured, and trusted
 
-The paper measures grades, task-level specification versus implementation performance, prompt counts and categories, qualitative interaction patterns, trust reasons, and statistical differences under a paired design. Dafny checks code against formal specifications (Section 2, p. 2), while the study grades also credit partially correct work (Section 3.2, pp. 7–8). Inference: the study does not prove that ChatGPT understands the programs, that students learned the underlying logic, or that its findings generalize beyond 14 students, one course, one model, and two tasks. The corresponding VL trust boundary includes the Verus verifier and solver, the Rust compiler, external libraries, and the correctness and completeness of the user specification.
+The paper measures grades, task-level specification versus implementation performance, prompt counts and categories, qualitative interaction patterns, trust reasons, and statistical differences under a paired design. Dafny checks code against formal specifications (Section 2, p. 2), while the study grades also credit partially correct work (Section 3.2, pp. 7–8).
 
 The paper's numbers use several denominators that must stay attached: 14 participants for pass counts and trust counts; 103 prompts and 103 responses for interaction logs; 5/5, 3/4, and 4/5 for group comparisons; and 7/14 and 2/14 for fully verified solutions without significant manual intervention (Sections 5.1–5.2, pp. 11–12). Inference: mixing these denominators would turn descriptive evidence into a false defect rate.
-
-## implications for VL
-
-Inference: VL should adopt error-driven proof interaction, full context, one-obligation prompts, and mandatory verifier reruns. The product should show exactly which specification and diagnostic justify a generated change. Specification quality deserves special attention because this study found lower assisted scores on specification tasks than implementation tasks; a generated implementation cannot repair a missing or wrong contract.
-
-Inference: VL should not redo this small educational experiment as a claim about all agents. It should reuse the protocol shape when testing a new assistant: paired tasks, randomized assistance, task-level correctness evidence, prompt and diagnostic logs, and independent verification. The threat to agent-written verified Rust is high where users accept code because a model sounds confident or because it compiles; it is lower where every change is checked against a reviewed Verus contract and users understand the result.
 
 ## techniques for the catalog
 
@@ -88,4 +80,3 @@ Inference: VL should not redo this small educational experiment as a claim about
 - context-complete single-obligation prompting (Section 5.2, pp. 11–13), Inference: provide the full class or module and ask for one method or proof obligation
 - independent trust calibration (Section 6, pp. 13–14), Inference: compare user confidence and model claims with actual verifier results and logged edits
 - LLM-resistant specification tasks (Section 7.1, p. 16): constrain invariants, contracts, and ghost variables to test specification skill where implementation generation is strongest
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "To explore how students interact with ChatGPT during deductive verification tasks, we first analyze the coded prompts."): checked the full study against the full paper, including quotations, numbers, section/page references, methods, and the arXiv link; corrected page references and grading descriptions, flagged the inconsistent reported mean gain, qualified the confidence explanation, and marked recommended workflows as inferences; did not check supplementary materials, raw data, statistical calculations beyond subtracting the reported means, or Verus adaptations empirically.

@@ -37,15 +37,9 @@ The concrete representation stores an integer UF array, an option array of assoc
 
 Inference: in Verus, use vector models and representation predicates to connect mutable arrays to the abstract state. Bounds and forest invariants would need explicit preservation proofs; the Isabelle heap assertions provide the specification to adapt.
 
-## performance, trust, and VL relevance
-Section 6 benchmarks exported Standard ML against handwritten C++ on wide and balanced forests. Each has `2^n` elements, with 1,000 and 100,000 explanation queries respectively, drawn uniformly from the element range (page 16). Table 1 reports wall-clock seconds on an Intel Core i7 4790k (page 17). The paper reports roughly 2–2.5 times overhead from arbitrary-sized integers, and roughly 2 times for unions and 1.5 times for explanations when comparing SML machine integers to C++ (page 16). These are observations on those workloads. Sound export with machine integers would require changing natural-number elements to fixed-width words, which is future work (page 17).
-
-“Executing code exported from Isabelle depends on a substantial trusted computing base (TCB), including the target language’s compiler and runtime.” (section 1, page 2). Inference: for VL, the reusable architecture is a simple certificate specification, an efficient algorithm proved equivalent under explicit input assumptions, and representation invariants connecting mutable state to that specification. The paper establishes this architecture in Isabelle, not in Verus.
-
 ## techniques for the catalog
 - certificate inference rules: make proof objects explicit and prove soundness and completeness against equivalence closure
 - rollback explanation: recursively remove newest unions to obtain a simple terminating certificate algorithm
 - forest/LCA explanation: annotate parent edges and select the newest associated union on either query path
 - dual UF representations: retain an uncompressed explanation forest alongside a compressed UF with matching representatives
 - refinement with heap assertions: relate imperative arrays to an abstract functional data structure
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The lemma below shows that ufa-lca is invariant under a union (a, b) if its arguments share the same representative beforehand."): checked all quotations, numbers, page and section references, and technique steps against the full paper; corrected quotation wording and locations, the termination argument, input assumptions, and scope of congruence closure, complexity, and machine-integer claims; replaced the link with the arXiv identifier in the paper and marked Verus/VL conclusions as Inference; did not inspect the formalisation or generated code, rerun benchmarks, or verify the proposed Verus adaptations.

@@ -21,8 +21,6 @@ Inference: for Verus Rust, parse the MIR/AST and emit candidate dereferences, ow
 
 Give the source, CWE specification, and numbered candidate lists to an LLM. Require immutable JSON containing a binary verdict, brief reasoning, and `add`/`remove` lists over existing guards, operations, and entities (Section IV-C, p. 4). The model may classify ambiguity but may not create free-form protections. In the running UAF, it incorrectly removes `release_sock` because it reasons that unlocking preserves pointer validity (Listing 4, p. 4).
 
-Inference: a VL adapter should constrain the model to editing numbered Rust facts and reject additions without exact source-span matches. The model's reasoning can prioritize review, but it must never close a Verus proof obligation.
-
 ### stage 3: reconciliation and CWE-specific pairing
 
 Reconcile edits with two filters. The source-backed filter accepts an added fact only when its line number and literal code match source. The force-keep filter prevents deletion of high-confidence AST facts (Section IV-D, p. 4). Then auto-pair retained events with protections using a hand-built strategy for each CWE. For CWE-416, pair each use with a preceding release and scan intervening code for nullification, reassignment, ownership transfer, escape, or a barrier such as return/goto. For CWE-415, group releases by normalized identity and pair feasible subsequent releases, recognizing resets and mutually exclusive branches (Table II, p. 5).
@@ -47,8 +45,6 @@ Inference: a Verus pipeline can similarly expose failed obligations while preser
 
 Grade symbolic evidence as strong, weak, noisy, or none from the residual unproved claims and noise/high-risk lexicons. Grade the neural explanation as strong, weak, or none by checking literal identifiers and CWE semantics. Use an asymmetric matrix keyed by `(VLean,QLean,VLLM,QLLM,|O|)`: strong non-noisy Lean vulnerability overrides a neural SAFE; a vacuous Lean model can defer to strong neural evidence; noisy unproved claims can be downgraded to SAFE (Section IV-G, Table III, pp. 6–7). The running example's strong symbolic VULNERABLE and neural SAFE/none therefore yields VULNERABLE.
 
-Inference: for VL, adjudicate Verus evidence with explicit grades for proved, unproved, timeout, and model-empty states. Do not turn a timeout or absent model into SAFE; the paper's conservative policy is an inference target, not a Verus guarantee.
-
 ## evidence, denominators, and ablations
 
 The main table uses best-of-three runs for CWE-120, CWE-416, and CWE-476, but single runs for CWE-125 and CWE-415 due to cost (Table IV caption, p. 7). The reported “all fifteen settings” means five CWE datasets × three backends, not 15 independent datasets. The authors' ablation removes AST extraction or deterministic translation. Translation success is 116/116 for the complete Claude/CWE-120 condition, but only 82/116 without translation; for Claude/CWE-416 it is 183/183 versus 158/183; for Claude/CWE-476, 138/138 versus 118/138 (Table V, p. 8). These denominators are samples per CWE condition.
@@ -56,14 +52,6 @@ The main table uses best-of-three runs for CWE-120, CWE-416, and CWE-476, but si
 The stability study repeats CWE-120, CWE-416, and CWE-476 three times; CWE-125 and CWE-415 are single runs. Six of nine paired t-tests reach p < 0.05, with df = 2; for Claude/CWE-416 the mean F1 difference is +0.069 ± 0.019, t = 6.21, p = 0.0250, and for Codex/CWE-416 +0.149 ± 0.006, t = 41.66, p = 0.0006 (Table VII, p. 9). The paper itself cautions that three runs give low power, and the three nonsignificant cases are attributed to inter-round variability (Section V-E, p. 9).
 
 Cost is measured per sample over three runs for the three repeated classes. For CWE-416, time is 129 ± 5 seconds for Claude Code, 131 ± 6 for Codex, and 37 ± 1 for the pure LLM; Claude uses 7.87 ± 0.01 million input tokens, Codex 48.28 ± 0.82 million, and pure LLM 0.50 ± 0.00 million (Table VIII, p. 9). Inference: kernel checking adds a bounded cost, but agentic repository context dominates token use in this setup.
-
-## what remains trusted and product threat
-
-Lean's kernel checks the synthesized model, but translation soundness, candidate extraction, hand-built CWE semantics, dataset labels, and the mapping from C/C++ to the model remain trusted or empirically tested. The paper states: “a verdict from L EAN G UARD is only as trustworthy as the Lean encoding it checks.” (Section VI, p. 10) The authors also limit scope: each CWE has a hand-built specification, the target class is fixed, and they make no claim for unseen classes or whole-program vulnerabilities (Section VI, p. 10).
-
-Inference: threat to an agent-written verified-Rust product is high for the specific failure mode of an LLM asserting safety without discharging obligations. The authority split, source-backed edits, deterministic translation, and conservative adjudication are directly reusable. The central risk remains specification/model incompleteness: a Verus theorem can be valid while missing an external library contract, unsafe pointer assumption, hardware behavior, or product security requirement.
-
-VL should reuse the rule that the LLM proposes facts and a kernel-checked model discharges obligations. VL should not redo generic neuro-symbolic vulnerability detection, and it should not claim coverage beyond the selected specification. The paper's explicit future limitation is that automatic routing and a shared extraction layer are still needed (Section VI, p. 10).
 
 ## techniques for the catalog
 
@@ -73,4 +61,3 @@ VL should reuse the rule that the LLM proposes facts and a kernel-checked model 
 - kernel-checked synthesized model — translate retained facts into Lean claims and classify every claim as proved, unproved, or error
 - bounded neuro-symbolic refinement — retry once on verdict conflicts or empty lifecycle models
 - evidence-aware adjudication — combine symbolic evidence quality, neural evidence quality, and obligation count conservatively
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

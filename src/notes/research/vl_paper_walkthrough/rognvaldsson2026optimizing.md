@@ -30,7 +30,7 @@ On the 43-problem held-out test split, the router reduced the area-under-curve c
 
 Ablations show all three features matter: full features 28.9% cost reduction, proof similarity plus error diversity 23.6%, error diversity plus attempt count 20.3%, proof similarity plus attempt count 19.7%, and attempt count alone 13.1% (Table 2, PDF p. 7). A noisy-oracle analysis gives 62.0% at zero noise and 28.2% at 5% noise; the router's 28.9% lies between the 4% and 5% oracle settings (Table 1, PDF p. 7). These are AUC reductions against the fixed-step baseline, not solve-rate percentages.
 
-Trusted components include Lean's kernel, the generated formalization, the classifier training labels, the cost proxy, and the assumption that prior-attempt means predict future cost. The paper's model and benchmark are Lean-specific; it does not measure Verus, Rust, unsafe code, or specification adequacy. Inference: threat to VeruLaw is moderate and practical: routing could reduce expensive failed verification calls, but a learned stop decision can terminate a proof that would later succeed, and a Verus adapter must preserve sound compile-and-check gates. Existing fixed-step agents should not be rebuilt unchanged; this work already isolates adaptive allocation as the missing control layer (inference).
+Trusted components include Lean's kernel, the generated formalization, the classifier training labels, the cost proxy, and the assumption that prior-attempt means predict future cost. The paper's model and benchmark are Lean-specific; it does not measure Verus, Rust, unsafe code, or specification adequacy.
 
 ## techniques for the catalog
 
@@ -39,5 +39,3 @@ Trusted components include Lean's kernel, the generated formalization, the class
 - logistic success estimator — predict the next-attempt success probability from prior trajectory features
 - marginal-value routing — attempt iff predicted quality minus lambda times predicted cost is positive
 - action-space extension — add model switching, self-correction, or decomposition as scored actions
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

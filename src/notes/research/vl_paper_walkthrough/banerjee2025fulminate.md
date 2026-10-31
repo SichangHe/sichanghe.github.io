@@ -31,8 +31,6 @@ The paper's five-step outline (Sec. 2.3, p. 7): (1) at ownership creation (globa
 
 In a small C-like calculus (MiniCN), the paper proves that this stack-depth instrumentation and an explicit resource-passing semantics bisimulate each other and fail under the same conditions (Sec. 3.4, Thm. 3.5, Cor. 3.6; proofs in supplementary material).
 
-Inference: For VL, a debug build could attach ownership IDs to allocations and assert that a function's pre/post resource transfer matches the Verus contract. Stack depth is C-specific; Rust would need allocation and borrow-owner IDs.
-
 ## technique: source-to-source instrumentation
 Fulminate uses the Cerberus front-end to parse, desugar, and C-type-check, generates executable versions of CN specifications as Typed Ail, and injects their pretty-print into a copy of the original source (Sec. 4.1). The output keeps source layout and comments, builds with gcc/clang, runs under existing test harnesses, and checks on-line without logs (Sec. 2.2). gdb or lldb can be used on the generated code, including to examine abstract states computed by CN predicates (Sec. 2.2). Failures report the original C+CN source location and the generated-code location (Sec. 4.7).
 
@@ -46,8 +44,6 @@ Fulminate tests whether pre- and post-conditions hold of the concrete states rea
 > “All examples run successfully in Fulminate; additionally, the CN and VeriFast tutorial examples were verified using CN’s proof mode.” (Sec. 5.2, p. 22)
 
 Anecdote (Sec. 5.5, p. 27): two CN users had abandoned verifying a VST string-to-integer hashtable in CN because of abstract error messages; with Fulminate, fixing a misspecified hash function took a few minutes and fixing a double-owned resource in the hashtable predicate took around ninety minutes.
-
-Inference: Runtime success covers only executed paths and inputs; it is not a proof. For VL, running generated tests before difficult Verus proof obligations follows the same idea.
 
 ## technique: detecting specification and implementation bugs
 The pKVM buddy allocator has 320 lines of C and 702 lines of CN specification (Sec. 5.3, p. 23).
@@ -70,22 +66,6 @@ Scaling (Figs. 5–6, p. 26): a Software Foundations stack example from 2 to 102
 
 > “A more informative measure of the Fulminate cost is perhaps the overhead per dynamic occurrence of Owned, which in the largest examples above is 0.3𝜇s or 0.9𝜇s.” (Sec. 5.4, p. 26)
 
-Inference: These numbers come from different settings (tutorial programs, selected examples, one buddy run, scaling inputs), so they are not one aggregate overhead figure. VL should not redo runtime separation-logic instrumentation for C; it should adapt the ownership-map and debugging workflow to Rust.
-
-## trust, limits, and VL threat
-The equivalence proof covers only the MiniCN calculus, which omits loops, structured data, and pointer arithmetic (Sec. 3.1). Inference: the Cerberus front end, the translator, and the test inputs remain trusted or outside the proof.
-
-Stated limits:
-- no test generation (Sec. 2.2)
-- not yet run at EL2 bare metal (Sec. 2.2)
-- instrumentation allocations are never deallocated (Sec. 5.4)
-- `goto` into or out of blocks, multiple compilation units, and C unions are unsupported (Sec. 7)
-- `Block` and `Owned` are not distinguished; CN maps must be indexed by bitvectors or integers (Sec. 7)
-- no concurrency (Sec. 7)
-- VeriFast examples needing function pointers, polymorphism, or concurrency were excluded because CN does not support them (Sec. 5.2)
-
-Inference: VL could reuse executable-specification checks and pre-proof dynamic testing, adapting ownership IDs to Rust allocation/borrow identities and making concurrency explicit. Inference: threat to an agent-written verified Rust product is medium to high: runtime checks expose specification mistakes quickly, but passing tests cannot replace Verus's universal proof.
-
 ## techniques for the catalog
 
 - executable CN predicates — restrict ownership formulas to directional binders and conditionals that walk concrete memory
@@ -93,4 +73,3 @@ Inference: VL could reuse executable-specification checks and pre-proof dynamic 
 - source-to-source runtime instrumentation — compile annotated C into ordinary C with online pre/post and access checks
 - specification-guided testing — use the same predicates for concrete tests and static proof, beginning with partial assertions
 - counterexample-driven spec debugging — inject wrong predicates or code and use precise ownership/precondition failures to repair them
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Injecting into the original source, rather than simply pretty-printing modified Typed Ail, keeps the structure, layout, and comments of the original, making the generated code easier to navigate when necessary."): checked every quotation, number, section and page reference, and technique step against the paper text; changed the allocator quote's section/page (was Sec. 2.2, p. 5; is Sec. 5.3, p. 23), the Sec. 5.2 quote's page (23 to 22), the “2+2 test” quote marks, the tutorial-example counts wording, the unsupported-feature list (function pointers etc. were VeriFast exclusions, not Fulminate limits), removed "Inference:" from statements the paper makes, and added the four executability restrictions, the MiniCN proof scope, and the Fig. 4 buddy space figure; did not check the supplementary proofs or the cited references.

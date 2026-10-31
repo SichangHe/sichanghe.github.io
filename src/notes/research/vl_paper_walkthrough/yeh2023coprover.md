@@ -73,7 +73,7 @@ When to use it. Inference: use short command history when the same proof state c
 
 How the paper evaluates it. CoProver is tested with command history plus sequent, sequent only, and history only. Table 1 shows 0.48 ± 0.0073, 0.28 ± 0.0098, and 0.21 ± 0.0093 respectively (p. 9); the paper says the ± values are variances estimated by bootstrap resampling. For the baselines, the paper says that "With the exception of the SVM using the polynomial kernel (SVM Poly), every method benefits from increasing structural information" (Table 2, p. 9). Table 2 values are not monotone for Linear SVC (0.30, 0.37, 0.30 for n=1,2,3), and the paper does not say whether command history is included in Table 2. The best Table 2 value is 0.37, below CoProver's 0.48 in Table 1, though the setups may differ. The paper's conclusion cautions that the models "may more likely be learning complex structural cues" rather than deep reasoning (Section 9, p. 14).
 
-Verus form. Inference: include the last few failed and successful proof actions, plus a normalized diagnostic, in the VL state. A history window can prevent repeating a failed `assert` or can suggest a follow-up `reveal`. Keep this as a ranker feature and never as a proof assumption.
+Verus form.
 
 ## technique 5: deploy recommendations behind a proof-assistant service
 
@@ -91,7 +91,7 @@ The paper measures recommendation quality, not theorem validity. Command data: 2
 
 Trusted or assumed are PVS, PVSLib and Prelude traces, the featurization rules, RoBERTa/T5/SBERT implementations, labels that user-selected imports are relevant, and cosine ranking. The authors explicitly warn that neural mechanisms may learn structural cues rather than deep reasoning; a cursory examination of attention heads found the weightings "did not consistently align with experienced users' intuitions" (Section 9, p. 14). No result proves that a top-ranked command will advance a proof.
 
-Threat to a product of agent-written verified Rust. Inference: medium productivity benefit and low direct soundness risk if the service remains advisory. The featurization, top-N look-ahead, supervised lemma retrieval, and service boundary map well to VL. Rust/Verus contracts need richer type and ownership features, and a retrieved lemma can fail its `requires`. Soundness risk rises if an agent treats recommendation confidence as proof or lets a remote service alter specifications without local re-verification.
+Threat to a product of agent-written verified Rust.
 
 ## techniques for the catalog
 
@@ -101,4 +101,3 @@ Threat to a product of agent-written verified Rust. Inference: medium productivi
 - short-history conditioning — append recent proof actions so recommendations reflect what has already been tried
 - structural baseline comparison — test n-grams and TF-IDF to measure the value of sequence structure over symbol counts
 - advisory prover service — return JSON suggestions through a web endpoint while leaving proof checking in the local assistant
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "We find that the combination of sequent and command history information gives consistently higher accuracy than using either alone, while all methods outperform the baseline."): I read the full paper text (pp. 1-15 and the reference list) and compared every quotation, number, table value, section and page reference, and technique step in the study; the tag and the arXiv link (arXiv:2304.10486) agree with the paper's first page. Changed: page references for steps 1-3 of technique 1 (p. 5, not p. 4), the description of the T5 versus classifier wording, the Table 2 claim (not monotone for Linear SVC; the paper says k-NN is next-best although Table 1 shows Linear SVC higher), the Siamese weight-sharing remark, the baseline-definition gap, the bootstrap-variance reading of the ± values, and labelled the author's "when to use" advice as Inference. Not checked: the cited prior work, the GitHub repository, the claims about earlier notes in this collection, and the Verus-form suggestions (Inference by the study author).

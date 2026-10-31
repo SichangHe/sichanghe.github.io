@@ -41,8 +41,6 @@ Inference: use this when direct proof search stalls or when the theorem has a hi
 
 The authors explicitly warn that the process is noisy: informal proofs have gaps and formalized lemma statements can remain wrong after correction, but enough useful lemmas are produced to improve over search alone (Sect. 2.2.1, pp. 6–7). If the target still fails, keep proved lemmas, add a new collection, formalize and correct the new statements, then retry. The revision prompt is asked to consider both an unsound strategy and a sound strategy whose lemmas were too coarse (Sect. 2.2.2, p. 7). The paper summarizes the architecture as: “First, we ask for an informal proof of the theorem.” (Sect. 2.2.1, p. 6.)
 
-Inference: the direct Verus form is a staged proof plan: generate candidate `spec fn` facts or `proof fn` lemmas, compile each in a temporary module, feed Verus diagnostics back, and retain only proved lemmas for the next function proof. Inference: a lemma's executable Rust body must not be replaced by an unverified claim; the candidate remains ghost specification code until its proof passes. Inference: the staged loop is useful for VL because it separates specification repair from routine proof repair, but the paper's evidence is Lean-specific.
-
 The IMO examples show why formal feedback matters. For the divisor-sequence problem, Aristotle's informal reasoning confused strict and weak decrease; subsequent formalization repaired the logical gaps while retaining useful ideas, and the final comments gave a corrected informal account (Sect. 3.1.3, pp. 9–10). For “Bonza functions”, it invented and formalized an auxiliary set of primes, and for “Inekoalaty Game” it introduced an invariant-like function, later replacing a calculus proof with `nlinarith` (Sect. 3.1.2 and 3.1.4, pp. 9–10). These are examples, not a measured rate of successful lemma repair.
 
 ## technique: test-time training from search traces
@@ -57,14 +55,6 @@ Geometry is handled outside Lean by Yuclid, a C++ deductive-database and algebra
 
 Yuclid adds a squared-length algebraic table, optional sine-law support, equations as generic statements, and rules generated from small auxiliary-construction problems. The sine extension proves one additional AG-30 problem but slows Yuclid by approximately 10x, so it is turned off in the recommended configuration (Sect. 2.3.2, p. 8).
 
-Inference: Verus is not a geometry prover, so this subsystem has no direct Rust mapping. A VL product could call a specialized external prover only behind a checked contract, but the paper does not establish that a geometry result can be imported into a Verus proof without rechecking its semantics.
-
-## evidence, trust, and product threat
-
-The paper reports five of six 2025 IMO problems with formally verified solutions, using Lean for non-geometry problems and a separate geometry solver. Yuclid also solves 17 of 30 AG-30 geometry problems under its stated single-core setup (Introduction, Sects. 3.1 and 2.3.1, pp. 1, 7–9). The paper also reports contributions to Mathlib, discovery of four false exercises in a Lean real-analysis textbook, and proof of the other exercises it processed (Sect. 3.2, p. 10). Those claims use different populations and should not be combined into one accuracy percentage. The paper gives no denominator for “many” university-level problems or for the textbook chapters beyond the examples described.
-
-Inference: trusting the end-to-end result requires trusting the human statement translations, the Lean kernel and permitted axioms, the intended meaning of the Mathlib definitions, and the separate geometry verification. Model training and judging affect candidate quality; they do not replace the final formal check. A formal proof alone does not establish that a manually translated statement captures the natural-language contest statement. Inference: this is a high threat to any VL claim that an LLM can generate verified proofs without a structured search-and-feedback loop, because Aristotle demonstrates a mature version of that loop. Inference: it is a low direct competitor for verified Rust, since the paper does not translate Rust programs, prove systems properties, or check Verus specifications. Inference: a Rust contribution should distinguish its treatment of ownership, mutable state, unsafe code, and Rust-specific specifications from the generic lemma decomposition and formal-feedback techniques already described here.
-
 ## techniques for the catalog
 
 - verifier-guided graph search: sample tactic actions, merge equivalent Lean states, and use PUCT over AND/OR proof obligations
@@ -72,4 +62,3 @@ Inference: trusting the end-to-end result requires trusting the human statement 
 - test-time training: retrain on current search traces to specialize later attempts and learn unfamiliar library APIs
 - geometry DD/AR solving: match numerical diagram rules, deduplicate statements, and cache Gaussian-elimination state
 - Lean proof acceptance: render the completed proof as a standalone Lean file, check the kernel and axioms, and reject gaps or `sorryAx`
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Upon processing a few chapters from the book, Aristotle discovered four exercises which were false as written, providing explicit counterexamples."): checked all paper text, quotations, numbers, technique steps, section and page references, and the catalog; corrected page references, goal splitting, the Lean/geometry distinction, test-time training wording, verification details, and inference labels; retained the link from the fetch record because the paper text provides no DOI, arXiv, or publisher URL for this paper; did not rerun Aristotle, Lean proofs, or external repository results.

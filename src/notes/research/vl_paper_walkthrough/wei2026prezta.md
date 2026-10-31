@@ -8,8 +8,6 @@ Prezta moves policy evaluation from an application gateway to a client-side zero
 
 The security proof relies on the knowledge soundness of the SNARK and the unforgeability of the identity-provider and policy-authority signatures; completeness follows from signature correctness and SNARK completeness (Appendix B, p. 5827). Zero knowledge is not used: “our architecture only utilizes the soundness and succinctness of SNARK, but not zero-knowledge” (Section 1, p. 5812). A policy authority signs the policy verification key (in the prototype, the zkVM image commitment); the identity provider signs subject attributes. A verifier accepts only when the policy signature and proof verify.
 
-Inference: For VeruLaw, the transferable pattern is to make the verifier check a compact proof of a policy execution whose code identity is signed, while keeping mutable policy logic outside the edge-device binary. This is a protocol architecture rather than a direct Verus technique.
-
 ## technique: signed policy and identity inputs in a zkVM
 
 Use this when a constrained verifier must accept requests under evolving policies without trusting a gateway to execute the policy correctly.
@@ -60,8 +58,6 @@ Evidence. The ablation reduces the naive policy from 1,301.7 s, 10,521,257 user 
 
 A policy update compiles a new image, obtains a new `IMAGE_ID`, signs it, and distributes it to edge devices. Signed `IMAGE_ID`s should carry an expiration time; for faster revocation, an OCSP-like service signs a status message that the client passes into the policy program, which checks the signature, revocation status, and freshness (Section 6.1, p. 5823). Proof generation may be outsourced because a compromised prover cannot enable unauthorized access, due to zkSNARK soundness; since JWTs are bearer tokens, the paper suggests binding a JWT to the request by including a hash of the request in its nonce (Section 6.2 and footnote 4, p. 5823). For audits, a policy can require an inclusion proof for a log record, verified by the policy program; the log could be made append-only with certificate-transparency techniques (Section 6.3, p. 5824). The artifact is “unaudited research code” (Open Science, p. 5824).
 
-Inference: These mechanisms threaten a VeruLaw product mainly at integration boundaries: policy-to-Rust compilation, JWT and revocation freshness, public-input binding, cryptographic library contracts, and zkVM soundness. Deployment evidence is not production assurance. What the paper proves is the abstract protocol under SNARK and signature assumptions; it does not prove the compiler, RISC Zero implementation, policy authority operations, edge-device clock, network binding, or XACML semantics outside the tested subset.
-
 ## techniques for the catalog
 
 - signed zkVM authorization: sign policy image commitments and identity claims, then verify a SNARK of policy execution at the edge
@@ -69,4 +65,3 @@ Inference: These mechanisms threaten a VeruLaw product mainly at integration bou
 - DFA regex precompilation: serialize static DFAs at deployment so zkVM proving performs table transitions only
 - zkVM cryptographic precompiles: use verified SHA-256 and big-integer instructions plus static RSA keys to reduce proof cost
 - public-input binding: authenticate public inputs such as subject IP, requested resource, and timestamp against trusted sources before accepting a proof
-Checked 2026-10-16 against the full paper by a Claude agent (mid-paper quote: "We note that our compiler must be re-run every time an XACML policy is updated to generate new Rust policy code; however, this introduces negligible overhead, since its execution is typically well under a second."): checked every quotation, number, section and page reference, and technique step against the full paper text; changed the link to the publisher page in the paper text, fixed page references (Appendix B 5827, Tables 2–3 5823, Listings 2 and 4–5, JWT quote 5821, intro quote 5812), recast the non-verbatim verifier-steps quote, corrected the Table 5 regex-library range to 61.5–509.0 s, replaced the unsupported claim that compromised edge devices and denial-of-service are excluded with the paper's network-threat scope, fixed the Prove inputs and the IMAGE_ID deployment wording, and marked the DFA rebuild claim as inference; did not check the figures' plotted values or the Verus-form inferences, which are not from the paper.

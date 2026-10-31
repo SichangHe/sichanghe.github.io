@@ -98,15 +98,13 @@ The paper defines representation predicates and reports mechanized correctness p
 
 The correctness of the example implementations relative to the specifications is a reported proof result, not an assumed premise (Section 5, p. 9). Inference: using those results for executable code still depends on the proof checker, the formal semantics, and the correspondence between that semantics and the deployed program. The paper does not verify arbitrary C or Rust implementations. Inference: a Verus adaptation would require its own checked memory representation and contracts; the proposed Verus forms above have not been implemented or verified here.
 
-The paper's useful reduction is to make pointer validity an explicit logical state while leaving the underlying separation logic unchanged. Inference: VL should reuse this separation between (a) an abstract container predicate, (b) a ghost state for offered and borrowed locations, and (c) explicit borrow/return lemmas. VL should avoid treating a successful proof of a value-level postcondition as evidence of pointer stability unless the contract carries the location-preservation fact.
+The paper's useful reduction is to make pointer validity an explicit logical state while leaving the underlying separation logic unchanged.
 
 ## threat to agent-written verified Rust
 
 Inference: the paper is a medium-to-high threat to a product that assumes ordinary container contracts are enough for agents to write verified Rust with cached internal references. An agent can prove a list's logical contents while leaving relocation, aliasing, and temporary ownership unspecified. Logical pinning supplies a concrete design for the missing contract layer.
 
 Inference: the threat is lower for a product that already uses Verus ghost ownership, explicit representation predicates, and checked APIs for internal pointers. The paper's method still demands human choices about which subparts are borrowable, which operations are in-place, and which invariants survive borrow/return transitions. Inference: an incomplete contract can admit a checked proof while omitting the pointer-stability property that a client needs.
-
-Inference: VL can turn the method into checks: every API that returns an internal reference should state the preserved abstract location; every operation that may resize, rebalance, free, or relink should invalidate or re-pin affected state; list and tree tests should include repeated lookups, swapping through two pointers, and rotations with temporary sharing. These checks are a product adaptation inferred from the paper's examples, not claims made by the paper.
 
 ## techniques for the catalog
 
@@ -118,4 +116,3 @@ Inference: VL can turn the method into checks: every API that returns an interna
 - borrowable recursive substructures — lift lists and trees so elements, tails, and subtrees can be independently exposed and transferred
 - non-separating overlapping views — use a shared logical precondition for repeated lookups whose subtrees may overlap
 - offered ownership for sharing and rotation — let one container retain ownership while another treats the same pinned subpart as borrowed
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Tracking an alias list rather than a single optional exposed pointer simplifies specifications: equality among all aliases is encapsulated in ♭ 𝑅, so functions that read or create aliases do not need to track it explicitly."): checked all quotations, numbers, section and PDF-page references, definitions, API contracts, and technique steps; corrected the four-state count, definition references, open-question section, transformer composition, availability conditions, root-location preservation, proof/trust distinction, and publication link; did not rerun the Rocq artifact or implement or verify the inferred Verus adaptations.

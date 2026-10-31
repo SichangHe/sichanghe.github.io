@@ -70,8 +70,6 @@ Verus form. Inference: use a corpus of Rust/Verus functions with deliberately we
 
 Lean verifies the formal proof terms for each supplied witness. The seed theorem statements, proof decomposition, mutation tactic, LLM-generated informal reasoning, model training data, and external benchmark formalization remain trusted inputs or search components. The authors report that 7B models often fail arithmetic, ignore supplied witnesses, or produce inaccurate rewards (Section 6, p. 9). Synthetic-data quality is also limited: training curves converge in roughly half an epoch, suggesting redundancy. These are explicit limitations, not evidence that larger models solve the problem.
 
-Inference: counterexample generation is valuable for VeruLaw because it can challenge overly strong or vacuous Rust/Verus contracts before accepting generated code. It threatens a product that treats one passing proof as evidence that a specification is correct. VL should not redo generic Lean mutation or the idea of a verifier-gated witness; a useful adaptation is mutation of Verus `requires`/`ensures`, with independent contract review and regression tests. A Verus pass for a generated counterexample proves that the particular witness violates the written contract; it does not establish that the intended product behavior is wrong unless the contract is the right one.
-
 ## techniques for the catalog
 
 - proof-aware hypothesis mutation — remove an essential hypothesis from a proved universal theorem and generate an existential counterexample problem
@@ -80,5 +78,3 @@ Inference: counterexample generation is valuable for VeruLaw because it can chal
 - proof-length reward shaping — downweight easy auxiliary proofs and regulate generated proof length with normalized policy optimization
 - verifier-gated benchmark checking — count only counterexamples whose formal proofs pass the theorem prover
 - counterexample-based specification audit — use witnesses to test autoformalized theorem statements and intermediate reasoning steps
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -88,12 +88,6 @@ Inference: Verus agents should route nonlocal specification failures to decompos
 
 The method was evaluated on MiniF2F-test (244), ProofNet (371), MathOlympiadBench (360), and PutnamBench (660) (section 5.2, page 6). Table 3 reports accuracy percentages for the first three benchmarks and solved-problem counts for PutnamBench at budget 64, with additional Putnam budgets 128 and 256. Section 5.4 and Appendix C.1 compare direct and refinement samples using an energy-statistic permutation test with length-normalized Levenshtein distance on canonicalized programs. The authors explicitly qualify the measure: “While edit distance is a purely syntactic metric, Lean proofs exhibit tight coupling between syntactic structure and proof state evolution.” The authors also report less than 0.1% runtime for value-model inference and one Lean compilation per sampled proof (section 5.6, page 8).
 
-Inference: The measured gains establish a Lean search improvement under these models and budgets. They do not establish lower Verus proof cost, better Rust safety, or stable behavior under changed libraries. For VL, the threat is material: verifier errors can become a compact training and search signal that lets an agent explore repairs cheaply. The counter-risk is that error classes can hide semantic differences, and a checker only validates the stated contract.
-
-## what VL should not redo
-
-Inference: VL should not repeat the paper's basic discovery that compiler feedback can guide local proof repair or that direct and refinement search can be combined. New work should test diagnostic normalization, source-local insertion, and value-guided obligation scheduling on real Verus projects, with proof success, verifier time, repair count, and specification changes as denominated outcomes.
-
 ## techniques for the catalog
 
 - failure-mode compression: analyze recurring failures with normalized diagnostics; condition repairs on the current proof and compiler feedback
@@ -101,4 +95,3 @@ Inference: VL should not repeat the paper's basic discovery that compiler feedba
 - cold-start repair training: synthesize failed/correct proof pairs with verifier-checked labels and fine-tune a repair-capable prover
 - expert iteration: retrain on successful repairs from the prover's current error distribution
 - value-guided tree search: mix fresh proof generation with error-conditioned refinement and rank nodes by learned repair potential
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "While localized and recurring errors are often repairable, deeper semantic failures remain challenging and continue to limit refinement performance."): checked all study quotations, numbers, section/page references, and technique steps against the full paper, including appendices; corrected normalization versus refinement inputs, the insertion ablation result, page references, a truncated quotation, value-model training steps, accuracy units, and the distribution-test description; changed the link to the paper’s arXiv identifier; did not reproduce experiments, inspect implementation or training data, or validate the proposed Verus transfers.

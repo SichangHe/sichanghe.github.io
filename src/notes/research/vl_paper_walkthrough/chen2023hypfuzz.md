@@ -44,12 +44,9 @@ Evidence and limits: HyPFuzz obtains 94.78% CVA6 coverage in 72 hours and reache
 ## what is proved, measured, and trusted
 Formal-engine results: selected cover properties can be reachable, unreachable, or undetermined; reachable results include Boolean witness assignments (§2.1, p. 1363). Measured: coverage, scheduler rates, fuzzing speed, and differential mismatches. Each experiment ran for 72 hours and was repeated three times (§5.1, pp. 1369–1370). Inference: the workflow relies on JasperGold/SAT/BDD semantics, RTL instrumentation, converter correctness, ISA specifications, simulators, and golden models. Inference: agent-written verified Rust is threatened mainly at the boundary between specification and implementation: high coverage and differential agreement do not prove absence of bugs, and an incorrect golden model can make every result misleading.
 
-Inference: what VL should not redo: the paper already supplies the hybrid loop, rolling-rate scheduler, point-selection heuristics, SVA witness generation, ISA conversion, and differential vulnerability detector. VL can reuse the pattern for verified-Rust testing, but must separately prove the Rust implementation and reference-model correspondence.
-
 ## techniques for the catalog
 - cover reachability: turn uncovered RTL behavior into a formal path witness
 - rate scheduler: switch between formal solving and fuzzing using rolling coverage rates
 - point selection: prioritize deep, uncovered, or dependency-heavy modules
 - witness conversion: map per-cycle Boolean assignments into ISA instruction seeds
 - differential checking: compare DUT architectural state with an ISA golden model
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "The MaxUncovd selection strategy is the fastest for all processors except for the OR1200, where the RandSel strategy performs the best."): checked all paper text, quotations, numerical claims, section and printed-page references, technique steps, and the publisher link; corrected the selection-strategy coverage exception, RandSel behavior, scheduler description, converter steps, reference locations, and inference labels; did not reproduce experiments, inspect implementation code, or independently validate the reported vulnerabilities or CVEs.

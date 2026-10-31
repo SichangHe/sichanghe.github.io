@@ -38,14 +38,9 @@ How: (1) constrain variables to match the actual system and check satisfiability
 
 Inference: Verus form: use the optimizer to propose a patch, then rerun Verus on the patched Rust with explicit contracts and invariants. The SMT repair model does not itself prove implementation behavior.
 
-## what remains trusted and threat to VL
-The paper's claimed connection between model proofs and the actual system depends on extraction accuracy (sec. IV-A.1, p.5; sec. IV-B, p.6). Inference: applying this approach requires trusting the extractor, solver, selected rules, and thresholds, and checking that source changes implement the proposed model changes. Section V (p.6) leaves comparison with existing methods, scalability, and additional concerns as research questions. Section III-C (pp.4–5) suggests solving concerns separately if their combined constraint set becomes intractable. Inference: that fallback loses assurance that one repair satisfies every concern simultaneously. For VL's distributed Rust systems, the graph model could complement functional Verus proofs, but this paper supplies no measured threat reduction or Rust validation. Reuse model traceability and validate candidate repairs; do not infer source-level correctness from an unverified extractor.
-
 ## techniques for the catalog
 - intermediate graph extraction — reconstruct services, endpoints, ownership, and calls from source repositories
 - concern-specific model extension — add ordering, data, access, role, and operation fields as needed
 - SMT constraint generation — combine architecture constraints and proposed authorization extensions in one model
 - ranking-function cycle check — require a strict integer order along every edge
 - solver-backed repair proposals — verify observed facts, then minimize changes for developer investigation
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "We can create a verifier by taking a constraint system and holding all variables constant via constraints that assert the variables match the actual state of the microservice system."): checked all paper text, study quotations, counts, section and page references, model definitions, technique steps, and evaluation limits; changed the link to the paper's arXiv identifier, recorded the hub-inequality inconsistency, removed unsupported extraction claims, and marked added implementation and Verus advice as Inference; did not check cited works, TrainTicket source, tool execution, or empirical correctness.

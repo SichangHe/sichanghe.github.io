@@ -30,7 +30,7 @@ Inference: express an L0/L1/L2/L3 report as a Rust enum or struct and define a `
 
 evidence and limits
 
-The paper reports 252 automatically flagged candidates and 170 manually confirmed cases, so the confirmed corpus is 170/1,030 valid traces (16.5%), while the candidate screen is 252/1,030 (24.5%). These fractions are computed from the study's stated denominators. Bandit false negatives cannot be measured; the authors call the corpus a conservative estimate of failures detectable by this framework (section 5.2, p. 17). Inference: VL should layer independent security checks around Verus proofs and should not treat a passing proof or test as evidence that an unmodeled security property holds.
+The paper reports 252 automatically flagged candidates and 170 manually confirmed cases, so the confirmed corpus is 170/1,030 valid traces (16.5%), while the candidate screen is 252/1,030 (24.5%). These fractions are computed from the study's stated denominators. Bandit false negatives cannot be measured; the authors call the corpus a conservative estimate of failures detectable by this framework (section 5.2, p. 17).
 
 ## technique: exploitability scoring for candidate triage
 
@@ -53,7 +53,7 @@ Inference: implement the score over a finite list of typed source and sink recor
 
 evidence and limits
 
-The weights and threshold were calibrated on Iteration 1 candidates and are not a universal risk model. The authors explicitly say manual review makes the threshold a sensitivity parameter rather than a final classification boundary (section 2.4.2, p. 5). Inference: this is suitable for routing expensive analyses and reviewers, but VL should measure false negatives and threshold drift on its own Rust and dependency ecosystem before using it as a release policy.
+The weights and threshold were calibrated on Iteration 1 candidates and are not a universal risk model. The authors explicitly say manual review makes the threshold a sensitivity parameter rather than a final classification boundary (section 2.4.2, p. 5).
 
 ## technique: iterative taxonomy and propagation tracing
 
@@ -78,7 +78,7 @@ Inference: model a repair pipeline as a state machine whose states carry the pat
 
 evidence and limits
 
-Reviewers rarely intercepted confirmed deficiencies in the multi-agent cases (section 3.2, p. 12). Introduction was concentrated in multi-agent outputs and configuration artifacts, while Inadequacy had the highest mean L3 risk, 17.7 versus Omission 10.7 and Introduction 8.0 (Table 9, p. 13). The same base model and related prompts prevent attributing convergence to architecture alone (section 3.2, p. 12). Inference: a VL workflow must scan generated configuration, tests, and build artifacts, not only the target Rust file.
+Reviewers rarely intercepted confirmed deficiencies in the multi-agent cases (section 3.2, p. 12). Introduction was concentrated in multi-agent outputs and configuration artifacts, while Inadequacy had the highest mean L3 risk, 17.7 versus Omission 10.7 and Introduction 8.0 (Table 9, p. 13). The same base model and related prompts prevent attributing convergence to architecture alone (section 3.2, p. 12).
 
 ## technique: category-directed security verification
 
@@ -105,8 +105,6 @@ The authors conclude: “Our results show that silent failures should be treated
 
 The paper proves no formal theorem; it provides an empirical taxonomy and verification procedure. The main results depend on GPT-4o-mini, Python-only SecurityEval/CVEfixes tasks, Bandit, the L3 heuristic, manual review, and qualitative coding. As a sensitivity check the authors re-examined the taxonomy using only the 131 true positives (39 of the 170 are Partial) and state: “All three axial categories and seven of the ten open codes remain represented in this subset.” (section 5.1, p. 17). The three dropped codes are Deployment Context Risk, Ambiguous Repair Intent, and Vulnerable Test Code; the paper reports that counts fell in all three categories but does not give the per-category counts of the subset. The paper excludes performance, privacy, maintainability, usability, and non-security silent failures (section 5.1, p. 17).
 
-Inference: the threat to agent-written verified Rust is high for security claims if VL relies only on passing tests or proofs of functional contracts. The study reports 170/1,030 valid traces confirmed by manual review as retaining or introducing security weaknesses while passing L0 and L1 (section 2.5.1, p. 6); this count is limited to weaknesses detectable by its framework. A Verus contract can address a security property only when that property, all generated artifacts, and external assumptions are modeled. Because the confirmed cases are defined by L2/L3 findings and manual review, a test-only benchmark would count all of them as successes (section 4.2, p. 15); VL should therefore not rely on one. The unresolved question is how to combine machine-checked Rust contracts with independent security analyses without trusting an agent-generated specification.
-
 ## techniques for the catalog
 
 - four-level verification: separate syntax, functional behavior, static security, and exploitability checks
@@ -114,4 +112,3 @@ Inference: the threat to agent-written verified Rust is high for security claims
 - propagation tracing: follow a deficiency from planning or implementation through every agent handoff and artifact
 - iterative taxonomy: refine omission, inadequacy, and introduction codes with independent recoding and agreement checks
 - category-directed analysis: route API, input-handling, and generated-artifact checks to the failure mechanism most likely to occur
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "This shows that a subset of tasks elicited similar silent-failure patterns across otherwise distinct frameworks, rather than isolated framework-specific failures."): read the whole paper text and the whole study; checked every quotation, the section and page references, the L0-L3 definitions, the exploitability formula and weights, the sampling and coding steps, the kappa values, and the counts and percentages in Tables 5 to 9 and the text of sections 3.1 to 3.3; changed one misquoted sentence (the word "axial" was missing from the section 5.1 quote), one wrong section reference (the conclusion quote is in section 7, not 6.5), the source-sink multiplier description, step 2 of category-directed verification (its bypass-testing advice comes from section 4.1), the reviewer-evidence sentence (the paper says reviewers rarely, not never, intercepted), an unsupported claim about prior work, and a typo; added the kappa values and the 131-true-positive details; did not check the references, the figures beyond their printed numbers, the released dataset, or the per-framework counts in Figure 5. The link is the arXiv id printed on the paper page.

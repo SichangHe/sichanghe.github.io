@@ -43,7 +43,7 @@ The paper says: “The critiques from the various critics are pooled together by
 
 Inference: for Verus, collect diagnostics, failing postconditions, compiler errors, and test failures; summarize them into a bounded repair prompt. Keep each diagnostic tied to the exact source revision. Prompt diversification can try alternate lemma or invariant hypotheses, but each candidate must be rechecked by Verus.
 
-evidence and limits: Section 3.2 proposes controller choices without reporting a comparison of their effects. Inference: a summary can omit a critical error, so VL should preserve raw diagnostics alongside summaries and rerun the critics on each candidate.
+evidence and limits: Section 3.2 proposes controller choices without reporting a comparison of their effects.
 
 ## technique 3: LLM-assisted model and specification acquisition
 
@@ -60,7 +60,7 @@ The paper gives the concrete pattern: “The idea here is that the traditional d
 
 Inference: for Verus, use the LLM to draft `requires`, `ensures`, data invariants, and abstract-state transitions, then require a human or specification review to confirm that they state the product requirement. Verus proofs establish the drafted contract, so contract review must precede proof acceptance. The model-acquisition workflow does not remove trusted assumptions about external libraries or hardware.
 
-evidence and limits: model acquisition is an architectural role here, supported by cited work rather than an isolated quantitative experiment in this paper. In the travel case study, the authors report “6x of baselines” with a limit of 10 backprompting cycles and state: “One interesting observation about this domain is that we were able to use the LLM itself to enumerate the type of critics needed to validate the plan (with light human supervision).” (Section 4, p.8). Inference: these results do not establish that LLM-generated critics are sound; in VL, the reviewed specification remains a trusted input.
+evidence and limits: model acquisition is an architectural role here, supported by cited work rather than an isolated quantitative experiment in this paper. In the travel case study, the authors report “6x of baselines” with a limit of 10 backprompting cycles and state: “One interesting observation about this domain is that we were able to use the LLM itself to enumerate the type of critics needed to validate the plan (with light human supervision).” (Section 4, p.8).
 
 ## technique 4: LLM reformulation and syntax-checked translation
 
@@ -78,15 +78,9 @@ Inference: for Verus, ask an LLM to convert a natural-language requirement into 
 
 evidence and limits: in the travel study, the authors write: “Finally, LLMs reliably play the role of reformatter as well, converting free form travel plans into structured plans parseable by the critics for backprompts or plan evaluation.” (Section 4, p.8). No separate translation accuracy denominator is given. Inference: a valid parse can still encode the wrong requirement, so syntax critics cannot establish semantic adequacy.
 
-## paper evidence, trust assumptions, and VL relevance
-
-The paper states: “We reiterate that the soundness of the LLM-modulo framework is inherited from the soundness of the correctness (hard) critics.” (Section 3.1, p.6). Inference: for agent-written verified Rust, Verus can fill the hard-critic role for the encoded specification. Requirements, model abstraction, external APIs, and compiler behavior need their own justification; this paper establishes no Verus-specific guarantee. VL can use repeated verifier-guided repair and separate correctness checks from style feedback, while reviewing LLM-generated specifications and reformulations for meaning.
-
 ## techniques for the catalog
 
 - hard-critic generate–test loop — generate candidates, run sound model-based critics, and iterate until every correctness critic passes
 - backprompt meta-controller — pool heterogeneous diagnostics and choose summarized or diversified prompts for the next candidate
 - model/specification acquisition — use LLM suggestions with human curation to build the formal model and complete requirements
 - syntax-checked reformulation — translate candidates into verifier representations and validate syntax before semantic checking
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "The completeness of the system depends on the LLM’s ability to generate all potentially relevant candidates."): checked all quotations, numbers, section and page references, technique steps, and the paper link; corrected Table 1’s page and denominators, the completeness reference, an abbreviated quotation, unsupported workflow steps, and inference labels, and replaced the fetch-record link with the paper’s arXiv identifier; did not reproduce experiments, inspect cited papers, or validate the proposed Verus adaptations.

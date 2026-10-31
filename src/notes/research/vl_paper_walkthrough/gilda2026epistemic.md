@@ -86,14 +86,6 @@ how to do it:
 
 Verus form (Inference): encode arithmetic claim predicates as `spec fn`s and call solver-supported `assert` goals; use `bit_vector` only for bit-vector properties and ordinary arithmetic lemmas for real/integer bounds. Property-based tests can remain executable smoke tests, while the contract proves the finite calculator semantics. Verus cannot convert an arbitrary operational throughput claim into a sound model without trusted measurements and assumptions.
 
-## trust boundary, prior work, and VL threat
-
-The paper proves the min operator's five mathematical invariants and reports implementation tests, but it does not evaluate a deployed FPF tool; its reference server is “an existence proof, not the contribution itself” (Introduction, p. 2). Trusted elements include evidence scores, scope labels, expiry windows, timestamp sources, topology classification, and the external verifier. Inference: a Verus proof can harden the record schema, decay propagation, and calculator, while these inputs remain outside the proof unless independently attested.
-
-The audit and framework already cover explicit evidence layers, weakest-link aggregation, validity windows, dependency graphs, and SMT/property-based checks. Inference: VL should not redo these as generic product claims. A distinct contribution would be integrating them with Verus proof artifacts: for example, attaching exact proof hashes and solver configurations to F3 evidence, or proving that generated Rust contracts cannot silently retain expired assumptions.
-
-Inference: threat to a product of agent-written verified Rust is high at the epistemic and temporal boundary. Verus can establish that code meets its written contract; it cannot ensure the contract's assumptions remain valid after dependency, hardware, or workload changes. FPF's 14/62 stale decisions and its explicit 0.1 decay rule provide a practical model for surfacing that risk. The framework's position-paper status and two-project self-audit mean the magnitude is a warning signal, not a product-level failure rate.
-
 ## techniques for the catalog
 
 - ADI epistemic cycle — move claims from hypothesis through logical checking to empirical corroboration and record the decision externally
@@ -101,4 +93,3 @@ Inference: threat to a product of agent-written verified Rust is high at the epi
 - F-G-R ceilings — cap reliability by formality, scope congruence, and epistemic layer
 - evidence decay — attach validity windows, lower expired evidence to 0.1, and alert for re-validation, waiver, or deprecation
 - SMT and property checks — validate quantitative constraints with SMT and test calculator invariants with generated inputs
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

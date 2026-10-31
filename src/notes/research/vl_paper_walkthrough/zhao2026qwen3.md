@@ -73,20 +73,6 @@ Verus form. Inference: a Verus implementation would keep the two-phase engineeri
 
 Evidence and limits. The harness tests only provided inputs, so it does not prove equivalence for all inputs; §5.3 explicitly characterizes the measure as behavioral agreement on the test suite. Six attempts and stochastic decoding (temperature 0.6, top-p 0.95, top-k 20, max output 1,536; Table 10, p. 17) make SR depend on the repair budget and random seeds. Inference: a product using this pipeline should log every attempt and classify compiler, timeout, static-analysis, and translation-process failures, as the paper does in §5.5.
 
-## results, trust, and product threat
-
-Table 11 compares model-level SR on the 200-program benchmark. The base Qwen3.5-27B is 72.30%; the three-stage model is printed as 87.30%, while the prose says 87.20% and calls the gain 14.9 percentage points (§6.1, pp. 18–19). Qwen3.5-Plus (397B total, 17B active) is 77.20%, MiniMax-M2.5 (230B/10B active) 83.90%, GLM-5 (744B/40B active) 84.40%, GLM-5.2 89.90%, and Claude Code-4.6 90.01% (Table 11, p. 18). These are five-seed averaged SR values under the six-attempt SACTOR setting, with the denominator being the 200 programs per run and the average taken over five seed-level rates (§5.6, p. 18).
-
-On SWE-bench Verified, the table gives 72.0 for GPT-5-mini, 62.0 for GPT-OSS-120B, 72.0 for Qwen3.5-122B-A10B, 72.4 for the base Qwen3.5-27B, and 70.6 for the fine-tuned model (Table 12, p. 19). The discussion says 70.5% twice, so this table/prose pair is another rounding or transcription inconsistency. The benchmark is the human-validated 500-task subset, evaluated at pass@1 (§6.2, p. 19).
-
-What is proved or measured. The paper measures compilation and test-passing behavior, averaged SR, idiomaticity indicators (Clippy lint counts and unsafe-code fraction in the abstract), failure categories, and general coding pass@1. Stage 2 examples are accepted by Verus, and VeruSyn filters obvious specification weakening and escape hatches. What stays trusted is the Verus implementation and solver, the generated specifications, the C compiler and reference executions, the FFI harness, benchmark tests, static-analysis context, model checkpoint, and the assumption that test inputs cover relevant behavior. Inference: neither the SACTOR result nor the fine-tuning result proves memory safety, semantic equivalence over all inputs, or correctness of an agent-written Verus specification.
-
-Inference: the threat to a product that emits agent-written verified Rust is high for specification and coverage reasons but moderate for the repair mechanism itself. The VeruSyn pattern is directly useful for teaching a model to react to verifier diagnostics while forbidding contract weakening. The SACTOR result shows that bounded feedback loops can raise translation success substantially, but its oracle is finite execution and its best model still trails GLM-5.2 and Claude Code-4.6. A Verus product should therefore use SACTOR-like staged generation and repair as an input pipeline, then require independent contracts and Verus proofs for security properties before accepting generated code.
-
-## what VL should not redo
-
-The paper already supplies a three-stage Rust/Verus/C2Rust curriculum, a concrete anti-cheating filter, a two-phase SACTOR decomposition, FFI-based behavioral checking, six-attempt repair, five-seed averaging, and a 200-program benchmark. Repeating a generic “generate, compile, retry” loop without preserving verifier diagnostics, specifications, and denominators would duplicate its core contribution. The paper does not provide a causal ablation of its stages, a formal equivalence proof, or project-scale training exposure: Stage 3 uses `functions/` and `programs/` data but excludes `projects/` (§4.3, pp. 14–15). Inference: VL's new work should target specification correctness, dependency boundaries, project-scale proofs, and measured ablations rather than another unqualified C2Rust success-rate claim.
-
 ## techniques for the catalog
 
 - verifier-error repair corpus — generate rejected Verus proofs, retain verifier errors with successful patches, deduplicate, and filter contract weakening or escape hatches before SFT
@@ -98,4 +84,3 @@ The paper already supplies a three-stage Rust/Verus/C2Rust curriculum, a concret
 - FFI behavioral verification — compile and run the original C and generated Rust on identical inputs, compare outputs, and allow a fixed repair budget
 
 - seed-averaged success rate — compute per-seed pass fractions over a fixed program denominator and report the arithmetic mean over five stochastic runs
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

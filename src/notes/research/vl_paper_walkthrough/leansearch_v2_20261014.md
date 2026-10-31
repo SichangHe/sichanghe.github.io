@@ -92,12 +92,6 @@ Verus form: Inference: store alternative Rust lemma sets and treat visibility or
 
 evidence and limits: MathlibMPR reports one to eight groups per theorem and mean 2.96; Covered@10 is 30.4% for reasoning mode (Section 4.2 and Table 2, pp. 7–8). Alternative-routing annotations cover only a subset, so coverage is not an exhaustive account of all mathematical proofs.
 
-## what remains trusted and what VL should take
-
-The retriever, informalizer, embeddings, reranker, filter, judge, and benchmark annotations are search machinery, not proof evidence. The Lean kernel checks accepted proofs; the paper's retrieval metrics do not. Inference: VL can reuse the architecture as a contract-aware lemma service: dependency-aware descriptions, two-stage retrieval, global proof planning, empty-result signaling, and verifier-gated downstream evaluation. Inference: Verus-specific indexing must preserve module visibility, exact contracts, and compiler revisions because Lean declaration kinds and proof states do not transfer directly.
-
-The paper's controlled numbers show retrieval quality propagating to proof success in one fixed loop, but its limitation section says transfer beyond Lean/Mathlib and repository-level agents remains untested (Section 5, p. 10). Existing semantic search and premise-selection systems are baselines rather than work VL should redo; the distinct contribution is set-valued, strategy-level retrieval. Inference: product risk is moderate: incorrect retrieval wastes effort, but accepting a bad proof remains blocked if Verus is the final checker. Risk becomes high if VL treats relevance scores or judge decisions as acceptance.
-
 ## techniques for the catalog
 
 - dependency-aware corpus — extract a declaration DAG and informalize descriptions bottom-up
@@ -105,5 +99,3 @@ The paper's controlled numbers show retrieval quality propagating to proof succe
 - global sketch loop — sketch proof steps, retrieve, filter, judge, and revise unsupported routes
 - three-level evaluation — measure ranking, premise-group coverage, and fixed-loop verifier success
 - route and empty-set modeling — preserve interchangeable lemmas, alternatives, and genuine no-support signals
-
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

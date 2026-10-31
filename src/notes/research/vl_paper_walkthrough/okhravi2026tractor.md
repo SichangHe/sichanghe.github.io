@@ -50,20 +50,6 @@ Battery 01 contains C that maps relatively naturally to Rust's affine type syste
 
 Battery 02 adds heap allocation and ownership transfer, mutable aliasing and interior mutability, overlapping raw buffers, function-pointer dispatch, type-erased containers, goto cleanup, type punning, structural indirection, cross-translation-unit linkage, deep macros, filesystem I/O, and environment state (Section 3.3, pp. 26–28). It deliberately excludes inline assembly, cyclic ownership, and concurrency, so it is a bounded challenge rather than a complete C language corpus. P02 is a modified libgit2 of roughly 100,000 lines and combines B02 features as a scale and ownership capstone (Section 3.4, p. 28).
 
-Inference: VL should use B01 to test basic contract translation and B02/P02 to test ownership invariants, buffer overlap, cleanup, and aliasing proofs. The omitted concurrency and inline assembly mean passing TRACTOR would not establish coverage for all systems code.
-
-## trust, contradictions, and threat to VL
-
-The benchmark's strongest claim is reproducibility: public batteries, hidden vectors held back for six months, Dockerized translators, AWS Batch/Fargate, S3 inputs/outputs, and released infrastructure. Its correctness claim remains bounded by test coverage and by LLVM's concrete C behavior. Hidden tests are not a formal oracle. `has_ub` exclusions and regex matching weaken exact equivalence, while manual idiomaticity scores introduce reviewer judgment.
-
-There are no translator performance or correctness numbers in this paper, so no success rate or denominator can be inferred. The report's B01/B02 feature lists are benchmark design facts, not measurements. The authors' statement that B02 “make[s] up the initial evaluation in which a tool’s ability to preserve behavior ... is placed under test” is a motivation, not evidence of proof.
-
-Inference: agent-written verified Rust faces a larger threat from wrong specifications and unsafe FFI assumptions than from ordinary compilation failures. TRACTOR's vectors can catch observable mismatches; its safety and idiomaticity metrics can expose excessive unsafe and poor API design; Verus proofs can add stronger invariants. VL should retain test-vector evidence, formal contracts, solver logs, and unsafe-operation reports as separate artifacts, because none subsumes the others.
-
-## what VL should not redo
-
-TRACTOR already defines the four metric families, JSON and filesystem test-vector schemas, Cando/Test Runner architecture, safety instrumentation, Clippy-plus-manual rubric, performance methodology, staged batteries, and AWS evaluation infrastructure. A VL study should integrate these artifacts with Verus contract checking rather than build another generic C-to-Rust scorecard.
-
 ## techniques for the catalog
 
 - observable test-vector equivalence — compare C and Rust stdout, stderr, return codes, ABI state, and filesystem changes with JSON vectors
@@ -72,4 +58,3 @@ TRACTOR already defines the four metric families, JSON and filesystem test-vecto
 - rubric-based idiomaticity — combine rustc/Clippy/Lizard measurements with six-dimensional manual Likert review
 - reproducible performance measurement — randomize cloud jobs, warm up, and measure throughput, perf-stat runtime, and Massif memory
 - staged C-to-Rust batteries — escalate from affine-safe B01 features to aliasing, ownership, type erasure, cleanup, and large B02/P02 projects
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

@@ -43,14 +43,6 @@ Annotations are macros that expand to nothing; global annotations expand to ISO-
 
 Inference: Verus cannot preserve this exact source compatibility because proof annotations affect the Rust verifier, although proof code is erased from execution. A migration tool could use C-rusted-style contracts as input specifications for Rust wrappers.
 
-## evidence, assumptions, and threat to VL
-The paper's evidence consists of worked examples: Figure 2 diagnostics on one unsafe function, Figure 3 a repaired function with no warnings, Figure 7 unit constraints, Figure 8 lifecycle errors, Figure 9 protocol errors, and Figure 11 an unsafe boundary. No table gives benchmark counts, false-positive rates, proof times, or independent validation. Inference: the analyzer's implementation, library annotations, finite domains, and interpretation of absent annotations remain trusted. The paper also claims prevention of leaks, use-after-deallocation, race conditions due to sharing, and other resource errors for accepted annotated programs (Section VIII, pp. 10–11), but those broad claims are not accompanied by quantitative coverage.
-
-Inference: threat to agent-written verified Rust is moderate as a competing workflow idea. C-rusted could reduce migration cost and annotate legacy C, but it does not provide Verus's solver-backed functional proofs or Rust compiler guarantees. VL should borrow its explicit resource protocols and safe/unsafe boundary discipline, then discharge them with Verus contracts.
-
-## what VL should not redo
-The paper already illustrates, by examples, ownership qualifiers, lifecycle states, nominal subtypes, protocol pre/postconditions, unsafe encapsulation, and annotation erasure. New work should measure how these contracts translate into Verus and whether agents can preserve them during C-to-Rust migration.
-
 ## techniques for the catalog
 - ownership qualifiers — annotate resource-producing and resource-consuming interfaces so ownership transfer and leaks are checked
 - lifecycle annotations — require initialization before use and finalization before scope exit
@@ -58,4 +50,3 @@ The paper already illustrates, by examples, ownership qualifiers, lifecycle stat
 - nominal value properties — distinguish units and ranges with nominal types and constrained operators
 - unsafe boundaries — isolate implementation-only operations with `e_unsafe`, `e_checked`, and `e_unchecked`
 - incremental annotation erasure — let macros disappear for existing C compilers while a static analyzer checks them
-Checked 2026-10-18 against the full paper by a Claude agent (mid-paper quote: "Nominal typing is a restriction placed by strong type systems whereby two types are compatible only if they have the same name, independently from their underlying representation."): read the whole paper text and checked every quotation, figure content, section and page reference, and technique step against it; changed page references (Figures 3, 4, 6, 7, 8, 10, 11, `e_unchecked` and `e_checked` text), the `fopen` description (optional owning FILE pointer, not a descriptor), the `e_checked` wording, the finalization wording (released, not scope exit), the erasure wording (all annotations expand to nothing except global ones), and the sharing-race claim (pp. 10-11), added two paper quotes, and marked my own procedure steps and trust remarks "Inference:"; did not check the Verus mappings (outside the paper), references, or the analyzer behavior beyond the paper text.

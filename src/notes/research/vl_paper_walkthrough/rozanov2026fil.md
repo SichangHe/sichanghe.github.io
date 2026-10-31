@@ -51,10 +51,6 @@ Inference: the method assumes that stages are genuinely ordered and that prompts
 
 Measured quantities are compilation, runtime, correctness, and speed fractions over the 100-problem test set, with run-to-run variation. Trusted components include the KernelBench reference, compiler/runtime/profiler, stage verifiers, prompt design, model implementations, and timing. The paper's claim is that inductive biases improve this benchmark under a constrained budget; it does not establish that all long-FIL tasks benefit or that humans can always create a useful ordered decomposition.
 
-Inference: for VL, Verus verification time is a FIL component. A practical adaptation would order checks from Rust parsing and compilation, to executable tests, to Verus proof obligations, to stronger system-level properties. The key difference is that a Verus proof is a logical certificate, while a runtime or speed check remains empirical. The paper does not discuss Verus or Rust. Inference: when proof failures are slow, indiscriminate candidate sampling would waste the feedback budget, and stage-specific prompts could focus repairs on syntax, contracts, invariants, or solver lemmas. Inference: this does not justify weakening a contract to pass an earlier stage.
-
-VL should not redo the generic ordered-metric idea, first-failure prompting, or the 100-problem KernelBench comparison. A new contribution would need a Verus-specific decomposition with measured proof-time, timeout, and repair outcomes and an explicit trust boundary.
-
 ## techniques for the catalog
 
 - FIL accounting — estimate total verification cost as candidate count times feedback-loop duration, with parallelism included
@@ -62,4 +58,3 @@ VL should not redo the generic ordered-metric idea, first-failure prompting, or 
 - first-failing-stage search — evaluate stages in order and prompt a targeted repair at the first failure
 - expert inductive-bias prompting — encode domain debugging knowledge as stage-specific prompts
 - low-data control — compare the same biases with and without additional domain pretraining
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Our setting, by contrast, focuses on regimes where the verification process itself determines the maximum feasible data scale, transforming what has traditionally been an algorithmic challenge into a fundamental data bottleneck."): read the whole paper text; checked every quotation, Table 2 and Table 4/5/11 numbers, the Algorithm 1 steps, section and page references against the text; changed the abstract-quote capitalization, the minutes-to-weeks overstatement, page references for Sections 3.1.2 and 5.1 and Table 9, the Fast 1/Fast 2 prompt description, the baseline wording, and marked own conclusions as Inference; added paper-internal text/table inconsistencies, Table 11 degradations, the low-variance caveat and the paper's own long-FIL limitation; did not check figures (Figures 1-8 and transition plots), cited references, or the GitHub code, and did not recompute significance tests; link is the arXiv ID printed in the paper header.

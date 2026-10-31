@@ -106,10 +106,6 @@ Stubs and environment models
     and that it is sound only if it over-approximates what it replaces.
   - Concrete use: the Firecracker rate limiter stubs `libc::clock_gettime`, and the study reports this "found a rounding bug allowing up to 0.01% bandwidth excess".
   - [study](../vl_paper_walkthrough/kani_20261012.md)
-- Rust standard library verification. Stubbing used to speed up compilation.
-  - The study says, as an inference for VL: "A stub is a trust boundary and must be counted in the evidence." (the study's words)
-  - It also lists "intrinsic and foreign-function models" among trusted components.
-  - [study](../vl_paper_walkthrough/verifying_the_rust_standard_library_20261012.md)
 - PropertyGPT. Conservative models of what the prover cannot see.
   - Unknown on-chain calls: the study quotes the paper that they "remain unknown at the verification stage, so we assume all on-chain calls succeed but make their return data symbolic".
   - It also models `sha3` as injective, and calls both over-approximations or assumptions that can cause false alarms or miss semantics.
@@ -219,15 +215,6 @@ Assumptions at unverified boundaries, as maintenance
   - Practitioners isolate unsafe and external APIs behind `external_body` specs and track assumptions in `requires`.
   - The Verus form is the study's labelled inference, not the interviewees'.
   - [study](../vl_paper_walkthrough/toward_practical_deductive_verification_20261012.md)
-
-Model-to-deployment gap (SoundGate, an admission prerequisite check for agent actions)
-- Verus proves the sequential admission model, 11 items verified, zero errors reported. Standard-library collections and deployment transport stay trusted.
-- The deployed Rust is tied to the model only by differential testing: 12 million operations over 200,000 randomized traces, zero divergences.
-  The author calls this "not a mechanized refinement proof" (the paper's words, as quoted in the study).
-- The mediation condition is itself a trusted assumption: every side-effecting operation acts only after a release verdict.
-  Wrappers, linters and network or filesystem confinement each leave a hole; the approver and prerequisite check process stay trusted.
-- The study's inference for VL: report model proof, code proof, conformance tests and confinement separately.
-- [study](../vl_paper_walkthrough/stop_means_stop_20261011.md)
 
 Translation as trusted base
 

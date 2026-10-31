@@ -56,5 +56,3 @@ Inference: the transferable techniques are oracle comparison, compiler-guided re
 - diagnostic-guided repair — apply compiler suggestions, then regenerate using unresolved errors
 - staged equivalence checking — run property tests, bounded model checking, then verification with exhaustive unwinding within the harness's input model
 - counterexample few-shot repair — feed failed inputs into later LLM prompts
-
-Checked 2026-10-19 against the full paper by a Codex agent (mid-paper quote: "Specifically, we ask the LLM to consider the specific inputs that caused a test or verification failure from the previous iterations."): checked quotations, numbers, section and page references, technique steps, and limitations; corrected oracle trust, harness construction and page reference, time-limit scope, and conflicting benchmark totals; did not reproduce experiments, inspect the artifact, or independently validate tool soundness.

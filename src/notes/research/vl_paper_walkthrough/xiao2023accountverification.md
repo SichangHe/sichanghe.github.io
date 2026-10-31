@@ -2,7 +2,7 @@
 (authored by agents unless marked 🧑)
 Tag: `xiao2023accountverification`, [paper](https://www.usenix.org/conference/usenixsecurity23/presentation/xiao-madelyne)
 
-This paper studies the meaning and effects of social-media account verification. The authors explicitly frame the work as two components: “The project consists of two components: a user survey and a measurement of verified Twitter accounts.” (Abstract, p. 3099.) Inference: for VeruLaw, its survey, longitudinal measurement, qualitative coding, and reliability checks could help evaluate whether a verification label communicates a proved property; they do not prove Rust behavior.
+This paper studies the meaning and effects of social-media account verification. The authors explicitly frame the work as two components: “The project consists of two components: a user survey and a measurement of verified Twitter accounts.” (Abstract, p. 3099.)
 
 ## technique: representative perception survey
 
@@ -10,7 +10,7 @@ Inference: use this when a system's stated assurance may differ from what users 
 
 Steps: (1) state questions and the target population; (2) pilot the instrument and calibrate completion time; (3) recruit a demographically representative sample; (4) include attention and news-awareness checks; (5) inspect response quality; (6) analyze both structured responses and inductively coded free text. The final sample was 299 after excluding one respondent who identified Bill Clinton as the current U.S. President (Sec. 4.2, p. 3103). However, the authors retained the 263/299 (88%) who failed the attention check: “In a manual review of answers, especially free response prompts, these participants clearly demonstrated that they were paying attention to the study.” (Sec. 4.3, pp. 3107–3108.) Appendix D reports negligible effect size (Hedges’ g = 0.090), but its prose reverses the pass/fail counts relative to Table 9 and Sec. 4.3 (p. 3116). Inference: this inconsistency limits interpretation of that robustness analysis.
 
-Verus form. Inference: a similar assurance study for VeruLaw could define user-facing claims, then test whether users understand the exact property proved. The survey would measure communication of a contract; proving the contract would require separate evidence.
+Verus form.
 
 Evidence and limits. Fifty-two percent (154/299) believed identity confirmation was required for Twitter's blue check (Sec. 4.2.1, p. 3104). Eighty percent (239/299) did not know what gold checks meant, and 87% (259/299) did not know what gray checks meant (Sec. 4.2.3, p. 3106). Self-reported digital literacy may be inflated: the authors note that the dummy term “Proxypod” could resemble legitimate terminology (Sec. 4.3, p. 3108). Prolific recruitment may introduce biases beyond the demographic factors represented (Sec. 4.3, p. 3107). The demographic associations with understanding verification were not statistically significant (Sec. 4.2.4, pp. 3106–3107).
 
@@ -34,11 +34,10 @@ Verus form. Inference: a formal representation could check consistency with expl
 
 ## what is established and trusted
 
-The study reports perception gaps and differences among sampled account groups. Inference: these observations do not establish that verification causes belief or that a badge is technically secure. The analysis depends on Twitter API fields, continuity of account identifiers, manual labels, sample representativeness, and statistical interpretation. Inference: VeruLaw users might similarly read a verification label as stronger than its proved contract. The paper does not test that possibility. Its recommendation to distinguish subscription from verification visually and explain verification in context (Sec. 6, p. 3112) suggests testing equally precise explanations of proved software properties.
+The study reports perception gaps and differences among sampled account groups.
 
 ## techniques for the catalog
 
 - representative assurance survey — define perception questions, pilot the instrument, recruit a demographically representative sample, review response quality, and analyze structured and free text
 - longitudinal snapshot measurement — sample timestamps uniformly, retrieve tweets and account records, compare verification across dates, and report transition denominators and sampling bias
 - inductive codebook coding — iterate categories from samples, double-code an overlap, and compute Cohen's kappa
-Checked 2026-10-16 against the full paper by a Codex agent (mid-paper quote: "This method for measuring digital literacy necessarily requires truthful responses from survey takers, and some bias is to be expected in respondents’ subjective self-evaluations of their own digital literacy."): read the full paper including appendices and references; checked quotations, numbers, section and page references, technique steps, tag, and paper link; corrected references, unsupported preregistration and filtering claims, sampling descriptions, and overstatement of causal evidence; recorded inconsistent attention-check counts and January dates; marked applications as inference and removed unsupported Verus API prescriptions; did not reproduce the analyses, inspect supplementary materials, or validate the proposed VeruLaw applications.

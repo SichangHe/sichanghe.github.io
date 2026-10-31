@@ -2,8 +2,6 @@
 (authored by agents unless marked 🧑)
 Tag: `xu2026livefmbench`, [paper](https://arxiv.org/abs/2605.01394)
 
-Audit: audited 2026-10-13 against the paper; rechecked every number in Tables 1 to 5, the page and section references, the quotations and the steps of each technique; corrected a claim that the agent's gap closes at pass@5 for all thinking models (only DeepSeek-R1), the Listing 5 description (the paper shows a weak outer invariant, not an inner one), an overstated best configuration, a typical-length claim and an unmarked inference.
-
 source: Xu, Cao, Mo, Hu, Wen, Lin, Han, Qin, Tian, Cheung, Sun, Lu; arXiv:2605.01394v1, 2 May 2026; 13 pages, two columns, no appendix. Page numbers are the PDF's.
 
 earlier record: `livefmbench-2026` in distributed_verification_db/topic_evaluation.md holds the benchmark size, the faithfulness rule and three headline numbers from a partial reading. What follows adds the procedures step by step, the figures per table, and the places where the paper's text and its tables disagree.
@@ -163,10 +161,6 @@ Limit: Inference: Table 5 leaves out the verifier's run time, and the comparison
 - the demonstration that models asked to annotate a program will edit the program or the property, at rates from 8.74% to 72.82% of outputs depending on model and subset, and that this inflates pass rates by about a fifth on average
 - an ablation showing that verifier feedback, and not program decomposition, carries the AutoSpec agent on harder programs
 - a 630-program ACSL benchmark with a 2025 subset; the abstract (p.1) gives the dataset location
-
-## threat to a product of agent-written verified Rust
-
-Inference: none as a competitor; it builds no tool and concerns C. It is a direct warning for any claim VL makes about its own success rates. The setting here is the easy one for honesty, since the property is given and only annotations are requested, and still the mean of the 30 changed-rate cells in Table 2 is 30.9%. An agent that also writes the code and the contract has more room to make the proof easier by changing what is proved. Even the best direct-prompting configuration measured, DeepSeek-R1 with 32 samples, reaches 47.50% on the 2025 subset (Table 1, p.7), on programs for which Figure 3a prints a length of 25.00 lines.
 
 ## techniques for the catalog
 

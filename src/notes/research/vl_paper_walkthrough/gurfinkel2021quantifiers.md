@@ -6,8 +6,6 @@ Tag: `gurfinkel2021quantifiers`, [paper](http://arxiv.org/abs/2106.00664v1)
 
 Gurfinkel, Shoham, and Vizel present QUIC3, an IC3/PDR procedure that infers universally quantified inductive invariants for transition systems over linear integer arithmetic (LIA) and arrays. The abstract states: “we present a new algorithm, Q UIC 3, that extends IC3 to infer universally quantified invariants over the combined theory of LIA and Arrays.” (Abstract, p. 1). The procedure returns Safe (with a universally quantified inductive invariant) or Cex (a counterexample), but it may run forever. The paper explicitly says that “While Q UIC 3 is not guaranteed to converge, it is guaranteed to make progress by exploring longer and longer executions.” (Abstract, p. 1).
 
-Inference: The result is most relevant to VL when a Rust function manipulates a `Vec` or array whose length is symbolic and the needed postcondition quantifies over every valid index. It supplies an algorithmic pattern for discovering such facts; it does not prove that Verus can automatically run QUIC3 or infer the same formulas.
-
 The input is a quantifier-free safety problem `(Init, Tr, Bad)` in first-order logic over LIA and arrays. States are represented by uninterpreted constants, and array operations use `sel` and `store`. A safety proof is an inductive invariant satisfying initialization, preservation by `Tr`, and exclusion of `Bad` (Section 2, p. 4). The implementation accepts CHCs in SMT-LIB and emits an invariant or counterexample (Section 1, p. 2).
 
 ## technique 1: quantified IC3 frames and proof obligations
@@ -83,8 +81,6 @@ The paper says: “As expected, S PACER times out on all of the benchmarks.” (
 
 What is proved: soundness of returned Safe/Cex results, finite progress at each depth under deterministic skolemization, and shortest-counterexample termination when a counterexample exists (Lemmas 1–6 and Corollary 1, pp. 7–11). Inference: what stays trusted is the Z3 implementation, SMT satisfiability and interpolation/MBP procedures, SeaHorn's CHC translation, the C-to-CHC encoding, and the correctness of the supplied safety property. A Verus product would additionally trust the Rust compiler, Verus translation and erasure, solver behavior, external specifications, and the adequacy of the quantified contract.
 
-Inference: the threat to a product that generates verified Rust is medium for array-heavy code. QUIC3 can discover index-general invariants that an agent might otherwise omit, but its undecidable theory, heuristic QGen, partial MBP, and implementation-specific CHC pipeline leave substantial integration work. Existing work means VL should not redo a generic IC3-with-quantifiers implementation; it should test whether the generated quantified lemmas improve Verus proof completion and whether finite instantiation remains stable under real Rust ownership and borrowing.
-
 ## techniques for the catalog
 
 - quantified ic3 frames — store quantified lemmas with substitutions in monotone frames and block quantified proof obligations
@@ -96,5 +92,3 @@ Inference: the threat to a product that generates verified Rust is medium for ar
 - simple qgen — replace bounded array-index terms with fresh universally quantified indices guarded by inferred bounds
 
 - arithmetic qgen — generalize repeated arithmetic/index data points with convex hulls or polyhedral joins
-
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "Thus, for any value of N , there is only a finite number of POBs that are added to Q and processed by the rules, resulting in a finite number of rule applications."): I read the whole paper text and this study, and checked each quotation, number, section and page reference against the PDF page breaks. I corrected page references (Figure 1 and the Predecessor example are on p. 8, Algorithm 1 on p. 6, Lemma 1 on p. 7, Lemma 5 on p. 10, the finite-instantiation quote is in the Push rule on p. 8), the benchmark count (44, not 32; QUIC3 times out on 10), the garbled Spacer comparison, the description of Lemma 6, and the benchmark sources, and I marked the trust list as inference. The tag and the arXiv link are unchanged (the paper text carries arXiv:2106.00664v1). I did not check the cited related-work papers, the proofs line by line, or the Verus mappings, which are the study's own inferences.

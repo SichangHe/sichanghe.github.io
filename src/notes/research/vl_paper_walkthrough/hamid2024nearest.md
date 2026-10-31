@@ -6,8 +6,6 @@ Tag: `hamid2024nearest`, [paper](https://arxiv.org/abs/2311.10965)
 
 The paper is a Coq case study that verifies quickselect, k-d tree construction, and K-nearest-neighbor (KNN) search over a k-d tree with a bounded priority queue. The abstract says: “Our experience demonstrates an intuitive method for specifying properties of these algorithms using the notion of list permutations.” (Abstract, p. 1) The implementation uses natural-number coordinates (`datapt := list nat`), the Manhattan distance `sum_dist`, a functional priority queue adapted from Verified Functional Algorithms (VFA), and fuel arguments for termination (§2.2, §3, pp. 3–4). The paper says its Coq development also verifies single nearest-neighbor search, but the paper itself presents only the general KNN variant (§2.1, p. 2).
 
-Inference: The central transferable lesson for VeruLaw is specification by preserved collection contents (permutation) plus an ordering relation between output and leftover, rather than a fully sorted representation. The paper does not verify Rust or Verus, and its theorems are mathematical correctness statements about the Coq functions.
-
 ## technique: fuel-bounded quickselect with a permutation contract
 
 What it is and when to use it. Quickselect finds the kth smallest element of a list and partitions the remainder, in expected linear time (§3.1, p. 3). A fuel argument makes a non-structurally recursive function acceptable to Coq. The paper states: “A common device to define functions with complex recursions is to introduce an extra nat parameter (called the “fuel”) as the primary recursive argument.” (Section 2.2, p. 3)
@@ -75,16 +73,9 @@ Verus form. Inference: Verify a bounded queue with a representation invariant re
 
 Evidence and limits. The size property is proved separately (Lemma 4.2, `knn_search_build_size_gen`, p. 5). The other two properties follow from `knn_full_relate` (Lemma 4.3) and the generalized `knn_full_relate_gen` (Lemma 4.4), proved by induction on the tree (§4.1, p. 6). The paper says the proof of Lemma 4.4 “was extremely long and tedious to develop”, giving two reasons: “the lack of automation for reasoning about Permutations” and that “large portions of the proof tactics were duplicated to cover the different execution paths in the function” (§4.1, p. 6). The paper reports no runtime benchmarks or proof-checking times. Hypotheses about the queue's representation invariant (`priq`) and abstraction relation (`Abs`) are elided in the paper's statements but “appear in the full Coq statements in the appendix” (footnote 6, p. 5).
 
-## what is proved, trusted, and relevant to VL
-
-Inference: Coq's kernel checks the definitions and proofs; the trusted base therefore includes Coq 8.16.1 (the version named in §2.2, p. 3), the standard library, and the stated hypotheses, including those about the priority-queue representation. The paper proves functional correctness of Coq functions, not properties of compiled code or of a machine-learning classifier built on KNN.
-
-The paper reports: “we used only the standard Coq library and little proof automation, leading to some long proof scripts, particularly for Lemma 4.4”, and proposes developing a decision procedure for permutation reasoning (§6, pp. 7–8). Inference: VL should reuse the specification pattern (contents relation, ordering relation, bounding invariant, abstract queue relation) rather than redo a generic nearest-neighbor proof. Dimension mismatches, arithmetic overflow, queue abstraction gaps, and wrong metric assumptions are the likely failure modes when porting it to Rust.
-
 ## techniques for the catalog
 
 - fuel-bounded quickselect — use a decreasing natural fuel argument and prove a permutation plus rank/order contract
 - permutation-specified tree construction — recursively median-partition data while proving tree contents are a permutation of the input
 - bounding-box pruning — prove a clamped closest point gives a distance lower bound for each subtree
 - bounded-priority-queue KNN — keep at most K candidates and prune only when the queue is full and the box lower bound exceeds the current worst candidate
-Checked 2026-10-17 against the full paper by a Claude agent (mid-paper quote: "While it appears intuitively correct, the proof of this lemma was extremely long and tedious to develop."): checked every quotation, page, section, lemma number and algorithm step against the paper text and figures; changed the link to the arXiv page (the paper's DOI is a placeholder), fixed two quotes not word for word, page numbers for §4.2–§4.3 and §6, the quickselect recursion and equal-partition steps, the lemma numbering for tree boundedness, the reasons given for the Lemma 4.4 proof effort, and the queue-invariant claim (elided in the text, not assumed); removed the unsupported claim that queue implementation properties were admitted; did not check the Coq development on GitHub or the venue/year beyond the paper's ACM reference line.

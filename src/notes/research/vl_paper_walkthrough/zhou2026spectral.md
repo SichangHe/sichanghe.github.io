@@ -8,8 +8,6 @@ Zhou, Zou, and Liu prove that cutting a convex body through the center of its ma
 
 The paper's formal-verification contribution is unusually explicit: “Lean 4 with mathlib verifies the main theorem, sharpness, and supporting results (GitHub source).” (Abstract, PDF p. 1.) The formal development covers Euclidean ellipsoids, Lebesgue volume, arbitrary positive dimensions, finite-dimensional consequences, and an alternative resolvent proof (Section D, PDF p. 18).
 
-Inference: the mathematics suggests a reusable VL pattern: normalize a problem into a compact algebraic representation, expose independent necessary constraints, prove each with a general lemma, and optimize a scalar certificate. Verus cannot directly reuse Lean declarations or mathlib proofs; the Rust/Verus encoding and libraries would have to be rebuilt.
-
 ## technique 1: affine normalization and center-exclusion reduction
 
 What it is. An invertible affine transformation sends the maximizing ellipsoid to the unit ball. Every candidate is represented as `E(a,A) = a + A B₂ⁿ` with `A` positive definite, and the volume ratio is `det A` (Section 2.1, PDF p. 2). A central halfspace condition becomes the norm constraint `||A⁻¹a|| ≥ 1`.
@@ -78,19 +76,11 @@ Verus form. Inference: model matrices, Loewner order, and fractional powers as g
 
 The circular-cone family `K_n` and ellipsoid `E_n` provide a lower-bound witness whose ratio tends to `sqrt(e)/2` (Section 4, PDF p. 7). The proof supplies explicit contact weights establishing the unit ball as the John ellipsoid and checks support inequalities for `E_n` (Section 6.5, PDF pp. 12–13). The formal source verifies `sharp_constant`, finite-dimensional nonattainment, near-equality bounds, and repeated-cut estimates (Section D, PDF p. 18).
 
-Inference: in VL, every universal safety theorem should include a machine-checked witness or adversarial family showing that the constant or precondition cannot be strengthened. A Verus proof can encode finite-dimensional witnesses and inequalities, but asymptotic limits and real analysis need explicit lemmas and trusted libraries.
-
 ## what is proved, measured, and trusted
 
 The paper reports a clean rebuild on Lean v4.35.0-rc2 with mathlib commit `0a6c8e...`, auditing 598 declarations and 43 public declarations on the resolvent route (Section D, PDF p. 18). It states: “No proof placeholder, project-specific axiom, or external numerical oracle occurs in the certified chain.” (Section D, PDF p. 18.) The repository contains Lean sources, pinned versions, a statement map, and `scripts/verify.py` that reruns the build, axiom audits, independence audit, and theorem-statement comparison (Section D, PDF p. 18).
 
 The paper also states a limitation: the explicit evaluation of the normalization as `sin(πp)/π` “is not a separate verified theorem.” (Section D, PDF p. 18.) Thus the verified scope covers the mathematical statements and proof dependencies, but not every displayed calculation as a line-by-line transcription. Trusted foundations include Lean's kernel, mathlib, the listed foundational axioms `propext`, `Classical.choice`, and `Quot.sound`, and the correctness of the formalized definitions of volume, matrices, and ellipsoids (Section D, PDF p. 18).
-
-Inference: the threat to a product of agent-written verified Rust is moderate but specific. The paper demonstrates that a long mathematical argument can be decomposed into reusable checked lemmas and independently checked proof routes. It does not show that an agent can discover or maintain such proofs, nor that a Verus encoding preserves numerical semantics of an implementation. VL should reuse the decomposition and audit pattern, but measure proof maintenance and specification adequacy separately.
-
-## what VL should not redo
-
-Inference: VL should not redo affine normalization, midpoint ellipsoid construction, generic rank-one spectral inequalities, or dual-route audit design as if they were unstudied ideas. The product-relevant gap is translating these patterns into supported Verus constructs and testing whether independent proof routes detect specification or implementation mistakes.
 
 ## techniques for the catalog
 
@@ -101,4 +91,3 @@ Inference: VL should not redo affine normalization, midpoint ellipsoid construct
 - independent proof routes — formalize derivative and resolvent proofs with the same hypotheses and conclusion
 - sharpness witness — use explicit circular cones and contact weights to prove the universal constant is optimal
 - reproducible audit — pin tool/library versions, rebuild cleanly, audit declarations and axiom dependencies
-Checked 2026-10-15 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

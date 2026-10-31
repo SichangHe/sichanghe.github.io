@@ -4,7 +4,7 @@ Tag: `pirzada2026conver`, [paper](https://doi.org/10.48550/arxiv.2605.27051)
 ## problem and method
 ConVer is a top-down compositional verifier for C programs. It starts from a top-level assertion, asks an LLM to synthesize function contracts, and checks both an abstract system and concrete functions with ESBMC. The abstract states: “a top-down compositional verification tool.” (Abstract, p. 1). The LLM proposes annotations; ESBMC makes verification decisions, so the paper says: “delegates verification decisions to ESBMC” (Section II, p. 3).
 
-The method addresses state explosion by replacing calls with contracts at system level and checking implementations against contracts in isolation at function level. Inference: for VL, this is a direct architectural pattern for decomposing agent-written Rust verification, but ESBMC’s C contract syntax and Verus’s Rust contracts are different.
+The method addresses state explosion by replacing calls with contracts at system level and checking implementations against contracts in isolation at function level.
 
 ## technique: top-down contract derivation
 
@@ -97,7 +97,7 @@ Inference: use a static complexity score to route simple Verus functions to ordi
 
 ## ESBMC-LF preprocessing
 
-ConVer includes ESBMC-LF, which converts Lingua Franca files to C while preserving properties: compile LF, normalize platform paths, flatten to one translation unit with an operational runtime model, extract MTL properties, instrument assertions/assumptions/tracking variables, and generate a bounded direct execution model (Algorithm 5, p. 8). This enables standard C verification but expands source benchmarks to monolithic translated files. Inference: VL should not translate Rust merely to imitate this; the reusable idea is preserving properties while changing the verification front end.
+ConVer includes ESBMC-LF, which converts Lingua Franca files to C while preserving properties: compile LF, normalize platform paths, flatten to one translation unit with an operational runtime model, extract MTL properties, instrument assertions/assumptions/tracking variables, and generate a bounded direct execution model (Algorithm 5, p. 8). This enables standard C verification but expands source benchmarks to monolithic translated files.
 
 ## evidence, trust, and product implications
 
@@ -110,4 +110,3 @@ ConVer’s soundness depends on ESBMC’s system and function checks and the con
 - inductive loop invariants — prove base, preservation, and exit obligations instead of unrolling loops
 - complexity-scored pre-abstraction — route high-risk functions through conservative summaries before refinement
 - property-preserving preprocessing — translate a richer model to a verifier language while retaining assertions
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

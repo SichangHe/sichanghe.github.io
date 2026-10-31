@@ -68,12 +68,9 @@ The authors manually vetted generated contracts and found all synthesized contra
 
 The formal proof covers client CHCs under synthesized predicates. Library behavior is only tested; the authors explicitly warn that “VMTLC with modular/contextual contracts can, of course, succeed on incorrect programs, as library contracts are not verified, but only tested.” (Section 1, p. 3). Trusted components include the VC generator, CHC solver/learner, observers, test generator, compiler/runtime, and resource bound. Inference: a Verus product using this method must label dependency contracts as tested assumptions and retain ordinary proofs for security-critical library code.
 
-Inference: threat to agent-written verified Rust is high at the integration boundary. The method can make a client proof appear complete while a dependency contract is false on an untested path. The paper already covers contextual versus modular contracts, ICE/decision-tree learning, LLM-assisted contract proposals, and fuzzing feedback; VL should not redo those ideas without a Rust ownership and dependency-specific contribution.
-
 ## techniques for the catalog
 
 - observer-based contract synthesis: infer first-order library contracts and client invariants over pure pre/post observer functions
 - contextual contracts: synthesize call-site summaries tested only on states reached by one client
 - ICE-CHC learning: alternate candidate invariant/contract learning with positive, implication, and negative counterexamples
 - tested-contract loop: run a bounded modular or contextual tester and feed violating valuations back into synthesis
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

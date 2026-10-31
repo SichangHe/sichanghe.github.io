@@ -7,8 +7,6 @@ The paper presents Aria, a general code-agent plus verification-harness design f
 
 The evaluated sets are Iris’s four core modules (4,257 lemmas), RustBelt standard-library developments (217 lemmas), reglang (318 lemmas), and 72 not-yet-ported iris-lean lemmas. The abstract reports that Aria proves all four sets fully automatically. The Iris and RustBelt results use Coq; iris-lean uses Lean. The paper reports no expert intervention and zero failures for each set. The campaign used Claude Opus 4.7 as its principal model and a Claude Code command-line agent.
 
-Inference: for VeruLaw, the useful abstraction is a deterministic proof boundary around a nondeterministic Rust/Verus agent. The model can choose proof structure, but only a verifier and policy hooks can decide acceptance.
-
 ## technique 1: whole-lemma agent under a kernel harness
 
 What it is. Give a coding agent the complete lemma and repository context, rather than asking a specialized predictor for one tactic. The agent reads the source file, definitions, and lemmas already in scope, edits the proof, and receives the failing line, error, and pending goal after every rejected attempt. The paper describes the method as: “We hand a whole lemma to a general LLM code agent—an off-the-shelf coding tool built for everyday software engineering” (Section I, PDF p. 2). The agent is free to choose its own proof strategy.
@@ -57,12 +55,6 @@ The proved claims are kernel-checked lemmas in the four benchmark families. Meas
 
 Trusted components include the Coq or Lean kernel, the proof assistant implementation, the HHL compiler/runtime, Python policy hooks, the extraction and coverage checks, and the model’s availability. The paper’s zero failures means zero failures under these harness and benchmark conditions; it does not prove that arbitrary generated code is safe outside the checked specifications.
 
-Inference: the central product threat to VeruLaw is operational rather than logical. A capable agent can generate substantial verified proof text, reducing manual proof labor. The residual threat is that a wrong specification, an unsound escape hatch, incomplete target extraction, or a policy bug can make a kernel-accepted result irrelevant to the intended product behavior. The paper’s harness pattern directly addresses silent proof dropping and verifier feedback, but it does not establish that the specification captures all product requirements.
-
-## what VL should not redo
-
-Inference: VL should not spend its first effort building a tactic-by-tactic predictor if a whole-lemma agent plus strict Verus feedback already supplies a simpler control loop. It should also avoid treating style polishing as correctness, and avoid unbounded conversation reuse. The paper has already demonstrated these design choices at complete-set scale in Coq and Lean; VL’s work should focus on Verus-specific policy, specification coverage, and Rust workspace integration.
-
 ## techniques for the catalog
 
 - whole-lemma kernel loop — give a general code agent a complete lemma, run the prover, return exact diagnostics, and retry with a bounded budget
@@ -72,4 +64,3 @@ Inference: VL should not spend its first effort building a tactic-by-tactic pred
 - staged proof pipeline — separate extraction, first proof, error repair, and fresh-session style polishing while kernel-checking every accepted edit
 
 - bounded session reuse — preserve retry history and nearby-lemma context for a small window, then reset to prevent context dilution
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.

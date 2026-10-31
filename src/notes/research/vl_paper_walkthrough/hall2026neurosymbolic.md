@@ -46,10 +46,7 @@ Verus form: Inference: mutate `requires`/`ensures` clauses or natural-language c
 
 The abstract reports that “concrete SMT counterexamples raise verified accuracy from 55.4% to 98.5%” (Abstract, p. 1). This is the 65-question counterexample-guided experiment, with final accuracy measured over all questions.
 
-
 Experiments use quantifier-free linear real arithmetic and Booleans with Z3; Claude Sonnet 4.6 generates SMT and answers, Claude Haiku translates assignments, and syntactic repair is capped at five retries (§2.3, p. 4). The canonical schema, domain constraints, LLM translations, solver, and requirement reviewers are trusted or partially trusted. The paper explicitly notes that redundancy is “a review signal rather than a verdict” (§2.4, p. 5): r11 and r56 were redundant because other requirements made their triggers unreachable, but engineers must decide whether that is intended.
-
-Inference: VERIMED threatens agent-written verified Rust only when agents encode an unsafe or ambiguous requirement consistently. Its audits, independent formalizations, counterexamples, and mutation tests provide useful gates around Verus generation, but they remain bounded by the shared state schema and solver theory. Existing work already covers consistency, vacuity, violatability, redundancy, ambiguity resolution, round-trip checking, counterexample repair, and mutation detection; VL should integrate these checks instead of relying on proof success alone.
 
 ## techniques for the catalog
 
@@ -58,4 +55,3 @@ Inference: VERIMED threatens agent-written verified Rust only when agents encode
 - counterexample-guided repair — feed concrete solver witnesses and violated requirements into bounded LLM regeneration
 - round-trip semantic validation — re-formalize reconstructed natural language and require bidirectional equivalence
 - mutation stress testing — inject requirement faults and detect semantic differences under the shared schema
-Checked 2026-10-13 by a Codex agent with scripted checks only: quotations matched word for word against the paper text, title, size, sentence reuse and tag checked by the prerequisite check script; the paper was not read in full (correction 2026-10-16). A full recheck against the paper is pending.
