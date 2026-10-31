@@ -67,6 +67,7 @@ Verdict words
 
 1. Make a new empty folder for your own files, call it `W`, and work only there. Copy the result into `$W/copy` and work only on the copy. `cp -rL` follows links. `ROOT` is the folder that holds `verify.sh`; `dk` mounts it. If the result has several, set `ROOT` to the one the report names.
 ```
+VERIFIER_IMAGE=<image containing the required verifiers>
 RES=<absolute path of the result>
 W=<absolute path of a new empty folder>
 mkdir -p "$W/copy" && cp -rL "$RES"/. "$W/copy/"

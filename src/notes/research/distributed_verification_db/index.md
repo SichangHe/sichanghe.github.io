@@ -3,35 +3,35 @@
 
 ## what is in it
 
-- `sources.jsonl`: 2149 papers, theses, tools, repositories, benchmarks, and blog posts. Each record says in plain English what the source did, its key numbers, what it assumes or leaves out, up to six word-for-word quotes, the saved PDF if there is one, and where the detailed note is. 311 sources were covered by both reviews and are merged into one record each.
-- `cases.jsonl`: 1150 concrete problems that someone specified or proved, 291 of them with a liveness guarantee (something good eventually happens). Each record gives the system, the guarantee (also as one plain sentence), the tool, the assumptions, the reported effort, how strong the evidence is (`evidence_kind`), whether it concerns running code or an abstract model (`subject`), and whether a human, an agent, or an automatic tool wrote it (`who`). Agents assigned the last three from the record text, not from the papers. 770 cases carry the id of their source record. Start with [liveness cases by how strong the evidence is](liveness_cases.md): 63 of them are machine-checked proofs about running code.
+- `sources.jsonl`: 2375 papers, theses, tools, repositories, benchmarks, and blog posts. Each record says in plain English what the source did, its key numbers, what it assumes or leaves out, up to six word-for-word quotes, the saved PDF if there is one, and where the detailed note is. 340 sources were covered by both reviews and are merged into one record each.
+- `cases.jsonl`: 1150 concrete problems that someone specified or proved, 291 of them with a liveness guarantee (something good eventually happens). Each record gives the system, the guarantee (also as one plain sentence), the tool, the assumptions, the reported effort, how strong the evidence is (`evidence_kind`), whether it concerns running code or an abstract model (`subject`), and whether a human, an agent, or an automatic tool wrote it (`who`). Agents assigned the last three from the record text, not from the papers. 771 cases carry the id of their source record. Start with [liveness cases by how strong the evidence is](liveness_cases.md): 63 of them are machine-checked proofs about running code.
 - `spec_and_proof_files.jsonl`: 1546 specification and proof files found in public repositories, 269 of them containing a liveness property. Each record gives the problem, the tool, the stated safety and liveness properties, the file size, and a link pinned to the exact version inspected.
-- `leads.jsonl`: 376 titles that searches turned up and nobody has read yet. Claude agents read the abstracts and judged 0 relevant, 69 not relevant, and found no abstract for 190; 117 are not judged yet. The relevant ones are listed in [relevant work found but not yet read](leads_to_read.md).
+- `leads.jsonl`: 336 titles that searches turned up and nobody has read yet. Claude agents read the abstracts and judged 0 relevant, 68 not relevant, and found no abstract for 190; 78 are not judged yet. The relevant ones are listed in [relevant work found but not yet read](leads_to_read.md).
 
 ## how far to trust a source record
 
 Every source record has a `reading_depth` field copied from what the review notes say about themselves. Nothing here was re-read while building the database. The quotes are word for word from the review notes, which took them from the sources.
 
-- most of the source read: 1078
+- most of the source read: 1314
 - parts read: 203
-- only the abstract or first pages read: 758
-- reading depth not recorded: 41
-- not read, title and metadata only: 69
+- only the abstract or first pages read: 738
+- reading depth not recorded: 52
+- not read, title and metadata only: 68
 
-Numbers in the records are the sources' own reports; neither review reran any experiment or proof checker. 763 sources have a matched PDF in the paper collection; the rest either have none saved or are saved under a name the matcher did not recognize.
+Numbers in the records are the sources' own reports; neither review reran any experiment or proof checker. 769 sources have a matched PDF in the paper collection; the rest either have none saved or are saved under a name the matcher did not recognize.
 
 ## browse by question
 
-- [how humans state guarantees and structure proofs](topic_formulation.md): 275 sources
-- [distributed and concurrent systems that were proved](topic_verified_systems.md): 399 sources
-- [proofs that something good eventually happens](topic_liveness.md): 213 sources
-- [connecting an abstract model to running code](topic_model_to_code.md): 200 sources
-- [tools that find invariants automatically](topic_invariant_inference.md): 154 sources
-- [LLM and agent systems that write specifications or proofs](topic_agents.md): 348 sources
-- [from what a human wants to a formal statement](topic_intent_to_spec.md): 183 sources
-- [how to judge specifications, proofs, and agents](topic_evaluation.md): 321 sources
-- [sources of concrete example problems and benchmarks](topic_cases.md): 252 sources
-- [background theory and logic](topic_foundations.md): 1341 sources
+- [how humans state guarantees and structure proofs](topic_formulation.md): 304 sources
+- [distributed and concurrent systems that were proved](topic_verified_systems.md): 435 sources
+- [proofs that something good eventually happens](topic_liveness.md): 226 sources
+- [connecting an abstract model to running code](topic_model_to_code.md): 203 sources
+- [tools that find invariants automatically](topic_invariant_inference.md): 167 sources
+- [LLM and agent systems that write specifications or proofs](topic_agents.md): 370 sources
+- [from what a human wants to a formal statement](topic_intent_to_spec.md): 195 sources
+- [how to judge specifications, proofs, and agents](topic_evaluation.md): 329 sources
+- [sources of concrete example problems and benchmarks](topic_cases.md): 266 sources
+- [background theory and logic](topic_foundations.md): 1543 sources
 
 One source can appear under several questions. Each page lists best-read sources first, then newest first.
 
