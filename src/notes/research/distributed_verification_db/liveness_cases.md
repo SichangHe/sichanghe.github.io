@@ -1077,7 +1077,7 @@
     - guarantee: In an mCRL2 model of Raft election, weak liveness holds (a leader can be elected), but 'a leader must always eventually be elected' fails when messages are lost or nodes crash.
     - assumes: message loss and crashes allowed
     - tool: mCRL2; written by: human
-    - case `A:176`; search result mentioning arXiv 2403.18916 (not opened)
+    - case `A:176`; source record `modelling-the-raft-distributed-2024`
 - reconfigurable Raft (RR, RR-big) - synthesis from sketch
     - guarantee: PolySemist completes two reconfigurable Raft sketches (RR, RR-big) so that the result satisfies the given TLA+ safety/liveness property, checked by TLC on fixed small node counts.
     - assumes: human-written sketch and property; fixed small node counts; two reconfigurable Raft sketches from prior work

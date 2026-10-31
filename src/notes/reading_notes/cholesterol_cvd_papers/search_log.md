@@ -9,30 +9,6 @@ Redo date: 2026-06-13.
 - lower-prestige specialty/open-access venues, case reports, cross-sectional imaging, nonrandomized interventions, and retracted work were screened only for uncertainty mapping
 - downgraded screened sources remain as paper/reference artifacts when lawful, but they do not drive the synthesis conclusion
 
-## Required browser routes
-
-- long-running browser
-  - found and used existing Chrome profile at `/ssd1/sichangheagent/personal_browser_setup/.runtime/browser-use-opencode/state/profile`
-  - CDP endpoint: `http://127.0.0.1:9279`
-  - noVNC/websockify was also present on localhost port `6080`
-- Perplexity
-  - used via existing browser CDP
-  - signed-in profile visible as `Steven He`
-  - helper selector initially missed the icon-only submit button, then direct CDP mouse/keyboard input submitted successfully
-  - intermediate JSON artifact was quarantined outside the notes repo
-  - answer URL: `https://www.perplexity.ai/search/c6b6d1fe-e29a-487c-9fc0-00f4753fe2b3`
-- Gemini
-  - used via existing browser CDP
-  - no login or challenge page observed
-  - direct CDP input submitted successfully through visible `Send message`
-  - intermediate JSON artifact was quarantined outside the notes repo
-  - answer URL: `https://gemini.google.com/app/b04989903395e2d6`
-- Google Scholar
-  - used via existing browser CDP
-  - query: `LDL ApoB causal atherosclerosis Mendelian randomization insulin resistance ketogenic diet cardiovascular risk 2024 review`
-  - no CAPTCHA or unusual-traffic block observed
-  - intermediate JSON artifact was quarantined outside the notes repo
-
 ## Main queries and trails
 
 - Perplexity prompt asked for recent top-tier sources on LDL/ApoB, insulin/high blood sugar, keto/low-carb claims, and atherosclerotic vessel blockage
