@@ -13,5 +13,3 @@ Liveness requires checking the conditions under which progress is promised. Anvi
 Catalog availability does not establish that an artifact's proof was reproduced. The proposed evaluation has not yet been run.
 
 The catalog contains 1,914 records: 1,638 TLA module variants, 102 implementation/proof directories, 167 automatic-verification input files, one suite retrieval lead, and six archive leads. Helper modules and regression tests are included, and distinct usable benchmark cases have not been counted. Exact-content duplicates are recorded as aliases. Independent review checked aggregate counts and all quotes in five selected records.
-
-

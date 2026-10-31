@@ -687,4 +687,3 @@ research we could do
 - builds on Chen, DiResta, Brooks, Hanley, and [image watermarking](image_watermarking.md)
 - measures detectable evidence rather than total generated-image prevalence
 - no comprehensive open-web estimate was identified in this review
-

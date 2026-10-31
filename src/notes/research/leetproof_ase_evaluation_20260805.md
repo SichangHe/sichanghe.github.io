@@ -239,4 +239,3 @@ part of that package, but evaluation alone is not the contribution.
     “three reviews”; “one day or less”
   - uncertainty: the 2026 artifact process was still ongoing on the retrieval
     date; no artifact badge or evaluation outcome is inferred for LeetProof
-
