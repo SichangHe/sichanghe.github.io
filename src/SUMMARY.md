@@ -93,6 +93,7 @@
         - [Trail](notes/programming/trail.md)
     - [Referral Links](notes/referral/index.md)
     - [Research Notes](notes/research/index.md)
+        - [🤖 web agent literature review](notes/research/web_agent_lit_review.md)
         - [🤖 distributed verification literature review A](notes/research/distributed_verification_review_a_20261007.md)
             - [🤖 review A, second pass: 2025–2026 work, agents, liveness, evaluation](notes/research/distributed_verification_review_a2_20261009.md)
         - [🤖 distributed implementations and specification methods, review B](notes/research/distributed_verification_review_b/review_b_systems_20261007.md)
