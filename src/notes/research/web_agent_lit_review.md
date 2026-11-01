@@ -148,8 +148,9 @@ Conventions
     - claim: "They identify the common underlying root causes of flakiness in the UI tests, the strategies used to manifest the flaky behavior, and the fixing strategies used to remedy flaky UI tests." (search-tool summary, not PDF)
     - pdf: 2021_romano_uiflaky.pdf
 - [ROBULA+: An algorithm for generating robust XPath locators for web testing](https://doi.org/10.1002/smr.1771), Leotta, Stocco, Ricca, Tonella, J. Software: Evolution and Process, 2016
-    - claim: "Robula+ cuts locator fragility by 90% compared with absolute locators and by 63% compared with Selenium IDE locators." (search summary of results, not verbatim abstract)
-    - pdf: no pdf
+    - claim: "ROBULA+ reduces the locators fragility on average by 90% w.r.t. absolute locators and by 63% w.r.t. Selenium IDE locators." (accepted manuscript, abstract)
+    - pdf: 2016_leotta_robula.pdf
+        - [author-hosted accepted manuscript](https://tsigalko18.github.io/assets/pdf/2016-Leotta-JSEP.pdf)
 - [Similarity-based web element localization for robust test automation (Similo)](https://arxiv.org/abs/2208.00677), Nass, Alegroth, Feldt, Leotta, Ricca, TOSEM, 2022/2023
     - claim: "leverages information from multiple web element locator parameters to identify a target element using a weighted similarity score." (search summary)
     - pdf: 2022_nass_similo.pdf
@@ -174,6 +175,9 @@ Conventions
 - [WebArena Verified: Reliable Evaluation for Web Agents](https://openreview.net/forum?id=94tlGxmqkN), El hattami, Thakkar, Chapados, Pal, NeurIPS 2025 Workshop on Scaling Environments for Agents, 2025
     - claim: not verbatim. OpenReview blocked the fetch; a search-result summary says it audits all 812 tasks, replaces substring matching with type-aware comparators, verifies backend state, and reports "template-level macro averages, 95% confidence intervals". Verify against the paper before citing numbers.
     - pdf: none (OpenReview PDF not retrievable; no arXiv version found)
+        - paper title and authors confirmed in the [SEA 2025 accepted-paper list](https://sea-workshop.github.io/2025/)
+        - [official project repository](https://github.com/ServiceNow/webarena-verified) cites the same OpenReview paper
+        - no alternate manuscript found in the project repository or the public websites of El hattami and Thakkar
 - [VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks](https://arxiv.org/abs/2401.13649), Koh, Lo, Jang, Duvvur et al., ACL, 2024
     - claim: "we identify several limitations of text-only LLM agents, and reveal gaps in the capabilities of state-of-the-art multimodal language agents."
     - pdf: 2024_koh_visualwebarena.pdf
