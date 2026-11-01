@@ -17,36 +17,36 @@
   small { display: block; margin-top: 2rem; line-height: 1.6; color: #8da6b2; }
 </style>
 <main>
-  <h1>Rain for sleep</h1>
-  <p>Light stereo rain with scattered taps, soft leaf patter, and small water drops.</p>
-  <button id="start">Start rain</button>
+  <h1>Minecraft rain</h1>
+  <p>Rain from the Minecraft swamp recording, with a smooth transition between repeats.</p>
+  <button id="start">Start Minecraft rain</button>
   <p id="status" role="status">Start with your device volume low, then adjust until comfortable.</p>
   <audio id="player" controls loop preload="auto" hidden></audio>
-  <small>Synthesized locally. No recording, ads, or streaming downloads.<br>
-    Rain repeats every two minutes. Phone browsers may pause audio when locked;
+  <small>A two-minute recording, about 23 MB. Phone browsers may pause audio when locked;
     try yours before relying on it overnight.</small>
+  <p>Audio from <a href="https://www.youtube.com/watch?v=RRUkNshLopk">“10 hours of minecraft rain sounds (no music)” by TryzzMC</a>.</p>
   <p><a href="/">Steven Hé’s website</a></p>
 </main>
 <script type="module">
-  import {makeRain} from './sound.mjs?v=surface-drops-1';
+  import {RAIN_URL} from './sound.mjs?v=minecraft-1';
   const start = document.querySelector('#start');
   const player = document.querySelector('#player');
   const status = document.querySelector('#status');
-  let url;
+  player.addEventListener('error', () => {
+    start.hidden = false;
+    status.textContent = 'Audio download failed. Check your connection and tap Start Minecraft rain to retry.';
+  });
   start.addEventListener('click', async () => {
     start.disabled = true;
-    status.textContent = 'Preparing rain…';
+    status.textContent = 'Loading Minecraft rain…';
     try {
-      if (!url) {
-        url = URL.createObjectURL(new Blob([makeRain()], {type: 'audio/wav'}));
-        player.src = url;
-      }
+      if (!player.src || player.error) player.src = RAIN_URL;
       player.hidden = false;
       await player.play();
       start.hidden = true;
       status.textContent = 'Adjust your device volume until comfortable.';
       if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({title: 'Rain for sleep', artist: 'Soft stereo rain'});
+        navigator.mediaSession.metadata = new MediaMetadata({title: 'Minecraft rain', artist: 'TryzzMC'});
         navigator.mediaSession.setActionHandler('play', () => player.play());
         navigator.mediaSession.setActionHandler('pause', () => player.pause());
       }
