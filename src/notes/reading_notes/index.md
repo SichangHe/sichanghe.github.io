@@ -1,5 +1,51 @@
 # Unstructured Reading Notes
 
+- Narratives as a Fundamental Unit for
+    Modeling the Online Information Ecosystem, Patrick Gerard, thesis proposal
+    - \~7 social platform/month on average
+    - but research usually focus on 1 platform
+    - e.g. Springfield: rumor of Haitian eating cats on Facebook
+        - spread to X and Tiktok to TV news
+    - narrative persist regardless of content
+        - convert to computational object
+    - narrative is coherent account of what's happening
+        - e.g. misinfo about hurricane Helene and FEMA response
+        - semantic identity persist as form change
+    - E.g.
+        Russian blogs tying Ukrain to
+        nazism exploded the same day the war started
+        - attention differ, construct narratives dynamically
+    - need clustering algorithm: open-ended, scalable, verifiable
+    - Tiktok platform style cause encoder output to cluster, not on topic
+    - solution: use decoder to recover human-interpretable narrative
+        - online agglomerative clustering
+        - later: DP-means, HNSW + Leiden + neighbor vote
+        - decrease computational complexity
+    - user profile on different platforms are separate
+    - can compare engagement on different platform across user
+        - discourse network: connect user across platform by
+            similarity w/ TF-IDF
+    - benchmark: established computational social science task
+        - influence operation detection
+        - ideological stance preditction
+        - can do w/ much less data
+    - proximity on discourse network predict they do what neighbors do
+        - 2-6x higher adoption rate
+    - most user stick to their platform, but
+        0.33% users help migrate narrative across
+        - predict when a narrative will appear on a platform
+    - model cross-platform diffusion (spreading)
+        - traditional: study platform pair, platform-centric
+            - perform not much better than random: AUC 0.57
+        - use user as node, not platform ⇒ unify
+            - random forest to predict based on user connections
+            - work well: AUC 0.87
+    - information operation detection
+        - e.g. tenet media, funded by Russia, influence election
+        - do not look anomalous
+        - but concentrate on narrow set of narrative (fingerprint)
+    - good presentation: answer on the next slide when people have a question
+    - people would endorse/spread false claim ALA agree w/ narrative
 - Photoreal Worlds at Scale - From Capture to Generation, Haithem Turki,
     CS department lecture
     - need to use differentiable rendering (e.g.
