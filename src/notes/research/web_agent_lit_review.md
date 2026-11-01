@@ -173,11 +173,11 @@ Conventions
     - claim: "we build an environment for language-guided agents that is highly realistic and reproducible."
     - pdf: 2023_zhou_webarena.pdf
 - [WebArena Verified: Reliable Evaluation for Web Agents](https://openreview.net/forum?id=94tlGxmqkN), El hattami, Thakkar, Chapados, Pal, NeurIPS 2025 Workshop on Scaling Environments for Agents, 2025
-    - claim: not verbatim. OpenReview blocked the fetch; a search-result summary says it audits all 812 tasks, replaces substring matching with type-aware comparators, verifies backend state, and reports "template-level macro averages, 95% confidence intervals". Verify against the paper before citing numbers.
-    - pdf: none (OpenReview PDF not retrievable; no arXiv version found)
+    - claim: "We provide improved results reporting with template-level macro averages, 95% confidence intervals, and failure-mode breakdowns." (PDF page 1, abstract)
+    - pdf: 2025_webarena_verified.pdf
+        - [public manuscript](https://openreview.net/pdf?id=94tlGxmqkN), retrieved through an ordinary browser session
         - paper title and authors confirmed in the [SEA 2025 accepted-paper list](https://sea-workshop.github.io/2025/)
         - [official project repository](https://github.com/ServiceNow/webarena-verified) cites the same OpenReview paper
-        - no alternate manuscript found in the project repository or the public websites of El hattami and Thakkar
 - [VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks](https://arxiv.org/abs/2401.13649), Koh, Lo, Jang, Duvvur et al., ACL, 2024
     - claim: "we identify several limitations of text-only LLM agents, and reveal gaps in the capabilities of state-of-the-art multimodal language agents."
     - pdf: 2024_koh_visualwebarena.pdf
