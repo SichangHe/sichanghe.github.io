@@ -146,7 +146,7 @@ Conventions
     - pdf: 2022_hashemi_jsflaky.pdf
 - [An Empirical Analysis of UI-based Flaky Tests](https://doi.org/10.1109/ICSE43902.2021.00141), Romano, Song, Grandhi, Yang, Wang, ICSE, 2021
     - claim: "They identify the common underlying root causes of flakiness in the UI tests, the strategies used to manifest the flaky behavior, and the fixing strategies used to remedy flaky UI tests." (search-tool summary, not PDF)
-    - pdf: no pdf
+    - pdf: 2021_romano_uiflaky.pdf
 - [ROBULA+: An algorithm for generating robust XPath locators for web testing](https://doi.org/10.1002/smr.1771), Leotta, Stocco, Ricca, Tonella, J. Software: Evolution and Process, 2016
     - claim: "Robula+ cuts locator fragility by 90% compared with absolute locators and by 63% compared with Selenium IDE locators." (search summary of results, not verbatim abstract)
     - pdf: no pdf
@@ -182,13 +182,13 @@ Conventions
     - pdf: 2024_drouin_workarena.pdf
 - [WorkArena++: Towards Compositional Planning and Reasoning-based Common Knowledge Work Tasks](https://arxiv.org/abs/2407.05291), Boisvert, Thakkar, Gasse, Caccia et al., NeurIPS D&B, 2024
     - claim: "we propose WorkArena++, a novel benchmark consisting of 682 tasks corresponding to realistic workflows routinely performed by knowledge workers."
-    - pdf: not kept (24.6MB); arxiv.org/pdf/2407.05291
+    - pdf: 2024_boisvert_workarenapp.pdf
 - [The BrowserGym Ecosystem for Web Agent Research](https://arxiv.org/abs/2412.05467), Le Sellier De Chezelles, Gasse, Drouin, Caccia et al., TMLR, 2025 (arXiv 2024)
     - claim: "Many existing benchmarks suffer from fragmentation and inconsistent evaluation methodologies, making it challenging to achieve reliable comparisons and reproducible results."
     - pdf: 2024_chezelles_browsergym.pdf
 - [WebVoyager: Building an End-to-End Web Agent with Large Multimodal Models](https://arxiv.org/abs/2401.13919), He, Yao, Ma, Yu et al., ACL, 2024
     - claim: "The proposed automatic evaluation metric achieves 85.3% agreement with human judgment, indicating its effectiveness in providing reliable and accurate assessments of web agents."
-    - pdf: not kept (18.5MB); arxiv.org/pdf/2401.13919
+    - pdf: 2024_he_webvoyager.pdf
 - [An Illusion of Progress? Assessing the Current State of Web Agents](https://arxiv.org/abs/2504.01382), Xue, Qi, Shi, Song et al., COLM, 2025
     - claim: "Our results depict a very different picture of the competency of current agents, suggesting over-optimism in previously reported results."
     - pdf: 2025_xue_onlinemind2web.pdf
@@ -224,6 +224,7 @@ Conventions
     - pdf: 2025_kapoor_hal.pdf
 - [Auditing Web Agent Evaluation on WebArena-Lite: Human Review of Outcomes and Trajectories](https://arxiv.org/abs/2610.01491), Gan, He, Tsujii, Kobayashi, 2026
     - claim: "Across four GPT 5.5 settings, human review recovers 5.45 to 8.49 percentage points of success missed by the evaluator."
+    - pdf: 2026_gan_webarenalite_audit.pdf
 (Judge-reliability evidence also in the benchmark entries: WebVoyager 85.3% and Online-Mind2Web about 85% agreement with humans; WebArena Verified false-negative fixes. These agreement rates mean about 15% disagreement, larger than most method gaps.)
 
 ## API vs browsing and tool protocols
@@ -324,3 +325,60 @@ Conventions
 - [DECEPTICON: How Dark Patterns Manipulate Web Agents](https://arxiv.org/abs/2512.22894), Cuvin, Zhu, Yang, arXiv, 2025
     - claim: "Dark patterns steered state-of-the-art agents toward malicious outcomes in over 70% of the generated and real-world tasks tested" (search summary, not PDF)
     - pdf: 2025_cuvin_decepticon.pdf
+
+additional downloaded literature
+- titles checked against PDF first pages
+- entries without a quotation are bibliographic records, not summaries or assessments
+- publication status is not inferred from availability on arXiv
+
+program interfaces and workflows
+- [CUAWright: A Minimal Unified Interface for Digital Agents](https://arxiv.org/abs/2610.04116)
+    - pdf: arxiv_2610.04116.pdf
+    - quotation from PDF page 1: “bash commands as its sole action interface”
+- [MacroBench: A Novel Testbed for Web Automation Scripts via Large Language Models](https://arxiv.org/abs/2510.04363)
+    - pdf: arxiv_2510.04363.pdf
+- [ReUseIt: Synthesizing Reusable AI Agent Workflows for Web Automation](https://arxiv.org/abs/2510.14308)
+    - pdf: arxiv_2510.14308.pdf
+    - quotation from PDF page 1: “These workflows incorporate execution guards that help agents detect and fix errors while keeping users informed of progress and issues.”
+- [Position: Web Agents Should Use Typed Actions Instead of Click-Based Browsing](https://arxiv.org/abs/2602.17245)
+    - pdf: arxiv_2602.17245.pdf
+    - quotation from PDF page 1: “Verb calls can carry preconditions, postconditions, policy tags, and logging hooks”
+
+evaluation, failure and stopping
+- [From Confident Closing to Silent Failure: Characterizing False Success in LLM Agents](https://arxiv.org/abs/2606.09863)
+    - pdf: 2026_false_success.pdf
+    - quotation from PDF page 1: “We call this false success: a mismatch between the agent’s natural-language claim of completion and the programmatic environment state.”
+- [StressWeb: A Diagnostic Benchmark for Web Agent Robustness under Realistic Interaction Variability](https://arxiv.org/abs/2604.16385)
+    - pdf: 2026_stressweb.pdf
+- [A Functionality-Grounded Benchmark for Evaluating Web Agents in E-commerce Domains](https://arxiv.org/abs/2508.15832)
+    - pdf: 2025_amazonbench.pdf
+- [Verified Tool Calls Improve LLM Agent Reliability under Non-Atomic Failures](https://arxiv.org/abs/2608.02645)
+    - pdf: 2026_verifiedtoolcalls.pdf
+- [Establishing Best Practices for Building Rigorous Agentic Benchmarks](https://arxiv.org/abs/2507.02825)
+    - pdf: 2025_zhu_agenticbenchchecklist.pdf
+- [Quantifying Overclaiming Propensity in Frontier LLM Agents](https://arxiv.org/abs/2609.20812)
+    - pdf: 2026_overclaiming.pdf
+- [WideSearch: Benchmarking Agentic Broad Info-Seeking](https://arxiv.org/abs/2508.07999)
+    - pdf: arxiv_2508.07999.pdf
+- [When Web Agents Finish but Still Fail: Reproducible Triggers and Trace Diagnostics for Parallel Web Exploration](https://arxiv.org/abs/2606.20724)
+    - pdf: arxiv_2606.20724.pdf
+- [When Is Enough Not Enough? Illusory Completion in Search Agents](https://arxiv.org/abs/2602.07549)
+    - pdf: arxiv_2602.07549.pdf
+- [When May an Agent Stop? Evidence-Carrying Termination for Tool-Using LLMs](https://arxiv.org/abs/2608.23623)
+    - pdf: arxiv_2608.23623.pdf
+- [HALT: Verification-Aware Stopping for Retrieval-Augmented Search Agents](https://arxiv.org/abs/2608.02009)
+    - pdf: arxiv_2608.02009.pdf
+- [CoVeR: Coverage-Based Routing of Verifier Calls in Agentic Retrieval](https://arxiv.org/abs/2609.26086)
+    - pdf: arxiv_2609.26086.pdf
+- [Silent Failures in Agent–Tool Interaction: An Audit of ToolUniverse](https://arxiv.org/abs/2609.26836)
+    - pdf: arxiv_2609.26836.pdf
+
+supporting retrieval and uncertainty methods
+- [How Important is Recall for Measuring Retrieval Quality?](https://arxiv.org/abs/2512.20854)
+    - pdf: arxiv_2512.20854.pdf
+- [Using Chao’s Estimator as a Stopping Criterion for Technology-Assisted Review](https://arxiv.org/abs/2404.01176)
+    - pdf: arxiv_2404.01176.pdf
+- [Evaluating the Unseen Capabilities: How Many Theorems Do LLMs Know?](https://arxiv.org/abs/2506.02058)
+    - pdf: arxiv_2506.02058.pdf
+- [Estimating Semantic Alphabet Size for LLM Uncertainty Quantification](https://arxiv.org/abs/2509.14478)
+    - pdf: arxiv_2509.14478.pdf
