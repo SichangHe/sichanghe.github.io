@@ -58,6 +58,9 @@ Channel](https://www.youtube.com/@sichanghe)
 [📓 Notes](/notes/)
 </div>
 
+<!-- 🤖 -->
+[🌧 Rain for sleep](/rain/)
+
 {{ #include news/2026spring.md }}
 
 {{ #include news/2025spring.md }}

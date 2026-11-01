@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111d24">
+<title>Rain for sleep</title>
+<style>
+  :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #111d24; color: #d7e3e8; }
+  body { margin: 0; min-height: 100svh; display: grid; place-items: center; }
+  main { width: min(30rem, 85vw); padding: 3rem 0; }
+  h1 { font-size: 2.5rem; font-weight: 500; }
+  p { line-height: 1.65; color: #afc2cb; }
+  button { border: 0; border-radius: 1rem; padding: 1rem 2rem; background: #b4d1d5; color: #13252c; font: inherit; cursor: pointer; min-height: 48px; }
+  button:focus-visible { outline: 3px solid white; outline-offset: 5px; }
+  audio { width: 100%; margin-top: 1rem; }
+  a { color: #b4d1d5; }
+  small { display: block; margin-top: 2rem; line-height: 1.6; color: #8da6b2; }
+</style>
+<main>
+  <h1>Rain for sleep</h1>
+  <p>Soft, steady stereo rain. A gentle rustle with small scattered drops, without thunder.</p>
+  <button id="start">Start rain</button>
+  <p id="status" role="status">Start with your device volume low, then adjust until comfortable.</p>
+  <audio id="player" controls loop preload="auto" hidden></audio>
+  <small>Synthesized locally. No recording, ads, or streaming downloads.<br>
+    Rain repeats every two minutes. Phone browsers may pause audio when locked;
+    try yours before relying on it overnight.</small>
+  <p><a href="/">Steven Hé’s website</a></p>
+</main>
+<script type="module">
+  import {makeRain} from './sound.mjs';
+  const start = document.querySelector('#start');
+  const player = document.querySelector('#player');
+  const status = document.querySelector('#status');
+  let url;
+  start.addEventListener('click', async () => {
+    start.disabled = true;
+    status.textContent = 'Preparing rain…';
+    try {
+      if (!url) {
+        url = URL.createObjectURL(new Blob([makeRain()], {type: 'audio/wav'}));
+        player.src = url;
+      }
+      player.hidden = false;
+      await player.play();
+      start.hidden = true;
+      status.textContent = 'Adjust your device volume until comfortable.';
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({title: 'Rain for sleep', artist: 'Soft stereo rain'});
+        navigator.mediaSession.setActionHandler('play', () => player.play());
+        navigator.mediaSession.setActionHandler('pause', () => player.pause());
+      }
+    } catch (error) {
+      status.textContent = `Could not start rain. Tap Play in the audio controls, or retry. ${error.message}`;
+    } finally {
+      start.disabled = false;
+    }
+  });
+</script>
+</html>
