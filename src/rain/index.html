@@ -18,7 +18,7 @@
 </style>
 <main>
   <h1>Rain for sleep</h1>
-  <p>Soft, steady stereo rain. A gentle rustle with small scattered drops, without thunder.</p>
+  <p>Light stereo rain with scattered taps, soft leaf patter, and small water drops.</p>
   <button id="start">Start rain</button>
   <p id="status" role="status">Start with your device volume low, then adjust until comfortable.</p>
   <audio id="player" controls loop preload="auto" hidden></audio>
@@ -28,7 +28,7 @@
   <p><a href="/">Steven Hé’s website</a></p>
 </main>
 <script type="module">
-  import {makeRain} from './sound.mjs';
+  import {makeRain} from './sound.mjs?v=surface-drops-1';
   const start = document.querySelector('#start');
   const player = document.querySelector('#player');
   const status = document.querySelector('#status');
