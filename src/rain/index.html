@@ -20,7 +20,7 @@
   <p>A twenty-minute rain recording that fades into itself, so it never stops or jumps.</p>
   <button id="toggle">Start rain</button>
   <p id="status" role="status">Start with your device volume low, then adjust until comfortable.</p>
-  <small>Downloads about 20 MB. Phone browsers may pause audio when locked;
+  <small>Downloads about 20 MB on first use, then plays from this browser’s storage. Phone browsers may pause audio when locked;
     try yours before relying on it overnight.</small>
   <p>Audio from <a href="https://www.youtube.com/watch?v=eTeD8DAta4c">“Relaxing Rain Sounds = Drifting to Sleep” by Relaxing White Noise</a>.</p>
   <p><a href="/">Steven Hé’s website</a></p>
@@ -32,10 +32,23 @@
   let context, players, current = 0, timer, playing = false;
 
   // Two copies of the recording; near the end of one, the other starts and they crossfade.
-  function setup() {
+  // Downloads the recording once into the browser's Cache Storage; later visits and both players reuse it.
+  async function load() {
+    if (!('caches' in window)) return RAIN_URL;
+    const cache = await caches.open('rain-sound');
+    let response = await cache.match(RAIN_URL);
+    if (!response) {
+      status.textContent = 'Downloading rain (about 20 MB, only once)…';
+      await cache.add(RAIN_URL);
+      response = await cache.match(RAIN_URL);
+    }
+    return URL.createObjectURL(await response.blob());
+  }
+  async function setup() {
+    const url = await load();
     context = new AudioContext();
     players = [0, 1].map(() => {
-      const audio = new Audio(RAIN_URL);
+      const audio = new Audio(url);
       audio.preload = 'auto';
       const gain = context.createGain();
       context.createMediaElementSource(audio).connect(gain).connect(context.destination);
@@ -65,7 +78,6 @@
     setTimeout(() => { outgoing.audio.pause(); }, OVERLAP * 1000 + 500);
   }
   toggle.addEventListener('click', async () => {
-    if (!context) setup();
     if (playing) {
       playing = false;
       players.forEach(player => player.audio.pause());
@@ -77,6 +89,7 @@
     toggle.disabled = true;
     status.textContent = 'Loading rain…';
     try {
+      if (!context) await setup();
       await context.resume();
       const player = players[current];
       player.gain.gain.cancelScheduledValues(context.currentTime);
