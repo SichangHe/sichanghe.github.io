@@ -12,48 +12,87 @@
   p { line-height: 1.65; color: #afc2cb; }
   button { border: 0; border-radius: 1rem; padding: 1rem 2rem; background: #b4d1d5; color: #13252c; font: inherit; cursor: pointer; min-height: 48px; }
   button:focus-visible { outline: 3px solid white; outline-offset: 5px; }
-  audio { width: 100%; margin-top: 1rem; }
   a { color: #b4d1d5; }
   small { display: block; margin-top: 2rem; line-height: 1.6; color: #8da6b2; }
 </style>
 <main>
-  <h1>Minecraft rain</h1>
-  <p>Rain from the Minecraft swamp recording, with a smooth transition between repeats.</p>
-  <button id="start">Start Minecraft rain</button>
+  <h1>Rain</h1>
+  <p>A twenty-minute rain recording that fades into itself, so it never stops or jumps.</p>
+  <button id="toggle">Start rain</button>
   <p id="status" role="status">Start with your device volume low, then adjust until comfortable.</p>
-  <audio id="player" controls loop preload="auto" hidden></audio>
-  <small>A two-minute recording, about 23 MB. Phone browsers may pause audio when locked;
+  <small>Downloads about 20 MB. Phone browsers may pause audio when locked;
     try yours before relying on it overnight.</small>
-  <p>Audio from <a href="https://www.youtube.com/watch?v=RRUkNshLopk">“10 hours of minecraft rain sounds (no music)” by TryzzMC</a>.</p>
+  <p>Audio from <a href="https://www.youtube.com/watch?v=eTeD8DAta4c">“Relaxing Rain Sounds = Drifting to Sleep” by Relaxing White Noise</a>.</p>
   <p><a href="/">Steven Hé’s website</a></p>
 </main>
 <script type="module">
-  import {RAIN_URL} from './sound.mjs?v=minecraft-1';
-  const start = document.querySelector('#start');
-  const player = document.querySelector('#player');
+  import {RAIN_URL, LOOP, OVERLAP} from './sound.mjs?v=2';
+  const toggle = document.querySelector('#toggle');
   const status = document.querySelector('#status');
-  player.addEventListener('error', () => {
-    start.hidden = false;
-    status.textContent = 'Audio download failed. Check your connection and tap Start Minecraft rain to retry.';
-  });
-  start.addEventListener('click', async () => {
-    start.disabled = true;
-    status.textContent = 'Loading Minecraft rain…';
+  let context, players, current = 0, timer, playing = false;
+
+  // Two copies of the recording; near the end of one, the other starts and they crossfade.
+  function setup() {
+    context = new AudioContext();
+    players = [0, 1].map(() => {
+      const audio = new Audio(RAIN_URL);
+      audio.preload = 'auto';
+      const gain = context.createGain();
+      context.createMediaElementSource(audio).connect(gain).connect(context.destination);
+      audio.addEventListener('error', () => {
+        status.textContent = 'Audio download failed. Check your connection and tap Start rain to retry.';
+      });
+      return {audio, gain};
+    });
+  }
+  function fade(player, from, to) {
+    const now = context.currentTime, steps = 64, curve = new Float32Array(steps);
+    for (let i = 0; i < steps; i++) {
+      const angle = i / (steps - 1) * Math.PI / 2;
+      curve[i] = from < to ? Math.sin(angle) : Math.cos(angle);
+    }
+    player.gain.gain.cancelScheduledValues(now);
+    player.gain.gain.setValueCurveAtTime(curve, now, OVERLAP);
+  }
+  function watch() {
+    const outgoing = players[current];
+    if (!playing || outgoing.audio.currentTime < LOOP) return;
+    const incoming = players[current = 1 - current];
+    incoming.audio.currentTime = 0;
+    incoming.audio.play();
+    fade(incoming, 0, 1);
+    fade(outgoing, 1, 0);
+    setTimeout(() => { outgoing.audio.pause(); }, OVERLAP * 1000 + 500);
+  }
+  toggle.addEventListener('click', async () => {
+    if (!context) setup();
+    if (playing) {
+      playing = false;
+      players.forEach(player => player.audio.pause());
+      clearInterval(timer);
+      toggle.textContent = 'Start rain';
+      status.textContent = 'Paused.';
+      return;
+    }
+    toggle.disabled = true;
+    status.textContent = 'Loading rain…';
     try {
-      if (!player.src || player.error) player.src = RAIN_URL;
-      player.hidden = false;
-      await player.play();
-      start.hidden = true;
+      await context.resume();
+      const player = players[current];
+      player.gain.gain.cancelScheduledValues(context.currentTime);
+      player.gain.gain.setValueAtTime(1, context.currentTime);
+      await player.audio.play();
+      playing = true;
+      timer = setInterval(watch, 250);
+      toggle.textContent = 'Pause rain';
       status.textContent = 'Adjust your device volume until comfortable.';
       if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({title: 'Minecraft rain', artist: 'TryzzMC'});
-        navigator.mediaSession.setActionHandler('play', () => player.play());
-        navigator.mediaSession.setActionHandler('pause', () => player.pause());
+        navigator.mediaSession.metadata = new MediaMetadata({title: 'Rain', artist: 'Relaxing White Noise'});
       }
     } catch (error) {
-      status.textContent = `Could not start rain. Tap Play in the audio controls, or retry. ${error.message}`;
+      status.textContent = `Could not start rain; tap Start rain to retry. ${error.message}`;
     } finally {
-      start.disabled = false;
+      toggle.disabled = false;
     }
   });
 </script>
