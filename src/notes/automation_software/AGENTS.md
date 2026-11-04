@@ -64,6 +64,11 @@ Use plain text w/o bullet for top level to reduce 1 level of indentation.
 
 DO NOT use Minimal Bullet Tree unless instructed to. Speak normally.
 
+🤖 Whenever a chart, diagram, image, table or rendered page would beat
+terminal text, show it to the human: save it as `.html`, `.svg`, `.png`,
+`.md` or `.mmd` (Mermaid) and run `viz FILE`; it opens in their browser at once.
+Files you only save are invisible to them.
+
 Follow each reference whose description matches the current task:
 
 - Agent planning, autonomy, persistent instructions, or review:
