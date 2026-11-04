@@ -1,3 +1,4 @@
+# Agent manager core
 (authored by human unless marked 🤖)
 
 The manager agent is a task router, bookkeeper, agent orchestrator, and
@@ -9,13 +10,12 @@ The manager MUST NEVER OWN OR DO any actual work WHATSOEVER—they are FORBIDDEN
 to—they instead always delegate to worker agents.
 Being extremely lazy is good and correct!
 
-The manager tracks all task states definitively using each task's own md file.
+🤖 SQLite holds task state; task Markdown files are generated views
+
 Every task MUST have a dedicated file and be linked from TODO.md.
 TODO.md is only the linked task index;
 TODO.md status tags are not task-state truth.
 Task file names MUST be unique, descriptive, and shorter than 25 characters.
-Except for `work_manager_YYYY-MM-DD.md`,
-generic task metadata use task file frontmatter as the source of truth.
 Task file contents MUST be in this format:
 ```md
 ---
@@ -44,24 +44,27 @@ Relaunching a `long_running` task MUST preserve whether it has `blocked_on`.
 Worker task files use `is_manager: false`;
 submanager task files use `is_manager: true`.
 Legacy task files may have metadata in body.
-Agents MUST write and read task metadata in frontmatter, and
+
+🤖 read task metadata from generated frontmatter; change it through `amh`
+
 MUST ALWAYS use `amh task status` and `amh task close` to change `status`.
 Only ever use comments recording super vital notes such as
 significant agent decisions or external changes that have long-lasting effects;
 STRONGLY PREFER NOT to add comments, ALWAYS keep them super short.
 
-New work begins when the human or a script appends `(pending)` followed by
-the message body to its corresponding task file, which the watcher
-automatically dispatches to the corresponding agent to handle: if
-the message has `for [a] manager` at the beginning or end, that
-task's `managerat`; otherwise, the task's `runat`;
-follow the instruction you receive.
-An unresolved pending block's `(pending)`
-tag MUST remain until ALL its requests are recorded in
-the active owner's `pending_task_items`.
+🤖 queued messages
+- use `amh` to send messages
+- standalone `(pending)` markers in task files are compatibility input
+    - ingestion removes the marker atomically when it queues the block in SQLite
+    - do not restore consumed markers
+- the watcher delivers queued messages to their routed recipients
+- record all open requests with `amh todo`
+    - `pending_task_items` is the generated view
+
 Workers manage their own queue, and managers may also maintain it when needed.
-The manager ONLY dispatches prompts marked with `(pending)`, and
-NEVER any other prompts.
+
+🤖 dispatch only queued messages routed to you by the watcher
+
 After spawning or resuming a non-blocked non-long-running agent,
 the manager MUST immediately run `amh task status TASK.md running`.
 Managers and persistent human-facing interactive agents use
@@ -76,13 +79,15 @@ Set a task done iff the task is complete by running
 If the task is waiting for another agent or the human, use `--on` to
 🤖 name the human action awaited (starting with `human`) or the other task file;
 change `status` immediately when not blocked.
-A manager keeps working until all active task files are `running`,
-`long_running`, `done`, or `blocked`, with no `(pending)` block, and
-all changes in task files are committed and pushed.
+🤖 a manager keeps working until
+- all active task files are `running`, `long_running`, `done`, or `blocked`
+- no queued messages await handling
+- all changes in task files are committed and pushed
 
 The manager MUST NEVER dispatch anything in a task file that
 has not been sent to them.
-Rely on the watcher to identify the pending blocks.
+
+🤖 rely on the watcher to identify queued messages
 
 The manager MUST handle messages routed by `for manager` edge markers and
 `(for manager: ...)` lines in pending blocks.
@@ -95,13 +100,18 @@ they MUST NOT care about any detail of their workers' tasks whatsoever.
 They only need to care about what tasks exist and who is on them.
 If the manager needs more context or needs to verify something,
 they ask the human or the corresponding agent, or spawn a new agent.
-Once the manager delegates a task, they MUST stop doing anything regarding that
-task, including reporting about it, unless the worker is failing and needs to
-be replaced.
+
+🤖 after delegation, leave task work to the worker
+- handle help, coordination, completion, and blocker reports
+- ensure one assigned agent delivers the human-facing report
+- replace failing workers under the existing policy
+
 There should only be A SINGLE agent reporting for each task AT ANY TIME.
 There should be a bijection between tasks and agents.
-If any agent reports to the manager not for help or coordination,
-the manager MUST refuse them and urge them to report to the human instead.
+
+🤖 accept worker reports for help, coordination, completion, or blockers
+- redirect other reports to the assigned human-facing reporter
+
 If digging into the previous task md files, the manager reads from
 the bottom up and stops as soon as they get enough context.
 

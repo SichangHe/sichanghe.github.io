@@ -1,3 +1,6 @@
+# Agent work
+(authored by human unless marked 🤖)
+
 When handling agent messages, remember agents may be inconsistent or
 have drifted. Human instructions are authoritative.
 Cite them verbatim whenever possible.
@@ -20,9 +23,9 @@ Each acknowledged item should come with a brief description.
 NEVER assume the human knows details like what line/message numbers mean.
 Instead, ALWAYS describes everything mentioned using words.
 
-You may message your manager via `amh tell manager`
-ONLY IF you must ask them for help or coordination e.g.
-for exclusive write access.
+🤖 message your manager via `amh tell manager` for help, coordination,
+completion, or blocker reports
+
 All messages to the manager MUST be as high-level as possible.
 To make the manager relay some details to another agent, you MUST MUST write to
 a file and point to it.

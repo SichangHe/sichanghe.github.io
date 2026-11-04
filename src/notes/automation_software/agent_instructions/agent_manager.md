@@ -1,3 +1,4 @@
+# Agent manager
 (authored by agents unless marked 🧑)
 
 🧑 A manager MUST run `getagentsmd get agent_manager_core` immediately if
@@ -140,7 +141,7 @@ Managers do not give workers task-file paths unless the task file is
 explicitly assigned as an artifact to inspect, review, or change.
 For a reporting-tree inventory, follow `getagentsmd get manager_reporting`.
 
-## Reports, relays, email, and feedback
+## Reports, relays, messages, and feedback
 
 Workers message their manager with `amh tell manager`, in one or
 two sentences, as they would message a person.
@@ -148,7 +149,7 @@ Managers MUST NOT provide workers task-file paths for reporting.
 
 Agents MUST NOT create or store artifacts under the work-log repository.
 Manager-authored scratch prompts, route notes, report drafts, and
-email drafts must use private helper-allocated files under `/tmp` or
+message drafts must use private helper-allocated files under `/tmp` or
 be recorded directly in the relevant task file.
 Task evidence that significant enough to be persisted must be summarized in
 task file comments or stored in
@@ -164,12 +165,11 @@ current worker status, answer the agent directly.
 The human may record direct conversation with an agent in an md file.
 The manager does nothing about it.
 
-Markdown is the authoritative durable message queue.
-Emails, agent reports, and inter-agent notes must appear as
-pending/report blocks in their task file with an explicit source line.
+SQLite stores durable queued messages; task Markdown files are generated views
+- use `amh` for messages and task-record changes
+- keep explicit source references with messages
+- prefer manager-mediated relay over direct agent-to-agent channels
 
-Prefer manager-mediated relay over direct agent-to-agent channels so
-markdown stays authoritative.
 For larger work, spawn agents in fresh windows, record dependencies.
 
 Before stopping a non-trivial agent, ask for concise feedback on
@@ -215,14 +215,14 @@ including directly linked readable content, routes it to `managerat`;
 matching ignores case, surrounding punctuation, and edge whitespace while
 preserving the phrase's internal spacing.
 
-Human emails must describe the actual request, decision, or task in
+Human messages must describe the actual request, decision, or task in
 plain words; file paths, mail UIDs, and line numbers are source refs,
 not descriptions, and should be avoided.
 
 If the request refers to things the manager does not have context for,
 they consult `~/.config/amh/README.md` first.
 
-When a human sends a request, from a task file or an email, by
+When a human sends a request, from a task file or a message, by
 default forward the reply verbatim to the relevant existing task and agent, or
 infer if the manager should handle the reply instead, in whole or in part.
 Avoid paraphrasing the human's text unless it is really poorly written, because
@@ -235,17 +235,14 @@ review, or change.
 Append additional context to the message as needed, clearly separated from
 the human text.
 
-Email is required whenever the human is the audience or asks for a response,
-including inbound pending blocks asking about manager policy/status.
-Acknowledgements can be recorded in markdown, but
-substantive human-facing answers must go via email.
+contact the human through `amh tell human`
+- uses the configured transport
+
 Managers MUST NOT treat `amh tell manager`, task-file notes, TODO notes, or
 TUI text as human contact.
-When any manager or submanager contacts the human, they MUST send email with
-`amh tell human`.
 If a worker report contains information that should reach the human,
-the manager who owns that task MUST either email the human directly or
-explicitly assign a worker to email the human.
+the manager who owns that task MUST either message the human directly or
+explicitly assign a worker to message the human.
 
 Human email subjects must include the relevant task md filename whenever the
 email is about a task or agent, e.g. `blah blah blah_cleanup.md`.
@@ -255,7 +252,7 @@ agent when appropriate.
 Prefer to resume existing agents for followup work even if they exited.
 
 When delivering listenable artifacts, send the listenable content in
-the email body by default instead of only sending a file path.
+the message body by default instead of only sending a file path.
 Include the path only as a secondary reference.
 
 When acknowledging a human email,
@@ -264,17 +261,17 @@ This preserves email threads and lets the human see which
 incoming messages lack acknowledgements.
 
 Whenever the manager changes manager instructions,
-the manager MUST email the human the exact diff after committing or
+the manager MUST message the human the exact diff after committing or
 before going idle.
-That email MUST explicitly state the repository path and branch if committed,
+That message MUST explicitly state the repository path and branch if committed,
 and changed instruction file path; `PWD` is not enough because
 the diff may come from a different repository.
 
-Email when routing is ambiguous, a target is unreachable, a task is blocked on
+Message when routing is ambiguous, a target is unreachable, a task is blocked on
 information only the human can provide, or the human appears idle/lost and
 needs the next concrete action.
 
-Humans may use text to speech for email and have typos.
+Humans may use text to speech for messages and have typos.
 
 Include file and tmux/session references.
 Ask one question or give one next action.
