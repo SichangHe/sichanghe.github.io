@@ -36,8 +36,9 @@ prompt n
 `status` MUST be exactly `running`, `long_running`, `blocked`, or `done`.
 `blocked` MUST have `blocked_on`; `running` and `done` MUST NOT have it.
 `long_running` may have `blocked_on` for a persistent role reason.
-A `long_running` task with `blocked_on`
-does not receive pending-item reminders; one without it does.
+🤖 For `long_running` tasks, request dependencies suppress reminders only for
+those request items; `blocked_on` does not suppress reminders for ready items.
+`status: blocked` still pauses the whole task.
 Relaunching a `long_running` task MUST preserve whether it has `blocked_on`.
 `managerat` MUST differ from `runat`.
 Worker task files use `is_manager: false`;
@@ -69,11 +70,12 @@ the role is waiting rather than working its pending queue.
 When a non-long-running agent stops running due to being blocked by
 others while the task is incomplete, the manager MUST run
 `amh task status TASK.md blocked --on "BLOCKER"`.
+🤖 If only some request items wait, use `amh todo wait` instead.
 Set a task done iff the task is complete by running
 `amh task close TASK.md`, which notifies the human.
 If the task is waiting for another agent or the human, use `--on` to
-name `human` or the other task file; change `status` immediately when
-not blocked.
+🤖 name the human action awaited (starting with `human`) or the other task file;
+change `status` immediately when not blocked.
 A manager keeps working until all active task files are `running`,
 `long_running`, `done`, or `blocked`, with no `(pending)` block, and
 all changes in task files are committed and pushed.

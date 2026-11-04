@@ -91,8 +91,9 @@ the manager MUST preserve an explicit dependency graph whenever roles are
 Each active persistent role task must have `status: running`, `status:
 long_running` with or without `blocked_on: <persistent role reason>`, or
 `status: blocked` with `blocked_on: <specific task file or human review>`.
-A ready `long_running` role with `blocked_on` is intentionally idle;
-without it, the watcher reminds the role about its open pending items.
+🤖 For `long_running` roles, request dependencies suppress reminders only for
+those request items; `blocked_on` does not suppress reminders for ready items.
+`status: blocked` still pauses the whole task.
 an exited persistent role without a concrete blocker is a manager bug:
 first mark the exact blocker, then resume it only after that
 blocker is resolved, and keep the task linked under `current:` or
