@@ -2,37 +2,22 @@
 (authored by agents unless marked 🧑)
 Tag: `polgreen2022uclid5`, [paper](https://arxiv.org/abs/2208.03699)
 
-## scope
-UCLID5 combines operational and axiomatic models, several specification styles, SMT verification, and syntax-guided synthesis. The paper lists “Floyd-Hoare style proofs, k-induction and bounded model checking (BMC), verifying hyperproperties, or using syntax-guided and inductive synthesis” as supported techniques (Sect. 1, p. 2). Its architecture parses a module, type-checks and inlines procedures, symbolically simulates transitions into assertion trees, then emits SMT-LIB or SyGuS-IF for external solvers (Sect. 2, pp. 2–3). Inference: the external SMT/SyGuS solver, the front-end translation, and any oracle binary are trusted components; the paper does not discuss this.
-
-## technique: multi-modal modeling and invariant checking
-Use sequential procedures for code-like operations and transition-system `init`/`next` blocks for unbounded state evolution. UCLID5 permits their combination: “The sequential program modeling is inspired by systems such as Boogie [5] and allows the user to port Boogie models to UCLID5,” while “The concurrent modeling is done by defining transition systems with a set of initial states and a transition relation,” and “A main module can be defined that triggers when each child module is stepped” (Sect. 3.2, p. 6).
-
-Steps: (1) declare state variables; (2) define `init`; (3) define `next` with deterministic or nondeterministic updates; (4) write assertions, pre/postconditions, global invariants, or LTL properties; (5) choose induction, k-induction, or BMC in `control`; (6) inspect solver results and counterexamples. For loops in procedural code, UCLID5 either unrolls bounded loops or replaces while loops with user-provided invariants; unbounded control flow is represented as transition systems (Sect. 2, p. 3).
-
-Verus form. Inference: represent state in a Rust struct, transition functions with `requires`/`ensures`, and loop invariants with `invariant` clauses. A transition-system proof becomes an inductive `proof fn` over the state relation. UCLID5's nondeterministic `havoc` requires explicit quantified assumptions or ghost choice in Verus.
-
-## technique: syntax-guided invariant synthesis
-The Fibonacci example declares a synthesis function `h` and uses it to strengthen a non-inductive invariant. The paper states that CVC5 “will automatically generate the function h(x, y) = x >= 0, which completes the inductive proof” (Sect. 3.1, p. 5). Apply it by (1) writing the desired safety invariant; (2) observe that induction fails because the invariant is not inductive; (3) declare a `synthesis function` with the needed arguments and result sort; (4) conjoin that function in an invariant; (5) invoke induction and `check`; (6) let an external SyGuS-IF solver find a function body, as the paper's example does with CVC5. Inference: the solver is looking for a definition that makes the base case and inductive step valid; the paper says only that the user-selected verification task should pass.
-
-Verus form.
-
-## technique: hyperproperty by self-composition
-UCLID5 adds `hyperaxiom` and `hyperinvariant` for k-safety. A hyperinvariant is an invariant over n module instances; the maximum instance index determines n. The paper's example is `hyperinvariant[2] det xy: y.1 == y.2` (Sect. 3.1, p. 4). For the TAP case, instantiate two TAP modules, state that mapped memory is equal in both traces, step both instances together, and run induction (Sect. 4, pp. 9–10). The paper reports Table 1 results from a machine with a “2.6GHz 6-Core Intel Core i7 and 16GB of RAM running OSX”; times include compilation and solving. UCLID5 TAP 53 procedures, 25 functions, 87 annotations, 2765 lines, 49 seconds; its integrity proof 2 procedures, 0 functions, 54 annotations, 293 lines, 30 seconds. The corresponding Boogie rows were: TAP 22 procedures, 25 functions, 254 annotations, 1840 lines, 51 seconds; integrity 14 procedures, 11 functions, 71 annotations, 835 lines, 346 seconds (Table 1, p. 10). Annotations are “the number of loop invariants, assertions, assumptions, pre- and post-conditions that were manually specified.” These are single model/proof rows, not averages over tools.
-
-Verus form. Inference: encode two ghost copies of state and prove a relational invariant such as equality on protected addresses. Rust's borrow checker cannot express two executions directly, so the relation belongs in ghost state and proof functions. Existing Verus constructs support quantified postconditions and invariants, but no `hyperinvariant` keyword.
-
-## technique: solver-backed external oracles and synthesis
-An oracle function has no model implementation and is linked to a user binary queried by the solver. The paper says this is useful when a component is “difficult or impossible to model” or when nonlinear arithmetic is better outsourced (Sect. 3.2, p. 6). Declare `oracle function [isprime] Prime(x: integer): boolean`; verification uses satisfiability modulo oracles and synthesis uses synthesis modulo oracles. In the LTI example, `isStable` checks eigenvalue stability, while `k0` and `k1` are synthesized; BMC unrolls ten steps and checks state bounds (Appendix A.3, pp. 19–20).
-
-Verus form.
-
-## what is proved, trusted, and reusable
-The paper states that “the verification runtimes between the Boogie and UCLID5 models and proofs are comparable” (Sect. 4, p. 10); Table 1 shows 49 s vs 51 s for TAP and 30 s vs 346 s for the integrity proof. It attributes the higher line count of the UCLID5 TAP model (2765 vs 1840) to “stylistic differences,” and the integrity proof is shorter (293 vs 835 lines).
-
-## techniques for the catalog
-- multi-modal modeling: combine procedural code, transition systems, axioms, and temporal specifications
-- inductive and bounded checking: choose induction, k-induction, or BMC for the property shape
-- SyGuS invariant synthesis: synthesize a predicate that strengthens a failed induction proof
-- hyperproperty self-composition: instantiate multiple traces and prove relational invariants
-- oracle-backed reasoning: delegate hard predicates to external binaries through solver interfaces
+uclid5: one language for procedural + transition-system models, with SMT verification and SyGuS synthesis
+- supports hoare proofs, k-induction, bmc, hyperproperties, synthesis
+- pipeline: parse, typecheck, inline, symbolic simulation, emit SMT-lib or SyGuS-if
+- tcb: external solver, front-end translation, oracle binaries
+multi-modal modeling
+- Boogie-style procedures plus `init`/`next` modules
+- loops: unroll, or replace with user invariants
+SyGuS invariant synthesis
+- declare `synthesis function h`, conjoin in a non-inductive invariant, solver (CVC5) fills the body
+  - fibonacci example finds `h(x, y) = x >= 0`
+hyperproperties via self-composition
+- `hyperinvariant[2]` over two module instances
+- trusted-access-protection case study: 2765 lines, 49 s vs Boogie 1840 lines, 51 s
+  - integrity proof: 293 lines, 30 s vs Boogie 835 lines, 346 s
+  - single models, not averages
+- Verus: encode two ghost state copies, prove a relational invariant; no hyperinvariant keyword
+oracle functions
+- external binary queried by the solver for hard-to-model parts
+- lti example synthesizes controller gains `k0`, `k1` with bmc over 10 steps

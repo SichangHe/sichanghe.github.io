@@ -2,62 +2,36 @@
 (authored by agents unless marked 🧑)
 Tag: `jensen2012fictional`, [paper](https://www.semanticscholar.org/paper/3c34432c58e2b58f44f7784a3168a0f25988df3f) (link from the fetch record; the paper text gives no DOI)
 
-## what is proved and measured
-Fictional separation logic (FSL) replaces mandatory physical disjointness with an abstract separation algebra and an interpretation into physical heaps. Its goal is modular specifications for mutable abstract data types implemented with sharing. The authors define an indirect Hoare triple in terms of an existing standard separation-logic triple, then state frame, consequence, module-composition (separating product) and stacking rules; the proofs are in an online appendix [14] that is not part of the paper text. The paper gives worked bit-pair, monotonic-counter, wrapper, fractional-permission, and stacked-collection examples, but no benchmark denominator or runtime measurements. It says it presents the logic "for a simple sequential imperative programming language with procedures" (sec.1, pp.379–380).
-
-## technique: abstract separation algebra and interpretation
-What it is: Choose an abstract separation algebra `Σ` and interpretation `I : Σ → P(heap)` existentially, so abstract predicates need not expose physical sharing. A separation algebra is a partial commutative monoid (Definition 1, sec.2.1, p.380). In sec.3 an interpretation between algebras is `I : Σ → P(Σ')` with `I(0Σ)={0Σ'}` (p.382). The indirect triple is `I.{P} C {Q} ≜ ∀φ. {∃σ∈P.I(σ◦φ)} C {∃σ∈Q.I(σ◦φ)}` (sec.3, p.382).
-When to use it: Use this when multiple abstract resources may overlap in one concrete cell, such as two bits packed into one integer, or copy-on-write collections (sec.1, p.378; sec.4.2, p.388).
-How to do it: (1) define the abstract carrier and partial composition; (2) define `I` mapping abstract states to heap predicates; (3) define the representation predicates (`B1`, `B2` in the bit pair); (4) quantify `Σ`, `I`, and the representation predicates existentially in the public specification; (5) prove each implementation function against the indirect triple, using the standard separation-logic rules. The bit-pair implementation packs two bits in one integer; the witnesses are `Σ = loc →fin ({1,2} →fin bool∅⊥)`, `I(f) = ∀∗p∈supp(f). supp(f(p))={1,2} ∧ p ↦ (f(p)(1)+2·f(p)(2))`, and `Bi(p,b)={[p ↦ [i ↦ b]]}` (sec.3.2, p.384).
-Verus form: Inference: define a ghost abstract state and `spec fn interpret(abs, heap_view)->bool`; make the public contract existential over ghost representation and prove each Rust method preserves it. Verus’s `Set`, `Map`, `Seq`, and `spec fn` can encode the algebra; physical aliasing still requires a Verus-supported ownership model or ghost abstraction.
-Evidence: “The intention is that the interpretation map I should explain how elements of the separation algebra Σ are represented by predicates on physical heaps” (sec.1, p.379). The bit-pair proof of `bp get1` reduces to a standard heap read `x := [p]` using the saturation lemma and Lemma 1c (sec.3.2, p.384).
-Limits: The abstract logic can hide implementation sharing, but interpretation and algebra must be chosen soundly. The paper’s language is sequential; extending to a concurrent language is future work (sec.7, p.395).
-
-## technique: indirect frame and Enter rules
-What it is: Quantification over every abstract frame `φ` builds framing into the triple. The Enter1 rule changes an indirect triple whose pre- and postconditions are singletons (conjoined with pure assertions) into a standard triple over `I(σ◦φ)`, and Lemma 1 gives facts for interpretations defined pointwise over finite maps (sec.3.1, p.383).
-When to use it: Use Enter1 or Lemma 1c when a function changes one abstract object while arbitrary represented objects remain in the frame.
-How to do it: the paper’s `bp get1` proof, read bottom-up, is: (1) the goal `I.{B1(p,b)} C {B1(p,b) ∧ x%2=b}`; (2) unfold the definition of `B1`; (3) apply Lemma 1c to get `∀φ.{I([p↦[1↦b]◦φ])} C {…}`; (4) apply the saturation lemma `I([_↦[i↦b]◦φ]) ⊢ ∃b'. φ=[3−i↦b']`, which gives the concrete heap; (5) unfold `I` to reach the standard triple `∀b2.{p↦(b+2·b2)} x:=[p] {p↦(b+2·b2) ∧ x%2=b}`, which is trivial. The frame must contain the second bit because `I` requires full field support, and the read preserves it (sec.3.2, p.384).
-Verus form: Inference: use a universally quantified ghost frame and prove a frame-preservation lemma with `ensures` that the untouched abstract component is unchanged. Verus does not have an indirect-triple connective; encode it as a lemma parameterized by an arbitrary ghost frame.
-Evidence: “The quantification over all possible abstract frames φ bakes the frame rule into the indirect triple definition” (sec.3, p.383).
-Limits: Proofs depend on interpretation-specific saturation lemmas; the paper derives them by hand per example and gives no automated method.
-
-## technique: freely duplicable abstract state for monotonic counters
-What it is: A monotonic counter representation `MC(c,i)` can be duplicated and weakened: for `i≤j`, `MC(c,j) ⊢ MC(c,j) * MC(c,i)`. Reading guarantees only `ret≥i`; `mc inc` takes `MC(c,i)` to `MC(c,i+1)` (sec.3.3, p.385).
-When to use it: Use this pattern for monotone observations where clients may retain stale lower bounds and no operation decreases the concrete value.
-How to do it: choose `Σ = loc →fin Z⊥` with max as composition; `I(f)=∀∗c∈supp(f). ∃j≥f(c). c↦j`; `MC(c,i)={[c↦i]}`. The duplication property is verified in the assertion logic; the verification of the three functions is in the online appendix, not in the paper text (sec.3.3, p.385).
-Verus form: Inference: store an abstract lower-bound ghost value and prove `old(bound) ≤ new(bound)`; a read contract returns a value at least the bound. Duplicating a ghost lower-bound fact is logical weakening, not duplicated executable ownership.
-Evidence: “The counter should have a representation predicate MC (c, i) that can be freely duplicated” (sec.3.3, p.385).
-Limits: “There can be no function to deallocate a counter because its representation predicate can be freely shared.” The paper adds that the specification is “more suited for a garbage-collected language” and does not guarantee that consecutive calls to `mc read` return the same value (p.386).
-
-## technique: separating products for multiple modules
-What it is: For interpretations `I1` and `I2`, `I1 ∗ I2 ≜ λ(σ1,σ2). I1(σ1) ∗ I2(σ2)`, with rules CreateL, ForgetL, LeakL and Prod-Pure (Fig. 1) and their R-variants to introduce, remove, or leak module layers (sec.4, p.386).
-When to use it: Use it when a client calls multiple independently abstracted libraries or directly accesses the heap alongside them.
-How to do it: at the bottom of the client proof, apply Basic and then CreateL (or CreateR) for each module used; use LeakL instead when the command cannot clean up that module’s state completely (as for monotonic counters); before calling a library function, frame out irrelevant facts and use ForgetL to ignore the irrelevant modules; apply the module’s indirect triple (sec.4, p.386; sec.4.1, p.387). The paper’s generic client proof assumes the abstracted bit-pair and monotonic-counter specifications `Sbp` and `Smc`; a concrete client is only in the online appendix (sec.4.1, p.387–388).
-Verus form: Inference: define a product ghost state containing each module’s invariant and prove a method contract preserves untouched components. There is no direct `CreateL`; use explicit lemma instantiation and ghost tuple framing.
-Evidence: “To allow clients of multiple libraries to know about more than one separation algebra and interpretation function, we introduce separating products of interpretations” (sec.4, p.386).
-Limits: Leaked resources (LeakL) are not cleaned up, and monotonic counters cannot be deallocated (p.386); the paper says clients of multiple modules with complex stacking patterns “may benefit from tool support for composing the interpretations” (sec.7, p.394).
-
-## technique: indirect entailment and fractional permissions
-What it is: Indirect entailment is `P |=I Q ≜ ∀φ. (∃σ∈P. I(σ◦φ)) ⊢ (∃σ∈Q. I(σ◦φ))`; it supports the rule ROC-Indirect and lets abstract pre- and postconditions be changed in ways ordinary consequence does not allow, because a physical heap may be in the image of several abstract `σ` (sec.5, p.389). The paper encodes fractional permissions with rationals `0<z≤1`, composition by addition when the sum is at most one, and an interpretation `Ifp` requiring full permission (`f(l)=(v,1)`) for each described location (sec.5.1, pp.390–391).
-When to use it: Use indirect entailment to reuse ordinary full-permission write and allocation rules for fractional permissions.
-How to do it: define the permission algebra `Σfp = Ptr →fin (Val= × Perm)⊥` and fractional points-to `l ↦z v ≜ {[l ↦ (v,z)]}`; verify the Fractions rule (splitting and joining); define `Ifp`; prove the read rule directly with Lemma 1c and a saturation lemma; use the bi-entailment `(l ↦1 v)L =||=_{Ifp∗1} (l ↦ v)R` (proved in the online appendix) so that the write rule follows from the standard write rule by Basic, ForgetR, ROC-Indirect and CreateL; the paper says the allocation rule follows “almost immediately” (sec.5.1, pp.390–391).
-Verus form: Inference: use rational or integer-scaled ghost fractions and prove addition bounds; require full fraction for mutating methods and positive fraction for reads. Verus does not automatically enforce fractional ownership, so the fraction must be a proved ghost protocol.
-Evidence: “We can now prove a specification of the heap read command for fractional permissions” (sec.5.1, p.391).
-Limits: Here `Ifp` assumes full permission for every described location; the permission-based reasoning is presented for the sequential language only (sec.5.1, p.391; sec.7, p.395).
-
-## technique: stacking interpretation layers
-What it is: Compose `I:Σ1→Σ2` and `J:Σ2→Σ3` relationally, `I ; J ≜ λσ1. ∃σ2∈I(σ1). J(σ2)`, or expose both layers with stacking `I ▷ J ≜ (I∗1);J` (sec.6, p.392).
-When to use it: Use stacking when a module extends another abstraction and clients need either the lower layer hidden or both layers available.
-How to do it: apply RelComp to peel off the top layer and make its frame explicit; use StackComp or Enter1Stack when both layers are visible (both-direction rules); use StackRel to collapse stacking to relational composition and hide it. The paper stacks fractional permissions over the collection specification so `coll contains` and `coll clone` work with any partial permission while the other functions need full permission, and the original collection specifications are reused through an indirect bi-entailment (sec.6, pp.391–392; sec.6.1, p.393).
-Verus form: Inference: represent each layer as a ghost invariant and prove refinement/forgetful lemmas between them; expose only the composed contract at API boundaries.
-Evidence: “Relational composition masks the J-interpretation to the outside” (sec.6, p.392).
-Limits: “the converse of RelComp does not hold” (p.392); choosing what to expose is a design decision (Inference).
-
-## techniques for the catalog
-- abstract interpreted separation — hide physical sharing behind an existential algebra and heap interpretation
-- indirect framed triples — quantify over arbitrary abstract frames and enter standard proof obligations
-- monotone duplicable predicates — model shared lower bounds for nondecreasing state
-- separating products — compose independently abstracted modules for clients
-- indirect entailment — replace abstract predicates with concretely equivalent ones
-- fractional permission algebra — encode read/write sharing over a standard heap
-- stacked interpretations — expose or hide multiple abstraction layers
+fictional separation logic (FSL) = modular specs for abstract data types whose implementations share memory
+- ordinary separation logic demands physical disjointness; FSL asks only abstract disjointness
+  - abstract separation algebra Σ (partial commutative monoid) + interpretation I : Σ → P(heap)
+  - Σ, I, representation predicates are existential in the public spec, so sharing stays hidden
+- sequential language only; concurrency is future work
+- no benchmark or runtime numbers; worked examples only
+  - bit pair, monotonic counter, wrapper, fractional permissions, stacked collection
+  - proofs sit in an online appendix, not the paper
+indirect triple I.{P} C {Q} = ∀φ. {∃σ∈P. I(σ◦φ)} C {∃σ∈Q. I(σ◦φ)}
+- quantifying over abstract frame φ bakes the frame rule in
+- Enter1 + Lemma 1 reduce it to a standard triple over I(σ◦φ)
+  - bit pair: two bits packed in one integer, each abstractly owned separately
+  - needs a hand-derived saturation lemma per interpretation; no automation
+- Verus: ghost abstract state + spec fn interpret, universally quantified ghost frame, frame-preservation lemma
+  - Verus has no indirect-triple connective; encode as a lemma
+monotonic counter: MC(c,i) freely duplicable, MC(c,j) ⊢ MC(c,j) * MC(c,i) for i≤j
+- read only guarantees ret ≥ i
+- no dealloc, since the predicate is shared; fits garbage-collected languages
+- Verus: ghost lower bound, duplicating it is logical weakening not ownership
+separating products I1 ∗ I2 compose independently abstracted modules in a client
+- rules CreateL/R, ForgetL/R, LeakL/R, Prod-Pure
+- LeakL leaves state uncleaned, as for counters
+- complex stacking may need tool support (authors)
+indirect entailment P |=I Q: weaken abstract pre/post where one heap fits several σ
+- use: fractional permissions encoded on top of full-permission rules
+  - permissions are rationals 0<z≤1, composition = addition up to 1
+  - Ifp demands full permission (f(l)=(v,1)) per described location
+- write and alloc rules follow from the standard ones via ROC-Indirect and bi-entailment
+- Verus does not enforce fractions; they must be a proved ghost protocol
+stacking interpretations I ▷ J = (I∗1);J, relational composition I ; J hides the top layer
+- lets a module extend another abstraction and show clients one or both layers
+- example: fractional permissions stacked over a collection spec; contains/clone need any fraction, others full
+- converse of RelComp does not hold

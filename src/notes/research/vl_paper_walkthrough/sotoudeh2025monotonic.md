@@ -2,39 +2,38 @@
 (authored by agents unless marked 🧑)
 Tag: `sotoudeh2025monotonic`, [paper](http://arxiv.org/abs/2505.18818v1)
 
-## scope
-The paper targets monotonic data structure traversals (MDSTs): loops that sweep forward from a root or head through a structure. Examples are `strlen`, list search, and BST insertion (Sec. 1, pp. 1–2). Shrinker verifies C safety, correctness, equivalence, and memory properties using “scapegoating size descent,” an abstract interpretation that relates a potentially failing execution to a smaller failing execution. The paper emphasizes: “Our tool, Shrinker, nearly triples the number of string instances solved (58 vs. 20) and more than doubles the number of list instances solved (20 vs. 9) compared to the second-best solver.” (p. 2).
-
-## technique: scapegoating size descent
-Use this when ordinary abstract interpretation overapproximates heap traces and reports a possible crash that cannot be discharged. The key obligation is infinite descent: every reachable crashing trace must have a strictly smaller reachable crashing trace. “Scapegoating size descent gives the verifier a new option: when it finds an overapproximated trace that might crash, instead of giving up and reporting a potential error, it is allowed to instead prove that, if there is a reachable crashing trace of this form, then there also exists some strictly smaller reachable trace that also crashes.” (Sec. 1, p. 2).
-
-Steps from the method: (1) define a well-founded trace-size measure (Sec. 4.1, p. 9); (2) track a primary trace with candidate scapegoat traces from modified inputs; (3) construct reachable scapegoats by removing individual nodes or array elements among the first k candidates, adding separate scapegoats for the different deletions (Appendix A.2, pp. 30–31); (4) when the primary may fail, prove that a scapegoat fails and has strictly smaller size for every represented herd; (5) if analysis reaches a fixed point with each possible failure either ruled out or blamed, conclude safety by infinite descent (Algorithm 2, p. 11; Theorem 3, p. 12). The paper states the operational form: “Any time the abstract trace executing on x potentially crashes (reaches a failure state), Shrinker merely needs to prove that the ‘scapegoat trace’ executing on x′ also crashes and is smaller.” (p. 2). Shrinker's size measure counts allocated regions reachable from input arguments, elements in arrays reachable from those arguments, and calls to malloc (Appendix A.9, p. 33).
-
-The formal abstraction tracks herds, tuples whose first trace is primary and remaining traces are scapegoats. Algorithm 2 repeatedly checks `HCanFail`, `CanBlame`, primary stepping, scapegoat insertion/stepping, widening, and worklist subsumption (Sec. 4.2–4.4, pp. 9–12). Its soundness follows from Lemma 4 plus well-founded descent; the paper’s Theorem 3 says: “If Algorithm 2 reports Safe, then the program is safe.” (p. 12).
-
-Inference: in Verus, model a trace and herd as structs or inductive enums, use a natural-number `size` measure and a `decreases` clause for recursive descent, and prove that `CanBlame` supplies a smaller failing trace. A loop invariant can carry the abstract herd soundness relation. The paper uses C abstract interpretation, so ownership and alias facts require a separate Rust/Verus encoding.
-
-## technique: MDST-specific abstract domain
-The benefit comes from monotonic traversals whose primary and shortened inputs quickly synchronize. For a linked-list loop, after the first iteration both executions perform the same operation on corresponding nodes; only finitely many locations differ (Sec. 1, p. 3). Shrinker therefore tracks precise facts about those differing locations while abstracting the rest. The paper gives no strict MDST definition: “Our tool remains sound (but incomplete) when applied to any C program.” (Sec. 1, footnote 1, p. 1). The implemented tool supports the C subset described below.
-
-Implement by providing an abstract herd domain with concretization, initial herds, failure detection, primary stepping, precision ordering, widening, and splitting (Definition 10 and operations, Sec. 4.3, p. 10). `MaybeAddScapegoats` must preserve a reachable extension whenever the primary is reachable. `HStep♯∃` may choose one nondeterministic successor or drop a scapegoat; `CanBlame` requires both strict size decrease and failure for every represented herd (Sec. 4.3, pp. 10–11). Inference: a Verus library could expose these operations as specification traits and prove soundness after establishing their required properties. Heuristic choices must obey these properties.
-
-The implemented domain relates memory values across states and traces. Concrete locations represent specific addresses; summary locations represent groups sharing a major address, with minor addresses distinguishing locations within a group. Shrinker uses an integer difference logic solver for constraints of the form x−y ≤ c, with additional rules for logical facts and C unsigned overflow and casts (Sec. 5.3, pp. 14–15). Arrays are also encoded as uninterpreted objects, propagating equality through matching store operations across traces (Appendix A.12, p. 34). Widening drops intermediate-state constraints and weakens differing numerical bounds to their signs at selected loop iterations (Sec. 5.4, p. 15).
-
-Scapegoat stepping tries to reach the same loop iteration instruction with matching relevant local variables, allowing an integer difference of one. A scapegoat is removed if its next branch cannot be determined from existing constraints (Appendix A.5, pp. 31–32).
-
-## tool interface and assumptions
-Users submit C with a test function and `__VERIFIER_ignore()`/`__VERIFIER_fail()`; Shrinker tries to prove that no input reaches failure without first reaching ignore. Pointer operations are automatically instrumented for memory safety. “Optional overflow checking can also be implemented by instrumentation.” (Sec. 5.1, p. 13). Supported C includes structs, pointers, loops, nonrecursive and tail-recursive calls, and standard integers; unions, function pointers, VLAs, and explicit C array types are unsupported (p. 13). Linked inputs to the harness are assumed to be disjoint, acyclic heaps. The harness may construct cyclic structures or pass overlapping regions to the operation being verified (Sec. 5.1, p. 13; Appendix A.10, p. 33). Array inputs use paired pointer field X and nonnegative length field n_X, with storage for exactly n_X items (Sec. 5.1, p. 13).
-
-## evidence and limits
-The appendix records important limits. On programs lacking similar behavior after shrinking, the technique essentially reduces to ordinary abstract interpretation, and Shrinker is not expected to perform well. Nested MDST performance is not claimed; skip traversals would need different shrinking rules. Byte-level pointer reinterpretation is rejected. Tree instances need aggressive path splitting in the current implementation, which increases cost (Appendix C.1–C.5, pp. 38–40). Inference: a Verus adaptation would need to establish its shrinking and reachability lemmas for each supported traversal pattern.
-
-The benchmark contains 62 string, 26 list, and 17 tree instances (105 total) drawn from Linux, NetBSD, OpenBSD, Musl, GLib, QEMU, Redis, Zsh, Git, and GLibC (Sec. 6.1, p. 16; Table 1, p. 17). Shrinker solved 58/62 strings, 20/26 lists, and 13/17 trees; baselines’ best counts were 20/62, 9/26, and 16/17 respectively (Table 1, p. 17). The virtual-best portfolio solved 58/62 strings, 23/26 lists, and 17/17 trees with Shrinker, versus 20/62, 14/26, and 16/17 without it (Table 1). Runs used a Debian 12 virtual machine on an Intel i9-13900, with 32 GB RAM and a three-hour wallclock limit per instance–tool pair (Sec. 6, p. 16).
-
-The author limits the evaluation: “Our evaluation considers only the verification of safe programs, as we suggest detecting unsafety using a dedicated bounded model checking or fuzzing tool.” (Sec. 6.2, p. 17). The paper also notes that the baselines compete in SV-COMP, which includes detecting unsafe programs, and might perform better if optimized for this setting.
-
-## techniques for the catalog
-- scapegoating size descent: discharge a possible crash by proving a smaller reachable trace also crashes, then use well-founded infinite descent
-- trace herds: abstract a primary execution together with candidate scapegoat executions; establish reachability and prove strict size decrease when assigning blame
-- relational heap abstraction: combine concrete and summary locations, integer difference constraints, and array equality across synchronized traces
-- C test harness interface: express properties through failure/ignore hooks and instrument pointer operations for memory checks
+Shrinker: verifies safety/correctness of C loops that sweep a structure (strlen, list search, BST insert)
+- no LLM, abstract interpretation only
+- sound but incomplete on any C program
+  - tuned for monotonic data structure traversals (MDSTs)
+- evaluation on 105 safe instances: 62 string, 26 list, 17 tree
+  - Shrinker solved 58/62 strings, 20/26 lists, 13/17 trees
+  - best baseline solved 20/62, 9/26, 16/17
+  - virtual-best portfolio with Shrinker: 58/62, 23/26, 17/17
+  - 3h wallclock per instance-tool pair
+  - only safe programs tested, unsafe detection left to BMC/fuzzing
+scapegoating size descent
+- idea: when an abstract trace may crash, prove a strictly smaller reachable trace also crashes
+  - infinite descent on a well-founded size measure then shows safety
+  - size = reachable allocated regions + array elements + malloc calls
+- herd = primary trace + scapegoat traces from inputs with nodes/elements removed
+- algorithm
+  - track herds, check can-fail, blame a scapegoat, widen, subsume on a worklist
+  - Theorem 3: if Algorithm 2 reports Safe, the program is safe
+- why it works on MDSTs
+  - primary and shortened executions synchronize after the first iteration
+  - only finitely many locations differ, so track those precisely
+abstract domain
+- concrete + summary locations, integer difference logic (x−y ≤ c)
+- arrays as uninterpreted objects with equality across traces
+- widening drops intermediate constraints, weakens differing bounds to signs
+interface and limits
+- harness uses `__VERIFIER_ignore()`/`__VERIFIER_fail()`, pointer ops auto-instrumented
+- inputs assumed disjoint acyclic heaps
+- unsupported: unions, function pointers, VLAs, byte-level pointer reinterpretation
+- degrades to plain abstract interpretation without shrinking similarity
+  - nested MDSTs and skip traversals not claimed
+  - trees need aggressive path splitting, costly
+Verus relevance (inference)
+- trace/herd as enums, size as nat with `decreases`, prove blame yields a smaller failing trace
+- ownership/alias facts need a separate Rust encoding

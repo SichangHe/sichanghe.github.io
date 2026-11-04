@@ -1,59 +1,28 @@
 # From Solver Feedback to Faithful Plans: Multi-Role Reinforcement Learning for Symbolic Planning
 (authored by agents unless marked 🧑)
+
 Tag: `zhang2026solverfeedback`, [paper](https://arxiv.org/abs/2608.21897)
 
-This paper learns natural-language-to-PDDL formalization from a deterministic planner, without human-written PDDL demonstrations. A shared Qwen2.5-7B model has three role-conditioned policies: Actor, Judge, and Editor. The abstract states, “The Actor proposes PDDL specifications, the Judge provides a solver-calibrated quality signal, and the Editor performs bounded diagnostic-conditioned refinement.” (Abstract, PDF p. 1) The Actor generates a domain/problem pair, the Judge predicts solver-calibrated quality, and the Editor makes bounded diagnostic-conditioned repairs. The abstract reports 35.5% baseline average success, 70.8% for the proposed method, 66.3% faithful success, and 6.4% semantic drift on PlanBench (Abstract, PDF p. 1).
-
-## solver-grounded environment
-
-A task is a natural-language description `x`; the output `y=(ydom,yprob)` is a PDDL domain and problem. Fast Downward deterministically returns `(b,d)`, where `b=1` means syntactically valid and solver-executable within the time limit, while `d` contains diagnostics such as parse errors, type mismatches, unsatisfied preconditions, unreachable goals, and failed action traces (Section 3.1, PDF p. 4). The paper calls raw solver success “a necessary but insufficient learning signal” (Section 1, PDF p. 2): weakening a goal or removing constraints can make an unfaithful specification easy to solve (Section 3.1, PDF p. 4). The paper states, “The central challenge is that solver success is not identical to task-level semantic faithfulness.” (Section 3.1, PDF p. 4)
-
-How to apply it. (1) Define the natural-language task and a formal output schema. (2) Run a deterministic parser/planner on each generated specification. (3) Return both a binary result and structured diagnostics. (4) Preserve a separate semantic-faithfulness checker because the solver evaluates the generated specification, not the original intent (Sections 3.1 and 3.5, PDF pp. 4–5).
-
-Verus form. Inference: treat `cargo verus` diagnostics as a binary proof result plus structured obligations, but define a separate requirement checker or specification review. Inference: a passing proof is analogous to solver success and can still certify the wrong `requires`/`ensures`; do not use verifier acceptance as the sole semantic oracle.
-
-## one-brain three-roles policy
-
-The model uses role embeddings for Actor, Judge, and Editor, with approximately 95% of parameters shared and lightweight role-specific heads (Section 3.2, PDF p. 4; Appendix A.3, PDF p. 12). The Actor context is `x`; the Judge sees `(x,y)`; the Editor sees `(x,yt,dt)` (Section 3.2, PDF p. 4). Shared parameters couple generation, verification, and repair while preserving role specialization.
-
-## solver-grounded training episode
-
-Algorithm 1 gives the complete episode. (1) Sample an initial specification `y0` from the Actor. (2) Query the solver for `(b0,d0)`. (3) Compute the Judge score. (4) If `bT=1`, stop. (5) Otherwise sample an Editor repair `yt+1` conditioned on the task, current specification, and diagnostic; query the solver again. (6) Repeat for `Hmax` repairs, then update all roles with their objectives (Algorithm 1, PDF p. 4). At inference, return the first solver-executable specification within the horizon, or the final edit if none succeeds (Section 3.3, PDF p. 4).
-
-The Actor reward is `RA=b0+λJ sJ`; the Judge is trained with binary cross-entropy plus a band penalty for overconfident errors; the Editor reward is `RE=bT−βT` (Section 3.4, PDF p. 5). Actor and Editor use PPO; the Judge is a calibrated binary predictor (Section 3.4, PDF p. 5). Appendix A reports `λJ=0.3`, `β=0.1`, `Hmax=5`, PPO learning rate `3×10^-5`, batch size 32, clipping `0.2`, and discount `0.9` (Appendix A.4–A.6, PDF pp. 12–13).
-
-Verus form. Inference: map Actor output to a Rust implementation plus frozen contract, Judge to a pre-check that predicts proof difficulty or contract risk, and Editor to bounded proof repair using diagnostics. The final acceptance must remain a successful Verus proof with the original contract intact. Inference: a repair reward should penalize edits and specification changes, and a separate contract diff should reject weakened entry-point preconditions or postconditions.
-
-## judge calibration and semantic faithfulness
-
-The Judge's direct target is solver executability, not human semantic labels. The paper defines `B` as solver success and `C` as task correctness; if on-policy disagreement `Pr(B≠C)≤ε` and Judge calibration error is `δJ`, it proves `E|sJ−C|≤ε+δJ` (Section 3.5, PDF p. 5; Appendix C, PDF pp. 14–15). Here `δJ` is a sup-norm calibration error against the Bayes-optimal solver-success predictor, and the bound ties the Judge to solver success, not to human semantic labels. This is a conditional, distributional statement. It becomes useful only when solver success and reference correctness agree on generated samples.
-
-The method evaluates both solver success and semantic faithfulness. On PlanBench, the proposed method obtains 70.8% solvability, 66.3% faithful success, and 6.4% drift, where drift is the conditional fraction of solver-successful outputs failing semantic checking (Table 3, PDF p. 7). Faithfulness is judged by a post-hoc reference checker used only for evaluation and never for training; it checks goal preservation, object/type preservation, and action-schema consistency (Appendix H.4, PDF pp. 28–29). The paper reports that its Judge separates solver-successful faithful and unfaithful candidates with AUC 0.89, computed post hoc over 3110 candidates that include initial outputs, intermediate repairs, and final outputs (Section 4.3, PDF p. 8; Table 5, PDF p. 9; Appendix H.9, PDF p. 30). The paper also reports a 4.5-point solvability–faithfulness gap for the method, versus 12.3 and 11.3 points for two self-refine baselines (Section 4.3, PDF p. 8).
-
-Verus form. Inference: define `C` as an independent requirement predicate over Rust behavior and `B` as Verus proof success, then measure their disagreement on generated contracts. Inference: use a Judge score only for candidate ranking; it cannot replace a proof or establish that the requirement predicate is complete.
-
-## diagnostic-conditioned bounded repair
-
-When the initial output fails, the Editor receives the raw diagnostic and current specification and edits for at most five steps (Appendix B.1–B.2, PDF p. 14). The diagnostics cover syntax/parse, type/object mismatch, invalid operator definitions, and search-level failures such as unreachable goals (Appendix B.1, PDF p. 14). Figure 3 reports cumulative success rising from 46.2% at the initial Actor output to 70.8% after five repairs; the first two repairs provide 17.3 of the total 24.6 percentage-point gain (Section 4.3, PDF p. 8). Remaining failures shift from syntax/type errors toward action-schema and transition-model errors (Section 4.3, PDF p. 8; Figure 3, PDF p. 7).
-
-Verus form. Inference: classify diagnostics into parser/type errors, failed assertions, missing invariants, and contract/specification mismatches; let an Editor add proof lemmas, `assert` blocks, loop `invariant`s, or `decreases` clauses. Keep the target contract frozen and cap attempts. Inference: a repair that only weakens `ensures` is semantic drift and should be rejected even if Verus succeeds.
-
-## reward-hacking mitigation by shared parameters
-
-The paper analyzes local reward hacking. It states, “Thus, parameter sharing does not eliminate reward hacking, but reduces the local degrees of freedom for improving Actor reward without corresponding verification and repair changes.” (Section 3.7, PDF p. 6) Under a local isotropic-Gaussian-gradient assumption, the expected worst-case first-order hacking gain is of order σ√PA for three separate models and at most of order σ√h for a shared backbone, where h is the Actor-head dimension; the shared bound also assumes that Judge and Editor gradients cover every backbone direction (Theorem 3.1, Section 3.7, PDF pp. 5–6; Appendix E, PDF pp. 17–18). The authors explicitly state that sharing “does not eliminate reward hacking” (Section 3.7, PDF p. 6).
-
-## evidence and limitations
-
-Main PlanBench results use four domains, Fast Downward with a 60-second timeout, and Qwen2.5-7B without supervised fine-tuning or human PDDL demonstrations (Section 4.1, PDF p. 6; Appendix A.1–A.7, PDF pp. 12–13). Table 1 reports average success 70.8% for the method versus 35.5% LLM+P across the four domains, where the Table 1 baselines use GPT-4o (Section 4.1, PDF p. 6); zero-shot transfer is 90.0% on ProntoQA, 48.0% Trip Planning, and 40.0% Calendar (Table 1, PDF p. 6). The main text does not describe a train/test split of PlanBench instances, although Table 6 lists PlanBench as the training environment (Appendix A.6, PDF p. 13). Inference: the reported ± values are consistent with about 100 test instances per domain, but the paper does not state the count. A matched six-solver-call comparison gives 70.8% average success and 66.3% faithful success for the method, with 3.2 average calls and 6.4% drift (Table 2, PDF p. 7). Role ablation on Mystery BlocksWorld gives 71.0% full success, 0.0% Actor-only, 31.5% Editor+Judge, 20.5% Actor+Judge, and 0.0% Actor+Editor; three separate 7B models also score 0.0% (Table 4, PDF p. 8). Appendix A.4 describes the Judge with a ±1/±0.5 consistency reward, whereas Section 3.4 and Appendix B.2 train it with binary cross-entropy plus a band penalty; the paper does not reconcile the two. These are the paper's reported configurations, not universal guarantees.
-
-The trusted base includes Fast Downward, PDDL parsing/grounding, reference semantic checks, prompts, model initialization, reward design, benchmark labels, and the assumption that solver diagnostics identify repairable causes. The solver can accept a specification that changes the task.
-
-## techniques for the catalog
-
-- solver-grounded specification generation — obtain deterministic executable feedback on each generated formal artifact
-- role-conditioned verification loop — couple Actor generation, Judge scoring, and Editor repair in one role-aware model
-- bounded diagnostic repair — iteratively edit a failed artifact from structured diagnostics up to a fixed horizon
-- calibrated solver Judge — train a score against solver outcomes and track disagreement with task-level correctness
-- semantic-faithfulness checking — require both solver success and an independent check against the original task
-- shared-backbone reward-hacking control — restrict generator-only optimization directions through shared verifier and repair parameters
-- role-ablation evidence — remove Actor, Judge, or Editor roles to test which feedback mechanisms cause gains
+learn nl → PDDL from a deterministic planner, no human PDDL demos
+- one Qwen2.5-7B, three roles: Actor writes domain+problem, Judge predicts solver-calibrated quality, Editor repairs from diagnostics
+  - ~95% parameters shared, role embeddings and light heads
+- Fast Downward returns (valid?, diagnostics)
+  - solver success is necessary but insufficient: weakening goal makes spec easy to solve
+- rewards: Actor = b0 + 0.3 sJ, Editor = bT − 0.1 T, PPO, Hmax = 5 repairs
+results on PlanBench
+- solvability 70.8%, faithful 66.3%, drift 6.4% (solver-ok but unfaithful)
+  - LLM+P with GPT-4o: 35.5%
+- faithfulness checked by a post-hoc reference checker, never used in training
+- bounded repair: 46.2% → 70.8% over 5 edits, first 2 give 17.3 of 24.6 pts
+judge calibration bound
+- E|sJ − C| ≤ ε + δJ, with ε = Pr(solver success ≠ correct)
+  - ties judge to solver success, not human semantics
+shared backbone limits reward hacking
+- local analysis only: shrinks hacking directions, does not eliminate them
+trust and limits
+- trusted: planner, parser, reference checker, benchmark labels
+- solver can accept a spec that changed the task
+verus transfer (inference)
+- freeze the contract, cap repair attempts, reject edits that only weaken `ensures`
+- proof success = solver success: can certify wrong spec, keep separate requirement check
+- judge score for ranking only

@@ -2,41 +2,24 @@
 (authored by agents unless marked 🧑)
 Tag: `becker2021explaining`, [paper](https://doi.org/10.4204/EPTCS.338.10)
 
-## problem and result
-
-The paper addresses a practical diagnosis problem: a proof failure "may be due to an incorrectness in the program, an incompleteness in the program annotations, or an incompleteness of the prover" (abstract, p. 82). Its central proposal compares two executions driven by the solver's candidate model. The abstract states: “The first RAC execution follows the normal program semantics, and a violation of a program annotation indicates an incorrectness in the program.” It then defines giant-step execution, which “does not execute loops nor function calls but instead retrieves return values and values of modified variables from the oracle”; a violation “only observed under giant-step execution characterises an incompleteness of the program annotations” (abstract, p. 82).
-
-The input is a deductively verified program with preconditions, postconditions, loop invariants, assertions, and a `writes` clause (the paper says written variables could be inferred automatically but requires the clause "for simplicity", Section 2, p. 84). The conclusion of each VC is negated and the solver is queried; if it does not answer "unsat", it may give a model, which is turned into a candidate counterexample, “essentially a collection of triples (variable, source location, value)” (Introduction, p. 82, following Dailler et al. [7]). The model is only a candidate: “the counterexample may be invalid, in which case it may add more confusion than help” (abstract, p. 82).
-
-## technique 1: standard versus giant-step RAC
-
-What it is. Standard runtime assertion checking (RAC) executes the original code and checks annotations as encountered. Giant-step RAC checks the same annotations but replaces each function call and loop by one model-directed step. The paper's toy program calls `set_x 2`, whose contract is `x > n`, and then asserts `x = 3`. The solver model is {x = 0, x0 = 4}: x is 4 after the call. Normal RAC computes 3 and reports no issue; giant-step RAC takes 4 from the counterexample, the postcondition of `set_x` holds, and the assertion then fails. This is reported as a subcontract weakness, suggesting a more precise postcondition for `set_x` (Introduction, p. 83).
-
-When to use it. Use the method when the solver answers anything other than "unsat" and gives a model. The paper says that for any other answer there is "a need to validate the resulting candidate counterexample and categorise it as non-conformance or subcontract weakness" (Introduction, p. 83). The method also discards models that violate a premise of the VC or satisfy its conclusion (Section 2, p. 85).
-
-How to apply it.
-
-1. Generate the VC from code and annotations, negate its conclusion, and query the SMT solver (Introduction, p. 82).
-2. Convert a returned model to a candidate counterexample, a collection of (variable, source location, value) triples (Introduction, p. 82, using the approach of Dailler et al. [7]).
-3. Run standard RAC on the enclosing function of the VC, with arguments and global values taken from the counterexample. If it fails at the same source location as the VC, report a non-conformance. If it fails at a different location, the counterexample is bad (not suitable to explain the failed proof) but is still reported as a non-conformance elsewhere in the code (Section 2, p. 85).
-4. Otherwise run giant-step RAC on the enclosing function, with inputs and written variables from the counterexample as the oracle. A failure is a subcontract weakness (some postcondition or loop invariant in the context is too weak). A stuck execution means the counterexample is invalid and discarded (a VC premise is not satisfied; the paper suggests suspecting prover incompleteness). A normal execution means the counterexample is discarded because it satisfies the VC conclusion (Section 2, p. 85).
-
-The giant-step evaluator's call rule (Figure 2, p. 84): evaluate arguments, set the parameters, evaluate the precondition (false: assertion failure), query the oracle for the written variables and the result and assign them, then evaluate the postcondition (false: execution stuck). The pseudocode says: “query the oracle for values v1 · · · vk for y1 · · · yk and v for result, assign them in the context” (Figure 2, line 8, p. 84). For a loop: evaluate the invariant (false: assertion failure, as in standard assertion checking); query the oracle for the written variables and assign them; evaluate the invariant again (false: stuck, the oracle gives no valid values); evaluate the loop condition (false: terminate the loop execution, the oracle covers an execution that goes beyond the loop); otherwise evaluate the body and check the invariant (false: assertion failure); if the invariant is preserved the execution is reported stuck, because the oracle is not appropriate for identifying any failure (Figure 2, lines 11-18, and Section 2, p. 85). The paper notes this execution form is inspired by the weakest precondition rules for calls and loops (Figure 3, p. 85).
-
-Verus form. Inference: Verus could implement the same diagnostic split around a verified Rust function by recording a model-derived test input and executing an ordinary instrumented function, then executing a diagnostic harness that replaces a call with an unconstrained result satisfying its `requires`/`ensures` contract. A Verus loop uses `invariant` clauses; function contracts use `requires` and `ensures`. The paper defines no Verus (or Rust) interpreter, so the oracle and classification harness would be ordinary Rust test infrastructure, while the contracts being checked remain Verus specifications. Inference: a `spec fn` can describe the admissible post-state, but the diagnostic harness must not call proof-only code at run time.
-
-Evidence. The Why3 implementation reproduced the categorisations of Petiot et al. [13] for “all 16 modifications that were applicable to the WhyML program”, from three C/ACSL example programs translated to WhyML (Section 3, p. 86). In the Ada/SPARK “Riposte” testsuite of Dailler et al. [7], containing 24 programs with 247 checks, the SPARK integration is “work in progress”; currently the approach identifies 14 wrong counterexamples, 57 non-conformities, and 22 other cases classified as “either non-conformity or subcontract-weaknesses” (an imprecise answer that results when standard RAC is non-conclusive); “The counterexamples of 154 checks could not yet be categorised” (Section 3, p. 86). These are counts over that stated suite, not accuracy percentages. The integer-square-root example (Figure 4, p. 86) gives two concrete classifications. Changing the first assignment in line 12 to `y ← y - z` leads to a failed preservation proof of invariant I2; the counterexample gives n = 4, standard RAC fails after the first loop iteration on I2, and it is categorised as non-conformity. Removing loop invariant I3 leads to a failed postcondition proof; the counterexample gives n = 1, standard RAC terminates normally with result 1, giant-step RAC sets r, y, z to 0, 0, 1 from the counterexample (which satisfy the invariants), leaves the loop, and fails the postcondition because r = 0; this is categorised as subcontract-weakness (Section 3, pp. 86-87). The paper reports Z3 was used to prove the goals and generate counterexamples.
-
-Limits and trust. The paper lists as future work: support for type invariants, handling missing values in the counterexample, calls to functions that lack an implementation, and polymorphic data types (a complex encoding is applied to the VCs and unwinding it to obtain an oracle “does not currently work”). It says the method “is often limited in the RAC, for example when checking assertions that are quantified formulas”, and that “a counterexample at Why3's level might not be suitable at the front-end level” (Section 4, p. 87). It also says “The current experimental results are not fully satisfying” (Section 4, p. 87). Inference: a Verus adaptation would inherit trust in the model-to-input mapping, test harness, solver model, and any abstracted dependency contracts; it diagnoses a failed proof but does not prove that the specification expresses the intended requirement.
-
-## what is proved, measured, and trusted
-
-The paper states no completeness or correctness theorem for the classification; it gives a semantic procedure (Section 2) and defers the formal presentation to a research report [2], which this study did not read. Evidence is the experimental counts above: 16 applicable WhyML modifications and 247 SPARK checks, of which 154 are not yet categorised, so classification coverage is incomplete on the SPARK suite. The paper states solvers “are assumed to be sound when the answer is ‘unsat’” (Introduction, p. 82); other answers carry no validity guarantee. Inference: the implementation and the translation from solver model to oracle are trusted engineering components.
-
-Inference: for agent-written verified Rust, this is a moderate product threat and a useful feature opportunity. A failed Verus proof currently requires human interpretation; model-guided ordinary/contract-only replay could separate wrong Rust from missing invariants. The paper does not address Rust ownership, concurrency, or Verus syntax, so it does not remove those product-specific risks.
-
-## techniques for the catalog
-
-- model-guided counterexample generation — turn a failed SMT model into source-location values for replay
-- giant-step assertion checking — replace calls and loops with oracle-supplied writes while checking contracts and invariants
-- two-stage failure classification — use ordinary RAC for non-conformance, then giant-step RAC for weak contracts or invalid models
+problem: a failed proof may be a program bug, weak annotations, or prover incompleteness
+- the solver's counterexample is only a candidate and may be invalid
+idea: replay the candidate with runtime assertion checking (RAC) in two modes
+- standard RAC: runs the real code; violation at the failing VC location = non-conformance (program bug)
+- giant-step RAC: calls and loops are replaced by oracle values from the counterexample
+  - violation only here = subcontract weakness (postcondition or loop invariant too weak)
+  - stuck execution = invalid counterexample (suspect prover incompleteness)
+  - normal execution = discarded, it satisfies the VC conclusion
+- needs a `writes` clause to know which variables the oracle supplies
+results (Why3 implementation, Z3)
+- reproduced all 16 applicable WhyML modifications of Petiot et al.
+- SPARK "Riposte" suite: 24 programs, 247 checks
+  - 14 wrong counterexamples, 57 non-conformities, 22 inconclusive
+  - 154 checks not yet categorized; authors call results not fully satisfying
+limits
+- no type invariants, missing values, or polymorphic data types yet
+- quantified assertions are hard for RAC
+- no correctness theorem for the classification
+verus takeaways (inference, not evaluated)
+- could separate wrong rust from missing invariants for agents reading failed proofs
+- harness would be ordinary rust test code; contracts stay verus specs

@@ -2,45 +2,41 @@
 (authored by agents unless marked 🧑)
 Tag: `ayoun2025hybrid`, [paper](https://doi.org/10.1145/3729289)
 
-## scope and result
-Ayoun, Denis, Maksimović, and Gardner propose splitting end-to-end Rust proofs: Creusot handles safe code while Gillian-Rust handles unsafe code with separation logic. The paper claims this is viable on standard-library LinkedList and Vec fragments and gives a shared specification boundary. Its central claim is explicit: “We propose a hybrid approach to end-to-end Rust verification where the proof effort is split into powerful automated verification of safe Rust and targeted semi-automated verification of unsafe Rust.” (abstract, p. 1). This is a proof-of-concept, not a complete Rust verifier.
-
-## technique 1: split verification by safety boundary
-Use this when a Rust program is mostly safe but contains unsafe primitives (raw pointers, uninitialised memory, custom allocators). Write the high-level safe algorithm and its contracts for Creusot; isolate internally unsafe modules (IUMs) and give them ownership predicates and functional contracts for Gillian-Rust. Treat unsafe types as opaque in Creusot via `ShallowModel`, while Gillian-Rust reasons about their concrete heap representation. The paper says: “Creusot verifies all proof obligations within its reach and delegates unsafe code verification to a tool dedicated for that purpose.” (sec. 2.1, p. 4). In a merge-sort example, Creusot proves sorting and permutation of an abstract sequence; Gillian-Rust proves doubly-linked-list pointer operations. Inference: this avoids forcing one engine to support both higher-order safe Rust and byte-level unsafe memory; the paper's stated gain is that Creusot's pure abstraction gives “an efficient encoding into SMT, a high degree of automation, and no need for SL” (sec. 2.1, p. 4).
-
-Evidence: Merge Sort (68 executable lines, 55 specification lines, 56 generic permutation lemmas) verifies in 6.3 s wall time (28.7 s user); Gnome Sort takes 2.6 s wall (17 executable, 6 specification lines); Right Pad takes 0.6 s wall (12 executable, 11 specification lines) (sec. 7, pp. 20–21). These measurements are single-threaded on a 2019 MacBook Pro with 16 GB RAM. Per sec. 7 (p. 21), Creusot's standard `extern_spec!` specifications are trusted and are “either identical or semantically equivalent to the ones proved by Gillian-Rust”; the two tools agreeing on contracts is therefore an assumption.
-
-## technique 2: represent unsafe Rust with ownership predicates
-Use this for each unsafe data structure. Implement an `Ownable` trait mapping a concrete type to a pure representation (`ReprTy`) and define an `own(self, repr)` predicate that ties the representation to a separation-logic heap predicate. For `LinkedList<T>`, the example uses `ReprTy = Seq<T::ReprTy>` and `dllSeg(self.head, None, self.tail, None, repr) * (self.len == repr.len())` (sec. 2.2, pp. 4–5). Define the linked-segment predicate to capture acyclic forward/backward traversal and ownership of nodes. Then annotate a function with `#[show_safety]`; Gillian-Rust expands this to preconditions requiring ownership of arguments and a postcondition requiring ownership of the result. The paper states: “This attribute expands to a Gilsonite specification which requires the ownership predicate of all input parameters to hold when entering the function, and ensures that the ownership predicate of the return value holds on function return.” (sec. 2.2, p. 5).
-
-Gillian-Rust symbolically unfolds and folds these predicates around pointer reads and writes, checks integer overflow paths, and restores the invariant before closing a borrow. This proves type safety (TS), a global property reduced to local ownership invariants. Evidence includes LinkedList TS for 130 executable lines and 176 annotation lines in 0.24 s; Vec TS for 294 executable and 44 annotation lines in 1.08 s (evaluation table, p. 19). It assumes predicates accurately describe every representation and that unsupported closures are manually inlined.
-
-## technique 3: automate Rust lifetimes and mutable borrows
-Use this when functions take `&mut T` and unsafe code temporarily accesses the referent. Gillian-Rust encodes RustBelt lifetime tokens and full borrows as guarded predicates. On extraction, `Unfold-Guarded` opens a borrow, yielding the location, structure ownership, and prophecy controller while consuming the lifetime token. After mutation, fold the invariant and apply `Mut-Update`; then `MutRef-Resolve` closes the borrow and recovers the token. The `push_front` example requires only `mutref_auto_resolve!(self)` after the unsafe helper call. The paper describes the key automation: “The rules that allow for manipulating the ownership invariant of mutable references are challenging to automate, and we detail our approach to this in §4.” (sec. 2.2, p. 5).
-
-Step by step: (1) compile the mutable reference into a full-borrow guard and lifetime token; (2) automatically unfold the guard on first field access; (3) symbolically execute allocation, pointer updates, and predicate unfolding; (4) use path conditions and observations to discard overflow/panic paths; (5) fold the data-structure predicate; (6) run `mutref_auto_resolve!` to update prophecy state and close the borrow. Inference: this is sound only under the paper’s RustBelt/RustHornBelt-inspired model; sec. 8 (p. 21) says its meta-theory leaves "small gaps in the justification of its soundness". Shared references, fractured borrows, and multiple lifetimes are not implemented.
-
-## technique 4: prophetic functional correctness
-Use this when a mutable reference’s final abstract value must be related to its initial value. In Pearlite, `*self` is the entry representation and `^self` is the value at borrow expiration. Specify `push_front` as `#[requires((*self)@.len() < usize::MAX@)]` and `#[ensures((^self)@ == (*self)@.prepend(e))]`; Gillian-Rust translates it to Gilsonite observations and parametric prophecies. The paper explains: “Pearlite, inspired by RustHorn, uses prophecy variables and the final value operator ^ in order to specify such a property.” (sec. 2.2, p. 5). During symbolic execution, prophecy controllers track permitted final values; `Proph-Sat` rejects an overflow branch whose condition contradicts the length observation.
-
-The hybrid translation elaborates ownership for each argument and result, substitutes representation variables into pre/postconditions, and places conditions in prophecy observations. LinkedList FC (130 executable, 227 annotation lines) takes 0.45 s; Vec FC (294 executable, 107 annotation lines) takes 2.57 s; MiniVec FC takes 1.35 s (evaluation table, p. 19). Functional correctness subsumes TS in these rows. The model does not formalise RustHornBelt’s causal-loop proof obligation; the authors believe Gillian’s parameter data-flow enforces it, leaving a soundness gap.
-
-## technique 5: compile one contract language to both engines
-Use shared `hybrid::requires` and `hybrid::ensures` attributes on APIs called by both safe and unsafe code. Compile Pearlite types through `Ownable` into Gillian representations; interpret `&mut T` as a pair of current and prophesied representations. For `push_front`, compile the Pearlite sequence equation into Gilsonite ownership and an existential result representation. Run `cargo creusot` then Why3 for safe obligations, and `cargo gillian` then the Gillian-Rust backend for unsafe obligations. The paper reports: “The code generated by the hybrid macros is often identical to the raw Gilsonite specification we would write by hand. We have noticed no impact on verification times caused by use of the hybrid macros.” (sec. 7, p. 20).
-
-## what is proved, trusted, and missing
-Proved: TS and/or FC for EvenInt, LinkedPair, subsets of standard-library LinkedList and Vec, MiniVec, and clients using the resulting contracts. The authors call this “the first verification of TS and FC of unsafe code from the Rust standard library” for those subsets, with minor source changes (sec. 7, p. 19). Trusted: the Gillian-Rust and Creusot implementations, Why3, the semantic interpretation of Pearlite/Gilsonite, RustBelt/RustHornBelt foundations, compiler translations, and externally supplied Creusot contracts. Meta-theory removes “later” modalities and omits a formal causal-loop proof. Unsupported or restricted: closures and some MIR constructs; at most one lifetime in specifications; shared references and fractional permissions; concurrency and Send/Sync obligations; ZST vector elements; allocator parameterisation; some closure/trait layers manually inlined; StackedBorrows and TreeBorrows.
-
-## techniques for the catalog
-- safety-boundary hybrid: send safe Rust to Creusot and unsafe modules to Gillian-Rust through shared contracts
-- ownable representation predicates: connect concrete pointer heaps to abstract sequences with `Ownable` and separation logic
-- guarded mutable-borrow automation: unfold, mutate, fold, and resolve RustBelt-style lifetime guards automatically
-- prophecy-based functional correctness: specify mutable-reference final values with `^` and parametric prophecy observations
-- dual contract compilation: elaborate Pearlite `hybrid` attributes into Creusot and Gilsonite specifications
-- symbolic unsafe execution: use layout-independent heap objects, pointer arithmetic, path conditions, and predicate unfolding
-
-## study status
-full text, including appendices, read from the supplied PDF text; quotations are verbatim and section/page-located
-
-Cross-paper note: the related-work text says Verus does not support traditional raw pointers, so it cannot verify the standard-library LinkedList in the way this paper does, and it instead tracks linear ghost objects (PointsTo<T>). The Verus papers it cites (2023 OOPSLA) and verus_practical (SOSP 2024) say Verus supports raw (heap) pointers through permissioned pointer primitives, and the latter says its authors extended that support for their case studies. The papers do not reconcile the wordings; the study reads traditional as unrestricted Rust *mut T use without ghost permissions, which is an inference.
-Audited 2026-10-12 against the paper: read the full text (sections 1-10, evaluation table, caveats) and checked every number (Merge/Gnome/Right Pad figures, TS/FC table rows, 0.04 s vs 4m36s, 1.35 s vs 30m40s), code snippets, attribute names, rule names, related-work claims, and quotation wording and page. Changed: quotation pages for sec. 2.1 (p. 3 to 4), the Pearlite/RustHorn quote (p. 6 to 5) and the hybrid-macros quote (p. 21 to 20); "isolate unsafe modules" to internally unsafe modules; marked one unmarked inference and the RustBelt soundness remark; replaced an unsupported assumption sentence with the paper's trusted-contracts statement; qualified "one-line annotations" with the LinkedList annotation counts. No invented steps found. Not checked: appendices A-C beyond the EvenInt functions, and the cited external tools. Follow-up: added a note that the raw-pointer statement about Verus is sourced to the 2023 paper and conflicts with verus_practical.
+split end-to-end rust proofs by safety boundary
+- creusot proves safe code, gillian-rust proves unsafe code with separation logic
+  - proof-of-concept, not a complete rust verifier
+- creusot sees unsafe types as opaque via `ShallowModel`
+  - gain: smt encoding, high automation, no separation logic for safe code
+- internally unsafe modules (IUMs) get ownership predicates + functional contracts
+- example: merge sort proved on abstract seq, doubly-linked-list ops proved in gillian-rust
+unsafe rust via ownership predicates
+- `Ownable` trait maps concrete type to pure `ReprTy`
+  - `own(self, repr)` ties repr to a separation-logic heap predicate
+  - `LinkedList<T>`: `ReprTy = Seq<T::ReprTy>`, `dllSeg(...) * len == repr.len()`
+- `#[show_safety]` expands to: own(args) in pre, own(result) in post
+  - proves type safety (TS) from local ownership invariants
+- symbolic execution unfolds/folds predicates around pointer reads/writes
+automated mutable borrows
+- encode RustBelt lifetime tokens + full borrows as guarded predicates
+  - unfold guard on first access, mutate, fold, `Mut-Update`, `MutRef-Resolve`
+  - user only writes `mutref_auto_resolve!(self)` after unsafe helper call
+- prophecy-based functional correctness
+  - pearlite `*self` = entry value, `^self` = value at borrow expiry
+  - e.g. push_front: `(^self)@ == (*self)@.prepend(e)`
+one contract language for both engines
+- shared `hybrid::requires`/`hybrid::ensures` compile to creusot and gilsonite specs
+  - generated code often identical to handwritten gilsonite, no verification-time impact
+evidence
+- merge sort 6.3 s wall, gnome sort 2.6 s, right pad 0.6 s
+- LinkedList TS 0.24 s, FC 0.45 s; Vec TS 1.08 s, FC 2.57 s; MiniVec FC 1.35 s
+- claim: first TS and FC verification of unsafe std-lib code (subsets, minor source changes)
+- 2019 macbook pro, single-threaded
+trust and gaps
+- trusted: creusot, gillian-rust, why3, rustbelt/rusthornbelt semantics, extern_spec contracts
+  - extern_spec contracts assumed equivalent to ones gillian-rust proves
+- soundness: meta-theory has small gaps, causal-loop obligation not formalised
+- unsupported: closures, shared refs, fractional permissions, >1 lifetime, concurrency, ZST, allocators
+relation to verus
+- paper says verus lacks traditional raw pointers, tracks `PointsTo<T>` ghost objects
+  - conflicts with verus papers (OOPSLA 2023, SOSP 2024) saying verus supports raw pointers via permissioned primitives
+  - reading "traditional" as raw `*mut T` without ghost permissions is an inference

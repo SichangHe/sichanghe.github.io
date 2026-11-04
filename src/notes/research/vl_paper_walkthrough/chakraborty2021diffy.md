@@ -2,41 +2,28 @@
 (authored by agents unless marked 🧑)
 Tag: `chakraborty2021diffy`, [paper](https://arxiv.org/abs/2105.14748)
 
-## problem and central construction
-Diffy verifies C array programs parameterized by array size N. The input is a Hoare triple {ϕ(N)} P_N {ψ(N)} required for every N>0, including sequential and nested loops. The abstract states: “The technique relies on constructing two slightly different versions of the same program.” (p. 1). One version, Q_(N−1), changes loop bounds from N to N−1 but leaves other uses of N unchanged; P_(N−1) replaces every use of N. The tool computes a simpler peel(P_N) such that P_N is semantically equivalent to Q_(N−1); peel(P_N), then relates corresponding variables of Q_(N−1) and P_(N−1) with difference invariants. This avoids discovering a complex loop invariant for every loop.
-
-Inference: In Verus, the closest encoding is a recursive/specification function over a size parameter plus a proof that one size step preserves the contract. Verus does not natively accept C Hoare triples, so the executable Rust loops and array accesses would need contracts and loop invariants where the paper's transformed proof supplies facts.
-
-## technique 1: generate Q and peel
-Use this when a program has loop bounds linear in N and well-nested loops. Algorithm 1 (`GenQandPeel`) first lists top-level loops in order, then calls `GenQandPeelForLoop` for each. For a loop L with upper bound U_L(N), form Q_L by substituting N−1 only in upper-bound expressions. Construct the missed iterations as a peel (`LPeel`) and move peeled fragments after the Q loops. Because the peels move, uses in a later Q loop of variables or array elements assigned in an earlier peel are replaced by the right-hand sides assigned in that peel (lines 4–5 of Algorithm 1; Algorithm 1 marks “If R_Lj is a loop, abort”). For nested loops, process inner loops by nesting depth and insert their peels into the enclosing loop's peel. Lemma 1 gives strictly lower maximum nesting depth in peel(P_N) when the program meets the Section 3 syntactic restrictions and all loop upper bounds are linear in N and in outer loop counters; Corollary 1: if P_N has no nested loops, peel(P_N) is loop-free (Section 4.1, pp. 10–14). When a peel contains a loop, the paper handles it with optimizations: “If the modified values in the peel can be summarized as closed form expressions, then we can replace the loop in the peel with its summary.” (Section 4.1, p. 13); for example a peeled loop `S = S + 1` over N iterations becomes `S = S + N`. The paper also says it may not always be possible to move the peel of a nested loop across subsequent loops. Theorem 1 states that P_N is semantically equivalent to Q_(N−1); peel(P_N). Programs are first SSA-renamed (scalars and arrays) (Section 3, p. 9).
-
-The semantic reason is explicit: “Given P_N, we first algorithmically construct two programs Q_N−1 and peel(P_N), such that P_N is semantically equivalent to Q_N−1 ; peel(P_N).” (Section 2, p. 6). This differs from earlier difference-program methods because Q_N−1 preserves non-bound uses of N.
-
-Inference: In Verus, a proof can define a size-reduced ghost/spec computation and expose the peeled operations as a lemma over slices or sequences. The paper's automatic code transformation does not carry over to arbitrary Rust control flow; it would need a restricted grammar or manually supplied transformation.
-
-## technique 2: difference-invariant inference
-Construct the standard cross-product Q_(N−1) × P_(N−1), with disjoint variable sets V_Q and V_P. Corresponding loops have synchronized bounds; if branch conditions can be proved equivalent, synchronize them, otherwise explore all four branch combinations. Run dataflow analysis at loop heads, exits, and branch conditions. Start with equalities relating corresponding variables in the two preconditions and propagate equality expressions, including disjunctions. The resulting D(V_Q,V_P,N−1) is the difference invariant.
-
-The authors report: “The only dataflow values of interest are differences between corresponding variables in Q_N−1 and P_N−1.” (Section 4.3, p. 14). In all their experiments they “didn’t need to go beyond quadratic expressions on N” (Section 2, p. 7); Section 4.3 says “most of the inferred equality expressions are simple expressions of N (atmost quadratic in N)” (p. 15). Their worked example obtains x′−x = (N−1)(2N−1) at the first loop exit and corresponding array differences for the second loop (Section 4.3, p. 15). The analysis tracks equality expressions; the paper says it can be extended with interval domains to learn inequalities, or with a library of expressions in a guess-and-check framework (Section 4.3, p. 15). The difference invariants are agnostic of the post-condition, so the analysis need not be re-run for a different post-condition of the same program (Section 4.3, p. 15).
-
-Inference: A Verus analogue would use ghost sequences and `assert forall` relations between size-N and size-(N−1) executions, then invoke `lemma` proofs to propagate equalities. Verus's `invariant` is a clause on a loop, not a callable function; the relation would be supplied as a loop invariant or lemma postcondition.
-
-## technique 3: inductive verification and strengthening
-Algorithm 2 executes the following steps. First check the base triple at N=1 and report a counterexample if it fails. Generate Q and peel (Algorithm 1). Split ϕ(N) into ϕ′(N−1) and Δϕ′(N), allowing quantifier ranges to change while keeping unaffected uses of N. Infer D on the cross-product. Eliminate V_P from ψ(N−1) ∧ D using quantifier elimination to obtain ψ′(N−1). Check the inductive triple {ψ′(N−1) ∧ Δϕ′(N)} peel(P_N) {ψ(N)}. If it fails, call `Strengthen`: compute a weakest precondition of the peel, map it back through D, accumulate ξ(N) and ξ′(N−1), recheck the base case (failing there returns False), and iterate until success or timeout. If no weakest precondition can be inferred, `Strengthen` recursively calls Diffy when peel(P_N) has loops, and otherwise gives up. The algorithm itself says: “if the inductive step succeeds, then we conclude that the assertion holds.” (Section 4.4, p. 15).
-
-The soundness theorem requires a finite base range 1≤N≤M, a relation ξ(N)∧D(V_Q,V_P,N)⇒ξ′(N) for all N>0, and a successful strengthened inductive triple for all N≥M (Theorem 2, pp. 16–17). Fixed-point iterations may not converge in general; the paper says “in our experiments, convergence always happened within a few iterations” (Section 2, pp. 7–8).
-
-Inference: In Verus, the base range can be proved by finite lemmas or explicit small-N cases; the inductive step can be a `proof fn` whose `ensures` states the size-N contract and whose body uses sequence extensionality, arithmetic lemmas, and solver assertions. Inference: quantifier elimination and weakest-precondition computation are external automation; Verus still checks the resulting proof obligations and requires explicit loop `invariant` clauses for executable loops.
-
-## evaluation, trust, and limits
-Diffy is a C++ prototype using LLVM 6.0.0 and Z3 4.8.7, evaluated on an Intel i7-6500U, 16 GB RAM, Ubuntu 18.04.5, with a 60-second timeout for every tool (Section 5, p. 17). The benchmark set has 303 array benchmarks: 157 safe and 146 unsafe, divided into C1 (standard operations), C2 (N-dependent branches/modulo), and C3 (nested loops) (Section 5, p. 17). Table 1's safe total is 157: Diffy succeeds on 151, is inconclusive on 3, and times out on 3. Diffy therefore verifies 151/157 safe programs; Vajra and VeriAbs each verify 110/157, and VIAP 20/157 (Table 1, p. 17). For unsafe programs, Diffy succeeds on 142/146 (98 C1, 24 C2, 20 C3) and is inconclusive on 4, with no reported timeout in the table. For unsafe programs the others detect violations in 115 (Vajra), 125 (VeriAbs) and 120 (VIAP) of 146 (Table 1, p. 17; Section 5, p. 19). The text says Diffy proved most safe programs within three seconds (Section 5, p. 18). The benchmarks are the entire Vajra test-suite plus added challenging benchmarks, and the authors ran all tools themselves with Vajra v1.0, VIAP v1.1 and VeriAbs v1.4.1-12; with a 100 s timeout, VIAP additionally verified 89 safe programs while the other tools were unchanged on safe and unsafe sets (Section 5, p. 20).
-
-Failures are informative: in 3 safe cases “the smt solver timed out while trying to prove the induction step since the formulated query had a modulus operation”, and in 3 it “was unable to compute the predicates needed to prove the assertions” (Section 5, p. 18). VeriAbs proved 2 C2 and 3 C3 benchmarks where Diffy was inconclusive or timed out (p. 18). On the same 157 safe programs, VIAP times out on 113 and is inconclusive on 24 (Table 1); Vajra is inconclusive on 47 and VeriAbs times out on 47.
-
-Inference: What is proved is validity of the modeled Hoare triples under the transformation and solver checks. Trusted elements include C parsing/LLVM, the transformation's soundness (Theorem 1), Z3 (used for loop-free Hoare triples), quantifier elimination, the input contracts, and the restrictions on loop bounds and variable updates (Section 3).
-
-## techniques for the catalog
-- Q-and-peel transformation — replace N-bound loops by N−1 loops plus a lower-depth peeled fragment
-- cross-product difference invariants — relate corresponding variables of two synchronized executions with dataflow equalities
-- inductive strengthening — prove base cases, eliminate old-state variables, and iterate weakest-precondition strengthening
-- parametric array verification — evaluate the transformed proof on symbolic-size safe and unsafe benchmark suites
+diffy: verifies c array programs parameterized by N by induction on N, avoiding per-loop invariants
+- input: {phi(N)} P_N {psi(N)} for all N>0, nested loops allowed
+- Q_(N-1): loop bounds N to N-1, other uses of N kept
+- P_N equivalent to Q_(N-1); peel(P_N) (theorem 1)
+  - peel is loop-free if P_N has no nested loops, lower nesting depth otherwise
+  - peeled loops summarized in closed form when possible (S = S + 1 over N becomes S = S + N)
+difference invariants
+- cross-product Q_(N-1) x P_(N-1), dataflow over equalities between corresponding variables
+  - all experiments needed at most quadratic expressions in N
+  - independent of the postcondition, so reusable
+inductive check
+- base case N=1, then {psi'(N-1) and delta-phi(N)} peel {psi(N)}
+  - eliminate P-side variables from psi and D by quantifier elimination
+- on failure, strengthen with weakest precondition of the peel mapped back through D, iterate
+  - converged within a few iterations in experiments, not guaranteed
+- sound given finite base range and strengthened inductive triple (theorem 2)
+evaluation
+- 303 benchmarks (157 safe, 146 unsafe), 60 s timeout, c++ prototype on llvm 6 + z3 4.8.7
+  - safe verified: diffy 151, vajra 110, veriabs 110, viap 20
+  - unsafe detected: diffy 142, vajra 115, veriabs 125, viap 120
+  - failures: modulus in induction step (3), could not compute predicates (3)
+trusted
+- c parsing/llvm, transformation soundness, z3, quantifier elimination, loop-bound and update restrictions
+verus porting (inference, not shown by paper)
+- spec fn over size N plus one-step lemma, relation as loop invariant, qe/wp stay external

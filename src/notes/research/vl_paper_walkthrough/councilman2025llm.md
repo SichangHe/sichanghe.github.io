@@ -1,129 +1,34 @@
 # Towards Formal Verification of LLM-Generated Code from Natural Language Prompts
 (authored by agents unless marked 🧑)
 Tag: `councilman2025llm`, [paper](https://arxiv.org/abs/2507.13290v2)
-## what the paper builds
 
-The paper defines a pipeline for checking LLM-generated Ansible against a user-reviewed formal description. Its system, Astrogator, introduces a Formal Query Language, compiles both query and playbook into a State Calculus, symbolically interprets both, and unifies their initial/final state pairs. The central problem is that natural language has no formal semantics. The paper states: “This means traditional approaches that provide formal guarantees, such as program synthesis and verification, are not immediately applicable: without a formal specification, what property would one prove?” (section 1, p. 2). The proposed answer is a readable specification that the user confirms before verification. The complete interactive pipeline remains future work: “We envision that, in the future, these ideas could be incorporated into a full end-to-end system, like shown in Figure 2, that would guarantee the correctness of generated code as described in Section 3.” (section 4, p. 6).
-
-The paper formalizes intent as a set U of acceptable target programs. A program p is correct exactly when p belongs to U, but U cannot be tested directly. A formalizer F maps description d to specification s. The user checks s; then the verifier checks p against the semantics of s and reports choices made in under-specified parts. The paper explicitly limits the guarantee: after checking p ∈ [[s]], “the task of determining whether 𝑝 ∈ 𝒰 is one that only the user can solve” (section 3, p. 6). Inference: the verifier checks conformance to the accepted query, while the human must also review additional program assumptions and actions to determine whether the program matches intent.
-
-## technique: user-checkable formal queries
-
-what it is
-
-A Formal Query Language expresses actions in natural-language-like syntax while giving them precise semantics. Its grammar has sequences of sentences, atomic verb-description-argument forms, and conditional sentences. Examples include `move file from remote ... to remote ...`, `install numpy`, and `if os is Debian ...`. The design principles are that queries remain high-level and that users need no package-name or module-specific expertise.
-
-when to use
-
-Use this when an LLM receives an ambiguous natural-language request and the correctness target must be reviewed before code is trusted. The paper illustrates ambiguity with “copy a file from /path/a to /path/b.” (section 4.1, p. 6), which can mean copying within the remote system or between controller and remote. It separately motivates high-level descriptions with a knowledge error: “For example, as described previously, on Debian the package name for numpy is python3-numpy, but a user may not know this off the top of their head and might believe a reasonable name like numyp is correct.” (section 4.1, p. 7). The user reviews the intended operation; the knowledge base supplies system-specific names.
-
-how to do it
-
-1. take the natural-language description
-2. produce a query made from verbs, high-level descriptions, separators, and values; use conditional forms when behavior depends on OS or existence
-3. show the query to the user for approval
-4. retain domain descriptions such as `numpy`, `apache server`, or `zsh configuration file for user="dev"` rather than forcing implementation names
-5. compile the approved query into State Calculus code
-
-The paper’s Figure 3 grammar gives `query ::= ε | sentnc | sentnc . query`, with `sentnc` supporting atoms and `if cond then sentnc otherwise sentnc`; Table 2 supplies concrete description/query pairs (section 5.1, pp. 8–9). The paper says, “The formal query language must be sufficiently high-level and interpretable that a user can easily understand whether a query matches their intent or not.” (section 5.1, p. 8).
-
-Verus form
-
-Inference: represent a reviewed query as a Rust data type whose fields encode actions, paths, predicates, and branches. A `spec fn` can map that query to an abstract state transition relation; `requires` can state environmental assumptions and `ensures` can state the resulting abstract state. Inference: a proof function can establish that a generated implementation’s post-state satisfies the query relation, but the human review of the query remains outside Verus. Inference: Verus does not automatically recover the user’s intended set U from prose, so this front-end review is still required.
-
-evidence and limits
-
-The query examples and grammar demonstrate expressiveness for file, package, user, shell, and conditional operations. The knowledge base supplies implementation-specific facts while preserving high-level terms. Limits are explicit: a query may be under-specified; the unifier reports extra assumptions and actions rather than deciding whether they are acceptable (section 5.2.3, p. 12). The paper’s Ansible implementation hand-curates its knowledge base (section 5.5, p. 15). Automatic query generation is proposed, not evaluated: “While we do not address the problem of generating formal queries in this paper, we believe it is suitable for LLMs” (section 4, p. 6). Evaluation uses “our hand-written formal queries” (section 6.3, p. 16).
-
-## technique: State Calculus semantic model
-
-what it is
-
-State Calculus models side-effecting programs as transformations of a state containing attributes and elements. Attributes map labels to values; elements represent objects such as files or users and can contain nested state. Its syntax includes assignments, stateful calls, attribute reads (`get`), updates (`add`), return/failure, conditionals, existence tests, case, and loops (section 5.2.1, pp. 9–10). A file owner read is represented as `x ← get file(/path).owner`; an update is `add file(/path).owner ⇐ "user"`.
-
-when to use
-
-Use this model for a DSL whose important behavior is state change rather than pure return values. It gives both the formal query and generated program a common semantic language, so comparison does not depend on comparing source syntax.
-
-how to do it
-
-1. define the state’s attribute and element labels
-2. define stateful module functions and pure functions
-3. translate each query action to state updates and reads
-4. translate each source-language task to a stateful call with the same state effects
-5. interpret both translations symbolically and compare their transitions
-
-The paper defines a symbolic state as partial maps that retain only relevant attributes and elements. Unknown `get` values become symbolic values; unknown `exists` tests fork execution into present and absent branches. Symbolic conditionals interpret both branches, while a symbolic list loop executes once with a symbolic element and records that it represents all elements (section 5.2.2, pp. 10–11). The paper states: “The result of the interpreter is a set of symbolic initial-final symbolic state pairs that reflect the behavior of the program under different initial states.” (section 5.2.2, p. 10).
-
-Verus form
-
-Inference: encode a concrete state as a Rust struct and its abstract state as Verus `Map`, `Set`, or `Seq` values exposed by a `spec fn` view. Inference: model each module as an executable function with `requires` for valid inputs and `ensures` describing the state change; use `old(state)` in postconditions when relating pre-state values to post-state values. Inference: represent symbolic branching with proof cases over predicates and prove each branch’s postcondition, while representing loop behavior with a loop invariant and a `decreases` clause when termination must be proved. Inference: Verus’s solver checks these contracts, but it does not provide Astrogator’s generic symbolic interpreter automatically; the state model and abstraction must be written.
-
-what is trusted and where it fails
-
-The paper’s semantics depend on hand-written module descriptions and the chosen abstraction level. Its file model can omit hard-link identity unless an inode element is added (section 5.4.2, p. 14). Symbolic loops are intentionally imprecise and do not support arbitrary while-loops; the paper calls arbitrary loops a common verification challenge (section 7.2, p. 19). Inference: omitted state fields can make a proof vacuous with respect to real behavior, so a Verus state view needs independent review.
-
-## technique: unification-based verifier
-
-what it is
-
-The unifier compares query and program symbolic state pairs. For every query pair, it seeks a program pair whose initial state is consistent and whose final state matches. Program initial assumptions may be fewer than query assumptions. Symbolic values can be concretized in program results to match query constants, and compatible symbolic list values can be unified. Query symbolic values cannot be concretized to match a program constant because they denote all possible values (section 5.2.3, pp. 11–12).
-
-when to use
-
-Use this when multiple initial environments and branches must be covered and source-level equivalence is too strict. It checks that every specified final effect occurs while allowing a generated program to avoid irrelevant assumptions.
-
-how to do it
-
-1. compile query and program to State Calculus
-2. symbolically interpret both into initial/final pairs
-3. for each query pair, find a program pair with a consistent initial state
-4. require all query final effects to occur in the program final state
-5. unify symbolic values where the representation permits it
-6. report additional program assumptions and actions for human review
-
-For under-specified queries, consistency requires common assumptions not to disagree; program-only assumptions are reported. Program-only final attributes/elements are permitted and reported as additional actions, but every query action must still match exactly (section 5.2.3, p. 12). The paper states: “Similarly, for final states, we had previously assumed that the program’s and query’s final states must be the same but now we permit the program’s to include additional actions (i.e., additional elements or attributes) and we report any of these as additional actions.” (section 5.2.3, p. 12).
-
-Verus form
-
-Inference: express the query relation as a `spec fn` over pre-state and post-state and prove an implementation `ensures` clause that includes every required effect. Inference: model permitted extra effects explicitly in the relation, or prove a separate predicate that classifies them; Verus’s `ensures` does not itself produce a user-facing list of assumptions. Inference: branch coverage requires proving each branch, and symbolic-value compatibility must be encoded as equalities or quantified specifications suitable for Verus’s solver.
-
-## technique: compiler and knowledge base
-
-what it is
-
-Astrogator compiles queries using built-in verb rules and compiles Ansible playbooks using module definitions written in a Module Description Language. Module descriptions specify argument types, optional or mutually exclusive arguments, enums, elements, attributes, and stateful behavior. A knowledge-base interface lowers high-level descriptions to concrete facts: for example, `apache server` maps to `apache2` and `apt` on Debian and `httpd` and `dnf` on RHEL; a zsh configuration description maps to the user’s `.zshrc` path (sections 5.4–5.5, pp. 13–15).
-
-how to do it
-
-1. define each supported module’s argument and result types
-2. state mutually exclusive and optional arguments
-3. write its state effect in the module language
-4. compile each playbook task in order, converting built-in variables to state reads
-5. implement knowledge-base functions for package, file, and similar descriptions
-6. compile formal-query verbs and descriptions through those functions
-
-The paper says, “The actual compilation of an Ansible program into the State Calculus is surprisingly simple.” (section 5.4.1, p. 13). Inference: the difficult work is the module semantics and the domain knowledge, not task sequencing.
-
-Verus form
-
-Inference: represent module specifications as Rust functions whose `requires` constrain argument combinations and whose `ensures` describe state updates. Inference: use `spec fn` definitions for trusted package/file mappings and prove callers use only mappings covered by those definitions. Inference: if mappings come from external documentation or a database, their correctness remains a trusted assumption unless separately verified.
-
-## evaluation, evidence, and contradictions
-
-The benchmark has 21 Ansible tasks, reference solutions averaging 1.67 tasks and at most four. Six LLMs each produced ten programs per task, yielding 1,260 programs. The setup used Debian 12.11.0, Ubuntu 24.04.2, and RHEL 9.6 virtual machines, reset from snapshots between runs; a program was correct only if it passed all tests on all applicable systems (section 6.1, p. 15). Of 1,260, 42 (3.3%) failed post-processing, 5 (0.4%) did not terminate, 596 (47.3%) failed to execute, and 226 (18.0%) executed but failed tests. Problem 18 was handled separately: “the solutions to problem 18 cannot be executed (they attempt to access a URL that does not exist) but through manual inspection we identified only 1 of the 58 syntactically valid responses is correct.” Thus 57 more programs were labeled incorrect, leaving 334 (26.5%) correct (section 6.2, p. 16). GPT-4o produced 108/210 correct (51.4%); open-source models produced 226/1050 (21.5%) (section 6.2, pp. 15–16).
-
-Astrogator accepted 277/334 correct programs (82.9%) and rejected 856/926 incorrect programs (92.4%), processing all 1,260 in about 70 seconds (section 6.3, p. 16). The abstract rounds these to 83% and 92%. Inference: these rates describe agreement with the benchmark’s test-based and manually assigned labels; they do not establish accuracy over all Ansible programs.
-
-The paper reports 57 correct programs rejected. Eighteen used unsupported features: nine used constructs such as blocks or handlers, and nine used shell commands. The other 39 used valid alternatives not returned by the single-valued knowledge base (section 6.3, pp. 16–17). It reports 70 incorrect programs accepted: 68 arose from under-specification, one from ignored shell plugins, and one from an undocumented `lineinfile` behavior. Of the 68, seven performed undesired additional actions and 61 relied on assumptions that did not hold in the test environment (section 6.3, pp. 17–18). The paper presents these as addressable implementation or testing limitations, but the under-specification cases require a human to inspect reported assumptions and actions. Inference: for agent-written verified Rust, this architecture reduces risk from mismatched implementation behavior when the abstract state and query are reviewed, but it leaves substantial risk in wrong abstractions, incomplete module specifications, and unreviewed assumptions. Inference: the paper’s testing setup is evidence for this Ansible prototype, not evidence that a generic Verus front end will achieve the same rates.
-
-The paper also hand-translates a Bash pipeline and an Arduino state machine into State Calculus and verifies each translation against a hand-written specification (section 7.2, pp. 18–20).
-
-## techniques for the catalog
-
-- user-checkable formal query — express natural-language intent in a precise, readable DSL and require user approval
-- state calculus modeling — represent side-effecting code as symbolic initial/final state transformations
-- symbolic interpretation — fork unknown conditions and track unknown attributes and collections over all relevant states
-- unification-based verification — match program and query state pairs while reporting extra assumptions and actions
-- module description compilation — specify DSL modules’ types and state effects, then compile source tasks into the common calculus
-- knowledge-base lowering — resolve high-level descriptions to system-specific package, file, and configuration facts
+problem: nl has no formal semantics, so what property to prove?
+- answer: llm output checked against a user-reviewed formal query
+- astrogator: ansible-only prototype, full interactive pipeline is future work
+- guarantee limit: verifier checks `p ∈ [[s]]`, only the user can decide `p ∈ U` (intent)
+  - human must also review reported extra assumptions and actions
+formal query language
+- nl-like high-level syntax: `install numpy`, `if os is Debian ...`
+- user approves query, knowledge base lowers names (numpy → python3-numpy on debian)
+- llm query generation proposed, not evaluated, evaluation uses hand-written queries
+- verus: query as rust data type + `spec fn` transition relation, human review stays outside verus
+state calculus
+- attributes + elements, both query and playbook compiled to it
+- symbolic interpretation gives initial/final state pairs
+  - unknown `get` becomes symbolic, unknown `exists` forks
+  - symbolic loops imprecise, no arbitrary while
+- omitted state (e.g. hard-link identity) can make proof vacuous
+unification verifier
+- every query pair needs a program pair with consistent initial state and matching final state
+- program may assume less or do extra, extras reported for human review
+- query symbolic values cannot be concretized to program constants
+module descriptions + knowledge base
+- hand-written module semantics, hand-curated knowledge base, trusted
+- compilation itself simple, module semantics and domain knowledge are the hard part
+results (21 tasks, 6 llms × 10 = 1260 programs)
+- 334 (26.5%) correct, gpt-4o 108/210, open-source 226/1050
+- accepted 277/334 correct (82.9%), rejected 856/926 incorrect (92.4%), ~70 s total
+  - agreement with test/manual labels only
+- 57 correct rejected: 18 unsupported features, 39 valid alternatives missing from single-valued knowledge base
+- 70 incorrect accepted: 68 under-specification (7 undesired extra actions, 61 env assumptions), 1 shell plugins, 1 `lineinfile` quirk
+- inference: risk moves to wrong abstractions, incomplete module specs, unreviewed assumptions

@@ -1,154 +1,38 @@
 # Formal Disco: open-ended verified-program generation
 (authored by agents unless marked 🧑)
+[paper](https://arxiv.org/abs/2607.04631v1), arXiv preprint, no peer review
 
-- paper
-  - Gabriel Poesia, Simon Henniger, Tzu-Han Hsu, Yilun Du, and Nada Amin
-  - *Formal Disco: Scalable Open-Ended Generation of Formally Verified Programs*
-  - arXiv `2607.04631v1`, submitted 2026-07-06
-  - archival record: <https://arxiv.org/abs/2607.04631v1>
-  - full text: <https://arxiv.org/pdf/2607.04631v1>
-  - code: <https://github.com/metareflection/formal-disco>
-  - datasets: <https://huggingface.co/collections/metareflection/formal-disco>
-
-## decision
-
-- confidence: high on identity and reported results, medium on generality
-  - identity and bytes match the arXiv v1 archival record
-  - the record is a preprint with no venue or peer-review claim
-  - results are author-reported and were not independently reproduced here
-
-## evidence boundary
-
-- abstract-level screening established only that the work generates verified
-  programs in Dafny, Verus, and Frama-C
-- this walkthrough is based on the complete 46-page v1 paper
-  - main method and objective in sections 3.1 through 3.3
-  - system and empirical evidence in sections 4.1 through 4.4
-  - limitations in section 5
-  - hyperparameters, qualitative examples, implementation details, features,
-    and prompts in appendices A through E
-- claims below are paper claims unless labeled inference or recommendation
-
-## direct answer
-
-- what it does
-  - coordinates three asynchronous LLM workers around a shared agenda
-    - an initiator sketches a small verified program from a random repository
-      README and up to two language-documentation snippets
-    - a fixer patches compilation or verification failures for at most three
-      attempts
-    - an extender grows a passing program and sends failures back for repair
-  - records prompts, outputs, outcomes, program ancestry, and verifier feedback
-  - bootstraps an open Qwen 2.5-Coder 32B model from Claude-generated traces
-  - iteratively fine-tunes only successful traces whose programs contribute most
-    to chosen diversity measures
-  - uses compiler and verifier acceptance as the scalable correctness filter
-- central idea
-  - raw corpus size is insufficient because duplicated or trivial programs can
-    be arbitrarily numerous
-  - the paper instead maximizes Shannon entropy over selected program features
-    - annotation counts
-    - lemma-body sizes
-    - method-body sizes
-    - loop skeletons
-  - each training round retains the paper's quoted `top 1/3 successful examples`
-    ranked by minimum surprisal rank
-- why the architecture matters
-  - incremental initiate-repair-extend work reaches larger verified programs
-    than one-shot generation
-  - external README themes reduce topic collapse
-  - documentation snippets expose rare language features
-  - verifier feedback supplies a deterministic signal at much larger scale than
-    human review
-
-## full-paper results
-
-- worker scaling, section 4.1
-  - Claude initiation succeeds 11 percent of the time for Verus
-  - Claude extension succeeds above 40 percent in both evaluated languages
-  - after five self-improvement iterations, Qwen matches or exceeds the seed
-    Claude workers across the reported worker tasks and languages
-- diversity, section 4.2
-  - entropy rises across iterations for all four optimized features and all
-    three languages, with one reported exception
-    - Verus lemma-body-size entropy remains below the Claude seed corpus at
-      iteration five
-  - the final Qwen Verus corpus longest method or lemma body is 105 lines versus an
-    86-line maximum in the Claude seed corpus
-  - Formal Disco leads compared Verus corpora on three of four sampled feature
-    views only up to their respective sample lengths
-  - VeruSAGE remains most diverse for Verus loop skeletons
-- downstream Verus annotation, section 4.3
-  - evaluation set: 149 filtered VerusBench programs
-  - Qwen 2.5-Coder 32B base pass@1: 8.7 percent
-  - the Formal-Disco-trained model pass@1: 43.0 percent
-  - reported Claude 4.5 Opus pass@1: 43.0 percent
-  - the SAFE-trained comparison pass@1: 40.9 percent
-  - at pass@32, Formal Disco reaches 59.1 percent while SAFE plateaus at 51
-    percent from pass@16 onward
-- ablations, section 4.4
-  - three workers yield verified programs on 29.8 percent of LLM calls versus
-    23.0 percent for the monolithic agent in the Dafny ablation
-  - the iterative system averages 268 lines per program versus 85 for the
-    monolithic agent
-  - removing README seeds lowers subject-word entropy from 8.1 to 5.9 bits at
-    the matched sample size and lowers yield from 23.0 to 12.8 percent
-  - removing documentation snippets leaves four of 30 tracked Dafny features
-    unseen
-
-## what was already done
-
-- SAFE identified multi-level Verus data scarcity and synthesized about 20,000
-  programs from Python and Rust seed tasks
-- VeruSyn expanded SAFE with tutorial-driven Verus feature coverage and reports
-  a much larger corpus
-- Dafny work includes ATLAS, DafnySynth, and DafnyBench
-- theorem-proving systems already use proof checking to filter large synthetic
-  corpora
-  - AlphaGeometry
-  - DeepSeek-Prover
-  - Goedel-Prover
-- Formal Disco's incremental contribution
-  - one language-agnostic agenda and worker loop across three auto-active tools
-  - joint open-ended generation of specifications, implementations, and proofs
-  - explicit measurement and optimization of corpus diversity
-  - downstream Verus evidence on human-written benchmark programs
-- scope boundary
-  - this paper does not claim the first synthetic Verus data
-  - it does not establish repository-level autonomous verification
-  - it does not establish that generated specifications express human intent
-
-## limitations and cautions
-
-- verification proves conformance to the supplied specification, not that the
-  specification matches human intent
-- entropy is measured only over chosen syntactic and structural features
-  - optimizing a proxy can increase its diversity without increasing downstream
-    utility
-  - human-written data remains more diverse on unoptimized annotation structure
-- open-endedness still depends on external README and documentation seeds
-- the strongest Verus number is a benchmark annotation task
-  - it is not end-to-end program synthesis
-  - it is not repository verification
-- the model comparison is budget-sensitive
-  - the headline Verus equality is pass@1
-  - open models are sampled to 32 attempts, while Claude is capped at four
-- the system uses 48 worker processes
-  - Qwen runs take about eight to 12 hours on four 80 GB H100 GPUs
-  - the paper does not provide a complete end-to-end dollar-cost comparison
-- the paper's own conclusion calls richer reasoning traces and verifier-based
-  reinforcement learning future work
-
-## source-linked claims
-
-- method and worker definitions: full paper sections 3.2 and appendix C
-  - source phrase: `distributed agenda`
-- training selection: full paper section 3.3
-  - source phrase: `top 1/3 successful examples`
-- Verus benchmark result: full paper section 4.3 and figure 5
-  - source phrase: `exactly 43%`
-- diversity boundary: full paper sections 4.2 and 5
-  - source phrase: `small, hand-chosen set`
-- source authenticity and exact bytes
-  - arXiv API record for `2607.04631v1`
-  - local PDF SHA-256 equals a fresh download from the archival PDF endpoint
+what it does
+- Poesia et al: generate verified programs in Dafny, Verus, Frama-C with 3 async LLM workers on a shared agenda
+  - initiator sketches a small program from a random repo README + up to 2 language-doc snippets
+  - fixer patches compile/verify failures, at most 3 attempts
+  - extender grows a passing program, failures go back for repair
+- bootstrap open Qwen 2.5-Coder 32B from Claude-generated traces
+- iterate fine-tuning on successful traces, keep top 1/3 by minimum surprisal rank
+  - objective: maximize Shannon entropy of annotation counts, lemma/method-body sizes, loop skeletons
+- verifier acceptance is the scalable correctness filter
+why the design matters
+- initiate-repair-extend reaches larger programs than one-shot
+- README seeds reduce topic collapse, doc snippets expose rare features
+results
+- downstream Verus annotation on 149 filtered VerusBench programs, pass@1
+  - Qwen base 8.7%, Formal Disco model 43.0%, Claude 4.5 Opus 43.0%, SAFE-trained 40.9%
+  - pass@32: Formal Disco 59.1%, SAFE plateaus at 51% from pass@16
+- ablations (Dafny)
+  - 3 workers: 29.8% of calls yield verified programs vs 23.0% monolithic; 268 vs 85 lines per program
+  - no README seeds: subject-word entropy 8.1 to 5.9 bits, yield 23.0% to 12.8%
+  - no doc snippets: 4 of 30 tracked features unseen
+- diversity: entropy rises over 5 iterations except Verus lemma-body size
+  - VeruSAGE stays most diverse for Verus loop skeletons
+prior work
+- SAFE: ~20k Verus programs from Python/Rust seeds
+- VeruSyn: SAFE + tutorial-driven feature coverage, larger corpus
+- not first synthetic Verus data
+caveats
+- verified only against the generated spec, not human intent
+- entropy is over hand-chosen syntactic features, a proxy
+- 43.0% is pass@1 on an annotation task, not end-to-end synthesis or repo verification
+- budget-sensitive comparison: open models sampled to 32 attempts, Claude capped at 4
+- cost: 48 worker processes, 8 to 12 h on four 80 GB H100s per Qwen run, no dollar comparison
+- depends on external README and doc seeds
+- results author-reported, not reproduced

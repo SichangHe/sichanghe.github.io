@@ -2,30 +2,47 @@
 (authored by agents unless marked 🧑)
 Tag: `yang2025autoverus`, [paper](https://doi.org/10.1145/3763174)
 
-## what the paper proves and how
-AutoVerus is a three-phase multi-agent pipeline for Verus, where Rust code, specifications, and proof annotations are checked by the Verus verifier and SMT solver. The paper describes its goal as: “we present AutoVerus. AutoVerus uses LLMs to automatically generate correctness proof for Rust code.” Its input is a single Rust function with specifications; its output is a Verus program accepted by the verifier. [autoverus]
-
-### preliminary invariant generation and safe merging
-1. Prompt a loop-invariant agent to add invariants to every loop, while preserving executable Rust. [autoverus]
-2. Generate five candidates, reject unsafe or syntactically invalid candidates (syntax-invalid candidates are kept only if simple edits fix them, such as `v[i]` to `v[i as int]`). [autoverus]
-3. Score each by `(V,E)`, where V is the number of functions Verus verifies and E the number of verification errors; rank descending V then ascending E. [autoverus]
-4. Merge ranked candidates linearly, retaining a merge only when it improves the score, and stop when Verus accepts the merged program. Houdini checks whether a subset of annotations suffices. [autoverus]
-The paper says the phases are “Generation phase”, “Refinement phase”, and “Debugging phase” (sec. 1, p. 4). The invariant prompt teaches three rules: state initial values of variables read in a loop, assigned values of variables written, and use spec/proof functions when needed. Figure 5 demonstrates complementarity: one candidate has `N < 1000`, another has `b.len()==N`; merging them yields a verified loop. This technique fails when the five candidates omit a needed fact or when unsafe transformations cannot be repaired. [autoverus]
-
-### generic refinement agents
-Starting from the best candidate, run four sequential agents: Constant-Propagation copies precondition facts into loop invariants; Array-Length adds container lengths; Quantifier checks that quantifier-related invariants are used correctly; Conditional-Loop-Invariant makes iteration-dependent facts valid for every iteration. Accept an agent’s candidate only if it is valid, safe, and does not lower V; if it is already correct, stop. The paper says refinement agents are “invoked unconditionally regardless of how many and what verification errors are reported by Verus” (sec. 4.2.1, p. 10). My inference: this monotonicity prevents a later edit from destroying earlier proofs, but unconditional agents can waste calls and cannot invent domain-specific lemmas. [autoverus]
-
-### error-driven debugging
-If refinement fails, compile with Verus, pick one reported error by a fixed priority (type errors, then bound errors, then invariant-before-loop errors, then the rest by report order), dispatch its matching repair agent, and iterate up to a maximum (10 by default). The eight classes are precondition, vector length, postcondition, invariant failure at loop start, invariant failure at loop end, assertion, arithmetic under/overflow, and type mismatch; an extra agent handles assertion errors with proof functions and a default agent covers any other error. For each candidate, return immediately if verified; otherwise accept a safe, compilable candidate that scores better, or that reduces the number of errors of the target type without lowering V, and skip the remaining candidates. The paper says debugging adds proof annotations “like assert statements and lemma functions” (sec. 1, p. 4). It can add asserts and proof functions beyond loop invariants, but depends on accurate error classification and a finite iteration bound. [autoverus]
-
-## evidence, trust, and limits
-Verus-Bench contains 150 tasks (translated from Diffy, MBPP and CloverBench, plus 23 Misc programs from Verus tutorials or libraries). Table 1 counts are 11 CloverBench, 38 Diffy, 78 MBPP and 23 Misc; the SAFE paper's VerusBench has 139 tasks (23 tutorial, 38 SV-COMP, 78 MBPP, no CloverBench), so the 11-task difference matches the CloverBench part, an inference the papers do not state, and verusyn uses the 150 count. AutoVerus proves 137/150 (91.3%) with at most three tries; over half finish in under 30 seconds or three LLM calls. The paper reports 2,637 generated candidates and approximately $37 total LLM cost for that run. Phase 1 alone handles slightly over half; the GPT-4o baseline (max 10 min) proves 67 of 150 (Table 2). These denominators are benchmark tasks, not arbitrary Rust projects. Verus, its SMT solver, Lynette’s safety analysis and merge transformation, Houdini, and the specification itself remain trusted; successful verification establishes the supplied specification, not that the specification captures user intent. The paper describes “150 non-trivial proof tasks” (sec. 1, p. 4) and does not cover newest Rust features. Random LLM sampling, translated benchmarks, and single-function units limit external validity. [autoverus]
-
-My inference: AutoVerus materially lowers effort for agent-written verified Rust when loop invariants and standard error classes dominate. Product use still needs human review of specifications, unsafe filtering, and benchmark-independent tests; a malicious or mistaken specification can be proved faithfully. [autoverus]
-
-## techniques for the catalog
-- invariant candidate generation and linear merging — generate five loop-invariant programs, filter and rank by `(V,E)`, then merge complementary annotations under Verus checks
-- monotonic generic refinement — sequentially add propagated preconditions, lengths, quantifier fixes, and conditional invariants while never reducing verified-function count
-- error-directed repair agents — map Verus diagnostics to specialized repair prompts and iterate with verifier acceptance as the gate
-- Houdini annotation minimization — test subsets of generated annotations to retain a sufficient proof
-Audited 2026-10-12 against the paper: checked Verus-Bench counts, Table 2, 137/150, 2,637 candidates, $37, Algorithms 1-3, Figure 5/6, agent lists, quotations and page references; corrected the baseline figure (67, not 14), section/page references, the Quantifier/error-selection/acceptance descriptions, the eight-error list, the Verus-Bench sources, and one unmarked inference. Follow-up: added a clause explaining Verus-Bench 150 against the 139 of the SAFE paper.
+3-phase multi-agent pipeline for Verus
+- input: 1 Rust function with specs; output: program Verus accepts
+- phases: generation, refinement, debugging
+generation: loop invariants + safe merge
+- 1 agent adds invariants to every loop, keeps executable code unchanged
+  - rules: state initial values of read vars, assigned values of written vars, use spec/proof fns
+- sample 5 candidates, drop unsafe/invalid ones
+  - syntax-invalid kept only if simple edit fixes it, e.g. `v[i]` to `v[i as int]`
+- score (V,E): V = fns verified, E = verification errors
+  - rank by V desc, then E asc
+- merge ranked candidates linearly, keep a merge only if score improves
+  - candidates are complementary: `N < 1000` + `b.len()==N` verifies only together
+  - Houdini checks which annotation subset suffices
+refinement: 4 sequential generic agents, always run
+- constant-propagation: copy precondition facts into invariants
+- array-length: add container lengths
+- quantifier: fix quantifier invariants
+- conditional-loop-invariant: make iteration-dependent facts hold every iteration
+- accept a result only if valid, safe, V not lower
+  - inference: monotone V protects earlier proofs but wastes calls, cannot invent domain lemmas
+debugging: error-directed repair, up to 10 iterations
+- pick 1 error by priority: type, bound, invariant-before-loop, then report order
+- 8 error classes each with own agent
+  - precondition, vector length, postcondition, invariant fail at loop start, invariant fail at loop end, assertion, arithmetic overflow, type mismatch
+  - extra assertion agent writes proof fns; default agent for the rest
+- accept a safe compilable candidate that raises score or cuts errors of target type without lowering V
+- can add asserts and proof fns beyond invariants
+  - depends on correct error classification
+results on Verus-Bench (150 tasks)
+- sources: 11 CloverBench, 38 Diffy, 78 MBPP, 23 Misc
+  - SAFE paper's VerusBench has 139 tasks; the 11 gap likely CloverBench (inference)
+- 137/150 (91.3%) with at most 3 tries
+  - over half done in under 30s or 3 LLM calls
+  - phase 1 alone solves a bit over half
+  - 2,637 candidates, about $37 total
+- GPT-4o baseline (10 min max): 67/150
+trust and limits
+- trusted: Verus, SMT solver, Lynette safety analysis/merge, Houdini, the spec
+  - proof only shows the supplied spec holds, not user intent
+- benchmark tasks, not real Rust projects
+  - translated benchmarks, single-function units, random LLM sampling hurt external validity
+  - newest Rust features not covered
+inference: cuts effort when loop invariants and standard errors dominate
+- still needs human spec review, unsafe filtering, benchmark-independent tests

@@ -2,39 +2,26 @@
 (authored by agents unless marked 🧑)
 Tag: `sakaguchi2022reflexive`: [paper](https://arxiv.org/abs/2202.04330)
 
-## scope and central claim
-Sakaguchi presents computational-reflection tactics for algebra in Coq/Mathematical Components (MathComp). The problem is that existing large-scale reflection tactics recognize operators purely syntactically, while packed classes let the same operator appear with syntactically different but definitionally equal structure instances; homomorphisms also have domain and codomain types that may differ. The paper's abstract says, “This paper demonstrates how to implement reflexive tactics that support packed classes and homomorphisms.” (Abstract, p. 1) The solution has two parts. Section 3 proposes a reification scheme based on keyed matching (operator head matched syntactically, arguments compared by conversion). Section 4 proposes a reflection scheme of two steps: a preprocessing step that pushes homomorphisms down to the leaves, then the existing reflexive decision procedure (a verified normalizer). Both reified terms are produced simultaneously by one reification procedure (Section 1, p. 2).
-
-## technique: verified reflection for equations
-Use this when a decidable algebraic fragment can be normalized faster than a proof script can rewrite it. Define an inductive syntax tree, an evaluator from syntax to the carrier type, and a normalizer. For the additive example (Section 2.3), constructors represent variables, zero, opposite, and addition; `AGeval` interprets them and `AGnorm` computes a normal form (a formal sum, a list of integers). Prove one reflection lemma: if all coefficients of the normal form of `e1 - e2` are zero, evaluations of the two expressions are equal. To solve a goal, reify both sides, run the normalizer by reduction, and apply the lemma with `erefl`.
-
-The paper's example uses `int_correct` and proves an integer equation by constructing `e1` and `e2` syntax terms and passing `erefl`; it explains, “Here we used computational reflection twice.” (Section 2.3, p. 5) First the reified terms, interpreted by `AGeval`, must be convertible to the two sides of the goal; second the nullity condition (`all ... = true`) is checked by reducing its left-hand side to `true`. The paper notes that for the second case optimized reduction such as `vm_compute` and `native_compute` can be useful. Inference: a Verus analogue is a ghost syntax datatype plus `spec fn eval` and `spec fn normalize`, with a proved `lemma` connecting normalization to evaluation. Verus's proof functions and `assert` can discharge concrete normalization, but the erased proof must not be called at runtime; executable Rust should keep the original arithmetic function.
-
-## technique: conversion-aware reification for packed classes
-Use this when the same operator can carry different but convertible structure instances. Pure syntactic matching fails because, for example, in `x + 1 = 1 + x` over `int` the two `GRing.add` occurrences take syntactically different zmodType instances (`int_ZmodType` versus `GRing.Ring.zmodType int_Ring`) while denoting the same operation (Section 3.1). Extend the reifier with a parameter for the expected structure instance and, after matching the operator head (the key), call unification (`coq.unify-eq`) on the structure argument; since neither side contains unification variables in normal use, this reduces to a conversion check. The paper states, “Reification recognizing operators by conversion or unification rather than purely syntactic matching would address the above issue.” (Section 3.2, p. 8) It avoids full unification for term matching because that “can make reification too costly”. The structure instance passed to `quote` is obtained by canonical-structure resolution (unifying `GRing.Zmodule.sort V` with the goal's type), inside a `solve` predicate that matches the goal `T1 = T2`, reifies both sides, and continues with the shared normalizer.
-
-Inference: in Verus, trait-associated operators and generic types require a canonical specification interface rather than syntactic matching of Rust methods. One can expose algebraic laws as `spec` functions and reusable `lemma`s parameterized by traits, but Verus does not provide Coq's canonical-structure or conversion tactic API. The translation therefore preserves the design principle, not the implementation.
-
-## technique: preprocessing homomorphisms before normalization
-Supporting homomorphisms directly in the decision procedure, the paper says, “requires a more involved data type describing the syntax, another decision procedure, and correctness proof” (Section 1, p. 2). Instead define a richer syntax `MExpr` (Section 4.1) with a homomorphism constructor `MMorph` whose source and target z-module types may differ. Define `Mnorm` to recursively push each map through zero, opposite, and addition until it reaches leaves, composing maps as it descends (an accumulator argument `f`). Prove `M_correct`: `Meval e = Mnorm [additive of idfun] e`. Reify with an accumulator `F` (an Elpi function from term to term, so composition leaves no beta redex) for the composed map; when the input is a homomorphism application, unify it with `GRing.Additive.apply U V _ G In1` to decompose it into the map `G` and its argument `In1`, then recurse on `In1` at type `U` with the composition of `F` and `G`. The `quote` predicate yields two reified terms: one of type `MExpr V` and one of type `AGExpr`.
-
-The paper gives the concrete normalization rule and says, “The normalization procedure we need for MExpr is just pushing down homomorphisms appearing as the MMorph constructor to the leaves of the syntax tree:” (Section 4.1, p. 9) The paper states that this twofold scheme allows reusing `AGExpr`, `AGeval`, `AGnorm`, and `AG_correct` as is (Section 4, p. 9). The paper adds that the meta properties linking the reified terms to the input cannot be proved inside Coq but are checked by the kernel on every tactic invocation (Section 4.1, p. 10). Inference: this is the reusable recipe, because preprocessing turns the term into the syntax the decision procedure already handles. Inference: for Verus, model a map as a `spec fn` preserving zero/addition, prove map-pushing lemmas once, and invoke them before arithmetic normalization. Generic Rust trait dispatch and ownership may require explicit ghost witnesses; those details are not in the paper.
-
-## technique: staged extension of syntax
-When an operator is not directly supported, add a preprocessing equation instead of redesigning the normalizer. Section 4.2 extends the z-module tactic with an opaque subtraction `subr` (it does not reduce; the lemma `subrE : @subr = (fun U x y => x + (- y))` is available): a new constructor `MSub` is interpreted by `Meval` with `subr` but normalized by `Mnorm` as addition of an opposite, and the reifier emits `MSub` and `AGAdd _ (AGOpp _)`. The paper also says that “even if an operator can be supported by relying on its definitional behavior, our methodology is sometimes performance-wise better than doing so.” (Section 4.2, p. 11) Its example is `n%:R` versus `(Posz n)%:~R` over `rat`, where `Time Check erefl : (Posz 6 * 6)%:~R = 36%:R :> rat` took 36.364 s (paper footnote: reproduces only with MathComp 1.12.0 or earlier).
-
-Section 5.1 adapts the Coq `ring` and `field` tactics. Preprocessors support homomorphisms and operators such as `GRing.natmul`, `intmul`, and `exprz`, via three inductive types: `NExpr` for `nat` expressions, and mutually inductive `RExpr` (ring expressions) and `ZMExpr` (z-module expressions) (definitions in Appendix B). Normalization is to the sparse Horner form, taken from the existing Coq tactic [29]. The `field` tactic additionally supports inverse and division and generates proof obligations describing the non-nullity of denominators.
-
-## technique: canonical zification plus linear arithmetic
-Use this for field side conditions that reduce to integer arithmetic (Section 5.2). Define a `zifyRing` record containing a ring value `rval`, an integer `zval`, and proof `rval = zval%:~R`. Register canonical instances for zero, one, opposite, addition, multiplication, and integer scaling (`intmul`). Recursive canonical inference then maps a ring expression to an integer expression and supplies its correctness proof. Rewrite with `zify_eqb` (stated for `numDomainType`, where `_%:~R` is injective), then run `lia`; the paper's script is `move=> n; rewrite zify_eqb /=; lia.` Inference: Verus can represent the correspondence with a ghost integer and a lemma relating casts, then use `assert`/`lemma` arithmetic; it has no canonical-instance search equivalent, so the mapping must be explicit.
-
-## evidence and limits
-Section 5.3 applies the tools to the formal proof of Apéry's theorem (irrationality of ζ(3)); they replace two tactics, `rat_field` and `goal_to_lia`, both written in Ltac and specific to `rat`. Table 1 reports the invocations that take more than 1 second: three problems from two lemmas (`P_eq_Delta_Q`, `recAperyB`) in `ops_for_b.v`. Sizes (number of constructors of reified `FExpr` terms) are 14,690, 8,407, and 113,657; the new `field` tactic takes 87.410 s, 1.957 s, and 26.680 s, versus `rat_field` at 91.872 s, 4.168 s, and 39.033 s. The paper says Problem #1 has many large coefficients (greater than 10^12), so the time share of normalization is higher and its gain is minor. Across the whole proof, “we could reduce 485 lines of specifications and proofs out of 5881 lines excluding code for proof automation”, and checking the entire proof became 26% faster (6 min 52 s) than before (9 min 19 s). The authors also state, “our field tactic cannot directly solve an equation that has rational exponents” (Section 5.3, p. 15), nor variables in exponents. The paper says supporting the latter might be possible incompletely in preprocessing. The conclusion notes the preprocessor is not extensible by users with new rules.
-
-Inference: trusted components include Coq kernel reduction, the correctness lemmas, canonical-structure declarations, and the underlying MathComp algebra laws; the paper does not give such a list. Inference: for agent-written verified Rust, reflection can reduce proof maintenance and solver load, but generated normalizers enlarge the trusted proof-engineering surface; a wrong specification or missing algebraic law still yields a formally valid but irrelevant proof.
-
-## techniques for the catalog
-- computational reflection: reify an algebraic goal, normalize syntax by computation, and apply a proved reflection lemma
-- conversion-aware reification: match packed-class operators modulo conversion or unification
-- homomorphism preprocessing: push maps through algebraic syntax to leaves and reuse one normalizer
-- canonical zification: infer integer representatives of ring terms and discharge field side conditions with linear arithmetic
+problem: reflexive tactics in Coq/MathComp match operators syntactically
+- packed classes give same operator syntactically different but convertible instances
+- homomorphisms have differing domain/codomain types
+computational reflection
+- syntax tree + evaluator + verified normalizer + one reflection lemma
+- reify both sides, normalize by reduction, close with `erefl`
+conversion-aware reification
+- match operator head syntactically (keyed matching)
+- compare structure arguments by unification, i.e. conversion
+  - full unification for matching is too costly
+homomorphism preprocessing
+- push maps down to leaves (`Mnorm`), proved correct (`M_correct`)
+- reuse the existing normalizer (`AGeval`, `AGnorm`, `AG_correct`) unchanged
+- adding an operator = adding a preprocessing equation (e.g. opaque `subr`), not a new normalizer
+canonical zification
+- map ring terms to integers via canonical instances, then `lia` for field side conditions
+evidence: Apéry's theorem proof
+- removes 485 of 5881 lines, checking 26% faster (9 min 19 s → 6 min 52 s)
+- hardest `field` call 91.9 s → 87.4 s, big coefficients (>10^12) limit gain
+- no rational or variable exponents, preprocessor not user-extensible
+takeaways for Verus
+- generated normalizers enlarge the trusted proof-engineering surface
+- Verus has no canonical-structure/conversion API, so mappings must be explicit ghost lemmas

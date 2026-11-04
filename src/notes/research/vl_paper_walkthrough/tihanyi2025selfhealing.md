@@ -2,46 +2,31 @@
 (authored by agents unless marked 🧑)
 Tag: `tihanyi2025selfhealing`, [paper](https://doi.org/10.1109/AST66626.2025.00020)
 
-## core method
-
-ESBMC-AI combines bounded model checking (BMC) with an LLM for automated C vulnerability repair. BMC converts a program to a state-transition system and an SMT formula; a satisfiable formula supplies a concrete counterexample trace. The LLM interprets that trace and proposes a patch. The paper describes the division directly: “We use BMC to verify programs and provide diagnostic counterexamples via text to LLM. In contrast, LLM is used to understand the textual trace that leads to the program bug and thus tentatively produce code to fix the identified vulnerability” (Section IV, p. 139).
-
-The paper uses GPT-4o as the base LLM (Section VI, p. 142). The key limitation is scope. BMC establishes absence of a reachable violation only up to its bound k (Section IV.A, p. 140); the paper later uses unlimited k for dataset preparation but a 10-second, `--unwind 1` repair check (Section V.C, p. 142; Section VI, p. 143). Inference: a passing patch is checked against the modeled property, not against every semantic requirement or every vulnerability class; the paper adds human review of patches for correctness, compilability and unchanged behavior (Section VI.A, p. 143).
-
-Inference: the closest Verus adaptation is to feed Verus diagnostics, failed assertions, and counterexample-like traces to an LLM, then rerun Verus and tests. Verus is deductive rather than bounded model checking, so a successful proof has a different meaning. This adaptation is an inference.
-
-## technique 1: generate a mathematical counterexample trace
-
-Use this when an LLM cannot localize a vulnerability from source text alone. BMC builds a control-flow graph, converts it to static single assignment, and encodes initial states, transitions, and the negated safety property into `BMC(k)`. If satisfiable, the SMT assignment yields the values and path that reach the violation; if unsatisfiable, no error state is reachable within k steps (Section IV.A, pp. 139–140).
-
-The paper models a trace as a finite sequence of states connected by transitions and says “Each counterexample specifies the exact trace, line number, and variable name” (Section IV.A, p. 140). In Section IV.B (p. 141) it gives an overflow example, `overflow line 7 function main, ERROR: argv[0]=32768, *mul(y,y)`, and says the model “could identify the link between the overflow error, the mul(y,y) function, and the specific line number mentioned”. That sentence is the authors' argument about attention, not a measured result. Motivation: in Section II (p. 138) GPT-3.5 answered “There is no problem with this code.” for an overflowing program, and the Figure 2 caption (p. 145) says “The actual vulnerability may be overlooked by an LLM when misleading function names are used.”
-
-Inference: for Verus, retain the exact diagnostic location, symbolic values when available, failing postcondition, and call path in the repair prompt. A Verus proof failure is not automatically a concrete execution trace, so do not invent one; distinguish solver diagnostics from tested runtime counterexamples.
-
-## technique 2: specialize repair prompts by vulnerability class
-
-Use a separate prompt template for each class. The paper says that when ESBMC finds a vulnerability, ESBMC-AI “transforms the counterexample into the appropriate format and generates a corresponding prompt based on a previously created template by human experts”, combining the counterexample (stack traces) with the original code (Section VI, p. 143). The prompt texts are not given in the paper text. Fix code mode aims at “ensuring that the code remains compilable and retains its original behavior” (Section V.B, p. 142). The authors state that “distinct prompts are required to address dereference failure versus buffer overflow in scanf().” A generic “fix the code based on this counterexample” prompt significantly lowers accuracy (Section V.B, p. 142); the paper gives no number for the generic prompt.
-
-Run one repair at a time. The paper notes that fixing an arithmetic overflow can expose another floating-point overflow, and that addressing multiple issues in one iteration can reduce accuracy because of biased attention (Section VI.A, p. 144). Re-run ESBMC after every patch and stop or continue based on the new result. Keep a user-chat mode (explanation only) separate from fix-code mode (automatic patching); In UCM “there is no automatic code patching” and developers decide manually; in FCM the tool detects vulnerabilities with ESBMC and uses the LLM to fix the code (Section V.B, pp. 141–142).
-
-Inference: a Verus repair template should identify whether the diagnostic is a missing invariant, failed postcondition, arithmetic fact, ownership issue, or unsupported library assumption. Ask for a minimal patch and rerun Verus, Rust tests, and security properties after each change. This is not a procedure evaluated in the paper.
-
-## technique 3: use a time-bounded verifier in an interactive loop
-
-ESBMC is selected because the authors say it “could solve the highest reachability-safety verification tasks within 10 seconds time-limit in the SV-COMP 2024” (Section V.A, p. 141). They call the ten-second limit not arbitrary: longer times “are unsuitable for code fixing in a live Integrated Development Environment (IDE) and continuous integration (CI) pipeline”, and they say it gives “nearly real-time feedback” (Section V.A, p. 141). Their repair invocation uses `--overflow --memory-leak-check --show-stacktrace --timeout 10 --unwind 1 --multi-property --no-unwinding-assertions --verbosity 6` (Section VI, p. 143). FormAI labels came from BMC with k = 1 (Section V.C, p. 142); the authors reclassified the 50,000 samples with ESBMC 7.6.1 using unlimited k-steps and a 500-second timeout (Section V.C, p. 142). Inference: the ten-second limit trades completeness for feedback speed.
-
-## evidence and denominators
-
-The evaluation selected 50,000 samples from the 112,000-program FormAI dataset, whose programs are all compilable (Section V.C, p. 142). ESBMC classified 31,801 of them as verification-failed (63.60%, Section VI, p. 142). For eight categories the authors manually reviewed 1,337 samples. Table III (p. 144) reports one-iteration accuracy; each table row lists sample size and counts of verification successful (VS), failed (VF) and unknown (VU) patched programs, and the stated accuracy matches VS divided by sample size in six of eight rows: lower-bound array violations 174/182 = 95.60%; `fscanf` buffer overflow 220/241 = 91.29%; division by zero 115/133 = 86.47%; NULL dereference 184/229 = 80.35%; forgotten-memory dereference 91/187 = 48.66%; upper-bound array violation 48/117 = 41.03%. Two rows do not match: `scanf` buffer overflow is printed as 90.40% but 160/175 = 91.43%; arithmetic-add overflow is printed as 70.27% but 52/73 = 71.23%. The paper's text repeats 90.40% (p. 143) and 70.27% (p. 144, Section VI.A), and the contributions list (p. 137) repeats both. That list also gives 69.66% for array bounds violation errors, which equals neither Table III row (174/182 and 48/117). Inference: treat the printed percentages for those rows as unreliable and use the counts.
-
-Without the exact counterexamples and stack traces, the paper says LLMs fix issues with “approximately 31 − 37% accuracy, compared to 80% to 90% accuracy with ESBMC output” (Section VI.B, p. 144). The paper does not describe the baseline setup (which samples, prompts or models), so Inference: this comparison should not be read as a universal causal estimate. The manual review subset is 1,337 of 50,000, not the full dataset, and was drawn from the most common categories (Section VI.A, p. 143). The paper says automatically comparing original and suggested code is infeasible “due to the undecidability of program equivalence”, so it used manual review plus lines-of-code and cyclomatic-complexity changes as indicators (Section VI.A, p. 143).
-
-The authors acknowledge that LLM repairs may be “syntactically valid” yet “do not effectively address the underlying bugs” or “introduce new issues”, and that SQL injection, XSS, and OS injection “cannot currently be detected using this method” (Section VI.C, pp. 144–145). The study concerns C, not Verus Rust. Inference: trusted elements are ESBMC’s model, SMT solver, unwinding or timeout bound, vulnerability labels, prompts, LLM behavior, and manual patch review.
-
-## techniques for the catalog
-
-- counterexample-guided repair — turn formal verifier traces into localized LLM patch prompts
-- class-specific prompting — use distinct repair templates for each vulnerability or proof-failure class
-- one-issue iteration — patch one finding, rerun the verifier, and expose newly introduced failures
-- dual interaction modes — separate explanation-only user chat from automatic fix-and-verify mode
-- bounded feedback budgets — record timeout and unwind settings and treat unknown as unresolved
+esbmc-ai: bounded model checker finds c bug, llm patches it, rerun checker
+- bmc gives a counterexample (trace, line, variable); llm reads it and writes the fix
+- base llm gpt-4o
+- guarantee only up to bound k; repair check uses 10s timeout, `--unwind 1`
+  - a passing patch is checked against modeled properties only
+counterexample in the prompt is the key
+- without it llm fixes ~31-37% of issues, with it 80-90%
+  - baseline setup not described, not a clean causal estimate
+- llm alone can miss overflows, e.g. gpt-3.5 said "no problem" on an overflowing program
+class-specific repair prompts
+- dereference failure vs scanf overflow need different templates; generic prompt lowers accuracy (no number given)
+- fix one issue per iteration, rerun esbmc
+  - fixing one overflow can expose another
+- two modes: user chat (explain only), fix code (auto patch + verify)
+evaluation
+- 50,000 of 112,000 formai programs; 31,801 (63.6%) fail verification
+- 1,337 manually reviewed across 8 categories, one iteration
+  - lower-bound array 95.6%, fscanf overflow 91.3%, div by zero 86.5%, null deref 80.4%
+  - forgotten-memory deref 48.7%, upper-bound array 41.0%
+- some table accuracies do not match their own counts
+limits
+- injection classes (sql, xss, os) not detectable
+- patches can be valid but not fix the bug or add new ones
+- program equivalence undecidable, so behavior preservation checked by hand
+verus transfer (inference, untested)
+- feed verus failure location, failed postcondition, call path into repair prompt
+- do not fake a concrete trace; a verus failure is not a runtime counterexample
+- classify failure (invariant, postcondition, arithmetic, ownership, library assumption) to pick template

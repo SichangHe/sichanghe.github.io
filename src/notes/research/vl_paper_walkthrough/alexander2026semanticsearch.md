@@ -2,35 +2,27 @@
 (authored by agents unless marked 🧑)
 Tag: `alexander2026semanticsearch`, [paper](https://arxiv.org/abs/2602.05216)
 
-## purpose and evidence
-The paper builds a theorem-level retrieval system over 9.2 million statements from arXiv and seven other sources. It represents each theorem with an LLM-generated natural-language slogan, embeds slogans and queries, and retrieves candidate statements with approximate nearest-neighbor search. The abstract describes the aim: “Searching for mathematical results remains difficult: most existing tools retrieve entire papers, while mathematicians and theorem-proving agents often seek a specific theorem, lemma, or proposition that answers a query.” (Abstract, p. 1.) On 111 queries written by professional mathematicians, Qwen3 8B without the cross-encoder reranker reaches 45.0% theorem-level Hit@20 and 56.8% paper-level Hit@20; with that reranker, the values are 45.0% and 63.1% (Section 3.5, p. 5; Table 2, p. 6). Inference: a premise-retrieval service is directly useful to Verus agents, but retrieved lemmas are suggestions and cannot replace checking in Verus.
-
-## technique 1: parse theorem statements with layered fallbacks
-The corpus parser extracts theorem type, optional reference number, optional note, and body, expanding basic author-defined LaTeX macros. For arXiv, it tries three strategies in order. First, plasTeX builds a node tree and extracts theorem-like environments; this parses 422,000 papers and about 6.9 million theorems. Heuristics filter out bodies shorter than 8 characters or ending in “ and” or “ let”. Second, an injected LaTeX package logs theorem data during compilation; this handles 137,000 papers and about 1.8 million theorems. Third, regular expressions parse environment delimiters and produce about 542,000 theorems from 30,000 papers; reference numbers are captured only if explicitly stated (Section 3.1, pp. 2–4).
-
-Other sources use source-specific parsers: a common regex parser for five GitHub repositories and a MediaWiki API parser for ProofWiki. The system normalizes environment names, retains labels and source URLs, removes wiki markup, and records theorem counters (Section 3.2, p. 4).
-
-## technique 2: sloganize LaTeX statements before embedding
-Raw LaTeX is symbol-heavy and queries are usually informal. The authors prompt DeepSeek V3 to produce a concise declarative English description of each theorem’s main result, instructing it to avoid symbolic notation, proof details, and surrounding document references. Slogans become the primary retrieval representation (Section 3.3, p. 4). They compare body-only, body-plus-abstract, and body-plus-introduction prompts at temperature 0.2 with a 1024-token output limit. The total corpus-generation cost is reported as about $6,000: $4,000 for LLM calls and $2,000 for compute and storage (Section 3.3, p. 4).
-
-The ablation shows context matters. With prompted Qwen3 8B embeddings on the restricted ablation corpus, body-only gives Hit@20 0.737, body-plus-abstract 0.737, and body-plus-first-section 0.763; MRR@20 is 0.451, 0.429, and 0.496 respectively (Table 3, p. 7). Inference: slogans can make Verus lemma retrieval accessible to natural-language agent queries, but a generated slogan must link back to the exact formal statement and file. The slogan is an indexing aid, not a proof artifact; never let an agent cite slogan text as if it were a Verus contract.
-
-## technique 3: embed and index for two-stage approximate retrieval
-The system embeds slogans offline and queries at inference time with Qwen3-Embedding-8B, stores vectors in PostgreSQL with pgvector, and indexes them with HNSW plus binary quantization. It retrieves candidates by Hamming distance and reranks them by cosine similarity (Sections 3.4 and 5, pp. 4–5, 8). The deployed search uses a two-stage pool of `clamp(max(200, 12 × k), 200, 800)` candidates, then metadata filtering and cosine reranking on the original 4096-dimensional vectors. Optional citation weighting uses `cosine similarity + λ · log(max(citations, 1))` (Section 5, p. 8).
-
-The authors report that repeating short queries improves retrieval, and the service duplicates queries below a length threshold; the example is “Landau equation Landau equation” (Section 5, p. 8). Inference: a Verus lemma service should retrieve by semantic embedding, then rerank by exact namespace, type signature, preconditions, and library version. A returned lemma must be loaded into the proof context and checked by Verus. The ranking index, quantization, and repetition heuristic remain trusted infrastructure.
-
-## technique 4: blind, two-stage validation set
-Three research mathematicians create 111 queries across 14 arXiv tags without seeing the corpus or slogans. The paper states: “Crucially, queries were written blind: each mathematician composed natural-language descriptions of theorems they knew from memory, without access to the corpus or its slogans, to prevent any leakage of retrieval representations into the evaluation queries.” (Section 3.5, p. 5.) Section 3.5 describes a larger set of 7,356 papers in which they were confident each queried result appeared at most once. Section 4.5 instead describes the ablation corpus as 7,356 statements by 8 primary authors, restricted to math.AG papers by authors whose work contains a query match (p. 6). Inference: these descriptions leave the exact ablation corpus size and unit unclear. Every query–theorem pair is checked first by an LLM for corpus existence and semantic match, then by an independent mathematician (Section 3.5, p. 5). Hit@k is the fraction of queries with an exact match in the top k; MRR@k is the mean reciprocal rank of the first relevant result (Section 4.1, p. 5).
-
-## technique 5: reranking and retrieval-augmented reasoning
-The authors also evaluate reranking Qwen3 8B’s base results with Qwen3-Reranker-0.6B over the top 100 candidates. Theorem-level Hit@1 rises from 17.1% to 18.9%, and MRR@20 from 24.3% to 27.0%; paper-level Hit@20 is 63.1% after reranking (Table 2, p. 6). The baseline comparison is precise: Qwen3 8B reaches 0.450 theorem-level and 0.568 paper-level Hit@20, while ChatGPT 5.2 reaches 0.198 theorem-level and Google Search reaches 0.378 paper-level (Table 2, p. 6). The table’s values are on the 111-query validation set, with the retrieval corpus restricted to arXiv papers; Google and arXiv cannot return theorem-level results.
-
-A qualitative case study asks Claude Opus 4.5 about KSBA compactifications. Without retrieval it gives a plausible but wrong answer; with retrieved theorems it cites specific results and reaches the correct answer (Section 4.4, p. 6). The authors conclude: “By treating theorems as first-class retrieval objects and enriching them with natural-language descriptions, we enable new forms of access to mathematical knowledge – whether for retrieval-augmented generation by LLMs, for premise selection in formal proof search, or for literature review by expert mathematicians.” (Section 6, p. 8.) Inference: a Verus proof agent could use this architecture: retrieve candidate lemmas, present exact statements and source links, and let Verus accept or reject the instantiated proof. Retrieval can prevent rediscovery and confabulation but cannot establish that a candidate applies.
-
-## techniques for the catalog
-- layered theorem parsing: use structured parsing, compilation logging, and regex fallbacks with source metadata
-- sloganized retrieval: generate concise natural-language descriptions linked to exact formal statements
-- two-stage vector search: HNSW and quantized candidate retrieval followed by cosine or cross-encoder reranking
-- blind validation: evaluate Hit@k and MRR on queries written without corpus access
-- retrieval-augmented proving: supply retrieved lemmas to an agent while requiring the proof checker to accept use
+theorem-level retrieval over 9.2M statements (arXiv + 7 sources)
+- target users: mathematicians and theorem-proving agents who want a specific lemma, not a paper
+- 111 blind queries by 3 mathematicians
+  - Qwen3 8B: theorem Hit@20 0.450, paper Hit@20 0.568
+  - baselines: ChatGPT 5.2 theorem Hit@20 0.198, Google Search paper Hit@20 0.378
+  - Qwen3-Reranker-0.6B on top 100: Hit@1 17.1% to 18.9%, MRR@20 24.3% to 27.0%
+sloganize before embedding
+- DeepSeek V3 writes a short symbol-free English slogan per theorem
+- context helps: body+first section Hit@20 0.763 vs body-only 0.737
+- cost about $6,000 total ($4,000 LLM, $2,000 compute/storage)
+- for Verus: slogan is an index aid only, must link to exact formal statement and file
+  - never cite slogan text as a contract
+layered parsing
+- plasTeX (422k papers, 6.9M theorems), then LaTeX logging package (137k, 1.8M), then regex
+- source-specific parsers for GitHub repos and ProofWiki
+two-stage vector search
+- Qwen3-Embedding-8B, pgvector, HNSW + binary quantization
+- Hamming candidates (200 to 800), cosine rerank on 4096-dim vectors
+  - optional citation weighting: cos + λ log(max(cites, 1))
+  - repeating short queries improves retrieval
+- inference: Verus lemma search should rerank by namespace, signature, preconditions, version, then have Verus check use
+retrieval-augmented reasoning
+- Claude Opus 4.5 on KSBA compactifications: wrong without retrieval, correct citing retrieved theorems
+- blind query writing prevents leakage of slogans into evaluation

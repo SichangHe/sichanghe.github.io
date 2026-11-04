@@ -2,31 +2,26 @@
 (authored by agents unless marked 🧑)
 Tag: `wischermann2025proofcompass`, [paper](https://arxiv.org/abs/2507.14335v1)
 
-## method
-ProofCompass combines a general LLM with the specialized DeepSeek-Prover-v1.5-RL (DSP-v1.5) without additional model training. It uses two guidance channels: a natural-language proof supplied to DSP's chain-of-thought mode, and lemmas extracted from failed attempts and selected by the LLM. The abstract describes the aim as “strategically guiding existing specialized prover methods” (p. 1). It also reports: “The LLM provides natural language proof strategies and analyzes failed attempts to select intermediate lemmas, enabling effective problem decomposition.” (abstract, p. 1) The Lean REPL checks every generated proof; an attempt fails on errors, `sorry`, or a verification timeout (Section 4.1, p. 7).
-
-## technique: informal proof guidance
-Use this when the specialized prover accepts a natural-language chain-of-thought prefix. The paper's steps are: (1) prompt a guiding LLM with formal theorem `Tformal` and its informal counterpart `Tinformal` to produce a complete natural-language proof `pNL` (Section 3.2, p. 4); (2) summarize it with a second query into `psummary` because the full proof often exceeds DSP's context (Section 3.2, p. 5); (3) put the summary in Lean block-comment syntax immediately after the theorem; (4) call DSP in CoT mode for up to N sequential proof attempts, verifying each with Lean and stopping on success (equations (1)–(3), pp. 4–5). The paper states: “This process continues until either a correct proof is found or the maximum of N initial attempts is reached.” (Section 3.2, p. 5) The paper's example uses positivity lemmas, `field_simp`, `div_le_div_iff₀`, `ring_nf`, and `nlinarith` for a real inequality (Figure 3, p. 5).
-
-Inference: for Verus, use an LLM-generated prose plan as a prompt-side hint, then translate it into explicit Rust `requires`, `ensures`, loop `invariant`, `assert`, and `proof fn` steps. The resulting code would need Verus verification; the paper does not evaluate this adaptation.
-
-## technique: extract and select lemmas from failures
-When the initial N attempts fail, ProofCompass aggregates all generated Lean proofs and extracts every `have` statement. Its steps are: (1) collect `Pinit^1 … Pinit^N`; (2) extract unique `have` statements into `Lextract` (equation (4), p. 5); (3) syntax-check candidates and retain `Lvalid` (equation (5), p. 5); (4) ask the LLM to assess logical soundness from global hypotheses and whether each lemma is justified by the natural-language proof, then select at most k lemmas in proof order as `Lselect` (equation (6), pp. 5–6). The authors explicitly choose lemmas from failed specialized-model attempts rather than asking the LLM to invent them directly (Section 3.3, p. 6; Appendix C, pp. 13–14). Their stated reason is that directly generated lemmas “tended to be syntactically different from those typically produced by DSP-v1.5 and proved more challenging for the SLM to utilize.” (Appendix C, p. 13)
-
-Inference: in Verus, mine failed verification drafts for repeated `assert` goals or candidate `proof fn` statements, parse them, and ask a model to rank only statements that are implied by current preconditions. Recheck each selected lemma with Verus before using it. The proposed transferable idea is to obtain intermediate obligations from failed drafts.
-
-## technique: prove the main theorem conditionally, then discharge lemmas
-For each selected lemma, the LLM generates concise informal proof text `pli` and also generates a main-theorem proof plan `pmain` assuming all selected lemmas (equations (7)–(8), p. 6). Existing `have` proofs that already establish a selected lemma from global hypotheses initialize `Lproven` (equation (9), p. 6). DSP first generates `Pmain` with all selected lemmas appended as hypotheses (equation (10), p. 6). Only after obtaining this conditional main proof does it iterate over unproven lemmas: “Within each iteration of this loop, the method first attempts to prove individual lemmas.” (Section 3.4, p. 6) For each lemma, it supplies global hypotheses and earlier selected lemmas as hypotheses, calls DSP with its informal proof, and adds a verified result to `Lproven`. After each pass, it constructs `Pfinal` from the theorem, proven `have` statements, and `Pmain`, and submits the complete proof to Lean (equations (10)–(11), p. 6). Every call for `Pmain` or an individual lemma consumes the shared budget B. If no lemmas are selected, the method returns to the initial generation strategy for the remaining budget (Section 3.4, p. 6).
-
-Inference: in Verus, make each selected fact a separately checked `proof fn` with a narrow contract, then call those lemmas from the target proof. Preserve the paper's dependency order by letting each lemma use only facts established earlier, and verify the assembled target proof. The paper does not test this Verus proposal.
-
-## evidence and resource accounting
-The paper describes miniF2F as containing 488 problems (Section 4.1, p. 6); Table 1 reports results on miniF2F-test. Verification uses Lean 4.15. For pass@k, k counts DSP calls, including lemma and main-proof calls: “For our methodology, an “attempt” in the Pass@k calculation corresponds to any call made to the DSP-v1.5 model.” (Section 4.1, p. 7) A proof must produce no REPL errors, contain no `sorry`, and finish verification within 20 seconds (Section 4.1, p. 7). The baseline DSP-v1.5 obtains 50.0% ± 0.5% at 32 attempts, 51.6% ± 0.5% at 128, and 54.9% ± 0.7% at 3200. ProofCompass obtains 52.5% at 32 and 55.3% at 128 (Table 1, p. 7). Inference: comparing 55.3% at 128 attempts with 54.9% at 3200 gives a 25-fold ratio of DSP attempt budgets, not a measured 25-fold reduction in elapsed time or total model cost. Appendix A estimates a time crossover after approximately 46 total attempts (pp. 12–13), accounting for upfront guidance costs and faster subsequent generation: “Following this, each subsequent attempt to prove a lemma or the main theorem is highly efficient, costing only 2.84 seconds.” (p. 12) The authors use Gemini 2.0 Flash Thinking Experimental for `pNL` and Gemini 2.0 Flash for summaries, selection, and elaboration, while DSP runs on an Nvidia RTX 4090 (Section 4.1, p. 7).
-
-Ablations isolate the channels: only lemma guidance gives 51.6% at 32 and 53.3% at 128; only informal proof gives 52.0% and 52.9% (Table 1, p. 7). Inference: these ablations support both channels contributing for this model and budget; they do not establish the same gains for Verus or other provers. Section 6 identifies the CoT-specific guidance format and limited attempt budget as limitations. The PDF states a maximum of 2^7 = 128 attempts per problem (p. 8); the extracted text flattens the superscript into “27”. This agrees with the pass@128 setup.
-
-## techniques for the catalog
-- natural-language proof seeding — summarize a capable model's proof strategy and inject it into a specialized prover's chain-of-thought input
-- failure-derived lemma mining — extract intermediate `have` statements from failed attempts, syntax-check them, and select justified candidates
-- conditional proof decomposition — obtain a main proof assuming selected lemmas, prove those lemmas under ordered dependencies, and verify the assembled proof
-- budgeted verified retries — count every specialized-prover call, verify with Lean, and stop on the first complete proof
+general LLM guides a specialized prover (DeepSeek-Prover-v1.5-RL, DSP) with no training
+- Lean REPL checks every proof; fail on error, `sorry`, or 20 s timeout
+- guidance channel 1: summarized natural-language proof placed as a comment in DSP's CoT prompt
+- guidance channel 2: lemmas mined from DSP's failed attempts
+  - extract unique `have` statements, syntax-check, LLM selects at most k justified by the informal proof
+  - mining from DSP output beats LLM-written lemmas, which were syntactically unlike DSP's and harder for it to use
+prove the main theorem assuming selected lemmas, then discharge lemmas
+- lemmas get earlier lemmas as hypotheses; assemble and verify the final proof
+- every DSP call, lemma or main, counts against one attempt budget
+results on miniF2F-test (488 problems)
+- DSP: 50.0% at 32 attempts, 54.9% at 3200
+- ProofCompass: 52.5% at 32, 55.3% at 128
+  - 25x fewer DSP attempts, not 25x less time or cost
+  - time crossover at about 46 attempts
+- ablation: lemmas only 53.3% at 128, informal proof only 52.9%; both channels help
+- guide LLMs are Gemini 2.0 Flash (Thinking) variants
+limits
+- needs a prover that accepts CoT prefixes; small attempt budget
+- Lean only; verus transfer is untested
+takeaways for verus
+- seed a prover with an LLM prose plan
+- mine failed drafts for candidate `assert`s / `proof fn`s, filter, recheck each with Verus
+- prove main goal conditionally on lemmas, then discharge lemmas in dependency order

@@ -2,34 +2,32 @@
 (authored by agents unless marked 🧑)
 Tag: `sivakumar2025conjecturing`, [paper](http://arxiv.org/abs/2510.11986v1)
 
-## problem and benchmark
-The paper separates conjecturing—a conclusion such as an answer, bound, or proposition—from translating a given statement into Lean. It warns that a proof can validate an incomplete answer: solving `x² − 4x = 0` with `x = 0` is valid but omits `x = 4` (Section 1, p. 2). The authors state: “Conjecturing relies on intuition, pattern recognition, and heuristic testing, whereas proving requires the rigorous application of tactics.” (Section 1, p. 2) The abstract warns: “However, the conjecture should not be assumed to be provided.” (abstract, p. 1) They build ConjectureBench from 355 PutnamBench problems and 102 CombiBench problems, after splitting multipart questions and removing solutions embedded in statements. The final set has 457 paired informal–formal problems: 178 numerical, 165 algebraic, and 114 proof-type instances (Table 2, p. 4).
-
-Their evaluation has two settings. In “seen,” the model receives the informal statement and gold Lean conjecture; in “unseen,” it must infer and incorporate the conjecture. A standalone task asks only for a concise Lean conjecture (Section 3.2, p. 5). Inference: this separation is useful when a system must turn user requirements into a complete specification rather than merely prove a supplied postcondition.
-
-## technique: evaluate conjecturing during autoformalisation
-The model receives the informal statement, with or without the gold conjecture according to the setting, and generates a Lean formal statement (Section 3.2, p. 5). The evaluation uses Typecheck for compilation and BEq+ tactics to attempt equivalence with the gold formalisation; BEq+ requires typechecking. LLM Grader back-translates both statements with InternLM2-Math-Plus-20B, then uses Qwen3-14B to judge semantic equivalence (Section 4, pp. 6–7). Separately, ConJudge checks conjecture incorporation: its purpose is to determine whether the gold solution is “reasonably and correctly incorporated as a conjecture within the final autoformalised statement.” (Section 3.3, p. 5) ConJudge receives generated formalisation, gold conjecture, and gold formalisation; a human annotation of 100 samples tunes it (Section 3.3, p. 5). The authors caution that BEq+ can produce “false negatives on semantically equivalent statements that differ in surface form” (Section 4, pp. 6–7).
-
-Inference: for Verus, keep a separate specification-completeness check before proving Rust. Encode candidate answers as `spec fn` values or predicates, then use `proof fn` lemmas to show equivalence to the intended requirement. Run Verus for type and proof obligations, but use review or independent semantic tests for natural-language faithfulness; Verus cannot infer whether a postcondition is complete.
-
-## technique: standalone definitional-equivalence metric
-For isolated conjecture generation, the paper uses `equiv_rfl`: generated and gold Lean conjectures are accepted when Lean's `rfl` proves definitional equality (Section 3.3, p. 6). The task isolates the answer from full statement generation, but the metric tests definitional equality: Appendix B.4 (p. 23) uses `theorem thm : conjecture_gold = conjecture_generated := by rfl`. Inference: Verus can use equality lemmas and executable test cases for candidate specification values, but definitional equality with `rfl` is Lean-specific and should not be claimed as a Verus metric.
-
-## technique: Lean-FIRe hybrid reasoning
-Lean Formal-Informal Reasoning (LEAN-FIRe) is an inference-time method that interleaves natural-language Chain-of-Thought (CoT) with Lean-of-Thought (LoT). Its steps are: (1) use five expert-annotated Putnam examples as few-shot data; (2) from a new informal problem, generate a complete natural-language CoT that decomposes the problem, identifies objects, and avoids formal code and the final answer; (3) generate one LoT step for each CoT step, translating concepts into Lean primitives and syntax; (4) supply the combined hints for conjecture generation or autoformalisation, the two tasks illustrated in Figure 2 (p. 5; Section 3.4, p. 6; Appendix B.1, p. 21). The five seed problems are excluded from evaluation and cover “probability, real analysis, linear algebra, abstract algebra, number theory” and different solution types (Section 3.4, p. 6). The paper says the method is “a two-stage hybrid reasoning process that integrates informal problem decomposition with formal code generation by means of interleaved Chain-of-Thought (CoT) with Lean-of-Thought (LoT) prompting.” (Section 3.4, p. 6)
-
-Inference: a Verus agent can first write a prose decomposition of data, invariants, and the desired Rust contract, then translate each step into `spec fn`, `requires`, `ensures`, loop `invariant`, and `proof fn` code. Each translation must compile and verify; the prose trace remains a search aid. The paper's five-example prompting and Lean syntax do not transfer unchanged.
-
-## evidence and failure modes
-For conjecturing during autoformalisation, GPT-4.1 baseline scores are 26.70% ConJudge@1 unseen and 61.27% @10, versus LEAN-FIRe 55.80% and 85.34%; DeepSeek-V3.1 baseline is 30.63% and 58.86%, versus 44.64% and 71.55% (Table 3, p. 7; denominator 457 problems). Removing few-shot examples drops GPT-4.1 unseen to 28.88% @1 and 56.89% @10. The authors interpret this as follows: “the hybrid reasoning structure alone does not significantly improve conjecturing.” (Section 5.1, p. 7)
-
-Standalone conjecture generation is far weaker. GPT-4.1 succeeds on 15/457 (3.28%) at pass@1 and 23/457 (5.04%) at pass@10 under `equiv_rfl`; DeepSeek-V3.1 succeeds on 17/457 (3.72%) and 26/457 (5.70%) (Table 4, p. 7). By type, GPT-4.1 gets 10/178 numerical @1, 5/165 algebraic, and 0/114 proof; DeepSeek gets 13/178, 4/165, and 0/114 (Table 4, p. 7). These are the paper's reported percentages. Inference: two pass@10 percentages are inconsistent with the counts: 23/457 rounds to 5.03%, and 26/457 to 5.69%, rather than the reported 5.04% and 5.70%. The models often generate helper definitions or lemmas instead of the answer, and the authors observed possible contamination such as `IsMagicSquare` appearing only in gold formalisation (Section 5.1, p. 8).
-
-End-to-end autoformalisation remains low. Under the strict BEq+ metric, LEAN-FIRe reportedly enables GPT-4.1 to formalise 13 new PutnamBench no-answer problems and DeepSeek-V3.1 seven (Section 5.2, p. 8). The paper reports “an average 23.7% drop in performance” from seen to unseen (Section 5.2, p. 8). It also reports “a net mean gain of 3.01% at pass@1 but a slight decline at pass@10” for LEAN-FIRe (Section 5.2, p. 9). These are the paper's aggregate summaries; it does not give an explicit averaging formula. A misplaced factorial in one generated statement passed Typecheck and the LLM Grader but failed BEq+ (Section 5.2, p. 8). The authors describe “a subtle error: a misplaced factorial symbol.” (Section 5.2, p. 8; generated code, p. 9) Inference: compilation and an LLM judgment do not establish exact equivalence.
-
-## techniques for the catalog
-- seen/unseen conjecture evaluation — separate translation with a supplied answer from autoformalisation that must infer the answer
-- ConJudge incorporation check — use a calibrated judge to test whether the generated statement contains the intended conjecture
-- definitional conjecture metric — isolate candidate-answer generation with Lean `rfl` equivalence
-- Lean-FIRe prompting — generate a complete natural-language decomposition, then translate each step into Lean hints using expert examples
-- multi-metric validation — combine typechecking, tactic equivalence, and semantic judging to expose different failure modes
+conjecturing (the answer/bound/proposition) is separate from translating a given statement
+- a proof can validate an incomplete answer
+  - e.g. x² − 4x = 0 solved by x = 0, omits x = 4
+- "the conjecture should not be assumed to be provided"
+- verus analogy (inference): check specification completeness before proving, since verus cannot tell whether a postcondition is complete
+conjecturebench
+- 457 problems from 355 putnambench and 102 combibench
+  - 178 numerical, 165 algebraic, 114 proof-type
+- seen (gold conjecture given) vs unseen (must infer it)
+- metrics
+  - typecheck, BEq+ (tactic equivalence), llm grader (back-translation)
+  - conjudge: is the gold conjecture incorporated, tuned on 100 human labels
+  - equiv_rfl for standalone conjectures, lean-specific
+- misplaced factorial passed typecheck and llm grader, failed BEq+
+  - compile + llm judgment do not establish equivalence
+lean-fire: interleave natural-language cot with lean-of-thought
+- 5 expert few-shot examples, one lot step per cot step
+- conjudge@1 unseen, 457 problems
+  - gpt-4.1 26.70% to 55.80%
+  - deepseek-v3.1 30.63% to 44.64%
+- gain comes from few-shot examples, structure alone does not help much
+results
+- standalone conjecturing is very weak
+  - gpt-4.1 15/457 pass@1, 23/457 pass@10
+  - deepseek-v3.1 17/457 pass@1, 26/457 pass@10
+  - 0/114 proof-type for both
+- 23.7% average drop from seen to unseen
+- lean-fire net mean gain 3.01% at pass@1, slight decline at pass@10
+- possible contamination, e.g. `IsMagicSquare` only in gold formalization

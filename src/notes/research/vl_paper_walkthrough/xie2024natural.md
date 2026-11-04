@@ -2,32 +2,22 @@
 (authored by agents unless marked 🧑)
 Tag: `xie2024natural`, [paper](https://arxiv.org/abs/2405.07973)
 
-## purpose and architecture
-Xie, Hui, and Cao design a proof language that preserves natural-language proof structure while making each step checkable. The paper’s central claim is that “we design a natural-language-like formal proof language for modeling mathematical proofs.” (section 1, p. 3) The paper also states, “For each step of reasoning, corresponding solvers are chosen heuristically in order to check its correctness.” (section 1, p. 3) The implementation, ProofGrader, parses this language to an abstract syntax tree (AST), statically resolves ambiguities, and checks the resulting proof step by step with modular solvers (sections 1 and 4, pp. 3, 9–12). The paper targets mathematical proof formalization and educational grading (section 1, pp. 1–3).
-
-## technique: proof actions and explicit proof-goal transformations
-Inference: use the AST when a language-model output or human proof should remain readable while exposing checkable state changes. The grammar separates proof actions from forward and backward proof statements. The core actions are `AIntros`, `AExists`, `ASuppose`, `ASet`, `ASetProp`, and `AExistVar`; forward nodes include `PoseWithoutProof` and `PoseAndProve`; backward nodes include `ClaimSuffice` and `ProveSuffice`; conclusions use `ConclWithoutProof` or `ConclAndProve` (section 2, pp. 3–6).
-
-To apply it, parse each proof sentence into an AST node, then interpret the node against a proof goal `(A,C)` consisting of premises `A` and conclusion `C` (section 3, p. 7). `AIntros` removes a universal quantifier and substitutes a fresh variable; `AExists` substitutes a witness whose free variables already occur in the goal; `ASuppose` removes an implication and adds a proposition equivalent to its antecedent to the premises; `ASet` binds a term after checking well-definedness; `ASetProp` adds a proposition that may introduce variables; and `AExistVar` instantiates an existential premise (section 3, pp. 7–8). For `ASet`, the paper states: “The requirement for well-definiteness ensures that a term does not appear before its existence has been proved in the proof goal.” (section 3, p. 7)
-
-## technique: partial proofs for locally introduced assumptions
-Partial proof handles informal arguments where the subgoal is not stated before introducing temporary assumptions. `PosePartialProof` starts a nested proof with `APoseVar` or `APoseProp`; `EndPartialProof` closes it and adds the derived results back with dependencies (section 2, pp. 5–6). The monotone-convergence example poses ε > 0, derives facts under that assumption, and then turns the result into a statement universally quantified over ε (section 2, p. 6; Table 3, p. 10).
-
-Procedure: start the partial block with a variable and its predicates, or a proposition over existing variables; check each nested result; at the end, remove temporary premises and prefix each result with the assumptions on which it depends. The `PoseVar` rule restricts the free variables of the assumptions `sP` to those in the original goal plus the posed variable `s`; `PoseProp` restricts the free variables of its assumption `P` to those in the original goal (section 3, p. 9). The paper explains: “After the partial proof terminates, these results are added with dependencies on the assumptions, by prefixing them with universal quantifiers and prerequisite conditions.” (section 3, p. 9)
-
-## technique: static analysis to resolve context and notation
-Parsing is intentionally a plain grammar translation; static analysis then elaborates the AST (section 4.2, p. 10). The analyser infers how a step changes the preceding and following proof goals, selects the interpretation consistent with that transition, and often performs lexical-scope analysis (section 4.3, p. 11). For “there exists A”, it distinguishes: a witness for the goal’s existential, an existential proposition, or a newly bound variable. Algorithm 1, HCDS, inserts `AExistVar` after an existential proposition when its quantified variable occurs freely in the subsequent proof (section 4.3, p. 12). The analyser similarly resolves overloaded `f(x)` and `{a_n}` by checking whether the apparent variable is bound; Algorithm 2, HON, rewrites an equation `f(x) = t1` to `f = λx.t1` when `x` is absent from the bound-variable list; an `ASet` step adds its variable to that list (section 4.3, p. 12).
-
-## technique: bounded, prioritized solver manager
-Proof checking repeatedly applies formal transition rules and asks a solver manager whether a proposition is deducible (section 4.4, pp. 12–13). Each solver exposes `solve(s,p)`, a cost, a default priority, and a proposition-dependent priority (section 5.1, p. 14). The `usablelist` procedure selects conditional solvers with nonzero dynamic priority and appends general solvers. An empty result accepts; `false` immediately rejects; returned subpropositions are recursively checked after subtracting the solver’s cost. The prose describes pruning unchanged propositions and accepting a decomposition only if all its subpropositions pass. However, Algorithm 3 sets `flag = true` when a recursive check is false, then returns true when that flag is true, contradicting this prose (section 5.2, p. 15). The cost limit is intended to prevent nontermination; the paper does not establish termination formally. Configuring the solver list lets an educator disable advanced theorems or powerful automation (section 5.2, p. 15).
-
-## evidence, trust, and limits
-The paper describes its design goal as follows: “The notion of partial proof can be considered as one innovation of our proof language.” (section 2, p. 6) The evaluation runs the parser and checker on 52 mathematical proofs covering arithmetic, trigonometry, exponentials/logarithms, inequalities, derivatives, sequential limits, and continuity (section 6.1, p. 16; Table 4 denominator: 52 total examples, with per-topic counts 2–10). Table 4 reports per-topic average parser times of 34–78 ms and checker times of 477–7,758 ms; average memory values range from 3,328 to 3,968 in the table’s units, labeled `kb`. The largest average checker time is for the topic containing two function-continuity proofs. The paper reports no soundness proof for its proposition predicates or solver implementations: “These predicates are implemented as functions within our proof checking system, however, they are too cumbersome to define formally.” (section 3, p. 7) Inference: accepting the prototype’s results requires trusting its proof-processing and checking implementations; the paper does not establish their correctness through a soundness proof.
-
-The paper reports feature comparisons against Waterproof, Diproche, Lurch, Isabelle, and Coq (Table 5, p. 17), but it does not measure translation accuracy from unrestricted natural language or compare proof completeness on a common benchmark. Inference: for agent-written verified Rust, the valuable lesson is explicit intermediate obligations and bounded, inspectable automation; the threat is that an elaborator or solver manager can silently encode a mistaken interpretation unless every emitted claim is rechecked by Verus.
-
-## techniques for the catalog
-- proof-action AST — encode readable proof steps as explicit premise/conclusion transformations
-- partial-proof dependency closure — discharge temporary assumptions and quantify every derived result over them
-- context-sensitive elaboration — use goal transitions and lexical scope to resolve ambiguous statements and notation
-- bounded solver scheduling — select proposition-specific solvers with priorities, costs, recursion, and branch pruning
+ProofGrader: natural-language-like formal proof language, each step checkable
+- parse to AST, resolve ambiguity statically, check step by step with modular solvers
+- proof actions = explicit premise/conclusion transformations
+- partial proofs
+  - introduce temporary assumptions, discharge them, quantify derived results over them
+- static analysis resolves context and notation from goal transitions and lexical scope
+- solver manager: heuristic per-proposition solver choice
+  - priorities, costs, recursion, branch pruning, bounded effort
+evidence
+- 52 math proofs (arithmetic to continuity)
+  - parser 34-78 ms avg, checker 477-7,758 ms avg per topic
+- only feature comparison with Waterproof, Diproche, Lurch, Isabelle, Coq
+  - no accuracy or completeness benchmark, no unrestricted NL translation
+trust
+- no soundness proof for predicates or solvers
+  - paper: "too cumbersome to define formally"
+takeaway for Verus
+- explicit intermediate obligations and inspectable bounded automation
+- risk: elaborator silently encodes a wrong reading unless Verus rechecks every claim

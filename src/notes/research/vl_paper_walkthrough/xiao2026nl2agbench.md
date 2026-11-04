@@ -2,44 +2,31 @@
 (authored by agents unless marked 🧑)
 Tag: `xiao2026nl2agbench`, [paper](https://arxiv.org/abs/2608.28481)
 
-## benchmark and formalization target
-NL2AGBench measures whether an LLM can translate an English geometry problem into AlphaGeometry’s domain-specific language (DSL). The source pool is 231 manually formalized AlphaGeometry instances from the JGEX repository; the benchmark selects 48 representative problems. The paper requires both syntax and semantic preservation: the DSL must parse, and it must preserve geometric objects, constraints, and target conclusions (Section III-A, pp. 3–4). Its evaluation criterion is executable rather than textual: “A translation is considered successful if and only if it can be executed by AlphaGeometry without error and produces a valid problem specification.” (Section III-A3, p. 4.) The authors state, “Our taxonomy provides a standardized framework for analyzing failures in AlphaGeometry auto-formalization.” (Section IV-C, p. 7.)
-
-## technique 1: construct an executable paired benchmark
-Inference: Use this when natural-language inputs have multiple equivalent formal renderings. Start with a repository containing informal problems and trusted formalizations. Filter for verified specifications and choose a diverse, runnable subset. NL2AGBench selects 48 of 231 AlphaGeometry-formalized JGEX problems, covering circles, cyclic quadrilaterals, angle bisectors, orthocenters, circumcenters, midpoints, reflections, and perpendicular constructions; it excludes problems whose execution is too expensive (Section III-A1–2, pp. 3–4). Store each English problem with its verified DSL and run every candidate through AlphaGeometry.
-
-Inference: for Verus, pair Rust functions with checked Verus contracts and representative inputs. Keep source statements, generated code, and proof outcomes together. Diversity should include ownership, mutable state, arithmetic, concurrency interfaces, and unsafe/FFI boundaries; a benchmark that only samples easy pure arithmetic will overstate agent reliability. The AlphaGeometry engine is a trusted checker for DSL execution; in a Verus benchmark, the Verus verifier and Rust compiler occupy that role, while the benchmark’s specifications remain trusted inputs.
-
-## technique 2: constrained single-output prompting
-The benchmark gives the model official AlphaGeometry syntax definitions, handwritten clause and formatting rules, and the target problem. The prompt requires exactly a two-line answer containing the problem identifier and DSL representation, with no explanation or alternatives (Section III-B, p. 4). This makes the output directly executable and avoids post-hoc extraction of code from prose.
-
-## technique 3: execution-based outcome classes
-For every translation, execute the generated DSL. Label it successful, a syntax error when grammar or construction rules fail, or a logic error when syntax is valid but geometry is semantically wrong (Section III-C, p. 5). The paper’s error taxonomy refines syntax errors into assertion, key, and value errors, and logic errors into omitted constraints, incorrect relations, wrong target predicates, or misinterpreted terminology (Section IV, pp. 5–7).
-
-The concrete examples are useful diagnostics. An `AssertionError` occurs when `reflect` receives too few points. A `KeyError` occurs when an output point is not repeated in a circumcenter clause, when semicolons are misplaced before a proof clause, or when an extra `eqangle` is hallucinated. A `ValueError` occurs for self-referential constructions or incorrect predicate arity. A valid but wrong `r_triangle` statement can assert perpendicularity for the wrong pair of lines; the modified ag4masses system exposes this by freezing, whereas the official system can continue until it freezes (Section IV-A–B, pp. 5–7).
-
-Inference: classify Verus-generation failures similarly: parser/type errors, verifier failures caused by missing or malformed contracts, and verifier-passing semantic errors found by independent specifications or tests. Keep the categories separate because syntax repair and invariant repair require different prompts. A successful compile or proof only establishes the checked specification, so the specification itself must be reviewed.
-
-## technique 4: few-shot translation
-Each model receives 54 paired English/DSL examples exposing common constructions, syntax patterns, and proof predicates (Section V-A, p. 8). Compared with zero-shot prompting, few-shot prompting raises executable translation rates across all evaluated models. The paper reports Gemini 3.1 improving from 62.5% to 83.3% on the 48-problem benchmark, Grok-3 from 52.1% to 62.5%, Sonnet 4.6 from 37.5% to 52.1%, and GPT-5.4 from 75.0% to 79.2%. Qwen3:235B rises from 12.5% to 45.8%, and Llama3.1:70B from 0% to 23%; Mistral:7B, Nemotron-3 Nano:4B, and Llama3.2:3B remain at 0% (Table I and Section V-A, pp. 8–9). These percentages use 48 problems per model and setting; the paper describes gains as approximate in prose.
-
-Inference: Verus few-shot examples should be paired with successful proof scripts and the exact contracts they discharge, including examples of failed obligations and corrected invariants. Retrieval by syntactic resemblance alone can teach surface patterns; examples should cover semantic variations such as aliasing and loop invariants. Few-shot prompting changes generation, not the trusted checking boundary.
-
-## technique 5: two-stage human-guided correction
-After an initial translation, provide a diagram and ask the model to reassess it (stage 1). The diagram supplies collinearity, circle membership, and auxiliary-construction information that text may leave implicit. Then inspect the revised output and, if needed, provide an error-specific hint about a wrong parameter count, predicate misuse, or invalid construction; ask the model to revise only the problematic part (stage 2) (Section V-B, pp. 9–10). The paper reports improvement for GPT-5.4 by 14.29%, Gemini 3.1 by 14.63%, Claude Sonnet 4.6 by 26.47%, and Grok-3 by 32.14%; each percentage is the change reported for that model’s evaluated set, but the paper does not state a denominator in the paragraph reporting these gains. It therefore cannot be independently converted to a problem count from that paragraph alone.
-
-Inference: the Verus analogue is a verifier-guided repair loop. First provide the failing obligation, relevant types, and local invariant context; then provide a targeted hint naming the missing precondition or lemma and ask for a localized patch. Human review is still required when the specification may be wrong. This approach scales poorly when every failure needs manual diagnosis, exactly as the paper says: “Diagram interpretation requires additional problem resources, and error-specific hints require manual inspection of model outputs.” (Section V-B, p. 10.)
-
-## technique 6: supervised fine-tuning and its limit
-The authors fine-tune smaller open-source models on HAGeo-409, a human-verified collection of geometry problems paired with AlphaGeometry formalizations (Section V-C, p. 10). Fine-tuning improves grammar adherence and reduces syntax errors, but executable accuracy remains limited: models can learn surface DSL patterns while producing semantically incorrect constructions. The paper reports, “Fine-tuning improves adherence to AlphaGeometry syntax and reduces several categories of grammar-related errors.” (Section V-C, p. 10.) Inference: fine-tuning a Verus model on proof/code pairs may improve syntax and library idioms, but does not establish that a generated contract expresses the intended behavior. A second independent specification, differential test, or human review remains necessary.
-
-## what is checked and what remains trusted
-The executable AlphaGeometry engine checks generated syntax and can expose certain semantic inconsistencies; the dataset’s formal specifications, problem selection, model weights, prompt examples, timeout rule, and interpretation of logic errors remain trusted. Runs exceeding five minutes without new output are classified as logic errors in the modified ag4masses evaluation (Section IV-B, p. 7). The benchmark covers 48 problems, so its rates estimate this set and do not establish reliability on arbitrary geometry or arbitrary DSLs. The reported 85%+ closed-source claim is a headline comparison; model-level Table I values and the 48-item denominator are the precise evidence.
-
-## techniques for the catalog
-- executable paired benchmark: store natural-language tasks with verified formal targets and run generated outputs
-- constrained output prompting: require a parser-ready artifact with no explanatory text
-- execution-based taxonomy: separate syntax, construction, and semantic failures by running the checker
-- few-shot formal examples: provide verified input/output pairs covering syntax and semantic variants
-- verifier-guided repair: feed localized checker errors or hints back into a second generation pass
-- fine-tuning with caution: improve DSL fluency while independently checking semantics
+NL2AGBench: LLM auto-formalization of English geometry into AlphaGeometry DSL
+- 48 problems chosen from 231 manually formalized JGEX instances
+- success iff AlphaGeometry executes it and yields a valid problem spec
+  - executable check, not textual match
+error taxonomy from execution
+- syntax errors: assertion, key, value errors
+- logic errors: omitted constraint, wrong relation, wrong target predicate, misread terminology
+- >5 min without output counts as logic error
+  - modified ag4masses freezes on wrong-but-valid statements
+prompting and few-shot
+- prompt demands exactly 2 lines (id + DSL), no prose, so output is parser-ready
+- 54 few-shot examples lift every model that scored above 0
+  - Gemini 3.1 62.5% to 83.3%, GPT-5.4 75.0% to 79.2%
+  - Sonnet 4.6 37.5% to 52.1%, Grok-3 52.1% to 62.5%
+  - Qwen3:235B 12.5% to 45.8%
+  - Mistral:7B, Nemotron-3 Nano:4B, Llama3.2:3B stay at 0%
+two-stage human-guided correction
+- stage 1: show diagram and ask to reassess
+- stage 2: error-specific hint, revise only the faulty part
+- gains: GPT-5.4 14.29%, Gemini 3.1 14.63%, Sonnet 4.6 26.47%, Grok-3 32.14%
+  - denominator not stated
+- needs manual diagnosis, scales poorly
+fine-tuning on HAGeo-409
+- fixes syntax adherence, not semantics
+limits and Verus takeaways
+- only 48 problems
+- inference: classify Verus failures as parse/type, verifier, verifier-passing but wrong spec
+  - passing the checker only validates the spec as written, so the spec still needs review

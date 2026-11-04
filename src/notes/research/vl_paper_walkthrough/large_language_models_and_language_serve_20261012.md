@@ -2,50 +2,42 @@
 (authored by agents unless marked 🧑)
 Tag: `schena2026large`, [paper](https://arxiv.org/abs/2609.03086v1)
 
-## what the paper builds
-
-Eiffel-tools is an LSP language server that puts an editor, a language/project index, an LLM, and AutoProof in one loop. The server reads the Eiffel configuration, recursively analyses used libraries, indexes features, contracts, and inheritance, and exposes that index through ordinary LSP interfaces. It parses both source and model responses with Tree-sitter, then extracts only syntactically valid features, bodies, or contracts. The paper says, “This information is also integrated into LLM prompts when relevant to give the relevant context to the model” (Section 4, p. 5). The design avoids requiring a complete compiler so projects with missing files or compile errors can still be edited. AutoProof is an auto-active verifier: model-based contracts become Boogie proof obligations, and a timeout kills a non-terminating verification. For repair commands, a generated change is reverted to the last stable state when verification fails; the interactive contract-add command instead filters and inserts contracts without changing the body.
-
-Inference: the reusable principle is a typed adapter boundary. The LSP command knows which identifiers, contracts, and syntax are relevant; repair prompts additionally include verifier diagnostics; the model proposes a bounded artifact; a parser rejects malformed output; and repair commands use the verifier as an acceptance test with rollback. The authors describe the goal directly: “we can force any command that generates code to produce only verified code” (Section 2.3, p. 4). This is a claim about the tool's acceptance policy, not proof that the generated specification is semantically what the user intended.
-
-## technique 1: context-indexed, parsed generation
-
-Use this when a language is low-resource or the model needs project-specific names and contracts. Build an index from the project configuration and libraries. Store each class's features, contracts, and inheritance tree. For a requested feature, derive the current class, argument-class models, identifiers legal in preconditions and postconditions, feature signature, header comment, and class invariant; repair commands add the verifier's error or counterexample to this command-specific context. Put these in a structured prompt. Parse the model response with Tree-sitter; extract the expected syntactic unit and discard anything that is not a valid feature or contract. The paper notes that LSP custom operations “may access the server state and use the project and language specific knowledge to implement their custom logic” (Section 2.3, p. 4).
-
-Verus mapping (inference): the equivalent adapter would query Rust syntax and type information, collect the function signature, `requires`/`ensures`, visible variables, traits and impl context, and the Verus diagnostic. Generate a bounded Rust/Verus function or annotation block, parse it with `syn`/rust-analyzer-like machinery, and reject code that does not type-check before invoking Verus. The project index must preserve module paths, generic bounds, mutable-borrow facts, and imported specs; Eiffel's identifier list does not carry Rust ownership automatically. The context strategy carries over; Eiffel syntax templates and model-based contract filtering do not.
-
-## technique 2: add model-based contracts
-
-Use this when executable checks exist but static functional specifications are missing. The command accepts a feature and optional hints in its header comment. Prompt fields are: task, current-class model, argument-class models, identifiers available in preconditions, identifiers available in postconditions, then the complete feature with existing clauses and placeholders for additions. Ask the model for candidate feature definitions. Parse each candidate, extract only proposed preconditions and postconditions, and filter contracts that are redundant, not model-based, use invalid top-level identifiers, or call with the wrong number of arguments. Append the remaining contracts after existing ones; the editor inserts them without replacing the body. The paper's example turns a trivial `min` postcondition into “res: (Result = x or Result = y) and Result ≤ x and Result ≤ y” (Figure 1, p. 7). The paper explicitly warns that AutoInfer and Citadel generate contracts for dynamic checks, whereas this command targets model-based specifications (Section 3, p. 4).
-
-Verus mapping (inference): generate `requires` and `ensures` clauses, but run a stricter policy. Parse candidate clauses, resolve every name and type, reject clauses that mention ghost state incorrectly or weaken an existing contract, and optionally ask Verus to prove the unchanged body. Keep additions separate from edits so a human can review semantic strengthening. Verus specifications are ordinarily ghost and non-executable, so the distinction between executable and model-based contracts changes, while candidate extraction, name checking, and proof gating carry over.
-
-## technique 3: fix one feature body with an instrumented override
-
-Use this when the specification is trusted and only the implementation is broken. The command never edits specifications. It creates a subclass that overrides the target feature, preserving the original class. It sends the feature context and an `<ADD BODY>` placeholder to the model, extracts a body, inserts it into the override, and runs AutoProof. On failure it requests another body; on success it copies only the body into the original feature. If no candidate verifies before the attempt limit, the original remains unchanged. This isolates intermediate invalid programs from the user's file. The paper's Figure 2 shows `min` with a postcondition requiring the result to be one of the inputs and no greater than either; the generated branch body is accepted only after the verifier succeeds (Section 4.1, pp. 7–8).
-
-Verus mapping (inference): generate a replacement body in a temporary module or cloned function with the same `requires`/`ensures`, then run `verus` on that harness. Rust's orphan rules and trait coherence may make a literal subclass impossible; use a temporary wrapper, a copied function in a verification-only module, or a feature branch. Preserve ownership and lifetime context exactly. Copy the body only after proof success. The acceptance property is strong for the stated contract but cannot detect an underspecified or wrong contract.
-
-## technique 4: verifier-feedback repair at feature and class granularity
-
-Use feature-by-feature correction for batch repair. Parse the whole project and select classes or features. For every failing feature, send a two-message prompt: a system task plus Eiffel syntax guide, then a user message containing available identifiers, feature code, class invariant, and the AutoProof counterexample or compilation error. Replace the backed-up feature with the parsed candidate and rerun AutoProof. Restore the backup after failure and retry until success or a fixed limit. The paper states, “If verification still fails, the original is restored and another candidate is tried” (Section 4.2, p. 9). A class-level command applies the same protocol to an entire class, allowing specifications and bodies to change together; it is the only command that asks for a large, consistent output in one step (Section 4.2, p. 9).
-
-## technique 5: bounded retries, prompt ablation, and measurement
-
-The evaluation fixes 539 bugs from two public Eiffel datasets—513 translated BuggyJava+JML examples and 26 Maple examples—with three models, two prompt variants, and at most ten attempts per feature. Each attempt verifies the current version, includes the result in the next request, parses a candidate, and verifies it. The “full” prompt supplies a syntax guide, a verbatim feature template, available variable names and types, and the concrete error. “Minimal” omits these and merely says there is a problem. The full prompt improves the average success rate by 6.4 percentage points; Sonnet 4.6 fixes 513/539 (95.2%) full and 486/539 (90.2%) minimal, GPT-5 Nano 443/539 (82.2%) and 415/539 (77.0%), and Laguna XS 458/539 (85.0%) and 410/539 (76.1%) (Section 6, pp. 14–15). Among features that are eventually fixed, the first attempt accounts for 67.9% to 83.5% depending on model and prompt. Figures 8–9 report means per feature run, including successful and unfixed features after all attempts: wall-clock time ranges from 35 seconds (Sonnet full) to 195 seconds (Laguna minimal), while Sonnet costs $0.0307 full and $0.0261 minimal per run and GPT costs $0.0080 and $0.0061 (Figures 7–10, pp. 15–17).
-
-Verus mapping (inference): measure verified-function rate as successes/attempted functions, report the denominator, attempt budget, model, prompt context, verifier timeouts, and cost. Compare context ablations rather than assuming a larger prompt helps. A retry loop should stop on a deterministic budget or verifier timeout and retain every candidate and diagnostic for audit.
-
-## what is proved, trusted, and assumed
-
-AutoProof proves functional correctness of the submitted Eiffel body relative to the submitted model-based contracts. Inference: the verifier, Boogie translation, and SMT checker are soundness-critical trusted components; the LLM, prompt construction, parser, and source index affect candidate quality and completeness but are not proof of user intent. The authors assume contracts are correct in the feature-correction command; this is not the same as proving the datasets correct by construction. Public benchmarks may have leaked into model training: the paper says, “It is possible that those benchmarks leaked in the training data of some LLMs” (Section 7, p. 17). The paper measures repair success, time, token use, and cost, not production defect rates or specification adequacy. The figures are internally consistent for 539 tasks, but “vormal verification” in the conclusion is a typographical error, not a separate method.
-
-## techniques for the catalog
-
-- context-indexed generation — index project symbols and contracts, then give only legal, relevant context to a parser-gated model request
-- model-based contract synthesis — generate candidate preconditions and postconditions, filter names and calls, and retain additions only after the paper's stated validity checks
-- isolated body repair — test a generated body in a temporary override or harness and copy it back only after verification
-- verifier-feedback transactions — feed diagnostics into bounded retries while restoring the last stable source on failure
-- granularity and ablation measurement — compare feature versus class repair and full versus minimal prompts with explicit success denominators, attempts, time, and cost
-
-Audited 2026-10-12 against the paper: checked every number (513/539, 486/539, 443/539, 415/539, 458/539, 410/539 and percentages, 6.4 pp, 67.9% to 83.5%, 35 s to 195 s, costs, 513+26=539), page and figure references, quotations, and the command steps for add contracts, fix feature body, feature-by-feature and class-by-class repair against Sections 2 to 7; no Verus code is given, the Verus mappings are marked inference. Changed: the AutoInfer and Citadel reference page from 5 to 4; labelled the typed adapter boundary sentence as inference. Note that the paper itself is inconsistent: Section 4.2 says a failed feature is restored, Section 5 says the failed fix is kept for the next attempt; the study reports both.
+eiffel-tools: lsp server looping editor, project index, llm, AutoProof (eiffel auto-active verifier)
+- index parses config, libraries, features, contracts, inheritance with Tree-sitter
+  - no full compiler needed, so broken projects still work
+- prompt context is command-specific
+  - current class, argument-class models, legal identifiers in pre/postconditions, signature, invariant
+  - repair commands add verifier error or counterexample
+- llm output is parsed, only valid features/bodies/contracts kept
+- claim: "we can force any command that generates code to produce only verified code"
+  - acceptance policy only, does not prove spec matches user intent
+commands
+- add model-based contracts
+  - generate candidate pre/postconditions, filter redundant, non-model-based, bad identifiers, wrong arity
+  - append after existing clauses, body untouched
+  - example: trivial min postcondition becomes result is x or y, and ≤ both
+- fix feature body
+  - spec trusted, never edited
+  - generate body in a subclass override, run AutoProof, retry on failure
+  - copy body back only on success, so invalid intermediates never touch user file
+- feature-by-feature and class-level repair
+  - prompt = system task + syntax guide, then identifiers, code, invariant, counterexample
+  - restore backup on failure, retry to attempt limit
+  - class-level changes specs and bodies together, one large output
+eval: 539 bugs (513 BuggyJava+JML translated, 26 Maple), 3 models, ≤10 attempts
+- full prompt (syntax guide, template, variable types, concrete error) beats minimal by 6.4 pp avg
+  - Sonnet 4.6: 513/539 (95.2%) full, 486/539 (90.2%) minimal
+  - GPT-5 Nano: 443 (82.2%) vs 415 (77.0%)
+  - Laguna XS: 458 (85.0%) vs 410 (76.1%)
+- first attempt gives 67.9%-83.5% of eventual fixes
+- mean per feature run: 35 s (Sonnet full) to 195 s (Laguna minimal)
+  - cost: Sonnet $0.0307 full / $0.0261 minimal, GPT $0.0080 / $0.0061
+caveats
+- benchmarks may have leaked into training data
+- measures repair success, time, cost, not spec adequacy or production defects
+- paper inconsistent: sec 4.2 restores failed feature, sec 5 keeps failed fix for next attempt
+verus transfer (inference)
+- carry over: context index, parser gate, verifier as acceptance test with rollback, context ablations, report denominators
+  - need rust ownership, generics, module paths in the index
+  - eiffel syntax templates and model-based contract filtering do not transfer
+- body repair needs temp module or copied function, since orphan rules block a literal subclass

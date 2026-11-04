@@ -2,55 +2,38 @@
 (authored by agents unless marked 🧑)
 Tag: `gloeckle2026wybecoder`, [paper](https://arxiv.org/abs/2603.29088v2)
 
-## scope and central claim
-
-WybeCoder is an agentic workflow for synthesizing imperative programs and their proofs together. The paper translates the functional Verina and Clever benchmarks into Loom/Velvet, a shallow imperative language embedded in Lean. A generated method contains `require`, `ensures`, mutable variables, loop invariants, and a decreasing termination measure. Velvet lowers these to verification obligations; CVC5 handles routine obligations and Lean agents repair the rest. The authors report 74.1% on Verina and 62.1% on Clever-Loom for their strongest sequential Claude Opus setting, and successful generated proofs for a roughly 2,000-line Heapsort development. These numbers measure benchmark end-to-end success (implementation plus proof), not production Rust correctness.
-
-The key technique is hybrid verification. Pure SMT auto-active systems are good at routine conditions but give opaque failures; pure interactive proving handles failures but requires every proof step. WybeCoder alternates the two. The paper states: "This approach allows users to revert to manual proofs in Lean or Rocq when automated solvers reach their limits." (Section 2.2, p. 3). In Verus, the analogous design is a Rust method with `requires`, `ensures`, `invariant`, `decreases`, and `assert`/`by` proof blocks, with Verus/Z3 discharging arithmetic and quantified conditions and explicit proof lemmas handling residual goals. This mapping is an inference: the paper targets Lean/Velvet and CVC5, not Verus. Ownership, borrowing, executable Rust semantics, and Verus's trigger behavior still need separate proofs.
-
-## technique: imperative contracts and loop invariants
-
-Use this when a specification describes mutable arrays, loops, or side effects. Start from a mathematical postcondition, then choose a mutable implementation and state the relation between the current state and the processed prefix. The paper's running sum has `s = (xs.take i).sum ∧ i ≤ xs.size`, with `decreasing xs.size - i`; at loop exit, `i = xs.size` yields the postcondition. The method is proved by (1) checking the precondition establishes the invariant, (2) proving each body assignment preserves it under the loop guard, (3) proving the guard's negation plus invariant implies `ensures`, and (4) proving the decreasing expression reaches termination. The study's own Hoare-logic reading (the paper only cites Hoare logic as the basis): `{I ∧ B} C {I}` gives preservation and `{I}` after the loop combines with `¬B`.
-
-In Verus, write a mutable `while` with `invariant` clauses and `decreases`; use sequence snapshots or ghost sequences to express the processed prefix while the executable array remains mutable. State bounds (`i <= xs.len()`) explicitly. For an array sum, use a ghost `Seq<int>` or a quantified relation to the original input, and add arithmetic assertions where the solver cannot bridge `i+1`. Functional sequence operations belong in ghost specifications only; the implementation must retain constant-time array access. Evidence in the paper is the 64.6% Verina result for GPT-5 sequentially (32 turns × 16 agents), while its limitations show that dynamic programming and heavy array mutation are much harder than scans and folds (Sections 5.7, p. 7). The assumptions are a sound Velvet semantics, trusted Lean kernel, and correctly stated contracts; an incorrect invariant can prove the wrong property.
-
-## technique: sequential compiler-feedback repair
-
-Use this as the simplest baseline or when a single coherent context is more useful than parallel workers. Give the model the specification and an initial method. Run Lean/Velvet; append the generated code and compiler error to history; ask for a revised complete method; stop on success or after `T` turns. The paper's Algorithm 2 is explicit: `code ← M(P, history)`, `result ← E(code)`, and `history ← history + [(code, result.error)]`. In Verus this is a loop around `verus` diagnostics, preserving prior code and error text. Do not treat compilation as proof of intended behavior: only a successful Verus verification against the contract counts.
-
-The reported tradeoff is substantial: on Verina, Claude Opus reaches 74.1% at 32 × 16, while the smaller GPTOSS-120B reaches 30.2% at 16 × 4 (Table 1). Sequential attempts benefit from either more turns or independent pass@k attempts; the paper finds useful multi-turn iteration and an optimal turn range near 6–16 in its bounded experiments. A failure mode is solver opacity: a generic error may not reveal whether an invariant is too weak or a conclusion is false.
-
-## technique: subgoal decomposition with proof transfer
-
-Use this for methods with many independent verification conditions. Extract each obligation (entry, loop preservation, exit, decreases, and named auxiliary conditions) as an independent theorem. Launch prover agents concurrently. If all succeed, reconstruct the full correctness theorem from the subgoal proofs (the paper allows an optional sequential agent to fix reconstruction issues). If any agent returns a concrete `CHANGE`, update the implementation or invariants, re-extract goals, and transfer proofs whose deterministic names still match. If all agents fail without a requested change, stop. Algorithm 1 gives this control loop and uses names such as `h_count.loop` for stable matching.
-
-For Verus, name invariants and helper lemmas consistently (for example, `sum_loop_preservation`) and keep method signatures stable while repairing one obligation. Verus does not expose Lean's theorem extraction API, so an orchestrator would need to generate temporary proof modules or isolate `assert` blocks; this is an inference. Stable names and goal-local edits avoid destroying already checked proofs. The technique scales: on Heapsort, the authors used 215 subagents for `heapify`, 8 for `maxheap`, and 134 for `heapsort_main`; the resulting Lean code is about 2,000 lines and all three methods verify (Section 5.8 and Appendix H). Yet decomposition is model-dependent: GPT-5 scores 57.7% versus 64.6% sequential on Verina, while Gemini benefits more from decomposition; a shared-state run can keep improving one rollout but consumes substantial compute (Tables 1–2, Figure 4).
-
-## technique: goal-directed implementation changes
-
-An implementation change must be justified by an unprovable obligation, rather than made speculatively. The paper's rule is that insufficient hypotheses call for stronger invariants, while unprovable conclusions require weaker ones; the agent then reports a change, the method is re-implemented, and proofs for unchanged named goals are transferred. The helper-lemma and edit-only-the-necessary-method details are the study's inference. This is the paper's bridge between auto-active invariant synthesis and interactive diagnosis. In Verus, the same discipline means requiring each generated edit to cite a failing `assert`/invariant and rerunning the verifier before accepting it. It reduces accidental regressions but does not prevent a model from changing behavior while retaining an overly weak contract.
-
-## technique: leakage controls and imperativeness judging
-
-Benchmarks can be solved without the intended algorithm. Specification leakage occurs when a postcondition contains a computable reference function; the model can return that function directly. Functional leakage occurs when an imperative method wraps a pure `List.foldl` or similar function in the monad. The paper's concrete warning is: "Robustly mitigating leakage. We address both specification and functional leakage through a unified strategy: rather than attempting to obfuscate specifications as in Clever, we permit functional specifications but enforce imperative implementations." (Section 3.1, p. 4). Enforce this by allowing functional expressions in ghost contracts, forbidding functional primitives on critical runtime paths, and applying an imperativeness judge to generated code. Their GPT-5 decomposition score falls from 75.1% unguarded to 51.9% after judging, but manual review found the latter genuinely imperative (Section 5.4).
-
-For Verus, inspect the executable body for `Seq`/`fold` substitutes and require array or map mutation with the promised asymptotic shape. A judge is a screening layer, not evidence of correctness; the Verus verifier remains authoritative. This control assumes the judge recognizes all cheating patterns and does not reject valid low-level code. It also does not solve a bad specification.
-
-## technique: disprove unsatisfiable specifications
-
-When a benchmark may contain a contradictory contract, provide the agent with a choice: prove an implementation or prove that some input satisfies the precondition while no output satisfies the postcondition. WybeCoder automatically generates a theorem of the form `∃x ∈ X, P(x) ∧ ∀y ∈ Y, ¬Q(x,y)`. The model is not told which case applies. In Verus, this can be a separate `proof fn` constructing a counterexample and universal contradiction. Report disproofs separately from implementations because they establish a stronger fact than a wrong implementation. On Verina, GPT-5 was "notably successful on 347/384" of the cases in 32-turn evaluations (the paper does not define the 384; 12 specifications times 32 turns is the study's inference); all models except Sonnet proved 12 unsatisfiable specifications (Section 5.3). This result is benchmark diagnosis, not evidence that the generated program is safe.
-
-## techniques for the catalog
-
-- hybrid SMT plus interactive proof repair — generate imperative verification conditions, discharge routine goals automatically, and use interactive theorem agents for residual goals
-- contract-directed loop invariant synthesis — express prefix/state relations, bounds, preservation, exit, and termination for mutable loops
-- sequential compiler-feedback agent — alternate complete code generation with verifier diagnostics until success or budget exhaustion
-- subgoal decomposition and proof transfer — solve named obligations in parallel, reconstruct proofs, and preserve unchanged proofs across goal-directed edits
-- imperativeness and leakage control — allow functional ghost specifications while screening executable code for reference-function wrappers
-- unsatisfiable-contract disproof — prove a preconditioned counterexample theorem when no implementation can satisfy the postcondition
-- frame-aware specification engineering — state permutation, untouched regions, and decomposition contracts before asking agents to prove algorithms
-
-## study status
-
-This study is based on the complete extracted text, including appendices and the Heapsort listing. The paper's reported numbers use Lean/Velvet and are not Verus measurements; all Verus mappings above are explicitly marked as inference where the paper does not establish them.
-Audited 2026-10-12 against the paper: checked the Table 1 and Table 2 rates, 75.1 to 51.9 judge drop, 12 unsatisfiable specifications, 215/8/134 Heapsort subagents, Algorithms 1 and 2, section and appendix pages of the three quotations; corrected the leakage quotation (specification, not specific), the 347/384 disproof count wording, the goal-directed change rule (paper: stronger or weaker invariants, not weaker postcondition or helper lemma), the reconstruction step, and removed an unsupported cost claim and an unsupported host-side test claim; marked the Hoare triple reading as the study's. Not checked: Verus syntax beyond local Verus notes, and Heapsort listing contents beyond the stated properties.
+agentic imperative code + proof generation in lean (Loom/Velvet), not verus
+- verina and clever benchmarks translated to imperative form with require/ensures/invariant/decreasing
+- CVC5 discharges routine obligations, lean agents repair the rest
+- best: 74.1% verina, 62.1% clever-loom (sequential claude opus)
+- heapsort ~2,000 lines verified
+- end-to-end benchmark success, not production rust correctness
+hybrid auto-active + interactive verification
+- SMT handles routine conditions, interactive proving handles residual goals
+- verus analogue: z3 plus explicit proof lemmas (inference)
+sequential compiler-feedback repair
+- loop: generate full method, run verifier, append code + error to history, up to T turns
+- opus 74.1% at 32x16, GPTOSS-120B 30.2% at 16x4 on verina
+- useful turn range ~6-16
+- failure mode: opaque solver errors
+subgoal decomposition with proof transfer
+- extract entry/preservation/exit/decreases as named theorems, prove in parallel
+- on CHANGE request, revise implementation, re-extract, transfer proofs of matching names
+- heapsort used 215/8/134 subagents for heapify/maxheap/heapsort_main
+- model-dependent: gpt-5 57.7% vs 64.6% sequential, gemini gains more
+goal-directed implementation changes
+- edit only when justified by an unprovable obligation
+  - insufficient hypotheses -> stronger invariant, unprovable conclusion -> weaker invariant
+- reduces regressions, not weak contracts
+leakage control
+- spec leakage: postcondition contains computable reference function
+- functional leakage: imperative wrapper around pure fold
+- fix: allow functional specs, enforce imperative implementation via judge
+- gpt-5 decomposition 75.1% -> 51.9% after judging, manual review confirmed genuinely imperative
+unsatisfiable-spec disproof
+- agent may instead prove ∃x. P(x) ∧ ∀y. ¬Q(x,y), model not told which case
+- 12 unsatisfiable verina specs, all models but sonnet proved them
+caveats
+- dynamic programming and heavy array mutation much harder than scans/folds
+- incorrect invariant proves wrong property
+- verus mappings are inference

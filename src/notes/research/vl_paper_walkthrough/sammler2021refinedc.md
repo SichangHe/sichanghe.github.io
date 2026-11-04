@@ -2,66 +2,37 @@
 (authored by agents unless marked 🧑)
 Tag: `sammler2021refinedc`, [paper](https://doi.org/10.1145/3453483.3454036)
 
-RefinedC verifies low-level C by assigning each value an ownership type refined with logical facts, then checking the resulting typing derivation in Coq. Its automation is Lithium, a restricted separation-logic programming language whose rules are interpreted as Iris lemmas. The abstract describes the central combination: “RefinedC, which combines ownership types (for modular reasoning about shared state and concurrency) with refinement types (for encoding precise invariants on C data types and Hoare-style specifications for C functions).” (Abstract, p. 1). The paper targets functional correctness of pointer-heavy systems code, including uninitialized memory, pointer arithmetic, and selected concurrency patterns.
-
-## technique: refined ownership specifications for an allocator
-
-What it is. A C struct receives a logical type indexed by mathematical values. In Figure 1, `mem_t` is indexed by `a`, the available-byte count. Its `len` field has singleton integer type `a @ int<size_t>`, and its buffer has owned uninitialized-memory type `&own<uninit<a>>` (Figure 1 and Section 1, p. 2). The function specification states the input ownership, the requested size, the nullable result, and the updated ownership. The paper gives this exact shape:
-
-```c
-struct [[rc::refined_by("a: nat")]] mem_t {
-  [[rc::field("a @ int<size_t>")]] size_t len;
-  [[rc::field("&own<uninit<a>>")]] unsigned char* buffer;
-};
-[[rc::parameters("a: nat", "n: nat", "p: loc")]]
-[[rc::args("p @ &own<a @ mem_t>", "n @ int<size_t>")]]
-[[rc::returns("{n≤a} @ optional<&own<uninit<n>>, null>")]]
-[[rc::ensures("own p : {n ≤ a ? a - n : a} @ mem_t")]]
-void* alloc(struct mem_t* d, size_t sz) { ... }
-```
-
-How to apply it (a reading of the Figure 1 example; the paper does not state these as a numbered procedure). (1) Introduce a refinement parameter for every data-structure fact that must remain true. (2) Put singleton or predicate refinements on fields, so the physical field value is tied to the logical value. (3) Put owned-pointer types on locations whose exclusive memory resource the function consumes. (4) State input ownership and value relationships with `rc::args`; state nullable or conditional results with `rc::returns`; state the transferred and updated ownership with `rc::ensures`. (5) Make the implementation branch on the same condition used by the result refinement, here `sz > d->len`, then update the field and return pointer arithmetic (Figure 1 and Section 2.1, pp. 2–4). (6) Let RefinedC's typing rules split and recombine ownership around pointer addition. The paper says “RefinedC verifies the specification of alloc without manual intervention” and that its automation picks the correct case of the returned optional with rules `S-null` and `S-own`, and splits the ownership of `buffer` with rule `O-add-uninit` (Section 2.1, p. 4).
-
-Inference: in Verus, encode the executable allocator as Rust and put the input relation in `requires`, the returned relation in `ensures`, and the memory/state relation in a predicate over a borrowed allocator object. Use `assert` and `proof fn` lemmas for arithmetic such as `n <= a`; use a loop `invariant` for iterative code. Verus ownership and borrowing carry the Rust alias discipline, but the RefinedC syntax and its Coq separation-logic resources do not carry over. The Verus proof must state the representation invariant and the post-state relation explicitly.
-
-Evidence and limits. The allocator example is a proof of the stated logical contract under RefinedC's Caesium semantics. Inference: it does not establish that the C compiler, foreign code, hardware, or a caller that violates `rc::args` is safe. A deliberately weakened specification (`n < a` instead of `n ≤ a`) fails when `n = a`; the reported diagnostic identifies the branch and unsolved condition (Section 2.1, p. 4). This is evidence that the specification is checked against the implementation, not that the specification expresses the intended requirement.
-
-## technique: recursive ownership and loop invariants for free lists
-
-What it is. The `free` example models a sorted linked list of free chunks with a recursive `chunks_t` type refined by a multiset `s` of chunk sizes. The head size `n` and tail multiset are existentially quantified; constraints assert `s = {[n]} ⊎ tail` and `n ≤ k` for every `k` in `tail`. `rc::size("n")` says the allocation occupies `n` bytes although the C header covers only its prefix (Figure 3, p. 5). The function's postcondition adds the freed chunk to the multiset.
-
-How to apply it. (1) Define a recursive pointer type with `rc::ptr_type` and a refinement that distinguishes the null and non-null cases. (2) Quantify the head and tail with `rc::exists`; expose the physical size with `rc::size`; relate the pieces with `rc::constraints`. (3) State the precondition that the new block can contain the header, and state the output multiset in `rc::ensures`. (4) Before the traversal loop, introduce an existential suffix variable using `rc::exists`. (5) Bind the current pointer and the already-traversed list with `rc::inv_vars`; the invariant gives ownership of the suffix and a separation-logic wand connecting it to the final list. (6) The loop moves `cur` to `&(*cur)->next` until the end of the list or a chunk with `sz <= (*cur)->size`; after the loop, the code writes the new chunk and links it to `*cur` (Figure 3 and Section 2.2, pp. 4–5). (7) Add `rc::tactics("all: multiset_solver.")` when the default arithmetic/list solver cannot discharge multiset side conditions.
-
-Inference: the Verus form is a recursive `struct` plus a ghost mathematical sequence or multiset describing the list. Use a predicate for ownership and sortedness, a loop `invariant` that splits the traversed prefix from the remaining suffix, and a `proof fn` to show multiset insertion preserves the postcondition. A Verus `requires` clause should state header-size bounds; `ensures` should state the resulting sequence. The separation-logic wand has no direct Verus spelling, so encode the same frame relation as a predicate over the suffix and prefix.
-
-Evidence and limits. Figure 7 has no row for the Figure 3 `free` example itself. The nearest row is the singly linked list, which the paper says uses the magic-wand representation of partial data structures illustrated in Section 2.2 (Section 7, #1, p. 11). That row reports 44 distinct rules and 613 rule applications, with 119 existential instantiations and 47/5 automatically/manually proved pure side conditions. Its overhead is approximately 0.2, where the caption defines overhead as the sum of Annot and Pure divided by Impl (Figure 7, p. 11). RefinedC handles recursive unfolding automatically, but the paper still requires an explicit loop invariant. The approach is partial correctness: the paper states that “RefinedC only verifies partial, not total, correctness.” (Section 9, p. 14). Termination and liveness therefore remain outside this technique.
-
-## technique: Lithium goal-directed proof automation
-
-What it is. Lithium represents typing rules as a restricted Iris logic program. A judgment has unrestricted hypotheses `Γ`, resource hypotheses `Δ`, and a goal `G`; resource atoms are non-duplicable because they may contain ownership. Search analyzes the goal's outer constructor, applies the matching rule, and never backtracks (Section 5, pp. 7–8). The paper states: “Lithium is a carefully restricted fragment of the Iris logic, on which efficient goal-directed proof search is possible” (Section 1, p. 3).
-
-How to apply it. (1) Translate C and annotations into Caesium and RefinedC's abstract syntax (Section 1, p. 3). (2) Generate the typing goal for each statement, carrying the function postcondition in the control-flow state. (3) For conjunctions, split the goals; for universal goals, introduce a fresh variable; for existential goals, create an evar. (4) For a resource conjunction, reduce the left side to atoms, match an atom to the unique location/value in `Δ`, consume it, and continue. (5) Solve pure propositions with the built-in arithmetic/list solver or a named domain solver. (6) If the evar heuristics fail, the paper's fallbacks are to extend the simplification rules or to choose annotations more carefully so that simpler unification problems arise (Section 5, p. 8). The restrictions on the left sides of `∗` and `−∗` keep resource matching deterministic and remove backtracking (Section 5, p. 7).
-
-Evidence and limits. The paper calls the Hafnium page allocator its largest case study (Section 7, #5, p. 12). Its Figure 7 row (Hafnium mpool allocator) has 191 lines of C, 72 distinct typing rules, 1730 typing-rule applications, 515 existential instantiations, 122/11 automatic/manual pure side conditions, 55 annotation lines, five lines of pure Coq, and overhead approximately 0.3 (Figure 7, p. 11). Across all programs, only one existential variable required manual instantiation, in Spinlock (Section 7, p. 10). The default solver currently targets only linear arithmetic and Coq lists; the authors count side conditions requiring a separately named solver as manual even when that solver discharges them (Section 7, p. 11). The paper says the evar procedure “is not complete” (Section 5, p. 8).
-
-## technique: semantic foundation and low-level memory model
-
-What it is. RefinedC's types are interpreted in Iris, embedded in Coq, and its typing rules are proved sound in that model. The front end translates C through Cerberus into Caesium, a control-flow-graph language with a deep Coq semantics and a CompCert-like low-level memory model (Sections 1 and 3, pp. 3, 5). Caesium supports pointer arithmetic, representation bytes, uninitialized memory with poison, fixed-size integers, gotos, function pointers, sequentially consistent atomics, and non-atomic accesses (Section 3, p. 5).
-
-How to apply it. Keep the front-end translation, Caesium semantics, and Coq proofs as the foundation; encode each new C idiom as a type and Lithium rule; prove that rule in Iris; then add it to the open rule set so ordinary programs use it automatically (Sections 1, 3 and 5, pp. 3, 5, 8). For concurrency, use the paper's atomic Boolean abstraction to associate a resource with an atomic state, then verify acquire/release operations against that resource (Sections 6 and 7 #6, pp. 10 and 12).
-
-Evidence and limits. The paper lists RefinedC's trusted computing base as its roughly 6000-line OCaml front end, roughly 1500 lines of Caesium Coq semantics, and Coq; Lithium itself need not be trusted because it generates Iris proofs (Section 3, pp. 6–7). Caesium fixes C's expression order, lacks integer-pointer casts and relaxed-memory concurrency, and warns about potentially nondeterministic expressions or escaping block-local addresses (Section 3, p. 6). RefinedC does not support external function calls or I/O behavior, and liveness remains future work (Section 9, p. 14).
-
-## what is proved, what remains trusted, and product relevance
-
-RefinedC proves that the translated C program has the specified refined types under the Caesium/Iris semantics, with a Coq-checkable derivation. The proof covers the listed case studies: linked lists, queues, binary search, two binary search trees (layered and direct), allocators, a linear-probing hashmap, Hafnium's page allocator, a spinlock, and a one-time barrier (Section 7, Figure 7, pp. 11–12). It does not prove that a specification matches the product requirement, that unsupported ISO C behavior is safe, that external calls or I/O satisfy contracts, or that partial correctness implies termination. The paper's trusted base includes Coq, the front end (which translates source C), and the Caesium semantics (Section 3, p. 6). Inference: compiler behavior and hardware are outside the model.
-
-## techniques for the catalog
-
-- refinement-indexed ownership types: attach mathematical invariants and exclusive memory ownership to low-level values and function arguments
-- conditional result specifications: use optional refined types to describe nullable or success-dependent results and updated ownership
-- recursive free-list invariants: represent list contents with existential head/tail data and a multiset refinement preserved by a loop invariant
-- Lithium goal-directed automation: encode typing rules as non-backtracking separation-logic clauses selected from the goal shape
-- semantic foundational verification: interpret types and rules in Iris/Coq over a deep Caesium C semantics
-- solver-assisted side conditions: discharge arithmetic, list, set, and multiset obligations with named Coq solvers and retain manual proofs for the remainder
-- atomic resource abstractions: associate an atomic Boolean or spinlock with the resource it protects and verify concurrent operations through ownership transfer
+refinedc verifies low-level c via ownership types refined with logical facts, checked in coq
+- automation is lithium, a restricted separation-logic language whose rules are iris lemmas
+- targets functional correctness of pointer-heavy code: uninit memory, pointer arithmetic, some concurrency
+- partial correctness only, no termination or liveness
+specs are refinement-indexed ownership types
+- allocator example: `mem_t` refined by available bytes `a`, buffer `&own<uninit<a>>`
+  - `rc::args`, `rc::returns`, `rc::ensures` give input ownership, nullable result, updated ownership
+  - result `{n≤a} @ optional<&own<uninit<n>>, null>` verified with no manual proof
+- weakened spec `n<a` fails at `n=a`, diagnostic names the branch and unsolved condition
+  - shows spec is checked against code, not that spec matches intent
+recursive structures need existential head/tail plus an explicit loop invariant
+- free list: sorted chunks refined by multiset `s = {[n]} ⊎ tail`, `n ≤` all tail
+- loop invariant holds the suffix ownership plus a magic wand back to the full list
+- `rc::tactics("all: multiset_solver.")` for multiset side conditions
+- singly linked list row: overhead ~0.2 (annot + pure over impl), 47/5 auto/manual pure goals
+lithium is goal-directed and never backtracks
+- judgment: unrestricted Γ, resources Δ, goal G; resource atoms non-duplicable
+- ∀ goal introduces a fresh var, ∃ goal an evar; pure goals go to a built-in linear-arith/list solver
+- evar heuristics are incomplete; only 1 manual instantiation across all case studies (Spinlock)
+- largest case: hafnium mpool allocator, 191 loc c, 55 annotation lines, overhead ~0.3
+- solver obligations needing a named solver count as manual
+semantic foundation
+- c goes through cerberus to caesium, a deep coq semantics with a compcert-like memory model
+  - supports pointer arithmetic, poison, goto, function pointers, sc atomics
+  - lacks int-pointer casts and relaxed memory, no external calls or i/o
+- new idiom = new type + lithium rule, proved sound in iris, added to the open rule set
+- concurrency via atomic boolean abstraction tying a resource to an atomic state (spinlock, one-time barrier)
+- tcb: ~6000 loc ocaml front end, ~1500 loc caesium, coq; lithium itself untrusted
+case studies
+- linked lists, queues, binary search, two bsts, allocators, hashmap, hafnium page allocator, spinlock, one-time barrier
+verus transfer (inference)
+- `requires`/`ensures` + representation predicate replace refinement args/returns
+- loop `invariant` splits traversed prefix from suffix; wand becomes a prefix/suffix frame predicate
+- ownership types and iris resources do not carry over, state invariants explicitly

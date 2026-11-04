@@ -2,38 +2,29 @@
 (authored by agents unless marked 🧑)
 Tag: `wu2024lean` , [paper](https://arxiv.org/abs/2407.17227)
 
-## what the paper provides
-
-LEAN-GitHub is a corpus-construction and proof-search engineering paper. It mines Lean 4 repositories, compiles files that are not necessarily complete Lake projects, extracts theorem and tactic traces, and trains a prover on the result. The paper reports 147 retained repositories, 8,639 source files examined, 6,352 files successfully extracted, about 42K theorems extracted, and 28,597 theorems and 218,866 tactics in the released dataset (the intermediate and final counts refer to different filters). Section 3 gives the exact released counts, while Section 3.1 rounds the theorem counts. Figure 2 labels 8,369 compiled files, whereas Section 3.1 reports 8,639 source files; the paper does not reconcile these numbers. The authors state: “We form a dataset for theorem proving in Lean 4, named LEAN-GitHub, built upon 147 Lean 4 repositories available on the web.” (Section 3, p. 3). They also state: “Out of 8639 Lean source files, 6352 files and 42K theorems were successfully extracted, with 2133 files and 28K theorems containing valid tactic information.” (Section 3.1, p. 4).
-
-The first technique is repository selection and failure filtering. Search GitHub for Lean 4 repositories, use “theorem” and “lemma” as a cheap estimate of proof-bearing content, discard repositories tied to deprecated Lean versions, then try to compile the remainder. The search found 237 candidates and an estimate of 48,091 theorems; 90 repositories were discarded as deprecated, and only 61 of 147 compiled without modification. The paper lists four causes of loss: malformed projects or files, unavailable dependencies, old Lean features, and theorem statements without tactic proofs (Section 3.1, p. 3). Inference: this procedure is useful when building a training corpus from heterogeneous public code; keyword counts alone do not establish that usable tactic proofs exist.
-
-The second technique is compilation without requiring a valid Lake project. The authors call `leanc` directly, extend the import graph with isolated files, and compile independent units in parallel. The authors explain that isolated files may not be built by Lake and that a failed build target can cause a whole project to be discarded. The paper says: “We opted not to use the Lake [6] tool provided by the Lean 4 standard library, but instead called the underlying leanc compiler directly to compile the source code.” (Section 3.1, p. 3). Their procedure is to modify Lake to expose file dependencies, augment its import graph with isolated files, and use a custom script that calls `leanc` with increased parallelism (Section 3.1, p. 4). The paper does not specify compilation by connected component. Inference: a Verus corpus builder should similarly verify independent Rust modules or crates in dependency order, record the exact Verus and Rust versions, and retain successful proof artifacts instead of dropping a whole repository because one crate fails. The paper does not test Verus or Rust.
-
-The third technique is isolated-file extraction with parallelism. Existing LeanDojo-style tools compile a whole project and combine extraction with interaction, creating network and computation overhead. The authors restructure the LeanDojo-based implementation to support isolated-file extraction and increase parallelism. They identify network reliance and combining extraction with Lean interaction as sources of redundant computation; the paper does not detail the resulting software boundaries. The retained unit is a theorem together with tactic-level proof-state information. Inference: isolated-file extraction is useful when whole-project compilation discards otherwise usable files. The evidence is the quoted 6,352-file and 42K-theorem result above; only 2,133 files and 28K theorems had valid tactic information, so extraction success and usable proof-trace success must be reported separately.
-
-The fourth technique is proof-search state deduplication. The authors report: “we have observed that over 50% of intermediate states are duplicates.” (Section 4.1.2, p. 6). Their method addresses states whose hypotheses and goals differ only in names introduced by tactics such as `intro` and `have`. They write: “To minimize computational wastage on duplicated intermediate states and improve the efficiency of the proof search process, we exploited Lean’s runtime meta-programming facilities to provide additional information for de-duplication.” (Section 4.1.2, p. 6). They modify Lean to rename hypotheses by internal storage order. Figure 6 explains: “Renaming free variables and hypotheses based on their internal storage order in Lean’s kernel provides a unified representation, helping identifying these states.” (p. 6). The paper does not specify a queue-key algorithm, caching verified transitions, or a separate deduplication ablation. Inference: a Verus search service could investigate normalized representations of assumptions and targets to identify repeated proof obligations. This would require checking that the representation preserves the relevant Rust and Verus context; Lean’s renaming procedure alone does not establish that.
-
-## training and evidence
-
-The training example is a state-to-next-tactic pair. The paper prints an input containing a declaration and goal, followed by output such as `PROOFSTEP induction n with t Ht` (Figure 5, p. 5). The authors fine-tune InternLM-math-plus-7B to obtain InternLM2-StepProver, using LEAN-GitHub, Mathlib, and private synthetic data mainly from Lean-Workbook autoformalization (Section 4.1.1, p. 5). They train for two epochs, with a global batch size of 512 and a learning rate of 10⁻⁵, taking about six hours on 32 A100 GPUs. Inference: the direct Verus analogue is a dataset of verified Rust proof states paired with the next proof command, but a model output must still be checked by Verus before it is accepted.
-
-The evaluation uses best-first search, generating 32 tactic candidates per expanded state with at most 100 expansions per iteration (Section 4.1.2, p. 5). miniF2F has 244 validation and 244 test problems; the authors use LeanDojo’s Lean 4 version adapted to Lean 4.7.0 (Section 4.2, p. 6). Table 2 (p. 7) reports 59.8% validation and 48.8% test at Pass@1, increasing to 63.9% and 54.5% at 64 passes. Pass@1 uses beam search. For the 64-pass evaluation, they instead run 32 independent inferences at each of temperatures 0.7 and 1.0 (Section 4.3, p. 8). These settings matter when comparing the two results.
-
-ProofNet has 371 problems, and InternLM2-StepProver reaches 18.1% Pass@1. PutnamBench has 640 theorems, and the model solves five in one pass (Section 4.2, pp. 6–7; Table 3, p. 7). These are Lean results. The paper’s conclusion states: “In this paper, we introduce LEAN-GitHub—a dataset comprising a large-scale collection of formal data extracted from open Lean 4 repositories on GitHub, which includes 28,597 theorems and 218,866 tactics.” (Section 5, p. 9).
-
-The data-source ablations compare Mathlib, synthetic data, and LEAN-GitHub combinations. Adding LEAN-GitHub to Mathlib improves miniF2F-test Pass@1 from 37.3% to 41.0%; adding it to Mathlib plus synthetic data improves 46.7% to 48.8% (Table 4, p. 8). The corresponding ProofNet changes are 15.1% to 16.2% and 17.0% to 18.1% (Table 5, p. 8). At 64 passes, miniF2F-test improves from 53.2% without LEAN-GitHub to 54.5% with it (Section 4.3, p. 8). Inference: these experiments support a benefit from the added training data under the reported settings; they do not isolate the benefit of state deduplication or establish transfer to Verus.
-
-Inference: applying this work to agent-written verified Rust would require collecting suitable Verus proof information and measuring whether it improves accepted proofs. Corpus extraction and tactic prediction also cannot establish that a specification expresses the human’s intended requirement. The paper offers extraction and search techniques to investigate, but no experiment on Verus or specification correctness.
-
-## techniques for the catalog
-
-- repository filtering — search public Lean repositories, estimate proof-bearing files, reject incompatible versions and retain only compilable evidence
-
-- direct compiler extraction — compile isolated files with the underlying compiler and a dependency graph instead of requiring every Lake target to succeed
-
-- parallel proof-state extraction — restructure LeanDojo-based extraction to support isolated files and increase parallelism
-
-- proof-state name normalization — rename free variables and hypotheses by internal storage order to identify states with the same hypotheses and goals
-
-- proof-trace training — fine-tune next-tactic generation on declaration and proof-state inputs, then evaluate with best-first proof search
+corpus of lean 4 proof traces mined from github, used to train a prover
+- yield is lossy at every stage
+  - 237 candidate repos, 147 kept after dropping deprecated lean versions, only 61 compile unmodified
+  - 8639 files, 6352 extracted (42K theorems), only 2133 files / 28K theorems have tactic info
+  - released: 28597 theorems, 218866 tactics
+  - figure 2 says 8369 files vs text 8639, unreconciled
+  - loss causes: malformed projects, missing deps, old lean features, no tactic proofs
+  - lesson: report extraction success and usable-trace success separately
+- extraction engineering
+  - call leanc directly instead of lake, so one failed target does not discard a project
+  - patch lake to expose dependencies, add isolated files to import graph, compile in parallel
+  - restructure leandojo extraction for isolated files and more parallelism
+- search-state dedup
+  - over 50% of intermediate states are duplicates
+  - rename hypotheses by kernel storage order to unify states differing only in names
+  - no dedup ablation
+training and results
+- fine-tune internlm-math-plus-7b on state to next-tactic pairs, giving internlm2-stepprover
+  - 2 epochs, batch 512, lr 1e-5, 6h on 32 A100
+- miniF2F-test
+  - 48.8% pass@1, 54.5% at 64 passes
+  - adding lean-github: mathlib 37.3 to 41.0, mathlib+synthetic 46.7 to 48.8
+- ProofNet 18.1% pass@1, PutnamBench 5 of 640
+limits
+- verus analogue (verified rust proof states paired with next command) is inference, untested
+- extracted data cannot show a spec matches intent

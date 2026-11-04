@@ -1,47 +1,44 @@
 # Inductive Deductive Synthesis: code and proof grow together
 (authored by agents unless marked 🧑)
 
-IDS demonstrates agent synthesis of distributed-store implementations and refinement proofs from supplied formal specifications. It is strong direct prior work for code/proof co-design and performance-guided search. The important remaining boundary is specification adequacy and the connection from proved model to deployed runtime.
-
-## The actual guarantee
-
-Agarwal, Krentsel, Liu, Cemri and colleagues take a fixed Rocq specification and synthesize an implementation plus proof. §2, p. 3: “IDS takes such specifications as input rather than producing them.” Appendix F.1, p. 22 proves forward simulation: implementation steps correspond to abstract steps on related states. “every observable trace of the implementation is also a trace of the abstract spec.” This establishes the modeled trace property, conditional on the execution model and specification.
-
-The common interface contains seven get/put/request/guard/response methods, state and update types, and client–replica operational semantics. Appendix I, pp. 31 onward gives the specifications; appendix A summarizes their distinctions. Appendix I, pp. 33–35 models a network as a multiset of messages and guarded replica transitions; it states “The get operations are synchronous.” Its separate convergence definition is conditioned on reaching an empty network, rather than proving that this occurs eventually. Recommendation: distinguish message interleavings from crash/recovery semantics and eventual-delivery assumptions. The properties include read-your-writes, monotonic writes, monotonic reads, combined read-your-writes/monotonic writes, published Chapar causal consistency, author-supplied causal consistency and label-filtered causal consistency.
-
-## Synthesis and search techniques
-
-§§3–4, pp. 3–5 and Appendix F.2 allow well-typed incomplete candidates. Define extends implementation; Prove closes a lemma; Decompose introduces a deferred helper. Repair changes a failing step; Revert chooses an earlier branch. Temporary `Admitted` holes must disappear at final acceptance. Appendix F.2: “Every Admitted is a deferred hole, not a permanent assumption”. Inference: partial typechecking proves only compatibility of the completed pieces under remaining assumptions. It does not prove that holes can be filled or that the design is viable. Likewise a failed tactic or type mismatch does not by itself prove a strategy impossible, despite the main paper’s “no false positives or false negatives” oracle language (§3).
-
-A coordinator tracks progress and runs several synthesis workspaces. Tactical stalls go to a proposer supplying exact helper signatures and tactics; strategic stalls go to a reloader changing representations, abstraction functions, reachable-state invariants or decomposition. Appendix F.4 triggers a proposer after ten stagnant polls; F.5 escalates reloads at 20, 40, 60 polls. Failure histories survive fresh workers. Inference: revise the representation when a proof will not split, rather than accumulating patches indefinitely.
-
-Appendix B, pp. 15–16 gives concrete proof decompositions. Chapar shifts from global per-replica state to per-key cells carrying sender clock and dependencies; its invariant splits per message, per store entry and per replica clock. Monotonic reads shifts to per-(key, client) entries so update proofs split on key/client equality. Causal variants use vector clocks, per-key clock maps and balanced trees. Per §5.3, IDS data-store representations are bounded while the references' grow with workload size. These are proof-friendly representation choices with measured efficiency benefits.
-
-§4 benchmarks extracted implementations before their proofs finish and feeds performance into further search, then returns the fastest accepted candidate. Recommendation: keep incomplete candidates eligible for search scoring, never for a verified verdict.
-
-Appendix F.3, pp. 23–24 describes a deterministic acceptance audit: zero admissions; zero `Axiom`, `Hypothesis`, `Parameter` after comment stripping; clean rebuild; patterns for constant puts, always-true read guards, empty simulation domains and payload-dropping state stubs. §5.4, p. 9 reports a candidate with a put guard always false, whose theorem held trivially. Inference: proved safety can coexist with rejecting every operation. Pattern checking catches known evasions, but does not prove general non-vacuity or liveness. The listed audit patterns do not explicitly include that exact false put guard; audit coverage needs artifact inspection.
-
-## Results and resource boundaries
-
-Table 1, p. 7 evaluates three runs per specification. Success means at least two successful runs: IDS succeeds on seven specifications, six at 3/3 and author-supplied causal consistency at 2/3. Codex GPT-5.4 and Claude Code Opus 4.6 each reach two of seven. IDS totals of per-spec medians are 48 hours/$744, giving roughly 6.8 hours/$106 per specification; individual times two to eleven hours and costs $52–$155. These are author reports, not reproduced. The table caption says “All methods share the same model”, while §5.1 distinguishes GPT-5.4 and Opus 4.6. The architecture comparison with Codex shares the primary backend; the Claude comparison does not.
-
-§5.1, p. 6 extracts Gallina to OCaml and uses a five-VM Google Cloud runtime. Each run has four workers × 1,000 random operations; separate workload scaling uses 1,000/2,000/5,000/20,000 operations per worker at 50% puts. Throughput, p99 latency and peak memory are measurements. §5.3 reports up to 3× Chapar vector-clock throughput; author causal consistency and monotonic reads reach about 1.4×. RYW is comparable within 20%; monotonic-write references time out. Function-as-map references extract to chains growing with previous puts; lists or trees avoid that history cost. Appendix D.1, p. 18 also explains monotonic-write timeouts through “UDP packet reordering and the protocol’s no-retry compare-and-swap”. Inference: these timeouts depend on the selected runtime and workload as well as representation; they are not a universal failure of the reference algorithm. Inference: speedups depend heavily on representation and the selected references, not a comparison against every modern production store.
-
-Appendix C, pp. 16–17 also selects one candidate from 100 independent Codex implementation-only sessions for each of four properties, under formal-specification versus paragraph-only input. Both settings pass adversarial traces on RYW and MW, and fail them on MR and CC. Only formal-specification RYW gets a subsequent refinement proof: 1/4 versus 0/4. A failed bounded proof search is unresolved correctness, not a demonstrated violation; the MR/CC trace failures do demonstrate violations. Reported generation/selection costs range $25.77–$47.80 and do not represent the full later proof effort.
-
-The “roughly 200× faster” claim compares one synthesis run with historical 9–12 months of expert effort (§5.2), not a controlled contemporary human trial. Table 2 ablates joint design, proposer, reloader, audit and rich verifier feedback. Removing structured goals/hypotheses/backtraces leaves every spec at at most 1/3 and drops VERINA to 58%. Removing joint design drops VERINA from 176/189 to 160/189; proposer to 150, reloader to 167, feedback to 110. Audit ablation leaves VERINA at 176; the distributed-store evidence is the single unaudited put guard returning false reported in §5.4, p. 9. Figure 5 reports full performance feedback yields mean 1.42× throughput over first-accepted candidates.
-
-Appendix E, pp. 21–22 and Table 7 report proof/annotation successes: 88/100 hardest DafnyBench tasks, 100/100 miniCodeProps sorting tasks, 149/150 full Verus-Bench and 97/100 hardest CoqStoq tasks. Table 7 says “IDS reduces to its DSA component since the ISA has no design space to search” on those proof-only tasks. Code/proof synthesis reaches 176/189 VERINA, 65/77 on AlgoVeri’s Dafny track and 62/62 CloverBench. Both vanilla agent baselines also reach 62/62 CloverBench, so that result does not show an IDS advantage. These are smaller tasks than the distributed-store evaluation, and their acceptance rules vary by checker. Public benchmarks and supplied formal contracts limit what these results show about repository intent recovery.
-
-## ChatGPT cross-check (2026-10-12)
-
-The complete answer in `inductive_deductive_chatgpt_answer.md` was checked against the saved PDF text. The answer's main architectural assessment is supported: the paper reports seven distributed specifications, with six successful in all three runs and the author-supplied causal-consistency specification successful in two of three (Table 1, p. 7), and describes joint implementation/proof search as its central method. The answer correctly treats these as author-reported results rather than a reproduced deployment.
-
-The answer's warning about specification adequacy is also supported by the paper's own limitation: “any correctness guarantee is only as strong as the specification it is checked against” (§6, p. 10). The RYW, MW, and causal-consistency defects discussed in the answer are analyses of the displayed definitions and execution rules; they are not claims that the authors themselves acknowledge as defects. They should therefore remain hypotheses for model checking, not established contradictions.
-
-The answer correctly qualifies the Verus result. Table 7 reports 149/150 on Verus-Bench, but the paper says, “the first four are proof-only (impl and spec given); on these, IDS reduces to its DSA component since the ISA has no design space to search” (Appendix E, p. 21). This is evidence of proof-annotation capability, not repository-scale verified-Rust synthesis. The same table gives 148/150 for Codex and Claude Code, so the one-task difference is near saturation.
-
-The answer also correctly separates bounded search outcomes from semantic counterexamples. A failed refinement attempt establishes that the submitted proof did not close within its budget; it does not by itself prove the implementation incorrect. Conversely, the paper's adversarial-trace stage can reject an implementation on a witnessed violating trace (Appendix C, pp. 16–17). The acceptance audit is useful but finite: it checks listed patterns and zero deferred holes, while a semantic non-vacuity argument still requires separate scrutiny.
-
-Finally, the answer's product-threat assessment is bounded by the paper's stated scope. The authors say the seven specifications cover correctness-critical behavior but “not the full operational envelope of a production KV store,” omitting runtime scaling, reconfiguration, fault recovery, logging, and observability (§6, p. 9). The paper therefore supplies strong prior art for proof-directed code/proof search and a direct Verus proof benchmark result, while leaving repository-scale Rust, specification validation, and end-to-end runtime guarantees open.
-Audited 2026-10-12 against the paper: checked Table 1 pass rates, hours, costs and totals (48 h, $744, 6.8 h and $106 per spec), Table 2 ablation counts, Table 7 counts, Appendix C costs and pass pattern, Appendix F.3 to F.5 audit patterns and poll thresholds, Appendix B representation choices, and the page references and quotations; all matched. Corrected two claims: removed an unsupported statement that trace or history material stays in proofs (the paper says only that IDS representations are bounded), and replaced a loose claim that the audit ablation exposes vacuity with the paper's single reported false put guard. Not checked: the ChatGPT cross-check provenance and the independent review mentioned in the study status, which concern files outside the paper.
+ids synthesizes distributed-store implementation plus rocq refinement proof from a fixed formal spec
+- spec is input, not produced: "IDS takes such specifications as input rather than producing them" (§2)
+- guarantee is forward simulation: every implementation trace is an abstract-spec trace
+  - conditional on execution model and spec
+  - authors: guarantee "only as strong as the specification" (§6)
+- 7 specs: ryw, mw, mr, combined ryw/mw, chapar causal, author causal, label-filtered causal
+- not covered: runtime scaling, reconfiguration, fault recovery
+search design
+- incomplete candidates typecheck with `Admitted` holes, none allowed at final acceptance
+  - actions: define, prove, decompose, repair, revert
+  - partial typechecking does not show holes fillable
+- coordinator runs several workspaces
+  - proposer after 10 stagnant polls: exact helper signatures, tactics
+  - reloader at 20/40/60 polls: change representation, abstraction function, invariant, decomposition
+  - failure history survives fresh workers
+- change representation when proof will not split
+  - per-key cells, per-(key, client) entries, vector clocks, balanced trees
+- benchmark extracted code before proofs finish, feed performance into search, return fastest accepted
+  - incomplete candidates scorable, never verified
+- deterministic acceptance audit
+  - zero admissions, zero Axiom/Hypothesis/Parameter, clean rebuild
+  - patterns for constant puts, always-true guards, empty simulation domains
+  - a false put guard made the theorem hold trivially (§5.4)
+  - pattern checks do not prove non-vacuity or liveness
+results (author-reported, not reproduced)
+- table 1: ids succeeds on 7/7 specs (6 at 3/3, author causal at 2/3)
+  - codex gpt-5.4 and claude code opus 4.6 each 2/7
+  - 48 h, $744 total, ~6.8 h and $106 per spec
+- throughput up to 3x chapar vector-clock, ~1.4x author causal and mr, ryw within 20%
+  - mw reference timeouts partly due to udp reordering and no-retry cas, not universal
+  - performance feedback mean 1.42x over first-accepted
+- "roughly 200x faster" compares one run to historical 9-12 months of expert effort, not a controlled trial
+- ablation on verina: full 176/189, no joint design 160, no proposer 150, no reloader 167, no rich feedback 110
+- proof-only benchmarks
+  - dafnybench hardest 88/100, miniCodeProps 100/100, verus-bench 149/150 (codex/claude code 148/150), coqstoq hardest 97/100
+  - on proof-only tasks ids reduces to its proof component, no design space
+  - near saturation
+- code+proof: verina 176/189, algoveri dafny 65/77, cloverbench 62/62 (vanilla agents also 62/62)
+implications
+- strong prior art for proof-directed code/proof co-design and performance-guided search
+- open: spec adequacy, repository-scale rust, model-to-runtime gap

@@ -2,39 +2,33 @@
 (authored by agents unless marked 🧑)
 Tag: `green2026hyperspecialization`, [paper](https://arxiv.org/abs/2609.14836)
 
-## what is proved or measured
-The paper studies automated hyperspecialization: coding agents synthesize a new solver for one workload family instead of using one general-purpose solver. SAT is the existence proof because SAT solvers have “a simple, well-specified interface,” are straightforward to evaluate, and produce a checkable result (§1, p. 2). The dataset (the Global Benchmark Database) contains 31,809 CNF formulas divided into 189 families (§4.1.1, p. 6); Figure 1 (p. 1) groups the families as 58 industrial, 113 crafted, 15 random, and 3 mixed. Each agent run is allocated two hours of active time (time spent writing and testing code, not waiting for external evaluation) and at most ten external evaluations (§3.3, p. 5). The agent runs on a single core and submits candidate solvers to an external server that evaluates them in parallel in the cloud (Figure 2, p. 5, draws 10 CPUs as an example). Specialists emit DRAT, DPR, or VeriPB proofs, validated with the GRAT, DPR, and VeriPB toolchains; SAT answers are checked with the formally verified gratchk in SAT mode (§3.2.4, p. 5; Appendix A names the verified kernels gratchk, cake_lpr, and cake_pb_cnf). The abstract reports “synthesizing hundreds of workload-specific SAT solvers at an average cost of $37 each.”
-
-## technique: choose a task with measurable performance and checkable output
-What it is: Hyperspecialize only software whose inputs and outputs have a clear contract, whose performance can be measured, and whose result can be checked independently.
-When to use it: Use when a workload repeats enough that specialization can amortize construction cost and when an incorrect output can be rejected by a trusted checker.
-How to do it (paper’s §3.1–3.2, pp. 4–5): (1) Define input formulas and output assignments or UNSAT proofs. (2) Specialize per family, and within each family split the instances 80% training and 20% validation (§3.2.2 and §3.3). (3) Select a performance metric; the paper uses PAR-2, which scores a run as its time if the solver returned a valid solution within the time budget and twice the timeout otherwise (timeout 600 seconds, §4.1.3, p. 6). (4) Require a certificate for UNSAT and validate it with an independent checker. (5) Compare specialist and baseline scores on held-out instances. The paper states, “implementations’ results must be checkable.”
-Verus form: Inference: this maps to a Rust function with a precise input/output contract and a proof-producing or proof-checkable result. Verus can verify functional properties of the specialist and a checker, but performance remains an external measurement; use `ensures` and `proof fn` lemmas for semantic correctness, not timing.
-Limits: A checkable output does not prove that the workload contract is complete. Inference: hidden requirements, parser bugs, or an unsound checker remain threats.
-
-## technique: agent-based whole-codebase synthesis with feedback
-What it is: Give an isolated coding agent a target family, condensed documentation for the proof format, proof-format instructions, and an evaluation server. The agent submits complete solver candidates; the server evaluates them on both splits but returns only training results to the agent (§3.3, p. 5).
-When to use it: Use when optimization spans parsing, algorithm choice, proof generation, and low-level implementation, so isolated function synthesis would miss system interactions.
-How to do it (paper’s §3.3, p. 5 and Appendix A): (1) Give the agent the training instances (the complete read-only training set) and keep the validation instances, their runtimes, and their metrics private. (2) Let the agent implement a complete solver in a Docker container with broad internet access disabled. (3) The agent tests locally on training formulas with the installed proof checker pipeline. (4) The agent submits to the evaluation server and inspects per-instance status and timing on training formulas. (5) Iterate within the two-hour active budget and ten evaluations. (6) Every submission is also evaluated on validation privately; the paper selects the best specialist per family by training PAR-2 and reports its validation score (§4.2, p. 7). The prompt requires agents to “Fix every invalid model, invalid proof, crash, timeout, or proof-checker resource failure before chasing marginal speed.”
-Evidence: The average time to first submission was 28.1 minutes at a total cost of $10.63 and yielded a 1.71× improvement over baseline; full runs took on average 1.5 hours at a cost of $37 and yielded a 4.40× improvement (§4.3.1, p. 8). Footnote 4 says the 4.40× includes submissions from all three proof formats, not just the best one, so it is lower than the RQ1 average. In RQ1, excluding verification time, specialization produced a faster solver than the per-family virtual best of four baselines in 121/189 families (64.0%) and a more than 1,000× PAR-2 reduction in 32/189 (16.9%), with a geometric mean ratio of 12.0×; including verification time the geometric mean ratio is 5.03× and the specialist still wins on 121/189 families (§4.2, p. 7). Inference: these are held-out family-level performance results, not a guarantee for a new workload.
-Verus form: Inference: run the agent outside the trusted Verus proof, then require the submitted Rust specialist to compile and pass Verus contracts before deployment. Generated code and optimization traces remain untrusted proposals.
-
-## technique: certificate-producing SAT solvers
-What it is: Make UNSAT answers emit DRAT, DPR, or VeriPB certificates and run an independent checker; SAT answers emit assignments checked against every original clause.
-When to use it: Use when a solver’s output must be accepted without trusting the solver implementation.
-How to do it (paper’s §3.2.4, p. 5 and Appendix A): (1) Take the assigned proof format (the paper runs one independent agent per format) and read its reference contract. (2) Implement the solver and proof logger together. (3) For SAT, output an assignment and independently check every clause. (4) For UNSAT, write the required proof syntax. (5) Elaborate the proof with the format tool and check the verified kernel (for example, `cake_lpr` for DPR, `gratchk` for GRAT, or `cake_pb_cnf` for VeriPB). (6) Reject invalid certificates before measuring speed. The paper says, “Our synthesized solvers emit proofs in either DRAT, DPR, or VeriPB format.”
-Verus form: Inference: represent a certificate as a Rust datatype and verify a checker’s soundness lemma: accepted certificate implies unsatisfiability. The checker should be the trusted boundary; do not mark the solver itself `external_body` to bypass proof obligations.
-Limits and evidence: Proof format changes reasoning expressiveness and verification cost (§3.2.4, p. 5). The authors report that “agents had the most success with VeriPB,” while DPR runs were on average more expensive than GRAT and VeriPB runs for unknown reasons (§4.3.1, p. 8). In the cross-family test, only seven source/target combinations were rejected by the verifier; six were false positives caused by a bug in the DPR elaborator dpr-trim, and one was a legitimate bug (a fixed 64 KiB line buffer in the fpga-routing solver) (§5.3, pp. 10–11). Inference: toolchain bugs can distort results, and the checker pipeline is part of the trusted base.
-
-## technique: economic deployment policies
-What it is: Decide whether to specialize or to run general-purpose solvers (one fixed solver, or a race of four), using workload size, available cores, construction cost, and a PAR-2-style score.
-When to use it: Use when specialization is optional and the workload may be too small to amortize agent and checker cost.
-How to do it (paper’s §3.4 and §4.3.2, pp. 5–6, 8–9): (1) Record the agent and evaluation compute needed to build a specialist. (2) Model workload size `N` and machine parallelism `C` (the paper uses C from 1 to 64 and N from 1 to 1M). (3) Compare policies: a fixed baseline solver (four policies), a four-solver race (needs C ≥ 4), “wait” (all cores specialize, then the best checkpoint is served on all cores), and “hybrid” (half the cores serve the first submitted specialist while the rest keep specializing; serving cores switch to better specialists as they appear). (4) Simulate each policy on r random workloads of size N sampled with replacement from each family’s validation set. (5) Score each policy as makespan plus 2T per unsolved instance, P = M + 2T(N − Q), where makespan includes specialization time, and pick the lowest total. The paper reports that “Once the workload size exceeds N = 2, 000, some form of hyperspecialization is the optimal strategy on a majority of families across all machine sizes” (§4.3.2, p. 9).
-Evidence and limits: The paper evaluates eleven policies (4 fixed baselines, 1 race, and wait and hybrid for each of 3 proof formats) and reports that for small workloads running fixed baseline solvers is most often optimal, while “as the workload size increases, hyperspecialization increases in viability” (§4.3.2, pp. 8–9). On average GRAT specialists fare better than VeriPB and DPR. Inference: the threshold is workload-, machine-, proof-format-, and price-specific; it is not a universal economic law.
-Verus form: Inference: a Verus-verified dispatcher can prove a policy invariant requiring every returned result to have passed its checker, while cost and latency estimates remain unverified inputs.
-
-## techniques for the catalog
-- checkable-output task selection — choose workloads with measurable performance and independently rejectable outputs
-- feedback-driven whole-codebase synthesis — iterate complete agents against hidden validation and failure diagnostics
-- certificate-producing solvers — emit DRAT, DPR, or VeriPB and verify with an independent kernel
-- specialization deployment policies — compare baseline, wait, and hybrid strategies using workload size and cost
+coding agents synthesize a workload-specific SAT solver per benchmark family
+- data: Global Benchmark Database, 31,809 CNFs, 189 families
+- budget per run: 2h active time, ≤10 external evaluations, 1 core locally
+- avg cost $37 per solver, 1.5h per full run
+- 4.40x improvement full run vs 1.71x at first submission ($10.63, 28.1 min)
+task choice: measurable performance + independently checkable output
+- UNSAT: DRAT, DPR, or VeriPB proof, checked by verified kernels gratchk, cake_lpr, cake_pb_cnf
+- SAT: assignment checked against every clause
+- "implementations' results must be checkable"
+- limit: checker pipeline is in the trusted base
+  - 6 of 7 rejected cross-family combos were false positives from a dpr-trim bug, 1 real bug (fixed 64 KiB line buffer)
+  - agents did best with VeriPB, DPR runs costlier
+agent setup
+- split per family 80% train / 20% validation, agent sees only training results
+- Docker, no internet, evaluation server returns training status and timing
+- best specialist chosen by training PAR-2, reported on validation
+- prompt: fix every invalid model/proof/crash/timeout before chasing speed
+results (held-out, family level)
+- beats per-family virtual best of 4 baselines on 121/189 families (64%)
+  - >1000x PAR-2 reduction on 32/189
+  - geomean 12.0x excluding verification, 5.03x including
+- no guarantee for a new workload
+deployment economics
+- compare fixed baseline, 4-solver race, wait, hybrid policies
+- for N > 2000 instances, some hyperspecialization is optimal on most families
+- threshold depends on workload, machine, proof format, price
+Verus relevance (inference)
+- run the agent untrusted, accept only code passing compile + Verus contracts + checker
+- certificate checker soundness lemma: accepted => UNSAT
+- timing stays an external measurement

@@ -2,36 +2,28 @@
 (authored by agents unless marked 🧑)
 Tag: `alrabah2026chipmem`, [paper](https://arxiv.org/abs/2609.27067)
 
-## problem and architecture
-ChipMEM adds memory around an unchanged EDA agent. It stores reusable procedures only when a deterministic domain harness accepts the final artifact, while a Bayesian component records every tool outcome for retry advice. The paper's key design is: “ChipMEM is an agent-agnostic layer that converts tool-verified execution traces into two complementary memories” (section 3, p.4). Procedural memory transfers strategies across tasks; statistical memory predicts tool-call success and recovery within and across sessions (section 3, pp.4–5). The reported OpenTitan run is an exception to the stated PASS-only storage rule, as discussed below.
-
-## technique 1: procedural memory accepted by an external checker
-Use this when agent trajectories produce artifacts that a domain tool can deterministically accept or reject. Represent each skill as a key-value item `(task embedding -> skill, metadata, verifier outcomes)`. Embed a task artifact that excludes agent instructions, retrieved skills, history, generated files, tests, and scoring artifacts. Retrieve at most K items whose cosine similarity exceeds τproc. After execution, distill the trajectory into a skill only if the harness returns PASS; FAIL and INVALID add nothing.
-
-Steps are explicit in Algorithm 1 (p.6): initialize an empty library; embed each task; retrieve top-K skills; give task and skills to the agent; record every action/result and update statistical memory after each completed call; advise recovery when a repeated failure has low predicted success; run the domain harness; on PASS distill and store the procedure, otherwise leave the library unchanged. The adapter defines acceptance: “PPA acceptance requires successful synthesis, functional equivalence, and a positive audited improvement.” (section 3, p.6). Frozen mode keeps a read-only initial library; evolving mode carries accepted additions forward.
-
-Evidence: with frozen memory on 20 unseen CVDP tasks (10 stimulus and 10 checker), CID012 remained 10/10 and CID013 rose from 8/10 to 10/10; overall 18/20 to 20/20 (Table 2, p.9). This denominator is one evaluation per task and read-only memory. On five RTL-OPT designs, memory-off produced 3 strict passes, procedural-only 4, and Bayesian-only 4 under matched settings. The combined-memory loaded-state replay produced 5 after accumulating experience on the same design sequence; it reports system capability rather than an equally initialized component comparison (Table 1 and section 5, p.8). The study is small and uses top two retrievals at threshold 0.6 (limitations, p.9).
-
-## technique 2: statistical retry and recovery memory
-Use this when repeated tool failures waste latency. For each tool call c_t, error class e_t, and saturated prior retry count b_t=min(r_t,3), maintain a hierarchical Beta-smoothed retry probability: p0→p1(c)→p2(c,e)→p3(c,e,b), starting from Beta(1,1). At each conditioned level, p_j=(s_j+K p_(j−1))/(s_j+f_j+K), where s_j and f_j count successes and failures and K=8. The retry bucket groups three or more earlier calls together. If the final probability is below τstat=0.20 after a same-type failure, rank recovery actions by a parallel hierarchy q0→q1(action)→q2(action,error)→q3(action,error,stage), using the same smoothing formula for recovery successes and failures, and pass the ranking to an LLM recovery planner for a bounded advisory plan. Every completed call atomically persists retry and recovery evidence (section 3, p.5).
-
-The paper says: “The ranking is advisory; each completed tool call atomically persists retry and recovery evidence for the next decision, including the next decision in the same session.” (section 3, p.5). Inference: a Verus adapter can classify failures (SMT timeout, unsupported feature, type error, missing invariant), estimate whether retrying unchanged is useful, and suggest inspect-log, simplify-quantifier, or add-lemma actions. The Bayesian probabilities guide actions; only Verus acceptance validates a repair.
-
-Evidence: across 50 OpenTitan sessions (ten designs, five attempts per mode), ChipMEM reduced mean LLM calls 29.4→26.1, tool calls 27.4→23.3, tool time 420.2→369.8 seconds, input tokens by 6.8%, and total tokens by 3.4% (section 5, p.8). However, output tokens increased 55.0% and summed session wall time increased 14.9% (Table 10, p.19). Appendix A.4, p.18, cautions: “The completed legacy run mined a skill after every memory-on session, including all 45 failed sessions, so these results are descriptive of this run rather than a clean evaluation of the current PASS-only learning rule.” Table 11, p.19, reports that clustered confidence intervals cross zero for the efficiency differences except the output-token increase. Inference: these cost means do not establish that the current PASS-only system reduces runtime; recovery advice still requires external validation.
-
-## technique 3: deterministic domain adapters and strict outcome logging
-Use an adapter to keep memory independent of a specific agent. It supplies the original task, retrieved skills, and recovery advice; exposes tools; records trajectory H_n; and returns the artifact to a deterministic harness V. For CVDP, PASS requires hidden simulation, coverage, and mutation checks; for PPA, synthesis, equivalence, and audited improvement are required (section 3, p.6). Statistical memory updates after every call even when procedural memory does not.
-
-## technique 4: evaluate transfer with frozen memory and matched controls
-Use frozen libraries to test transfer to unseen tasks without adding procedural skills during evaluation. The whole-system controls use the same model, task, prompt, tools, and budget (section 4, pp.7–8); the five-design ablation additionally matches task order, RTL inputs, seed, and execution limits (section 5, p.8). Report acceptance, equivalence, audited gains, and interaction cost with explicit denominators. The separate 36-design held-out PPA study keeps procedural updates enabled, so later designs may reuse skills learned earlier in that evaluation (Appendix A.2, p.15). The paper notes that “Because the library is read-only, the two additional passes reflect transfer from previously learned procedural memory.” (section 5, p.9).
-
-Table 3, p.13, reports RTL-OPT mean area gains of 6.18%→8.79%, with 33/38 equivalence passes in both modes. ChipMEM selects each design’s best valid result across three result sets. RTLRewriter short-suite area gains are 5.66%→8.69% on 49 scored designs, with equivalence passes 33/49→37/49; the five long designs give 6.85%→7.47% and 2/5 passes in both modes. Thus the scored-suite equivalence totals are 35/54→39/54, including unchanged outputs accepted as trivially equivalent and excluding unproven outputs. Five zero-cell cases are excluded. Section 5, p.8, instead gives aggregate area improvement “from 5.95% to 8.88% on RTLRewriter-Bench.” Inference: these aggregate means are not reconciled with Table 3b, so use the explicit suite-level values.
-
-Table 3c–d reports Custom Design Set mean area/power gains of 0.1400%/0.3879%→0.3101%/0.5211%; OpenTitan gives 0.0519%/0.0000%→0.2431%/2.5373%, with equivalence passing 6/10 in both modes. OpenTitan acceptance rises 1/10→4/10 using the best of five attempts per design, subject to the legacy-run qualification above. RTL-OPT and RTLRewriter measure area; they have no matched downstream power or timing measurements (section 4, p.7).
-
-## techniques for the catalog
-- checker-approved procedural memory — retrieve task-similar skills and store only trajectories accepted by a deterministic harness
-- Bayesian retry predictor — estimate tool-call success from hierarchical Beta posteriors with saturated retry history
-- recovery-action ranking — rank error-specific recovery strategies by smoothed historical success
-- agent-agnostic verification adapter — standardize task, tool, trajectory, and final-artifact interfaces across domains
-- frozen transfer evaluation — test memory reuse on unseen tasks with read-only libraries and matched controls
+agent-agnostic memory layer around an unchanged EDA agent, gated by a deterministic harness
+- procedural memory: store a skill only if the harness returns PASS
+  - item = (task embedding -> skill, metadata, verifier outcomes)
+  - retrieve top-K by cosine similarity > τproc (0.6, K=2)
+  - FAIL/INVALID add nothing
+  - PPA acceptance = synthesis ok + functional equivalence + audited improvement
+- statistical memory: hierarchical Beta-smoothed retry/recovery estimates
+  - updated after every tool call, including failures
+  - p0→p1(call)→p2(call,error)→p3(call,error,retry bucket), smoothing K=8
+  - if p < 0.20 after same-type failure, rank recovery actions and let an llm planner advise
+  - advisory only; the harness alone validates
+- verus inference: classify failures (smt timeout, unsupported feature, missing invariant), suggest inspect-log/simplify-quantifier/add-lemma
+evidence is small and partly confounded
+- frozen memory on 20 unseen CVDP tasks: 18/20 → 20/20
+- 5 RTL-OPT designs: memory-off 3 strict passes, procedural-only 4, Bayesian-only 4
+  - combined 5 is a loaded-state replay, not a matched comparison
+- RTL-OPT area gain 6.18%→8.79%; RTLRewriter short suite 5.66%→8.69%
+  - section 5 aggregate 5.95%→8.88% is not reconciled with table 3
+- 50 OpenTitan sessions: llm calls 29.4→26.1, tool calls 27.4→23.3, total tokens -3.4%
+  - output tokens +55.0%, summed wall time +14.9%
+  - clustered CIs cross zero except the output-token increase
+  - legacy run mined a skill after every session including 45 failed ones, so not a clean test of the PASS-only rule
+untrusted agent, trusted adapter
+- adapter supplies task, skills, advice, tools; records trajectory; hands artifact to the harness
+- transfer evaluated with read-only libraries and matched model/prompt/tools/budget

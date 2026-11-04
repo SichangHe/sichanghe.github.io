@@ -2,49 +2,31 @@
 (authored by agents unless marked 🧑)
 Tag: `zhang2026verusseek`, [paper](https://doi.org/10.1145/3832783.3834603)
 
-## problem and workflow
-
-VerusSeek targets incomplete Rust/Verus programs whose executable code and user-provided contracts exist but whose loop invariants, assertions, lemmas, or proof blocks are missing. The abstract states, "Verus checks each candidate proof, and the resulting diagnostics guide the next repair attempt." The paper's abstract describes the core design: "Instead of retrieving entire files or functions, VerusSeek indexes previously verified Verus code as semantic proof constructs, including contracts, assertions, loop invariants, lemmas, and proof blocks." (Abstract, p. 1). It combines retrieval with an LLM and checks every candidate with Verus.
-
-The backend has six stages: semantic proof-construct chunking, type-aware retrieval, bounded hierarchical context expansion, structural loop-invariant hint synthesis, LLM patch generation, and Verus verification with iterative repair (Section 2, pp. 2–3). It exposes the same process through a web interface, Docker deployment, and command-line execution (Sections 2–3, pp. 3–4).
-
-## technique 1: index semantic proof constructs
-
-what it is. Build a knowledge base from previously verified Verus programs, but split each program into contracts, assertions, loop invariants, lemmas, and proof blocks. Store the construct type, source span, enclosing function, verification status, and neighboring context as metadata (Section 2, “Stages 1–3”, p. 2).
-
-how to apply it. Parse each verified program and emit one retrieval unit per semantic construct. When a target fails, infer a query type from the failing program and verifier error. Table 1 maps signals to evidence: `while`, failed invariants, and loop errors prefer loop-invariant and contract chunks; `proof fn` and auxiliary-proof signals prefer lemmas and proof blocks; failed `assert(...)` prefers assertions and proof blocks (Table 1, p. 2). Select constructs whose types match the inferred obligation; Table 1 lists a second preferred type for each query (for example, Contract for LoopInvariant), so the preference is not strictly one type. Expand each selected construct with a bounded amount of hierarchical context: its enclosing function contract, nearby companion invariants, or related assertions (Section 2, p. 3). This restores dependencies while avoiding unrelated code from a complete file.
-
-why. The motivating `prime_num` loop needs a quantified non-divisibility invariant and a short proof block; a whole verified file contains distracting material. The paper says, "the useful evidence is not another complete implementation, but a quantified non-divisibility invariant and a short proof block, supplemented with bounds and a termination measure derived from the loop structure." (Section 1, p. 2).
-
-Verus form.
-
-## technique 2: synthesize structural loop hints
-
-what it is and when to use it. Retrieval may provide semantic patterns but omit obvious facts required by the current loop. For loop-related failures, derive a lightweight proof skeleton from executable structure: bounds from guards and array accesses, frame conditions for values that are not modified, and a termination expression from a progress variable (Section 2, “Stage 4”, p. 3).
-
-how to apply it. The paper says the analyzer derives "candidate bounds from loop guards and array accesses, frame conditions for unmodified inputs, and termination measures from progress variables." These hints are combined with retrieved examples. For Figure 1, the paper says VerusSeek "can derive the bounds on index and the decreasing expression n - index from the loop structure," while retrieval supplies "examples of quantified non-divisibility invariants and proof assertions that construct a counterexample when a divisor is found" (Sections 1–2, pp. 2–3). The paper does not give the analyzer's rules beyond this description. Inference: the concrete steps are to inspect the loop guard and index uses for bounds, find inputs the body does not write for frame facts, and pick a progress variable for the `decreases` measure.
-
-Verus form.
-
-## technique 3: verifier-guided generate–repair loop
-
-how it works. Given program P, corpus K, and budget B, Algorithm 1 first loads/builds the construct index. Each round runs Verus; if there is no error, return P. Otherwise infer a query type, retrieve constructs, expand context, synthesize hints, ask the LLM for a patch, apply it, and repeat until success or the budget is exhausted (Algorithm 1, p. 3). The prompt includes the incomplete program, latest verifier feedback, retrieved evidence, and structural hints (Section 2, “Stages 5–6”, p. 3).
-
-The motivating `prime_num` example uses a postcondition requiring that no integer from 2 through `n-1` divides `n`. Its loop carries bounds, a quantified non-divisibility invariant, and `decreases n - index`; when a divisor is found, a proof block asserts divisibility and constructs an existential counterexample (Figure 1 and Section 3, pp. 2 and 4). The paper's conclusion states, "Every generated patch is checked directly by Verus and revised using the latest verifier feedback when necessary." (Section 5, p. 5).
-
-Verus form. Inference: run the real Verus binary after each generated patch and feed its exact diagnostics into the next retrieval query. Cap retries with a budget and return failure when the budget ends; do not report an unverified patch as a proof.
-
-## evidence and numbers
-
-The main experiment uses 150 non-trivial VerusBench tasks: CloverBench 11, Diffy 38, Misc. 23, and MBPP 78 (Table 2, p. 4). Under gpt-4o and at most three synthesis attempts, VerusSeek verifies 122/150 (81.3%), compared with AutoVerus 69/150 (46.0%), RagVerus 85/150 (56.7%), Basic RAG 78/150 (52.0%), and Chunked RAG 95/150 (63.3%) (Table 4, p. 5). It verifies 104/150 on the first attempt; among the 122 successful tasks, 104/122 (85.2%) succeed first, 13 on the second, and 5 on the third (Section 4, pp. 4–5). The reported relative improvements are 76.7% over 69/150 and 43.5% over 85/150; these are relative increases in task counts, not percentage-point differences (Section 1, p. 2; Section 4, p. 4).
-
-Ablation under gpt-4o changes Basic RAG from 78/150 to Chunked RAG 95/150, then to VerusSeek 122/150; the added loop-hint component contributes 27 tasks in aggregate (Table 3, p. 4). The suite effects are uneven: on Diffy, Chunked RAG verifies 35/38 while VerusSeek verifies 32/38, a decrease of three tasks, and the hints add 26 tasks on MBPP (Table 3 and Table 2, p. 4; Section 4, p. 4). The Basic RAG to Chunked RAG step also varies by suite: Diffy +30 but MBPP -12 (Table 3, p. 4). With deepseek-v3.2, VerusSeek verifies 116/150 (77.3%), versus 60/150 AutoVerus, 62/150 RagVerus, 59/150 Basic RAG, and 87/150 Chunked RAG (Table 4, p. 5). The paper reports approximate cost of $0.31 per task for gpt-4o and $0.01 per task for deepseek-v3.2, but gives no cost denominator beyond “per task” (Section 4, p. 5).
-
-The reported 1.19 synthesis attempts per successful task is 122 successes over 104 first-attempt, 13 second-attempt, and 5 third-attempt outcomes: `(104 + 2*13 + 3*5) / 122 = 1.19` (Section 4, p. 5). This is an arithmetic check of the paper's counts, not a new measurement.
-
-## techniques for the catalog
-
-- construct-level proof retrieval: index contracts, invariants, assertions, lemmas, and proof blocks with type-aware metadata and bounded context
-- structural loop-hint synthesis: derive bounds, frame facts, and termination measures from loop syntax to complement retrieved semantic patterns
-- verifier-guided patch repair: generate a Verus annotation patch, run Verus, feed diagnostics back into retrieval, and retry within a fixed budget
-- benchmark and ablation accounting: report task counts with suite denominators, attempt rounds, backend, and cost setting
+task: fill missing invariants, assertions, lemmas, proof blocks in Verus programs
+- code and contracts given
+- every candidate checked by Verus, diagnostics drive repair
+index verified Verus code as semantic proof constructs, not whole files
+- types: contracts, assertions, loop invariants, lemmas, proof blocks
+- metadata: type, span, enclosing function, verification status
+- query type inferred from failing program and verifier error
+  - `while`/invariant errors to invariant and contract chunks
+  - `proof fn` to lemmas and proof blocks
+  - failed `assert` to assertions and proof blocks
+- bounded hierarchical context expansion: enclosing contract, companion invariants
+structural loop hints from syntax
+- bounds from guards and array accesses
+- frame conditions for unmodified inputs
+- `decreases` from progress variable
+- complements retrieval; analyzer rules not given in the paper
+verifier-guided generate-repair loop
+- run Verus, retrieve, hint, LLM patch, repeat within budget
+results: 150 non-trivial VerusBench tasks, gpt-4o, at most 3 attempts
+- VerusSeek 122/150 (81.3%)
+  - AutoVerus 69, RagVerus 85, Basic RAG 78, Chunked RAG 95
+  - 104 first attempt, 13 second, 5 third
+- deepseek-v3.2: 116/150 vs Chunked RAG 87
+- ablation uneven
+  - hints add 27 tasks overall, 26 on MBPP
+  - Diffy: Chunked RAG 35/38 beats VerusSeek 32/38
+  - Basic to Chunked: Diffy +30, MBPP -12
+- cost per task ~$0.31 gpt-4o, ~$0.01 deepseek-v3.2

@@ -2,31 +2,28 @@
 (authored by agents unless marked 🧑)
 Tag: `yuan2026mathadv`, [paper](https://www.semanticscholar.org/paper/7430309ce5f9a0f2fd4bac2ae004cf9702787140)
 
-## benchmark design and measured claims
-MathAdv is a diagnostic benchmark, not just a theorem list. It contains 321 problems across 13 undergraduate and graduate domains; 298 have Lean 4 statements, while 23 remain auxiliary-only because current Mathlib support is inadequate (§3.1, p. 4). Each suitable problem can have direct-answer, multiple-choice, and expert-transformed variants. The paper’s central claim is that component-wise scores separate knowledge, informal reasoning, formal proof construction, and presentation robustness: “Together, these results show how component-wise evaluation can reveal model capabilities and failure modes that aggregate theorem-proving accuracy obscures.” (Abstract, p. 1)
-
-The formal theorem-proving evaluation reports accuracy over the benchmark’s 320? Lean targets as presented in Table 1; the paper’s stated denominator for the formalized collection is 298 in §3.1. Goedel-Prover-V2 reaches 21.88%, DeepSeek-Prover-V1.5 RL + RMaxTS 16.56%, and GPT-5.4 10.62% (Table 1, p. 7). All models score 0% on topology in the displayed domain plot, while Goedel performs best in number theory and linear algebra (p. 8). These numbers are benchmark accuracy percentages, not proof probability or coverage of all 321 source problems.
-
-## technique: component-wise diagnostic tasks
-Use this to diagnose why a model fails a formal proof. (1) Select a nonredundant source problem from textbooks or expert contributions across domains (§3.1, p. 4). (2) Ask for a direct answer without Lean to test informal mathematics. (3) Ask a multiple-choice question identifying the relevant theorem, concept, or strategy; the paper creates these for 293 problems, excluding tasks whose solution is mainly direct computation or basic facts (§3.1, p. 4). (4) Ask for a Lean theorem proof on the original statement. (5) For a selected subset, create an expert reformulation preserving the mathematics but changing presentation; MathAdv has 30 transformed problems (§3.1, p. 4). Compare scores across all views: high direct-answer but low Lean means formalization difficulty; low multiple-choice means knowledge; original/transformed gaps indicate presentation sensitivity.
-
-The paper’s probability example asks for the expected stopping time of a biased random walk, then supplies a direct-answer version and a multiple-choice question whose correct strategy is the optional stopping theorem (Example 1, p. 5). Its real-analysis transformation changes a convex-combination characterization into “the smallest convex set containing S” while preserving the same set (Example 2, p. 5).
-
-Evidence and limits: the benchmark uses domain-expert curation and a second independent expert review for every problem (§3.1, p. 5). Domain labels “undergraduate” and “graduate” are intentionally not assigned because the distinction varies by institution (p. 5). Transformed tasks are expert-crafted, so they measure robustness to this curated distribution, not arbitrary paraphrase invariance.
-
-## technique: verifier-in-the-loop autoformalization
-Use this when an LLM can propose Lean statements but cannot reliably predict type checking. The four stages are: (1) Initial Autoformalization: prompt an LLM with the informal statement and proof and obtain Lean 4 code; (2) Syntax Correction: compile and return parser/type errors to the model for iterative correction; (3) Dual Semantic Verification: an independent LLM and a human expert assess whether the statement preserves intended meaning; (4) Final Expert Review: a second expert resolves residual issues (§3.2, pp. 6–7). The pipeline diagram labels these as “Query,” “Draft statement,” “Syntax check,” “Semantic check,” and “Final validation” (Figure 3, p. 7).
-
-The paper explains the trust split: “We do not rely on them as syntax or type-checking judges. Instead, we place the Lean verifier in the loop.” (§3.2, p. 7) LLMs are used for semantic interpretation and revision; Lean is used for compilation feedback. Candidate problems lacking definitions or lemmas in Mathlib are surveyed through official documentation, LeanSearch, and Loggle, then deferred when faithful formalization would require prohibitive library development (§3.2, p. 7).
-
-Verus form (Inference): keep the same four-stage boundary. Generate a Rust/Verus specification, compile with the pinned Verus toolchain, feed diagnostics back for repair, then have an independent model and human compare the contract to visible intent, followed by a second review. Use valid Verus constructs from the local guide (`requires`, `ensures`, `spec fn`, `lemma`, `assert`, and proof blocks); do not treat successful compilation as semantic fidelity. The paper’s use of Lean compiler feedback carries directly; its Mathlib search step becomes a search for existing Verus libraries and supported encodings.
-
-## technique: compare search-based and whole-proof generation
-MathAdv evaluates proof-step systems that query verifier states and search, and whole-proof systems that emit an entire proof without verifier interaction (§4.1, p. 7). Report Pass@K or accuracy with fixed compute budgets, and keep the interaction protocol explicit. DeepSeek-Prover-V1.5 improves from 1.25% base to 11.25% with reinforcement learning and 16.56% with RMaxTS; the authors attribute the gain to search in sparse-reward proving (Table 1 and §4.2, p. 8). Goedel-Prover-V2’s 21.88% is the best reported score.
-
-## techniques for the catalog
-- component-wise diagnostics — pair formal proofs with direct answers, theorem-choice questions, and equivalent transformations
-- expert-preserving transformations — change presentation while preserving mathematical content to test robustness
-- verifier-in-the-loop formalization — compile candidate statements, return errors, and separate syntax correction from semantic review
-- staged semantic review — use independent model review, human review, and final expert validation
-- protocol-separated evaluation — report search-based, whole-proof, and general-purpose models under explicit budgets
+claim: component-wise scores expose failures hidden by aggregate proving accuracy
+- 321 problems, 13 undergrad/grad domains, 298 with Lean 4 statements
+  - 23 auxiliary-only, Mathlib support inadequate
+- variants per problem
+  - direct answer without Lean: informal math
+  - multiple choice on theorem/strategy: 293 problems
+  - Lean proof of original statement
+  - expert-transformed presentation: 30 problems
+- every problem has expert curation plus second independent expert review
+proving results
+- Goedel-Prover-V2 21.88%, DeepSeek-Prover-V1.5 RL+RMaxTS 16.56%, GPT-5.4 10.62%
+  - DeepSeek-Prover-V1.5: 1.25% base → 11.25% RL → 16.56% with search
+- all models 0% on topology
+- transformed tasks measure robustness to curated rewrites, not arbitrary paraphrase
+- one denominator in the note is inconsistent (Table 1 vs 298 in §3.1), treat percentages with care
+verifier-in-the-loop autoformalization
+- 1 LLM drafts Lean from informal statement and proof
+- 2 compile, feed parser/type errors back, iterate
+- 3 independent LLM + human expert check semantic fidelity
+- 4 second expert final review
+- "we place the Lean verifier in the loop" rather than trusting LLMs as syntax judges
+- problems needing missing Mathlib definitions deferred, searched via docs, LeanSearch, Loggle
+for Verus (inference)
+- same four stages with Verus compile feedback
+- compile success is not semantic fidelity

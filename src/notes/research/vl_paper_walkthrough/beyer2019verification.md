@@ -2,45 +2,36 @@
 (authored by agents unless marked 🧑)
 Tag: `beyer2019verification`, [paper](http://arxiv.org/abs/1905.08505v1)
 
-## cooperative verification
-
-Beyer and Wehrheim define cooperative verification as combining existing verification approaches through exchangeable intermediate information. The abstract says, “The goal of cooperative verification is to combine verification approaches in such a way that they work together to verify a system model.” (Abstract, p.1) Their goal is to increase effectiveness and efficiency while leaving tools mostly unchanged: “Cooperative verifiers communicate with each other in order to maximize the common strength, in particular, by exchanging information about intermediate results.” (section 1, p.2). A verifier evaluates whether program `p` satisfies behavior specification `ϕb`, returning `true`, `false`, or `unknown` and optionally a witness `ω` (section 2, p.2).
-
-The paper distinguishes portfolio combinations (run the approaches sequentially or in parallel, with no communication), algorithm selection (a selector picks one approach from a selection model extracted from the input), and cooperative combinations (tools exchange intermediate results) (sections 1 and 2.2, pp.2, 5–7). Inference: use cooperation when one verifier has useful partial knowledge that another can consume. Inference: for Verus, the artifact boundary could connect Verus proofs, Kani or model-checking counterexamples, test generators, and specification-repair tools without merging their implementations.
-
-## technique: exchange partial results
-
-Conditional model checking fits when one run has verified only part of the state space. The paper says it means “to produce a condition as output that describes the state-space that was successfully verified”, and the condition “can be represented as an automaton”; “Using a reducer [23], a program can be reduced to those parts of its state space that still has to be verified; the result is called residual program.” (section 3.1, p.8). Inference: the steps (1) run verifier one, (2) serialize its condition, (3) reduce the program using that condition, (4) run verifier two on the residual program, and (5) combine results only when the condition semantics justify full coverage are this study's assembly, not a procedure listed in the paper. The paper says “Symbiotic [31] can be seen as reducer-based cooperation (slicer + Klee).” (p.8). Its composition `ver(red(p, ϕb), ϕb)` (section 4.2, p.12) passes `ϕb` as the reducer's second argument, although the paper types a reducer as `P × Ψ → P`; Inference: this looks like a typo for a condition `ψ`.
-
-Witnesses exchange decisive evidence. A violation witness describes a path through the program that violates the specification; a correctness witness describes invariants that are useful in a correctness proof. The first analyzer produces a result r and a witness ω; the second analyzer “(re-)verifies the same program and specification using information from the witness. If the result r matches the result r’, then the result is confirmed.” (section 3.1, p.8, Fig. 7). Inference: a Verus witness could carry a failing input trace or candidate loop invariant, but it must be translated into valid Rust/Verus assertions and checked by Verus.
-
-Precision reuse targets regression verification. A CEGAR verifier can export its precision (the abstraction facts defining the abstraction level); when version i is verified, the verifier reads the precision that the run for version i−1 wrote, “in order to save time discovering the right abstraction level for the abstract model” (sections 3.1 and 3.2, p.9). Configurable certificates, per the paper, reduce validation time because the validator “does ‘only’ need to check for the set of abstract states that all initial states are contained and that the set is closed under successor transitions” (p.10). Path programs were “invented to incorporate external invariant generators into CEGAR-based approaches” and are produced after a verifier finds an infeasible error path; the path program goes to an invariant-synthesis tool to obtain path invariants, which “can then be fed back into the CEGAR-based approach” (section 3.1, p.9).
-
-## technique: validate and parallelize through artifacts
-
-Witness-based validation increases confidence by replaying a violation path or using correctness-witness invariants to re-establish a proof. Execution-based validation extracts a test case from a violation witness and executes it, to confirm that the violation is observable in the executed program (section 3.2, p.10). The paper says conditional model checking “is used to split programs into parts that can be independently verified [70]” (stateless verification and parallelization, p.10). The authors list explainability as another objective, citing only “preliminary results on explaining and visualizing counterexamples” and saying the exchangeable witness format makes many more approaches possible (p.10).
-
-The paper's framework names seven artifact kinds (section 4.1, pp.10–11): program `p`; behavior specification `ϕb`; test specification `ϕt`; result `r ∈ {true,false,unknown}`; witness `ω`; test case `t`; and condition `ψ` describing already verified or covered behavior. It classifies actors as analyzers (produce knowledge), transformers (translate artifacts), and presenters (make artifacts human-readable) (section 4.2, p.11).
-
-The component types make composition explicit. A verifier has type `P × Φb → R × Ω`; a conditional verifier has `P × Φb × Ψ → R × Ω × Ψ`; a validator has `P × Φb × Ω → R × Ω`; a reducer has `P × Ψ → P`; a test extractor has `P × Φb × Ω → T`; and a test executor presents `P × T → {}` (section 4.2, pp.11–12). A conditional verifier can be built as `ver(red(p, ϕb), ϕb)`, and execution validation as `exec(p, wit2test(p, ϕb, ver(p, ϕb).ω))` (pp.12–13). The paper also notes that “Transformers are largely lacking today, only a few exist already [13, 23]” (p.12).
-
-## technique: give artifacts formal semantics
-
-The paper argues that tools need agreed artifact semantics before cooperating; otherwise a combination may incorrectly claim `true` after leaving parts of the state space unchecked. The paper models a program as a control-flow automaton `Ap = (L, ℓ0, G)` with locations, an initial location, and operation-labelled edges (section 4.3, pp.13–14). A concrete path records states and edges under assignments, assumptions, and nondeterministic inputs.
-
-An artifact automaton is `A = (Q, Σ, δ, q0, Inv, F)`: finite states and initial state; alphabet `Σ ⊆ 2G × Γ`; transition relation; state invariants; and final states (Definition 1, p.14). A path matches when every selected program edge belongs to the transition's edge set, each state satisfies the automaton invariant, and each edge condition holds (Definition 2, p.14). It is accepted when the run ends in a final state and covered when the run consumes the whole path.
-
-The paper's specializations are (section 4.3, pp.15–16): property automata observe program state and mark violations; test-goal automata mark coverage goals; violation witnesses have trivial state invariants and identify error paths; correctness witnesses have trivial transition assumptions and no final states, carrying invariants; condition automata have trivial invariants and no transitions from final states; test-case automata encode a sequence of input values.
-
-The semantics are set intersections. A program satisfies a property when `paths(Ap) ∩ L(A¬ϕb) = ∅`. A correctness witness is valid when all program paths are covered by it and no property-violating path exists. A violation witness is valid when `paths(Ap) ∩ L(Aω) ∩ L(A¬ϕb) ≠ ∅`. A condition is correct when `paths(Ap) ∩ L(Aψ) ∩ L(A¬ϕb) = ∅`. A test case covers a goal when `paths(Ap) ∩ paths(At) ∩ L(Aϕt) ≠ ∅` (section 4.3, pp.16–17).
-
-Inference: a Verus artifact format should define exactly which Rust executions, assumptions, invariants, and proof obligations a witness covers, and a validator should check those semantics. A JSON label saying “verified” without coverage semantics is insufficient.
-
-## techniques for the catalog
-
-- conditional verification — serialize covered-state conditions, reduce to a residual program, and verify the remainder
-- witness exchange — pass violation paths or correctness invariants to an independent validator and compare results
-- precision and certificate reuse — save CEGAR precisions or abstract-state certificates for regression and faster validation
-- artifact actors — compose analyzers, transformers, validators, reducers, test extractors, and presenters through typed interfaces
-- formal artifact semantics — define automata matching, acceptance, coverage, and set-based validity before combining tools
-- execution validation — extract tests from violation witnesses and run them to confirm an observable failure
+cooperative verification = combine verifiers by exchanging intermediate artifacts
+- vs portfolio (no communication) and algorithm selection (pick one tool)
+- verifier: program p, spec ϕb -> true/false/unknown + optional witness ω
+- inference: for Verus, artifact boundary could link proofs, counterexample finders, test generators, spec repair
+artifact kinds
+- program, behavior spec, test spec, result, witness, test case, condition ψ (already-verified behavior)
+- actors: analyzers (produce), transformers (translate), presenters (make readable)
+  - transformers are "largely lacking today"
+- typed components
+  - verifier P × Φb → R × Ω
+  - conditional verifier adds input/output condition Ψ
+  - validator P × Φb × Ω → R × Ω
+  - reducer P × Ψ → P
+  - test extractor + test executor
+exchange techniques
+- conditional verification: tool 1 outputs condition (automaton) of verified states, reducer yields residual program, tool 2 verifies the rest
+  - e.g. Symbiotic = slicer + Klee
+- witnesses: violation witness = error path, correctness witness = invariants
+  - second tool re-verifies using witness, result confirmed if it matches
+  - inference: Verus witness could carry failing trace or candidate invariant, translated to Rust and rechecked by Verus
+- execution validation: extract test from violation witness, run it to confirm failure is observable
+- precision reuse: export CEGAR abstraction precision, reuse across regression versions
+- certificates: validator only checks initial states contained and closure under successors, cheaper than verifying
+- path programs: feed infeasible error path to invariant generator, feed invariants back into CEGAR
+formal artifact semantics
+- artifacts are automata over program paths (CFA)
+  - witness/condition/test-goal/test-case are specializations
+- validity is set intersection
+  - program safe iff paths(Ap) ∩ L(A¬ϕb) = ∅
+  - violation witness valid iff paths ∩ L(Aω) ∩ L(A¬ϕb) ≠ ∅
+  - condition correct iff paths ∩ L(Aψ) ∩ L(A¬ϕb) = ∅
+- without agreed coverage semantics a combination may claim true with unchecked state space
+- inference: a Verus artifact format needs defined coverage, not a "verified" label

@@ -1,39 +1,30 @@
 # Next-Token Prediction Task Assumes Optimal Data Ordering for LLM Training in Proof Generation
 (authored by agents unless marked 🧑)
 Tag: `an2024next`, [paper](https://arxiv.org/abs/2411.00863)
-## scope and claim
-The paper studies how the order of proof steps within each next-token training sample affects generated proofs. It claims that the optimal order places each step's useful intermediate supervision before that step, calling this intuitively sequential order. The proposed causes of poorer learning with other orders are unavailable future supervision and learned spurious dependencies. The experiments compare sequential and reversed generated proofs in intuitionistic propositional logic in Lean and four-by-four digit multiplication; they do not establish optimality over all proof orders (Sections 3–4, PDF pp. 3–8).
 
-The paper's concrete example asks whether `f(x)=x^2+4x+5` is always positive. Logical order rewrites the expression as `x^2+4x+4+1`, then `(x+2)^2+1`, then invokes positivity. Intuitively sequential order presents these steps in reverse. The paper says, “Without the lemma, it is unclear why these preliminary steps are necessary.” It calls this the Delayed Insight Issue (DII): “We refer to this issue as Delayed Insight Issue (DII)—a problem where crucial insights are introduced too late, disrupting intuition and understanding.” (Section 1 and Figure 1, PDF p. 2). Inference: the figure's wording that a square is always positive should be read as nonnegative; adding one makes the example strictly positive.
-
-## technique 1: reorder training proofs by dependency
-The proposed rule is to identify the intermediate supervision for each target step and place that supervision before the target. The authors state: “We claim optimal order to be the intuitively sequential order, where intermediate supervision is placed on the left.” (Section 1, PDF p. 3). Figure 1 gives the example: Step 3 (the positivity lemma), then Step 2 (square completion), then Step 1 (rewriting the constant). The paper does not supply a general algorithm for finding this order in arbitrary proofs.
-
-For multiplication, the authors retain the same proof steps in three orderings: SEQ (problem, sequential proof, final answer), PSER (problem, sequentially reversed proof, final answer), and SER (problem, final answer, sequentially reversed proof). These are Table 1's orderings (PDF p. 6). They enumerate four-digit pairs, shuffle them, and use the first 1,000,000 for training and the last 1,000 for testing. For PropL, they use only SEQ and SER, reversing tactic/state pairs for SER. They select 21,000 instances proved with three, four, or five tactics, reserving the last 1,000 for testing and 20,000 for training; models see each sample at most once (Section 4.1, PDF pp. 4–5).
-
-Inference: for Verus, build each example from a Rust function, its pre/postconditions, and proof steps; order explanatory `assert` facts and lemma invocations before the operation whose verification depends on them. The paper is about Lean and language-model data, so Verus syntax and this mapping are an inference. Keep the actual Verus proof obligations unchanged; only reorder the serialized proof demonstrations. Do not treat model ordering as a replacement for Verus's verifier.
-
-## technique 2: measure proof validity at two levels
-The paper's Lean evaluation distinguishes tactic prediction correctness from proof-generation correctness: “The second metric is proof generation correctness, which not only checks if the generated tactics prove the theorem, but also ensures that all intermediate states are correctly generated.” (Section 4.2, PDF p. 5). Lean applies the generated tactics and computes intermediate states, which are compared with the model's generated states. Multiplication uses proof correctness (every step and final answer), final-answer correctness, and Step-1 correctness. The paper does not describe a comparable formal verifier for multiplication.
-
-Inference: for Verus, compile generated Rust and run Verus on every candidate, recording both final postcondition success and intermediate `assert`/state obligations. A passing final postcondition alone does not establish that the generated explanatory states are faithful; this is a design inference from the paper's two metrics.
-
-## technique 3: isolate the two causes with controlled prompts
-To test whether models learn to use future supervision, the multiplication experiment prompts SEQ and PSER with the problem plus all intermediate steps except the final answer, in their respective orders; SER receives only the problem. The authors report: “As displayed in Figure 2d, 2e, 2f, in this setting, for all three base models, models that are fine-tuned/trained from scratch on SER got 0 final answers correct consistently.” (Section 4.3, PDF p. 7). They interpret this as evidence for the no-look-forward explanation. Correct intermediate prompts also remove errors from generating those steps, yet SEQ still outperforms PSER on final-answer correctness.
-
-To investigate spurious dependencies, another experiment prompts SEQ and SER with only the problem and scores the decomposition step (Step 1). SEQ learns it faster; the authors attribute SER's slower early learning to fitting dependencies on later proof steps (Section 4.3 and Figure 3, PDF pp. 7–8). Inference: this behavior supports their explanation but does not directly measure an internal learned dependency.
-
-A separate control masks all tokens except final-answer tokens out of the training loss; the problem and intermediate steps remain inputs. SEQ still outperforms PSER on final-answer correctness. A curriculum control fine-tunes Gemma-2B on PSER for 50,000 steps and then on SEQ; proof-correctness convergence is slower than direct SEQ fine-tuning (Section 5, PDF p. 7; Figure 10, PDF p. 15). The masked experiment is described as Gemma-2B in Section 5 but labeled Llama-2-7B-hf in Figure 10b; the paper does not resolve this discrepancy.
-
-## evidence, limitations, and trust
-The experiments use Gemma-2B and Llama-2-7B-hf, Adam, learning rate 5×10^-5, batch size 4 on four NVIDIA A100s; scratch runs take about three days (Section 4.3, PDF p. 5). Multiplication uses six fine-tuned models and three randomly initialized Gemma-2B models; PropL uses two fine-tuned Llama-2 models. The PropL baseline produces no correct proofs in 1,000 tests; although called zero-shot, it is described as receiving three examples (Section 4.3, PDF pp. 5–6).
-
-The abstract reports “an 11 percent improvement in proof success rate” (PDF p. 1), while Section 4.3 reports “20 percent measured by the tactic prediction metric” for SEQ versus SER (PDF p. 6). These concern different metrics; the prose does not specify whether the percentages are relative or percentage-point differences. The textbook audit reports 17.3 percent and a denominator of 57 nontrivial proofs, but Appendix A.2 lists nine cases (Section 1, PDF pp. 2–3; Appendix A.2, PDF pp. 11–13). Inference: nine divided by 57 is approximately 15.8 percent, so those reported counts do not reproduce 17.3 percent.
-
-The datasets are artificial. The authors state: “Ideally, we would prefer to train and evaluate models on graduate- and research-level mathematical theorems and proofs.” (Section 5, PDF p. 8). They cite the lack of a reliable method for verifying model-generated proofs in that setting. Experiments cover only 2B and 7B models, and training-from-scratch runs were not repeated because of computational constraints (Section 7, PDF p. 9).
-
-## techniques for the catalog
-- dependency-aware proof ordering — place each step's intermediate supervision before the step it explains
-- verifier-backed intermediate-state scoring — validate tactics and every generated state in Lean rather than checking text
-- order ablation — compare sequential, partially reversed, and fully reversed serialized proofs under matched data
-- masked and curriculum controls — restrict training loss to final answers and compare PSER-then-SEQ with direct SEQ training
+claim: optimal training order puts each step's intermediate supervision before the step ("intuitively sequential order")
+- delayed insight issue (DII): key insight appears too late in the sample, hurting learning
+  - example: positivity lemma for `x^2+4x+5` goes first, then square completion, then constant rewrite
+- proposed causes of poorer learning with other orders
+  - future supervision unavailable at generation time
+  - spurious dependencies learned on later steps
+- no general algorithm to find the order; optimality over all orders not established
+evidence is small and artificial
+- tasks: Lean intuitionistic propositional logic (PropL), 4-digit multiplication
+  - multiplication orders: SEQ, PSER (reversed proof then answer), SER (answer first, then reversed proof)
+  - PropL: SEQ vs SER only, 20,000 train / 1,000 test
+- models: Gemma-2B, Llama-2-7B-hf; scratch runs not repeated
+- controls
+  - prompt with all intermediate steps but no answer: SER gets 0 final answers correct
+  - prompt with problem only: SEQ learns step 1 faster than SER
+  - mask loss to final answer: SEQ still beats PSER
+  - curriculum PSER then SEQ converges slower than direct SEQ
+- reported gains inconsistent: abstract 11%, section 4.3 20% (tactic metric), textbook audit 17.3% not reproducible from 9/57
+- Gemma-2B vs Llama-2-7B-hf label conflict for the masked experiment
+technique: score proofs at two levels
+- tactic prediction correctness
+- proof generation correctness: Lean applies tactics and checks every generated intermediate state
+Verus transfer (inference)
+- order explanatory `assert` and lemma calls before the operation they support when serializing training proofs
+- reorder only the demonstration, keep the proof obligations unchanged
+- record both final postcondition success and intermediate assert/state obligations

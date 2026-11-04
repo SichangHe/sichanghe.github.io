@@ -2,65 +2,47 @@
 (authored by agents unless marked 🧑)
 Tag: `dardinier2023inlining`, [paper](https://arxiv.org/abs/2208.10456)
 
-## problem
-
-Bounded verification inlines calls to a finite depth and unrolls loops a finite number of times. It avoids method specifications and loop invariants, so it is useful for finding bugs before annotation work. In traditional program logics, successful modular verification implies successful verification after inlining. Automatic separation-logic (SL) verifiers differ because method executions own permissions and predicates, and their proof-search heuristics depend on those resources. The paper's abstract states, “However, this essential property might not hold for automatic separation logic verifiers such as Caper, GRASShopper, RefinedC, Steel, VeriFast, and verifiers based on Viper” (abstract, PDF p. 1).
-
-The paper calls inlining verification-preserving for a program and a bound n when the following holds: if the program verifies modularly w.r.t. some annotation, then the program inlined with bound n also verifies (section 3, PDF p. 7). Thus, when inlining is verification-preserving for a program, each error in the inlined program corresponds to an error in the original program. The paper says this “spares developers the effort of trying to find (non-existing) annotations that make modular verification succeed” (section 1, PDF p. 2). Inference: the guarantee is per program and per bound, not a property of the verifier alone.
-
-The motivation is practical: “Detecting errors using inlining before adding method specifications and loop invariants can prevent developers from wasting time attempting to annotate and verify an incorrect program” (section 1, PDF p. 2).
-
-## technique 1: identify resource-sensitive non-preservation
-
-The first step is to inspect how the verifier's automation observes or changes owned resources. Two mechanisms cause failures.
-
-* automatic instantiation chooses existential predicate parameters or resource fragments using the resources currently owned. In the paper's VeriFast example (Fig. 1), method `n` is verified modularly with precondition `Q(a)`, so the existential `Q(?x)` in `crLock`'s precondition is instantiated with `a`; after inlining, the caller also owns `Q(b)`, VeriFast's heuristic instantiates `x` with `b`, and the later `acquire(l, a)` fails (sections 2–2.1, PDF pp. 3–5)
-* automatic rule selection chooses among separation-logic rules from the owned resources. In the RSL-Viper example, a greedy atomic-read rule consumes `P(l)` on the first read; the second read then cannot obtain the needed assertion, although modular specifications can preserve the invariant (section 2.2, PDF pp. 5–6)
-
-The paper's diagnostic is to compare the modular proof state with the larger state at the same point of the inlined program. Features it flags are operations that inspect resources (`perm`), features that trigger proof search for imprecise assertions (e.g. existentially quantified parameters), and assertions that specify exact resource bounds, as in GRASShopper's `assert` and Nagini's end-of-method leak checks (sections 2, 5, 6.1, PDF pp. 3–6, 18, 22–23). Inference: a Verus workflow should perform this audit around ownership-sensitive proof helpers and mutable borrows; the paper's permission predicates and Viper operations do not exist in Verus.
-
-## technique 2: the semantic condition (framing plus bounded monotonicity)
-
-The paper's main method is a compositional sufficient condition. Entire method bodies that will be inlined must satisfy bounded framing. Call-free statements between calls must satisfy bounded monotonicity, the conjunction of bounded safety monotonicity and bounded output monotonicity. The authors write that “Informally, the semantic condition holds iff: (1) entire inlined method bodies satisfy bounded framing, and (2) call-free statements between” method calls “satisfy bounded monotonicity” (section 3, PDF p. 7). The condition guarantees, but is not equivalent to, verification-preserving inlining. It is formalized in Def. 4.4 (PDF p. 16).
-
-Framing means that if a statement verifies with resources `P` and produces `Q`, it also verifies with an additional disjoint frame `R` and preserves `R`. The paper requires framing for whole inlined bodies, not every statement, because a body may temporarily open and close a predicate yet preserve it overall (section 3.1, PDF pp. 8–9).
-
-Safety monotonicity means that success in a state implies success in any larger state that agrees on common resources and variables (section 3.2, PDF pp. 9–10). It prevents extra caller resources from making a proof rule choose an invalid resource. Output monotonicity adds that executing in the larger state leaves a final state at least as large as the state from the smaller execution. It prevents a resource-sensitive branch from consuming more resources after inlining and breaking a later statement (section 3.3, PDF pp. 10–11).
-
-The properties are bounded by a set of states T (the resource bound), set to the possible states of the inlined program at the relevant point; the compared states must be smaller than some state in T. Section 6.3 says this relaxation is required for common patterns: imprecise assertions in GRASShopper and VeriFast that are unambiguous in the inlined context, and two Nagini patterns (section 3.4, PDF pp. 11–12; section 6.3, PDF pp. 24–25). Partial annotations are handled by asserting the method precondition before the call and the postcondition after it; the inlined program also asserts them at the start and end of the callee body (assertAnnot, Def. 4.6, section 4.3, PDF p. 17; section 3.5, PDF pp. 12–13).
-
-Inference: the Verus analogue is a proof obligation that a helper preserves unrelated ownership and maintains postconditions when called under the larger alias-free context created by its caller. Verus's ownership discipline removes some SL ambiguity, but it does not automatically establish semantic monotonicity for ghost state, permission predicates, or partial proofs.
-
-## technique 3: prove the condition and its dual result
-
-The authors formalize a language parameterized by a separation algebra and prove in Isabelle/HOL that their semantic condition implies verification-preserving inlining (Theorem 4.5, section 4.2, PDF p. 16). Theorem 4.7 (section 4.3, PDF p. 17) extends this to inlining with partial annotations, via the assertAnnot transformation. The dual result is Theorem D.1 (completeness of inlining, Appendix D, PDF p. 37): for a program with a maximal annotation w.r.t. the bound, if the inlined program verifies then the original verifies modularly under a bounded semantics. The paper says this one is proved “on paper” with full details in the artifact, not in Isabelle. The result is bounded: an error beyond the inlining depth can remain unseen (Fig. 9, PDF p. 36).
-
-The theorem is proved once for the parametric language. Per program, the user must establish the semantic condition SC (Def. 4.4) for the initial statement, with the empty state as the starting bound; Theorem 4.5 then yields the guarantee. Inference: this means the theorem is a prerequisite check on the verifier model (heuristics must be local and deterministic, so the model does not cover Caper, section 4.1 and section 7), and the per-program work is checking SC, which section 5 approximates.
-
-## technique 4: conservative syntactic and structural checks
-
-The paper says “Both the mono and framing properties are hyperproperties” that combine universal and existential quantification over states, so checking the semantic condition directly is hard. It therefore presents two conservative approximations, checkable syntactically and with a standard program verifier (section 5, PDF p. 18).
-
-The syntactic check is fast. It rejects operations that inspect resources, such as `perm`, and syntactic forms likely to trigger proof-search heuristics, such as existentially quantified parameters in imprecise assertions. Programs with no such features are accepted immediately; the check is intentionally coarse.
-
-The structural check is more precise and can be verified by an SMT-based program verifier. For structural monotonicity, the implementation uses self-composition: execute a statement in a smaller state while guarding assertions and recording the resulting state, execute it in a larger state, then assert safety and that the second final state contains the first. The paper's Viper instrumentation uses a fresh boolean `exist`, a `guardExecs` transformation that turns assertions into assumptions during the first run, and an assertion that `exist` remains true and the final states are ordered (Fig. 8, section 5, PDF pp. 20–21). For nondeterminism, it records choices from the first execution and compares only executions resolving choices consistently through a determinization function (section 5, PDF pp. 21–22).
-
-Structural mono implies mono (Lemma 5.2, PDF p. 19), structural framing implies framing (Lemma F.2, Appendix F), and the structural condition implies the semantic condition (Theorem 5.3, section 5, PDF p. 19); all are proved in Isabelle/HOL per the paper. So passing the structural check is sufficient for verification-preserving inlining. Inference: a Verus tool could self-compose a function's proof obligations over two ghost states or two symbolic ownership contexts, but implementing the separation-state order and guarded execution is new work; ordinary Verus verification of one execution is not this check.
-
-## evidence and limits
-
-The evaluation extends Viper's verification-condition generator to inline calls and loops, check the structural condition, and account for partial annotations. It uses test suites of VeriFast (1002 files), GRASShopper (314), Nagini (232), and RSL-Viper (14), totaling 1562 files (section 6, PDF p. 22). Automatic syntactic analysis found 1053/1562 files (67%) that violate the syntactic condition (Table 1, PDF p. 23). Of 72 manually analyzed violating files, 22 (31%) were not always-preserving and 50 were always-preserving. The semantic condition validated 49 of the 50 always-preserving files (98%), and the structural condition validated 47 of those 49 (96%, section 6.3, PDF p. 24); the Table 1 caption states 94% (47 of 50) of the always-preserving files. The 72 files were not a random sample of all 1053: some files were discarded as too complex for manual inspection, and 20 per verifier were picked at random (all 12 for RSL-Viper) (section 6.2, PDF p. 23).
-
-The tool reported every seeded true error for some sufficiently large bound: bounds 1 to 4 sufficed for all examples except N4 and G2 in Table 2, which needed bounds 10 and 11 because each contains a loop that iterates 10 times (section 6.4, PDF p. 25). It never reported a spurious error. Verifying the same examples modularly without annotations gave at least one spurious error each and 3 on average; annotations for successful modular verification took 256 lines for 1152 lines of code, which inlining does not need. Table 2 times are averages of 5 runs on a Lenovo T480 with 32 GB, i7-8550U 1.8 GHz, Windows 10; they range from 1.4 to 42 seconds (Table 2, PDF p. 24). The seeded errors were mostly seeded by the authors themselves (section 6.5, PDF p. 26).
-
-The paper names its threats (section 6.5, PDF pp. 25–26). The examples come from test suites that “might not be representative of realistic code”; some files were discarded before the manual analysis, and the authors may have made mistakes in that manual analysis. Separately, the paper notes that bounded verification does not prove correctness for all executions and that incompleteness of the program logic or SMT solvers can still cause false positives unrelated to inlining (section 1, PDF p. 2). Inference: the guarantee depends on the formal model of the verifier (local, deterministic heuristics), the Isabelle/HOL proofs, the correctness of the Viper instrumentation, and the chosen bound.
-
-Inference: the threat to agent-written verified Rust is moderate and specific. Inlining can reduce annotation effort and expose bugs early, but a Rust/Verus proof that succeeds under one ownership context does not automatically justify reuse under every caller context. Verus's borrow checker removes many aliasing states, yet ghost-state choices, helper contracts, and bounded unrolling still need explicit monotonicity arguments.
-
-## techniques for the catalog
-
-- resource-sensitive failure analysis — compare modular and inlined verifier states to find permission-dependent instantiation and rule-selection changes
-- framing and bounded monotonicity — require whole inlined bodies to preserve frames and call-free segments to preserve safety and output under larger states
-- semantic-condition theorem — prove that those properties imply verification-preserving inlining and use the dual bounded completeness result
-- syntactic screening — reject resource-inspecting and imprecise-assertion features that can trigger non-preserving automation
-- structural self-composition — instrument two executions over ordered states, guard the first, and check safety plus final-state monotonicity
+problem: bounded verification (inline calls, unroll loops) finds bugs without specs or invariants
+- classic logics: modular success implies inlined success
+- automatic SL verifiers (Caper, GRASShopper, RefinedC, Steel, VeriFast, Viper-based) break this
+  - their heuristics depend on the resources currently owned
+- verification-preserving for a program and bound n: modular success w.r.t. some annotation implies inlined success
+  - so an inlined error is a real error, not a missing annotation
+  - guarantee is per program and per bound, not per verifier
+2 failure mechanisms
+- automatic instantiation of existential parameters
+  - VeriFast `crLock`: extra caller resource `Q(b)` makes it instantiate `x` with `b`, later `acquire(l, a)` fails
+- automatic rule selection
+  - RSL-Viper greedy atomic read consumes `P(l)` on the first read, second read fails
+- red flags: `perm` inspection, imprecise assertions, exact resource bounds, leak checks
+semantic condition, sufficient not necessary
+- whole inlined bodies satisfy bounded framing
+- call-free segments between calls satisfy bounded monotonicity
+  - safety monotonicity: success in a state implies success in a larger state
+  - output monotonicity: final state in the larger run is at least the smaller one
+- bounded by set T of possible states at that point
+- partial annotations handled by asserting pre/postconditions around calls and callee body
+proofs
+- Isabelle/HOL: condition implies verification-preserving inlining, also with partial annotations
+- dual completeness theorem proved on paper only
+  - an error beyond the inlining depth can stay unseen
+- requires the verifier model to have local, deterministic heuristics, so Caper is not covered
+checking the condition, since mono and framing are hyperproperties
+- syntactic check: reject `perm` and imprecise-assertion features
+- structural check: self-composition in Viper
+  - run the statement in a smaller and a larger state, guard the first run's assertions
+  - assert safety and final-state ordering
+  - structural condition implies the semantic one, proved in Isabelle
+evidence on VeriFast, GRASShopper, Nagini, RSL-Viper tests (1562 files)
+- 1053 files (67%) violate the syntactic condition
+- of 72 manually analyzed violators, 50 are always-preserving
+  - semantic condition validates 49, structural 47
+- seeded errors: all found with bounds 1 to 4, except N4 and G2 needing 10 and 11 (loops of 10 iterations)
+  - no spurious errors, 1.4 to 42 s
+  - modular without annotations: at least 1 spurious error each
+  - annotations for modular success took 256 lines for 1152 lines of code
+- threats: suites may be unrepresentative, errors seeded by authors, 72 files not a random sample
+Verus relevance (inference)
+- audit ownership-sensitive proof helpers and ghost-state choices
+- a proof under one ownership context does not justify reuse in every caller context
+- self-composition check would be new work

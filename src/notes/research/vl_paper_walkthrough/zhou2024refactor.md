@@ -2,44 +2,31 @@
 (authored by agents unless marked 🧑)
 Tag: `zhou2024refactor`, [paper](https://arxiv.org/abs/2402.17032)
 
-## problem and result
-REFACTOR learns to identify reusable theorem proofs embedded in formal proof trees. The paper's setting is Metamath, where each node has a name and proposition and edges encode theorem application. The central claim is that a connected proof-tree component can be learned as node-level binary classification. The paper says: “Specifically, we work under formal systems where each mathematical proof is represented by a tree called proof tree.” (section 1, p.1). The largest model exactly recovers the human-selected theorem on 19.6% of held-out expanded proofs, extracts 1,907 valid new theorems from expanded examples and 16 from original set.mm proofs, and refactors 14,092 of 27,220 library theorems.
-
-## technique 1: turn theorem extraction into graph labeling
-Use this when proofs are trees and a reusable lemma is represented by a connected embedded proof. Construct each proof as a graph G=(V,E); node features concatenate the applied name N and resulting proposition PROP. Label nodes in the target embedded theorem 1 and all others 0. Train a graph neural network to output one probability per node, dividing each proof's binary cross entropy loss by its node count (section 4.2, p.5). The paper defines the task explicitly: “The task is to output a subset of nodes Vtarget ⊂ V that correspond to an embedded proof of a useful theorem.” (section 4.2, p.5).
-
-Steps from the paper: (1) represent every proof as a tree whose leaves are premises and whose internal nodes apply axioms or theorems (section 3); (2) choose a connected subtree that satisfies the paper's validity conditions, rather than assuming connectivity alone is enough (section 4.1); (3) label its nodes and train the classifier with the displayed loss (section 4.2). Inference: in Verus, the analogous target is a contiguous proof obligation or reusable `lemma` body, but Verus proofs are Rust functions and SMT assertions rather than Metamath substitution trees; one would represent `requires`/`ensures`, calls, and proof steps as a dependency graph, then use the model only to propose a candidate lemma. The candidate still must be checked by Verus; the graph classifier is not evidence of soundness.
-
-Evidence: the largest model (10 GraphSage layers, hidden size 512, 4,535k parameters) obtains 85.6% test node accuracy and 19.6% test proof accuracy (Table 2, p.8; section 5.3, p.7; denominator is the held-out theorem-extraction test set). An ablation shows bidirectional edges plus node features reaches 13.3% test proof accuracy, while no edges plus features reaches 0.1% (Table 1, p.6; section 5.3, p.7). Both Table 1 configurations use 10 layers and hidden size 256. Inference: these results support using both name/proposition features and proof connectivity. Assumptions and failure: independent node decisions often produce disconnected predictions; the authors write, “We hypothesize this may be because our current model makes independent node-level predictions.” (section 5.4, p.8). A learned label can also be a connected but invalid subtree, so a verifier is mandatory.
-
-## technique 2: synthesize training targets by proof expansion
-Use this when human proofs invoke a theorem but the desired training input should contain its expanded body. For each theorem application, duplicate the invoked theorem's proof tree, substitute its canonical hypothesis leaves with the corresponding contextual argument subtrees, and replace the subtree rooted at the application node with the instantiated tree. The paper's three-step description is: “identifying the proof tree associated with the theorem”, “substituting the original arguments with the actual ones in the proof context”, and “finally copy and replace it to where the expanded node is located” (section 4.3, p.5). The embedded proof component corresponding to the invoked theorem is the positive target Vtarget.
-
-Apply it as follows: (1) for each application t in proof P, retrieve Pt; (2) map each formal hypothesis in Pt to the entire subtree rooted at the corresponding parent of t; (3) copy Pt with those substitutions; (4) splice the copy at t, retaining the rest of P; (5) label the embedded proof component corresponding to Pt as the extraction target (Appendix A.2, pp.15–16). The implementation expands one theorem at a time, producing M examples for M theorem applications; recursive or simultaneous expansion is left for future work (section 4.3).
-
-Inference: Verus could generate analogous training data by replacing a verified lemma call with its proof-level dependency summary or body, while preserving typed Rust expressions and quantified facts. Rust macro expansion is not equivalent: Verus's proof functions and SMT context do not expose a Metamath-style canonical substitution tree. The resulting candidate lemma must be rechecked with `verus`; only checker acceptance is trusted.
-
-Evidence and limits: from the set.mm version containing 27,220 theorems, filtering proofs over 1,000 nodes or node features over 512 characters produced 257,264 raw data points; occurrence balancing yielded 124,294 expanded proofs (section 5.1, pp.6–7). Extraction targets are capped at 100 occurrences per training theorem and 10 per validation/test theorem. Targets are non-overlapping across train/validation/test to reduce memorization. Inference: performance may differ on proofs whose expansion pattern is unlike these examples.
-
-## technique 3: validate predicted components and turn them into lemmas
-Use this after model prediction, before adding any theorem to a library. Select nodes with predicted probability greater than 0.5. Reject disconnected sets and any set where a selected node has some but not all of its parents selected. Standardize the boundary leaves to canonical Metamath arguments, then pass the extracted node names in Reverse Polish Notation to the Metamath verifier. Reject candidates that fail after standardization (Appendix A.1, p.14). Deduplication follows extraction (section 5.4, p.8). The paper reports three categories—“Non-Tree & Invalid”, “Tree & Invalid”, and “Tree & Valid”—and says the last “corresponds to a prediction that leads to an extraction of new theorem previously not defined by humans” (section 5.4, p.8).
-
-Evidence: after deduplication and removing 302 whole-proof extractions, 1,923 unique new theorems remained: 1,907 from expanded data and 16 from original set.mm (section 5.4, p.8). Table 3 (p.8) analyzes incorrect predictions and prints a test total of 4,822, with 1,206 non-tree-invalid, 3,348 tree-invalid, and 328 tree-valid predictions. Inference: these categories sum to 4,882, exceeding the printed total by 60; the table is internally inconsistent. Across accepted theorems, 684 were used in refactoring, with 159,376 total uses and 407,539 nodes saved (Table 5, p.9). Inference: the validation procedure yields reusable theorems, but many predictions fail its validity checks.
-
-## technique 4: refactor proofs by matching and replacement
-Use a mined theorem library to shorten existing proofs. For each proof and extracted theorem, traverse nodes in postorder, attempting leaves before the root. Match theorem-application steps and map the extracted theorem's arguments to contextual arguments. Replace a match with an application of the extracted theorem, update the traversal, and restart it after each replacement. Continue until that theorem yields no further replacements, then proceed to the next extracted theorem (Appendix A.3, pp.16–17). The authors leave the effects of traversal order and theorem order to future work. The paper states: “we consider a specific re-writing procedure, which alternates between 1) matching the extracted theorems against the proofs in the library and 2) replacing the matched proportion of the proofs with the application of the new theorems” (section 5.5, p.9). Inference: in Verus, a tool could match normalized assertion/dependency patterns and replace repeated proof blocks with a lemma call, then rerun Verus and measure proof text or solver cost; matching must respect Rust types, lifetimes, triggers, and quantifier instantiation.
-
-Evidence: 14,092/27,220 set.mm theorems were refactored (section 5.5, p.9). Of 1,923 extracted theorems, 684 were used: 670 from expanded proofs and 14 from original proofs. They saved 407,539 nodes total, comprising 375,126 from expanded-source theorems and 32,413 from original-source theorems. Table 5 (p.9) reports average savings of 196.7 and 2,025.8 nodes, respectively. Inference: these averages use all 1,907 expanded-source and 16 original-source extracted theorems as denominators, including unused ones; they are not averages over only the 670 and 14 used theorems.
-
-## technique 5: train a prover on the refactored library
-Use accepted new lemmas as additional training material. Train one Holophrasm prover on the original data and another on the augmented refactored data, with identical defaults and a five-minute search limit per test theorem. The paper reports: “by training on the refactored dataset, the prover was able to prove 75 more test theorems” (section 5.6, p.9). Table 4's denominator is 2,720 held-out test theorems: Holophrasm'20 proves 557, the symbolic baseline 566, MetaGen 600, and REFACTOR 632. Inference: 632−557=75. New theorems occur in 31.0% of REFACTOR's proved test theorems, across 141 distinct new theorems (section 5.6).
-
-## what is proved, trusted, and already done
-The paper checks extracted candidates with a Metamath verifier (Appendix A.1, p.14) and measures classifier accuracy, extraction counts, proof compression, and prover test counts (section 5, pp.6–9). The verifier, rather than the classifier output, determines candidate validity.
-
-## techniques for the catalog
-- graph labeling of embedded proofs — classify proof-tree nodes with a feature-aware GNN to propose reusable connected components
-- proof expansion — inline a theorem body with substituted hypotheses to synthesize positive extraction examples
-- verified lemma mining — reject disconnected or invalid predictions, canonicalize accepted components, and retain only verified theorems
-- proof refactoring — repeatedly match extracted lemmas and replace matching subtrees with calls
-- verified-library training — train proof search on checker-accepted, refactored proofs and measure held-out theorems proved
+REFACTOR: learn to extract reusable theorems from Metamath proof trees as node-level binary classification
+- largest model: exact human-chosen theorem on 19.6% of held-out expanded proofs
+- extracts 1,907 valid new theorems from expanded data + 16 from original set.mm
+- refactors 14,092 of 27,220 library theorems
+graph labeling
+- proof = graph, node feature = applied name + resulting proposition
+- label nodes in target embedded theorem 1, else 0; GNN outputs 1 probability per node
+- model: 10 GraphSage layers, hidden 512, 4,535k params, 85.6% node acc, 19.6% proof acc
+- ablation: bidirectional edges + features 13.3%, no edges + features 0.1%
+- failure: independent node predictions often disconnected
+training data by proof expansion
+- inline an invoked theorem's proof tree, substitute hypothesis leaves with context subtrees
+- 1 theorem expanded at a time, 124,294 expanded proofs after balancing
+verified lemma mining
+- keep nodes with p > 0.5, reject disconnected sets or partial-parent selections
+- standardize boundary leaves, run Metamath verifier; verifier, not classifier, decides validity
+- 1,923 unique theorems after dedup; many predictions invalid
+  - Table 3 categories sum to 4,882 vs printed total 4,822
+proof refactoring
+- postorder match extracted theorems against proofs, replace with theorem application
+- 684 of 1,923 theorems used, 407,539 nodes saved
+prover training
+- Holophrasm on refactored library proves 632 of 2,720 test theorems
+  - Holophrasm'20 557, symbolic baseline 566, MetaGen 600
+- new theorems in 31.0% of proved test theorems
+Verus relevance (inference)
+- same idea: propose repeated proof blocks as lemmas, recheck with Verus
+- Metamath substitution trees do not map directly to Verus proof functions + SMT context

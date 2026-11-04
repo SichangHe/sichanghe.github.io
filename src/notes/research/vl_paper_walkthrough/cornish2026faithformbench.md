@@ -2,32 +2,44 @@
 (authored by agents unless marked 🧑)
 Tag: `cornish2026faithformbench`, [paper](https://arxiv.org/abs/2608.10916)
 
-## the failure being measured
-
-FaithformBench tests whether an autoformaliser (AF) preserves the validity of each natural-language reasoning step when translating it into a formal statement. The key risk is silent correction: an invalid input is changed into a provable formal statement. The paper’s abstract states: “Our method is based on automatically generating perturbed reasoning steps that are designed to render them invalid, and then measuring validity preservation on unperturbed steps and invalidity preservation on perturbed steps.” (Abstract, p. 1). This is a diagnostic method, not a proof that an AF is faithful.
-
-The first technique is paired validity testing. Start with N reasoning steps, each containing assumptions and a conclusion. Keep the original step x and generate a slightly modified counterpart Pert(x). Run the AF on both. Pass each formal output to a prover that returns proved (a proof was found), refuted (a proof of the negation was found), or inconclusive (neither proof was found, or the AF failed). A faithful AF with successful proof search should yield proved for a valid x and refuted for an invalid Pert(x). Section 4 (p. 4, assumptions (8) and (9)) requires a high proportion of valid originals and invalid perturbations.
-
-The second technique is controlled perturbation. The GPT-5.2 prompt asks for a small change to a conclusion, equation, or deduction while retaining the premise and format (Section 5.2, p. 5; Appendix E, pp. 17–18). The alternative regex procedure first tries changing the rightmost number and swapping an arithmetic or comparison operator; both edits can apply. If neither applies, it removes an existing “not”, inserts “not” after the first modal or copular verb, or finally prepends “It is false that” (Appendix C, p. 13). The authors used three language models to judge effectiveness and four annotators to audit 219 stratified items. They report: “The perturbations were judged on average as effective in 97.8% of the total 12,784 reasoning steps.” (Section 5.2, p. 5). Human agreement with GPT-5.2 was 95.9%.
-
-The third technique is prover-backed failure statistics. For unperturbed inputs, define FNR as the number of cases where the AF output is refuted, divided by N; define FPR as the number of perturbed cases where the AF output is proved, divided by N; define AFFR as the number of AF failures across both sets, divided by 2N. AF failures include extraction and type-check failures, rather than only empty responses. The paper states: “Under assumptions (8) and (9), each failure event above implies that the AF was unfaithful, and so UFLB estimates a lower bound on the proportion of inputs on which the AF was unfaithful.” (Section 4, p. 4). The aggregate is `UFLB = 1/2 FNR + 1/2 FPR + AFFR`. Its interpretation depends on the validity assumptions; failed proof search only decreases the measured bound. Inference: a Verus harness could attempt proofs of generated propositions and their negations, recording denominators and verifier timeouts separately.
-
-The fourth technique is contingency analysis (Section 4, pp. 4–5). Classify each original/perturbed pair as faithfulness (proved, refuted), sycophancy (proved, proved), abstention (refuted, refuted), inversion (refuted, proved), or inconclusive (either outcome undetermined, including AF failure). These are diagnostic labels: truth-value preservation alone does not establish semantic faithfulness, and abstention here means two refutations, rather than a refusal or timeout. Figure 1 (p. 1) gives a concrete failure: Kimina changes `x ∈ R` to `x ∈ N` while retaining `3^x = 5`. The resulting premise is unsatisfiable, so the invalid conclusion `3^(x+2) = 51` follows from a contradiction.
-
-## benchmark construction and results
-
-The benchmark starts from ProcessBench, retaining its 1,179 human-verified error-free chains. GPT-5.2 parses each chain into a directed acyclic graph of dependencies; each node and its parents form a reasoning step. Decomposition produced 15,082 original steps, of which 12,784 were verifiable; declarative steps remain as context but are excluded from analysis. Each verifiable step received an LLM perturbation and a regex perturbation in released variants. The main analysis therefore has 12,784 original and 12,784 perturbed steps. The paper says: “FaithformBench consists of 12,784 reasoning steps and perturbed counterparts across four mathematical datasets of increasing difficulty.” (Contributions, p. 2). The datasets are GSM8K, MATH, OlympiadBench, and OmniMATH. The base benchmark retains identifiers, dependencies, inference rules, and perturbation type; the derived Faithform-AF and Faithform-LLMs datasets add model outputs and proof outcomes (Appendix A, pp. 11–12).
-
-They evaluate four fine-tuned AFs, Goedel (8B), Herald (7B), Kimina (7B), and StepFun-Formaliser (7B), plus Claude Opus 4.7, GPT 5.2, Gemini 3.1 Pro, and Qwen Plus. The protocol extracts the theorem from the final code block, type-checks it with `by sorry`, constructs its logical negation including all parameters, and attempts both statements with DeepSeek-Prover-V2-7B at pass@2 (Appendix F, pp. 20–21). Prover outputs that alter the statement beyond replacing the proof placeholder count as inconclusive (Appendix B, p. 13).
-
-The results show high silent correction among fine-tuned models and lower rates among the general-purpose models (Sections 6.1–6.3, pp. 5–7). Goedel has the lowest UFLB among specialised AFs despite the highest FPR; Claude Opus 4.7 and Gemini 3.1 Pro improve on its UFLB on every dataset. Figure 5(a), p. 7, gives Goedel’s GSM8K pair percentages as 71.2 faithfulness, 21.4 sycophancy, 0.9 abstention, 0.5 inversion, and 6.1 inconclusive. Inference: percentages from different datasets require their respective denominators before pooling.
-
-Accepted proofs establish the formal statement or its negation, not correspondence with the natural-language input. The interpretation depends on source labels, perturbation validity, dependency parsing, and correct extraction and verification; prover strength affects how many cases remain inconclusive. The paper reports a manual audit of 210 dependency nodes in total, with parsing accuracies of 100% GSM8K, 94.2% MATH, 95.6% OlympiadBench, and 96.7% OmniMATH (Section 5.2, p. 5). Its limitation is explicit: “Our method does not assess semantic drift in full generality, and is therefore not complete: even if the UFLB metric is very small, this does not imply that the AF is necessarily faithful.” (Limitations, p. 7).
-
-## techniques for the catalog
-
-- paired validity testing — compare AF outputs on each valid step and a deliberately invalid counterpart
-- controlled perturbation — generate LLM or deterministic edits that preserve form while breaking validity
-- prover-backed lower bounds — compute FNR, FPR, AFFR, and UFLB from proofs, refutations, and inconclusive outcomes
-- contingency diagnosis — distinguish faithfulness, sycophancy, abstention, inversion, and inconclusive pairs
-- Inference: specification drift audit — inspect type, precondition, and bound changes that make an invalid requirement provable
+core risk: silent correction
+- autoformaliser (AF) turns an invalid nl step into a provable formal statement
+- example: Kimina changes `x ∈ R` to `x ∈ N` while keeping `3^x = 5`
+  - premise becomes unsatisfiable, so the invalid conclusion `3^(x+2) = 51` follows vacuously
+- relevant to spec drift: type/precondition/bound changes can make a wrong requirement provable
+paired validity test
+- per step x, also make a perturbed invalid Pert(x), run AF on both
+- prover returns proved / refuted / inconclusive for each formal output (statement and its negation)
+  - prover: DeepSeek-Prover-V2-7B at pass@2
+- faithful AF: x proved, Pert(x) refuted
+perturbation
+- GPT-5.2 prompt makes a small edit to conclusion/equation/deduction
+- or regex: change rightmost number, swap operator, or flip "not"
+- judged effective on 97.8% of 12,784 steps
+  - human agreement with GPT-5.2: 95.9% on 219 audited items
+metrics
+- FNR = valid steps refuted / N
+- FPR = perturbed steps proved / N
+- AFFR = AF failures (extraction, type-check) / 2N
+- UFLB = 1/2 FNR + 1/2 FPR + AFFR, a lower bound on unfaithfulness
+  - small UFLB does not imply faithful (paper's own limitation)
+pair taxonomy
+- (proved, refuted) faithfulness
+- (proved, proved) sycophancy
+- (refuted, refuted) abstention
+- (refuted, proved) inversion
+- anything undetermined: inconclusive
+benchmark
+- from ProcessBench: 1,179 error-free chains, parsed by GPT-5.2 into dependency DAGs
+- 15,082 steps, 12,784 verifiable, each with perturbed counterpart
+- datasets: GSM8K, MATH, OlympiadBench, OmniMATH
+- parsing audit: 100% GSM8K, 94.2% MATH, 95.6% OlympiadBench, 96.7% OmniMATH
+results
+- evaluated Goedel 8B, Herald 7B, Kimina 7B, StepFun-Formaliser 7B, Claude Opus 4.7, GPT 5.2, Gemini 3.1 Pro, Qwen Plus
+- fine-tuned AFs silently correct more; general-purpose models less
+  - Goedel: lowest UFLB among specialised AFs despite highest FPR
+  - Claude Opus 4.7 and Gemini 3.1 Pro beat Goedel's UFLB on every dataset
+- Goedel on GSM8K: 71.2% faithful, 21.4% sycophancy, 0.9% abstention, 0.5% inversion, 6.1% inconclusive
+caveats
+- a proof certifies the formal statement, not its match to the nl input
+- prover weakness only inflates inconclusive, lowering the bound

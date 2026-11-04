@@ -2,48 +2,33 @@
 (authored by agents unless marked 🧑)
 Tag: `mikula2024magnushammer`, [paper](http://arxiv.org/abs/2303.04488v3)
 
-## what the paper proves and measures
-
-The paper presents Magnushammer, a two-stage neural premise selector for Isabelle. Its stated goal is to retrieve facts relevant to a proof state. The abstract says, “This paper presents a novel approach to premise selection, a crucial reasoning task in automated theorem proving.” (Abstract, p. 1). The method uses a shared transformer backbone and separate projections. SELECT embeds the proof state and every premise, compares cosine similarity, and returns the top 1024 from a usual 30,000–50,000 candidates. RERANK scores each selected (proof state, premise) pair and returns the highest-scoring premises (Section 3, p. 4; Algorithm 1, p. 4).
-
-The paper evaluates formally verified Isabelle proofs, not merely retrieval accuracy. The PISA evaluation uses 1,000 problems (the same 1000 as Jiang et al. 2022a, randomly selected from the Archive of Formal Proofs); miniF2F has 488 problems, split into 244 validation and 244 test problems (Section 5.1, p. 6). A proof counts only when Isabelle formally verifies it. On PISA single-step, the 86M-parameter model obtains 59.5% versus Sledgehammer 38.3%; on miniF2F test it obtains 34.0% versus 20.9%, where 20.9% is the baseline “Sledgehammer + heuristics” from Jiang et al. (2022b); plain Sledgehammer scores 9.9% valid and 10.4% test (Table 2 p. 6; Table 3 p. 6; Section 5.2 p. 7). The combined Thor + Magnushammer multi-step system obtains 71.0% on the 1,000-problem PISA set versus Thor 57.0% (Table 2, p. 6; Section 5.2, p. 7). On miniF2F multi-step, Thor + Magnushammer obtains 36.9% valid and 37.3% test, below DSP’s 43.9% and 39.3% (Table 3, p. 6), so it is not the best multi-step result there. The sentence “A proof is successful if it is formally verified by Isabelle.” (Section 5.1, p. 6) defines the evidence boundary.
-
-The data are substantial but expensive to mine: HPL contains 1.1M pairs and SH contains 3.3M, for 4.4M MAPL pairs and 433K unique premises (Table 1, p. 5). HPL mining used 10K CPU hours and SH mining 150K CPU hours, reported as 17 CPU years (Section 4, p. 5). The paper also reports 0.1% of MAPL, approximately 4K samples, already beating Sledgehammer when fine-tuning a pretrained model (Section 5.3, p. 8; Table 4, p. 23: MAPL 0.1%, pretrained, 39.2%). These denominators and settings matter: the 39.2% is PISA with a 38M model and computational budget 800, whereas headline 59.5% is PISA single-step with an 86M model and budget 1000.
-
-## technique: hierarchical SELECT and RERANK
-
-Use this when a proof state has tens of thousands of possible facts and scoring every fact with a cross-encoder is too slow. The paper’s algorithm (Algorithm 1, p. 4) is:
-
-1. Compute a proof-state embedding and embeddings for all premises
-2. Cache premise embeddings
-3. Compute dot products between the state embedding and cached premise embeddings
-4. Keep the top KS premises by similarity (KS = 1024 in experiments)
-5. Form one pair `(proof state, premise)` for each selected premise
-6. Score each pair with RERANK
-7. Return the top KR premises (KR = KS in the experiments)
-
-SELECT is trained with a modified InfoNCE loss. Each batch has N positive pairs and M additional negatives; the usual setting is M = 3N, giving N − 1 + M negatives for each state (Section 3, p. 4; chosen N = 256 and M = 768 in Appendix C.2, p. 21; the loss is defined in Appendix B.1, p. 20). RERANK is trained with binary cross-entropy. For each positive pair, 15 negatives are sampled from the 1,024 highest SELECT-ranked premises that were never used as a premise for that proof state (Section 3, p. 4; Appendix B.2, p. 20). Algorithm 2 alternates SELECT and RERANK updates, recomputing the RERANK negative set every 1,000 steps (Appendix B.3, p. 20–21).
-
-Inference: In Verus, the analogous implementation would keep a cached embedding for each candidate lemma/specification, embed the current verification context, retrieve a fixed K, then rerank pairs that include the current goal and candidate. Verus itself has no SELECT or RERANK construct; this would be an external tool that emits candidate facts for ordinary `assert`, `requires`, `ensures`, `invariant`, `lemma`, and `broadcast` proof code. The paper’s method does not establish that text alone captures Verus types, ownership, or trigger behavior; its own limitation says Isabelle text “does not provide complete semantic information about the referenced objects” (Section 7, p. 10).
-
-The paper’s own proof example shows the output style. A Magnushammer proof can pass many premises directly to a native tactic: `by (clarsimp simp add: set_ar_cos_def Ring.Ring Ring.set_r_ar_cos eq_prop Ring.I_in_set_ar_cos Set.bexE Ring.ring_is_ag ker_ideal)` (Appendix F, p. 25). The paper says Magnushammer feeds premises “directly into the native Isabelle’s tactics”, so the proofs are longer, “of form of a combination of a strong tactic and a long list of premises as its arguments” (Appendix F, p. 25). Inference: in this setup retrieval produces a checked proof only because a trusted Isabelle tactic consumes the candidates.
-
-## technique: bounded tactic and premise search
-
-Use this when a ranked premise list must be converted into executable proof attempts. For each theorem, the evaluation initializes an Isabelle proof state, retrieves premises, takes the top k premises for each k in a prescribed list, combines every prefix with each tactic, executes the generated steps in parallel with a 2-second timeout, and reports success if any closes the theorem (Algorithm 3, p. 22; Section 3, p. 5; Section 5.1, p. 6). The paper also allows 0 premises for tactics that take none (Section 3, p. 5). Appendix D lists the tactics `smt, metis, auto, simp, blast, meson, force, eval, presburger, linarith` (p. 22), while the budget computation uses 36 tactics; the paper does not say how ten names become 36 (Inference: probably tactic variants, not stated). The main PISA budget uses 36 tactics, 14 prefix sizes (powers 2^0 through 2^10 plus 48, 96, and 192), and a two-second timeout, giving a computational budget C ≈ 1000 (Appendix D.1, p. 22; Section 5.1, p. 7 defines C = |T| × |K| × T, a budget in seconds, not a count of attempts; 36 × 14 = 504 steps). A proof counts only if Isabelle formally verifies it (Section 5.1, p. 6).
-
-Inference: A Verus tool could use the same bounded-search shape around a target function: retrieve candidate `requires` facts, `ensures` lemmas, loop invariants, and `lemma` calls; generate a bounded set of proof blocks or `assert`/`assert forall` hints; invoke Verus; retain only compilable, verified variants. The exact tactic names and syntax do not carry over, and the paper gives no Verus experiment.
-
-The paper motivates trying prefixes because fewer premises can reduce combinatorial search. Its wording is: “The rationale behind this is that the proof procedures implemented in ATPs and high-level ITPs’ tactics perform combinatorial search, and providing them with fewer premises to restrict their search space is beneficial.” (Section 3, p. 5). Appendix E reports cumulative proof rate against the number of premises used: for the 86M model trained on MAPL with tactic prompt, 19.94% with at most one premise, 33.79% with at most four, 39.29% with at most eight, and 56.19% with at most 256 (Table 6, p. 24; Inference: the table is on PISA, since BM25’s 30.55% at k ≤ 256 matches the 30.6% in Table 2). The paper uses these as an alternative retrieval-quality metric (Appendix E.3, p. 25). These are cumulative proof rates under the fixed tactic set, not retrieval precision percentages.
-
-## technique: build premise data from existing proofs
-
-Use this when training data should reflect real proof contexts. For every Isabelle proof step, extract the preceding proof state and each premise used by its tactic, producing one `(proof state, premise)` pair per premise. This is HPL, built from the Archive of Formal Proofs and the Isabelle Standard library. Then run Sledgehammer on intermediate propositions, retain successful alternative proof steps, and extract pairs from those alternatives to form SH; HPL ∪ SH is MAPL (Section 4, p. 5; Appendix A.2, p. 19). The paper explicitly reports, “For every proof step in every proof from these collections, we extracted the preceding proof state and the set of premises used in the proof step; this was turned into (proof state, premise) pairs constituting training data points.” (Section 4, p. 5).
-
-## techniques for the catalog
-
-- hierarchical premise retrieval — embed proof states and premises, retrieve a large top-K by cosine similarity, then rerank proof-state/premise pairs
-- hard-negative reranking — sample false positives from the selector’s top 1,024 candidates and train a binary relevance scorer
-- proof-derived premise corpus — extract one training pair per premise from human and alternative verified proof steps
-- bounded verifier search — combine ranked premise prefixes with a fixed tactic set, execute them under a timeout, and accept only machine-checked proofs
-- compute-budget evaluation — report proof rates against explicit numbers of tactics, premise-prefix sizes, parallel attempts, and timeout seconds
+two-stage neural premise selection for Isabelle
+- SELECT: embed proof state and all premises, cosine top 1024 from 30-50K candidates
+  - premise embeddings cached
+  - trained with modified InfoNCE, N positives + M=3N extra negatives per batch
+- RERANK: score each (proof state, premise) pair, return top KR (= KS = 1024)
+  - trained with binary cross-entropy
+  - 15 hard negatives per positive from SELECT top 1024 not used in the proof
+  - alternate SELECT/RERANK updates, refresh negatives every 1000 steps
+bounded search turns ranked premises into checked proofs
+- try top-k prefixes (k in 2^0..2^10, 48, 96, 192) x tactics, 2s timeout each, in parallel
+  - accept only if Isabelle verifies
+  - rationale: tactics do combinatorial search, fewer premises shrink the space
+- premises passed directly to native tactics, so proofs are one strong tactic + long premise list
+  - retrieval is useful only because a trusted tactic consumes candidates
+training data mined from existing proofs
+- HPL: one (state, premise) pair per premise used in each human proof step, from AFP + stdlib
+- SH: Sledgehammer alternative proofs of intermediate propositions
+- MAPL = HPL ∪ SH: 4.4M pairs, 433K premises
+  - mining cost 17 CPU years
+  - 0.1% of MAPL (~4K samples) fine-tuned already beats Sledgehammer
+results
+- PISA (1000 problems) single-step: 59.5% (86M model) vs Sledgehammer 38.3%
+- miniF2F test single-step: 34.0% vs Sledgehammer+heuristics 20.9%
+- PISA multi-step: Thor + Magnushammer 71.0% vs Thor 57.0%
+- miniF2F multi-step: 37.3% test, below DSP 39.3%, not best
+limits
+- text alone lacks semantic info on referenced objects (paper's own limitation)
+for verus
+- inference: external tool retrieves candidate lemmas/requires, bounded search over assert/lemma hints, keep only verified variants
+  - no Verus experiment, types/ownership/triggers not captured by text

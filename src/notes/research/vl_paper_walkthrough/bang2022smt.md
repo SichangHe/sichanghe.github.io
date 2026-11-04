@@ -2,37 +2,26 @@
 (authored by agents unless marked 🧑)
 Tag: `bang2022smt`: [paper](https://doi.org/10.1007/978-3-031-13188-2_19)
 
-## scope and central claim
-Bang et al. build `mlir-tv`, an SMT-based translation validator for MLIR transformations. Its input is a source and target function with the same signature; its output is either a counterexample or an SMT proof that the target refines the source. The abstract states, “It performs abstraction refinement if validation fails.” The key engineering choice is an over-approximate abstraction of floating point (FP) arithmetic and reductions: proving the abstraction safe proves the concrete transformation, while an abstraction failure triggers a more precise encoding.
-
-## technique: per-transformation translation validation
-Use this for a compiler pipeline whose optimizer changes one concrete source program at a time. Encode every MLIR instruction into a logical final state `(ub, memory, value)`, encode source and target separately, and ask an SMT solver whether the refinement relation holds for every initial memory and argument state. The paper says, “mlir-tv symbolically encodes each MLIR instruction in a function and emits its final state in a logical formula.” (Section 3, p. 390) The refinement check is `fsrc(I) ⊑ ftgt(I)`: if the solver finds an input breaking it, report an incorrect transformation; if no such input exists, report correctness. Inference: for Verus, this maps to specifying the pre-state with `requires`, the post-state with `ensures`, and proving a Rust implementation refines a reference `spec fn`; a direct Verus encoding must model ownership and permitted memory accesses explicitly.
-
-Inference (a recipe I derived from Sections 3 and 6.3, not a numbered procedure in the paper): (1) select a source/target pair after one transformation; (2) encode operations, tensor shapes, UB, and memory effects; (3) encode the refinement predicate; (4) negate the predicate to search for a counterexample; (5) classify `unsat` as validated and a model as a bug witness. The paper's implementation had 8,900 C++ lines and supported 25 tosa, 11 memref, 13 linalg, 10 tensor, 29 arith, 3 bufferization, and 8 other operations. Section 7 gives these as operation counts in the authors' implementation. Inference: they are not a completeness claim for MLIR.
-
-## technique: finite over-approximation of floating point
-Use this when IEEE-754 bit-blasting is too expensive or when an optimization deliberately relies on unsafe arithmetic laws such as associativity. Count the distinct FP values that source and target can observe, including values created by uninterpreted functions (UFs). Give each abstract value a small bit-vector: the number of bits is `ceil(log2 N)`, where, per Section 4.3, `N` is the number of applied UFs plus the number of FP arguments plus the number of distinct constants of the source and target functions (the UF count matters because an operation returning a non-FP value, such as `is_int(x)` via `floorSMT(x)`, can hide an unseen FP value). Represent a sign bit and magnitude bits; all-ones magnitude bits (except the lowest) mean infinity or NaN, with one NaN representation per sign. Encode arithmetic as UFs constrained only by properties needed by the transformation. For a commutativity-sensitive add, the paper encodes addition as `addf'SMT(x,y) & addf'SMT(y,x)`, where `&` is bitwise and and `addf'SMT` is a UF, instead of an expensive universal quantifier (Section 4.1, p. 392). Subtraction is addition of the negated operand; division uses a separate UF; comparisons, `|x|` and `-x` are encoded precisely. Special values are handled with `ite`; for example NaN propagation is an explicit conditional.
-
-The paper states, “Our encoding does not miss bugs because it is an over-approximation of the FP arithmetic.” (Section 4, p. 391) The paper adds that “validation failure does not always mean that the transformation is wrong” (Section 4, p. 391), and its conclusion qualifies the no-missed-bugs claim: it holds “unless a flag for bounding the size of dynamically shaped tensors is given” (Section 9). Therefore a proof in the abstraction implies correctness for concrete FP, but failure is inconclusive. Inference: a Verus proof can use an abstract `spec fn` over bit-vectors or mathematical values and a lemma connecting it to the executable float operation; Verus's `ensures` should expose exactly which arithmetic laws are assumed. Inference: do not write `external_body` on the function under verification; any hardware or library float behavior left opaque remains trusted.
-
-## technique: tensor, loop, and memory encoding
-Represent a tensor as a one-dimensional SMT array in row-major order, with a second Boolean array marking uninitialized elements. Encode each tensor operation as a lambda expression. For a `linalg` loop, infer bounds from indexing maps, encode the yielded element as a lambda over induction variables, and require shape agreement among inputs and output; mismatches are undefined behavior. Parallel iterators become lambda parameters; reductions are recognized syntactically and mapped to reduction UFs. Memory is split into uniquely identified blocks with number of elements, block type (whether created by `memref.alloc`), writability, liveness, and element and per-element initialized-flag arrays; loads and stores update the arrays of possibly aliased blocks with `ite`s. Disjointness of two memref accesses is encoded only for trivial, row-major layout maps; the tool raises an error otherwise (Section 6.2).
-
-The paper's worked loop computes `%C[i][j] = %A[i][j] + %B[j][i]` from identity and transposed indexing maps. Its method section says, “Encoding a loop in linalg starts with finding loop bounds.” (Section 5.2, p. 396) Inference: a Verus implementation would model arrays with sequences or maps in `spec fn`s, use `invariant` declarations on Rust loops, and prove bounds/disjointness with `requires` and `ensures`; MLIR's UB convention must become an explicit precondition or result variant.
-
-## technique: hash encoding for reduction commutativity
-For a fixed-length reduction, avoid expensive multiset theory. Define a UF `f` on elements and hash an array by the bit-vector sum `F(A)=Σ f(x)`. Permuted arrays have equal hashes; with a range of `ceil(log2 max(|A|,|A'|))` bits and universal quantification over `f`, equal hashes imply permutation. The paper's Theorem 1 proves this using indicator functions. For each pair of reduction calls, the paper encodes their equality as a constraint: by contraposition, `sum(A) != sum(A') ==> exists f. sum_{x in A} f(x) != sum_{x in A'} f(x)`, and “Since ∃f can be moved out, the precondition is quantifier-free.” (Section 5.3, p. 398) For nested reductions, add the precondition that the hash of an inner reduction equals the sum of element hashes; the paper unifies hash functions across pairs to reduce preconditions, and its supplementary material proves the unified hash range must not be smaller than `[0, p^2 n)`, with `p` the number of summation pairs and `n` the maximum array size (footnote 5, p. 398). Section 5.3 says the technique works when the input array length is constant.
-
-In Verus, inference: encode a finite sequence's permutation relation with a ghost multiset or counts and prove the hash lemma separately; use `lemma` and `assert`, while keeping executable reduction code unchanged. Inference: the encoding's guarantees depend on the fixed-length and hash-range conditions the paper states; I did not check the supplementary proofs.
-
-## technique: abstraction refinement
-Start with the cheapest abstraction: independent UFs for integer and FP dot operations, independent FP types, and full UF casts. If validation fails or times out, refine in stages: compose dot products from summation and multiplication; use the cast encoding; finally unroll small constant-length sums into additions. The abstraction cannot validate constant folding in general, so `mlir-tv` offers a command-line option for IEEE-754, which disables the unsafe reduction properties because they are incompatible with it (Section 6.3). Refinement is triggered “when a validation fails or timeouts”; the stated aim is “To make validations cheap on average.”
-
-## evidence, trust, and limits
-On 57 hand-written correct/incorrect function pairs, abstract FP was 13.6x faster on average than concrete IEEE-754; shrinking from 32 bits gave a 2.2x speedup. On 2,467 MLIR unit-test pairs, 433 validated, 8 timed out, and 8 failed; dynamic tensors were bounded at 100, so bugs requiring larger shapes could be missed. Three TensorFlow Lite models were split into functions averaging 9.5–11.6 instructions; all transformations in `text_classification_v2` validated, while for SqueezeNet and MobileNet the last two transformations (`linalg-bufferize` and `tensor-bufferize`) failed because of unsupported operations, so those models were validated only for the earlier transformations. Z3 4.8.13 (used for the experiments, because it did better than cvc5 0.0.3 in sanity tests), Apple M1, 16 GB RAM, MLIR commit b5a0f0f, and a 30 s timeout define these measurements. On hash versus multiset encoding (Section 7.3), the hash encoding was faster overall and its running time was consistent regardless of tensor size. The unit-test run also found MLIR issues, for example `x + (+0.0)` folded into `x` despite signed zero (reported and fixed) and unclear semantics of `linalg.fill` on read-only memrefs (Section 7.1). Inference: the product threat for agent-written verified Rust is analogous unsupported operations and mismodeled UB; validation proves only the modeled semantics and solver result, while MLIR textual specifications, solver soundness, and the split boundaries remain trusted.
-
-## techniques for the catalog
-- per-run translation validation: encode source and target final states and ask an SMT solver for a refinement counterexample
-- finite FP over-approximation: use small bit-vectors and property-constrained UFs so abstraction proofs imply concrete correctness
-- staged abstraction refinement: escalate from independent UFs to decomposed and unrolled arithmetic after failure or timeout
-- hash reduction encoding: replace fixed-length multiset equality with UF/bit-vector hash constraints
+`mlir-tv`: SMT translation validator for MLIR transformations (8,900 lines C++)
+- encodes source and target to final state `(ub, memory, value)`; checks refinement `fsrc ⊑ ftgt`
+  - unsat = validated; model = bug witness
+- abstraction refinement on failure or timeout
+over-approximate floating point
+- small bit-vectors of `ceil(log2 N)` bits, N = applied UFs + FP args + distinct constants
+- UFs constrained by FP properties (including unsafe ones like associativity)
+- proved in abstraction ⇒ correct for concrete FP; failure is inconclusive
+- bounded dynamic tensor size (100) voids the no-missed-bugs claim
+tensor, loop, memory encoding
+- tensor = 1-D row-major SMT array plus uninitialized-flag array; ops as lambdas
+- linalg loops: bounds from indexing maps; shape mismatch = UB
+- memory split into blocks with size, type, writability, liveness
+hash encoding of reduction commutativity
+- sum of UF `f` over elements; equal hashes ⇒ permutation (Thm 1)
+- existential over `f` moves out, so precondition is quantifier-free
+staged abstraction refinement
+- independent UFs → composed dot products → cast encoding → unrolled small sums
+- IEEE-754 flag disables unsafe reduction properties
+evidence
+- 57 hand-written pairs: abstract FP 13.6x faster than IEEE-754
+- 2,467 unit tests: 433 validated, 8 timeouts, 8 failures
+- 3 TF Lite models: SqueezeNet and MobileNet last 2 transformations failed (unsupported ops)

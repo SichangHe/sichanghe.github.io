@@ -2,49 +2,37 @@
 (authored by agents unless marked 🧑)
 Tag: `crichton2022modular`, [paper](https://doi.org/10.1145/3519939.3523445)
 
-## problem and contribution
-The paper defines Flowistry, a static information-flow analysis for safe Rust that remains modular across dependencies. “We demonstrate that ownership types can be used to soundly and precisely analyze information flow through function calls given only their type signature.” (Abstract, p. 1) “We prove the system’s soundness as a form of noninterference using the Oxide formal model of Rust.” (Abstract, p. 1) The analysis computes, for each variable in a function, a set of dependencies (program locations) at each program point; it is flow-sensitive and field-sensitive (Section 2, p. 2). In the evaluation the size of Θ(x) at the function exit is read as the size of the variable’s backward slice (Section 5.1, p. 8). It covers mutation, references, lifetimes, calls, and control flow.
-
-## technique 1: dependency contexts over places
-What it is. Flowistry labels each expression location ℓ and maps every memory place p to a set of labels Θ(p). “The computation of information flow is intertwined with type-checking, represented as a modified type-checking judgment.” (Section 2, p. 2) A node’s conflicts are its ancestors and descendants in the type tree, not its siblings (Section 2.1, p. 3), so a write to `t.1` updates `t` and `t.1` but not `t.0`.
-
-How to apply it. (1) Label every expression with a unique location. (2) Initialize a constant’s dependency to its own label: “A constant’s dependency is simply itself.” (Section 2.1, p. 3) (3) On a let binding, assign the initializer dependency to every projection under the new root. (4) On assignment to place π, add the expression dependency to every conflicting place. (5) Read a place by looking up Θ(π) (rule T-Move; for a place expression through references, rule T-Copy unions Θ over every possibly read place, Appendix A.1, p. 13). The paper’s tuple example states: “After checking ‘𝑡 .1 := 3’, then ℓ3 is added to Θ(𝑡) and Θ(𝑡 .1), but not Θ(𝑡 .0).” (Section 2.1, p. 3)
-
-Inference: a Verus analogue is a ghost dependency map represented as a `spec fn` over abstract labels and values, with proof lemmas for the conflict relation; executable Rust remains unchanged. Verus can express the map and `ensures` facts, but this paper’s inference engine is not a Verus feature.
-
-Evidence and limits. The paper states “Theorem 3.1 (Noninterference). Let 𝑒 such that:” (Section 3, p. 5): for a well-typed expression and two well-typed stacks, (a) if the stacks agree on all places whose dependencies lie within κ, the result values are equal, and (b) for each place in the output context, if the stacks agree on that place’s dependencies, the final values of that place are equal. The proof is in Appendix A.2 (the main text omits it). The paper focuses “just on values produced by the program, instead of other behaviors like termination or timing” (Section 3, p. 5), and Δ must be empty in the theorem. Unsafe raw pointers are outside soundness: “Our pointer and mutation analysis fundamentally relies on ownership-safety for soundness.” (Section 4.3, p. 7)
-
-## technique 2: ownership-derived reference and loan analysis
-What it is. Rust references carry provenance (lifetime) and ownership qualifiers (`uniq` or `shrd`). In the Oxide model, Flowistry reads the ownership-safety judgment’s loan sets as a points-to analysis. “The key idea is that Oxide already does a pointer analysis! Performing one is an essential task in ensuring ownership-safety.” (Section 2.2, p. 4) Rust itself does not build loan sets, so the implementation reconstructs them from the outlives-constraints Rust outputs (Section 4.2, p. 7).
-
-How to apply it. (1) For each borrow `&r ω p` in the MIR program, initialize Γ(r) = {p} (Section 4.2, p. 7). (2) Propagate loans by Γ(r) = the union of Γ(r′) over all r′ with r′:>r, until Γ reaches a fixpoint (Section 4.2, p. 7). (3) For an assignment through a reference, compute the loan set Δ;Γ ⊢uniq p ⇒ {l}. (4) Add the assigned expression’s dependencies to the conflicts of every unique loan in the set (rule T-AssignDeref). The worked example borrows x, reborrows through y, then through z, yielding the loan set `{uniq x.1, uniq (*y).1, uniq (*z)}` for `*z` (Section 2.2, p. 4).
-
-Inference: in Verus, model ownership facts with references and ghost predicates; use `old(...)` in postconditions when relating pre-state values, and prove alias-disjointness as lemmas. Verus does not expose Oxide’s Γ loan-set judgment, so a direct implementation would be a ghost abstraction and a trusted correspondence lemma.
-
-Evidence and limits. Rust’s ownership rule makes `&self` immutable and `&mut self` potentially mutating; lifetimes expose which returned references may point into the receiver (Section 1, p. 2). Raw pointers and `unsafe` blocks violate the assumptions and are not analyzed (Section 4.3, p. 7). Interior mutability and libraries such as `Arc::clone` that do not share a lifetime between input and output also lose alias information (Section 8, p. 12).
-
-## technique 3: modular summaries for calls
-What it is. A call uses only the callee signature. “Additionally, the function’s return value is assumed to be influenced by any input, and so has dependencies” κarg, the collective dependencies of the input, which are also added to every unique reference (Section 2.3, p. 5). Shared references are read inputs; transitively reachable unique references are possible mutation targets; the return is conservatively dependent on all readable inputs.
-
-How to apply it. (1) Compute the ω-refs of the argument recursively through its type, and from them `shrd-loans` and `uniq-loans`. (2) Union Θ(p) for every p in `shrd-loans` (plus the argument’s own dependencies) into κarg. (3) Add κarg to the conflicts of every place in `uniq-loans`. (4) Assign κarg as the dependencies of the call result. (5) Do not inspect the body, which the paper says lets the analysis “trivially handle higher-order functions” (Section 2.3, p. 5). The formalism restricts functions to one argument. The paper’s example is a function over `(&uniq u32, &shrd u32)`: only the first can be mutated, and both are assumed inputs, so the call adds {ℓ1, ℓ2} to Θ(x) but not Θ(y) (Section 2.3, pp. 4–5).
-
-Inference: a Verus library can expose proof-carrying summaries as `spec fn` predicates over argument references, then callers invoke lemmas establishing the summary; `requires` and `ensures` carry the boundary. A summary cannot justify effects absent from the callee contract.
-
-## technique 4: MIR forward dataflow and control dependence
-Implementation steps are explicit. “The Rust compiler lowers programs into a ‘mid-level representation’, or MIR, that represents programs as a control-flow graph.” (Section 4.1, p. 6) (1) Maintain Θ at each MIR instruction. (2) Transfer assignments by updating conflicts. (3) Join predecessor contexts by key-wise set union. (4) Iterate to a fixpoint in the join-semilattice. (5) Compute control-dependence between instructions, following Ferrante et al., from the post-dominator tree and frontier of the CFG, so branch conditions flow into mutated places (Section 4.1, pp. 6–7). Panics are excluded from control dependence because they “are designed to indicate unrecoverable failure” (Section 4.1, p. 7).
-
-Inference: Verus proofs can mirror this as ghost state threaded through a verified interpreter, but ordinary Verus verification reasons about the Rust program directly; MIR extraction and fixpoint iteration would be an external analysis.
-
-## evidence, measurements, and failures
-The evaluation uses ten crates totaling 286,682 LOC, 435,979 variables, and 14,696 functions (Table 1, p. 8), producing 3,487,832 data points over crate, function, condition (8 conditions), and variable name (Section 5.1, p. 8). “In 94% of all cases, the Whole-program and Modular conditions produce the same result.” (Section 5.2.1, p. 9) Among the remaining 6%, the median dependency-set increase is 7%, with the denominator explicitly being non-zero-difference cases (Section 5.2.1, p. 9). Removing mutability information gives non-zero differences in 39% of cases, median 50%; removing lifetimes gives 17%, median 56% (Section 5.2.2, p. 9). Baseline median per-function execution time is 370.24 μs; for `GameEngine::render` in rg3d the modular analysis takes 0.13 s versus 23.18 s for the recursive analysis, a 178× slowdown (Section 5.1, p. 8). Whole-program can only recurse into definitions within the analyzed crate, not the standard library (Section 5, p. 7).
-
-The IFC checker is a Rust library and compiler plugin with `Secure` and `Insecure` traits; the Figure 5b caption says it checks for flows from data of a Secure type to insecure operations, and the Section 6 text words the direction as from Insecure to Secure variables. It is purely intraprocedural. The slicer is a VSCode extension for slices within one function (Section 6, p. 11). The paper states that 96% of cases crossed a crate boundary, and only 6.6% of those had a non-zero modular/whole-program difference; 4% did not cross a boundary and 0.6% of those differed (Section 5.4.2, pp. 10–11). These denominators are conditional subsets, so percentages must not be compared as if they shared one denominator.
-
-What is proved is noninterference for the Oxide model (Appendix A.2); precision is measured empirically on the ten selected crates.
-
-## techniques for the catalog
-- ownership dependency context — map each place to expression labels and update conflicts on mutation
-- loan-set pointer analysis — derive points-to loans from ownership qualifiers and lifetime outlives constraints
-- signature-only call summary — propagate readable inputs to returns and unique loans without callee bodies
-- MIR fixpoint analysis — join place dependencies across CFG edges and add control dependencies
-- ownership precision ablation — quantify precision loss by disabling mutability and lifetime information
+Flowistry: modular information-flow analysis for safe Rust using only callee type signatures
+- ownership types give sound, precise flow through calls
+- soundness = noninterference, proved in the Oxide model (Appendix A.2)
+  - values only, not termination or timing
+  - unsafe, raw pointers, interior mutability are outside the guarantee
+dependency context Θ maps each place to a set of expression labels
+- assignment adds the expression's deps to all conflicting places
+  - conflicts = ancestors and descendants in the type tree, not siblings
+  - `t.1 := 3` updates Θ(t), Θ(t.1), not Θ(t.0)
+- flow-sensitive, field-sensitive
+pointer analysis comes free from ownership
+- loans: borrow `&r ω p` starts Γ(r)={p}, propagate along outlives constraints to fixpoint
+- write through a reference adds deps to every unique loan
+- Rust builds no loan sets itself, so the implementation reconstructs them from outlives constraints
+call summary from signature alone
+- return depends on all readable inputs (κarg)
+- κarg also added to every place reachable via unique references
+- no callee body needed, so higher-order functions are trivial
+implementation: forward dataflow over MIR
+- join = key-wise union, iterate to fixpoint
+- control dependence from post-dominator frontier; panics excluded
+evaluation: 10 crates, 286,682 LOC, 3.49M data points
+- modular = whole-program result in 94% of cases
+  - median dependency-set increase in the other 6%: 7%
+- ablations
+  - no mutability info: 39% differ, median +50%
+  - no lifetimes: 17% differ, median +56%
+- speed: median 370 μs/function
+  - rg3d `GameEngine::render`: 0.13 s modular vs 23.18 s whole-program
+- tools: intraprocedural IFC checker, VSCode slicer
+Verus relevance (inference)
+- could encode the map as a ghost `spec fn` with conflict lemmas
+- call summaries as predicates plus lemmas
+- MIR extraction and fixpoint stay external to Verus

@@ -2,44 +2,25 @@
 (authored by agents unless marked 🧑)
 Tag: `lin2024fvel`, [paper](http://arxiv.org/abs/2406.14408v2)
 
-## system and verification workflow
-
-FVEL turns a program-verification interaction into an Isabelle theorem-proving interaction. Its input is C code, optionally accompanied by SIMPL or Isabelle text; its output is success or failure. The paper states: “Moreover, the input format is flexible as one can choose to input an ensemble of C code and its corresponding SIMPL and/or Isabelle content as supplements.” (Sec. 3, p. 3). The workflow has a specification phase and iterative proof phase. At S0, FVEL transforms C into Isabelle facts and gives them to an LLM, which generates a lemma describing the code specification. At each later Si, the LLM generates proof steps and FVEL returns Isabelle feedback to the LLM. The described workflow terminates after generation of a whole proof; proof acceptance determines success. The authors write: “The process terminates until a whole proof is generated.” (Sec. 3, p. 4).
-
-When to use it. Inference: use this architecture when a verifier can expose a machine-checkable intermediate language and proof state, and an LLM is useful for proposing specifications or proof steps. It is not a soundness substitute: Isabelle, the C translation, and the generated lemma all remain part of the trusted/checked pipeline.
-
-How to apply it. (1) Give FVEL a C function and optional helper material. (2) C-Parser translates a supported C99 subset to SIMPL. (3) AutoCorres simplifies SIMPL to a higher-level Isabelle functional definition. (4) PISA starts Isabelle with C-Parser and AutoCorres in `sessionRoots`, sets the C file as working directory, imports the tools, unfolds the function fact, and returns the definition to the LLM. (5) Prompt the LLM to write an Isabelle lemma specification. (6) Ask for proof steps, invoke Isabelle after each step, and return error messages/proof states during proof generation; Isabelle acceptance determines success. These implementation steps are specified in Sec. 3, p. 4: “C-Parser can translate a large subset of C99 code into the imperative language SIMPL.”
-
-Verus form. Inference: replace C-Parser/AutoCorres with a Rust-to-Verus front end that exposes the target function, preconditions, postconditions, and loop invariants as a specification obligation. The LLM can propose a `requires`/`ensures` contract or a `proof fn`, then propose `assert`, `reveal`, and loop-`invariant` annotations. Run Verus after each proposal and return its diagnostic and remaining verification state. Inference: the source-level contract must be checked independently of generated proof text; an LLM-generated contract that is weaker than the intended property is a statement error even if Verus accepts its proof.
-
-## technique: dependency graph and step-wise proof dataset
-
-FVEL ER extracts training and evaluation material from the seL4 Isabelle project. It has two components: theory/session dependencies, and lemmas paired with their intermediate proof states. A theory graph has `.thy` files as nodes and import relationships as edges. The paper says: “With the theory dependency graph, it is convenient to locate and extract multi-depth lemmas and their corresponding proofs.” (Sec. 4.3, p. 5).
-
-Extraction steps. (1) Traverse the seL4 ROOTS file in order. (2) Parse each session's name, parents, directories, and theory list. (3) In every theory, parse text between `imports` and `begin`. (4) Recursively parse imported theories across sessions. (5) Build session and theory dependency graphs. (6) Build seL4 and its binary heap images. (7) For each theory, load all dependent sessions in PISA, set its working directory, and temporarily copy session files so imports resolve. (8) Interact with Isabelle one proof step at a time, storing each returned proof state and command. These steps are in Secs. 4.3–4.4, pp. 5–6. The authors describe the stored pair: “For each step, Isabelle will return a proof state and we store the step and proof state as a step-wise training sample.”
-
-The resulting dataset contains 758 theories, 29,125 lemmas, and 200,646 proof steps. The split by lemma is 26,081 train, 1,115 validation, 1,077 test, and 852 test-hard lemmas (Table 1, p. 6). The maximum theory dependency depth is 156 and the maximum proof length is 963 steps. The authors report that 12,089 of 29,125 lemmas take one step, 12,957 take 2–10 steps, and 28,954 take at most 100 steps (Sec. 4.5, p. 7). The authors write: “The test-hard set is selected from those lemmas in the three sessions “SysInit”, “SysInitExamples”, “LibTest”.” (Sec. 4.5, p. 6). Inference: their subsequent description of these lemmas as being at higher depths conflicts with Table 1: test-hard has average depth 31.476, versus 73.687 for training, and maximum depth 115, versus 156 for training.
-
-Verus form. Inference: construct a crate/module graph from Rust `use`, module, trait, specification, and proof dependencies. Save each lemma's Verus command together with the verifier state after that command. Split by lemma/function to keep the steps of one proof together. Inference: this alone does not prevent shared dependencies or similar proofs across splits. Inference: retain failed diagnostics as feedback examples, but label them separately from verified transitions.
-
-Assumptions and exclusions. The extraction omits experimental theories that Isabelle or PISA cannot verify, and excludes documentation, C-Parser, and AutoCorres sessions because they contain no relevant lemmas (Sec. 4.4, p. 6): “We also omit the sessions for documentation, C parser [27] and AutoCorres [8] as they do not contain lemmas that are relevant to formal proving.” The datasheet specifies the ARM architecture and March 11, 2024 release (Appendix C.2, p. 18). Inference: coverage therefore excludes parts of the seL4 source tree and does not establish coverage of arbitrary C programs.
-
-## technique: fine-tune then interactively verify
-
-FVEL converts training samples to Alpaca format: one fixed instruction, the lemma statement as input, and a complete Isabelle proof as output. It fine-tunes Llama-3-8B-Instruct and Mistral-7B-Instruct-v0.2 with LoRA (Sec. 5.1, p. 8): “We convert the training data into the alpaca format, where all training samples use the same instruction, the input is the lemma specification, and the output is a complete proof written in Isabelle.” Appendix D.1, pp. 20–21, specifies LoRA on `q_proj` and `v_proj`, a single RTX 3090, filtering samples longer than 1,024, global batch size 8, a cosine scheduler with maximum learning rate 1e−4, minimum 1e−5, warmup ratio 0.1, and up to 10 epochs with early stopping at minimum evaluation loss. Its timing statement is: “For Mistral-7B and Llama-3-8B, the fine-tuning lasts about 30 GPU hours.”
-
-The paper distinguishes the interactive environment from the FVEL ER theorem-proving experiment. For code verification, it says: “Our approach interacts with PISA and self-corrects by the returned error messages.” (Sec. 5.1, p. 8). In Appendix D.1, p. 22, the theorem-proving inference procedure instead says: “During inference, the model generates the complete proof in a single pass using a zero-shot approach, and PISA verifies the resulting proof.” That procedure uses temperature 0.0, with imports and required theorems manually added. Appendix E.3, p. 24, refers back to D.1 for the code benchmarks' fine-tuning and inference details. Inference: the paper does not fully resolve how this single-pass description combines with code verification's stated error-feedback loop.
-
-The benchmark comparison uses Code2Inv (133 C programs), SV-COMP-47 (47 programs), and a 1,000-program SV-COMP sample. Table 2 reports passed tasks. On Code2Inv, Mistral-7B rises from 37/133 to 40/133 after fine-tuning, and Llama3-8B from 46/133 to 46/133. On SV-COMP-47, Mistral rises 10/47 to 14/47 and Llama 11/47 to 16/47. On SV-COMP-1,000, Mistral rises 75/1,000 to 84/1,000 and Llama 69/1,000 to 81/1,000. The paper summarizes the latter as “performances on SV-COMP of 17.39% (69→81) by Llama3-8B and 12% (75→84) by Mistral-7B” (Sec. 6, p. 9). Inference: these percentages are relative increases in counts; 69 to 81 is 6.9% to 8.1% of 1,000.
-
-Failure analysis separates specification and proof errors. The authors write: “Further analysis in Table 3 shows that most of the validation errors in the Code2Inv dataset come from specification generation, which can be type mismatching, syntax errors, etc.” (Sec. 5.4, p. 9). The percentages below are shares of failures, not of all programs. On Code2Inv, Mistral-7B-FT has 72.0% statement errors and 28.0% proof errors; Llama3-8B-FT has 66.7% and 33.3%. On SV-COMP, Mistral-7B-FT has 59.0% statement and 41.0% proof errors; Llama3-8B-FT has 61.8% and 38.2% (Table 3, p. 9). Inference: a Verus deployment should report contract/specification failures separately from proof failures, because successful proof search cannot repair a wrong contract.
-
-The authors compare symbolic tools too: UAutomizer passes 92/133 Code2Inv, 1/47 SV-COMP-47, and 374/1,000 SV-COMP; ESBMC passes 68/133, 1/47, and 358/1,000. Lemur-GPT-4 passes 107/133 and 25/47 where reported (Table 2, p. 9). Inference: these counts should be compared within each benchmark.
-
-## techniques for the catalog
-
-- interactive specification-and-proof loop: translate code to theorem facts, generate a lemma, verify each proof step, and feed prover errors back
-- dependency graph extraction: recursively parse session/import declarations to expose multi-hop proof context
-- step-wise proof-state dataset: store each command with Isabelle's resulting state and split by lemma
-- verifier-aware fine-tuning: fine-tune on complete formal proofs, then accept only proofs checked by the theorem prover
-- statement-versus-proof error audit: classify failures by incorrect specification versus failed proof generation
+fvel: llm + isabelle environment for c program verification
+- workflow: c to simpl (c-parser) to isabelle (autocorres), llm writes spec lemma then proof steps, isabelle feedback each step
+  - success = whole proof accepted by isabelle
+- failure audit: most failures are specification errors, not proof errors
+  - code2inv: mistral-ft 72.0% statement / 28.0% proof, llama3-ft 66.7% / 33.3%
+  - sv-comp: mistral-ft 59.0% / 41.0%, llama3-ft 61.8% / 38.2%
+  - verus: report contract failures separately; accepted proof of weak contract is still wrong
+fvel er dataset from sel4
+- 758 theories, 29,125 lemmas, 200,646 proof steps
+  - split 26,081 train / 1,115 val / 1,077 test / 852 test-hard
+- extraction: theory dependency graph from sel4 ROOTS, then one isabelle step at a time via pisa, store (step, proof state)
+- paper inconsistency: test-hard described as deeper, but avg depth 31.5 vs 73.7 for train
+- coverage excludes parts of sel4, not arbitrary c
+fine-tuning small models gives modest gains
+- llama-3-8b-instruct and mistral-7b-instruct, lora, ~30 gpu hours
+- gains in passed tasks
+  - code2inv (133): mistral 37 to 40, llama 46 to 46
+  - sv-comp-47: mistral 10 to 14, llama 11 to 16
+  - sv-comp-1000: mistral 75 to 84, llama 69 to 81
+    - headline 17.39% / 12% are relative count increases (6.9% to 8.1% absolute for llama)
+- symbolic baselines: uautomizer 92/133, 1/47, 374/1000; esbmc 68/133, 1/47, 358/1000; lemur-gpt-4 107/133, 25/47
+- unresolved: appendix says single-pass zero-shot proof generation, main text says error-feedback loop

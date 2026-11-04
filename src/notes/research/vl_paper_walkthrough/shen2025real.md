@@ -2,64 +2,21 @@
 (authored by agents unless marked 🧑)
 Tag: `shen2025real`, [paper](https://arxiv.org/abs/2505.20613v3)
 
-## what is proved or measured
-REAL-Prover is a Lean 4, retrieval-augmented, stepwise prover. Its paper describes three coupled components: HERALD-AF generates formal statements; Jixia-Interactive applies tactics and returns proof states; LeanSearch-PS retrieves Mathlib premises. The authors state, “Each model invocation is conditioned on the current proof state and enhanced through the retrieval of semantically relevant theorems from Mathlib.” (Introduction, p.3). Their claimed measurements are benchmark pass rates, not a theorem about the neural model.
-
-## technique 1: consistency-filtered auto-formalization (HERALD-AF)
-what it is: a pipeline that turns informal mathematics into candidate Lean statements and filters semantic mismatches.
-
-how to apply it:
-1. use regular expressions to extract theorem blocks and exercises, then use an LLM to generate and refine informal statements (Section 2.1, p.5)
-2. run Herald-translator to generate multiple formal Lean candidates (Section 2.1)
-3. translate each candidate back to natural language with DeepSeek-V3 (Section 2.1)
-4. have a general LLM judge whether the back-translation faithfully reflects the original; retain only passing candidates (Section 2.1)
-
-The paper’s complete statement is: “This translation pipeline comprises three key stages: Auto-Formalization, Auto-Informalization, and LLM Judgement.” (Section 2.1, p.5). The filter makes a training corpus of formal statements, but the paper does not report its acceptance denominator or error rate.
-
-Verus form: Inference: use the same round-trip idea for a Rust/Verus contract: generate a candidate `requires`/`ensures` specification, render it into plain language, and require a reviewer or checker to compare the rendering with the requirement before proof search. Verus can then check the retained contract, but semantic agreement between prose and contract remains outside Verus. Do not treat LLM judgment as proof.
-
-## technique 2: interactive best-first tactic search
-what it is: a search tree whose nodes are Lean proof states and whose edges are candidate tactics checked immediately by Lean.
-
-how to apply it:
-1. initialize a proof state in Jixia-Interactive for each formal statement (Section 2.2, p.5)
-2. ask the LLM for multiple candidate tactics at the current node
-3. apply each tactic in Jixia-Interactive; discard invalid tactics and retain resulting states (Section 2.2)
-4. score a path by the paper’s length-normalized log probability, `sum_t log p(a_t|s_t) / L^alpha`, where `L` is path length and `alpha` is in [0,1] (Section 2.2, p.6)
-5. expand the highest-scoring node; stop on a proof with no goals or when the search budget is exhausted, then reconstruct the tactic path (Section 2.2)
-
-The paper says, “We adopt a best-first search strategy, selecting the node with the highest score to expand further by generating new tactics.” (Section 2.2, p.6). At inference it uses 64 passes, 64 samples per step, temperature 1.5, and `alpha = 0.5` (Section 3.1, p.8).
-
-Verus form: Inference: use an external search controller to generate alternative Rust/Verus proof candidates and run Verus on each candidate. Retain successful candidates and use diagnostics to guide further attempts. This adapts the search idea; the paper does not establish a Verus interface equivalent to Lean's interactive proof states. Verify the complete final artifact.
-
-## technique 3: semantic premise retrieval with hard negatives (LeanSearch-PS)
-what it is: dense retrieval maps a proof state and Mathlib theorem into one vector space, then supplies nearest theorems to the tactic model.
-
-how to apply it:
-1. extract `(s, t_pos)` pairs with Jixia, where `s` is a proof state and `t_pos` is the theorem successfully applied there (Section 2.2.1, p.7)
-2. train an embedding model with InfoNCE: the positive theorem competes against in-batch negatives
-3. embed all statements and theorems with the initial model; for each query select a hard negative randomly from ranks 30–100 (Section 3.1, p.8)
-4. train a second time on `(s, t_pos, t_hard_neg)` triples; at proving time nearest-neighbor retrieve top-k theorems and put them in the LLM prompt (Sections 2.2.1 and 3.1)
-
-The paper states, “These selected premises are then supplied as context to our language model, helping it produce more effective and accurate proof steps.” (Section 2.2.1, p.7). The training used E5-mistral-7b-instruct, LoRA, learning rate `2 × 10^-5`, batch 128, and one epoch (Section 3.1, p.8).
-
-Verus form: Inference: build a retrieval index over Verus lemmas, specification definitions, and verified proof snippets. Retrieve using verification diagnostics and available program context, then insert candidate names and signatures into the generation prompt. Recheck the resulting proof with Verus; retrieval alone establishes no proof.
-
-## technique 4: expert iteration for state–tactic data
-what it is: repeatedly use the current prover to solve formal statements, add verified traces to supervised data, and fine-tune a stronger prover.
-
-how to apply it:
-1. fine-tune an initial model on open datasets
-2. run it inside REAL-Prover on HERALD-AF statements
-3. keep generated state–tactic traces whose proofs pass Lean
-4. add them to the SFT corpus, fine-tune, and repeat on harder statements (Section 2.2.2, p.7)
-
-The resulting corpus has 210,420 state–tactic pairs: 25,818 and 30,589 from two expert-iteration sources, 18,669 human-annotated, 92,152 Mathlib, and 43,192 augmented Lean-Workbook pairs (Section 3.1, p.8). The contribution list separately says, “We release a comprehensive dataset consisting of 55k state–tactic pairs generated through our expert iteration process.” (Section 1.2, p.4). Inference: 55k describes the released expert-iteration subset rather than the full mixture, but it does not exactly match the 56,407 expert-iteration pairs listed in Section 3.1; the paper does not explain that difference.
-
-Verus form: Inference: collect `(verification_state, generated_step)` traces only after Verus checks the resulting function or lemma. Re-train on proof states plus diagnostics, but preserve independent re-verification because accepted traces still inherit the specification and tool assumptions.
-
-## techniques for the catalog
-- consistency-filtered auto-formalization — generate formal statements, back-translate them, and retain only candidates judged faithful
-- interactive best-first tactic search — sample tactics, verify each in an interactive prover, and expand the highest-scoring state
-- hard-negative premise retrieval — train a dense state-to-theorem retriever first with in-batch negatives and then mined near-miss premises
-- expert iteration — add prover-generated, verifier-checked state–tactic traces to successive supervised-training rounds
+lean 4 stepwise prover with premise retrieval
+- parts: HERALD-AF (statement generation), Jixia-Interactive (apply tactics, return states), LeanSearch-PS (Mathlib retrieval)
+- claims are benchmark pass rates, not theorems
+consistency-filtered autoformalization
+- formalize, back-translate with DeepSeek-V3, llm judges faithfulness, keep only passing
+- no acceptance rate or error rate reported
+- Verus form (inference): requires/ensures → plain language → human/checker comparison; llm judgment is not proof
+best-first tactic search
+- node = proof state, edge = tactic checked by lean immediately
+- score = Σ log p(a_t|s_t) / L^α, α=0.5
+- inference: 64 passes, 64 samples per step, temperature 1.5
+hard-negative premise retrieval
+- InfoNCE on (proof state, applied theorem) pairs; E5-mistral-7b + LoRA
+- second round with hard negatives sampled from ranks 30–100
+- top-k theorems go into the prompt
+expert iteration
+- run prover, keep lean-verified state–tactic traces, add to sft, repeat
+- corpus: 210,420 pairs; 56,407 from expert iteration, though contribution list says 55k (unexplained gap)

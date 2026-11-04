@@ -2,72 +2,48 @@
 (authored by agents unless marked 🧑)
 Tag: `deoliveira2016polynomial`, [paper](http://arxiv.org/abs/1611.07726v1)
 
-## scope and result
-
-The paper presents two components: linearizing a class of polynomial loop assignments and finding inductive invariants of the resulting linear loop with eigenspaces. Its abstract states: “We present in this paper a new technique for generating polynomial invariants, divided in two independent parts : a procedure that reduces polynomial assignments composed loops analysis to linear loops under certain hypotheses and a procedure for generating inductive invariants for linear loops.” The target class is solvable polynomial mappings. The claimed completeness is bounded: “we guarantee the completeness of the technique for a bounded degree.” The implementation is Pilat, a Frama-C plug-in for C.
-
-The program model has variables over a field, simultaneous assignments, nondeterministic choice between loop bodies, and a constant variable equal to 1. A solvable mapping (Definition 1, Section 2) partitions variables into blocks w1,...,wk where each block's update is `Mj wjT + Pj(w1,...,wj-1)`: linear in its own block plus a polynomial of earlier blocks only. The paper explicitly limits the method: “Our technique focuses on loops containing only solvable instructions, thus it is not possible to generate invariants for nested loops.” The paper adds: “It is however possible to find an invariant for a loop containing no inner loop even if it is itself inside a loop, that’s why we allow the construction.” Section 4.2 says the method “only focuses on the loop behavior itself, allowing any kind of operation outside of the loop.”
-
-## technique 1: lowerize a solvable polynomial loop
-
-what it is. Replace polynomial monomials by new variables whose updates are affine (Inference: in a Verus port these would be ghost-like values). For a solvable mapping, this terminates and preserves the original variables' values. The paper calls it “polynomial mappings lowerization or linearization.” It is the paper's analogue of operator-strength reduction: compute each needed product or power once, then update it from existing variables.
-
-when to use it. Use it for a single loop whose assignment is solvable. Do not use it for a self-polynomial such as x := x², because the required monomial chain x², x⁴, x⁸, … does not terminate. The paper gives the precise boundary: “This class of polynomials corresponds to solvable polynomial mappings, defined in Definition 1.”
-
-how to do it.
-
-1. Check solvability. Build a dependency graph and reject a cycle in which a variable depends polynomially on another variable that transitively depends on it. The paper says this “can be reduced to verifying the acyclicity of a graph” and names Tarjan and Johnson algorithms (Section 4.1).
-2. Add a variable for each required monomial. Substitute every original assignment into each monomial's variables. If substitution creates another monomial, add it and continue. Termination follows from solvability (Section 4.1).
-3. Keep only monomials needed for the requested invariant degree. For the running loop `(x,y) := (x+y²,y+1)`, degree three needs `y²`, `xy`, `y³`, and `1`; `xy²` is unnecessary because its transformed degree would grow to four (Sections 3 and 4.1).
-4. Initialize the added variables before entering the loop. The paper warns that “Polynomial assignments must be performed before the loop starts to initialize the new monomials.”
-5. Use the affine loop in place of the polynomial loop for invariant analysis. In the running example the linearized mapping is `f(x,y,y²,xy,y³,1) = (x+y², y+1, y²+2y+1, xy+x+y²+y³, y³+3y²+3y+1, 1)` (Section 3).
-
-The paper's smaller illustration transforms `(x,y,z) := (x+1,y+2,z+x*y)` into a loop with `xy := x*y` before the loop and update `xy := xy+2*x+y+2`, with `z := z+xy` in the same simultaneous assignment, so it uses the old `xy` (Figure 2, Section 4.1). This is a concrete recipe for replacing a product that otherwise makes an update nonlinear.
-
-complexity and limits. For a solvable mapping over n variables, Property 2 gives at most `choose(n+d,d)` new variables, where d is the degree of P, the polynomial linearizing g as in Definition 2; the paper then says, “The complexity of the transformation is polynomial for d or n fixed” (the Note after Property 2, Section 4.1). The paper says the bound is an upper bound and that in practice “we usually need much less variables”: for the running example 6 variables (x, y, y2, y3, xy, 1) instead of 10. The transformation linearizes only the loop, not the whole program (Section 4.2). Integer division is not modeled: the conclusion says the method “is incomplete for integers : invariants we generate are only correct for rationals”, and that the problem comes “from the linearization procedure which badly takes into account the division.”
-
-Verus form. Inference: represent each added monomial as a ghost or specification value, and state its relation to executable variables with `requires`/`ensures` on a helper or loop invariant. Inference: keep executable Rust updates unchanged where possible; add proof-only calculations and `assert`/`assert forall` facts to establish the monomial recurrence, and put both the original relation and each monomial-definition relation in the `while` loop's `invariant` clause (Verus syntax, not from the paper). Inference: this carries over cleanly for integer or mathematical-field operations without division rounding, but the paper's field semantics and its integer-division caveat must be addressed by a precise Rust integer specification.
-
-evidence. The implementation is a Frama-C plug-in written in OCaml, tested on a Dell Precision M4800 with 16GB RAM and 8 cores; reported times exclude parsing and measure only the invariant computation (Section 5). The paper says the tool “doesn’t implement the extension of our method and may output irrational invariants or fail on complex eigenvalues”, so technique 3 below is not in the benchmarked tool. The authors say the benchmark programs are cases where a polynomial invariant is compulsory for verification. Table 1 reports 20 programs. Pilat finishes in 1.5–192 ms on all listed cases, while Aligator times out at ten minutes on `knuth`, `illinois`, `moesi`, `petter_5`, and `petter_6`, and Fastind finds no invariant on `prod4`, `read_writ`, `illinois`, `mesi`, and `moesi` (a dash means no invariant; `O.O.T.` means an aborted ten-minute computation, Table 1). These denominators are the 20 table rows, not a random benchmark sample, and the paper gives no aggregate success percentage. The paper does not state the degree column for Aligator, and the programs come from an external benchmark (reference [6]). For `prod4`, the reported times are 13,900 ms for Aligator, no invariant for Fastind, and 8 ms for Pilat. For `knuth` at degree 3, Aligator timed out, Fastind took 347 ms, and Pilat took 192 ms.
-
-## technique 2: derive invariants from the dual eigenspaces
-
-what it is. A linear form `φ(X)=<φ,X>` is a semi-invariant when zero remains zero after one loop step. Compute eigenvectors of the transpose (dual) matrix. The paper defines the condition as: “ϕ is a semi-invariant for f iff ∀X, ϕ(X) = 0 ⇒ ϕ(f (X)) = 0.” An eigenvector `φ` of `f*` satisfies `f*(φ)=λφ`, which makes the implication immediate. Theorem 1 states the converse: “ϕ : Kn 7→ K is a semi-invariant if and only if ∃λ ∈ K, ∃ϕ ∈ Eλ, where Eλ = ker(f ∗ − λId).” Thus all semi-invariants are the union of the eigenspaces of `f*`.
-
-how to do it.
-
-1. Take the linearized loop as a matrix `A`. The paper says the input is a family of linear mappings that it can “easily compose them via their matrix representation”; for several bodies, Section 4.4 instead intersects the per-body invariant sets (technique 4).
-2. Compute `Aᵀ`, the matrix of the dual map, and its eigenvectors using a standard linear-algebra eigensolver. The paper does not describe an eigensolver (“We will not adress the problem of computing the eigenvectors”, citing [20]); it states that “the eigenvalue problem is known to be polynomial” so the generation algorithm is too.
-3. Form every linear combination of a basis within each eigenspace. The coefficients are parameters selected by the initial state.
-4. Convert a semi-invariant equation equal to zero into an invariant by imposing the initial-state equation. The constant variable `1` is always an eigenvector for eigenvalue 1, so each eigenvector `φ` for eigenvalue 1 (besides that constant one) gives an invariant that can be written `φ(X)=k`, where `k` is computed from the initial state (Section 4.2).
-5. For other eigenvalues, test which basis forms vanish on the initial state. If one chosen form does not vanish, use it as a denominator and express the remaining forms relative to it; Property 3 gives the conjunction of these normalized invariants.
-
-The running example produces eigenvectors `(-6,1,-3,0,2,0)` and `(0,0,0,0,0,1)` for eigenvalue 1, yielding `-6*x+y-3*y²+2*y³ = k` (Section 4.2; the Section 3 overview prints the same vectors without the `xy` coordinate). With initial `(x,y)=(0,0)`, `k=0`. The Euclidean-division example sets `X=(x,y,q,xq,xy,qy,y²,x²,q²,1)` and obtains `x+y*q=k` after discarding `y=k` and `y²=k` as evident because y does not change in the loop (Section 5); the paper's generated C annotation is `// invariant x + y*q = k` (Figure 3), with `int k = x + y*q;` computed before the loop.
-
-Verus form. Inference: state the discovered polynomial relation directly as a loop `invariant`, and prove preservation by an `assert` or a lemma showing that substituting the Rust update into the relation simplifies to the same relation. Inference (Verus knowledge, not from the paper): use `spec fn` only for mathematical definitions, `proof fn` for erased proofs, and `ensures` on executable or proof functions rather than on a `spec fn`. Inference: Verus's SMT backend can discharge linear-algebra consequences once the matrix/eigenvector facts are supplied, but eigenvector computation itself would normally occur outside verification and its result must be checked by proof obligations.
-
-## technique 3: rationalize irrational or complex eigenvalues
-
-The basic eigenspace method may return irrational or complex coefficients that SMT solvers cannot use conveniently. The paper's example `f(x,y)=(y,2x)` has eigenvalues `sqrt(2)` and `-sqrt(2)`, producing the forms `k*(x+sqrt(2)y)=0` and `k'*(x-sqrt(2)y)=0`, which for integer or rational x and y hold “iff k = k′ = 0” (Section 4.3). The authors instead elevate the matrix to monomials (this extension is not implemented in Pilat, Section 5). Definition 5 introduces `Ψd(A)`, which maps all monomials up to degree d according to `Ψd(A)·p(X)=p(A·X)`. Products of eigenvalues become eigenvalues of the elevated matrix. A rational product therefore yields a rational eigenvector.
-
-how to do it. Identify a multiplicative relation among algebraic eigenvalues, add the corresponding product monomial, construct the elevation matrix, then compute its rational eigenspaces. The paper does not give a search procedure: it says brute force is possible, or one can search for algebraic relations as treated in [13], which “we will not focus on.” The paper guarantees at least one rational product because “the product of all eigenvalues of a rational matrix is equal to its determinant,” and the determinant is rational. In the example the paper has `λx.λy = -2`, notes that the eigenvalue associated to `xy` is nevertheless 2 (since `(xy)' = 2xy`), and then considers `x²`, `y²`, and `xy`. It deduces `k1*xy + k2*(2x²+y²)=0` from the eigenvectors for eigenvalue 2 and `k*(y²−2x²)=0` from the eigenvector for eigenvalue −2 (Section 4.3).
-
-Verus form. Inference: avoid irrational specifications by proving the rational polynomial relation after multiplying or eliminating algebraic coefficients. The resulting invariant can be stated with ordinary integer or rational arithmetic in a Verus `invariant`. Inference: this is applicable only when the elevated monomial relation is proved for the concrete Rust update; Verus will not infer the algebraic-number argument automatically.
-
-## technique 4: nondeterministic multiple loop bodies
-
-For a loop that chooses among matrices `A_i`, an invariant must be preserved by every body. Definition 6 defines `Inv(F)` by requiring preservation for all `A_i`; Property 5 identifies it with the intersection of each body's invariant set. Compute each body's dual eigenspace union separately, then intersect the vector spaces: if `e` lies in both `Vect{B1}` and `Vect{B2}` then `e ∈ ker{(B1 B2)}`, applied to each combination of spaces in the unions (Section 4.4). The paper's product example (taken from [21]) has two bodies, `(2x,(y−1)/2,x+z)` and `(2x,y/2,z)`; after elevation to degree 2, looking only at eigenvalue 1, the eigenvector sums `e1+e2` and `e1'+e2'` coincide (`xy+z`), giving `xy+z=k'`. The paper says it does not consider the condition used to choose the body.
-
-Verus form. Inference: encode each branch in the Rust loop and put one invariant clause before the branch; prove preservation separately in each branch, with branch-specific `assert` steps. Inference: if branch selection is nondeterministic, the proof must cover every executable branch, matching the paper's intersection requirement.
-
-## what is proved, trusted, and left open
-
-The paper proves algebraic properties of solvable mappings and affine updates, and reports implementation timings. It does not prove the correctness of Frama-C, the OCaml plug-in, the eigenvalue implementation, or the generated C execution. It assumes variables take values in a field (Section 2), and the conclusion reports the integer-division problem quoted above; the paper does not discuss integer overflow (Inference: overflow is therefore outside the model). The conclusion also says “we do not treat interleaving loops as we cannot yet compose invariants with our generation technique.”
-
-## techniques for the catalog
-
-- solvable-loop linearization: replace polynomial monomials with terminating affine updates after a dependency-graph solvability check
-- bounded-degree elevation: add only monomials needed to seek invariants through a chosen degree, with a `choose(n+d,d)` upper bound
-- dual-eigenspace invariants: compute eigenvectors of the transposed update matrix and normalize them with the initial state
-- rationalization by products: elevate to monomial products so multiplicative eigenvalue relations produce rational invariants
-- multiple-body intersection: intersect each loop body's invariant eigenspaces to obtain invariants preserved by nondeterministic choice
+pilat (frama-C plug-in, C): polynomial loop invariants via linear algebra
+- complete for bounded degree, solvable mappings only
+- model: field variables, simultaneous assignments, nondeterministic bodies, constant 1
+- limits
+  - no nested loops (inner-loop-free loops inside outer loops ok)
+  - incomplete over integers: invariants correct only for rationals (division)
+  - overflow not modeled
+solvable mapping = blocks w1..wk, each updated linearly in itself + polynomial of earlier blocks
+- check by acyclicity of the dependency graph
+- `x := x²` is not solvable (x², x⁴, ... never ends)
+linearization of a solvable loop
+- add a variable per needed monomial, substitute assignments, repeat until closed
+  - init added variables before the loop
+  - keep only monomials needed for the target degree
+  - ≤ choose(n+d,d) new variables, polynomial for fixed n or d
+  - practice much less: running example 6 variables, not 10
+- analogue of operator-strength reduction
+  - `z := z+x*y` becomes `xy := xy+2x+y+2` with `z := z+xy` using old `xy`
+invariants from dual eigenspaces
+- semi-invariant φ: φ(X)=0 ⇒ φ(f(X))=0
+- theorem 1: φ is semi-invariant iff φ in ker(f* − λId) for some λ
+- eigenvalue 1 (besides the constant): φ(X)=k with k from initial state
+  - example: `-6x+y-3y²+2y³ = k`
+  - euclidean division: `x + y*q = k`
+- other eigenvalues: forms vanishing on the initial state, else normalize by a non-vanishing one
+- eigenvector computation itself is outside the paper (polynomial)
+irrational or complex eigenvalues
+- e.g. f(x,y)=(y,2x) has eigenvalues ±√2, no rational invariant directly
+- fix: elevate to monomials, products of eigenvalues become eigenvalues
+  - rational product always exists: product of all eigenvalues = determinant
+  - found `k*(y²−2x²)=0` for the example
+  - not implemented in pilat (may output irrational invariants or fail on complex eigenvalues)
+multiple bodies
+- invariant must hold for every body, intersect per-body eigenspace sets
+- branch condition ignored
+evaluation
+- 20 programs from an external benchmark, all programs where a polynomial invariant is compulsory
+- pilat 1.5–192 ms on all
+  - aligator times out (10 min) on knuth, illinois, moesi, petter_5, petter_6
+  - fastind finds nothing on prod4, read_writ, illinois, mesi, moesi
+  - no aggregate success rate given
+- trusted: frama-C, OCaml plug-in, eigensolver not verified
+verus use (inference)
+- state the relation as loop `invariant`, prove preservation by `assert`/lemma
+- eigen computation stays outside verification, checked via proof obligations

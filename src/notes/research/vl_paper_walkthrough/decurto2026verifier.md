@@ -2,58 +2,30 @@
 (authored by agents unless marked 🧑)
 Tag: `decurto2026verifier`, [paper](https://arxiv.org/abs/2609.27922)
 
-## scope and result
-
-The paper studies one-dimensional, uniform-grid mimetic finite-difference operators. Its central method is a strict division of labor: a language model chooses a typed construction architecture; deterministic compilation computes coefficients; an independent verifier tests the mathematical and numerical conditions; and exact rational reconstruction certifies selected candidates. The abstract states: “An LLM proposes only a typed construction program; a deterministic linear-program compiler generates coefficients; an independent verifier tests algebra, positivity, physical modes, conditioning, and manufactured PDEs; and coupled rational reconstruction provides exact certificates.” (Abstract, p. 1.)
-
-The motivating fixed MOLE/Corbino–Castillo order-six and order-eight Dirichlet blocks have four non-real boundary-localized modes. The authors prove that, under their positive-definite norm and endpoint-support hypotheses, an endpoint-supported identity would force a real non-positive spectrum (Problem and fixed-closure obstruction, pp. 2–3). The search therefore changes the closure and norm architecture. The paper's bounded claim is that models find promising structural regions while deterministic mathematics decides validity; it does not claim that models prove the operators (Verifier-guided search, pp. 3–4).
-
-## technique: verifier-guided typed program search
-
-What it is. A proposal is a typed record, rather than a coefficient vector. It specifies target interior order, left and right boundary orders, diagonal or positive local-block norm, reflected or independent closures, number of boundary rows, a support width for each row, norm bandwidth, coefficient bounds, positivity margin, and one of four objectives (Methods, “Program representation and deterministic compilation,” p. 9). Continuous objective weights make the program space non-enumerable. The model controls these representation-level choices, while the compiler and verifier are authoritative.
-
-When to use it. Inference: use this pattern when the design space has discrete architectural choices plus continuous coefficients, and when a cheap deterministic checker can reject invalid candidates. The paper warns that a model may propose a familiar stencil, invent a proof, or return approximately constraint-satisfying coefficients (Verifier-guided search, p. 3), so accepting model text as evidence is inappropriate.
-
-How to apply it, following the paper.
-
-1. Define the typed fields for order, closure, support, norm class, bounds, margin, and objective (Methods, p. 9).
-2. Transform variables to `A = QD` and `C = PG`, then impose the linear endpoint-supported relation `A + Cᵀ = B0`, with `B0 = −e1 e1ᵀ + e_{m+2} e_{m+1}ᵀ` (Methods, Eq. 3–4, p. 9).
-3. Add linear moment equations for polynomial exactness over shared boundary templates and encode diagonal norms or local block norms. The block cone is `Qb = τI + Σ αo vo voᵀ`, with `τ > 0` and `αo ≥ 0`; localized vectors respect the proposed bandwidth, and `P` is parameterized analogously (Methods, Eq. 5, p. 9).
-4. Solve the resulting linear program and instantiate `D = Q⁻¹A` and `G = P⁻¹C` on design and holdout meshes (Methods, p. 9).
-5. Have an external verifier check dimensions, finite coefficients, support, template transfer, derivative moments, conservation identities, the full endpoint identity, norm eigenvalue margins, physical eigenmodes, conditioning, and manufactured PDEs (Methods, “Independent verifier and exactification,” pp. 9–10).
-6. Check symmetry of `H = RLI R⁻¹`, where `RᵀR = QI`. Match computed eigenvalues to the first five exact values `−(jπ)²` by minimum-cost matching and count additional modes in the physical low-frequency window separately (Methods, p. 9).
-7. Reject a candidate on any failed prerequisite check. The fixed external endpoint requires no non-real or extra low modes, `κ(LI)h² ≤ 2`, first-mode and first-five-mode relative errors at most `0.05` and `0.20`, low- and mixed-frequency RMS errors at most `2 × 10⁻2` and `10⁻1`, and a mixed-frequency rate at least `0.55` times the smaller boundary order. The search problems use `u(x) = sin(πx)` and `u(x) = sin(πx) + 0.1 sin(7πx)` (Methods, p. 10).
-
-Verus form.
-
-Evidence and limits. Across 1,200 deterministic solver calls, full-metric feedback accepted 66/120 (55.0%), illumination archive 64/120 (53.3%), expert prior 120/240 (50.0%), and uniform random search 32/240 (13.3%) (Results, Table 1, p. 5). The denominator is calls under the common external verifier, not generated tokens. Both feedback comparisons had Holm-corrected `p = 0.0117`; the paper explicitly says this supports a yield advantage over random search, not dominance over expert search (Results, pp. 4–5). A diagnostic repair offer accepted 20/42 refined versus 25/55 fresh proposals (`p = 0.840`), and 637/638 (99.8%) LP-infeasible programs failed endpoint compatibility equations (Results, p. 5). The authors conclude: “The dominant obstacle is therefore global structural compatibility, not a local defect that a one-step textual repair can usually fix.” (Results, p. 5.)
-
-## technique: coupled exactification and independent certification
-
-What it is. Selected floating-point LP solutions are reconstructed in the complete coupled affine system, not coefficient by coefficient. An independent rational equation basis and reduced-row-echelon parameterization identify free coordinates; free coordinates are put on a common dyadic grid, pivot coordinates are solved exactly, and every original equation is rechecked (Methods, “Independent verifier and exactification,” p. 10).
-
-How to apply it. Recompile the selected program; build the full affine equation system; compute an independent equation basis and reduced-row-echelon form; choose a common dyadic grid only for free coordinates; solve pivots exactly; recheck every original equation; certify norm positive-definiteness using leading principal minors; and rerun the numerical verifier on unseen meshes (Methods, p. 10). The paper reports that all four leading order-six-interior/order-four-boundary LLM constructions passed affine identities, direct positive-definiteness, physical-mode tests, and transfer through `m = 640` (Results, pp. 5–6).
-
-Verus form. Inference: encode rational coefficients with exact integer numerator/denominator types and prove the affine identity using `ensures` on a proof function over sequences or matrices. Use a separate executable checker for Gaussian elimination and principal-minor calculations, and expose its result through a specification predicate only after independently validating its implementation. A Verus proof can certify the resulting exact identity; it does not by itself certify an unmodeled floating-point LP solution or a numerical eigenvalue computation.
-
-Evidence. The strongest structure-only candidate used dyadic denominator `2^36` and changed the floating-point solution by at most `1.27 × 10⁻9` (Results, p. 6; exponent checked in the PDF). At `m = 160`, it had `ρ(L)h² = 6.165962`, certified `κQ = 1.830782`, and mixed-frequency PDE RMS `8.91 × 10⁻8`; relative to the prior positive-diagonal 6–3 candidate, the paper reports a 25.4% lower spectral-radius constant and a 62.7-fold lower PDE error (Results, p. 6). The authors state: “The new operator is therefore a distinct accuracy–structure trade-off, not a uniform improvement over the reference.” The reference was about 69 times more accurate on that manufactured problem but retained four non-real modes (Results, p. 6).
-
-## technique: certificate-driven downstream guarantees
-
-The exact identity yields a weighted energy certificate. For `u̇ = LIu` and `EQ(u) = 1/2 uᵀQIu`, the paper gives `ĖQ = −uᵀ(GᵀPG)I,Iu ≤ 0` (Results, p. 6). At `m = 200`, the candidate's normalized weighted-symmetry residual was `1.2 × 10⁻16`; the order-six reference's was `0.52`. The candidate was contractive, while the reference reached `1.066` transient energy amplification at `t/h² ≈ 0.333` (Results, pp. 6–7). Both nevertheless had the same RK4 limit, `Δtmax/h² = 0.4517`, so energy certification did not imply a larger explicit step.
-
-The same certificate determines solver applicability. At `m = 200`, all seven exact constructions had weighted-symmetry residual at most `1.2 × 10⁻16`, smallest eigenvalue `+0.0493`, and CG applicable; none of the four reference systems met both conditions in its native quadrature (Results, Table 3, p. 7). Seven exact constructions required 114–120 CG iterations. Deliberately applying CG to the order-six reference's symmetric part reached residual `5.0 × 10⁻11` but returned error `0.278`; a dense direct solve and GMRES on the original system had errors about `1.00 × 10⁻9` and `1.01 × 10⁻9` (Results, pp. 7–8). The paper identifies symmetrization, rather than the reference discretization, as the source of that diagnostic failure.
-
-Verus form. Inference: state the matrix identity and positive-definite quadratic-form obligations as `spec fn` predicates, then prove energy monotonicity with a `proof fn` using `ensures`. Use Verus's supported arithmetic and sequence/matrix specifications for the finite-dimensional proof. CG iteration counts, RK stability bisection, and transient amplification are measurements requiring an executable numerical harness; they are evidence about an implementation and mesh, not universal Verus theorems.
-
-## what is proved, trusted, and left open
-
-Proposition 1 assumes symmetric positive-definite `Q` and `P`, `QD + (PG)ᵀ = B`, norm separation `EᵀQ = QI Eᵀ`, and `EᵀBGE = 0`; it concludes that `LI` is similar to a symmetric non-positive matrix and thus has a real non-positive spectrum (Problem and fixed-closure obstruction, pp. 2–3). Exact candidates receive reconstructed affine identities and positive-definiteness checks. Numerical claims are bounded by the listed meshes, manufactured solutions, thresholds, and model schedules. Inference: transferring this workflow to Verus would leave the compiler, verifier, reconstruction code, numerical libraries, arithmetic model, and specification as trust assumptions unless their relevant behavior is separately verified. Model proposals need no mathematical authority: the paper states, “Rejected proposals can inform later calls but never become mathematical evidence.” (Fig. 2, p. 4.)
-
-The paper says the primary feedback comparison is not fully causal because model-role schedules were generated separately; the expert prior is a strong control; the surrogate is lightweight; the grammar is constrained by a boundary-order preflight rule; and the novelty screen and operator library are incomplete (Discussion, p. 8). The study is one-dimensional and uniform-grid, and the block-positive cone is only a sufficient inner approximation of the full banded semidefinite cone (Discussion, p. 8). Inference: these restrictions make transfer to agent-written verified Rust an unmeasured product risk. Inference: the reusable product lesson is the propose–compile–verify–exactify boundary: agent suggestions can guide search, but only deterministic, independently checked artifacts should enter a trusted proof pipeline.
-
-## techniques for the catalog
-
-- typed verifier-guided program search — let a model choose a constrained construction architecture while deterministic compilation and an external verifier decide validity
-- coupled rational exactification — reconstruct selected numerical solutions in a coupled affine system and recheck every exact equation and positivity condition
-- certificate-driven energy and solver checks — derive weighted energy and CG conditions from an exact matrix identity, then measure downstream dynamics separately
+core pattern: propose, compile, verify, exactify
+- LLM proposes only a typed construction program, never coefficients
+  - fields: interior/boundary orders, norm class, closures, row support, bandwidth, bounds, margin, objective
+- deterministic LP compiler generates coefficients
+- independent verifier decides validity
+  - checks algebra, positivity, physical modes, conditioning, manufactured PDEs
+- rejected proposals inform later calls, never count as evidence
+- domain: 1D uniform-grid mimetic finite-difference operators
+search results (1,200 deterministic solver calls)
+- accepted: full-metric feedback 66/120 (55%), illumination archive 64/120 (53%), expert prior 120/240 (50%), uniform random 32/240 (13%)
+  - Holm p=0.0117 vs random; no dominance over expert prior
+- one-step textual repair no better than fresh proposals (20/42 vs 25/55, p=0.84)
+  - 637/638 LP-infeasible programs failed endpoint compatibility
+  - obstacle is global structural compatibility
+- caveats: feedback comparison not fully causal, 1D only, block-positive cone is a sufficient approximation
+exact certification
+- rational reconstruction in the whole coupled affine system, not per coefficient
+  - free coords on common dyadic grid, pivots solved exactly, every equation rechecked
+  - norm positive-definiteness by leading principal minors
+- best candidate: denominator 2^36, float shift ≤1.27e-9
+  - 25.4% lower spectral-radius constant, 62.7x lower PDE error than prior 6–3 candidate
+  - reference still ~69x more accurate on one manufactured problem but has 4 non-real modes
+- exact identity gives energy certificate and CG applicability
+  - all 7 exact constructions CG-applicable, none of 4 references
+transfer to Verus (inference)
+- trust base: compiler, verifier, reconstruction code, numerics, spec
+- only deterministic, independently checked artifacts enter the trusted pipeline

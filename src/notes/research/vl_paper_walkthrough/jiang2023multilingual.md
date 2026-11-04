@@ -2,36 +2,24 @@
 (authored by agents unless marked 🧑)
 Tag: `jiang2023multilingual`, [paper](http://arxiv.org/abs/2311.03755v2)
 
-## what the paper builds
-
-Jiang, Li, and Jamnik build MMA, a dataset of informal-formal mathematical pairs, by translating formal statements into natural language and then training a model in the reverse direction. The paper's abstract says: “In this work, we create MMA, a large, flexible, multilingual, and multi-domain dataset of informal-formal pairs, by using a language model to translate in the reverse direction, that is, from formal mathematical statements into corresponding informal ones.” (abstract, p. 1). The source libraries are Isabelle’s Archive of Formal Proofs and Lean4 mathlib4. The authors extract 244,238 Isabelle and 88,536 Lean4 statements, for 332,774 total pairs (Table 2, p. 4; §3, p. 4). The paper itself says "332K informal-formal pairs" (§1, p. 1); 332,774 is my sum of the two Table 2 counts.
-
-The key data technique is reverse translation. The paper's §2 (p. 3) defines "distilled back-translation" as back-translation practised in one direction only, because the reverse model is called through an API and is not trainable, and says Azerbayev et al. (2023) used it. Inference: MMA is an instance of this setting, since GPT-4 is proprietary and cannot be fine-tuned (§7, p. 9). Formal statements already contain precise information, while natural language can omit details (§3, p. 3). The authors therefore use GPT-4 to generate informal descriptions, then fine-tune LLaMA-33B to map those descriptions back to formal statements. Their instruction prompt (§3, p. 4) is "Statement in {Isabelle|Lean}:", then the formal statement, then the line “Translate the statement in {Isabelle|Lean} to natural language:”. They generate at most 512 tokens with greedy sampling, temperature 0.0, remove the mechanical opening “The lemma states that”, and capitalise the remaining sentence (§3, p. 4).
-
-## technique: construct noisy parallel data from formal libraries
-
-Use this when a verified corpus has formal statements but too few natural-language descriptions. First extract theorem statements from each formal library. Second call a capable language model on each statement with an instruction prompt. Third retain the formal statement and generated natural-language output as a pair. Fourth optionally normalize recurring boilerplate. The authors use the Portal to Isabelle library and the LeanDojo library for extraction (§3, p. 4), and their informalisation "targets all available formalised content, instead of just high-school and undergraduate-level mathematical exercises" (§3, p. 4). Inference: the numbered four-step recipe above is my restatement of the paper's pipeline, not the paper's own list.
-
-The method's own limitation is essential: the generated language is noisy. The paper gives the concrete example that GPT-4 interprets the Isabelle type `eint` as extended integers (integers with negative and positive infinities), although `eint` is introduced in a theory of p-adic numbers and only extends integers with positive infinity; the paper calls the translation "sensible, but not entirely correct" (§3, p. 4). Thus MMA is an approximation, not ground truth. The authors write: “Rather than the ground truth, informalisations in MMA should be treated as noisy approximations of it.” (§3, p. 4).
-
-Inference: for Verus, mine existing Rust/Verus specifications, function contracts, and proof lemmas as the formal side. Ask a model to describe each contract, but keep the original Verus text authoritative and attach compilation or verification results. Do not train on generated prose as if it were a specification; preserve a way to reject semantic drift.
-
-## technique: multilingual fine-tuning and human usefulness evaluation
-
-Train one open model on the combined Isabelle and Lean4 pairs, and compare it with models trained on each language separately for the same number of training steps (§4, p. 5; results in §5, pp. 6–7). The base model is LLaMA 33B, and the joint, Isabelle-only and Lean4-only models were trained for 3.3, 4.4 and 13.2 epochs of their data (§4, p. 5). Evaluate two distinct outcomes. First, compile generated statements. Second, have experts rate correction effort on a Likert scale from 0 ("no correction required") to 4 ("requiring similar or more effort to correct than formalising from scratch"), rather than only judging correct or incorrect (§5, p. 6). The paper says, “We define formalisations that have correction effort levels 0 (none) or 1 (trivial) as “acceptable with no or minor corrections”.” (§5, p. 7).
-
-The test randomly selects 50 miniF2F and 50 ProofNet problems, 100 in all, and the inspections were done by two expert-level formal proof assistant users who did not know which model produced each output (§5, p. 6). On the jointly fine-tuned model, 16% of Isabelle and 18% of Lean4 formalisations are acceptable with minor corrections (§5, p. 7); the Isabelle-only and Lean4-only models reach "6 − 11%" (§5, p. 7). The abstract reports the same range: 16 − 18% acceptable with minimal corrections, versus 0% for the base model. Inference: these two figures pool both benchmarks per language, so they rest on 100 judged outputs each. Compilation differs: for the jointly trained model, Isabelle generation compiles on 24% of miniF2F and 18% of ProofNet; Lean4 generation compiles on 20% and 4%, respectively (Table 3, p. 6). Inference: with 50 problems per benchmark these are multiples of 2 points, so differences such as 4% versus 6% on ProofNet are one problem. Compilation means only that the output is a legal expression in the formal language (§5, p. 6), and the paper adds that Isabelle statements with untyped variables can still count as syntactically correct and were frequent from the Isabelle-only model (§5, p. 7).
-
-The comparison supports transfer but is not universal. Joint training's final validation token accuracy on Isabelle is "1% higher" than monolingual fine-tuning and "0.7% lower" on Lean4, and the jointly fine-tuned model has "seen 3/4 Isabelle and 1/4 Lean4 tokens of the monolingual models" (§5, p. 6). On compilation, the Isabelle-only model beats the joint model (36% and 30% versus 24% and 18% on miniF2F and ProofNet), and the Lean4-only model beats it on ProofNet (6% versus 4%) (Table 3, p. 6). The paper concludes there is "considerable transfer between data in different formal languages" (§5, p. 7). Inference: a Verus corpus could mix specification idioms or related verified languages, but the benefit must be measured on held-out Verus tasks and not inferred from cross-language transfer.
-
-## Verus application and limits
-
-Inference: a Verus adaptation would use `spec fn`, `requires`, `ensures`, and proof functions as the formal target, then compile and verify generated candidates. A candidate that parses but fails the Verus verifier should be scored separately from one that verifies. The paper's expert correction scale is useful for measuring how much work remains, but its Isabelle and Lean syntax do not carry over. Inference: add counterexample or verifier diagnostics to the evaluation because a legal statement can still encode the wrong theorem.
-
-The authors caution that autoformalization quality is hard to assess automatically: “language models are very capable of generating formal statements that are syntactically correct but do not express the meaning of the informal statements” (§6, p. 8). Their manual evaluation covers "100 randomly sampled formalisations for each of 6 model-inference language pairs in Table 3", and they say inspecting all outputs "could reduce the sampling variance" (§6, p. 9). Sampling one informalisation from GPT-4 for each of the 332K statements "costs roughly US$3500", and they sampled only one per statement (§7, p. 9). Inference: trusted components include GPT-4's semantic fidelity, the extraction tools, the fine-tuning implementation, and the two experts' judgments. Inference: threat to a product that emits agent-written verified Rust is high at the specification boundary; a noisy natural-language paraphrase can cause a model to generate a different but compiling contract.
-
-## techniques for the catalog
-
-- distilled reverse translation: generate informal descriptions from formal libraries, then train formalization on the resulting pairs
-- multilingual transfer: jointly fine-tune on multiple formal languages and compare against equal-budget monolingual models
-- correction-effort evaluation: rate human repair cost separately from compilation and exact correctness
+idea: build MMA by informalizing formal libraries, then train formalization on the reversed pairs
+- source: Isabelle AFP 244,238 + Lean4 mathlib4 88,536 statements (sum 332,774)
+- GPT-4 writes informal text, greedy, up to 512 tokens
+- fine-tune LLaMA-33B informal -> formal
+- "distilled back-translation": one direction only since GPT-4 is not trainable
+- informalizations are noisy approximations, not ground truth
+  - example: `eint` misread as extended integers
+results
+- 100 problems (50 miniF2F + 50 ProofNet), 2 blind expert raters
+- joint model: 16% Isabelle, 18% Lean4 acceptable with minor correction
+  - monolingual 6-11%, base model 0%
+- compile rate (joint): Isabelle 24% miniF2F, 18% ProofNet; Lean4 20%, 4%
+  - monolingual Isabelle-only compiles more (36%, 30%)
+  - compiling only means legal syntax, not correct meaning
+- transfer between formal languages is considerable, not universal
+- correction-effort Likert 0-4 separates repair cost from compile/exact match
+- cost about US$3500 for one GPT-4 sample per statement
+Verus form (inference)
+- mine existing contracts and lemmas, keep Verus text authoritative
+- score verified vs parses-only separately
+- risk: paraphrase drift yields compiling but wrong contracts

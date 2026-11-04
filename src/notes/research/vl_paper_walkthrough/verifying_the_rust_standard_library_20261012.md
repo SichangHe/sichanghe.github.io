@@ -2,73 +2,41 @@
 (authored by agents unless marked 🧑)
 Tag: `cook2026verifying`, [paper](https://doi.org/10.1007/978-3-032-28079-4_19)
 
-## technique 1: organize verification as a rewarded, reviewable challenge program
-
-What it is and when to use it. Split a large, changing library into concrete challenges, each with a target, assumptions, acceptance criteria, and reward. Use this when no single verification team can cover the codebase and contributors have different tools and expertise. Contributors fork the verification repository, implement a candidate proof, submit a pull request, and a technical committee reviews and merges accepted work. The fork is periodically synchronized with upstream Rust. This turns proof maintenance into ordinary CI work and gives external people a bounded unit of work.
-
-The paper says, “Verification tasks are organized into challenges. Each challenge specifies a concrete verification target, a list of assumptions, explicit success criteria, and a financial reward disbursed upon completion.” It reports 29 published challenges, more than 450 pull requests, and at least 21 external contributors from four institutions. CI runs every active proof on each pull request, so a change that breaks a proof is visible immediately.
-
-Step by step (the study's sequence assembled from sections 3.1 and 3.2; the paper gives no checklist, and review of soundness and the diff is the study's wording): define the target and assumptions; publish the contract and success test; let a contributor fork the pinned verification repository; require tool output and any source edits in a pull request; review soundness and the diff; merge only accepted artifacts; rerun all tools on later revisions.
-
-Evidence and limits. Four tools are integrated: Kani, ESBMC, VeriFast, and Flux; Verus, Creusot, KRust, and RAPx were under review. The authors explain that “no single tool can discharge all verification conditions.” Section 5.1 says the authors under-budgeted time for community consensus and institutional coordination, and that formal legal agreements took months to finalize; these are schedule lessons, not proof evidence. The campaign found no previously unknown memory-safety vulnerability, but did find incorrect SIMD results, missing unsafe annotations, incorrect SAFETY comments, and incorrect panic documentation.
-
-## technique 2: generate MIR-level nondeterministic proof harnesses
-
-What it is and when to use it. Autoharness is a Kani compiler pass that enumerates functions and synthesizes a harness calling each eligible function with symbolic values. It is useful for broad triage of a library where hand-written harnesses plateau. The generated MIR does not modify source, so it can run continuously against a pinned compiler snapshot.
-
-The paper defines the harness as a test whose inputs represent all inputs at once: “A proof harness is analogous to a unit test, but instead of calling a function with concrete inputs, it calls the function with symbolic (non-deterministic) values that represent all possible inputs simultaneously.” Eligibility is mechanical: the function is monomorphic; every argument implements or can derive `kani::Arbitrary`; and it is not Kani-internal. Include/exclude patterns further restrict the set. Functions skipped for generic parameters, missing `Arbitrary`, absent bodies, internal status, foreign declarations, or unsupported argument types are recorded with a reason.
-
-Step by step: enumerate MIR function definitions; filter by those three predicates; allocate one local per argument; initialize each with `kani::any::<T>()`; call the target; if contracts exist, assume preconditions and check postconditions; otherwise instrument execution for supported UB; report pass, failure, timeout, or skip. The conceptual shape is:
-
-```rust
-#[kani::proof]
-fn check_wrapping_shl() {
-    let self_val: u32 = kani::any();
-    let rhs: u32 = kani::any();
-    let _ = self_val.wrapping_shl(rhs);
-}
-```
-
-The campaign produced 16,748 harnesses: 4,645 unsafe, 1,126 safe abstractions, and 10,977 other safe functions. 11,970 passed Kani's checked UB classes; 4,778 failed because of missing models, timeouts, or unsupported features. The denominator matters: only 11,970/16,748 (71.5%) automatic harnesses passed, and only 295 of those had contracts. With 694 manual contract proofs, 989 functions had contract-based proofs. Of 17,207 skipped functions, 9,635 (56%) were generic, 3,826 (22%) lacked `Arbitrary`, 3,246 (19%) were Kani internals, and 500 (3%) had other reasons. Thus extending generic and pointer/reference support could address 78% of skips, but this is a projection rather than a demonstrated result.
-
-## technique 3: separate validity invariants from semantic safety invariants
-
-A bit-valid value is not necessarily a value that safe callers can construct. Kani's derived `Arbitrary` respects compiler validity invariants such as a Boolean's representation, but it can violate semantic invariants such as `Duration` nanoseconds being below 10^9. The paper adds an `Invariant` trait with an `is_safe()` predicate. A contract harness assumes these predicates in addition to function preconditions. For an uncontracted function, all bit-valid states remain in scope; a failure can be a real UB or an input that callers are required to exclude.
-
-Use this technique whenever a type has a representation invariant that Rust's type system does not enforce. Step by step: identify the semantic invariant; implement `Invariant::is_safe`; attach a function contract requiring it; generate a harness that assumes the precondition; classify an unannotated failure as “needs contract” until a human decides whether the state is constructible. The paper warns, “types whose safety invariants are not yet annotated with is safe() are tested over all bit-valid values, which may include states that violate the type’s intended invariants.”
-
-In Verus, this maps naturally to a `spec fn` predicate and a `requires` clause, with `ensures` preserving the predicate. This is an inference because the paper uses Kani's trait and assumptions, but the proof obligation is the same. The assumption is visible and auditable; it is not evidence that every caller establishes it unless caller proofs are checked compositionally.
-
-## technique 4: choose bounded or inductive loop reasoning explicitly
-
-By default Kani unrolls loops to a configured bound and inserts an unwinding assertion. If the assertion passes, all reachable paths up to the model are covered; if it fails, the proof fails. A `kani::assume` can limit input size, but then the result is only for that range. With a loop contract, Kani checks that the invariant is inductive from an arbitrary invariant-satisfying state and uses a one-iteration abstraction, removing dependence on the bound. The paper says Kani does not yet support loop variant (decreases) clauses, so termination is not verified there (sections 4.1 and 7). The kani study in this directory documents `loop_decreases` in Kani's own loop contracts, so the two papers differ on this point; this study follows the standard-library paper for what the campaign used.
-
-The paper states, “A successful verification with loop contracts therefore constitutes an inductive proof for the annotated loops, removing the dependency on the unwinding bound.” In Verus, the direct form is a `while` invariant plus a decreases clause when termination matters.
-
-## technique 5: use separation logic for pointer-heavy linked structures
-
-VeriFast handles a LinkedList proof whose guarantees the paper calls qualitatively different from model checking: it reasons about unbounded inputs. A recursive `Nodes` predicate owns each allocated node and links the sequence from head to tail. Separating conjunction (`&*&`) gives exclusive ownership and rules out aliases and cycles. Each operation has `req` and `ens` contracts transferring ownership and updating the abstract sequence. The proof covered 19 pointer-manipulating functions and implied soundness of five additional safe functions.
-
-The exact contract shape includes a recursive predicate and a `push_front_node` precondition requiring allocator ownership, the existing `Nodes` list, and ownership of the new node; the postcondition returns `cons(node, nodes)` and increments length. VeriFast symbolically executes raw-pointer dereferences, field writes, and `Box::from_raw` under those resources. The paper says, “Because the predicate’s clauses are joined by a separating conjunction (&*&), the predicate structurally rules out aliasing and cycles.”
-
-For Verus, this is an inference. Model the list with a ghost sequence/set and a representation predicate over permissions or linear ghost tokens; use `requires`/`ensures` and loop invariants for traversal. Verus's linear ghost types can express ownership transfer, but VeriFast's syntax and automatic separation-logic entailment do not carry over. The proof assumes a `'static` allocator lifetime and does not fully check Tree Borrows restrictions for mutable references or boxes. VeriFast required ghost commands and source rewrites; a refinement checker then proved every original behavior is preserved, followed by a diff against upstream. The paper presents this three-stage pipeline as how it ensures the annotation edits do not alter program behavior.
-
-## technique 6: optimize a large proof CI with measurement and caching
-
-16,748 harnesses made compilation the bottleneck. The authors introduced compiler benchmarks, then used parallelization, caching, heuristically ordered code generation, and function stubbing. These changes yielded a reported 3.97x compilation speedup.
-
-## what is proved, measured, and trusted
-
-The strongest reported result is 989 functions with contract-verified proofs (694 manual plus 295 automatic). The broader 11,970 automatic passes cover Kani's supported classes: out-of-bounds, null/dangling dereference, uninitialized reads, and selected arithmetic overflow. They do not cover Rust aliasing (Stacked/Tree Borrows), data races, invalid inline assembly, all provenance UB, or preservation of type-level safety invariants. Randomized testing, not formal proof, validated 565 SIMD intrinsics; it found two upstream bugs but is only high-confidence testing.
-
-Trusted components include the MIR-to-GOTO translation, CBMC, SAT/SMT solvers, VeriFast's symbolic executor, intrinsic and foreign-function models, the pinned Rust semantics, explicit harness assumptions, and the proof authors' contracts. None of the tools is itself formally verified. Inference: the title's “verified” therefore means a scoped theorem under these models and assumptions.
-
-## techniques for the catalog
-
-- rewarded verification challenges — publish scoped targets, assumptions, acceptance tests, and reviewable pull requests so a changing library can be verified by a distributed community
-- MIR nondeterministic harness synthesis — enumerate eligible monomorphic functions, call them with symbolic `any` values, and check contracts or supported UB on all explored paths
-- invariant-aware input generation — distinguish bit-valid representations from semantic safety invariants and assume only explicit `is_safe` predicates
-- bounded versus inductive loop proofs — use unwinding assertions for finite bounds or loop contracts for invariant-based proofs independent of the bound
-- separation-logic ownership predicates — recursively own linked heap nodes with separating conjunction and transfer resources through pre/postconditions
-- multi-tool continuous verification — combine model checking, refinement types, and separation logic in CI because each covers different Rust behaviors
-- proof-pipeline performance engineering — benchmark compilation, then apply parallelism, caching, ordering, and stubbing while recording the resulting trust boundary
+community challenge program makes std verification distributed + CI-checked
+- each challenge: target, assumptions, success criteria, reward
+- contributors fork, submit pr, technical committee reviews; ci reruns all proofs per pr
+- 29 challenges, 450+ prs, 21+ external contributors from 4 institutions
+- tools: Kani, ESBMC, VeriFast, Flux (Verus, Creusot, KRust, RAPx under review)
+  - "no single tool can discharge all verification conditions"
+- found no new memory-safety vuln; found wrong simd results, missing unsafe annotations, wrong safety comments and panic docs
+- lessons: consensus + legal agreements took months (schedule, not proof, evidence)
+Kani autoharness synthesizes symbolic harnesses at mir level
+- eligible: monomorphic, args implement `kani::Arbitrary`, not kani-internal
+- 16,748 harnesses, 11,970 (71.5%) pass checked ub classes, 4,778 fail (missing models, timeouts, unsupported)
+  - only 295 passing have contracts; +694 manual contract proofs = 989 contract-verified functions
+- 17,207 skipped: 56% generic, 22% no `Arbitrary`, 19% kani internals, 3% other
+- covers oob, null/dangling, uninit reads, some overflow
+  - not aliasing (stacked/tree borrows), data races, inline asm, all provenance ub
+validity invariant ≠ safety invariant
+- derived `Arbitrary` gives bit-valid values, may break semantic invariants (e.g. `Duration` nanos < 10^9)
+- `Invariant::is_safe()` assumed by contract harnesses
+  - unannotated types tested over all bit-valid values, failures may be spurious
+- verus analogue: `spec fn` predicate + `requires`/`ensures` (inference)
+loop reasoning: bounded vs inductive
+- default: unroll + unwinding assertion, only covers up to bound
+- loop contracts: inductive invariant check, bound-independent
+- no loop variant support in the campaign, so termination unverified
+separation logic for pointer-heavy code
+- VeriFast proved LinkedList: 19 functions, implies 5 more safe ones
+- recursive `Nodes` predicate with `&*&` rules out aliasing + cycles
+- needs ghost commands + source edits
+  - refinement check + diff vs upstream show edits preserve behavior
+- assumes `'static` allocator lifetime, tree borrows not fully checked
+ci performance
+- 16,748 harnesses make compilation the bottleneck
+- parallelization, caching, codegen ordering, stubbing: 3.97x speedup
+trust and limits
+- 565 simd intrinsics validated by randomized testing only (found 2 upstream bugs)
+- trusted: mir-to-goto translation, cbmc, solvers, verifast executor, intrinsic/ffi models, contracts
+  - none of the tools is itself verified
+- "verified" = scoped theorem under these models

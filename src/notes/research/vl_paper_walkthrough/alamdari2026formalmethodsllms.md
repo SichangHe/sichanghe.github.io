@@ -2,33 +2,28 @@
 (authored by agents unless marked 🧑)
 Tag: `alamdari2026formalmethodsllms`, [paper](https://doi.org/10.1145/3805689.3812339)
 
-## what the paper establishes
-The paper adapts Linear Temporal Logic (LTL) runtime monitoring to black-box language agents. Its abstract states, “We further provide practical techniques for predictive monitoring, such as sampling-based methods, and we introduce intervening monitors that act at runtime to preempt and potentially mitigate predicted violations.” The decomposition uses a labeling function for input/output events followed by symbolic temporal reasoning; the labeler need not be learned. Theorem 4.1 establishes soundness under perfect labeling, “which means it never assigns incorrect propositions and it assigns all relevant propositions” (section 4.1, p. 8). A Violated verdict means no continuation can satisfy the formula; a Satisfied verdict means no continuation can violate it. This is not completeness: Appendix B states, “LTL progression is incomplete” and explains that TRAC can return Not violated or satisfied yet when the assessment property is already Satisfied or Violated (p. 22).
-
-## technique 1: specify behavior as LTL and label events
-Use LTL when a requirement depends on ordering, eventuality, or always conditions across steps. Define propositions P, a labeling function L mapping the observed history to the propositions true at that step, and an LTL formula ψ. The paper gives “always stop at red lights” as ◻(red_light → stop) and defines three-valued finite-prefix outcomes: Satisfied, Violated, or Not violated or satisfied yet (section 3.1, pp. 5–6). The paper lists “classifiers, masking functions applied to observations, unit tests, human feedback, and even LLMs themselves” as labeling mechanisms and notes that language outputs can require history-based labeling (section 3.1, p. 6).
-
-Steps: write the requirement in LTL; enumerate atomic propositions; implement L over the input/output history; evaluate finite prefixes using LTL3 semantics.
-
-Inference: Verus form: represent the event alphabet as a Rust enum and the monitor state as a ghost/spec LTL residual. `requires` constrains event validity; `ensures` states that each accepted event preserves the safety predicate. Parsing and label extraction would remain trusted unless separately verified.
-
-## technique 2: progression-based TRAC monitoring and auditing
-Use TRAC for online monitoring or retrospective log auditing without model internals. Algorithm 1 initializes ψ0=ψ, propositions S, and witness W. At each step it queries the black-box model, labels the accumulated history, computes residual ψt=prg(ψt−1, S), records a witness when the formula changes, emits Violated if ψt=False, Satisfied if ψt=True, otherwise Not violated or satisfied yet (section 4.1, Algorithm 1, p. 8). Progression preserves the formula rather than compiling an automaton, so the residual is readable, individual rules can be added or removed without recompilation, and the witness identifies the violating trace (section 4.1, pp. 7–8). For auditing, Observation 1 states, “Any monitor can be used to construct a log auditor—the auditor just has to call the monitor repeatedly on prefixes of its input” (p. 7). TRACR resets the formula and clears the witness after either a violation or satisfaction, allowing subsequent monitoring (Appendix C, Algorithm 2, p. 22).
-
-Inference: Verus form: implement a finite residual-state datatype and prove a transition lemma that maps each event to the next residual and preserves the monitor invariant. Store the witness as a ghost sequence and ensure a `Violated` result implies the recorded prefix reaches `False`. This proves the transition code against the chosen residual semantics, not correctness of an external labeler.
-
-Evidence: “For each auditing strategy, we compute the F1 score over 40 runs against the ground truth,” determined by TRACR with deterministic, domain-specific labels (section 5.1, p. 11). Results are mean F1 with 95% confidence intervals based on the standard error of the mean. Figure 2 states, “TRACR + LLM (Ours) consistently achieves the highest performance, with even small labeling models outperforming large LLM judges” (p. 12). These are experimental results, not a guarantee for arbitrary traces or labelers.
-
-## technique 3: predictive monitoring by trajectory sampling
-Use prediction when intervention must happen before a violation. Define a monitoring pattern π over assessment values and a horizon k; the predictive monitor estimates the probability that the current and next k prefixes form π (section 4.2, p. 9). Sampling draws n possible outputs (and future autoregressive outputs), applies the assessment property to each sampled trajectory, and estimates the probability as the fraction matching π. The paper also proposes direct LLM prediction (section 4.2, p. 9). Its intervention experiment states, “We implement the predictive monitor using a sampling-based estimator” (section 5.3, p. 13).
-
-Inference: Verus form: treat the predictor as an untrusted probability oracle and verify only the intervention policy's threshold logic. If samples are retained, a proof can establish counting bounds and that the reported fraction lies in [0,1]; statistical calibration and model distribution assumptions remain trusted.
-
-## technique 4: intervening monitors
-TRACP+I combines prediction and intervention, triggering when estimated violation risk is at least τ (Appendix C, Algorithm 3, p. 23). The experiment predicts violations within the next k=3 steps (section 5.3, p. 13). Section 4.3 proposes rejection sampling until a candidate meets a threshold (pp. 9–10); the experiment instead uses best-of-n sampling: “We generate 𝑛 = 5 output samples and select the one with the fewest predicted violations, as determined by TRACP+I” (section 5.3, p. 14). Constraint-guided prompting inserts a natural-language rendering of the residual LTL formula. Model substitution replaces the output with a compliance-focused alternative. In this experiment, the alternative uses the original model with a different prompt: “it is prompted solely to enforce the specified behavioral constraints, without being instructed to perform the environment’s task” (section 5.3, p. 14).
-
-## techniques for the catalog
-- LTL event specification: encode cross-step safety and liveness rules over labeled agent events
-- progression-based TRAC: update a readable residual formula per event and emit verdicts with witnesses
-- predictive sampling: estimate future violation probability from sampled trajectories over a finite horizon
-- intervening monitor: reject, reprompt with residual constraints, or substitute a safer model when risk exceeds a threshold
+ltl runtime monitoring of black-box llm agents
+- split into labeling function (events to propositions) and symbolic temporal reasoning
+  - labeler can be classifier, mask, unit test, human, or llm
+- 3-valued finite-prefix verdicts: satisfied, violated, not violated or satisfied yet
+- theorem 4.1: sound under perfect labeling
+  - violated means no continuation satisfies, satisfied means no continuation violates
+  - incomplete: ltl progression can answer "not yet" when outcome is already determined (appendix B)
+trac: progression-based monitor
+- update residual formula per event, record witness when formula changes
+  - residual stays readable, rules add or drop without recompiling an automaton
+  - witness identifies the violating trace
+- any monitor yields a log auditor by running it on prefixes
+- tracr resets after violation or satisfaction to keep monitoring
+- eval: f1 over 40 runs vs deterministic ground truth
+  - trac + llm labeler best, even small labelers beat large llm judges
+predictive monitoring
+- sample n future trajectories, estimate probability that next k prefixes match a pattern
+- predictor is an untrusted probability oracle
+intervening monitor (tracp+i)
+- trigger when estimated violation risk >= tau
+- experiment: k = 3, best-of-5 sampling picking fewest predicted violations
+- other actions: prompt with natural-language residual formula, substitute compliance-prompted model
+limits
+- guarantees hold only for the formula and labeler, not arbitrary traces
+- verus form (inference): verify residual transition and threshold logic, label extraction stays trusted

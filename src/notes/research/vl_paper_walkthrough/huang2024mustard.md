@@ -1,32 +1,27 @@
 # MUSTARD: Mastering Uniform Synthesis of Theorem and Proof Data
 (authored by agents unless marked 🧑)
 Tag: `huang2024mustard`, [paper](https://arxiv.org/abs/2402.08957)
-## what the framework does
-MUSTARD generates paired informal and Lean 3 mathematical problems from sampled concepts, then uses Lean as a feedback filter. Its purpose is a uniform source of theorem-proving and word-problem data across educational levels and domains. The framework samples one or two concepts and asks GPT-4 to produce a problem, natural-language proof, and matching formal proof. The paper states, “The formal proof is passed into Lean Prover for quality feedback, and according to the error messages the formal proof is revised and improved.” (Figure 2 description, Section 3, PDF p. 4).
 
-The concept pool covers elementary, middle-school, high-school, and higher-education levels, with five to nine domains per level. One or two concepts are sampled uniformly; two concepts from different subjects deliberately make the generation join domains while remaining reasonable (Section 3.1, PDF p. 3). The prompt requires the exact sections `# Problem:`, `# Informal proof:`, and `# Formal proof in Lean 3:`, and says the informal and formal proofs must be identical (Section 3.2, PDF p. 4).
-
-## technique 1: concept-conditioned three-part generation
-Use this when building a heterogeneous proof corpus without hand-authoring every theorem. Choose educational level, question type (theorem proving or word problem), and one or two domain-concept seeds. The main prompt generates all three parts together. A separate step-by-step variant generates the problem, its natural-language solution, and its Lean 3 translation in successive prompts (Appendix C.2 and Table 14, PDF pp. 15, 23). Extract the three marked sections. The paper decomposes this into T1 (problem generation), T2 (natural-language solving), and T3 (auto-formalization): “As a result, the LLM needs to complete the following three tasks: (T1) Generating a math problem that relates to the given concepts; (T2) Solving the math problem with a natural language proof; (T3) Performing auto-formalization to translate the written natural language proof into a formalized proof.” (Section 3.2, PDF p. 4).
-
-Inference: in Verus, replace Lean's formal-proof field with a Rust function plus Verus specifications and proof blocks, while preserving the three-part record and requiring the informal proof to describe the same obligations. This is an adaptation, not a claim made by the paper. Concept conditioning could generate varied verification tasks; Verus compilation and verification would provide the formal acceptance test.
-
-## technique 2: error-directed proof filtering and self-refinement
-Use this whenever generated formal code may contain syntax, library, or proof errors. Pass the complete formal proof to Lean. If Lean reports no error, collect the data point. If it reports errors, prepend line numbers to formal-proof lines, include the error messages in a correction prompt, and ask the LLM to rewrite the complete proof. Repeat validation and correction until the proof passes; Table 7 evaluates zero, one, and two correction rounds (PDF p. 9). The method says, “The verification and self-refinement are performed in multiple rounds until LLM generates a valid solution.” (Section 3.3, PDF p. 5). The correction prompt includes the problem, informal proof, and previous failed formal proofs with their diagnostics. It requests: “You should write the modified complete proof in your response.” (Appendix C.1, Table 13, PDF p. 18).
-
-Inference: the Verus version should compile the candidate with Verus, feed diagnostics back with line-numbered Rust, and retain only candidates that pass. Passing the verifier would establish the formal obligations, while agreement with the intended informal problem would still require a separate check.
-
-## technique 3: quality strata and downstream evaluation
-MUSTARD retains 5,866 generated points whose formal proofs pass Lean, then constructs equal-sized invalid and random subsets. The valid set is split into 4,866 training, 500 validation, and 500 test points; the entire generated set has 28,316 points (Section 4.3, PDF p. 6). Human evaluation samples 200 points: 100 Lean-valid and 100 invalid. Six dimensions score factuality, concept relevance, question type, informal-proof correctness, statement alignment, and proof alignment. Table 3 reports informal-proof correctness of 88.50% valid versus 73.50% invalid, informal/formal statement alignment of 74.00% versus 66.50%, and informal/formal proof alignment of 72.00% versus 54.00%. Its proof-alignment requirement is: “Whether the informal proof and the formal proof describe the same solution and have aligned proof steps.” (Section 4.2, PDF p. 5; Table 3, PDF p. 7). The paper does not explain how these half-percentage values are aggregated from the 100 points in each group.
-
-For downstream tests, the paper uses LoRA to fine-tune GPT2-large and Llama 2-7B; Appendix G also reports Llama 2-70B on GSM8K and MATH. Tables 4, 5, and 28 compare valid, invalid, random, and, where reported, all-data training (PDF pp. 7–8, 36). On the ATP table, Llama 2-7B fine-tuned on valid data reaches 8.7% on mathlib, 2.9% on miniF2F, and 12.2% on MUSTARDSAUCE-test. These are Pass@1 results for the valid-only fine-tuning row (Table 5, PDF p. 8). For that test set, the caption specifies use of only the valid training split. The paper reports an average relative gain of 18.15% for valid versus random ATP fine-tuning and 11.01% for math-word-problem fine-tuning (Section 4.3, PDF p. 7). Table 7 reports higher validity after one and two correction rounds across the listed settings. For elementary theorem proving with one concept, validity rises from 26.0% to 48.0% and 55.9%; for higher-education theorem proving with two concepts, it rises from 1.1% to 3.3% and 5.0% (Section 4.5, PDF pp. 8–9). These are setting-specific rates. Inference: compare the displayed rates directly, because some parenthesized improvements in Table 7 do not equal the differences between those rates.
-
-## evidence, assumptions, and product impact
-Inference: Lean acceptance alone does not establish correctness of the informal problem or its alignment with the formal statement; Table 3 measures these separately and reports imperfect alignment. Appendix A states: “Current formal validation still suffers mild inconsistency between the #reduce statements and various kinds of theorem proofs.” It adds: “In the future, we will explore more rigorous and careful data filtering.” (PDF p. 13). For contamination, Appendix H says: “we compute cosine similarities based on text-embedding-ada-002”, then inspect nearest pairs. Tables 29–32 show comparisons with miniF2F, mathlib, GSM8K, and MATH (PDF pp. 22, 36–39). Inference: those inspected pairs provide evidence about observed overlap, rather than proving absence of contamination.
-
-## techniques for the catalog
-- concept-conditioned synthesis — sample educational and mathematical concepts, then generate problem, informal proof, and formal proof together
-- verifier-feedback repair — line-number failed formal code, send prover diagnostics back to the model, and iterate until validation passes
-- valid/invalid/random strata — compare verifier-passing data with equal-sized failed and random controls
-- human alignment audit — score factuality, concept relevance, question type, and informal/formal alignment separately
-- verifier-filtered fine-tuning — train downstream models on accepted proofs and report split-specific pass rates
+synthesizes Lean 3 theorem/proof data with the prover as filter
+- sample 1-2 math concepts across 4 education levels
+- gpt-4 writes problem, informal proof, and formal proof together
+  - prompt requires informal and formal proofs to match
+- lean errors, with line numbers, go back to the llm for rewrite until it passes
+  - validity after 0/1/2 rounds, elementary 1-concept theorem proving: 26.0 to 48.0 to 55.9%
+  - higher-ed 2-concept: 1.1 to 3.3 to 5.0%
+data
+- 28,316 generated, 5,866 lean-valid
+  - 4,866 train, 500 val, 500 test
+- human audit of 100 valid vs 100 invalid
+  - informal proof correctness 88.5 vs 73.5%
+  - statement alignment 74.0 vs 66.5%
+  - proof alignment 72.0 vs 54.0%
+- lean-valid does not guarantee informal/formal alignment
+downstream
+- lora fine-tune on valid vs invalid vs random
+  - Llama 2-7B on valid: mathlib 8.7%, miniF2F 2.9%, MUSTARDSAUCE-test 12.2% pass@1
+  - avg relative gain over random: 18.15% atp, 11.01% word problems
+- contamination checked by embedding similarity and inspection, not proven absent
+verus relevance (inference)
+- same loop fits verus: concept-seeded tasks, compile, feed diagnostics back, keep passing ones
+- verifier acceptance still needs a separate intent-alignment check

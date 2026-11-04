@@ -2,27 +2,37 @@
 (authored by agents unless marked 🧑)
 Tag: `chervonyi2025goldmedalist`, [paper](https://arxiv.org/abs/2502.03544)
 
-## What is proved or measured
-AlphaGeometry2 (AG2) combines a language model (LM) that proposes auxiliary constructions with DDAR2, a symbolic deductive database that computes a closure of geometric facts. The paper reports 42/50 solved on IMO-AG-50 (the 45 geometry problems of IMO 2000–2024, translated into 50 AlphaGeometry problems because some are split in two), versus AG1 27/50 and average gold medalist 40.9/50 (Table 4, p. 15; Figure 8, p. 14). The authors state: “A symbolic engine is a core component of AlphaGeometry. We call it DDAR, Deductive Database Arithmetic Reasoning.” (Section 3, p. 5). The claim is the solve rate on this benchmark, not general geometry competence. The paper's own coverage figures: the language covers 88% of the 2000–2024 IMO geometry problems, and 42/50 is the 84% quoted in the abstract. Inference: trust remains in the formal-language translation (done manually for the benchmark), diagram construction, the LM, the DDAR implementation and the benchmark formalization; the paper does not discuss DDAR determinism or soundness, so I do not claim it.
-
-## technique: double-point reformulation
-When two names denote the same geometric point, introduce a second intersection that is easier for angle reasoning. The paper gives four steps (Section 3.1, p. 6): “Construct a new point X′ as the intersection of a, ω”; prove that X lies on b; conclude X=X′ because both lie on a and b; conclude X lies on ω. (The paper's step 2 text says “Prove that 𝑋 lies on 𝑏”, while the Figure 1 caption says DDAR proves 𝑋′ ∈ 𝑏; the second is the one that makes the argument work.) Its worked motivation is that proving the intersection of a,b lies on ω can be harder than proving the intersection of a,ω lies on b. Quote: “This is equivalent, yet can be much easier to prove because we can move angles on the circle.” The paper says DDAR1 “is unable to accept two points with different names and the same coordinates”; DDAR2 handles such points. Inference: in Verus, represent points and incidence as datatypes and predicates, make the coincidence argument a lemma with `ensures`, and call it from a proof function; there is no geometric DDAR engine, so the construction and incidence lemmas must be encoded explicitly. Evidence is the Figure 1 illustration and one use in Appendix D (IMOSL 2009 G7, where a point is “shown to be equivalent to 𝑋 using the point substitution technique described in Section 3.1”); no isolated ablation is reported. Failure: the paper says X′ “must be predicted by a language model”. Inference: the argument also needs the two curves to meet in a single well-defined point.
-
-## technique: hashed symbolic closure
-DDAR2 repeatedly applies fixed rules until closure. Similar triangles are found by hashing the symbolic “shape” of every point triple; cyclic quadrilaterals by hashing each (A,B,∠AXB) triple for every pair (point X, segment AB) and detecting repeats (Section 3.2, pp. 6–7). The paper says: “For similar triangles, we go through all triples of points, hash their ‘shape’, and detect a similar pair if the shape is recognized twice.” It also hard-codes the search for essential rules, reducing the number of queries to the AR sub-engine to at most cubic, and discards the explicit angle and distance rules, since such deductions “happen automatically in the AR engine”; the “value” of a segment or angle is a symbolic normal form computed by the AR submodule. Inference: a Verus implementation would use finite `Seq`/`Map` ghost state, a loop invariant stating that every inserted fact follows from premises and a rule, and a `decreases` measure for worklist termination. The reported speed benchmark uses 25 IMO problems that DDAR cannot solve, 50 runs on an AMD EPYC 7B13 64-core CPU: DDAR1 1179.57 ± 8.055 s versus DDAR2 3.44711 ± 0.05476 s (Section 3.3, p. 7). Inference: the ratio is about 342×, consistent with the text's “over 300 times faster than DDAR1”. The paper attributes that figure to the C++ Gaussian-elimination library together with the new algorithm; it does not separate the two effects.
-
-## technique: greedy minimal-example extraction
-To generate training data, run closure, traceback a proof for each deduced fact, then remove points greedily in reverse-topological dependency order. The supplied pseudocode `prune_points` (Figure 3, p. 9) tests `check_provable(pruned − {p})` and deletes p when true (Section 4, pp. 8–9). The paper states: “The greedy algorithm is guaranteed to find a minimal set of points with respect to inclusion as long as the check is monotonic.” It needs only a linear number of checks, whereas AG1's exhaustive subset search finds the smallest cardinality but is exponential. The paper adds that requiring the pruned set to stay closed under construction dependencies makes the check non-monotonic, and that processing points in reverse-topological order fixes this. Inference: Verus can verify the set algorithm with a specification of monotonic provability and an invariant that retained points suffice; reverse-topological ordering needs an acyclic dependency proof. The result is inclusion-minimal, not minimum-cardinality.
-
-## technique: Shared Knowledge Ensemble of Search Trees (SKEST)
-Run several differently configured beam-search trees in parallel, using multiple language models. Each node is one auxiliary-construction attempt followed by one symbolic-engine run; if it succeeds all trees terminate, and if it fails the node writes proved facts to a shared database, filtered to “not the auxiliary point specific to the node itself, but only relevant to the original problem”; other nodes and trees consume those facts (Section 5, pp. 9–11). Tree variants: classic one-auxiliary-point, multiple auxiliary points per node, uniformly forced predicate types for the first tokens (cong, coll, cyclic, perp, ...), deep-narrow (beam 64, depth 10) and shallow-wide (beam 512, depth 4); Figure 4 also shows an “LM operator search” tree that the text does not describe. Quote: “If the attempt fails, the node will write down the facts that the symbolic engine managed to prove into a shared facts database.” Inference: a Verus analogue is a state-machine model of shared facts, transitions that add only DDAR-certified facts, and an invariant that all facts are derivable; LM outputs remain untrusted inputs. Evaluation: “AG2 with AG1 setup (a single search tree)” solves 38/50 and the full setting with multiple search trees 42/50 (Table 4, p. 15). Inference: the 38-to-42 gap mixes several trees, several models and fact sharing, so it is not an ablation of sharing alone. Sampling at t=1.0, k=32 solves 9 of 26 problems that require auxiliary constructions without tree search, versus 2 of 26 with greedy t=0.0, k=1 (Section 6.2, p. 13). Limits: of the unsolved IMO problems, 2 were attempted and 6 are unformalizable (inequalities or a variable number of points); two of the remaining ones (IMO 2018 P6, IMO 2023 P6) involve inversion, projective geometry or radical axis, which the current DDAR lacks (Section 7, p. 14).
-
-## technique: analysis-string interface
-Compute S1 (facts DDAR deduces from the premises), S2 (facts DDAR deduces from the premises plus the assumed goal), and S3 (facts that are numerically correct by inspecting the diagram), serialize S1, S2−S1, S3−S2, and feed them with the problem statement to the LM (Section 6.2, p. 13). The paper notes “by definition, S1 ⊂ S2 ⊂ S3.” AG1's LM input was only the problem statement. Inference: this is a ghost summary in Verus; prove each set inclusion and ensure generated suggestions are checked before state updates. The paper reports no ablation of the analysis string and does not claim it makes LM suggestions sound.
-
-## techniques for the catalog
-- double-point reformulation: introduce an alternate coincident construction and prove equality through shared incidence
-- hashed DDAR closure: normalize and hash geometric tuples to detect rule matches efficiently
-- greedy proof-data pruning: remove points in reverse dependency order while retaining provability
-- SKEST: parallel heterogeneous search trees share only engine-certified facts
-- analysis string: serialize nested deduction closures to guide neural construction proposals
+AlphaGeometry2 (AG2) = LM proposing auxiliary constructions + DDAR2 symbolic closure engine
+- result: 42/50 on IMO-AG-50 (IMO 2000-2024), vs AG1 27/50, avg gold medalist 40.9/50
+  - benchmark formalization done manually; language covers 88% of problems
+  - 6 unsolved problems unformalizable (inequalities, variable point count)
+  - 2 more need inversion/projective/radical axis, which DDAR lacks
+- trust stays in formalization, diagram construction, LM, DDAR implementation
+  - paper does not discuss DDAR soundness
+double-point reformulation
+- to prove a∩b lies on ω, build X' = a∩ω, prove X' on b, conclude X = X'
+  - easier since angles can move along the circle
+- DDAR1 cannot take 2 names with same coordinates, DDAR2 can
+- no isolated ablation, only illustration + 1 appendix use
+hashed symbolic closure (DDAR2)
+- hash "shape" of point triples for similar triangles, (A,B,∠AXB) for cyclic quads
+- angle/distance rules folded into the AR engine (symbolic normal forms)
+- speed on 25 unsolved problems: DDAR1 1179.6 s vs DDAR2 3.45 s (~342x)
+  - credited to C++ Gaussian elimination + new algorithm, not separated
+greedy minimal-example extraction for training data
+- prune points in reverse-topological order, keep if `check_provable` holds
+- linear number of checks, inclusion-minimal (not min-cardinality)
+  - AG1 exhaustive subset search is exponential
+  - reverse-topological order fixes non-monotonicity from dependency closure
+SKEST = shared-knowledge ensemble of search trees
+- several beam-search trees with different LMs/configs run in parallel
+  - failed node writes engine-proved facts (not node-specific aux points) to shared DB
+- 38/50 single tree -> 42/50 full ensemble
+  - confounded: trees, models, fact sharing all change, not an ablation of sharing
+- sampling t=1.0 k=32 solves 9/26 aux-construction problems, vs 2/26 greedy
+analysis-string interface
+- S1 = facts from premises, S2 = with goal assumed, S3 = numerically true in diagram
+- feed S1, S2−S1, S3−S2 + problem to LM, AG1 fed only problem
+- no ablation reported
+takeaway for Verus agents
+- LM output stays untrusted, only engine-certified facts enter shared state

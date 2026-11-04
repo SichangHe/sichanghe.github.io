@@ -2,67 +2,41 @@
 (authored by agents unless marked 🧑)
 Tag: `liang2026testdriven`, [paper](https://arxiv.org/abs/2609.12012)
 
-This scoping survey uses "test-driven approaches" as an umbrella term for methods in which tests influence an engineering decision (Section II-A, PDF p. 2). It retained 87 research and supporting records, with method- or protocol-level extraction for 83, alongside a separate set of five practice resources (Abstract, PDF p. 1; Sections II-C and II-D, PDF p. 4). Its unit of comparison is the decision changed by a test, together with the oracle, editable artifact, and evidence of its use (Introduction, PDF p. 2). The survey warns: “Test passing alone does not establish behavioral equivalence, effective feedback, or process adherence.” (Abstract, PDF p. 1.) That distinction is directly relevant to Verus: a verified postcondition is evidence about a written specification, while the specification's relation to the product requirement is a separate question.
-
-## mechanism taxonomy
-
-The survey distinguishes the full Red–Green–Refactor process from neighboring mechanisms (Table II, PDF p. 7). Red–Green–Refactor requires a relevant failure before implementation, passing behavior, and a structural improvement checked against preserved behavior (Section II-A, PDF p. 2). Test-conditioned generation exposes assertions or examples before a candidate is generated. Execution-guided refinement feeds a candidate's execution result into a subsequent revision. Test-based selection executes a candidate population and retains one. Test-mediated analysis maps outputs, coverage, or traces to a relation, relevance, localization, or annotation decision. Evaluation-only testing assigns a score after development without an iterative feedback channel in the evaluated setting (Table II, PDF p. 7).
-
-## test design and behavioral targets
-
-The Red phase turns an intention into an executable obligation. The survey says: “Within that scope, full TDD retains its narrower process meaning: a relevant failure precedes implementation, passing behavior is established, and structural improvement is checked against preserved behavior.” (Section II-A, PDF p. 2.) A visible input-output example can resolve an ambiguous requirement before code exists; a failing assertion can identify behavior a candidate must change; a regression test can reject a transformation that damages existing behavior (Introduction, PDF p. 1).
-
-How to apply it. Inference: these steps are this study's assembly, not a numbered procedure in the survey; they follow its description of the cycle (Introduction, PDF p. 1; Section II-A, PDF p. 2). (1) Define the behavior and expected outcome (this step is the study's own; Section III-A, PDF p. 4 discusses turning intended behavior into an executable obligation). (2) Create a relevant failing test or assertion. (3) Implement enough behavior to pass it. (4) Refactor with a structural objective while rerunning the retained tests. The survey says test-first preparation is evidence about ordering, and does not by itself establish that a relevant failure was observed (Section II-A, PDF p. 2).
-
-Verus form. Inference: write a named `spec fn` for each requirement, attach it to an executable function's `requires` and `ensures`, and add a proof example that initially fails when the implementation is absent. Inference: after the contract is satisfied, refactor the Rust implementation while preserving the same `ensures`; use loop `invariant` clauses and `proof fn` lemmas for the proof structure. Inference: the failing proof obligation is analogous to Red, but Verus's acceptance still depends on the contract's correctness.
-
-## execution-guided refinement and candidate selection
-
-Execution-guided refinement differs from full TDD because a candidate already exists before feedback. The survey's taxonomy requires a feedback channel, a revised artifact, and a stopping rule or budget (Table II, PDF p. 7). A conversational loop can return failure information after each proposed patch, while agentic systems may interleave code inspection, localization, editing, and execution (Section IV-B, PDF p. 7). Test-based selection “ranks or rejects candidates without necessarily editing them” (Section II-A, PDF p. 3); Table II lists its evidence as candidate population, selection criterion, and oracle assumptions (PDF p. 7).
-
-How to apply it. Inference: the steps are assembled by this study from the Table II requirements (feedback channel, revised artifact, stopping rule, budget; PDF p. 7), not listed as a procedure by the survey. (1) Generate a candidate implementation or proof. (2) Run the designated tests or verifier. (3) Classify the failure and revise the editable artifact. (4) Stop at a stated budget or when the acceptance criterion holds. For selection, execute the candidate population and retain the candidate satisfying the selection criterion.
-
-Verus form. Inference: make each generated Rust/proof candidate a separate source snapshot, run Verus, parse diagnostics, and preserve the contract while allowing proof-only edits. Inference: a selection policy may rank candidates by verified goals, proof time, or independent tests, but only a successful Verus check can establish the selected contract. Inference: do not call a `proof fn` at runtime; use it only in proof code, with executable tests as a separate oracle.
-
-## translation, migration, and differential evidence
-
-Translation has a particularly strong executable oracle when the source program can be run. The survey reports that UniTrans generates inputs, obtains expected behavior from source execution, and uses those tests for translation and repair; TransAgent adds fine-grained execution alignment (Section IV-C, PDF p. 7). SpecTra validates multiple specification modalities before translation: static specifications and descriptions are checked by regenerating source code and running existing tests, while dynamic specifications are checked against source execution (Section IV-C, PDF p. 7). DepWareTrans orders batches using dependency information and checks the mixed-language repository after each translated batch (Section IV-C, PDF p. 7). The survey adds that the assurance of source-execution methods “is nevertheless relative to the source behavior represented by the chosen inputs.”
-
-How to apply it. Inference: the steps are assembled by this study from the Section IV-C descriptions of UniTrans, TransAgent and DepWareTrans (PDF p. 7), not given as a procedure by the survey. (1) Generate shared inputs. (2) Run the source or reference implementation to obtain expected behavior. (3) Translate or migrate the target. (4) Compare target execution with source execution at those inputs. (5) Check integration after each dependency-ordered batch.
-
-Verus form. Inference: encode source/target agreement as a `spec fn` relation and prove an `ensures` clause for the verified Rust target where the source behavior is modeled. Inference: replay tests remain finite evidence; FFI, compiler behavior, and the source executable remain trusted unless separately specified and verified. Inference: dependency ordering can determine proof order, but it does not prove cross-language semantic equivalence by itself.
-
-## formal-specification validation
-
-The survey explicitly includes tests for artifacts more abstract than application code. Work on LLM-generated tests for Alloy specifications asks whether cases expose incorrect formalizations of natural-language requirements (Section IV-H, PDF p. 8). The survey says the relevant questions concern whether a test is syntactically valid, whether it represents the requirement, and whether it distinguishes correct from incorrect specifications (Section IV-H, PDF p. 9). It states: “Evidence that an LLM generates useful tests does not automatically establish an end-to-end process that repairs formal models.” (Section IV-H, PDF p. 9.)
-
-How to apply it. Inference: the steps are assembled by this study from the three questions and the quoted caution above (Section IV-H, PDF p. 9), not given as a procedure by the survey. (1) Generate a candidate specification and tests. (2) Check test syntax and execution. (3) Check that each test corresponds to a requirement. (4) Check that tests distinguish a deliberately incorrect specification from the intended one. (5) Evaluate specification repair separately from test generation.
-
-Verus form. Inference: represent each requirement as a `spec fn`, generate positive and negative proof examples, and require the negative examples to fail before accepting a contract. Inference: use mutation of the specification or implementation to test whether the suite detects omitted or weakened requirements; Verus proof success alone cannot establish that a contract is complete. Inference: keep specification review separate from proof repair so an agent cannot “fix” a failure by weakening `ensures`.
-
-## test-mediated analysis
-
-Tests also guide decisions without editing production code. HyClone uses shared-input outputs for clone classification; CoSQA+ uses execution to support query-code annotation; IssueExec uses traces from relevant tests to localize code (Section III-E, PDF p. 6). For IssueExec, existing tests pass before the issue is resolved, and passing executions still reveal which code implements related behavior and how application-level operations traverse infrastructure (Section IV-F, PDF p. 8). The immediate output may be a label or ranked location, not a program revision.
-
-## skills: content, invocation, enforcement
-
-The survey says a useful description of a TDD skill “should identify the trigger, behavioral target, required ordering, allowed edits, test commands or discovery process, refactoring objective, and stopping condition” (Section V-B, PDF p. 9). It separates the content of instructions from their execution and utility. A skill that instructs an agent to establish a failure, make a small edit, rerun tests, and inspect regressions is a different observation from the agent executing those steps or from task success (Introduction, PDF p. 1). In a multi-agent system, separate role names do not establish independent reasoning because roles may share a model, context, or an incorrect specification (Section V-A, PDF p. 9).
-
-How to apply it. Inference: the steps are assembled by this study from Sections V-B (PDF p. 9) and VII-E (PDF pp. 15–16), where the survey proposes layered skill evaluation (validate the artifact, test retrieval or invocation, inspect adherence to order and edit permissions, evaluate behavior and cost on independent tasks); it gives no numbered procedure. (1) Specify the skill interface and trigger. (2) State the required sequence and allowed artifact edits. (3) Invoke it in a controlled workflow. (4) Enforce the sequence with external checks where possible; the survey notes that a natural-language instruction and an external check that blocks an edit have different operational consequences. (5) Evaluate both the skill artifact and the task outcome. MUSE-Autoskill describes creating a skill package, running its local tests, revising on failure, and registering it for reuse; its package audit reports a tests/ directory in 9% of generated packages, so the survey says the described test step and the observed package coverage must remain separate (Section V-D, PDF p. 11). The survey separates the described process from observed package coverage.
-
-Verus form.
-
-## evidence and denominator discipline
-
-The survey insists that metrics belong to experimental configurations, not pooled paper-wide headlines (Section II-D, PDF p. 4). It gives concrete contrasts. On the 100-task Phase 1 subset of graph-based TDAD with Qwen3-Coder-30B, the baseline, TDD guidance, and graph-augmented TDD conditions resolve 31%, 31%, and 29% of tasks; test-level regression rates are 6.08%, 9.94%, and 1.82%, with evaluated test counts 9,245, 8,040, and 8,536 (Section VI-B, PDF p. 12). The survey says instance-level regression rates “do not exhibit the same reduction” and that the evidence supports a lower test-level failure proportion, “not a general increase in issue resolution” (PDF p. 12). In SpecTra's GPT-4o case study on 24 functions from GNU coreutils `cat`, the baseline, all-modalities, and staged procedures produce 10, eight, and 11 accepted first-candidate translations (Section VI-B, PDF p. 12). The survey calls these counts one project case with a bounded compiler-repair procedure, not a basis for predicting effects across repositories or language pairs.
-
-## techniques for the catalog
-
-- test-to-decision classification — identify exactly which engineering decision an executable test changes
-- red–green–refactor protocol — establish a relevant failure, implement until passing, then refactor while preserving behavior
-- execution-guided refinement — feed candidate execution diagnostics into bounded artifact revision
-- test-based candidate selection — execute several candidates and retain one under an explicit oracle
-- source-execution differential checking — compare translated or migrated behavior with source behavior on shared inputs
-- formal-specification validation — test whether generated cases represent requirements and distinguish incorrect specifications
-- skill content/invocation/enforcement audit — separate what a reusable procedure says from whether an agent executes and obeys it
-- configuration-level evidence accounting — report model, setting, artifact, oracle, and denominator for each measured outcome
+scoping survey: 87 records (83 with method-level extraction) + 5 practice resources
+- "test-driven" = tests influence an engineering decision
+- compare by decision changed, oracle, editable artifact, evidence of use
+- test passing alone does not establish behavioral equivalence, effective feedback, or process adherence
+- Verus link: verified postcondition is evidence about the written spec, not the requirement
+mechanism taxonomy
+- Red-Green-Refactor: relevant failure first, passing, refactor with preserved behavior
+- test-conditioned generation: tests shown before generation
+- execution-guided refinement: feedback channel + revised artifact + stopping rule or budget
+- test-based selection: execute population, keep one
+- test-mediated analysis: tests drive labels or localization (HyClone, CoSQA+, IssueExec)
+- evaluation-only: score after development
+Verus mapping (inference, not in survey)
+- red: `spec fn` per requirement, failing proof obligation, then `requires`/`ensures`
+- refine: separate source snapshots, parse diagnostics, preserve the contract
+  - only a Verus pass establishes the contract
+- agent must not weaken `ensures` to fix a failure
+translation and migration
+- UniTrans, TransAgent: expected behavior from source execution
+- SpecTra: validate spec modalities before translation
+- DepWareTrans: dependency-ordered batches, integration check after each
+- assurance is relative to source behavior on chosen inputs
+formal-spec validation
+- LLM tests for Alloy specs: valid syntax, represent requirement, distinguish correct from incorrect spec
+- useful tests do not imply end-to-end repair of formal models
+- inference: negative examples must fail, mutate spec to check detection
+agent skills
+- good TDD skill states trigger, behavioral target, ordering, allowed edits, test commands, refactoring objective, stop condition
+- separate skill content, invocation, enforcement, utility
+- external checks that block edits differ from natural-language instructions
+- roles in multi-agent systems may share model, context, wrong spec
+- MUSE-Autoskill: tests/ dir in only 9% of generated packages
+evidence discipline
+- report metrics per configuration, not pooled
+- TDAD, Qwen3-Coder-30B, 100 tasks: resolved 31%/31%/29%
+  - test-level regression 6.08%/9.94%/1.82%
+  - instance-level regression no same reduction
+- SpecTra GPT-4o, 24 `cat` functions: 10/8/11 accepted, a single-project case

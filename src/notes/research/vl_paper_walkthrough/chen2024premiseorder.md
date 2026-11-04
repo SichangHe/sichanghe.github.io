@@ -2,49 +2,20 @@
 (authored by agents unless marked 🧑)
 Tag: `chen2024premiseorder`, [paper](http://arxiv.org/abs/2402.08939v3)
 
-## question and evidence
-
-The paper tests whether changing only the order of logically equivalent premises changes language-model reasoning. Its logical benchmark contains definite-clause problems: true facts, rules of the forms “If X, then Y” or conjunction variants, and a true conclusion. A prediction counts as correct only when the generated step-by-step proof is completely valid; hallucinated facts or rules are errors. The authors generate 200 problems for each required-rule count (4 through 12), five premise orders, and three distractor counts (0, 5, 10), for 27,000 variants (§2.1, pp. 3–4). The scoring criterion is explicit: “we consider the prediction to be correct only when the generated proof is completely valid.”
-
-The paper states (§1, p. 2), “In contrast to humans, we observe that for LLMs, the premise order has a significant impact on reasoning performance.” Section 3.2 (p. 6) reports accuracy decreases of up to 20–30 percentage points for GPT-4-turbo and PaLM 2-L, and decreases from above 65% to below 25% for Gemini 1.0 Pro and GPT-3.5-turbo when order changes from forward. These are comparisons across experimental conditions, each with 200 problems; shuffled results combine three orders.
-
-## technique: proof-aligned order and Kendall-tau sweep
-
-What it is. Define forward order (`τ = 1`) by listing each rule in the order used by the ground-truth proof. Define backward order (`τ = -1`) as its reverse, corresponding to backward chaining. Intermediate orders use normalized Kendall tau (`τ = 0.5, 0, -0.5`). This is a controlled way to expose a model’s dependence on the presentation sequence while preserving the facts and conclusion.
-
-How to apply it. (1) Generate a proof with a known sequence of rule applications. (2) Keep facts, rules and conclusion fixed. (3) Permute premises to the five tau conditions. (4) Prompt the model to name the premise used at each derivation step. (5) Decode greedily at temperature 0. (6) Accept only a completely valid proof. (7) Report accuracy separately by model, required-rule count and tau. All experiments use zero-shot prompting (§3.1, p. 5). The authors write (§2.1, p. 3), “Specifically, we denote the order that conforms to the ground truth proof with forward chaining as the forward order, where the rule applied in each derivation step is sequentially presented in the problem description.”
-
-Evidence and denominators. Table 1 (p. 7) is the error breakdown for 12 relevant rules, no distractors. For GPT-4-turbo at `τ=1`, 96.5% are correct, 0.5% wrong refutations, 1.5% rule hallucinations and 1.5% fact hallucinations (the four percentages sum to 100% of that model/order condition). At `τ=-1`, its corresponding figures are 84.0%, 0.0%, 3.5% and 12.5%. For GPT-3.5-turbo at `τ=1`, the denominator is the same 12-rule/no-distractor condition: 30.0% correct, 24.5% wrong refutation, 9.5% rule hallucination and 35.5% fact hallucination. Gemini 1.0 Pro at `τ=0.5` has 0.0% correct, 59.0% wrong refutation, 3.5% rule hallucination and 37.5% fact hallucination. The abstract (p. 1) reports “a performance drop of over 30%”; Table 1 shows that the magnitude depends on model and order.
-
-Verus form. Inference: make each premise a typed fact or relation and define a proof-carrying function whose `requires` clause states the input facts and rules. Its `ensures` clause states the conclusion and, if desired, a trace of rule applications. A Rust loop that consumes a forward-ordered trace can use `invariant` to preserve that every accumulated fact follows from the original facts and rules. To test order sensitivity of an agent, generate equivalent input traces in a harness and compare whether the agent emits a Verus-checking proof; the Verus checker, rather than text similarity, is the correctness oracle. Kendall tau is test metadata and does not belong in the trusted theorem.
-
-## technique: distractor stress test and error taxonomy
-
-What it is. Add rules that are not needed for the proof, then measure whether irrelevant context interacts with ordering. The benchmark uses exactly 0, 5 or 10 distracting rules. Section 3.2 (p. 6) reports that distractors further decrease performance and magnify the ordering effect while leaving the two tested models’ broad preferences unchanged: GPT-4-turbo often prefers backward among non-forward orders, and PaLM 2-L generally degrades as tau decreases toward -1. Forward is generally strongest, though Tables 6–8 contain ties and exceptions at small rule counts.
-
-How to apply it. (1) Identify rules required by the ground-truth proof. (2) Add 0, 5 or 10 rules not useful for that proof (§2.1, p. 4). (3) Interleave distractors with relevant rules, as stated in Appendix D (p. 17): “we interleave distracting rules with relevant rules in the input context.” (4) Evaluate the five tau conditions with the same proof-validity criterion. (5) Analyze wrong refutation, rule hallucination and fact hallucination (§3.2, p. 7). These categories mean rejecting a provable conclusion, inventing a rule, or introducing an absent, unproven fact. The paper does not specify a distractor-sampling algorithm.
-
-The authors propose an explanation (§3.2, p. 7): “The main reason is that LLMs are inclined to use the rules in the sequential order as they present in the problem, so when the next rule in the problem is not yet applicable, LLMs might still hallucinate facts to complete the proof step.” This is a paper claim supported by its error analysis, not a formal causal proof.
-
-Verus form. Inference: model distractors as additional immutable data and require every proof step to reference a rule whose antecedent is established. A Verus `assert` or lemma can establish that an unused rule cannot affect the conclusion when its predicate is unreachable. The executable Rust should retain the full input if product behavior requires it; proof code can separately establish that selection ignores unreachable distractors. This does not prove an LLM will select correctly; it detects the resulting invalid proof.
-
-## technique: R-GSM answer-preserving rewrite
-
-What it is. R-GSM tests mathematical word problems rather than explicit logic rules. The authors select GSM8K test problems with at least five sentences, retain the final sentence, and manually reorder the others only when the ground-truth answer remains unchanged. They enumerate alternative orders until finding a model failure; the candidate can inform manual rewriting if it preserves the answer (§2.2, pp. 4–5). The authors write, “Minor editing on words is allowed to ensure the grammatical correctness of the problem description.” The resulting dataset has 220 original/reordered pairs; over 60% have five sentences and all have at most eight.
-
-How to apply it. (1) Select test problems with at least five sentences. (2) Exclude problems without an alternative ordering that preserves the answer. (3) Keep the last sentence fixed; enumerate other sentence orders until a model fails. (4) Manually rewrite and verify answer preservation; an automatically found failure is usable only if it preserves the answer. (5) Evaluate original and rewritten descriptions using zero-shot, temperature-0 greedy decoding, without additional instructions (§3.1, p. 5). (6) Report both full-dataset accuracy and reordered accuracy on each model’s originally solved subset (§3.3, pp. 7–8). Inference: because construction seeks failures, the measured drop need not estimate the effect of a uniformly random sentence permutation.
-
-Results. Table 2(a) (p. 7) reports full-dataset accuracies: GPT-4-turbo 94.1% original versus 85.0% reordered; PaLM 2-L 86.4% versus 79.5%; Gemini 1.0 Pro 80.5% versus 69.1%; GPT-3.5-turbo 67.3% versus 51.8%. Table 2(b) conditions on each model’s originally solved problems, so original accuracy is 100% within that model-specific subset: reordered accuracy is 89.9%, 87.9%, 74.6% and 64.9%, respectively. Inference: subtracting these values from 100% gives losses of 10.1%, 12.1%, 25.4% and 35.1% of initially solved cases, respectively. Table 3 (p. 9) classifies failures on those subsets; for GPT-4-turbo, 45.0% are temporal-order errors, 15.0% unknown-variable errors and 40.0% other, summing to the conditional failure cases.
-
-Verus form. Inference: translate each word problem into a pure specification and write two parsers or input encodings with the same semantic value. Prove semantic equivalence with a `proof fn`; then run the executable algorithm on both encodings and check the same `ensures` result. This separates a real algorithmic order bug from an agent’s prompt-order brittleness.
-
-## implication for verified Rust
-
-The study measures model-generated proof text, not Verus proof success, and it does not evaluate Rust. Inference: presenting premises in dependency order may help an agent generate verified Rust, and varying their order during evaluation may reveal sensitivity. Invalid proofs can be rejected by Verus; an incorrect specification can still describe the wrong property. These applications remain untested by this paper. Section 4 (p. 10) describes graph construction, pruning and reordering from prior work, but says such methods “require task-specific design and do not generalize across domains.” The conclusion (p. 11) leaves explanations and new mitigation techniques to future work.
-
-## techniques for the catalog
-
-- proof-aligned premise ordering — compare forward, backward and Kendall-tau intermediate orders while preserving the logical task
-- distractor robustness testing — add 0, 5 or 10 irrelevant rules and classify invalid proofs by refutation, rule or fact hallucination
-- answer-preserving R-GSM rewrite — construct original/reordered word-problem pairs whose verified answer is unchanged
-- conditional accuracy analysis — report reordered accuracy only on instances solved in the original condition to isolate order failures
+premise order alone changes llm deductive reasoning a lot
+- logic benchmark: definite-clause problems, correct only if whole proof valid
+  - 27,000 variants: 4-12 required rules, 5 orders, 0/5/10 distractors
+  - forward order = rule order of ground-truth proof, backward = reverse, kendall tau between
+- forward order best
+  - gpt-4-turbo, palm 2-l: drop up to 20-30 points
+  - gemini 1.0 pro, gpt-3.5-turbo: from >65% to <25% at worst
+  - distractors enlarge the order effect
+- failure types: wrong refutation, rule hallucination, fact hallucination
+  - llm follows presented rule order, invents facts when next rule not yet applicable
+- r-gsm: reordered gsm8k problems with unchanged answer, 220 pairs
+  - gpt-4-turbo 94.1% -> 85.0%, gpt-3.5-turbo 67.3% -> 51.8%
+  - on originally solved subset, loss 10.1% to 35.1%
+  - constructed to find failures, so not an estimate for random permutation
+- limits
+  - tests proof text, not verus proofs, no mitigation proposed
+  - inference: present premises in dependency order, vary order when evaluating verus agents

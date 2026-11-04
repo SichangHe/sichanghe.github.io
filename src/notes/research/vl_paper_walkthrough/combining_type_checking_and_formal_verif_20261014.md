@@ -2,36 +2,25 @@
 (authored by agents unless marked 🧑)
 Tag: `ijaz2024combining`, [paper](https://arxiv.org/abs/2501.00248v1)
 
-## result
-This paper reports a hybrid correctness method for the Theseus Rust OS. Its premise is explicit: “This paper presents our experience exploring new ways to ensure OS correctness.” (Introduction, PDF p. 1.) Rust's type system enforces resource and state invariants cheaply; SMT verification proves the small set of properties types cannot express; prose connects the resulting local facts. The guarantee is deliberately weaker than end-to-end formal verification because unverified code, libraries, hardware assumptions, and informal reasoning remain trusted.
-
-The authors report: “The proof-to-implementation ratio for changes to the memory subsystem of Theseus (including the representation creator code) is 1:117.” (Section 6.2, PDF p. 12.) The verified portion of the ixgbe driver has a 1:8.3 proof-to-implementation ratio (Section 6.2, p. 12). The standard driver reaches 19 Gbps bidirectional throughput versus DPDK's 20 Gbps; the restricted variant reaches 20 Gbps (Section 6.1, p. 11). Table 1 (p. 7) classifies 29 DPDK ixgbe bugs: 4 preventable with basic Rust, 5 with the intralingual HAL, 6 with IRS, 12 with formal verification, and 2 hardware issues. Its caption says “approximately 50% of bugs in the DPDK ixgbe driver [2] can be eliminated with our hybrid approach.” Inference: this caption is ambiguous because the three categories before formal verification sum to 15/29, whereas including formal verification gives 27/29. The classification is not a measured elimination of bugs or completeness of OS verification.
-
-## technique 1: intralingual representation systems
-An Intralingual Representation System (IRS) makes a linear Rust value the sole authority to use a physical or abstract resource. A typestate encodes allowed operations. The paper's concise rule is: “The IRS combines the representation of a resource with the authority to use it, through linear types: the ownership of the linear-type instance denotes the sole authority to use the resource.” (Section 3.1, p. 3.) A `Pages<S>` value transitions among `Free`, `Allocated`, `Mapped`, and `Unmapped`; only `Pages<Mapped>` exposes memory access.
-
-Inference: this list translates the paper into an implementer sequence; the paper does not give it as a numbered procedure. Apply it by (1) defining a private resource representation; (2) making its state a type parameter; (3) exposing consuming transition methods; (4) exposing only methods valid for each state; (5) using `Drop` to return resources to the allocator. Ownership transfer, shared reference counting, and scoped borrowing provide delegation. For hardware, define register structs with typed read/write fields and methods whose arguments are proof-of-work tokens; the token returned by one operation is required by the next.
-
-Inference: in Verus, use Rust typestates and private fields for compile-time enforcement, then add `spec fn` predicates and `requires`/`ensures` for facts beyond the compiler. Verus proofs can establish that a transition preserves the predicate, but the compiler still supplies the aliasing guarantee. Do not treat the typestate alone as a proof of uniqueness: the paper found that linear ownership of a value does not ensure that two values do not denote overlapping resources.
-
-## technique 2: generic uniqueness and three propagation rules
-The authors fix IRS uniqueness with a verified generic `RepCreator`. A verified method checks a bookkeeping collection for overlap before calling its private constructor. Section 4.1 (pp. 5–6) gives three rules: invariant preservation (a proven invariant persists when arbitrary field changes are disallowed), composition (a composite is unique if its members are unique), and reuse (a verified generic implementation covers its specializations). The implementation explicitly “maintains the 1-to-1 mapping between the physical resource and its software representation(s)” (Section 5.1, p. 6).
-
-Inference: these steps are an operational restatement and are not in the paper as a numbered procedure. Steps are: choose an identifier with an `overlaps` relation; keep existing identifiers private; have the verified creation method reject overlap; prove consuming `split` and `merge` operations preserve non-overlap; compose `Chunk` into `Pages` and `Frames`; let generic instantiations reuse the proof. In Theseus, uniqueness is a prerequisite for the bijective page-to-frame mapping invariant; the mapping function consumes allocated pages and frames, and the intralingual HAL controls page-table writes (Sections 5.3.1–5.3.3, pp. 8–9).
-
-Evidence: the memory changes were 1.3k SLOC at a 1:171 proof-to-implementation ratio; the representation creator itself was 392 SLOC at 1:56 (Section 5.1, pp. 6–7). The allocator bug created overlapping `Frames` instances: “This bug only manifested in a very particular code path that had not occurred in over four years of frame allocator code usage.” It stalled driver development for over one person-month (Section 5.3.3, p. 9). Inference: a Verus version would maintain a ghost set of identifiers, prove disjointness on insertion, and use generic lemmas for composed resources.
-
-## technique 3: intralingual specifications and selective SMT proof
-Ordinary Rust type checking does not reject a newly added `Clone` implementation, an exposed field, or an invariant-breaking mutation that otherwise follows Rust's type rules. The paper adds assertions to reject these changes (Section 4.2, p. 6). The paper therefore uses compile-time macros: `assert_not_impl_any!`, `#[private_fields("range")]`, `#[nomutates]`, and `#[nocalls]`. It says, “To check such properties at compile time, we employ Rust macros to write static assertions.” (Section 4.2, p. 6.) The workflow is to identify an invariant, encode enforceable fragments as assertions, then use Prusti/SMT only for the remaining uniqueness or arithmetic property. Prose proofs tie the separate obligations together: “Within a prose proof, we use natural language to express the invariants and justify how they combine to imply a high-level invariant.” (Section 4, p. 5.)
-
-## technique 4: typed hardware abstraction layer
-The ixgbe HAL overlays a typed register layout on MMIO, prevents unsafe pointer arithmetic, and requires proof-of-work tokens for ordering. A register method takes `RxCtrlDisabled` before allowing a filter-control write, then returns `FilterCtrlSet` before re-enabling receive. The paper says the HAL “precludes the unsafe pointer arithmetic commonly used to access MMIO registers” (Section 3.3, p. 5).
-
-Inference: an implementation sequence is to transcribe datasheet offsets and access modes into structs, restrict writes to allowed bits, and encode required operation order in token types. The paper verifies casts from mapped memory for uniqueness and alignment (Sections 5.3.2 and 5.4.2, pp. 9–10); it does not report formal verification of the token-producing methods. The authors leave the unsafe cast unverified: a verified function returns the pointer address and a trusted function performs the one-line unsafe cast (Section 5.3.2, p. 9). Inference: Verus could express bounds, alignment, and token-state obligations; this study does not establish that port. The datasheet and device behavior would remain assumptions unless modeled.
-
-## techniques for the catalog
-- intralingual representation systems — encode resource authority and legal state transitions in linear typestates
-- verified representation creation — reject overlapping identifiers and propagate uniqueness through composition and generics
-- intralingual specifications — enforce trait, visibility, mutation, and call restrictions with compile-time assertions
-- typed hardware abstraction layers — encode register layout and operation order as types and proof-of-work tokens
-- selective hybrid verification — use SMT proofs for unexpressible invariants and prose only for explicitly trusted composition
+hybrid: Rust types for cheap invariants, SMT (Prusti) only for what types cannot express, prose to join them
+- weaker than end-to-end verification, unverified code, libraries, hardware assumptions stay trusted
+intralingual representation system (IRS)
+- a linear Rust value is the sole authority over a resource, typestate encodes legal operations
+  - e.g. `Pages<Free|Allocated|Mapped|Unmapped>`, only `Mapped` allows access
+- linear ownership alone does not rule out two values for overlapping resources
+  - fix: verified generic `RepCreator` rejects overlap before construction
+  - 3 rules: invariant preservation, composition, reuse via generics
+  - found a frame-allocator bug producing overlapping `Frames`, dormant 4+ years, stalled a driver for 1+ person-month
+intralingual specifications
+- compile-time macros enforce what types miss: `assert_not_impl_any!`, `#[private_fields]`, `#[nomutates]`, `#[nocalls]`
+typed hardware abstraction layer
+- typed MMIO register layouts, proof-of-work tokens force operation order
+- unsafe cast left trusted, only address and alignment verified
+evidence
+- proof-to-implementation ratio 1:117 for memory changes, 1:8.3 for verified ixgbe driver part
+- throughput 19 Gbps vs DPDK 20 Gbps
+- 29 DPDK ixgbe bugs: 4 basic Rust, 5 HAL, 6 IRS, 12 formal verification, 2 hardware
+  - caption's "approximately 50% eliminated" is ambiguous (15/29 without verification, 27/29 with)
+verus relevance (inference)
+- use typestates and private fields for compile-time guarantees, add `spec fn` and `requires`/`ensures` for the rest
+- ghost set of identifiers for disjointness

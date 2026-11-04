@@ -2,76 +2,26 @@
 (authored by agents unless marked 🧑)
 Tag: `filliatre2013why3`, [paper](https://www.semanticscholar.org/paper/4d011ed17687648ac4ce719e24c3bab77a4a143e)
 
-## platform and verification model
-
-Why3 is a deductive-verification platform with WhyML as both a programming/specification language and an intermediate language. The abstract states: "We present Why3, a tool for deductive program verification, and WhyML, its programming and specification language." (abstract, p.1) WhyML is first order, has polymorphic types, pattern matching, inductive predicates, mutable record fields, type invariants, and ghost code. Verification conditions are discharged by external automated or interactive provers.
-
-The specification language is deliberately shared across back ends. The authors write: "The specification language of Why3 does not depend on any features of the programming language, and can serve as a rich common format for theorem proving problems, readily suitable (via Why3) for multiple automated and interactive provers, such as Alt-Ergo, CVC3, Z3, E, SPASS, Vampire, Coq, or PVS." (Section 1, p.1) When a prover lacks a feature, Why3 applies encoding transformations such as eliminating pattern matching or polymorphism (Section 1, p.1).
-
-## technique: alias control instead of a memory model
-
-When to use it: use static alias control when mutable state can be named finitely and first-order verification conditions are preferable to a general heap model.
-
-How to apply it:
-
-1. Restrict every l-value to a finite set of statically known names. WhyML requires this to keep verification conditions tractable and readable (Section 2, p.2).
-2. Keep recursive data types free of mutable components; recursive mutable nodes would violate the restriction (Section 2, p.2).
-3. Put mutable state in record fields. A mutable resizable array is a record containing mutable `data` and `size` fields, with invariant `0 ≤ size ≤ data.length` (Section 2, p.2).
-4. Generate weakest-precondition verification conditions from preconditions, postconditions, loop invariants, assertions, and variants (Section 2, p.2).
-5. Send each obligation to an external prover, applying Why3 encodings when the prover lacks a language feature (Section 1, p.1).
-
-Evidence: the paper reports a gallery of 67 case studies (Section 3, p.2). Its KMP example specifies `first_occur p a result` and extracts executable OCaml, while the hash-table example has a mutable `data` field holding an array of lists. The paper says of resizing: "In particular, after the resize, one cannot use any stale pointer to the old value of data." (Section 3, p.3)
-
-Inference: Verus already uses Rust ownership and borrowing as a form of alias control, so this technique is conceptually aligned but not a reason to avoid Verus's memory model. In Verus, use ordinary Rust references/borrows, `requires`/`ensures`, and proof lemmas; do not write WhyML syntax. This is an inference.
-
-Limitations: WhyML is first order: higher-order functions are excluded (Section 2, p.2). Mutable nested pointer structures such as doubly linked lists and mutable trees cannot be implemented directly (Section 3, p.3).
-
-## technique: type invariants and ghost state
-
-When to use it: attach a local invariant to a mutable record type and maintain it at every construction or mutation; add ghost state when a mathematical view or resource is useful only for verification.
-
-How to apply it:
-
-1. Define a record with mutable fields and an invariant. The paper's `rarray` requires `0 ≤ size ≤ data.length` (Section 2, p.2).
-2. Assume the invariant on function arguments and generate an obligation after every creation or modification (Section 2, p.2).
-3. Add ghost expressions for counters or logical views. Ghost computations may read non-ghost values, but cannot modify non-ghost mutable values or raise exceptions into non-ghost code (Section 2, p.2).
-4. Use ghost results only in annotations. The paper says ghost code "can be safely removed from a program without affecting its final result" (Section 2, p.2). It does not say how extraction treats ghost code.
-
-Inference: A Verus analogue is a `spec fn` representation predicate plus ghost/spec variables and proof code erased from execution. The exact invariant placement must follow Verus's supported syntax; the paper's type-invariant semantics is not a Verus feature. This is an inference.
-
-## technique: executable implementation with verified contracts
-
-When to use it: use pre/postconditions for functions, loop invariants for iteration, and variants for termination. This supports executable code while retaining deductive proof obligations.
-
-How to apply it:
-
-1. Annotate each WhyML function with pre- and postconditions for normal and exceptional termination (Section 2, p.2).
-2. Annotate loops with invariants. Recursive functions and while-loops can be given variants (values that decrease at each call or iteration) to ensure termination (Section 2, p.2).
-3. Statically checked assertions can be inserted at arbitrary points in a program (Section 2, p.2).
-4. Let Why3 generate weakest-precondition verification conditions and dispatch them to external provers (Section 2, p.2).
-5. Extract verified WhyML to OCaml. Uninterpreted types can map to existing OCaml types or remain abstract; user mappings can customize the result (Section 3, p.3).
-
-The KMP example has a precondition `1 ≤ length p ∧ 0 ≤ length a` and postcondition `first_occur p a result` (Section 3, p.3). The extracted OCaml signature is `character array → character array → Num.t` (Section 3, p.3).
-
-Inference: In Verus, use `requires`, `ensures`, `decreases`, loop `invariant`, and `assert` constructs documented in the approved Verus reference. The paper's exceptional postconditions and OCaml extraction are WhyML-specific. This is an inference.
-
-## technique: abstract interfaces for unimplemented structures
-
-When to use it: specify a complex mutable data structure abstractly when the implementation is outside the language fragment, then verify clients against the interface.
-
-How to apply it:
-
-1. Declare an abstract model type with a mutable pure snapshot. The union-find example declares `type uf model { mutable contents: uf_pure }` (Section 3, pp.3–4). The keyword `model` makes `uf` an abstract data type for programs, while specifications see a record.
-2. Use a pure data type `uf_pure` as the immutable snapshot of the structure's contents (Section 3, p.4).
-3. Specify operations with a `writes` set and a relation between new and old snapshots. `find` returns a representative and ensures `result = repr u x ∧ same_repr u (old u)` (Section 3, p.4).
-4. Verify client code against that contract without implementing the data structure. Any implementation satisfying the interface can replace it without invalidating the client proof (Section 3, p.4).
-
-Inference: In Verus, model the abstract state with a ghost/spec type and expose an external or separately verified function contract; keep the implementation boundary explicit. This is an inference.
-
-## techniques for the catalog
-
-- prover-neutral verification conditions — generate a shared first-order specification and encode it for multiple automated or interactive provers
-- static alias control — constrain mutable names so weakest-precondition obligations avoid a general memory model
-- type invariants and ghost code — maintain record invariants and keep verification-only computations in ghost code that can be removed without changing the result
-- contract-and-variant verification — combine pre/postconditions, loop invariants, assertions, and decreasing variants
-- abstract data-structure interfaces — specify an unimplemented mutable structure through a pure snapshot and verify clients modularly
+why3 = deductive verification platform, whyml = programming + specification language
+- whyml is first order: polymorphism, pattern matching, inductive predicates, mutable record fields, type invariants, ghost code
+- no higher-order functions, no mutable recursive structures (doubly linked list, mutable tree)
+- verification conditions go to external provers (Alt-Ergo, CVC3, Z3, E, SPASS, Vampire, Coq, PVS)
+  - spec language is independent of programming language, so it is a common prover format
+  - encoding transformations (eliminate pattern matching, polymorphism) cover missing prover features
+static alias control replaces a memory model
+- every l-value is one of finitely many statically known names
+  - keeps weakest-precondition conditions first order and readable
+- mutable state lives in record fields, e.g. resizable array with invariant `0 ≤ size ≤ data.length`
+- 67 case studies in the gallery (KMP, hash table, union-find)
+- verus analogue: rust ownership/borrowing already does alias control (inference)
+type invariants and ghost code
+- invariant assumed on arguments, re-proved after every construction or mutation
+- ghost code can be erased without changing the result
+- verus analogue: `spec fn` representation predicate + ghost/spec state (inference)
+contracts, variants, assertions
+- pre/postconditions (normal and exceptional), loop invariants, variants for termination, assertions anywhere
+- weakest-precondition generation, extraction of verified whyml to OCaml
+abstract interfaces for unimplemented structures
+- `model` type with a mutable pure snapshot, e.g. union-find `uf_pure`
+- operations specified with `writes` and old/new snapshot relation
+- clients verified against the contract, any implementation can replace it

@@ -2,49 +2,44 @@
 (authored by agents unless marked 🧑)
 Tag: `xu2021memory`, [paper](https://arxiv.org/abs/2003.03296)
 
-## what the paper proves or measures
-
-Xu et al. survey 186 real-world Rust memory-safety bug reports. Their dataset combines RustSec Advisory-DB, the Trophy Case, Rust compiler project issues, and five GitHub projects (§3.2, pp. 7–8). The paper says the dataset “is a superset of all Rust CVEs with memory-safety issues by 2020-12-31” (§1, p. 2). By host program, the 186 bugs are 1 in the compiler, 33 in std-lib, 142 in third-party libraries, and 10 in executables (§3.2, p. 8, Fig. 2). Table 1 (p. 9) counts 185 bugs, because it excludes the one compiler bug (§4.1, p. 10: “Among all the 185 bugs (excluding one compiler bug)”). It cross-tabulates consequence and culprit, with source components written as `std-lib + CVEs + others` (caption, p. 9). Among consequences, 82 are use-after-free and 40 are buffer overflow/over-read (§4.1, p. 10). Among the three Rust-specific culprit categories, 52 are unsound generic or trait, 35 are automatic memory reclaim, and 29 are unsound function; another 69 are “other errors” that the authors say are common to other languages and “not our interest” (§4.1, p. 10).
-
-The main empirical result is narrow: “all memory safety-bugs in our dataset except the compiler bug require unsafe code” (§4.2, RQ-1.1, p. 10). The authors also report that “all existing CVEs are library bugs” (§4.2, RQ-1.2, p. 11). These are observations about the collected reports, not a proof that every future Rust bug has the same cause; the paper itself only says “we can conjecture that Rust has kept its promise” (§1, p. 2). Inference: a Verus project that verifies only safe call sites still needs contracts for unsafe libraries, FFI, and compiler assumptions.
-
-The paper’s three main categories are automatic memory reclaim, unsound function, and unsound generic or trait (“Result Highlight for RQ-2,” §5, p. 12). The paper does not verify programs; it classifies incidents and extracts recurring fault patterns. Inference: its techniques are review and specification checks that can guide what a Verus proof must state.
-
-## technique: audit ownership transfer and automatic drops
-
-What it is. Rust inserts `drop()` calls during compilation. The paper states: “Rust achieves automatic memory reclaim by adding drop() function calls for particular memories in MIR code during compilation” (§5.1, p. 13). The bug pattern is constructing a raw-pointer-backed value while the original owner remains scheduled for destruction. In Code 1, `genvec` takes `s.as_mut_ptr()`, builds a `Vec` with `Vec::from_raw_parts`, returns it, and then `s` is freed; using the returned vector is use-after-free and dropping it can double-free (§5.1.1, p. 13). The paper’s example includes two commented fixes: `/*fix1: mem::forget(s);*/` and a `ManuallyDrop::new(...)` wrapper around the string (Code 1, p. 13).
-
-When to use it. Apply the audit whenever unsafe code turns a pointer, allocation, or borrowed view into a new owner, or whenever a raw pointer is stored in a struct. The paper says a useful patch for a struct that does not own the memory its raw pointer targets is `PhantomData<T>`, “which fools the compiler that it owns the data of T” (§5.1.1, pp. 13–14).
-
-Steps. The paper gives no numbered procedure; the steps below are this study’s reading of its patterns. (1) Identify the original allocation and every alias created from it (Code 1, lines 2–6). (2) Follow the compiler’s normal drop point; here the temporary string is dropped when `genvec` returns (§5.1.1, p. 13). (3) Check whether the returned object also frees or accesses that allocation (Code 1, lines 13–15). (4) Transfer or suppress destruction explicitly with `ManuallyDrop<T>` or `forget()`; the paper warns that calling `forget()` late leaves program points vulnerable to stack unwinding (§5.1.2, p. 15), and recommends disabling automatic drop “as earlier as possible” and preferring `ManuallyDrop<T>` (§6.1.2, p. 19). (5) For structs containing raw pointers, encode ownership with `PhantomData<T>` when the struct really owns the target (§5.1.1, pp. 13–14).
-
-Verus form. Inference: represent an owned allocation with a ghost ownership/resource predicate and give the constructor a `requires` clause establishing that the input allocation is live and exclusively owned. Give the returned wrapper an `ensures` clause transferring that predicate; the destructor proof must consume it exactly once. For a non-owning pointer wrapper, the postcondition should preserve the source ownership predicate and state that dereference is forbidden after the source lifetime. A loop or panic-cleanup path needs an `invariant` stating that each allocation has exactly one owning resource. This is an inference because the paper uses Rust APIs and does not present Verus code.
-
-Evidence and limits. The paper says 35 bugs are automatic-reclaim bugs, “including 23 bugs occurred during normal program execution and 12 during stack unwinding” (§5.1, p. 13). Table 1 (p. 9) instead lists 22 under “Bad Drop at Normal Block” and 13 under “Bad Drop at Cleanup Block”; the paper does not explain the one-bug difference. The evidence is incident counting, not a measured reduction from the proposed patches. The paper does not treat concurrency issues as a sub-type of memory-safety bugs and notes that not all concurrency bugs involve memory safety (§2.1.1, p. 4). Inference: a proof that covers normal returns but omits the panic/unwind path does not cover the paper’s cleanup pattern; the paper says this bug type “only exists in the panic mode” (§5.1.2, p. 14), so abort-mode builds do not exhibit it.
-
-## technique: make initialization and panic cleanup safe
-
-What it is. During panic unwinding, Rust drops values even if initialization is incomplete. Code 4 allocates `mem::uninitialized::<Foo>()`, fills bytes through a raw slice, and can panic before initialization; unwinding then drops an invalid `Vec` pointer (§5.1.2, pp. 14–15). The paper states: “If the program panics at these vulnerable points, the stack unwinding process would call the destructor of Foo which contains an invalid pointer in Vec” (§5.1.2, p. 14).
-
-Steps. As above, these are this study’s reading of the paper’s patterns rather than a procedure the paper numbers. (1) Mark every point between allocation and full initialization as vulnerable (Code 4, lines 4–7). (2) Consider a panic at each such point and the destructor that unwinding invokes (§5.1.2, p. 14). (3) Replace `uninitialized()` with `MaybeUninit`; the paper says Rust introduced `MaybeUninit` to meet the RAII requirement and “deprecated uninitialized() recently”, and that other APIs such as `alloc()` can cause similar issues (§5.1.2, p. 14). (4) Apply the same check to `set_len()` before newly exposed elements are initialized (CVE-2019-16138, §5.1.2, pp. 14–15; §6.1.2, p. 20: call `set_len()` after full initialization when expanding, and as early as possible when shrinking) and to `forget()` used after pointer conversion (§5.1.2, p. 15). Inference: the same procedure should be applied to every early return and error branch, even if the paper discusses panic specifically.
-
-Verus form. Inference: use a ghost initialization flag or predicate. The constructor requires allocated but uninitialized storage; each write establishes a field predicate; the return `ensures` clause requires the complete `Foo` predicate. Any branch before completion must preserve the predicate that prevents `drop` from reading the value. A loop `invariant` can state that initialized length is at most allocated length and that every initialized element is valid. Do not model `forget()` as a run-time proof call; model its ownership effect in the specification.
-
-Evidence and limits. The paper reports 12 of the 35 automatic-reclaim bugs during stack unwinding in §5.1 (p. 13; Table 1 says 13), but it does not report how many were prevented by `MaybeUninit` patches. Inference: the count supports prioritizing unwind paths, not a quantitative claim about patch effectiveness.
-
-## technique: check public function contracts, FFI, and generic bounds
-
-What it is. The paper divides bad function signatures into four bullets: function safety, parameter mutability, lifetime bound, and function visibility (§5.2.1, pp. 15–16). It states: “If developers falsely declared an unsafe function as safe, users of the function may cause undefined behaviors without using unsafe code themselves” (§5.2.1, p. 16). FFI adds undefined behavior, races, misalignment, and inconsistent data layout (§5.2.2, p. 16).
-
-Steps. The paper gives no numbered procedure; these steps are this study’s reading. (1) For each function, check whether its body calls unsafe operations and whether the signature marks the required preconditions; the paper says this is “difficult” in general and recommends that a non-member function using unsafe code unconditionally “is likely to be declared as unsafe” (§6.1.3, p. 20). (2) Check that mutable effects are reflected in parameter mutability and that lifetimes are sufficient (§5.2.1, p. 16). (3) Enumerate every FFI behavior (zero-size allocation, recursive locks, races, alignment, layout) and either handle it or make the caller unsafe (§5.2.2, p. 16). (4) For generic and trait APIs, list required `Send`, `Sync`, `Pin`, and `'static` bounds; Code 5 shows an `unsafe impl<T> Send` repaired as `unsafe impl<T:Send> Send` (§5.3.1, p. 17), and the paper says 30 bugs lack `Send` or `Sync` bounds this way (§6.1.1, p. 19). (5) Test adversarial concrete types such as `Rc<T>` and a `#[repr(align(128))]` type; Code 6, in §5.3.2, shows that the implementation “does not respect the alignment and fails the assertion” (§5.3.2, pp. 17–18). Also, the paper recommends not exposing raw-pointer struct members as public, to avoid unsound construction without an unsafe marker (§6.1.3, p. 21).
-
-Verus form. Inference: express each safety precondition in `requires` and the promised memory/aliasing behavior in `ensures`; keep FFI specifications as trusted external contracts and state their assumptions explicitly. For a generic function, add trait and lifetime assumptions to the contract or restrict the type parameter. Use a proof `invariant` for thread-shared state; the paper’s `Send`/`Sync` failures are precisely cases where the invariant is missing. Verus cannot prove an external FFI implementation without a model; that boundary remains trusted.
-
-Evidence and limits. The paper reports 29 unsound-function bugs and 52 unsound-generic-or-trait bugs (§4.1, p. 10). Code 5’s race explanation is a concrete witness, not a frequency estimate for all generic APIs. The paper excludes ordinary implementation mistakes that are not API unsoundness (§5.2, p. 15).
-
-## techniques for the catalog
-
-- ownership-drop audit — trace raw-pointer ownership, compiler-inserted drops, aliases, and panic paths; transfer or suppress destruction explicitly
-- initialization-unwind audit — prove that every panic or early return sees only initialized values and use `MaybeUninit`-style staged initialization
-- API and FFI contract audit — expose unsafe preconditions, mutability, lifetimes, FFI behavior, alignment, and layout in contracts
-- generic-bound adversarial testing — instantiate generic and trait APIs with `Rc`, unusual alignment, pinning, and lifetime cases to test missing bounds
+empirical study of 186 rust memory-safety bugs (all rust CVEs by 2020-12-31 plus issues)
+- hosts: 1 compiler, 33 std-lib, 142 third-party libs, 10 executables
+- consequences: 82 use-after-free, 40 buffer overflow/over-read
+- rust-specific culprits
+  - 52 unsound generic/trait
+  - 35 automatic memory reclaim
+  - 29 unsound function
+  - 69 other, common to other languages
+- all bugs except the compiler bug require unsafe code
+- all existing CVEs are library bugs
+- observational, not a proof about future bugs
+- inference: verus must still specify unsafe libs, ffi, compiler assumptions
+bad automatic drop
+- rust inserts `drop()` in mir
+- pattern: raw-pointer value built while original owner is still scheduled to drop
+  - `Vec::from_raw_parts` on `s.as_mut_ptr()` gives use-after-free or double free
+- fixes
+  - `ManuallyDrop`, disable drop as early as possible
+  - `mem::forget` late is vulnerable to unwinding
+  - `PhantomData<T>` for structs that own the raw-pointer target
+- 35 bugs: paper text says 23 normal + 12 unwinding, table 1 says 22 + 13, unexplained
+- unwinding-only bugs vanish in abort mode
+- verus: ghost ownership predicate consumed exactly once, proof must cover panic paths
+initialization and panic cleanup
+- unwinding drops partially initialized values
+  - `mem::uninitialized` then panic drops invalid `Vec` pointer
+- fixes
+  - `MaybeUninit`
+  - `set_len()` after full init when growing, early when shrinking
+- verus: ghost init predicate, every early exit preserves it
+unsound public apis and ffi
+- bad signatures: safety, mutability, lifetime, visibility
+- safe-declared fn with unsafe behavior lets safe callers hit ub
+- ffi: zero-size alloc, recursive locks, races, alignment, layout
+- 30 bugs miss `Send`/`Sync` bounds, e.g. `unsafe impl<T> Send` should be `unsafe impl<T: Send> Send`
+- test generics with `Rc<T>`, `#[repr(align(128))]` types
+- do not expose raw-pointer fields publicly
+- verus: preconditions in `requires`, ffi stays trusted contract
+limits
+- incident counts only, no measured patch effectiveness
+- no concurrency bugs counted unless memory-safety

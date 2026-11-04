@@ -2,38 +2,34 @@
 (authored by agents unless marked 🧑)
 Tag: `wang2025unsafecop`, [paper](https://doi.org/10.1007/978-3-031-71177-0_19)
 
-## scope and pipeline
-UnsafeCop extends Kani bounded model checking (BMC) for memory safety in real-world unsafe Rust. It locates unsafe blocks, unsafe functions, and FFI, identifies public functions that can reach them, turns tests into proof harnesses, infers loop bounds with interval abstract interpretation, stubs loops with infeasible bounds and already verified functions, and schedules complex, frequently invoked functions first. Kani then checks memory-safety properties and returns counterexamples, which are fixed iteratively (Sec. 3, p. 309). The paper's abstract says: “Our methodology incorporates harness design, loop bound inference, and both loop and function stubbing for comprehensive analysis” (Abstract, p. 307).
-
-The scope is `T_F = { f | isPublic(f) && Reach(f, usf), usf ∈ USF }` (Def-1, Sec. 3.1, pp. 309–310), where `USF` is user-provided unsafe code: unsafe blocks, unsafe functions, or FFI interfaces. Reachability is computed over the interprocedural control-flow graph (iCFG). The authors exclude unsafe code in the Rust standard library and third-party crates (Sec. 3, p. 309). They argue that "verifying public functions that can reach unsafe code is sufficient since unsafe code is often executed through exposed functions from other crates" (Sec. 4.4, p. 320).
-
-Inference: Verus can use the same reachability triage to prioritize public Rust entry points whose call graph reaches `unsafe` or FFI. The BMC checks are not Verus proofs: Verus would require contracts and proof code for functional or safety properties, whereas UnsafeCop's Kani backend searches bounded executions.
-
-## technique: harness design
-For each target public function, first reuse integration and unit tests to cover calling scenarios and initialization. If tests are insufficient, collaborate with developers to design a harness. For functions whose generic types can alter control flow, identify all appropriate concrete types with developers and explore all instantiations. After fixing detected issues, adjust symbolic-value ranges with developers if coverage is still insufficient (Sec. 3.1, p. 310). In TECC, 57 existing tests covered 89 of the 110 public functions needing harnesses; the authors converted them and wrote 21 new harnesses (78 in total, about 23 person-hours), and removed 14 public functions with access to unsafe code that were unlikely to be called externally (Sec. 4.1, p. 315). They report "approximately 95% statement coverage for all verified functions" and no adjustments to symbolic-value ranges during verification (Sec. 4.1, p. 316).
-
-In TECC, 96 of the 110 public functions have FFI wrappers; the authors wrote harnesses for the FFI functions because these "directly receive data from C code" and are more prone to memory-safety issues (Sec. 4.1, p. 315). Kani's vacuity checks mark vacuous properties as `UNREACHABLE`; the authors reviewed these, which were less than 0.3% of all verified properties, and confirmed no trace could reach them under the harness data setups (Sec. 4.1, p. 316). The authors emphasize: “A harness is deemed correctly generated when the associated public function is verified to be free of bugs and achieves sufficient coverage” (Sec. 3.1, p. 310).
-
-Inference: in Verus, a harness analogue is a verified wrapper or test function that supplies representative concrete and symbolic inputs and calls the target under its `requires`. Coverage and vacuity are testing evidence, not a substitute for proving the contract. Verus does not use Kani's `kani::proof` interface.
-
-## technique: loop-bound inference
-BMC requires finite unwinding bounds. For loops with clear patterns (a literal constant bound, or counters derived from constants or intervals), compute each loop counter's interval in the interval domain and use the interval upper bound. For loops lacking clear patterns, run the abstract interpretation's fixed-point algorithm for a predefined number of iterations, then widen the accessed variables' intervals to a fixed point; the widened upper bound of the loop index is the loop bound (Sec. 3.2, pp. 310–311). In the paper's third Fig. 2 snippet, four iterations give the loop index intervals `[1,1]`, `[2,2]`, `[3,3]`, and finally `[3,7]`, so the bound is 7 (Table 1, p. 311).
-
-Inference: a Verus tool could use this analysis to suggest a finite test bound or to diagnose loops whose invariant cannot establish termination. It cannot replace a Verus `while` invariant and decreases proof when the desired claim is unbounded correctness. An inferred bound is sound only for the analyzed abstraction and BMC scope.
-
-## technique: loop stubbing with safety preservation
-Apply stubbing when widening yields a bound too large for complete unwinding. Replace iterator-like variables (loop indices and references to elements of array-like structures) with symbolic intervals, introduce new references for the accessed vector elements, keep access-validation `assert`s plus dereference and arithmetic-overflow checks, and over-approximate writes to variables declared outside the loop by assigning them appropriate intervals; complex, frequently called callees inside the loop are handled by the scheduling strategy (Sec. 3.3, pp. 311–313). Over-approximation is automated; preserving safety checks is manual. The paper says: “In loop stubbing, we preserve memory-safety checks and over-approximate loops’ external side effects to prevent BMC from stalling” (Sec. 3.3, p. 313).
-
-The `add` case had a practical loop bound of 100 million; without stubbing, Kani spent hours in pre-processing and was terminated for running out of memory, while with stubbing it produced the desired result in 6.75 hours (Sec. 4.2, p. 317). Inference: a Verus proof may abstract a loop with a lemma or ghost model, but any abstraction must have a proved relation to the concrete code. Replacing writes with arbitrary values is useful for memory-safety over-approximation but cannot preserve functional postconditions without additional contracts.
-
-## technique: interprocedural scheduling and function stubbing
-Compute `Invk(f) × Cmplx(f)` for each function, where `Invk(f)` is the function's in-degree in the iCFG and `Cmplx(f)` is the product of Halstead effort and cyclomatic complexity (computed with rust-code-analysis). Put functions above a threshold in `F_sche`, verify them first, then replace calls to them with over-approximating stubs when checking the remaining functions (Sec. 3.4, pp. 313–314). For TECC, the threshold is the harmonic mean of the products over the 196 examined functions, 3360.16; this yielded 168 scheduled functions after filtering out 28; the harmonic mean for `F_sche` is 20014.82 (Sec. 4.2, p. 318). Versus Non-Stubbing, Inter-Proc reduced average verification time by 70.75% for the four functions `chebyshev`, `sqrt`, `log2`, and `cos`, and by 78.28% when considering only `sqrt`, `log2`, and `cos` (Sec. 4.2, p. 317).
-
-Inference: Verus can similarly order lemma and function verification by call frequency and solver cost, but replacing a verified function with an unconstrained stub is valid only when its contract is sufficient for callers. Verus's `assume` or external specifications would enlarge the trusted base and should be reported explicitly.
-
-## techniques for the catalog
-- reachability-scoped harnesses — verify public functions whose call graph reaches user unsafe code and FFI
-- harness construction and vacuity checks — convert tests, cover generic instantiations, and review unreachable properties
-- interval loop-bound inference — derive BMC bounds from interval analysis and widening fixed points
-- safety-preserving loop stubbing — retain memory checks while over-approximating loop side effects
-- complexity-based interprocedural scheduling — verify high invocation-times-complexity functions first and stub them later
+unsafecop: Kani bounded model checking for memory safety of real-world unsafe Rust
+- scope: public functions that reach user unsafe blocks, unsafe fns, or FFI
+  - reachability over interprocedural CFG
+  - excludes unsafe in std and third-party crates
+- Kani gives counterexamples, fixed iteratively
+- BMC, not Verus-style proof: bounded executions, no contracts
+harness design
+- reuse unit/integration tests as harnesses, write new ones when coverage is short
+  - TECC: 57 tests covered 89 of 110 public fns, 21 new harnesses, 78 total, ~23 person-hours
+  - ~95% statement coverage of verified fns
+- vacuity: Kani `UNREACHABLE` properties under 0.3%, manually reviewed
+- FFI wrappers prioritized: they take data directly from C
+loop-bound inference
+- interval abstract interpretation, widen to fixed point, take upper bound of loop index
+  - example: intervals [1,1], [2,2], [3,3], then widened [3,7], bound 7
+- sound only for the analyzed abstraction and BMC scope
+safety-preserving loop stubbing
+- when bound is too large, replace iterator variables with symbolic intervals
+- keep access-validation asserts, dereference and overflow checks
+- over-approximate writes to outer variables
+  - kills functional postconditions
+- `add` loop bound 100 million: unstubbed ran out of memory, stubbed finished in 6.75 h
+interprocedural scheduling
+- score = in-degree × (Halstead effort × cyclomatic complexity)
+- verify high-score fns first, then stub them as over-approximations
+- TECC threshold 3360.16 (harmonic mean over 196 fns), 168 scheduled
+- verification time cut 70.75% on 4 fns (`chebyshev`, `sqrt`, `log2`, `cos`)
+Verus transfer (inference)
+- reachability triage to prioritize entry points with `unsafe`/FFI
+- stub a verified fn only if its contract suffices for callers
+- `assume`/external specs enlarge the trusted base, report them

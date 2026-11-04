@@ -2,46 +2,31 @@
 (authored by agents unless marked 🧑)
 Tag: `hozova2024overapproximation`: [paper](http://arxiv.org/abs/2402.10174v1)
 
-## scope and safety claim
-Hozzová et al. study two transformations of quantifier-free nonlinear integer arithmetic (QF NIA) verification conditions into linear integer arithmetic (LIA) or nonlinear real arithmetic (NRA) overapproximations. The industrial setting is Certora Prover, where a contract property becomes a verification condition (VC) satisfiable exactly when the contract can violate the specification. The authors state: “Both methods are designed for proving the VC unsatisfiability, not finding counter-examples: overapproximation unsatisfiability implies unsatisfiability of the original VC, but not vice versa.” (Section 1, p. 2) A model of an overapproximation can therefore be spurious.
-
-## worked VC and when to use the methods
-The running example models smart-contract variables, typically `uint256`, as nonnegative integers. With total shares `tS > 0` and total monetary value `tM > 0`, withdrawing `wS` shares gives `wM = (wS * tM) div tS`. Adding `nS` shares gives `tS' = tS + nS` and `tM' = tM + ((nS * tM) div tS)`. Withdrawing the same shares afterward gives `wM' = (wS * tM') div tS'`. The desired property is `wM ≥ wM'`. The VC conjoins these equations, nonnegativity assumptions, and the property's negation. It is unsatisfiable, but none of the four tested solvers proved its NIA encoding unsatisfiable within five minutes. The paper explains the broader encoding: “Wraparound semantics for uint256s are modelled by computing all operations that potentially under- or overflow modulo 2²⁵⁶.” (Section 2, p. 3) Certora also uses uninterpreted functions (UF) and datatypes (DT), yielding QF UFDTNIA.
-
-Inference: these transformations are useful candidates when the goal is to prove a VC unsatisfiable and its integer multiplication, division, or modulo makes direct NIA solving difficult. Keep the original VC: an approximated `sat` result alone does not demonstrate a contract bug. Applying the idea to Verus would require establishing that each transformation preserves the implication from transformed unsatisfiability to original unsatisfiability; the paper does not implement or evaluate a Verus integration.
-
-## technique: LIA overapproximation with uninterpreted operations
-“The LIA-based overapproximation proceeds in two steps.” (Section 3.1, p. 4)
-First replace integer multiplication, division, and modulo by fresh uninterpreted functions: `t *I s ⇝ umul(t,s)`, `t divI s ⇝ udiv(t,s)`, and `t modI s ⇝ umod(t,s)`. This produces a coarse overapproximation. Second add ground instances of valid integer-arithmetic properties to constrain these functions. The listed properties concern commutativity and neutral/absorbing elements; division/modulo result ranges; multiplication by an interpreted constant; multiplicative inverse properties conditional on absence of overflow modulo `2^256`; two's-complement identities; and monotonicity/distributivity relating pairs of multiplications.
-
-The authors specify the instantiation boundary: “These axioms are instantiatiated over single applications of the operators, as well as pairs of multiplications that lie on a common program path. They are not instantiated recursively, i.e., if an axiom produces a new multiplication, we don’t generate an axiom for that.” (Section 3.1, p. 4; spelling as printed) They do not list every axiom or the complete instantiation strategy. The output is a ground UF+LIA formula retaining any other input theories; QF DTNIA becomes QF UFDTLIA. Pass this overapproximation to a solver supporting its theories; `unsat` proves the original VC unsatisfiable.
-
-Inference: a Verus adaptation could use proved arithmetic lemmas to justify an abstraction. The paper's brief axiom description alone is insufficient to reproduce Certora's complete LIA transformation.
-
-## technique: NRA overapproximation with fractional remainder
-“We construct the NRA overapproximation fNR of fNI in three steps.” (Section 3.2, p. 4)
-First change integer sorts of variables and functions to real sorts, integer constants to real constants, and integer `+`, `-`, `*` to their real counterparts. Rewrite integer division as `t /R s -R ufrac(t,s)` and modulo as `umod(t,s)`.
-
-Second define `umod(x,y)` piecewise: return `x` if `0 ≤ x < y`; `x-y` if `y ≤ x < 2*y`; `x+y` if `-y ≤ x < 0`; otherwise `y*ufrac(x,y)`. This definition is tailored to Certora's modulo occurrences. Add `ax_frac_bound(x,y)`, requiring `0 ≤ ufrac(x,y) < 1` when `y > 0`, and `-1 < ufrac(x,y) ≤ 0` when `y < 0`. Add `ax_frac_zero(x,y,z,w)`, requiring `ufrac(x,y) = 0` if `x = z*w` and either `y = z` or `y = w`. Instantiate these axioms using selected terms occurring as arguments of real division, `umod`, and multiplication. For each real variable `x`, add `ax_int_approx(x)`: `x ≤ -1 ∨ x = 0 ∨ x ≥ 1`. These definitions and instances produce an overapproximation: the authors explain that an integer model extends by interpreting `ufrac(n,m)` as `n/m - (n div m)` (Section 3.2, p. 5).
-
-Third tighten the approximation by rewriting inequalities from the translated original formula, excluding the added definitions and axioms. Rewrite positive-polarity `t <R s` as `¬(t ≥R s)` and `t >R s` as `¬(t ≤R s)`. Then replace negative-polarity `t ≤R s` by `t -R 1 <R s`, and negative-polarity `t ≥R s` by `t +R 1 >R s`. Although these individual inequalities are relaxed, their negative occurrences tighten the formula while preserving integer models. In Example 2, Yices2 and cvc5 prove the transformed share VC unsatisfiable (p. 6). The output uses UF+NRA while retaining other input theories.
-
-## evidence and denominators
-The evaluation starts from 792 encodings of 396 customer-contract problems, one QF UFNIA and one QF UFDTNIA encoding per problem. Hash functions used for memory addressing are represented by UF or datatypes, respectively. Excluding 300 encodings found satisfiable leaves 492 benchmarks, 246 per encoding set. The solvers are cvc5 1.0.2, MathSAT 5.6.8, Yices2 2.6.4, and Z3 4.11.0. Runs use 300 seconds and 16 GB per problem on 32-core AMD Epyc 7502, 2.5 GHz machines with 1 TB RAM. Only cvc5 and Z3 run on the datatype set because the other two do not support datatypes (Section 4, pp. 6–7).
-
-A virtual best solver (VBS) takes the fastest result among the solvers run for each benchmark. Here, solved means proved unsatisfiable. Figure 1 (p. 7) reports VBS counts of 52 NIA, 34 LIA (11 new), and 42 NRA (14 new) for QF UF+; for QF UFDT+, 57 NIA, 52 LIA (19 new), and 47 NRA (16 new). Thus each approximation separately adds 30 benchmarks across the two encoding sets. Combining the approximations gives 50 and 59 solved benchmarks within the approximated UF and UFDT sets, respectively; 19 and 23 are new relative to NIA. The authors report: “19 and 23 benchmarks were newly solved in at least one of the overapproximations of QF UFNIA and QF UFDTNIA, respectively, corresponding to a 39% increase in the number of smart contracts we were able to verify compared to the NIA encoding.” (Section 4, p. 8) The increase is 42 additional solved encodings relative to 109 solved NIA encodings, not 39% of the 492 retained benchmarks. Inference: these counts should not be read as counts of distinct contracts, since each underlying problem has two encodings.
-
-Among the 109 benchmarks proved unsatisfiable in NIA, LIA returns no `sat` results and leaves 53 unsolved; NRA returns 24 spurious `sat` results and leaves 26 unsolved. The authors conclude: “We thus conclude that the LIA overapproximation is quite tight and is unlikely to benefit from adding more axioms. On the other hand, the NRA overapproximation could be tightened.” (Section 4, p. 8) This is their interpretation of this workload; unsolved LIA cases do not establish absence of spurious models.
-
-Of the 492 retained benchmarks, 482 use division and 490 use modulo. Averages per benchmark are 83 multiplications, 37 divisions, 47 modulos, and 1,361 variables. Ground axiom instances increase average file size by 70% for LIA and 243% for NRA (Section 4, p. 7). On the generic SMT-LIB QF NIA and QF UFNIA sets, NRA overapproximation generally reduces solver success. The notable exception is Yices on QF NIA: 5,992 of 10,343 problems solved after approximation versus 5,243 originally. The authors conclude that successful application requires tuning to the domain (p. 8).
-
-## what is proved, trusted, and limited
-The methods construct one overapproximation and pass it to a solver; they do not iteratively refine it, unlike the related approaches discussed in Section 5 (pp. 8–9). The paper describes and evaluates the transformations, but the LIA axiom set and instantiation strategy are not fully disclosed. The NRA prototype is a Python formula transformation using PySMT's tokenizer; LIA is implemented directly in Certora (Section 4, p. 6).
-
-Inference: assurance depends on the contract-to-VC encoding, correctness of the transformation and axiom instances, and solver soundness. Overapproximation can prevent a proof or introduce spurious models; accepting transformed `sat` as a genuine counterexample would be unjustified. A Verus application needs its own soundness argument and evaluation.
-
-## techniques for the catalog
-- LIA UF overapproximation: replace integer multiplication/division/modulo by uninterpreted functions and add selected valid ground axioms
-- NRA fractional overapproximation: translate integer division to real division minus a bounded fractional remainder, define modulo, approximate integer values, and rewrite inequalities by polarity
-- unsat-only proof use: transformed unsatisfiability proves original unsatisfiability; transformed satisfiability alone does not establish a counterexample
-- domain-specific evaluation: compare newly proved unsatisfiable cases, spurious satisfiable cases, encoding variants, resource limits, and formula size
+goal: prove certora vcs unsat when qf nia solving fails
+- overapproximation unsat implies original unsat; sat may be spurious, so no counterexamples
+- uint256 wraparound modeled by mod 2^256
+- running example: share/value withdrawal vc, unsat but 4 solvers fail in 5 min on nia
+lia overapproximation
+- replace `*`, `div`, `mod` with uninterpreted umul/udiv/umod
+- add ground axiom instances over single ops and pairs of multiplications on a common path
+  - commutativity, neutral/absorbing, div/mod ranges, no-overflow inverses, monotonicity
+  - not instantiated recursively
+- axiom set not fully disclosed, so not reproducible
+nra overapproximation
+- ints to reals; `t div s` becomes `t/s - ufrac(t,s)`, piecewise umod
+- axioms: ufrac bounds, ufrac zero for exact products, int approx `x ≤ -1 ∨ x = 0 ∨ x ≥ 1`
+- tighten by polarity-based inequality rewriting (negative `t ≤ s` to `t-1 < s`)
+- prototype in python on pysmt tokenizer
+evaluation
+- 792 encodings of 396 contract problems; 492 remain after dropping 300 sat
+- solvers: cvc5, mathsat, yices2, z3; 300 s, 16 gb
+- vbs solved: nia 52 / lia 34 / nra 42 (uf); nia 57 / lia 52 / nra 47 (ufdt)
+- combined: 19 + 23 newly solved, "39% increase" over 109 nia-solved encodings
+  - counts are encodings, not distinct contracts
+- lia: no spurious sat on nia-solved set, tight; nra: 24 spurious sat, loosenable
+- axiom instances inflate files 70% (lia), 243% (nra)
+- generic smt-lib: nra mostly hurts; exception yices on qf_nia, 5,992 vs 5,243 of 10,343
+- needs domain tuning
+verus transfer (inference)
+- candidate for nonlinear arithmetic vcs, keep original vc
+- needs own soundness argument; paper has no verus integration

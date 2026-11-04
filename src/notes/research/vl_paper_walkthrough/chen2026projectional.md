@@ -2,45 +2,17 @@
 (authored by agents unless marked 🧑)
 Tag: `chen2026projectional`, [paper](https://doi.org/10.1145/3803437.3805571)
 
-## scope and claims
-
-The paper proposes projectional decoding, which generates text while maintaining a partial graph model. The model is incrementally checked against semantic constraints; the checks then restrict token sampling. The authors state, “In this paper, we propose projectional decoding, a novel conceptual framework that integrates domain semantics directly into the generation process by maintaining, alongside text, a partial graph model as the primary artifact representation throughout generation.” (abstract, p. 1). The work is a framework and a preliminary CLEVR program-generation evaluation (Section 4, “a preliminary feasibility evaluation” in Section 1). The paper never mentions Verus or Rust; everything below about Verus is this study's inference.
-
-The basic problem is a representation mismatch: “While LLMs generate text, SE artifacts are inherently structural and often represented using graph-based models [10, 24].” (Section 1, p. 1). Projectional decoding keeps an explicit abstract representation so that incomplete output, alternatives, and errors can be reasoned about before the program is complete. The paper says, “This abstract representation enables incremental semantic validation by explicitly capturing uncertainty and natively supporting error detection, while guiding generation toward semantically valid outputs with provable guarantees.” (abstract, p. 1). Inference: “provable guarantees” describes the intended mechanism; the reported experiment does not establish a formal proof for all generated programs (in Table 1, semantic validity is 73.33% to 79.67%, not 100%).
-
-## technique 1: maintain and refine a partial model
-
-What it is. A decoder stores both the emitted text and a partial model of the artifact: a graph that instantiates a metamodel. Per Section 3 (p. 2), each element (node or edge) carries a four-valued status: certain elements are parts of the output already completed; possible elements are still to be generated; absent elements are ruled out by the constraints and excluded from the model; error elements indicate violations of semantic constraints.
-
-How to apply it. (1) Define a metamodel whose elements represent the target DSL or program, with well-formedness constraints (Section 2, p. 1). (2) Provide a grammar for syntactic validation and semantic constraints over the model. (3) For each syntactically valid token, update the partial model in two steps: refine existing partial elements using the new token (possible elements become certain or absent), and introduce new partial elements required by the metamodel and constraints (Section 3, p. 3). (4) Elements directly derivable from the generated output are derived; absent and possible elements are inferred from the syntactic and semantic constraints and the incomplete portions of the output. (5) Label an element as error when its refinement violates a constraint; the paper says this is checked with graph pattern matching for structural constraints or abstract interpretation for behavior constraints. (6) A model containing error elements is invalid and discarded. (7) Continue until “either a termination token is produced or no semantically valid refinements remain” (Section 3, p. 3). The paper gives no pseudocode; this seven-step list is this study's reading of the Section 3 prose.
-
-The example (Figure 2, p. 3) asks for `def sum_pos(xs:list[int])` returning the sum of all positive numbers in a list. Its two semantic constraints are written in the figure as “return value is an interger” (Con1, `ensure:type(return)=int`) and “total >= 0 for all paths” (Con2, `invariant:total>=0`); the paper spells “interger”. The text calls Con1 a postcondition and Con2 an invariant. The partial model in the figure contains Assign, For, AugAssign, VarRef, Expr, CallExpr and ConstExpr elements while the text is still incomplete; the figure's `Expr` stands for the incomplete right hand side of the `AugAssign`. Inference: in Verus, the model could be a ghost representation of a Rust function's control/data structure, with candidate states represented by spec values; generated code would still need ordinary Rust typing and Verus proofs.
-
-Evidence and limits. The method is conceptual and the example is illustrative. Inference: a partial graph can guide proof-oriented generation, but it does not itself prove that a Rust implementation satisfies its intended contract. The paper says generation “terminates early with a semantically invalid output” when the LLM explored “a decoding path where no semantically valid solutions are possible”, and proposes backtracking as future work (Section 4, p. 4; Section 5, p. 4, which mentions token-level and model-level backtracking).
-
-## technique 2: constraint-guided token masking
-
-What it is. At each generation step, the vocabulary is filtered by two validation modules, syntactic then semantic (Section 3, p. 2). The surviving tokens mask the LLM output distribution, so syntax and semantics influence decoding rather than post-hoc repair.
-
-How to apply it. (1) Obtain the LLM's next-token distribution for the current prefix. (2) Syntactic validation removes tokens that violate the grammar (the prototype uses LLGuidance). (3) Semantic validation evaluates each remaining token by refining the partial model and checking for constraint violations. (4) Discard tokens whose refinements lead to semantic violations and use the rest to mask the distribution. (5) Select the next token from the masked distribution (the paper's “naïve approach” samples from it; the evaluation uses greedy sampling) and append it to the prefix, which also refines the partial model. (6) Repeat. The paper notes “most tokens are discarded by the syntactic validation, making semantic validaiton computationally tractable even without additional caching or pruning” (Section 3, p. 2; the paper spells “validaiton”). The prototype compares no guidance, syntactic constrained decoding with LLGuidance, and semantic projectional decoding (Section 4, p. 4).
-
-The authors report, “The results show that even a simple token-masking strategy informed by partial models can substantially improve semantic validity and task accuracy compared to standard decoding or syntax-only constrained decoding.” (Section 1, pp. 1–2). The accuracy gain is not uniform: the paper says semantic validity improvement “also leads to better task accuracy in 2 out of 3 cases” (Section 4, p. 4); at 14B, accuracy is 37.33% with semantic guidance against 37.67% with no guidance. Inference: a Verus-oriented decoder could mask tokens that would make a required `requires`, `ensures`, or loop invariant structurally impossible, then invoke Verus after generation for semantic proof.
-
-## technique 3: incremental semantic validation and error handling
-
-What it is. Validation runs during generation, not only after a complete artifact. The partial model records uncertainty (possible elements) and can label elements as error when a refinement violates a constraint.
-
-How to apply it. (1) Encode domain rules as constraints over the metamodel; the paper names graph patterns and temporal logic as common forms (Section 2, p. 1). (2) Evaluate them on each refined partial model. (3) Possible (not yet generated) elements are not violations; only a refinement that violates a constraint becomes an error element. (4) Discard tokens whose refinement yields error elements. (5) If no semantically valid refinement remains, generation terminates early with a semantically invalid output (Section 3, p. 3; Section 4, p. 4). The CLEVR prototype reuses constraints from [5]: “(Con1) type consistency (e.g., the argument of filter must be of type set), (Con2) number of inputs (e.g., And must have exactly two inputs), and (Con3) acyclic structure, etc.” (Section 4, p. 4).
-
-In the paper’s words, “Error elements may be introduced as a result of validation when no refinement of the partial model satisfies the input constraints.” (Section 3, p. 3). Inference: Verus generation can use this distinction to keep pending proof obligations explicit, but failed SMT proofs and semantic-model errors must not be conflated: Verus reports obligations over concrete Rust/spec code, whereas this decoder reasons over an abstract graph.
-
-## evidence, trust, and product implications
-
-The preliminary evaluation uses Qwen3 4B, 8B, and 14B models, greedy sampling (temperature 0), and a few-shot prompt with four examples. “All metrics are computed over all generated results”: syntactic validity, semantic validity (all semantic constraints satisfied), and accuracy (correct answer when executed on a scene graph); for semantic guidance the paper also measures average generation time per token relative to no guidance. Table 1 (p. 4), in %: for 4B, no guidance is 9.00 syntactic, 4.33 semantic, 2.33 accuracy; syntactic-only is 100, 48.67, 28.00; semantic guidance is 99.33, 73.67, 36.00 with 1.1x time. For 8B, no guidance is 87.67, 60.33, 38.67; syntactic-only 100, 61.00, 37.33; semantic guidance is 99.00, 79.67, 40.00 with 1.5x time. For 14B, no guidance is 83.33, 55.44, 37.67; syntactic-only 100, 58.33, 36.67; semantic guidance is 99.67, 73.33, 37.33 with 1.1x time. The text says overhead ranges “from 1.11x to 1.50x”. The paper notes, “However, none of the LLMs reach a perfect semantic validity even with semantic guidance.” (Section 4, p. 4). Closed-source LLMs are not evaluated “due to the lack of access to their internal token distribution required for constrained decoding” (Section 4, p. 4). The paper reports no repeated runs or variance.
-
-## techniques for the catalog
-
-- partial semantic model: maintain an uncertain graph alongside text and refine it incrementally from emitted tokens and domain constraints
-- constraint-guided token masking: tentatively validate syntactically valid candidate continuations against the refined model and mask those that cannot satisfy the constraints
-- incremental validation with error states: check semantic rules during decoding and represent violations as error elements, discarding such models
-- model-guided backtracking target (Inference, building on the paper's future-work remark): use alternative partial-model refinements when a greedy path reaches no valid completion
+idea: keep a partial graph model beside the text during decoding
+- elements are certain / possible / absent / error
+- each token refines the model, error refinements are discarded
+- vocabulary masked by grammar (LLGuidance) then by semantic constraints
+preliminary CLEVR program-generation eval, Qwen3 4B/8B/14B, greedy
+- semantic validity: no guidance 4.33/60.33/55.44%, semantic guidance 73.67/79.67/73.33%
+  - syntax-only: 48.67/61.00/58.33%
+- accuracy gain not uniform; 14B 37.33% vs 37.67% unguided
+- overhead 1.1x-1.5x per token
+- no run reaches perfect validity despite "provable guarantees" claim
+limits
+- conceptual framework, no repeated runs, open models only
+- backtracking left as future work
+- paper never mentions Verus; use for contract/invariant structure masking is inference

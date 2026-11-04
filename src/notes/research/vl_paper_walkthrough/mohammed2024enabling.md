@@ -2,36 +2,32 @@
 (authored by agents unless marked 🧑)
 Tag: `mohammed2024enabling`, [paper](https://arxiv.org/abs/2404.01096)
 
-## what the paper teaches
-
-MSA assists porting C programs to Checked C using static analysis and LLM-generated annotations and refactorings. It does not guarantee a complete port: “We carry on with this design philosophy in this paper, striving to provide even more assistance without guaranteeing a complete port to Checked C.” (Section 3, p. 6). Checked regions provide spatial memory safety, with runtime checks; unchecked regions remain outside that guarantee (Section 2, pp. 2–3). The authors describe a broader verification workflow: “First step is to rewrite the code so that it is amenable to verification. Second step is to annotate the code with contracts (invariants, type qualifiers, etc.).” (Section 1, p. 2). Inference: the same separation may help Verus migration, but this paper does not evaluate Verus.
-
-The first technique is dependency-ordered, modular rewriting. Build a graph of top-level declarations, with edges from a declaration to the procedures, types, globals, and macros it directly uses. Indirect calls yield edges to the function-pointer type, not its potential targets; macros are not transformed (Section 4.1, pp. 6–7). Save each declaration’s original code and initialize its refactoring flag, then visit declarations bottom-up. Cycles are broken arbitrarily to keep a single pass. For each declaration, prompt the LLM with the task, examples, current code, immediate successors, their refactoring history, and task-specific variable names. Include only procedure signatures in the successor context. Apply the returned patch, then record whether the declaration changed; for procedures, record only signature changes (Algorithm 1 and Section 4.2, p. 8). The prompt says: “Similar changes have been made in other parts of the code. Given the refactor history, update the current code accordingly.” (Figure 2, p. 9). Inference: this supports propagating interface changes to callers without placing the whole program in one prompt.
-
-The second technique is structured patch generation. The prompt supplies Checked C background, a task description, instructions to respect prior edits, an output format, one or two fixed examples, and code context. The authors write: “Instead of asking the model to produce the entire modified code, prior work has found it useful to instead ask for a “diff” or a patch that can be applied to the original code.” (Section 4.2, p. 7). MSA requests multiple completions, ten by default, and takes a majority vote among their patches (Section 5, p. 10). Inference: a Verus implementation could request patches with dependency context, apply them mechanically, and use verification as a prerequisite check while retaining the original source for review.
-
-The third technique is combining symbolic inference with three sequential LLM transformations. First, 3C runs `typ3c` to classify checked pointers and `boun3c` to infer bounds from allocation-site dataflow. The base bounds algorithm is designed to be sound but incomplete; it only infers bounds involving one variable or a constant. MSA disables its potentially unsound heuristics (Section 3, pp. 5–6; Section 5, pp. 9–10). MSA then constructs a dependency graph and applies these transformations:
-
-1. Replace nested arrays with arrays of structs. MSA adds struct declarations symbolically; each struct stores an inner array and its length. The LLM rewrites uses and maintains the length when the array changes (Section 5.1, pp. 10–11).
-2. Infer bounds. The prompt allows four responses: add a valid bound, leave it unknown with an explanation, change an array pointer to a null-terminated array pointer, or add a bounds parameter to a procedure. This pass visits procedures bottom-up and may also annotate globals and struct fields in their context. Conflicting annotations for globals or fields are dropped afterward (Figure 6 and Section 5.2, pp. 11–13).
-3. Annotate remaining globals and struct fields. MSA symbolically adds integer bounds variables and corresponding `count` annotations. The LLM updates each new bounds variable whenever the associated pointer is assigned, in the same statement (Section 5.3, pp. 13–14; Figure 8, p. 13).
-
-The LLM can use callee annotations to infer caller annotations. For example, MSA infers `count len` for `data` and `count 32` for the return value of `get_hash`, using `MD5Update` and `util_bin_to_hex` signatures (Section 6.2, p. 16). Inference: a Verus workflow could similarly supply conservative analysis facts and callee contracts, leaving proposed contracts and interface edits to an LLM and checking the result with Verus.
-
-## evidence and boundaries
-
-For small Olden and Ptrdist benchmarks, V0 supplied no Checked C background or inference instructions and performed poorly. V1 supplied those instructions but used whole-program prompts. MSA correctly inferred 86% of required annotations on average, compared with 35% for V1. Five cases also involved refactoring instructions absent from V1, so the comparison does not isolate modularity alone. Correctness meant matching manually annotated versions that compiled and passed runtime tests (Section 6.1, pp. 14–15).
-
-For five real-world codebases, MSA inferred 877 annotations, of which the authors manually judged 797 correct and 80 incorrect. The 922 annotations remaining after `boun3c` form the denominator: 797/922 = 86%, with 45 left unannotated. Correct annotations included 212 array bounds, 78% of remaining array bounds, and 585 null-terminated array bounds, 90% of that category; 532 of the latter were `count(0)` (Section 6.2, pp. 16–17). For libarchive, MSA ran on the whole 146.8K-line codebase, but correctness analysis covered only a subset of 150 unannotated pointers (Table 2 and Section 6.2, p. 15). Thus, the reported totals do not cover every annotation generated for libarchive.
-
-Compiler validation was narrower than the manual annotation assessment. In the end-to-end vsftpd case study, the authors corrected or added annotations and changed a further 148 lines to pass the compiler, including dynamic bounds casts, assume casts, and new variables. They then started the FTP server without encountering failed runtime checks. MSA supplied 123 correct annotations leading to 250 edits; 11 annotations required 28 manual edits, followed by those 148 further edits. The authors estimate that MSA performed roughly 58% of the work and caution: “We acknowledge that further work is required in this space to make a claim on end-to-end porting.” (Section 6.3, pp. 17–18).
-
-The authors identify possible training-data contamination, manual correctness assessment, and future GPT4 changes as threats. Multiple authors independently assessed correctness and discussed disagreements; compiler checks were used for the small benchmarks and vsftpd case study. The experiments used `gpt-4-32k` from Azure OpenAI Service, and the authors make no claim about other LLMs (Sections 6–7, pp. 14, 18). Inference: these results support annotation assistance, not automatic preservation of intended behavior or complete porting. For Verus, verification would need a separate check that the specification expresses the intended requirement; this paper supplies no direct evidence about that transfer.
-
-## techniques for the catalog
-
-- dependency-ordered modular rewriting — visit declarations bottom-up with immediate dependency context and prior interface edits
-- structured patch prompting — specify task rules, examples, output format, and relevant variables; apply generated patches
-- symbolic inference followed by LLM transformations — use 3C without bounds heuristics, then replace nested arrays, infer bounds, and annotate remaining globals and fields
-- explicit uncertainty — allow unknown bounds and remove conflicting or out-of-scope annotations
-- compiler validation with manual completion — use Checked C checks, while recognizing that MSA output may need further edits
+MSA: LLM + static analysis assist porting C to Checked C, no guarantee of complete port
+- checked regions give spatial memory safety via runtime checks
+- GPT-4-32k only, no claim for other LLMs
+dependency-ordered modular rewriting
+- graph of declarations with edges to procedures, types, globals, macros used
+  - indirect calls link to the function-pointer type, macros untouched, cycles broken arbitrarily
+- visit bottom-up so each prompt carries only direct dependencies and earlier interface edits
+- callee annotations let the LLM infer caller annotations, e.g. `count len` for `data`
+- Verus form (inference): feed callee contracts as context, LLM proposes caller contracts, Verus checks
+symbolic inference first, then 3 LLM transformations
+- 3C `typ3c` + `boun3c` (sound but incomplete, one variable or constant bounds), unsound heuristics disabled
+- replace nested arrays with arrays of structs holding the length
+- infer bounds, 4 allowed answers: add bound, unknown with explanation, null-terminated array pointer, add bounds parameter
+- annotate remaining globals and struct fields via new bounds variables, updated at each pointer assignment
+- conflicting or out-of-scope annotations dropped, unknown is allowed
+structured patch prompting
+- prompt: Checked C background, task, respect prior edits, output format, 1-2 examples, context
+- ask for a diff, not whole code, 10 completions by default
+evidence
+- Olden/Ptrdist: 86% of annotations correct vs 35% for whole-program baseline V1
+  - confounded, 5 cases also had refactoring instructions V1 lacked
+- 5 real codebases: 877 annotations inferred, 797 correct, 80 wrong, 797/922 = 86% of those remaining after `boun3c`
+  - libarchive 146.8K lines run, but correctness checked on only 150 pointers
+- vsftpd: 123 correct annotations led to 250 edits, 148 more manual edits needed to compile
+  - ~58% of work done by MSA, authors disclaim end-to-end porting
+limits
+- correctness judged manually by authors, possible training-data contamination
+- supports annotation assistance, not preservation of intended behavior
+- no evidence on transfer to Verus spec correctness

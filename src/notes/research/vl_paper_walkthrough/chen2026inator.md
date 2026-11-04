@@ -2,52 +2,29 @@
 (authored by agents unless marked 🧑)
 Tag: `chen2026inator`, [paper](https://doi.org/10.1145/3808270)
 
-## central method and boundaries
-&inator chooses Rust interface types for a whole C program by translating it to an LLVM-like source language, generating SMT constraints, and solving them with Z3. The paper states: “&inator performs the following steps as shown in Fig. 3: (1) Convert the C program to &inator’s source language (§4). (2) Generate SMT constraints on the inferred Rust types that ensure type correctness, semantic equivalence, and precision (§6–§10). (3) Run an off-the-shelf SMT solver to solve the constraints, yielding correct, precise Rust types.” (Section 3.3, p. 6). Inference: this is interface synthesis, not proof that translated function bodies satisfy a Verus contract.
-
-The paper also states: “&inator’s conversion to the source language inserts a drop of 𝑣 at the start of the immediate postdominator of the nearest common ancestor in the postdominator tree of all basic blocks where 𝑣 is live.” (Section 4, p. 8). The input is whole-program. The authors say: “&inator requires whole-program analysis to perform correct and precise interface translation” (Section 3.1, p. 6). It does not support multithreaded programs; an incomplete program such as a library requires a client test suite. &inator has partial or no support for function pointers, polymorphic pointers, unions, variadic functions, and ternary operators (Sections 3.1–3.2, p. 6). Dynamic `RefCell` borrow conflicts and possible `Rc` cycles can remain, and inferred interfaces may not admit a panic-free or leak-free implementation (Section 3.2, p. 6).
-
-## technique: C/LLVM conversion and typed intermediate language
-Inference: this conversion could support incremental translation once the whole-program interface has been inferred. The compiler pass first applies LLVM `mem2reg`, then converts LLVM IR to a source language that is one-to-one with LLVM IR but adds precise source types, explicit drops, and type labels (Section 4, pp. 7–8; Section 11.1, p. 18). Its grammar includes `alloca`, loads, stores, pointer-field aliases, pointer arithmetic, calls, SSA phi, use, branches, returns, and drops (Figure 4, p. 7). Type labels identify each source fragment and non-nested rvalue so the solver can assign distinct fragments subject to the joint constraints (Section 4, p. 8).
-
-The conversion inserts `drop(v)` at the immediate postdominator of the nearest common ancestor of all blocks where `v` is live; if that ancestor is the exit, the drop is inserted there (Section 4, p. 8). Inference: these inserted drops give the borrow constraints explicit points at which variables are dropped.
-
-Inference: the inferred ownership shape could guide an API for later Verus verification; the paper does not establish Verus contracts or verify translated function bodies.
-
-## technique: infer Rust type fragments
-The solver assigns each source type label a fragment from `unknown`, primitives, structs with lifetimes, `ghost`, `Box`, `Rc`, `shared`, or `mut`, with `Cell` and slice qualifiers (Section 5, pp. 8–10; Figure 6). These map to concrete Rust forms such as `Box<T>`, `Rc<T>`, `&'a T`, `&'a mut T`, `Ref<T>`, `RefMut<T>`, and optional variants (Table 2, p. 9). The `ghost` fragment removes unnecessary pointer indirection by using the referent type itself. Pointer nullability is deliberately left to a later `Option` choice, so all pointer fragments may conservatively be wrapped in `Option` (Section 5, p. 9).
-
-The running linked-list example chooses owned and borrowed fragments, `RcCell` for an interior-mutable recursive field, and lifetimes for references (Figure 7, p. 10). These choices are constrained together, rather than inferred as sequential ownership, mutability, slice, and lifetime passes. Section 6 (p. 10) states: “&inator generates SMT constraints on inferred Rust types that enforce semantic equivalence with the input source program and adherence to Rust’s type-checking rules.” Section 5 (pp. 9–10) leaves `Option`, `Rc` versus `Weak`, and `Cell` versus `RefCell` unresolved within fragment sets; conservative choices can use `Option`, `Rc`, and `RefCell`.
-
-## technique: type-consistency constraints
-Generate constraints in four groups: type consistency, semantic preservation, borrow checking, and precision (Section 6, p. 10). Type-parity constraints require each primitive or struct fragment to match its Rust counterpart and each C pointer to map to an allowed Rust pointer fragment (Section 7.1, p. 11). Struct-consistency constraints require every lifetime used in a field to be declared by the struct (Section 7.2, p. 11).
-
-For recursive structs, assign an integer rank and require a struct rank to exceed the rank of any directly contained struct. A recursive field without indirection creates `StructRank(Node) > StructRank(Node)`, which is unsatisfiable; `Rc` or another pointer indirection makes the struct finite (Section 7.3, p. 11). Array constraints require an array qualifier for pointer arithmetic expressed as `&v[e]` and disallow array-qualified `ghost` fragments because array sizes are not inferred (Section 7.4, pp. 11–12). Assignment types agree except for lifetimes; pointer transformations allow differing path and rvalue types when safe Rust operations connect them (Sections 7.5–7.6, pp. 12–13; Figure 8). Writes require an owning or mutable fragment, or a `Cell` qualifier; allocations require owning fragments. Constraints for external functions were derived manually for the evaluated libc calls (Sections 7.7–7.10, p. 13). The authors state: “We derived these constraints manually for all libc functions called from our evaluated programs.”
-
-Inference: these type constraints could guide a verified translation, but a separate specification must describe the intended data and behavior.
-
-## technique: semantic-preservation constraints
-C copy semantics differ from Rust copy and move semantics. &inator therefore constrains pointer transformations so that a move cannot invalidate a live path, and nondestructive transformations preserve paths used later (Section 8, pp. 13–14). For pointer-typed non-nested rvalues whose pointer variable remains live, the transformation must be nondestructive. Paths derived from borrowed or `Rc` pointers also cannot be invalidated by moving out of their referents (Sections 8.1–8.2, p. 14). The paper states: “Nondestructive transformations are pointer transformations that do not invalidate any path in their operand, and are shown in Fig. 8 by solid edges.” The paper's example requires a list variable that is used again to transform nondestructively into a shared reference (Section 8.2, p. 14).
-
-Inference: for a Verus translation, these constraints identify where ownership changes must be reflected in `requires`, `ensures`, and ghost models of aliasing. They do not prove value-level equivalence unless the translated body is verified against a C semantic specification.
-
-## technique: NLL-style lifetime, loan, and conflict constraints
-&inator models Rust non-lexical lifetimes. A lifetime variable is a set of program points where a reference or struct containing it is live or aliased; loans are pairs `(lifetime,path)` (Section 9, pp. 14–15). It generates constraints for liveness, subtyping, reborrowing, function lifetime parameters, and call-site propagation (Section 9.1, pp. 15–16). In-scope loans are computed by data-flow: control-flow merges union the facts, while each instruction kills dead lifetimes and assigned paths and generates loans for borrows (Section 9.2, p. 16).
-
-Constraints prevent conflicting borrows, require nondestructive transformations for moves that would conflict with loans, permit writes through borrowed paths only under the stated shared-reference and interior-mutability conditions, and prevent conflicting drops (Section 9.3, pp. 16–17). In the example, `n` escapes `push` into `list`, so a borrowed `Node::next` would retain a loan when owning `n` is dropped. This forces `Node::next` to be owning (Section 9.3.4, p. 17). The authors explain: “Since n escapes the push function into list, if Node::next were a borrowed reference, then a loan of *n would be in scope when n is dropped, so this constraint forces Node::next to be an owning pointer.”
-
-## technique: optimize for precise interfaces
-Among types satisfying correctness constraints, &inator minimizes, in descending priority, the number of `Cell` qualifiers, cumulative pointer-transformation cost, run-time cost, and array qualifiers, considering interface fragments only (Section 10, pp. 17–18; Appendix E, pp. 36–37). Transformation cost favors owning fragments at the outermost fragment of struct fields and globals, and borrowed fragments elsewhere. Run-time cost orders `Rc`, `Box`, `ghost`, `mut`, and `shared` from most to least costly. The authors caution: “However, there is not necessarily a unique assignment of interface types that minimizes &inator’s optimality objectives.”
-
-## evidence and limits
-The authors manually validated correctness and precision for six non-scalability programs: the 41-line running example, ulidgen, leftpad, amp, nandc, and rbtree. Every one received a correct and precise interface by their manual assessment (Table 3, p. 20). Section 11.3 (p. 20) states: “For every (non-scalability) program, we were able to validate &inator’s inferred interface by writing a safe Rust program that used the interface and preserved semantics, as the Correct column reports.” The authors compared against manual line-by-line translations; only the amp and rbtree manual interfaces were written without first seeing &inator’s interfaces (Section 11.2, p. 19). Three larger scalability programs were not manually checked: carrays (618 C lines, 740 source instructions, 1,799 type fragments), jccc (1,394 lines, 1,983 instructions), and tisp (3,656 lines, 2,908 instructions) (Table 3, p. 20). Z3 solving times range from 0.6 s for the running example to 1,100 s for rbtree, 17,000 s for jccc, and 25,000 s for tisp; each timing is the average of five runs on dedicated Xeon Platinum 8268 sockets with LLVM 17.0.6 and Z3 4.13.3 (Sections 11.2–11.3, pp. 19–20, Table 3).
-
-The guarantee is conditional: Section 3.1 (p. 6) says, “For a C program without undefined behavior, &inator infers a correct interface (modulo the limitations below).” The evaluation modified inputs to accommodate unsupported features, and the three larger programs were used only for scalability measurements (Section 11.2, p. 19). Inference: the empirical results support the evaluated interfaces, but do not independently validate the constraint formulation or establish correctness for arbitrary C programs, external libraries, or Verus specifications.
-
-## techniques for the catalog
-- LLVM-to-source conversion — lower whole-program C to a typed IR with explicit drops, pointer paths, and labels
-- Rust fragment inference — choose ownership, borrowing, mutability, lifetime, slice, and interior-mutation fragments with SMT
-- type consistency constraints — enforce parity, finite recursive layout, arrays, mutability, ownership, and external-function rules
-- semantic preservation constraints — prevent C-to-Rust copy, move, and pointer transformations from invalidating live paths
-- NLL loan analysis — solve lifetimes, subtyping, reborrowing, in-scope loans, and conflict conditions by data flow
-- precision optimization — minimize `Cell` qualifiers, transformation cost, run-time cost, and array qualifiers in priority order over interface fragments
+&inator: whole-program c-to-rust interface (type) inference via smt
+- pipeline
+  - c to llvm (mem2reg) to typed source language with explicit drops, type labels
+  - generate smt constraints, solve with z3
+- picks per-label rust fragment: Box, Rc, &, &mut, Ref/RefMut, Cell, slices, lifetimes, ghost (no indirection)
+  - joint solving rather than sequential ownership/mutability/lifetime passes
+  - nullability left to later Option choice
+- constraint groups
+  - type consistency: fragment parity, finite recursive structs via integer ranks, arrays
+  - semantic preservation: moves must not invalidate live paths
+  - borrow checking: nll-style lifetimes, loans, conflicts, drop conflicts
+  - precision: minimize Cell, transformation cost, runtime cost, arrays, in priority order
+    - optimum not necessarily unique
+scope and limits
+- guarantee: correct interface for c without undefined behavior, modulo limits
+- whole program only, no multithreading, libraries need a client test suite
+- partial or no support: function pointers, polymorphic pointers, unions, variadics, ternary
+- RefCell panics and Rc cycles may remain, interface may not admit panic-free or leak-free body
+- libc external-function constraints written manually
+evidence
+- 6 programs manually validated correct and precise (running example, ulidgen, leftpad, amp, nandc, rbtree)
+- 3 larger programs only for scalability: carrays 618 loc, jccc 1,394, tisp 3,656
+- inputs modified for unsupported features
+relevance to verus (inference)
+- interface synthesis only; does not verify bodies or give verus contracts
+- ownership shape could guide later verified translation

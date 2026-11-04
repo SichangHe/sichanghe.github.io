@@ -2,41 +2,25 @@
 (authored by agents unless marked 🧑)
 Tag: `corazza2025accessible`, [paper](https://arxiv.org/abs/2501.12972v1)
 
-## scope and result
-The paper automates construction of Quint models and Rust adapters for model-based testing from CosmWasm Rust contracts. Its central claim is a three-phase split: “we first transpile the code into model stubs; then we “fill in the blanks” using a large language model (LLM); finally, we iteratively repair the generated model, on both syntactical and semantical level” (abstract, p.1). Inference: the model is an abstraction, not a proof of the Rust implementation. Model traces are replayed through a generated Rust adapter, and state mismatches expose bugs. The benchmark has 23 target functions from five CosmWasm CTF contracts, five independent runs, and five I/O examples per function (two exposed during generation, three held out; §5.1, p.18).
-
-## technique 1: mechanically frame a model and adapter
-
-What it is. `cosmwasm-to-quint` uses Rust compiler callbacks (`rustc_plugin`) to inspect a whole Cargo project and emit a Quint model skeleton plus a Rust adapter test. The paper says the stub “captures interleavings of different actions, but does not capture the actions’ semantics” (overview, p.3). Mechanical generation finds `cw_storage_plus` `Map::new` and `Item::new` constants, translates their generic key/value types, puts them in a `ContractState` record, and emits the state variable `contract_state` and the default-value definition `init_contract_state` (§4.1, pp.8–10). It uses `Deps`/`DepsMut` parameters to determine whether a function becomes an action or a pure definition. Each generated action has a matching pure definition that returns updated state. Actions nondeterministically choose function inputs, sender, funds denomination, and amount; the model also tracks time, bank balances, and the last result (§4.1, p.10). Bank messages are processed as later transitions; general inter-contract messages are unsupported (§4.1, pp.10–11).
-
-How to apply it. (1) Compile the Rust project through the plugin so project configuration and definitions are available (§4.1, p.9). (2) Identify storage constants and emit typed `ContractState` fields (§4.1, pp.9–10). (3) Emit action wrappers and pure-function stubs for entry points (§4.1, p.10). (4) Emit nondeterministic execution metadata and bank transitions (§4.1, pp.10–11). (5) Emit the adapter that reads Quint JSON traces and replays them with `cw_multi_test`; compare state after every execution (§4.1, p.11).
-
-Verus form.
-
-Evidence and limits. The authors state: “If the trace can be reproduced successfully, and the states after each execution match, it is evidence that the set of behaviors defined by Quint model is also defined in the implementation” (§4.1, p.11). Inference: this is evidence from sampled traces, not exhaustive equivalence. The generator cannot resolve external crates automatically and cannot yet handle general contract-to-contract communication (§4.1, p.9; §6, p.21).
-
-## technique 2: factor each semantic stub into few-shot LLM synthesis
-
-What it is. Each pure stub is generated independently from the Rust source, generated signatures and types, a natural-language description, and two input-output examples. Algorithm 1 calls `GeneratePrompt`, invokes the LLM, extracts and replaces the named stub, then calls `TestAndRepair` (§4.2, p.12). Prompts include a Quint cheatsheet, recursively collected type definitions, the corresponding Rust message handler, imports/constants, and few-shot CTF-01 examples (§4.2, pp.12–14; Appendix E.1, p.36). The authors use GPT-4o via OpenAI’s Chat Completions API (§1, p.3), with temperature 0.6 and top-p 0.7 (§4.2, p.12).
-
-How to apply it. (1) For each stub, collect the source handler and generated signature (§4.2, pp.11–14). (2) Add the user description and two I/O examples (§4.2, p.11). (3) Add demonstrations whose answers are hand-written Quint functions (§4.2, pp.12–13). (4) Require a functional pure definition with immutable arguments (Listing 1.3, p.13). (5) Insert the returned function and test it (§4.2, p.12).
-
-Verus form. Inference: use the same decomposition for Rust functions, but request a Verus executable `fn` with `requires`/`ensures` and separately generated `proof fn` lemmas. I/O examples can become `assert` checks or proof lemmas over concrete inputs; they are tests and do not establish universal postconditions. A Verus `spec fn` may express the abstract transition, while executable code must still satisfy its contract.
-
-## technique 3: ordered static, runtime, and semantic repair
-
-What it is. Errors are classified by earliest detection: “static errors (e.g., incorrect Quint syntax)”, runtime errors such as nonexistent methods, and semantic errors where output disagrees with an I/O specification (§4.3, p.15). For each stub, the loop gives each category a budget of three repair rounds, at most nine extra LLM calls (§4.3, p.15). Algorithm 2 checks type correctness, then crashes on supplied inputs, then mismatched outputs; each failure supplies tool output to a repair prompt and replaces the stub (Appendix B.1, pp.27–28).
-
-How to apply it. (1) Type-check the whole filled model; on failure, give Quint type-checker diagnostics to the LLM (§4.3, p.16; Algorithm 2). (2) Execute every supplied input; on a crash, give runtime output and repair (§4.3, p.17; Appendix B.2, pp.27–31). (3) Compare each returned value with its expected value; send incorrect pairs to semantic repair (§4.3, pp.16–17). (4) Decrement the category budget and repeat until fixed or exhausted (Algorithm 2, pp.27–28). The runtime example replaces a missing-map-key `get` with `getOrElse(..., { amount: 0 })` (Listings 1.10–1.12, pp.27–30).
-
-Verus form. Inference: compiler and verifier diagnostics can guide implementation or proof repairs; runtime failures can guide repairs through Rust tests; semantic mismatches can reveal failed `ensures` or failing example tests. Verus proofs should be rerun after each change. A repair loop cannot make an incorrect specification correct, and bounded examples cannot prove all inputs.
-
-## technique 4: LLM-generated state comparison and trace fuzzing
-
-The adapter has a mechanical trace runner and an LLM-generated `compare_state` function (§4.2, p.14; Appendix D). The mechanical stub already compares contract balances; the LLM extends it to query and compare contract state (Listings 1.16–1.18, pp.32–35). In the end-to-end case study, a trace found a CTF-02 panic after two steps. After manually adjusting the adapter to catch selected panics and check that they matched model errors, the authors report uncovering the main overflow vulnerability after 14 steps. With `cargo test --release`, the adapter detected an action succeeding when the model expected failure; without the flag, overflow checks caused the implementation to panic (Appendix A, pp.24–26). For CTF-02 and CTF-04, adapter generation succeeded across five independent runs and required two repair rounds total (Appendix D.1, p.35; Table 5, p.41).
-
-## techniques for the catalog
-- mechanical contract-to-model stubs: compiler-driven extraction emits typed abstract state, transitions, and an adapter while leaving core semantics as stubs
-- few-shot pure-function synthesis: an LLM fills each semantic stub from source context, descriptions, examples, and demonstrations
-- bounded ordered repair: static, runtime, and semantic checks feed diagnostics back in separate finite repair budgets
-- differential trace adapter: generated Rust tests replay model traces and compare queried implementation state after each step
+LLM-synthesized Quint models and Rust adapters for model-based testing of CosmWasm contracts
+- pipeline: transpile to model stubs, LLM fills blanks, iterative repair (syntax and semantics)
+- model is an abstraction, not a proof of the Rust code
+- benchmark: 23 functions, 5 CosmWasm CTF contracts, 5 runs, 5 I/O examples each (2 shown, 3 held out)
+mechanical framing
+- `cosmwasm-to-quint` via rustc_plugin emits typed ContractState, actions, pure stubs, adapter
+  - stub captures action interleavings, not semantics
+  - actions nondeterministically pick inputs, sender, funds; model tracks time and balances
+- adapter replays Quint JSON traces with cw_multi_test, compares state after each step
+  - matching states is evidence, not exhaustive equivalence
+- limits: no external crates, no general inter-contract messages
+few-shot stub synthesis
+- per stub prompt: Rust handler, generated signatures/types, natural-language description, 2 I/O examples, Quint cheatsheet, hand-written demos
+- GPT-4o, temperature 0.6, top-p 0.7
+ordered repair
+- order: static (type check), runtime (crash on inputs), semantic (output mismatch)
+- 3 rounds per category, at most 9 extra LLM calls per stub
+- Verus analogue (inference): verifier diagnostics, Rust tests, failed ensures drive repair
+  - repair cannot fix a wrong spec; examples cannot prove all inputs
+LLM-generated compare_state and trace fuzzing
+- CTF-02: trace found panic after 2 steps; main overflow found after 14 steps with manual panic handling
+- adapter generation for CTF-02 and CTF-04 succeeded in 5 runs with 2 repair rounds total

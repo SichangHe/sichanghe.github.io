@@ -2,37 +2,31 @@
 (authored by agents unless marked 🧑)
 Tag: `zhao2026rma`, [paper](http://arxiv.org/abs/2605.22875v2)
 
-Inference: RMA treats long proofs as persistent state-management problems. A typed research store records proof revisions, open issues, attempts, literature, concepts, meetings, insights, and evaluations; an orchestrator retrieves only task-relevant records, compiles a bounded context, invokes a local operation, and writes back a structured artifact. The paper’s central claim is that “Long-horizon mathematical reasoning fails less often because a model cannot produce a valid next step than because an agent fails to maintain and expose the right semantic state across many iterations” (Abstract, p. 1).
-
-## technique: typed persistent research store
-
-Inference: Represent proof development as a tuple of separately addressable records rather than one chat transcript. The paper defines the store as “𝒮 = (Π, ℐ, ℳ, ℒ, 𝒦, ℋ, ℰ), where Π contains proof artifacts and their revision history” (Sec. 3.1, p. 3); the other components hold issues, meetings, literature, concepts, insights, and evaluations. Initialize it from the problem, then append rather than overwrite attempts and links.
-
-Inference: Apply it step by step: (1) create the current proof record, (2) create typed issue records for every unresolved obligation, (3) preserve failed repairs and their evidence, (4) attach literature and concept records, (5) append evaluation scores each round, and (6) retain raw history while consolidating current links. In Verus, the analogous implementation is an external proof-work database plus Rust modules whose checked contracts are immutable artifacts; this is an inference because RMA uses Lean and natural-language LaTeX, not Verus.
-
-Inference: The trust boundary is explicit: the store records claims but does not prove them. Lean 4 kernel checking in the Formal Conjectures experiment is the evidence that accepted generated proof terms type-check; the paper reports 213 verified targets out of a fixed sample of 300 (Sec. 4, p. 5 and Appendix G, p. 23).
-
-## technique: operation-specific bounded context
-
-Inference: Do not pass the entire store to every call. Retrieve records linked to the current issue and operation, order them by priority, and remove whole records until a token budget is met. The paper specifies that `PrefixToBudget` “operates on C as a sequence of whole, addressable records, never on raw characters or tokens,” so “an operation never receives a lemma statement or proof fragment cut mid-sentence” (Sec. 3, p. 3).
-
-Inference: Their ablation held backbone, prompts, tools, issue ranking, and a $100-per-problem ceiling fixed on a 30-problem held-out set. Full RMA scored 8.53 ± 0.15 versus 3.47 ± 0.21 for context dumping and 2.63 ± 0.25 for stateless memory (Table 3 and Sec. 4.2, pp. 7–8). Those are judge scores, not kernel success rates, and the context-dumping intervention changes request size as well as selection.
-
-## technique: typed issue discovery and severity/dependency repair
-
-Inference: Run complementary critics: LM gap enumeration, deterministic claim/dependency parsing, semantic completeness scoring, and fidelity analysis. Convert findings into issues with defect type, affected claim, required repair, and a correctness-critical flag. Rank deterministically by severity and downstream dependency impact. The paper says, “P0 denotes a defect that invalidates the main conclusion or leaves a necessary crux claim unsupported; P1 denotes a gap that blocks a required lemma or proof branch” (Sec. 3.1, p. 4).
-
-Inference: Repair only the first b ranked issues per round. Give the solver the full current proof, selected issue, dependencies, related attempts, and applicable knowledge; request an anchored edit with exact text before and after the replacement. Apply it only when the anchor is unambiguous and no outside text changed; retry once, then use a gated full-document fallback. Re-run the full critic suite in the next round instead of trusting the patch. In Verus, this corresponds to compiling after each localized contract/lemma edit and routing compiler diagnostics back as issues; this is an inference.
-
-## technique: literature, meetings, and concept glossary
-
-Inference: An optional literature operation stores each source with theorem/technique, assumptions, supported claims, applicability limits, and citation. A meeting operation then combines current proof, issues, attempts, and literature into a record, action plan, and strategic insights; revision applies the plan. A concept registry stores names, definitions, assumptions, notation, and sources to stabilize terminology. The paper says the meeting operation is “synthesizing a meeting record ρ, action plan a, and strategic insights ΔH” (Sec. 3.2, p. 4).
-
-Inference: In a Verus workflow, the literature record can point to existing lemmas and the glossary can map Rust types to mathematical abstractions; this is an inference. The paper’s own no-web Formal Conjectures configuration disables literature retrieval, so the kernel result does not depend on external sources (Appendix G, p. 23).
-
-## techniques for the catalog
-
-- Inference: typed research store — preserve proofs, issues, attempts, literature, concepts, meetings, insights, and evaluations as linked records
-- Inference: bounded operation-specific context — retrieve and prioritize whole records, then fit a fixed context budget without cutting proof fragments
-- Inference: severity/dependency issue repair — rank correctness impact and downstream dependencies, apply anchored patches, and re-criticize globally
-- Inference: coordinated revision — use literature, meetings, action plans, and a concept glossary to guide broader proof changes
+long proofs fail from lost state, not from invalid next steps
+- claim: agent fails to maintain and expose the right semantic state across iterations
+- rma = typed research store + orchestrator that compiles bounded context per operation, then writes back structured artifacts
+typed persistent research store
+- separately addressable records: proofs w/ revision history, issues, attempts, literature, concepts, meetings, insights, evaluations
+- append attempts and links, never overwrite; keep failed repairs w/ evidence
+- store records claims but proves nothing; Lean 4 kernel is the trust boundary
+  - 213 of 300 sampled Formal Conjectures targets kernel-verified
+- verus analogue (inference): external proof-work db, checked contracts as immutable artifacts
+bounded operation-specific context
+- retrieve records linked to current issue + operation, order by priority, drop whole records to fit token budget
+  - never cut a lemma or proof fragment mid-sentence
+- ablation, 30 held-out problems, $100 per problem, judge scores not kernel rates
+  - full rma 8.53, context dumping 3.47, stateless memory 2.63
+issue-driven repair
+- critics: lm gap enumeration, deterministic claim/dependency parsing, completeness scoring, fidelity analysis
+- issues typed by defect, affected claim, repair, correctness-critical flag
+  - P0 invalidates main conclusion or leaves crux unsupported
+  - P1 blocks a required lemma or branch
+- rank by severity and downstream dependency; repair top b issues per round
+- anchored edits w/ exact before/after text; retry once, then gated full-document fallback
+- re-run all critics next round instead of trusting the patch
+- verus analogue (inference): compile after each local edit, feed diagnostics back as issues
+literature, meetings, concept glossary
+- literature record: theorem, assumptions, supported claims, limits, citation
+- meeting op combines proof, issues, attempts, literature into record + action plan + insights
+- glossary stabilizes names, definitions, notation
+- formal conjectures config disables literature, so kernel result does not depend on it

@@ -2,28 +2,29 @@
 (authored by agents unless marked 🧑)
 Tag: `abenhaim2026specification`, [paper](https://www.semanticscholar.org/paper/af489dd2737dae878a33d72b9d9bead2b0634905) (link from the fetch record)
 
-## case and protocol
-This is one instrumented case study of an AI agent removing a lifetime invariant from a VS Code extension. The paper reports “no human review of the generated code and no pre-existing oracle to validate the target behaviour” (Abstract, p. 1). The target was making a session panel closable while the AI generation continued, with reopening restoring the display and resuming the same stream without loss or duplication (Sec. 4, pp. 4–6). The five-phase protocol is ideate, specify, refine, code, verify; each phase runs as a separate session (Sec. 5, p. 6). Inference: the evidence supports an observed outcome under this protocol, rather than a formal proof of the extension.
-
-## technique 1: write a frozen behavioral specification
-Start from a natural-language request and a scoping exchange, then have the agent produce a specification. Here the initial specification described changes to 110 files across shared contracts, backend, frontend, and the RPC bus (Sec. 5.1, p. 7). Audit and refine it before freezing it for implementation. The paper states: “Code is then generated against a frozen reference, and audited again against that same reference.” (Sec. 1, p. 2).
-
-## technique 2: specification refinement against source
-The paper defines the audit: “Refinement is the process of having the agent re-analyse the specification against the real source code, report defects in the specification, and rewrite it.” Each cycle is a separate session, averaging 35 minutes (Sec. 5.2, p. 7). Fourteen cycles produced approximately 85 corrections and expanded the scope from 110 to 160 files. Cycle 14 returned no findings, so the specification from cycle 13 was frozen. Five cycles have estimated correction counts because a platform migration prevented recovery of their correction lists (Sec. 5.2 and Table 2, pp. 7–8). Inference: a Verus workflow could audit types, call sites, and existing contracts before adding proofs. A clean audit does not establish that the specification is complete.
-
-## technique 3: atomic implementation with separate compiler feedback
-Ask the agent to implement the frozen specification while preserving its atomicity requirement. The agent initially declined because a partial implementation would leave the repository inconsistent. It proposed ten steps; the operator requested three instead. Implementation ran in three consecutive segments, each initiated by explicit human confirmation, totaling 2 hours 21 minutes 44 seconds (Sec. 5.3, p. 8). Compilation, typing, and unit-test errors were corrected afterward in a separate session lasting under an hour. The paper states: “The agent does not automatically correct compilation, typing or unit-test failures in its own output; this is a deliberate design choice, intended to keep those signals visible.” (Sec. 5.4, p. 8).
-
-## technique 4: verification against the frozen reference
-The paper defines verification: “Verification is the process of having the agent analyse the current state of the source code against the frozen specification, report residual architectural defects and subtle deviations, and correct them.” (Sec. 5.5, p. 8). The checker uses a fresh session of the same agent (Sec. 2, p. 3). Seventeen verification cycles produced 116 code corrections. The stopping rule was empirical rather than fixed in advance: two consecutive zero-finding cycles, reached at cycles 16 and 17 (Secs. 5.5–5.6 and Table 3, pp. 8–9). Across 31 refinement and verification passes, approximately 85 specification corrections and 116 code corrections totaled 201 before any human ran the code (Sec. 6.1, p. 9). Inference: such audits could complement Verus by checking whether contracts match the intended architecture; repeated model audits do not prove the encoded properties.
-
-## evidence and what remains trusted
-The starting codebase contained 717,725 TypeScript lines across 3,648 files. The open/close refactor touched 189 files, including 31 new files; the frozen specification tracked 160. Including the extraction, the two commits totaled 288 changed files, 34,770 insertions, and 16,422 deletions (Abstract, p. 1; Secs. 6.2–6.3, pp. 9–10). These are combined commit counts, not a stated count of distinct files across both commits. The operation took three days and USD 2,430 in model inference (Sec. 6, pp. 9–11).
-
-The author reports that the first manual execution, a pre-existing unit test suite, and roughly thirty subsequent sessions revealed no bug or regression. Agent-written tests were also maintained under a standing instruction to test all produced code (Sec. 6.3, p. 10). This differs from having a pre-existing test oracle for the new behavior (Sec. 8, p. 11). The paper publishes the specification and 1,500+ pages of session logs, but the code remains closed source (Secs. 9–10, p. 12). It explicitly limits the evidence: “One task, one codebase, one operator. Nothing here establishes a distribution of outcomes, a success rate, or reproducibility across other systems or other classes of problem.” There was no control condition, the reporting was not independent, and weaker models were not characterized (Sec. 9, p. 12). Inference: confidence still depends on specification construction, agent source inspection, tests, and the author's functional observations.
-
-## techniques for the catalog
-- frozen specification — create and refine a behavioral reference before freezing it for implementation
-- refinement audit loop — compare the specification with source, correct it, and repeat until no findings remain
-- atomic implementation feedback — preserve atomicity across human-confirmed implementation segments, then correct compiler and test failures separately
-- frozen-reference verification — audit and correct generated code against the frozen specification; this case stopped after two consecutive clean passes
+one case study: agent removes a lifetime invariant in a VS Code extension
+- task: session panel closable while generation continues, reopen resumes the same stream without loss or duplication
+- 717,725 TypeScript lines over 3,648 files, 189 files touched, 3 days, USD 2,430
+- no human code review, no pre-existing oracle for the new behavior
+- evidence is one task, one codebase, one operator, closed code
+  - spec and 1,500+ pages of session logs published
+5 phases, each a separate session: ideate, specify, refine, code, verify
+frozen behavioral spec is the reference
+- code generated against it, then audited against the same spec
+spec refinement loop
+- agent re-reads the spec against real source, reports spec defects, rewrites it
+- 14 cycles, about 85 corrections, scope grew 110 to 160 files
+  - cycle 14 found nothing, cycle 13 spec frozen
+  - 5 cycles have estimated counts, lists lost in a platform migration
+atomic implementation
+- agent first refused partial implementation, proposed 10 steps, operator asked for 3
+- 3 segments totaling 2 h 22 min, each with explicit human confirmation
+- compile, type, unit-test errors fixed in a separate session
+verification loop
+- fresh session of the same agent audits code against frozen spec
+- 17 cycles, 116 code corrections
+  - stop rule: 2 consecutive zero-finding cycles, reached at cycles 16 and 17
+outcome and limits
+- no bug found by first manual run, existing unit tests, or about 30 later sessions
+  - agent-written tests existed under a standing instruction, so not an oracle-free check
+- same agent family writes and audits, so clean passes are weak evidence of correctness

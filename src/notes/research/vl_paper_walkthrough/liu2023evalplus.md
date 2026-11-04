@@ -2,91 +2,32 @@
 (authored by agents unless marked 🧑)
 Tag: `liu2023evalplus`, [paper](https://arxiv.org/abs/2305.01210)
 
-## result and scope
-
-Liu et al. introduce EvalPlus, a benchmark-enhancement framework for testing functional correctness of LLM-generated programs. The abstract states: “EvalPlus augments a given evaluation dataset with large amounts of test-cases newly produced by an automatic test input generator, powered by both LLM- and mutation-based strategies.” The framework starts from a ground-truth implementation and existing tests, creates semantically valid edge cases, differentially compares candidate code with the ground truth, and optionally reduces the resulting suite.
-
-The paper’s motivating example is a function that should return sorted unique common list elements. ChatGPT’s code passes the original HumanEval tests but converts the sorted list to a set, losing order; an added input exposes the defect (Figure 1). The authors argue that “current programming benchmarks are inadequate for assessing the actual correctness of LLM-generated code, leading to false confidence in the results” because they include on average fewer than 10 tests per problem, which are also too simple, and have imprecise problem descriptions (Section 1).
-
-The benchmark has 164 HumanEval tasks. HumanEval averages 9.6 tests per task, while HumanEval+ averages 764.1 tests and HumanEval+-Mini averages 16.1 (Table 2). The authors also report that they “carefully re-implemented and tested all ground-truths for HUMANEVAL+” because over 10% of the original ground truths were incorrect (Section 3). EvalPlus evaluates 26 LLMs, with random sampling of 200 programs at each of four temperatures (0.2, 0.4, 0.6, 0.8) plus greedy decoding. Two commercial models are exceptions: GPT-4 is evaluated only with greedy decoding, and ChatGPT is evaluated with greedy decoding plus 0.8-temperature random sampling (Section 3; Appendix A). Pass@k uses the unbiased estimator of Chen et al. (Section 3).
-
-## technique 1: LLM-seeded, type-aware input generation
-
-What it is. EvalPlus asks ChatGPT to propose difficult, corner-case, and complex inputs using the ground-truth implementation and existing tests as context. It filters invalid inputs using input preconditions, then scales the valid seeds with type-aware mutation (Sections 2 and 2.1).
-
-How to apply it:
-
-1. Build a prompt containing the ground-truth function, sampled base inputs, and an instruction to generate interesting valid tests (Section 2.1).
-2. Ask ChatGPT for seed inputs that exercise corner cases and semantic constraints (Section 2.1).
-3. Filter seeds that violate the ground-truth input precondition; invalid inputs could create undefined behavior and false positives (Section 2.1).
-4. Randomly select a valid seed and mutate it into a new input; add a contract-compliant mutant back to the seed pool (Section 2.1).
-5. Repeat from step 4 to continue generation (Section 2.1); in the HumanEval+ runs the stopping rule is a one-hour budget per task, targeting 1,000 additional inputs (Section 3).
-
-The basic mutations are type-directed (Table 1): integers and floats increment or decrement; booleans become random booleans; `NoneType` returns `None`; strings remove, repeat, or mutate substrings; lists remove, repeat, insert, or replace items; tuples and sets recursively mutate a list representation; dictionaries remove pairs, mutate values, or insert mutated keys and values (Table 1). Compound values recurse into their element types. To alleviate generating inputs that violate subtle semantic constraints, the authors also apply an ingredient mechanism that collects data fragments seen so far and reuses them during mutation (Section 2.1).
-
-Evidence. For each HumanEval task, they use around 30 ChatGPT-generated seeds from three prompts and run type-aware mutation for 1,000 additional inputs under a one-hour budget (Section 3). HumanEval+ therefore increases test scale by 80× (Abstract; Section 3). The authors state that ChatGPT “is unsuitable for large amounts of automated test generation due to undesired speed and cost of querying such a large model”, which is why mutation performs the expansion (Section 2.1).
-
-Verus form.
-
-## technique 2: differential testing against a trusted implementation
-
-What it is. EvalPlus executes each LLM-generated program and the ground-truth implementation on every generated input, then compares outputs. The oracle is differential equality, written in the paper as `f(x) = gt(x)?` (Figure 2 and Section 2). A candidate is correct only if it matches for all test inputs within the timeout and floating-point tolerance (Appendix A).
-
-How to apply it:
-
-1. Maintain a ground-truth implementation and input corpus (Section 2).
-2. Run the candidate and ground truth on each valid input; invalid inputs are filtered first because they could create false positives in differential testing (Sections 2 and 2.1).
-3. Compare outputs exactly by default; allow absolute floating-point error of 10^-6 when no task-specific tolerance is annotated (Appendix A).
-4. Mark a candidate failed when any output differs or execution exceeds `max(200 ms, 4 × tgt)`, where `tgt` is the ground-truth time for that test case (Appendix A).
-
-The same differential check, run between the authors’ re-implemented ground truth and the original HumanEval ground truth, exposed 18 defects in the original ground truths, 11% of problems: five unhandled edge cases, ten bad-logic implementations, and three performance issues (Section 3). One date-validation ground truth incorrectly rejects `12-31-1999`; an added test found the operator-precedence bug that base tests missed (Figure 4 and Section 3).
-
-Verus form.
-
-## technique 3: contract-based input filtering
-
-What it is. The paper states: “The goal of evaluating code synthesis is to check whether the synthesized code accurately reflects the desired user intent.” (Section 2.3) EvalPlus annotates tasks with programming-by-contract preconditions such as `assert n > 0` (Section 2.3). Contracts serve two purposes: they remove invalid generated inputs and clarify the intended domain alongside the natural-language prompt.
-
-How to apply it:
-
-1. Inspect the function description and identify input-domain assumptions (Inference: the paper only says the authors systematically annotated function pre-conditions as code assertions; the inspection step is my reading of that).
-2. Encode each assumption as an executable assertion such as `assert n > 0` (Section 2.3).
-3. Reject generated inputs that violate the contract before differential testing; mutants that comply with the contract are added to the seed pool (Sections 2.1 and 2.3).
-4. Use the contract as an orthogonal descriptor alongside the natural-language description in the prompt (Section 2.3).
-
-In HumanEval+, 83 of 164 tasks have hand-crafted contracts (Section 3). Inference: In Verus, these become `requires` clauses on the function under verification. A contract can prevent meaningless tests, but it can also hide bugs if it is weaker than user intent; specification adequacy remains a separate review obligation.
-
-## technique 4: test-suite reduction by greedy set cover
-
-What it is. Thousands of generated tests can be expensive. EvalPlus reduces them by selecting a subset that preserves testing requirements (Section 2.2). The paper formalizes this as: any testing requirement r satisfied by the original suite must still be satisfied by the reduced one, and says finding a minimal such subset is equivalent to the set covering problem (Section 2.2). The introduction says the selection is done by a greedy set cover algorithm (Section 1).
-
-The paper states: “To solve this problem effectively, it is crucial to define the testing requirements accurately.” (Section 2.2)
-
-The paper uses three requirements: branch coverage, killed mutants, and killed LLM samples (Section 2.2). Branch coverage preserves the covered branches; mutation analysis seeds exactly one subtle bug per mutant in the ground-truth solution and requires the reduced suite to kill the same mutants; sample killing preserves detection of incorrect samples from other models. For a new model, sample-killing reduction uses leave-one-out cross-validation because that model’s own executions are unavailable during reduction (Section 2.2).
-
-How to apply it (Inference: the paper gives the requirement types, the set-cover formulation, and the leave-one-out setup, but not a step-by-step procedure; the steps below are the standard greedy set-cover reading of it):
-
-1. Run every generated test and record branches, killed mutants, and incorrect samples it detects (Section 2.2).
-2. Define the requirement universe as the union of those records.
-3. Greedily select the test that covers the most remaining requirements.
-4. Stop when all requirements are covered. The paper also evaluates a Full variant that merges all three requirement types (Section 2.2).
-5. For sample killings, build the reduced suite for each model without that model’s own sample kills (leave-one-out cross validation) (Sections 2.2 and 3).
-
-HumanEval+-Mini averages 16.1 tests per task, 47× fewer than HumanEval+’s 764.1, while the paper says it achieves “almost the same pass@1⋆ drop” on a subset of the models (Section 3; Table 4). Table 4’s caption gives HumanEval+’s average as 774.8, which differs from Table 2’s 764.1; the Table 4 column counts include the base tests. The authors report that empirical sample killing is the most effective single metric, reaching the same effectiveness as the full approach, but consumes more tests than the theoretical metrics; coverage and mutation analysis “still serve as the base guarantees for the theoretical test adequacy” (Section 3).
-
-Verus form.
-
-## evaluation evidence and contradictions
-
-Across 26 models, HumanEval+ lowers pass rates relative to HumanEval by up to 23.1% for greedy pass@1, 19.3% for pass@1, 24.9% for pass@10, and 28.9% for pass@100 (Section 3). For ChatGPT, Table 3 reports greedy pass@1⋆ 73.2 to 63.4, pass@1 69.4 to 62.5, pass@10 88.6 to 82.1, and pass@100 94.0 to 91.1 (base to +extra). GPT-4 greedy pass@1⋆ falls from 88.4 to 76.2 (Table 3). The paper reports reductions of 12.6% for ChatGPT and 13.1% for GPT-4 without defining the formula here; I did not reconcile these with the Table 3 values. The paper reports the maxima as 23.1% (pass@1⋆), 19.3% (pass@1), 24.9% (pass@10), and 28.9% (pass@100); each metric must be cited with its column and setting. The paper also finds ranking reversals in pass@1⋆: WizardCoder-CodeLlama and Phind-CodeLlama are no better than ChatGPT on base HumanEval (73.2 and 71.3 versus 73.2) but outperform it on HumanEval+ (64.6 and 67.1 versus 63.4) (Section 3; Table 3). Other reversals: SantaCoder-1B surpasses InCoder-6.7B, and Vicuna-7B outperforms InCoder-1.3B (Section 3).
-
-What is measured is test-suite detection under a specified ground truth, model sampling regime, timeout, and 164-task benchmark. What remains trusted is the repaired reference implementation, contracts, generated test validity, and differential oracle. HumanEval+ can expose wrong code but cannot prove correctness for arbitrary inputs. The authors say that “future work can look into how to integrate EvalPlus with more formal verification (e.g., Dafny [32]) or validation techniques (e.g., translation validation [36]) to provide stronger guarantees of the evaluation results when applicable” (Section 5).
-
-## techniques for the catalog
-
-- LLM-seeded test generation: prompt an LLM with ground truth and existing tests, then filter and mutate valid seeds
-- type-aware mutation: recursively mutate values according to primitive and compound input types while preserving structure
-- differential testing: compare candidate outputs with a ground-truth implementation on every valid generated input
-- contract filtering: encode preconditions to reject invalid inputs and clarify intended semantics
-- greedy test reduction: preserve branch coverage, killed mutants, and killed candidate samples with a set-cover subset
-- rigorous benchmark accounting: report task count, test denominators, sampling temperatures, timeout rules, and metric columns
+evalplus: augment benchmark tests to catch wrong LLM code
+- motivation: HumanEval has <10 simple tests per task (avg 9.6), so pass rates are inflated
+  - ChatGPT code passes original tests but loses sorted order via set; added input exposes it
+- HumanEval+ has 164 tasks, avg 764.1 tests (80x), HumanEval+-Mini avg 16.1
+- >10% of original ground truths were wrong, authors reimplemented them
+  - 18 defects (11% of problems): 5 unhandled edge cases, 10 bad logic, 3 performance
+test generation
+- LLM seeds: ChatGPT proposes ~30 corner-case inputs per task from ground truth + existing tests
+  - filter seeds violating preconditions, since invalid inputs cause false positives
+- type-aware mutation expands to 1000 extra inputs (1 h budget per task)
+  - ints inc/dec, strings/lists remove/repeat/insert, dicts mutate values, compound types recurse
+  - ingredient pool reuses seen data fragments to respect subtle constraints
+  - LLM too slow/costly for bulk generation, so mutation does the scaling
+- contracts: 83/164 tasks have hand-written preconditions like `assert n > 0`
+  - filter invalid inputs and clarify intent
+  - Verus analogue: `requires`; weak contract can hide bugs
+oracle and reduction
+- differential testing vs ground truth on every valid input
+  - exact match, float tolerance 1e-6, timeout max(200 ms, 4x ground-truth time)
+- greedy set-cover test reduction preserving branch coverage, killed mutants, or killed LLM samples
+  - sample-killing most effective alone, uses leave-one-out across models
+  - Mini keeps almost same pass@1 drop with 47x fewer tests
+results
+- 26 LLMs, pass@k drops up to 23.1% (greedy), 19.3% (pass@1), 24.9% (pass@10), 28.9% (pass@100)
+  - ChatGPT greedy pass@1 73.2 -> 63.4, GPT-4 88.4 -> 76.2
+- ranking reversals: WizardCoder-CodeLlama, Phind-CodeLlama tie ChatGPT on HumanEval but beat it on HumanEval+
+limits
+- tests detect wrong code, cannot prove correctness; trusts repaired ground truth, contracts, differential oracle
+- authors suggest integrating Dafny or translation validation for stronger guarantees

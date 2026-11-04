@@ -2,54 +2,20 @@
 (authored by agents unless marked 🧑)
 Tag: `ghanbari2025goal`, [paper](https://doi.org/10.4230/LIPIcs.ECOOP.2025.23)
 
-## problem and result
-The paper presents clone-finder, a tool for finding repeated proof obligations in Rocq. It specifies, “At the highest level, clone-finder takes, as input, the base path for a Rocq project, Rocq options, and the minimum proof size threshold, and outputs a list of clones with proofs at least as large as the provided threshold.” (section 3, p. 4) Its target is α-equivalent goals, where bound-variable names may differ even though the Gallina terms have the same structure. The motivation is that “Such a duplication of effort not only results in waste of manpower, but also inflates proof scripts, increases maintenance costs, and reduces opportunities for reuse.” (section 1, p. 1). A detected pair can be factored into one independent lemma and reused (section 1, pp. 1–2). The author evaluates 40 CoqGym projects compatible with Coq 8.16.0; 20/40 projects contain at least one clone, and the mean is 27.73 goal-clone instances per project (section 5.2, pp. 11–12; denominator: 40 projects, minimum proof size five Ltac lines).
-
-## technique: construct proof trees from a live Rocq proof
-Use this when the input is a Rocq project and clone evidence must include the proof attached to each goal. The paper's Algorithm 1 (section 3, p. 7) gives the procedure:
-
-1. enumerate the project’s `.v` files and retain the Rocq command-line flags (section 3, pp. 7–8; these are inputs to Algorithm 1)
-2. connect each file to Coq-LSP through CoqPyt and iterate through proof-file steps (lines 3–5)
-3. when a theorem starts, allocate a `ProofTree`, map the file/theorem pair to it, and initialize the previous-goal set (lines 6–10)
-4. execute one proof step at a time until the proof can close; collect every current goal’s hypotheses and type (lines 11–18)
-5. compute disappeared goals (`gone`) and newly introduced goals (`new`); for each disappeared goal, attach the new goals as children and record the tactic that caused the transition (lines 19–29)
-6. update the previous-goal set, close the proof-file connection, and return the file/theorem-to-tree map (lines 30–37)
-
-The paper explains the key correspondence with a concrete state transition: if goals change from `[A, B]` to `[C, D, B]`, then `A` has children `C` and `D` (section 3, p. 8). The tree node stores context, goal, child goals, and tactic, and a depth-first traversal of a node yields its sub-proof (sections 2.1 and 3, pp. 3, 8).
-
-Inference: in Verus, the analogous audit tool would instrument a verified Rust build or proof trace, record each `requires`/`ensures` obligation and the proof commands or solver invocations that discharge it, then build a DAG keyed by obligation identity. Verus does not expose Coq-LSP goals, so the capture mechanism is an engineering replacement, while the parent/child obligation relation is the reusable idea.
-
-## technique: generalize, flatten, and remove nested goals
-Apply this after proof trees exist and before pairwise clone comparison. Algorithm 2 (p. 8) emits tuples `(goal, generalized-goal, proof, file, theorem)`, then removes a tuple when its generalized goal is a body nested inside another generalized goal. Algorithm 3 (p. 9) performs generalization in steps 1–3 below; Algorithm 2 performs step 4:
-
-1. collect free variables of the goal that occur in the local context
-2. topologically sort context dependencies, then reverse the order
-3. prepend `forall (v : ctx[v]),` for each variable in that order
-4. compare generalized goals with `prodBody`; retain only non-nested entries
-
-The dependency rule is explicit: if `v1`’s type contains `v2`, the graph has an edge from `v1` to `v2`; the resulting term must bind `v2` outside `v1` (section 3, p. 9). The paper states, “The topological sorting in reverse order ensures that if variable v1 depends on v2, then v2 is quantified before v1, preventing type dependency issues.” `prodBody` recognizes a goal as nested when repeated `forall` binders eventually expose the other term (Definition 4, p. 9).
-
-Inference: in Verus, a goal can be normalized by abstracting local variables into a specification predicate or lemma parameters, with dependent Rust types represented by explicit value/type parameters and `requires` clauses. The exact Gallina `forall` term and `prodBody` test do not carry over; a Verus implementation must define a canonical obligation representation and dependency graph.
-
-## technique: α-equivalence reporting
-Algorithm 4 (p. 10) compares each pair of deduplicated generalized goals. If the two Gallina terms satisfy the paper’s α-equivalence rules, clone-finder concatenates their tuples into one report containing both locations and proofs. The rules rename bound variables while preserving free-variable meaning; compatibility propagates equivalence through applications, products, functions, lets, fixpoints, and matches (Definitions 1–3, pp. 5–7). The intended targets are exact and renamed goal clones: “our technique finds α-equivalent goals in a project” (section 2.2, p. 4). The implementation limitations below qualify the reliability of its reports.
-
-Inference: a Verus clone detector should canonicalize binder names in quantified specifications, normalize equivalent trigger/order metadata only when semantics are preserved, and compare the resulting ASTs. It should report the source function, obligation, and proof context so a developer can extract a shared lemma. This is an inference because the paper implements Gallina α-equivalence, not Rust/Verus syntax.
-
-## implementation and evidence
-The prototype is 4,969 lines of Python, parses Gallina, uses Coq-LSP/CoqPyt, requires `Set Printing All`, and defaults to reporting proofs of at least five Ltac lines (section 4, p. 10). In the benchmark, projects range from 53 to 29,260 lines of code (section 5.1, p. 11). Table 1 reports clone counts and times per project; the 20/40 detection rate and 27.73 mean use 40 working projects, not all 135 CoqGym projects. End-to-end clone-finder time averages 1,833.345 seconds per project, while analysis after type checking averages 45.31 seconds (median 2.091 seconds); 94.71% of end-to-end time is attributed to CoqPyt/Coq-LSP execution (section 5.2, pp. 12–13). The paper also reports a 122.4× average slowdown relative to normal builds, caused by repeatedly loading dependencies (section 5.2, p. 13).
-
-The implementation also records a cache: “The current version of clone-finder tool stores partial results in file and avoids invoking Coq-LSP whenever the cached results are already available.” (section 5.2, p. 13) The author classifies reports into exact/near-identical proofs, one proof generalized over the other, and α-equivalent goals with entirely different proofs (section 5.2, pp. 11–13). The intended remediation is lemma extraction, using clone-finder with tools such as company-coq or CoqPIE (sections 1 and 7, pp. 2, 15–16).
-
-## limits and trust
-The benchmark uses 40 working projects from 46 compatible with Coq 8.16.0, out of 135 CoqGym projects; the reduction from 46 to 40 arose from Coq-LSP crashes (section 5.1, p. 11). Section 6 (p. 13) says compatibility “slashed the size of our benchmark by 86 projects.” Inference: that stated reduction is inconsistent with the reported counts, since 135 − 46 = 89.
-
-The implementation considers only local contexts, which the author says “could introduce unsoundness and false positives” (section 4, p. 10). Section 7 (p. 15) says the approach “can be sound and complete”; this is not a demonstrated guarantee for the prototype. The minimum proof-size threshold is fixed at five lines in the evaluation, and other thresholds are future work (section 4, p. 10).
-
-The proof-tree algorithm can report inaccurate results for compound tactics, tactics resolving multiple goals, and focus-shifting tactics. The author did not filter these proofs, accepting missed clones or inaccurate proof boundaries (section 6, p. 14). The evaluation covers syntactic clones, not semantic clones or otherwise matching quantified goals whose independent binders occur in a different order. Refactoring effort and practical impact were not measured: “Additional metrics, such as the effort required to refactor or eliminate the clones will be studied in a future work.” (section 6, p. 14)
-
-## techniques for the catalog
-- live proof-tree extraction — execute each proof step, record goal-state deltas, and attach vanished goals to newly created children
-- dependency-aware goal generalization — quantify context free variables in reverse topological dependency order
-- α-equivalence clone reporting — compare generalized goals under bound-variable renaming and report pairs with their locations and proofs
-- manual classification of reports — distinguish identical or near-identical proofs, generalized proofs, and entirely different proofs
+clone-finder: finds α-equivalent proof goals in a Rocq project so they can be factored into one lemma
+- evaluated on 40 CoqGym projects (min proof size 5 Ltac lines)
+  - 20/40 have at least one clone, mean 27.73 clones per project
+pipeline
+- live proof trees: step through proof via Coq-LSP/CoqPyt, diff goal sets per tactic, attach vanished goal to new children
+- generalize goals: quantify local-context free variables in reverse topological dependency order
+- drop goals nested inside another generalized goal (prodBody)
+- compare pairs under bound-variable renaming
+- report types: identical/near-identical proofs, one generalized over other, same goal with different proofs
+limits
+- prototype: 4,969 lines Python, 94.71% of time is Coq-LSP, 122.4x slowdown vs normal build
+- local contexts only (possible unsoundness/false positives)
+- compound, multi-goal, focus-shifting tactics give inaccurate proof boundaries
+- syntactic clones only; refactoring effort not measured
+- benchmark shrank from 135 to 46 to 40 projects (Coq 8.16.0 compatibility, Coq-LSP crashes)
+verus analogue (inference)
+- record each obligation and discharging proof step into a DAG; canonicalize binders; Verus gives no goal-state API

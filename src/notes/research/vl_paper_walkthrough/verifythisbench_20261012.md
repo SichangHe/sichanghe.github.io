@@ -2,62 +2,22 @@
 (authored by agents unless marked 🧑)
 Tag: `deng2025verifythisbench`, [paper](https://arxiv.org/abs/2505.19271v2)
 
-## what this paper contributes
-
-VerifyThisBench evaluates the complete chain from an informal problem statement to a compiled, machine-verified program: the model must infer a specification, write verification-aware code, and prove the specification. VerifyThisBenchXS removes one artifact at a time to measure narrower abilities. This is a benchmark and experimental protocol rather than a new proof calculus; its useful techniques are how to construct tasks, run feedback-driven proof generation, separate failure modes, and avoid treating a verifier pass as proof that the natural-language intent was captured.
-
-The authors summarize the target precisely: “models must (i) extract formal specifications, (ii) implement in a verification-aware language, and (iii) construct machine-checkable proofs.” The benchmark spans Dafny, Frama-C, VerCors, VeriFast, Why3, CBMC, and Verus, and evaluates nine language models. A task passes only when the target tool returns no error; a separate coherence check asks whether the generated specification matches the natural-language intent.
-
-## technique 1: construct end-to-end tasks from competition artifacts
-
-Start with human-vetted VerifyThis challenges from 2011–2024. Preserve the natural-language description (which often has little pseudocode), split challenge work into implementation and verification subtasks, and package the expected framework/tool. The paper reports 41 challenges and 154 tasks in its construction section. Solutions can be as long as 648 lines, against a maximum of 225 in prior end-to-end Lean work (paper, Section 1).
-
-Step by step (the study's reconstruction, inference: the paper gives only the construction sentence above, not a procedure): collect a challenge and its original description; identify each implementation or proof obligation; encode a task prompt without a formal specification; attach the language/framework and verifier command; keep a reference human solution for later relaxed variants; and test that the task itself is solvable by the tool. Include arrays, trees, memory safety, concurrency, and complex data structures so a model cannot rely on one algorithmic template.
-
-## technique 2: run a unified, tool-gated evaluation loop
-
-Use one environment and one pass criterion across frameworks. The environment integrates seven tools with pinned versions (Appendix C), and Docker container images and launch scripts are released. For every attempt: send the same prompt template to the model, compile and verify with a one-minute timeout, classify the result, then return verifier errors on later attempts. The paper says, “A task is marked as pass/succeed if no error is returned.” This is a reproducible mechanical gate, not a human judgment.
-
-The four-step formal-verification flow in the paper is itself a reusable recipe: (1) annotate code with preconditions, postconditions, assertions, and loop invariants; (2) generate verification conditions; (3) send them to an SMT/theorem-proving backend; (4) feed success or failure back to the developer. In Verus, the annotations are Rust contracts and proof functions, the verifier generates SMT obligations, and error diagnostics become the feedback payload. The exact solver is a trust dependency and should be recorded.
-
-Keep model prompts, temperature, hardware, timeout, and retry budget fixed. The experiment used temperature 0.7 when applicable, an Intel i7-1360P with 16 GB RAM, and five attempts per task. The first attempt was zero-shot; four later attempts received the full prior history and current verifier feedback. For multi-stage VerifyThis tasks, only the previous subtask's final attempt carried forward; XS tasks used isolated contexts.
-
-## technique 3: use feedback-driven iterative refinement
-
-The model first writes the whole solution. On each subsequent round, give the compiler/verifier diagnostics and all earlier attempts, then ask it to repair code, specifications, and proofs. This tests whether a model can use proof failures as actionable information rather than merely measuring one-shot memorization. Record pass rate after the initial attempt and after the fourth repair, not only the best run.
-
-The measured improvement is large but incomplete. On strict VerifyThisBench, o3-mini rose from 3.62% zero-shot to 9.37% after refinement, a 5.75 percentage-point gain. Across all models, overall zero-shot pass rates ranged from 0.28% (Qwen) to 3.62% (o3-mini); refined rates ranged from 1.11% to 9.37%. By tool, mean Verus success rose from 3.32% to 8.15%, and CBMC from 4.76% to 18.11%.
-
-## technique 4: isolate specification, implementation, and loop-invariant skills
-
-Construct XS from a human solution by deleting exactly one artifact type. In Code-Gen, provide the function specification and remove implementation and proof annotations. In Specification-Gen, provide implementation and proof and remove specifications. In Loop-Gen, provide specification and implementation and remove loop invariants. The paper creates 580 XS tasks: 226 code-generation, 233 specification-generation, and 121 loop-invariant tasks. CBMC is absent from XS because no prior CBMC solutions existed; Table 6 lists Verus with 31 implementation, 27 specification, 31 loop and a total of 99; the parts sum to 89, and the specification column's other entries sum to 223 rather than the stated 233, so the table is internally inconsistent (likely a Verus specification count of 37, the study's inference).
-
-## technique 5: classify outcomes beyond pass/fail
-
-Partition every attempt into NOGEN (no code), Compile Error, Timeout, Partial (some obligations prove), and Succeed. Plot these categories for zero-shot and refinement, strict and relaxed settings. This distinguishes syntax/API failures from hard mathematical obligations. The authors find compilation errors dominate; relaxed templates reduce them and increase partial results, while timeout rates remain relatively stable. A one-minute timeout means the attempt exceeded the measurement budget; it is not evidence of incorrectness.
-
-## technique 6: measure specification–intent coherence separately
-
-A verifier proves the supplied formal specification, not the English requirement. After generation, run a second model pass without exposing chain-of-thought and ask whether the specification aligns with the original intent. Compute coherence only over verifier-passed outputs, and manually inspect a subset. This is an auxiliary confidence signal, not a proof of alignment.
-
-The paper reports, “While passing a formal verifier indicates syntactic and logical correctness, it does not address the alignment problem.” Average coherence was only 43% of passed solutions; except for o3-mini and Qwen, models' self-confidence was below 50%. The authors call this an optimistic upper bound because the self-assessment can be wrong and manual inspection found overconfidence for o3-mini.
-
-## technique 7: compare tools and model specialization
-
-Average results reveal framework-specific skill. On strict tasks, CBMC improved most (4.76% to 18.11%), Verus improved from 3.32% to 8.15%, and VeriFast stayed near zero (0 to 0.43%). On XS, Dafny rose from 1.35% to 21.47%, Verus from 7.52% to 17.28%, and VeriFast from 5.22% to 9.93%. No model dominated every framework: o3-mini excelled on CBMC and Verus, Claude on Dafny/Frama-C, Gemini on VerCors, and Llama on Verus.
-
-## what is proved, measured, and trusted
-
-The only machine-checked claim per successful attempt is that the generated artifact compiles and satisfies its generated formal obligations under the selected verifier, solver, timeout, and tool version. The benchmark does not mechanically prove that the specification reflects the natural-language request; coherence is self-assessed and manually sampled. It also does not establish robustness to adversarial prompts, version changes, or tasks outside the VerifyThis distribution.
-
-## techniques for the catalog
-
-- end-to-end verification benchmark construction — turn natural-language, competition-vetted challenges into tasks requiring specification, implementation, and machine-checked proof
-- unified verifier execution — pin tools, prompts, hardware, timeout, and pass criterion so results are comparable across frameworks
-- diagnostic iterative refinement — feed compiler and verifier errors plus prior attempts back to the model for bounded repair rounds
-- artifact deletion ablations — remove code, specifications, or loop invariants separately to measure the corresponding model skill
-- outcome taxonomy — distinguish no generation, compilation failure, timeout, partial proof, and complete success
-- independent coherence checking — assess whether a passed formal specification matches the original natural-language intent
-- per-tool/per-model evaluation — retain framework-specific rates because model strengths and syntax compatibility differ
-
-Audited 2026-10-12 against the paper: checked all numbers against Tables 1-6, Sections 2.3, 3.1-3.4, 4.2-4.7 and Appendices A, C, E; corrected the XS per-model range, the loop prose reading, the 734-task location (Section 2.3), the unsupported sandbox claim, the Verus XS count (Table 6 is internally inconsistent), marked the task-construction steps as reconstruction, and removed a leftover process sentence. Quotations, the Verus-related reasoning and the marked threat assessment were checked and left as they were.
+benchmark for nl problem -> spec + verification-aware code + machine-checked proof
+- from VerifyThis competitions 2011-2024: 41 challenges, 154 tasks
+  - solutions up to 648 lines (prior end-to-end lean work: max 225)
+- 7 tools incl. Verus, Dafny, Frama-C, VerCors, VeriFast, Why3, CBMC; 9 llms
+- pass = verifier returns no error, 1 min timeout
+- 5 attempts: zero-shot, then 4 repairs with full history + verifier feedback
+verifier pass is not spec-intent alignment
+- coherence checked by llm over passed outputs only: avg 43%
+  - upper bound: self-assessment is overconfident (o3-mini)
+results are low
+- strict: o3-mini 3.62% -> 9.37% with refinement; all models 0.28-3.62% -> 1.11-9.37%
+- Verus mean 3.32% -> 8.15%; CBMC 4.76% -> 18.11%; VeriFast ~0
+- no model dominates: o3-mini best on CBMC/Verus, Claude on Dafny/Frama-C, Gemini on VerCors
+VerifyThisBenchXS ablates one artifact
+- 580 tasks: 226 code-gen, 233 spec-gen, 121 loop-invariant-gen
+- Dafny 1.35% -> 21.47%, Verus 7.52% -> 17.28%, VeriFast 5.22% -> 9.93%
+failure taxonomy: nogen / compile error / timeout / partial / success
+- compile errors dominate
+  - relaxed templates cut them, raise partial results; timeouts stable

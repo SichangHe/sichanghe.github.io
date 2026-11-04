@@ -2,32 +2,32 @@
 (authored by agents unless marked 🧑)
 Tag: `o2023selfrepair`, [paper](https://arxiv.org/abs/2306.09896)
 
-## claim and evaluation
-Olausson et al. evaluate self-repair for Python programming tasks with CodeLlama-13b-instruct, GPT-3.5, and GPT-4 on HumanEval and APPS. Their comparison counts repair calls in the same budget as independent samples. The first bullet of the Contributions list (Section 1, page 2) is direct: “Self-repair is not a silver bullet: when the cost of repair is taken into account, we find several instances in which pass rates are higher or equally high with i.i.d. sampling (without repair), especially when the budget is small.” APPS uses a randomly chosen 300-task set: 180 interview, 60 competition, and 60 introductory problems (footnote 6, page 5). For HumanEval the main text shows CodeLlama-13b-instruct and GPT-3.5 (GPT-4 on HumanEval and CodeLlama on APPS are in Appendix B); the paper restricts each dataset to one stronger and one weaker baseline model (section 4, page 5). Pass rates are the mean fraction of tasks solved under the corresponding sampling budget.
+self-repair is not a silver bullet once repair calls count toward the budget
+- setup: Olausson et al., Python tasks, CodeLlama-13b-instruct, GPT-3.5, GPT-4 on HumanEval and APPS (300-task subset)
+- several cases where iid sampling matches or beats repair, esp. small budgets
+- gains come from diverse initial samples
+  - GPT-4 on APPS: 10 samples + 1 repair each (20 total) is 1.05x pass@20
+  - 2 samples + 10 repairs each (22 total) is 0.97x pass@22
+  - more feedback-repairs per program at fixed initial samples is not worth the cost
+  - GPT-3.5 gains up to 34% relative on competition-level problems
+  - caveat: one frozen tree per task, subsampled with replacement, may add statistical artefacts
 
-The authors report a budget allocation effect (Contributions, page 2). “For example, for GPT-4 on APPS, drawing 10 samples up front and then 1 repair candidate each (up to 20 samples total) leads to a pass rate 1.05× higher than pass@20 from the same model without repair; drawing 2 samples up front and then drawing 10 repair candidates each (up to 22 samples total) leads to a pass rate which is lower than the baseline pass@22 (0.97×).” These ratios compare equal-budget pass rates, not percentages of all generated programs. The paper's Section 4.1 title states the same finding: self-repair improves with diverse initial samples.
+repair loop = repair tree
+- sample np programs, run tests, keep error messages ei
+- feedback model explains failure, programming model repairs given spec, program, error, explanation
+- tree size is np + np·nf·nr, compare against that many iid samples
+- Verus analogue (inference)
+  - ei = verus diagnostic, trust only successful verification, never the explanation
 
-## technique 1: executable self-repair loop
-Use this when executable tests or a verifier can return concrete failures. The paper's four stages (section 3.1, pages 3–4) are:
+feedback quality is the bottleneck
+- stronger-model feedback beats both iid and plain self-repair at all budgets
+  - Code Llama + GPT-3.5/4 feedback, GPT-3.5 + GPT-4 feedback
+- human feedback on GPT-4 repairs: pass rate 33.3% to 52.6% (1.58x)
+  - small study: 40 programs, 20 skewed-easy APPS tasks, 16 participants
+  - does not measure human effort
+- bottleneck is a hypothesis, not proved
 
-1. Given specification ψ, sample `np` programs independently from programming model MP.
-2. Execute each against the full test bed. Stop if any program satisfies ψ (`p |= ψ`); otherwise retain error messages `ei`.
-3. Feed ψ, the wrong program `pi`, and `ei` to feedback model MF and sample `nf` explanations `fij`.
-4. Feed ψ, `pi`, `ei`, and `fij` back to MP and sample `nr` repaired programs `rijk`.
-
-The authors call the resulting interleaved specification/program/feedback structure a repair tree. When MP=MF, feedback and repair can be jointly sampled in one interaction (section 3.1, page 4; prompts in Appendix G). The same MP is used for initial generation and repair (footnote 3). Their motivating example shows a modulo bug: a failing test says SUN returned 0 instead of 7, feedback identifies the modulo operation, and repair removes it (Figure 1, page 2). The introduction (page 1) describes the workflow: “First, a program is sampled from a code generation model; this program is then run on a suite of unit tests provided as part of the specification; if the program fails any test, then the error message and the faulty program are given to a feedback generation model, which outputs a short explanation of why the code failed”.
-
-Inference: In Verus, replace execution with `verus` compilation and proof checking. A failed verification diagnostic is `ei`; a model proposes an explanation and revised Rust proof. A valid `ensures` proof terminates the loop. Verus does not guarantee that a diagnostic is complete or that a textual explanation is sound, so only successful checking is trusted. Use actual Verus constructs (`requires`, `ensures`, `invariant`, `assert`, `proof fn`) and keep proof functions out of runtime calls.
-
-## technique 2: compare repair against equal-cost iid sampling
-Self-repair must be evaluated with the number of initial and repaired programs counted. The paper defines tree size as `np + np·nf·nr` (or `np + np·nfr` for joint feedback-repair) and compares against that many independent samples (section 3.2, pages 4–5). It generates one large frozen tree per task (`Np=50`, `Nf=25`, with `Nr=nr=1` because feedback and repair are mostly sampled jointly; `Nf=10` in the section 4.2 experiment) and sub-samples with replacement `Nt=1000` repair trees for each hyperparameter setting. Self-repair uses `np<=25` and the no-repair baseline `np<=50`. The authors state that this reuse greatly reduces computational cost but “risks introducing statistical artefacts” (section 5, page 9).
-
-The study varies `np` in {1,2,5,10,25} and feedback-repair count in {1,3,5,10}. It finds gains when more budget is spent on diverse initial programs; GPT-4 on APPS beats the baseline “by up to 8%”, GPT-3.5 on APPS shows only marginal gains at the largest `np`, and GPT-3.5 “sees up to a 34% performance gain relative to the baseline on competition-level problems” (section 4.1, page 5; per-difficulty heatmap in Figure 14, Appendix C). The paper also finds that fixing `np` and raising the number of feedback-repairs “does not appear to be worth the additional cost” (page 6); its `nfr=1` runs are in Figure 5. These are relative pass-rate changes for the named model/task subset, not universal improvements.
-
-## technique 3: strengthen feedback instead of repair sampling
-The paper replaces a model's feedback with a stronger model's feedback while keeping the repairing model fixed. “Artificially boosting the quality of the feedback significantly improves the efficacy of self-repair.” The boosted settings are Code Llama with GPT-3.5 or GPT-4 feedback, and GPT-3.5 with GPT-4 feedback; the paper says “in every case, the boosted configuration beats both the corresponding i.i.d. baseline and the corresponding self-repair configuration at all budgets” (Contributions, page 2; section 4.2, page 8, Figure 5). The paper hypothesizes, and does not prove, that the feedback stage is the bottleneck. For GPT-4, the paper reports “increasing the fraction of repaired programs which pass the tests by a factor of 1.58× (from 33.3% to 52.6%)” when GPT-4's explanations are replaced by those of human participants (Contributions, page 2; Table 1, page 8). The rate is passing repair candidates over sampled candidates: 25 candidates per (feedback, program) pair, for 40 failing GPT-4 programs from 20 APPS tasks (14 introductory, 3 interview, 3 competition tasks, skewed easy), with 16 participants giving 2 feedback strings per program (section 4.3 and Appendix D). Table 1 per difficulty: introductory 42.64% vs 62.21%, interview 19.33% vs 45.67%, competition 3.67% vs 14.67% (GPT-4 vs human). The study is small, and the authors say it does not compare human-in-the-loop against self-repair, since it does not measure human effort.
-
-## techniques for the catalog
-- executable repair tree: generate, check, explain diagnostics, and sample repairs as a branching search
-- equal-budget evaluation: compare repair trees with iid samples using the same program count or token cost
-- boosted feedback: substitute a stronger critic or human explanation and measure repaired-program pass rates
+takeaways for the catalog
+- always evaluate repair at equal cost against iid sampling
+- spend budget on diverse initial samples before repeated repairs
+- invest in better critic or diagnostics

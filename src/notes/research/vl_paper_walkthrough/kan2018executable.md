@@ -2,72 +2,26 @@
 (authored by agents unless marked 🧑)
 Tag: `kan2018executable`, [paper](http://arxiv.org/abs/1804.07608v2)
 
-## scope and result
-
-RustSEM is an executable operational semantics for a substantial subset of Rust. The paper's abstract says, “RustSEM provides an operational semantics for OBS at the memory-level, which can be used to verify the runtime behavior of Rust programs against the OBS invariants.” (§abstract, p. 1:1). OBS is Rust's ownership and borrowing system. The authors implement the semantics in K, compare it with the Rust compiler, and use K's execution and verification engines for runtime and formal verification.
-
-The central design has three levels. First, a sequentially consistent memory model defines stack and heap layout, memory operations, and memory-level OBS checking. Second, a Core Language (CL) intermediate representation reduces repeated semantic definitions. Third, a translation semantics maps Rust programs to CL. The paper states, “To execute a Rust program, RustSEM first translates the program into a CL program, and then executes the CL program wrt. the CL semantics, in which all memory accesses are carried out by invoking the interfaces of the memory model.” (§1, p. 1:2). The memory model is deliberately language-independent, and the authors prove a refinement relation from their graph abstraction to the memory model.
-
-Inference: for Verus, the useful lesson is to separate a small executable model of ownership-sensitive memory from the source-language front end. A Verus project could encode a CL-like state machine with executable Rust and prove that a Rust-facing wrapper preserves its state invariants. Verus does not automatically translate arbitrary Rust into this model, so the translation and coverage obligations remain proof work.
-
-## technique 1: state ownership and borrowing as graph invariants
-
-Use this technique when a verifier needs to reason about aliasing, nested borrows, fields, or non-lexical lifetimes independently of syntax. The paper first defines five OBS invariants (§2.3, pp. 1:5–1:6): each block has a unique owner; a borrow's lifetime is included in its referent's lifetime; mutable and other references to the same referent have disjoint lifetimes; a shared borrow disables writing through its referent; and a mutable borrow disables both reading and writing through its referent. The paper gives concrete violations, including a reference outliving its owner (Listing 4) and a shared borrow of a struct overlapping a mutable borrow of one of its fields (Listing 5).
-
-The representation is an OBS graph `G = (B, V, E, F)`: a block `B`, a set `V` of aliases, a total map `E` from each alias to one typed edge (`o`, `s` or `m`, to the block or another alias), and `F`, the lifetime of each edge (Definition 3.2). Well-formedness (Definition 3.3) checks unique ownership, lifetime inclusion along edges, and disjointness of a mutable edge's lifetime from the lifetime of any other borrowing edge to the same alias (§3, pp. 1:6–1:7). Permission functions `R_G(a,t)` and `W_G(a,t)` determine whether alias `a` can read or write at timestamp `t`; read permission is disabled at `t` if some mutable edge into the alias is live at `t`, and write permission is disabled if any borrowing edge into the alias is live at `t` (Definition 3.5). The authors prove Lemma 3.4, that a well-formed graph is acyclic, and Theorem 3.6, that at every timestamp either no writer is enabled or exactly one writer is enabled and all other reads and writes are disabled (Lemma 3.4, §3 p. 1:7, proof in Appendix A; Theorem 3.6, §3 p. 1:8, proof in Appendix B). The theorem's statement is, “If G is well-formed then we have either (1) ∀a ∈ V ,WG (a, t) = false or (2) ∃!a ∈ V ,WG (a, t) = true∧(∀a ′ .a , a ′ ⇒ RG (a ′, t) = WG (a ′, t) = false).” (§3, p. 1:8).
-
-Inference: the paper gives definitions and a theorem, not a step list; the following steps are my reconstruction of how they would be used. (1) create an alias node for an owner or reference; (2) add an edge labelled `o`, `s`, or `m` to its block or referent; (3) assign each edge a lifetime; (4) check the three graph well-formedness conditions; (5) compute read and write permissions at each timestamp; and (6) use Theorem 3.6 to establish exclusive mutation. The ingredients are Definitions 3.2, 3.3 and 3.5 and Theorem 3.6 in §3, pp. 1:6–1:8.
-
-Inference: the Verus form is a ghost graph with `Seq` or `Map` state, a `spec fn` for edge lifetimes, and proof functions that establish uniqueness, inclusion, and disjointness. An executable borrow operation can have `requires` clauses for a valid owner and non-overlap, and `ensures` clauses that preserve the graph invariant. Verus's ordinary Rust borrow checker still governs executable references; the ghost graph is an additional specification. Verus's `invariant` syntax belongs on loops or state-machine invariants, not as a function call.
-
-## technique 2: refine a high-level model into a dynamic memory model
-
-Use this when a high-level alias proof is too abstract for runtime checking. The memory configuration is a 4-tuple `(S, H, P, ms)`: stacks, a heap of blocks, a map `P` from aliases to the latest timestamps at which each was read and written, and a map `ms` of simultaneous read/write counts per location used to detect data races (§4.1, pp. 1:9–1:11). It dynamically extends a reference lifetime when a later use is encountered. In the paper's motivating example, a mutable borrow first has span `2 ∼ 2`; after a use at line 3 the span becomes `2 ∼ 3`. A later owner write is allowed until a shared borrow is actually used, at which point its lifetime extends and the earlier write becomes illegal (§4, pp. 1:8–1:9). The paper calls this “dynamic lifetime extension” (§4, p. 1:8).
-
-The operational memory rules reject invalid accesses, and the authors prove Theorem 4.4: a safe memory-operation sequence yields a well-formed OBS graph and operations respect its read/write permission functions (§4.4, pp. 1:16–1:17, and Appendix C, pp. 1:26–1:28). The paper describes the model as “the core of RustSEM that formalizes OBS” (§4, p. 1:8). It also incorporates sequential-consistency checking for concurrent access and treats raw pointers separately so unsafe operations can escape OBS checks (§4, pp. 1:8–1:14).
-
-Inference: the paper presents rules, not a step list; these steps are my reading of the rules. (1) represent an allocation and its owner in the memory state; (2) create a borrow value with a lifetime ending at the current timestamp; (3) on each use, extend the lifetime to that timestamp; (4) check the appropriate read/write permission before executing the memory operation; (5) update the last-use timestamp and alias state; and (6) reject an operation by entering a stuck/error state when permission or validity fails. Steps 1–5 reflect the dynamic-lifetime example and the Lv-Deref, Write-Ref and Read-Ref rules in §4; step 6 reflects the paper's statement that memory properties such as data races, buffer overflows and borrowing errors are specified as `{True}{¬stuck}` (§6.2, p. 1:21).
-
-Inference: in Verus, encode the memory state and timestamp as ghost state, and prove each operation's postcondition preserves a graph invariant. The executable operation can return `Result` for a detected violation; Verus can prove that a valid pre-state never returns an invalid state. A direct Verus encoding is a model of the semantics, not a replacement for Rust's compiler or for unsafe pointer validity.
-
-## technique 3: test semantic consistency by exploring all rule choices
-
-Use this technique when rewrite rules may overlap and a deterministic execution engine could silently choose only one branch. RustSEM's execution engine selects one trace, while K's verification engine searches all possible traces. The paper's example removes `v = false` from the false branch of an `if`; both true and false rules then match `v = true`. A second ambiguity occurs when a value is also accepted as an expression, allowing the evaluation rule to reapply infinitely many times (§6.1, p. 1:19).
-
-For every fixed test case, the authors perform three steps: “(1) Running the execution engine on the test case to detect bugs quickly. (2) Running the verification engine to detect semantic ambiguities. (3) Appending assert(False) to the end of each test case and run the verification engine again.” (§6.1, p. 1:20). The final step forces every explored path to fail, making K report paths that would otherwise satisfy the test and hide an ambiguity. Their small examples are two `if` programs whose chosen branches assert true. They run 400 memory/CL cases and 300 translation cases, comparing RustSEM execution with Rust compiler version 1.4.5 on a 12-thread Intel Xeon E5-1650 v3 with 16GB RAM (§6.1, p. 1:20). They detect more than 36 semantic ambiguities (§6.1, p. 1:20).
-
-Inference: Verus can express the same testing idea only indirectly. A proof function can quantify over a finite rule-choice datatype and prove that every enabled transition preserves an invariant; a harness can add `assert(false)` after bounded symbolic execution. Verus's solver does not itself execute K rewrite rules, so a faithful transition relation and finite-state bound must be supplied.
-
-## technique 4: use one semantics for runtime memory checking
-
-RustSEM's memory semantics instruments the model rather than the source code. It detects accessing uninitialized locations, reading dangling pointers, double frees, data races and deadlocks, ownership and borrowing errors, and buffer overflows (§6.2, p. 1:20). The introduction says runtime verification is evaluated on 118 programs (§1, p. 1:3), and Table 2 reports six error classes. Table 2 has 118 test cases total: 22 uninitialized-read, 11 dangling-pointer, 10 double-free, 14 data-race, 40 ownership/borrowing, and 21 index-overflow cases. Each row has 10 inputs; the reported average times range from 5.73 to 7.36 seconds and average memory from 344,088 to 394,152 KB (Table 2, p. 1:21). The authors state, “All the memory errors in the test cases can be detected with the inputs that can trigger the errors.” (Table 2 discussion, p. 1:21). The paper says “Data races are not always detected in an execution, since executions are non-deterministic.” (p. 1:21). It also says RustSEM is less efficient than other runtime checkers; the biggest test case is around 210 LOC and takes around 10 seconds (§6.2, p. 1:21).
-
-Inference: this is a runtime monitor backed by a formal transition system, rather than a static proof of all executions. In Verus, the analogous static result is a proof that every permitted operation satisfies a contract; a runtime checker is still needed for assumptions left outside the proof, such as foreign code or hardware behavior.
-
-## technique 5: symbolic functional and memory verification
-
-K's verifier takes the K operational semantics, symbolically executes it, and generates queries to a theorem prover (for example Z3), with implication between patterns reduced to SMT reasoning. A property is a reachability rule between matching K patterns. The user supplies a precondition, postcondition, and loop invariants. For memory safety, the paper uses `{True}{¬stuck}`: every input must avoid a stuck state. Functional properties add a result relation, such as a sum or sortedness predicate (§6.2, pp. 1:21–1:22).
-
-The benchmark includes `sum`, `sumvec`, insertion sort, polymorphism, closures, traits, two concurrent programs, and selected `VecDeque` methods (Table 3, pp. 1:21–1:22). The table reports lines of code, time, and memory for each; for example, `sum(N)` is 15 LOC and 44.65 seconds, while insertion sort is 43 LOC and 125.43 seconds. The concurrent-race property is correctly shown invalid because execution reaches a stuck state; concurrent-order explores all possible interleavings. For the old `VecDeque` implementation, RustSEM rediscovers a buffer overflow in `reserve`. Because infinite heap structures are unsupported, the authors bound `VecDeque` capacity at 16, explicitly making this a bounded-model check (§6.2, p. 1:22).
-
-Inference: the paper describes the infrastructure in prose, not as a step list; these steps are my reconstruction. (1) write a precondition over input state; (2) write a postcondition over the final state or use `¬stuck`; (3) add loop invariants; (4) encode the property as a K reachability rule; (5) let symbolic execution explore paths and SMT discharge implications; and (6) inspect a counterexample when a path reaches `stuck` or violates the postcondition. Steps 1–5 follow the method described in §6.2; step 6 is my inference from the verifier's reachability result, since the paper does not describe counterexample inspection.
-
-Inference: the Verus form uses `requires`, `ensures`, and loop `invariant` clauses on executable Rust, with `assert` and proof functions for intermediate facts. A bounded capacity can be an explicit `requires cap <= 16`, but that assumption must be recorded because it does not prove the unbounded data structure. A concurrency proof would use Verus transition-system/state-machine constructs rather than K reachability syntax.
-
-## what is proved, measured, and trusted
-
-The paper proves graph acyclicity, exclusive-mutation safety from graph well-formedness, and refinement from the high-level OBS abstraction to the memory model. It reports qualitative compiler comparison results (four findings, no per-test pass rate), ambiguity discovery, runtime checking cost, and bounded functional/memory verification. The compiler comparison uses about 700 tests: 400 memory/CL and 300 translation cases (§6.1, p. 1:20). The runtime table's denominators are test cases and ten fixed inputs per row, not all Rust programs. The formal table measures selected programs, not language-wide coverage.
-
-Inference: trusted components include the K rewrite and verification engines, the SMT solver, the Rust compiler used as the comparison oracle, the correctness of the Rust-to-CL translation rules, and the specifications and bounds supplied by the authors. The paper does not prove that K, Z3, or the compiler is correct. Inference: a Verus product would additionally trust Verus's supported Rust semantics, solver and erasure pipeline, external-library contracts, and any unsafe or foreign code boundary.
-
-The authors report substantial limits. Rust changes rapidly, so RustSEM omits features such as module definitions and derive attributes; formalization took about two and a half person-years and around 1100 K rules (§5, p. 1:18). K's RustSEM memory model cannot directly reuse the framework for infinite heap structures because that framework uses a different memory model (§6.2, p. 1:22). The paper concludes that a user-friendly and more powerful verifier remains future work (§6.2, p. 1:22).
-
-## techniques for the catalog
-
-- executable three-level Rust semantics: translate Rust to CL and execute it through a memory model that dynamically checks ownership and borrowing
-- OBS graph proof: represent owners, aliases, edges, and lifetimes, then prove well-formedness implies exclusive mutation
-- dynamic lifetime extension: extend a borrow's lifetime at each use and reject memory operations that violate permissions
-- semantic ambiguity testing: run execution, all-trace verification, and verification after appending `assert(False)`
-- semantics-based runtime checking: detect uninitialized/dangling reads, double frees, races, borrow errors, and buffer/index overflows through memory semantics instrumentation
-- symbolic reachability verification: specify pre/postconditions and loop invariants, then use K symbolic execution and SMT queries
-- bounded concurrent/data-structure verification: explore interleavings and use explicit finite capacity bounds when infinite heaps are unsupported
+RustSEM: executable operational semantics for a Rust subset, in K
+- checks ownership and borrowing system (OBS) invariants at memory level
+- compared against the Rust compiler
+- three levels
+  - sequentially consistent memory model (stack, heap, OBS checks)
+  - Core Language (CL) IR to avoid repeated semantic definitions
+  - translation semantics Rust to CL
+- memory model is language-independent
+  - refinement proved from the graph abstraction to the memory model
+OBS as graph invariants
+- 5 invariants over owners, aliases, edges, lifetimes
+- well-formedness implies exclusive mutation
+- non-lexical lifetimes handled by extending a borrow's lifetime at each use
+  - memory ops violating permissions are rejected
+K engine uses
+- runtime checking: uninitialized/dangling reads, double frees, races, borrow errors, buffer/index overflow
+- symbolic reachability verification with pre/postconditions, loop invariants, SMT
+- bounded exploration of interleavings
+  - explicit finite capacities for data structures, infinite heaps unsupported
+- ambiguity testing: run, verify all traces, verify after appending assert(False)
+Verus mapping (inference)
+- separate a small executable ownership model from the front end
+- translation and coverage remain proof obligations

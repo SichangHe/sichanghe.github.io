@@ -2,42 +2,26 @@
 (authored by agents unless marked 🧑)
 Tag: `zhang2026automated`: [paper](https://www.semanticscholar.org/paper/136a2a3f13638cbe68150025ac11b2abe8c4a19e)
 
-## study and measurable bottlenecks
-This paper profiles six proof-synthesis tools on CoqGym and derives a search heuristic called Pattern-Guided Tactic Search (PGTS). CoqGym has 13,137 test theorems from 27 projects; the authors compiled all 27 projects with Coq 8.9.0 (§3.1.2, p.3). For a fair comparison of the four tools used by PGTS, they use the intersection of compatible runs: 8,879 theorems from 24 projects (§3.1.2, p.3). The paper's central observation is that synthesis is a tree search in which a neural model proposes tactics and the interactive theorem prover (ITP) accepts, rejects, or advances each candidate.
-
-The authors mine human proof scripts rather than asking the neural model to rediscover all ordering information. PrefixSpan finds frequent tactic subsequences; two authors classify them into Introduction, Simplification, Application, Rewriting, Automation, and Analysis patterns. Their Cohen's kappa is 0.90 (§3.2.2, p.4). To reproduce the data preparation: collect training proof sequences, represent each as tactic tokens, mine frequent sequential patterns with PrefixSpan, classify each pattern, and count parent-tactic/child-tactic transitions. The resulting frequency table is the input to PGTS.
-
-## PGTS algorithm
-PGTS is a ranking layer around an existing neural tactic predictor and DFS proof search. Its steps are explicit in Algorithm 1 (p.12):
-
-1. start from the initial goal and ask the neural network for its top 20 tactics (Algorithm 1, lines 2–4)
-2. push candidates in descending score order and maintain a `Seen` set containing goals already reached
-3. pop a tactic, apply it in the ITP, and record the result (lines 10–11)
-4. on success, return the accumulated proof; on an error or repeated goal, skip the tactic (lines 12–20)
-5. on a new proving state, append the tactic, add the goal to `Seen`, and generate another top-20 list (lines 22–26)
-6. when there is a parent tactic, partition predictions into transitions present in the mined pattern table and the remaining predictions (lines 30–37)
-7. sort matching transitions by observed frequency, then sort the remainder by neural probability; continue depth-first
-8. if a node exhausts its candidates, backtrack to the preceding goal and try its untried tactics (lines 5–9)
-9. terminate with no proof after 300 tactic applications or 600 seconds (Algorithm 1 and §6, p.11)
-
-For the initial goal there is no parent tactic, so PGTS preserves the neural ordering. For every later goal, pattern frequency is a heuristic only: each tactic still must compile and produce a new ITP state. Restricted PGTS (RPGTS) applies pattern ranking only to parameterized tactics, providing an ablation.
-
-The paper describes the interaction succinctly: “The system attempts to apply each tactic in the top-k list using the interactive theorem prover” (Algorithm discussion, §6, p.11). It also specifies the stopping rule: “We follow the settings used in prior work by imposing a maximum time limit of 600 seconds and restricting the total number of tactic applications to 300” (§6, p.11). These are operational limits, not completeness guarantees.
-
-## results and denominator checks
-On the common 8,879-theorem subset, PGTS raises the number proved by ASTactic from 1,595 to 1,685 (90 additional, 5.64%); Tac from 1,343 to 1,506 (163, 12.14%); Tok from 1,407 to 1,537 (130, 9.24%); and Passport from 1,430 to 1,504 (74, 5.17%) (Fig. 11, p.13). The arithmetic is additional divided by the DFS baseline: 90/1,595, 163/1,343, 130/1,407, and 74/1,430. The reported mean is 8.05% across the four tools. The paper's answer is, “PGTS improves the performance of proof synthesis tools by increasing the number of successfully proven theorems by an average of 8.05%” (§7.2, p.13).
-
-Unique Added Value uses theorems PGTS proves that DFS does not, divided by the DFS count. Table 1 reports 240/1,595 = 15.05% for ASTactic, 327/1,343 = 24.35% for Tac, 329/1,407 = 23.38% for Tok, and 246/1,430 = 17.20% for Passport; mean 286 and 20.00%. RPGTS is lower (50, 68, 94, and 82 additional, mean 74 and 5.15%), so ranking all tactics is material.
-
-For capability, the share of newly proved theorems involving higher-order logic rises from 19.44% to 29.17% for ASTactic, 18.76% to 32.72% for Tac, 16.84% to 38.91% for Tok, and 20.42% to 37.80% for Passport (Table 2, p.13). The reported relative increases (50.05%, 74.41%, 131.00%, 85.11%) are each computed against the DFS percentage. For quality, PGTS has average proof length 6.20 tactics versus DFS 7.65 and RPGTS 6.67, and the average reduction compared with human proofs is 20.82% (§7.4, p.14). ASTactic is an exception where PGTS is slightly longer than DFS; RPGTS remains shorter.
-
-## Verus form and limits
-Inference: represent a Verus verification goal as executable Rust plus `requires`/`ensures`, and treat each candidate lemma call, `assert`, or loop `invariant` as an action submitted to Verus. Maintain a normalized state consisting of the current diagnostic obligations and available facts; branch on candidate `proof fn` calls or assertions, and let Verus decide whether the branch verifies. A mined transition table can rank which lemma or assertion tends to follow a previous proof action, but Verus has no Coq tactic-state API or universal top-20 tactic vocabulary.
-
-Inference: the PGTS structure transfers as a checker-in-the-loop search policy, while Coq tactics, PrefixSpan token meanings, and the 600-second/300-step limits do not transfer without calibration. A proof function is erased from executable Rust, so generated proof code must remain in proof contexts; `invariant` is a loop declaration, not a call. The final Verus check, specification, and trusted library contracts remain authoritative.
-
-## techniques for the catalog
-- sequential proof-pattern mining — mine PrefixSpan tactic subsequences from human scripts and classify them into six proof roles
-- pattern-guided tactic ranking — reorder neural top-k candidates by parent-tactic transition frequencies, then fall back to model probability
-- checker-in-the-loop DFS — apply candidates in the ITP, skip errors and repeated goals, and backtrack when a branch exhausts
-- bounded synthesis evaluation — enforce explicit tactic and time budgets and report added-value fractions against the same DFS denominator
+pgts: pattern-guided tactic search, a ranking layer on neural tactic predictor + dfs in Coq
+- profiles 6 proof-synthesis tools on CoqGym (13,137 theorems, 27 projects)
+  - common subset for 4 tools: 8,879 theorems, 24 projects
+- mines human proof scripts with PrefixSpan for frequent tactic subsequences
+  - 6 pattern roles: introduction, simplification, application, rewriting, automation, analysis
+  - builds parent-tactic to child-tactic transition frequency table
+- search loop
+  - neural top-20 tactics per goal, applied in the ITP
+  - tactics matching a mined transition are sorted by frequency first, rest by model probability
+  - skip errors and repeated goals, backtrack on exhaustion
+  - budget: 300 tactic applications or 600 s
+- the ITP still decides every step, patterns are only a heuristic
+results
+- proved theorems, 4 tools, vs dfs baseline: avg +8.05%
+  - ASTactic 1,595 to 1,685, Tac 1,343 to 1,506, Tok 1,407 to 1,537, Passport 1,430 to 1,504
+- newly proved theorems use more higher-order logic, e.g. Tok 16.84% to 38.91%
+- proofs shorter: 6.20 tactics vs dfs 7.65, 20.82% shorter than human proofs
+- ranking only parameterized tactics (rpgts) gains far less (avg +5.15% unique added value vs 20.00%)
+transfer to Verus (inference)
+- checker-in-the-loop search: candidate lemma call / assert / invariant, Verus accepts or rejects
+- mined lemma-after-action transition table can rank candidates
+- no tactic-state API in Verus, step/time budgets need recalibration
+- final Verus check and spec stay authoritative

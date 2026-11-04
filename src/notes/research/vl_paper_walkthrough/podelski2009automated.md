@@ -2,61 +2,32 @@
 (authored by agents unless marked 🧑)
 Tag: `podelski2009automated`, [paper](https://doi.org/10.2168/LMCS-6(3:6)2010)
 
-## result and specification boundary
-
-Hawblitzel and Petrank verify a Cheney copying collector and a mark-sweep collector, including allocators, in an x86-like Boogie language. The abstract says: “We used the Boogie verification generator and the Z3 automated theorem prover to verify this assembly language code mechanically.” The central specification abstracts physical addresses into a ghost graph: a concrete-to-abstract mapping `$toAbs`, abstract memory `$AbsMem`, and invariants relating object fields, allocation state, and collector colors. The verified interface is `Initialize`, `Alloc`, `ReadField`, and `WriteField`; the paper says the mutator “is not allowed to modify any of the variables var1...varn directly, but instead must use ReadField, WriteField, and Alloc to affect these variables.” The practical collectors use variants of `ReadField` and `WriteField` whose postconditions constrain `Mem` so the mutator can inline loads and stores (Section 4.1, p. 9). The verification “does not prove termination” and the allocators and collectors halt on out-of-memory or unsupported features such as multithreading (Section 1, p. 2).
-
-Inference: this is a concrete design pattern for Verus systems proofs: separate an abstract state machine from raw memory and prove each low-level operation preserves the representation invariant. It does not show that arbitrary unsafe Rust or a real runtime is verified automatically.
-
-## technique: abstract/concrete simulation with ghost state
-
-Use this when physical pointers and moving objects make direct functional specifications awkward. `$AbsMem` records the abstract object graph, while `$toAbs` maps each allocated concrete address to a unique abstract node or `NO_ABS`. `WellFormed` enforces injectivity; `ObjInv` says each concrete object's fields point to concrete addresses representing the corresponding abstract values; `MutatorInv` packages `WellFormed`, `ObjInv`, and the constraint that an address is unallocated exactly when `$toAbs` is `NO_ABS` (Figure 2, p. 10); the miniature mark-sweep version also bounds `Color[i]` below 2. `Initialize` ensures the invariant; `Alloc` and `WriteField` require and ensure it, and `ReadField` requires it and modifies nothing (Figures 3, 6, pp. 11, 14).
-
-Steps (my synthesis of Sections 4.1 and 4.1.1, pp. 7–9): (1) define the abstract graph and concrete memory arrays; (2) introduce ghost mappings and prove `WellFormed`; (3) define `Pointer` and `ObjInv`; (4) define the mutator invariant over every memory address; (5) give preconditions for valid pointers and abstract updates; (6) give postconditions that preserve the invariant and update `$AbsMem`; (7) verify collection effectiveness separately (Section 4.1.1, p. 9): after a collection only abstract nodes that were reached at some time since the collection started have physical memory. The paper emphasizes that “The verification ensures that if an allocation or garbage collection operation completes, then the physical heap managed by the allocator and collector faithfully represents the abstract graph of objects defined by the mutator.”
-
-Verus form (Inference): make the abstract graph a ghost value or `spec fn`, define a representation predicate over addresses and ghost mappings, and put it in `requires`/`ensures` of allocator and field operations. Use `proof fn`s for mapping injectivity and field correspondence. Verus ownership and borrows must account for aliasing and mutable memory; the Boogie array model's unrestricted mathematical updates do not carry over.
-
-## technique: tri-color mark-sweep invariants
-
-Use this to verify tracing collection without proving an entire reachability algorithm as one monolith. Objects are white (unvisited), gray (discovered but not scanned), or black (scanned). `GcInv` requires that black objects do not point to white objects, and that allocated objects satisfy `ObjInv`. In the miniature collector, `Mark` colors a node gray before recursively visiting children, then black afterward; the paper says that without the gray step “a cycle in the graph would send Mark into an infinite loop.” Sweep requires no gray objects, deallocates white objects, and turns black objects white for the next cycle.
-
-Steps (my synthesis of Sections 4.2 and 7.1 with Figure 13, pp. 15 and 27–29; the miniature collector of Figures 4–5 is recursive, the practical one iterative): (1) initialize reachable roots gray and put them on the mark stack; (2) pop a gray object; (3) push each white child and color it gray; (4) color the popped object black; (5) after the mark phase, scan the heap; (6) free white objects and remove their mappings; (7) recolor black objects white; (8) maintain free-list and local-cache invariants in the allocator. The paper says it chose this scheme to “find the middle way between simplicity and efficiency”; colors live in a separate two-bit-per-4-bytes table, and the allocator uses local caches with a free list.
-
-Verus form (Inference): encode color and mark-stack facts in loop `invariant`s and prove each mutation preserves no-black-to-white edges. Use a `decreases` measure only if proving termination is a product requirement; the paper does not prove termination. Represent the collector's abstract graph with a ghost map and use `ensures` to relate post-collection reachable objects to allocated memory.
-
-## technique: region-based invariants for moving collectors
-
-Use regions when a copying collector changes mappings and a single global object invariant creates non-local quantified obligations. The paper replaces one `$toAbs` mapping with source and target regions `$rs` and `$rt`, requires regions to grow monotonically via `RExtend`, and lets object fields point from one region to another. In the copying collector, `$r1` describes from-space and `$r2` the growing to-space; at the end `$toAbs := $r2` and facts about `$r1` are thrown out (Section 6, p. 26). The mark-sweep version uses `$r1` for all allocated objects and `$r2` for objects reached so far (Section 5, p. 18).
-
-Steps (my synthesis of Section 5, pp. 17–19, and Section 6, pp. 19 and 26): (1) define region mappings and a monotonic extension predicate; (2) define `ObjInv(i,$rs,$rt,...)` so field lookups use the target region; (3) establish source-region invariants before copying (`$r1 := $toAbs`, `$r2` empty); (4) add each copied object to the target region; (5) prove that target pointers remain valid under region extension; (6) after collection, discard source-region facts (the region “deallocation”). This converts many non-local facts into local color/region cases. The paper notes that “Together, these three strategies were sufficient for both mark-sweep and copying collectors.”
-
-Verus form (Inference): model each region as a ghost set/map and prove monotonicity with `ensures`; use `invariant` clauses for source/target ownership and copied-object correspondence. Verus cannot use Boogie's `$` ghost naming convention or mathematical arrays directly; encode snapshots and maps using supported spec values and explicit proof lemmas.
-
-## technique: trigger-directed quantified automation
-
-Use triggers to control SMT instantiation of quantified invariants. The authors write logically equivalent quantified formulas with different triggers and add a true function `T(i)` solely as a trigger. They explicitly assert `T(e)` for program expressions that should instantiate an invariant, while avoiding trigger expressions that recursively reintroduce themselves. The paper warns: “With an overly selective trigger, a quantified formula may never get instantiated, leaving a theorem unproved. With an overly liberal trigger, a quantified formula may be instantiated too often (even infinitely often), drowning the theorem prover in unwanted information.”
-
-Steps (my synthesis of Sections 4.3, 5, and 7.4, pp. 15–18 and 34): (1) identify quantified array or pointer invariants; (2) choose a trigger expression such as `memAddr(i)` or `Color[i]`; (3) if these create loops, add a semantically trivial trigger function; (4) assert trigger instances at relevant addresses; (5) use shared triggers to relate old and new array values for local updates; (6) add region-extension triggers for non-local pointer facts (`RExtend` triggers on `$r[i]` or `$r'[i]`, not on `T`; Section 5, p. 18); (7) in the realistic collector, use separate triggers for separate purposes: `TV` for general-purpose values including pointers and `TO` for field indices (Section 7.4, p. 34). Local facts work for mark-sweep; forwarding pointers require regions and additional triggers.
-
-Verus form (Inference): control quantifier exposure through explicit proof lemmas and carefully chosen quantified `requires`/`ensures` facts. Verus's solver interface is different from Boogie's trigger syntax, so the exact `T(i)` idiom is not a Verus construct; use only supported Verus quantifier patterns and proof functions.
-
-## technique: verified subset translation and specification testing
-
-The realistic collectors are written in an x86-like Boogie subset, then translated to MASM-compatible x86 by a small tool. The tool (Section 7.2, pp. 29–31) rejects programs that use ghost variables at run time, enforces matching `CALL` and `RETURN`, requires memory access through `Load`/`Store` procedures whose preconditions keep accesses inside the allowed area and 4-byte aligned, and maintains the invariant that registers, physical variables, and memory words hold integers in 0..2^32−1. The authors chose to translate BoogiePL to x86 rather than annotated x86 to BoogiePL; their stated reason is that Boogie and Z3 then “guarantee that we really have verified the collectors, at least in BoogiePL form, even if our BoogiePL-to-x86 translation subsequently turns the verified BoogiePL into erroneous x86 code.” They also wanted no high-level language compiler in the trusted base.
-
-After adding the Bartok memory model the specification “ballooned to hundreds of lines of bit-level details” (Section 7.3, p. 33), and the authors tested it two ways. Boogie's “smoke” feature, which attempts to prove false at various points in the program, “did not turn up any bugs.” Hand-translating the specification into C# and adding run-time assertions to the original Bartok collectors produced assertion violations that led to 5 specification bugs, from forgetting to multiply by 4 to convert a word address to a byte address, to forgetting that Bartok compresses the sorted return address tables. Separately, running the verified copying collector revealed two more specification bugs (Section 9, p. 39).
-
-## evidence, assumptions, and threat
-
-The miniature collector has seven verified procedures in less than two seconds. For practical collectors, Table 1 reports 115 seconds for copying, 70 seconds for mark-sweep, and 12 seconds for shared code; Section 8 reports measurements on a single core of a 4-core 2.4GHz Intel Core2 with 4GB of RAM. The code has 802 and 865 x86 instructions before inlining (plus 177 shared), 2,398 and 3,038 non-comment, non-blank BoogiePL lines (plus 779 shared, and 546 trusted-definition lines), “about 2-3 lines of annotation per x86 instruction.” The performance comparison covers 10 of 12 benchmarks from earlier papers (the excluded ones use multithreading or unsafe-code support); the paper says the “space and time consumption is in the same ballpark as Bartok's native run-time system” and stresses that the comparison “is highly unfair to the native collectors,” which support multithreading. The verified mark-sweep collector's performance suffered under fragmentation on three benchmarks (Figures 17(f), 17(g), 17(j)). Inference: this is not a speedup claim.
-
-The paper states that Boogie and Z3 are part of the trusted computing base (Section 3, p. 5) and that verification relies on a minimal set of trusted axioms and definitions for 32-bit arithmetic, x86 instructions, memory words, and the mutator interface (Section 1, p. 2). The BoogiePL-to-x86 translation is not itself verified (Section 7.2). The paper states that verification “does not prove termination”; collectors may halt on out-of-memory or unsupported multithreading or unsafe-code features.
-
-## techniques for the catalog
-
-- ghost abstract/concrete simulation — map physical addresses to an abstract object graph and preserve the mapping invariant
-- tri-color mark-sweep proof — maintain no-black-to-white edges through mark, sweep, and allocation loops
-- region-based copying proof — use monotone source/target regions to localize moving-pointer invariants
-- trigger-directed SMT automation — choose and assert quantifier triggers to control useful instantiation
-- verified subset translation — verify an x86-like source subset, then translate while rejecting unsupported ghost behavior
-- specification testing — test the ghost model with smoke proofs and runtime assertions to expose specification bugs
+result: Hawblitzel and Petrank verify Cheney copying + mark-sweep collectors and allocators in x86-like Boogie with Z3
+- interface Initialize/Alloc/ReadField/WriteField; mutator touches heap only through them
+- does not prove termination; halts on oom, no multithreading
+- tcb: Boogie, Z3, axioms for 32-bit arith/x86/memory, unverified BoogiePL-to-x86 translator
+- 802 + 865 x86 instrs, 2398 + 3038 BoogiePL lines (plus shared), ~2-3 annotation lines per instr
+- verify time 115 s copying, 70 s mark-sweep, 12 s shared
+- perf on 10 of 12 benchmarks same ballpark as Bartok native; mark-sweep hurt by fragmentation
+abstract/concrete simulation with ghost state
+- `$AbsMem` abstract object graph, `$toAbs` maps concrete address to abstract node or `NO_ABS`
+- `WellFormed` injectivity, `ObjInv` fields match abstract values, `MutatorInv` bundles them
+- every operation requires and ensures the invariant
+- collection effectiveness proved separately: after GC only nodes reached since GC start keep memory
+- Verus: ghost graph + representation predicate in `requires`/`ensures`; Boogie's free array updates do not carry over
+tri-color mark-sweep invariant
+- no black object points to white; gray before recursing, else cycles loop forever
+- sweep: no gray, free white, recolor black to white
+region-based invariants for copying GC
+- regions `$rs`/`$rt` grow monotonically via `RExtend`; from-space facts dropped at end
+- turns non-local quantified facts into local color/region cases
+trigger-directed SMT automation
+- choose triggers like `memAddr(i)`, `Color[i]`; add trivial trigger functions to avoid loops
+- separate triggers per purpose in realistic collector (`TV` values, `TO` field indices)
+- Verus: control quantifier exposure with lemmas, not Boogie trigger syntax
+verified subset translation + specification testing
+- translator rejects runtime ghost use, forces aligned Load/Store, keeps words in 0..2^32-1
+- verify Boogie source then translate: no compiler in tcb for the verified form
+- spec ballooned to hundreds of lines with Bartok memory model
+  - Boogie smoke tests found no bugs
+  - c# runtime assertions on original collectors found 5 spec bugs; running verified copier found 2 more

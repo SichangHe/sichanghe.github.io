@@ -1,130 +1,38 @@
 # Verified Code Transpilation with LLMs
 (authored by agents unless marked 🧑)
 Tag: `bhatia2024verified`, [paper](https://arxiv.org/abs/2406.03003)
-## technique: verified lifting as a three-phase pipeline
 
-what it is
-
-The paper decomposes verified transpilation into Search, Verification, and Code generation. Search finds a target-language program summary expressed in the IR. Verification checks semantic equivalence for all source states. Code generation applies simple pattern-matching rewrites to the verified summary.
-
-when to use
-
-Inference: use this pipeline when direct LLM translation to a low-resource DSL is unreliable or when concrete target syntax is too detailed for the model to reason about. The paper reports that direct generation can hallucinate nonexistent DSL functions, while an IR exposes only the intended high-level operators (section 3.2, p. 5).
-
-how to do it
-
-1. define the target DSL operators as semantic IR functions
-2. provide the source program and operator semantics to the synthesizer
-3. generate a program summary PS using only those operators
-4. generate any loop invariants needed to prove equivalence
-5. translate PS and invariants to the automated prover’s input language
-6. reject candidates that fail parsing or theorem proving
-7. rewrite the verified PS into concrete target DSL syntax
-
-Verus form
-
-Inference: represent the source semantics and target operator semantics with executable Rust plus Verus `spec fn` abstractions. Inference: give each generated target function `requires` and `ensures` clauses stating the source-level relation, and use `proof fn` lemmas to establish equivalence. Inference: a verified summary can be lowered to ordinary Rust only after Verus verifies the summary-to-source theorem; concrete syntax rewriting must preserve the verified operator structure. Inference: Rust APIs with externally visible mutation, ownership-sensitive behavior, I/O, or concurrency require modeling those effects beyond this paper’s input/output equivalence. The paper already handles loops and local mutation; Verus may additionally require termination arguments such as `decreases` clauses.
-
-## technique: Python IR for LLM synthesis
-
-what it is
-
-LLMLIFT defines each target DSL operator in Python, using Python as the prompt-visible IR. The IR captures semantics while hiding implementation details. For the running example, Python defines `map`, `reduce`, and `ite`; the LLM composes those operators to form PS. The paper chooses Python because it is widespread, concise, expressive, and represented in code-training data.
-
-when to use
-
-Inference: use a familiar, expressive IR when the target DSL is underrepresented in model training or has difficult concrete syntax. The IR should expose only the target’s semantic operators, so generated expressions are already in the target operator vocabulary.
-
-how to do it
-
-1. write a Python function for every supported target operator
-2. include all operator definitions in the prompt
-3. instruct the model to translate S using only those operators
-4. parse the returned Python expression and reject disallowed constructs
-5. pass the accepted expression to the verifier
-6. rewrite the expression to target syntax after proof succeeds
-
-The paper reports: “Python’s significant representation in the training datasets of LLMs makes it a suitable choice for this purpose.” (section 1, p. 2). It also says, “To ensure that the generated candidates follow the DSL operators defined in the prompt, we use a parser to reject candidates which do not satisfy this constraint.” (section 3.3, p. 6).
-
-Verus form
-
-Inference: the analogous Verus IR can be a small set of `spec fn` operators over `Seq`, `Map`, or other mathematical values, with executable Rust wrappers generated only after proof. Inference: parser rejection corresponds to checking that generated proof/spec code uses an approved operator vocabulary; Verus then checks the contracts, but a parser alone cannot prove semantic equivalence. Inference: operator definitions become trusted specifications unless their correspondence to the concrete Rust implementation is separately proved.
-
-## technique: few-shot generation of program summaries and invariants
-
-what it is
-
-The prompt has three parts: task instruction, Python definitions of all DSL operators, and the source program as the specification. LLMLIFT uses zero-shot generation for PS and one-shot generation for invariants. The model receives examples or a structural explanation of invariant form rather than requiring DSL-specific fine-tuning.
-
-how to do it
-
-1. state that the model must translate S using only listed operators
-2. include the complete operator semantics in Python
-3. include S directly as the correctness specification
-4. ask for PS in a zero-shot prompt
-5. show one invariant example and ask for Inv in a one-shot prompt
-6. parse both outputs and translate them to the verifier language
-
-The paper’s invariant template is `Inv ≜ f(i) ∧ e(Tlang)`, where f(i) constrains loop indices and e is recursively built from target operators (section 3.3, p. 6). Its example invariant states that `i` remains between 0 and `len(data)` and that the accumulated sum equals the MapReduce expression over the first i elements. The paper explains: “The loop invariant states that the loop index i remains within the bounds of the data array (0 ≤ i ≤ len(data)).” (section 3.3, p. 6).
-
-Verus form
-
-Inference: encode PS as a `spec fn` returning the target’s mathematical result and encode Inv as a loop `invariant` clause over index bounds and the accumulated abstract value. Inference: use `requires` for input-domain facts and `ensures` for final equivalence; use `proof fn` lemmas for operator identities. Inference: Verus syntax and libraries differ from Python, so the model’s Python output must be translated into valid Verus constructs before verification.
-
-## technique: two-phase PS then invariant generation
-
-what it is
-
-LLMLIFT first generates PS and then generates invariants while showing the previously generated PS. This makes the invariant construction conditional on the exact summary that needs proving. The paper compares this with generating PS and Inv together.
-
-how to do it
-
-1. generate PS
-2. include S in the invariant prompt with an added assertion equating its return variable to PS
-3. ask for invariants that prove that assertion
-4. translate PS and Inv to the theorem prover
-5. verify equivalence
-6. try further invariants for that PS; if none verifies, mark the PS as incorrect for subsequent summary generation
-
-In the tensor-processing experiment, the unified one-phase prompt solved 20/23 benchmarks, while the two-phase method solved all 23/23 under the same query budget (section 4.5, p. 9). The paper hypothesizes that simultaneous generation is harder and that access to PS helps the model reason about the needed constraints. Inference: this benchmark result does not establish that two phases always perform better.
-
-Appendix A (pp. 13–14) describes the retry procedure: generate summaries while supplying previously unsuccessful summaries as feedback, skip summaries already processed, discard unparsable summaries, and generate invariants for each remaining summary. Skip previously checked invariants and discard unparsable ones. Return PS only if verification succeeds; return `None` if the iteration budget is exhausted. The authors explicitly describe the fallback as an assumption: “If none of the generated Invs for a PS are found to be valid, the algorithm assumes that the PS itself is incorrect.” (Appendix A, p. 13). Inference: failure to find a proving invariant does not establish that the summary is wrong.
-
-Verus form
-
-Inference: generate a `spec fn` summary first, then write loop `invariant` clauses that relate the concrete accumulator to that summary. Inference: each candidate must be compiled and checked by Verus; the generation order is a search heuristic, not a soundness argument.
-
-## technique: theorem-prover translation and rewrite lowering
-
-what it is
-
-how to do it
-
-1. parse Python expressions into their operator structure
-2. rewrite operators and predicates into prover syntax
-3. invoke the prover on the source/summary equivalence and invariants
-4. retain only candidates with a successful proof
-5. rewrite the verified operator tree into concrete DSL calls
-
-The paper states: “To verify the functional equivalence of the generated program to the given source program for all program states, we translate both the generated program and the proof to the syntax of an automated theorem prover.” (section 1, p. 2). It later says that “The translation process is simplified due to Python’s highly structured syntax.” (section 3.3, p. 6).
-
-Verus form
-
-Inference: the Verus backend can consume Rust/Verus source directly, with `spec fn`, `requires`, `ensures`, `invariant`, and `proof fn` constructs, so a separate SMT-LIB lowering layer is usually unnecessary for the product. Inference: the generated proof remains untrusted search output until Verus accepts it; the verifier, solver, erasure, compiler, and any external operator specifications remain trusted components.
-
-## evaluation and evidence
-
-The evaluation uses GPT-4 through APIs with temperature 0.7 (section 4, p. 7). The paper states: “We keep a budget of 50 queries for the PS and a budget of 10 queries for each PS.” (section 4, p. 7). In context, the latter budget is for invariant generation. It covers four DSL domains. For Spark, with a one-hour MetaLift timeout, LLMLIFT solved 44/45 benchmarks, compared with MetaLift’s 40/45, and averaged under one minute per solved benchmark versus MetaLift’s three minutes; MetaLift required over approximately 1,000 lines to describe its search space (section 4.1, p. 7). For Domino network processing, both systems solved 10/10, with LLMLIFT averaging 2 seconds versus MetaLift’s 6 seconds; MetaLift again required over approximately 1,100 lines (section 4.2, pp. 7–8). For TACO, with a 90-minute timeout per benchmark, LLMLIFT solved 60/60 versus C2TACO’s 57/60, with average times of 2 seconds versus 41 seconds; C2TACO used over 1,000 lines of heuristics (section 4.3, p. 8). For tensor processing, both LLMLIFT and Tenspiler solved 23/23, but LLMLIFT averaged 95.89 seconds versus Tenspiler’s 115.14 seconds; removing Tenspiler’s optimizations reduced it to 5/23 within one hour (section 4.4, pp. 8–9).
-
-Inference: the denominators and settings are important because the 44/45, 40/45, 10/10, 60/60, and 23/23 figures are benchmark counts in their respective domains, while times are per-benchmark averages under the stated tools and timeouts. The paper’s Table 1 (p. 9) reports TACO benchmark accuracy by named suites; LLMLIFT is 100% in every listed suite, while C2TACO is below 100% on mathfu (91.6%), simpl_array (90%), and darknet (92.8%).
-
-Inference: the evaluation shows that an LLM can generate summaries and invariants that pass formal equivalence checks in these selected functional DSL tasks. Inference: it does not measure arbitrary Rust, mutable aliasing, unsafe code, concurrency, or specification discovery from ordinary user intent. Inference: the source programs and operator semantics are supplied as specifications, so wrong source behavior or wrong operator definitions would be proved consistently rather than detected.
-
-## techniques for the catalog
-
-- verified lifting pipeline — search for a semantic target summary, prove equivalence for all inputs, then generate concrete DSL code
-- Python semantic IR — expose target operators in a familiar intermediate language to make LLM synthesis domain-independent
-- parser-constrained generation — reject summaries that use operators outside the supplied DSL vocabulary
-- few-shot invariant synthesis — prompt the model with operator semantics, source specification, and an invariant example
-- two-phase summary/invariant generation — generate PS first and use it to guide loop-invariant synthesis
-- verification before lowering — translate candidates to an automated prover and rewrite only verified summaries into executable target syntax
+llmlift: verified lifting with an llm as the search engine
+- pipeline: search, verify, codegen
+  - search: llm writes a program summary (PS) in an IR of target operators
+  - verify: prover checks PS equals the source for all states
+  - codegen: pattern-rewrite the verified PS into concrete DSL syntax
+- source program is the spec, so a wrong source or operator definition is proved consistently
+python as the semantic IR
+- each target operator is a python function in the prompt
+  - avoids hallucinated DSL functions
+  - python is well represented in llm training data
+- parser rejects candidates using operators outside the vocabulary
+- verus analogue: small `spec fn` operator set over `Seq` / `Map`, executable rust only after proof
+prompting
+- PS zero-shot, invariant one-shot
+- invariant template: `Inv ≜ f(i) ∧ e(Tlang)`
+  - f(i) bounds the loop index, e is built from target operators over the first i elements
+two-phase generation beats joint generation
+- generate PS first, then invariants conditioned on that PS
+- tensor benchmarks: joint 20/23, two-phase 23/23, same query budget
+  - single benchmark, not a general proof
+- if no invariant verifies, the PS is assumed wrong
+  - assumption only, failure to find an invariant is not refutation
+- budget: 50 queries for PS, 10 per PS for invariants
+results with gpt-4 at temperature 0.7
+- Spark: 44/45 vs MetaLift 40/45
+- Domino: 10/10 both
+- TACO: 60/60 vs C2TACO 57/60
+- tensor: 23/23 both, 95.89s vs Tenspiler 115.14s
+  - Tenspiler without its optimizations: 5/23
+- baselines needed over ~1,000 lines of search-space or heuristic code
+limits
+- functional DSL tasks only
+  - not aliasing, unsafe, concurrency, or intent-to-spec discovery
+- verus adds termination (`decreases`) and effect modeling

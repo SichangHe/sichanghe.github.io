@@ -2,40 +2,31 @@
 (authored by agents unless marked 🧑)
 Tag: `naumann2020relational`, [paper](http://arxiv.org/abs/2007.06421v6)
 
-## scope and central idea
-Relational Hoare logic (RHL) proves properties of two executions: equivalence between programs, dependency requirements such as confidentiality, and determinacy of one program. The abstract says relational Hoare logics “extend the applicability of modular, deductive verification to encompass important 2-run properties” (abstract, p. 1). The paper focuses on termination-insensitive properties that quantify universally over pairs of traces (called ∀∀); refinement and relative termination involve existential quantification (∀∃), are “hyperliveness [26], not 2-safety”, and are discussed only in passing (Sec. 3, p. 8). It organizes alignment choices, proof rules, product constructions, and a proposed notion of alignment completeness. Its target is a relational judgment `C | C' : R ≈> S`: for every pair of finite traces, if the initial states satisfy `R` and both traces are terminated, the final states satisfy `S` (Sec. 3, p. 8; Sec. 4, p. 12).
-
-## technique: product programs and self-composition
-Use this to reduce a 2-run property to ordinary unary reasoning. Rename every variable of a second copy `C'` so the copies are disjoint, then prove the ordinary sequence `C; C'`. The paper states, “C; C′ serves as a product.” (Sec. 1, p. 2) A product run projects, via `left(T)` and `right(T)`, to one trace of each original program. A pre-product is adequate if it covers all finite traces (each finite trace of either program is a prefix of the projection of some product trace), and weakly adequate if it covers all finite prefixes of terminated traces (Sec. 3.1, p. 9). The paper also says, “The challenge is to construct one that admits a simple annotation and is at least weakly adequate.” (Sec. 3.1, p. 9)
-
-1. Choose a product transition relation (Sec. 3.1, p. 10): only-lockstep takes a step on both sides; interleaved takes a step on one side while the other stays put; maximal is the union of those two; sequenced runs the left program to completion and then the right; eager-lockstep is lockstep that lets one side continue after the other has finished; simple-condition and 3-condition use state conditions to choose between these.
-2. Check adequacy (Sec. 3.1, pp. 9–10). Only-lockstep is not adequate in general. Eager-lockstep, interleaved, and maximal are adequate. Sequenced is weakly adequate if neither program has stuck states. Simple-condition can fail to be adequate.
-3. Treat the relational spec `R ≈> S` as a unary spec `R ❀ S` over the paired state of the product (Sec. 3.1, p. 9).
-4. Apply the inductive assertion method (annotated cutpoints and verification conditions) to the product (Sec. 2.1 and 3, pp. 4, 8).
-
-Theorem 1 says that, for the basic semantics of specs (not the non-stuck semantics), if the pre-product is weakly adequate then the product satisfies unary `R ❀ S` iff the pair satisfies relational `R ≈> S` (Sec. 3.1, p. 9). The paper warns that for non-stuck semantics adequacy does not suffice, “contrary to a misstatement in a previous version of this paper”, because of one-sided divergence; this can be solved by requiring the programs to be terminating or by requiring products without one-sided divergence (Sec. 3.1, p. 10). The paper notes that interleaved has a relatively large reachable state space, which makes inductive invariants harder to find (Sec. 3.1, p. 10), and that sequenced product needs strong intermediate assertions (attributed to Terauchi and Aiken, Sec. 5, p. 20).
-
-Inference: this route pays off when a unary verifier is already available. The paper does not claim so; Francez's open question, quoted in Sec. 1 (p. 2), is a formal characterization of when the product method actually simplifies proofs. Inference: in Verus, clone pure/spec state with primed variables or two sequence values, state a relational invariant as a ghost predicate, and prove the product with ordinary `requires`, `ensures`, loop `invariant`, and lemmas. The paper observes that for a language with a single heap “it is not trivial to use it to encode two disjoint heaps” (Sec. 4, p. 12); Inference: Rust's mutable heap and aliasing make this harder, so an abstract paired heap or a disjoint ownership model would be needed.
-
-## technique: direct alignment rules
-The paper says that for languages with more elaborate state (a single heap, or assembly with a fixed set of registers) “it may be preferable to work more directly with the relational correctness judgment, suitably interpreted, rather than depending entirely on products encoded as single programs” (Sec. 4, pp. 11–12). Lockstep products correspond to “diagonal” rules, which relate programs with the same control structure; one-sided steps correspond to rules syntax-directed on one side; the 3-condition product corresponds to a three-premise loop rule (Sec. 4, p. 12). The diagonal rules (Fig. 4, p. 13): assignment substitutes the left and right expressions into the relational postcondition; sequence introduces an intermediate relation `Q`; the general conditional rule has four premises covering all combinations of branches, and AltAgree needs only two premises when the guards agree; IterAgree uses one invariant `Q` while the loop guards remain in agreement (Sec. 4.1, p. 13).
-
-For unequal loops, the second loop rule (from Beringer, Fig. 4 and Sec. 4.1, pp. 13–14) corresponds to the 3-condition product. It augments the invariant `Q` with `L`, the precondition for an iteration on the left while the right stays stationary, and `R`, likewise for the right. The side condition `Q ⇒ ([e] = [e']) ∨ (L ∧ [e]) ∨ (R ∧ [e'])` (left and right guard values) “ensures adequacy”, and the premises are `C | C'` under both guards and neither `L` nor `R`, `C | skip` under `L`, and `skip | C'` under `R`. Francez's eager-lockstep loop rule has extra premises and is, the paper says, “seldom helpful” (Sec. 4.1, p. 13). One-side rules relate a structured command to an arbitrary one (Fig. 5, p. 14); for example LeftSeq reduces `C; D | D'` to `C | skip` and `D | D'`, and WhSeq (from Francez) relates `while e do B od` to a sequence `C; D`.
-
-The paper's worked example is majorization of `P0` (factorial) over `P1` (2^x) for `x > 4`, proved by lockstep alignment with invariant (1) and a separate case `x = 4` (Sec. 3.2, p. 11). For `P2` majorizing `P3`, simple-condition product is insufficient and a 3-condition product is needed (Sec. 3.2, p. 11).
-
-Inference: each relational invariant can be a Verus ghost predicate over two states; each alignment branch becomes a lemma whose precondition selects the corresponding guard case. Verus loop invariants cannot directly quantify over two live mutable executions, so use immutable snapshots or duplicated ghost state.
-
-## technique: relate unary and relational facts
-`SeqProd` derives `C|C' : R ≈> S` from a unary proof of `C; C' : R ❀ S` when `C` and `C'` have disjoint variables; it is sound in basic semantics for programs that cannot get stuck, and stuckness “can be addressed using additional unary premises” (Sec. 4.2, pp. 14–15). The paper says SeqProd is useful for “small subprograms such as assignments and basic blocks where a functional spec is not difficult to prove” (Sec. 4.2, p. 15). The `Embed` rule (essentially from Yang) combines unary judgments `C:P❀Q` and `D:R❀S` into `C|D : [P]∧[R] ≈> [Q]∧[S]`, with left and right assertions conjoined, and is sound in both basic and non-stuck semantics (Sec. 4.2, p. 15). `Ecorr` goes the other way for equivalence transformations: from `C:P❀Q` and `C|D : E ∧ BP ≈> F`, infer `D:P❀Q` (Sec. 4.3, p. 15).
-
-The paper's new rule `CmdFun` (Sec. 4.3, p. 16) links a command `C` to a mathematical function `f` so that a caller `D` can use a relational property of `C` (such as symmetry or monotonicity) in unary assertion reasoning. Its premises are the determinacy judgment `C|C : x=x' ≈> z=z'`, the relational property `C|C : R(x,x') ≈> S(z,z')`, and `f` fresh. The conclusion is “link D with C”: `P ❀ Q`, proved from `D:P❀Q` under the hypotheses that `C : true ❀ z=f(x)` and `∀x,x'. R(x,x') ⇒ S(f(x), f(x'))`. The paper notes that CmdFun “does not require proof of C : true ❀ z = f (x)”; that spec instead “is used to define f in terms of C”. It glosses over procedures, parameter passing, and termination of `C`. Inference: Verus can state `z == f(x)` with a `spec fn` and prove the relational property as a lemma, but purity and termination obligations must be discharged explicitly.
-
-## evidence, trust, and limits
-The paper is a principles/history article; it reports no implementation, benchmark, sample count, or runtime denominator. Evidence consists of semantic definitions, Theorem 1 (stated to follow “by definitions”), informal soundness remarks for some rules (SeqProd, Embed, Swap, Comp), and worked examples. Alignment completeness, the paper's new notion, is only informally described: “We leave this to future work” (Sec. 4.6, p. 19). The paper also leaves out procedure calls (Sec. 4, p. 12), the ∀∃ soundness of the rules (end note 22), and optimizing-compiler transformations that reorder an unbounded number of actions, which “have not been formalized using RHL rules” (Sec. 4.6, p. 19). The number of cutpoints needed for a product may be on the order of the product of the cutpoints of the two automata, though a good alignment makes many unreachable, which can be annotated `false` (Sec. 3.1, pp. 9–10). Inference: trusted assumptions include the operational semantics, assertion entailment, termination conditions where required, and any unary verifier used for products. Inference: for verified Rust, RHL targets manual equivalence and information-flow proofs, especially compiler-change checks, but leaves ownership, unsafe operations, and solver soundness inside the trusted base.
-
-## techniques for the catalog
-- self-composition: rename a second program and verify a unary product to establish a 2-run property
-- adequate products: choose lockstep, interleaved, maximal, or sequenced transitions that cover source trace pairs
-- relational alignment rules: use diagonal, one-sided, and three-condition loop rules with relational invariants
-- unary and relational links: derive relational judgments from unary ones (SeqProd, Embed), or link a deterministic command to a mathematical function (CmdFun)
+relational Hoare logic (RHL) proves 2-run properties: equivalence, noninterference, determinacy
+- scope: termination-insensitive, universal over trace pairs (forall-forall)
+- principles/history paper: no implementation or benchmark
+product programs reduce 2-run to unary reasoning
+- self-composition: rename second copy C' disjoint, verify C; C'
+- product transition choices: lockstep, interleaved, maximal, sequenced, eager-lockstep, simple-condition, 3-condition
+  - only-lockstep not adequate in general
+  - eager-lockstep, interleaved, maximal adequate
+  - sequenced weakly adequate if no stuck states
+- Theorem 1: weakly adequate pre-product makes unary R ❀ S iff relational R ≈> S
+  - non-stuck semantics needs more than adequacy, because of one-sided divergence
+- open question (Francez): when does the product method actually simplify proofs
+direct alignment rules work on the relational judgment
+- diagonal rules for same control structure, one-sided rules otherwise
+- unequal loops: invariant Q plus L and R (one side steps alone)
+  - side condition Q ⇒ ([e]=[e']) ∨ (L ∧ [e]) ∨ (R ∧ [e']) ensures adequacy, matches 3-condition product
+- example: factorial majorizes 2^x for x>4, lockstep
+  - other pair needs 3-condition product
+unary/relational links
+- SeqProd: derive C|C' from unary C; C', for disjoint variables, non-stuck programs
+- Embed: put unary facts into relational proofs
+- CmdFun: link command C to math function f, using determinacy plus a relational property like monotonicity
+  - lets a caller use C's relational property in unary reasoning
+limits
+- alignment completeness only informal, left to future work
+- procedure calls left out
+- inference for Verus: duplicate ghost state or snapshots, relational invariant as ghost predicate
+  - loop invariants cannot quantify over two live mutable executions

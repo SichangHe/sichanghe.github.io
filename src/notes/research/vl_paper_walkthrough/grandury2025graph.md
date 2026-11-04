@@ -2,55 +2,30 @@
 (authored by agents unless marked 🧑)
 Tag: `grandury2025graph`: [paper](https://arxiv.org/abs/2501.13603v2)
 
-## what the paper proves
-The paper presents a separation-logic method for graph algorithms. Its central representation is a partial graph: a finite map of nodes to contents and adjacency lists, where an edge may point to a node outside the represented map. The authors make partial graphs a partial commutative monoid (PCM), with disjoint map union as the join. They then use PCM morphisms, functions that preserve the empty graph and join, to localize mathematical graph reasoning inside larger specifications. The paper states: “PCM morphisms are important because they generalize separation logic’s principle of local reasoning.” (abstract, p. 1)
-
-The reported Coq/Hoare Type Theory development covers a generic graph library, Schorr-Waite, and union-find. The sizes are 2,070 proof lines and 1,738 specification lines for the graph library, 110 proof lines and 111 specification lines for Schorr-Waite, and 49 proof lines and 46 specification lines for union-find (section 1, p. 4, table). The specification column explicitly includes “definitions, annotations, notation, code”. The authors state: “All proofs are fully mechanized in Coq using the Hoare Type Theory library.” (section 9, p. 27) Inference: these counts measure development size; they do not establish runtime performance or a defect rate.
-
-## technique: represent graphs with dangling edges and a pcm
-Inference: use this when a graph algorithm separates subgraphs but must retain edges crossing the separation. A partial graph is a finite partial map from nodes to `(value, adjacency-list)`, undefined at null. A dangling edge is an edge whose source is in the map and whose sink is absent. Joining two graphs is disjoint map union, undefined when their node domains overlap; the empty map is the unit. The authors explain: “Partial graphs decompose into subgraphs with disjoint nodes, where an edge crossing the divide becomes dangling in the subgraph containing the edge’s source.” (section 1, p. 2)
-
-The construction in section 3 proceeds as follows. Choose the node contents and adjacency-list type. Represent nodes as singleton maps, then split a graph into disjoint singleton or subgraph maps, retaining crossing edges. Define a heap predicate recursively over the map. General adjacency lists are stored as linked lists; binary graphs instead use three cells per node, holding a mark and two children. Both heap predicates satisfy `graph (γ1 • γ2) ⇔ graph γ1 * graph γ2` (equation (4), pp. 7–8). Inference: a Verus adaptation could use a ghost finite map and disjointness lemmas for graph joins, with a separate relation connecting that map to concrete memory permissions. This is a proposed adaptation, not code supplied or verified by the paper.
-
-The representation requires finite maps, excludes null from their domains, and requires disjoint domains for joins. Binary graphs additionally require exactly two children per node (section 3, pp. 6–7). Closure is a separate predicate: every sink must be a graph node or null (equation (12), p. 9). A partial graph need not be closed.
-
-## technique: make graph abstractions pcm morphisms
-Inference: use this when a proof changes one node or subgraph while preserving facts about the rest. A PCM morphism `f : A → B` satisfies `f eA = eB` and `f (γ1 • γ2) = f γ1 • f γ2`, with the joins interpreted in the respective PCMs. The second equation lets a proof rewrite a transformation of a composite into transformations of its parts. The authors explain: “More importantly, framing operates only at the top level of specifications, whereas morphisms localize deeply inside a context” (section 1, p. 3).
-
-Lemma 3.1 establishes that `nodes`, filtering by a set or contents, erasure, `map`, and `sinks` preserve the unit and distribute over join. Their target operations differ: `nodes` uses disjoint set union, `sinks` uses ordinary set union, and the other listed operations return graphs (pp. 9–10). Compose reachability with filtering to restrict paths to selected nodes. When a specification contains a morphism inside a larger formula, distribute it over the join, reason about the changed component, and rejoin the unchanged component (section 1, pp. 3–4).
-
-Inference: in Verus, encode graph abstractions as specification functions over a ghost graph and prove their distributivity lemmas with explicit disjointness assumptions. Those lemmas could support assertions or loop invariants about a mutable update. The paper does not establish which Rust ownership representation would support these updates.
-
-The paper explicitly distinguishes the operations: “Erasure, map, both filters, nodes and sinks distribute over • (and are actually morphisms), while closed and reach don’t.” (section 3, p. 9) Inference: direct morphism rewriting therefore cannot apply to `closed` or `reach` themselves; proofs must use their definitions or auxiliary lemmas. The paper reports mechanization and line counts, but no experimental comparison of proof time or solver robustness.
-
-## technique: contextual localization for global properties
-Lemma 3.6 assumes a closed binary graph, `x` in its node set, and a replacement child `y` in that set or null. It decomposes the old graph as the singleton node `x` joined with `γ\x`, decomposes the new graph with the changed child, distributes `sinks` and `nodes`, and concludes `sinks γ' ⊆ nodes0 γ'` (pp. 10–11). The authors say: “This alternative, contextual, form of locality arises not from eliding the rest of the structure, but from explicitly factoring it through morphisms.” (section 3, p. 11)
-
-Inference: reuse this pattern by identifying the mutated node, expanding the graph around it, distributing the relevant morphisms, relating old and new local values, and using the shared remainder to prove the global property. A Verus adaptation could keep the decomposition in ghost state and invoke a local update lemma with the required membership assumptions.
-
-## technique: higher-order map combinators
-The paper defines `map f γ` as the join of `x ↦ f x (γ x)` over all nodes and proves that it distributes over graph join (section 3, pp. 8–10). It preserves the node domain while transforming contents and adjacency lists. For Schorr-Waite, `map` lifts `if-mark`, which replaces the left child of an `L` node or the right child of an `R` node according to a supplied function and erases marks. Using predecessor or successor functions yields `inset` and `restore`. Their morphism properties follow from those of `map` (section 5, pp. 15–17). The paper notes: “Morphisms thus relate different levels of the abstraction stack that has heaps at the bottom, and localize the reasoning across all levels.” (section 1, p. 4)
-
-Inference: a Verus port could define the corresponding ghost transformation and prove its join-distribution lemma by finite-map extensionality. These transformations describe mathematical graphs; the paper uses them in assertions rather than implementing them as graph-wide program updates.
-
-## technique: Schorr-Waite verification with stack and restoration invariants
-The algorithm stores backtracking information by temporarily reversing child pointers. `PUSH` marks an unmarked non-null tip `L`, redirects its left edge to the predecessor, and advances left. When the tip is marked or null, `SWING` handles an `L` predecessor: it restores the left edge, redirects the right edge toward the prior stack node, marks `R`, and advances right. Under the same tip condition, `POP` handles an `R` predecessor: it marks `X`, restores the right edge, and removes the pivot from the stack (section 4, pp. 11–13). The paper states: “The idea of Schorr-Waite’s algorithm is that the information about backtracking can be maintained within the graph itself, while the graph is traversed iteratively in a loop.” (section 4, p. 11)
-
-The six invariant components are: (a) distinct non-null stack nodes, `p` as its top or null for an empty stack, and `t` a graph node or null; (b) closure; (c) exactly the `L/R` nodes on the stack; (d) `inset α γ = |γ|`, ensuring that the stack follows predecessor edges according to marks; (e) `restore α t γ = |γ0|`, reconstructing the initial edges; and (f) every unmarked node reachable by an unmarked path from `t` or a right child of a stack node (section 5, pp. 14–17). The proof first handles graphs connected from the root, verifies the operations, then frames the unreachable complement to obtain the general specification. The latter assumes a closed, initially unmarked binary graph containing the root; its postcondition marks exactly the initially reachable nodes `X` and preserves all edges (section 6, pp. 17–23).
-
-Inference: a Verus encoding could use a ghost initial graph, a ghost stack sequence, and node identifiers for `t` and `p`. Each operation would need to restore all six invariant components after its intermediate updates. Connecting pointer reversal to concrete Rust ownership would require a separate design and proof.
-
-The reported Schorr-Waite size is 110 proof lines plus 111 specification lines, supported by the separate graph library (section 1, p. 4). Inference: the benchmark count must be interpreted together with the library cost rather than as the size of a standalone proof.
-
-## technique: union-find through the same vocabulary
-The paper presents union-find as a second benchmark: “The latter is sketched in Section 7 to illustrate the generality of the approach, but is detailed in the appendix.” (section 1, p. 3) It uses unary graphs with self-pointing roots. The predicate `set S x` requires a heap graph whose nodes are `S` and whose summits and self-loop nodes are both exactly `{x}`. `NEW` allocates a self-pointing singleton; `FIND` follows parent pointers to the root; `UNION` takes representatives of disjoint sets and redirects one root to the other (section 7, pp. 23–25; appendix E, pp. 36–40). The presented `FIND` does not compress paths, and `UNION` does not use ranks. The reported sizes are 49 proof lines and 46 specification lines (section 1, p. 4).
-
-`loops` is a PCM morphism, but `summits` has a conditional distribution law that subtracts the opposing component’s nodes: `summits (γ1 • γ2) = (summits γ1) \ nodes γ2 ∪ (summits γ2) \ nodes γ1`. Section 7 requires all cycles to be self-loops (p. 25). Appendix E defines this condition as `preacyclic` and uses its preservation under redirecting a unary node toward an external node before distributing `summits` in the `UNION` proof. When rejoining the mutated component with the other tree, the proof instead uses lemma E.3(2): equal summit sets imply that their join has that same summit set (pp. 36–40). Inference: a Verus port should preserve these conditions explicitly; treating `summits` as an unconditional PCM morphism would lose an essential premise.
-
-## techniques for the catalog
-- partial-graph pcm: represent graph pieces with dangling edges and combine them by disjoint map join
-- pcm morphism localization: prove node-local abstractions distribute over graph joins and rewrite them inside contexts
-- contextual global proofs: preserve closure or similar global properties by decomposing at the mutated node
-- higher-order graph map: apply a node-indexed transformation through a join-preserving combinator
-- schorr-waite invariants: verify pointer reversal with stack, mark, restoration, and frontier reachability invariants
-- union-find distribution: reason about unary parent forests with loops and conditional summit distribution
+separation logic for graph algorithms via partial commutative monoid (PCM) of partial graphs
+- partial graph = finite map node -> (content, adjacency list), edges may dangle outside the map
+  - join = disjoint map union, undefined on overlapping domains, unit = empty map
+  - heap predicate satisfies graph (γ1 • γ2) ⇔ graph γ1 * graph γ2
+  - closure (all sinks are nodes or null) is a separate predicate, not implied
+- PCM morphisms localize math reasoning deep inside specs
+  - f e = e', f (γ1 • γ2) = f γ1 • f γ2
+  - "framing operates only at the top level of specifications, whereas morphisms localize deeply inside a context"
+  - morphisms: nodes, sinks, erasure, map, filters
+  - non-morphisms: closed, reach, so need case-by-case lemmas
+- inference: Verus port = ghost finite map + disjointness lemmas + relation to concrete permissions
+  - not provided or verified by the paper
+mechanized in Coq/Hoare Type Theory
+- graph library 2070 proof + 1738 spec lines
+- Schorr-Waite 110 + 111, union-find 49 + 46
+  - library cost must be added to each benchmark
+- sizes measure effort, not performance or defect rate
+Schorr-Waite invariants
+- pointer reversal stores the backtrack stack in the graph
+- 6 invariant parts: stack shape, closure, L/R nodes on stack, inset = |γ|, restore = |γ0|, unmarked reachability
+- prove connected-from-root case first, then frame off the unreachable rest
+union-find
+- unary graph, roots self-loop, FIND without path compression, UNION without ranks
+- summits distributes only conditionally
+  - summits (γ1 • γ2) = (summits γ1)\nodes γ2 ∪ (summits γ2)\nodes γ1
+  - needs preacyclic (all cycles are self-loops)
+  - treating summits as an unconditional morphism loses a premise

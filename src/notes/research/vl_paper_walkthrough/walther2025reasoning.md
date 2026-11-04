@@ -2,59 +2,55 @@
 (authored by agents unless marked 🧑)
 Tag: `walther2025reasoning`, [paper](https://doi.org/10.1007/s10817-025-09722-z)
 
-## problem and trust boundary
-
-Walther (J. Autom. Reason. 69:25, 2025) studies terminating functional programs that deliberately leave some calls undefined, such as division by zero or `hd(∅)` (head of the empty list). The abstract states: “We show how so-called domain procedures are synthesized which decide the domain of incompletely defined procedures in almost all cases.” (abstract, p. 1). A stuck computation, a term the interpreter cannot reduce to a constructor value, represents a runtime error (Section 3.2, p. 9). The undefined result is written ⋆ ("indetermined"). Semantically, ⋆ stands for an arbitrary but fixed value: a statement is true in the theory Th_Pr only if it holds in every standard model, i.e. for every way of completing the undefined calls (Definitions 3, 6, 7, Sections 3.3-3.4, pp. 9-13). So the paper does not forbid arbitrary values; it assigns truth only to statements that do not depend on them. Termination is required for all such completions (Definition 4, p. 10). The paper then refines Th_Pr to Th*_Pr so that the interpreter never gets stuck on ground instances of the proved statements. The interpreter, the symbolic evaluator and the VeriFun implementation are the implementation the results rest on; the paper proves its properties for terminating programs (Theorem 1 on p. 11, Theorem 8 on p. 29, Theorems 2, 4, 6, 7 in the appendix, pp. 39-46), and Theorem 5 only for safe programs.
-
-Inference: in Verus, this is a close model for panic preconditions. A Rust function that can panic should expose a `requires` condition; replacing panic with an arbitrary return value would permit false lemmas. The inference is about applying Walther's semantic discipline to Verus, not a claim made by the paper.
-
-## technique 1: exception guards and explicit stuck computation
-
-what it is and when to use it. Replace each undefined-result marker with a self-call in a marker-free copy of the body, but disable the calls created by that replacement so they cannot run. This lets the ordinary evaluator model partial functions while retaining a detectable stuck result, and keeps the evaluator terminating.
-
-steps. (1) For a procedure `f`, the marker-free body `R_f` is obtained by replacing each ⋆ with `f(x1,...,xn)` (Section 3.1, p. 6). (2) Form the exception guard `except_f`: the disjunction, over all occurrences of ⋆ in the body, of the conjunction of the condition-path literals leading to that occurrence (Section 3.2, p. 7). It is true exactly when evaluation of the body reaches a ⋆ result. For example, `except_/` is `y = 0`. (3) The interpreter opens a call `f(...)` only if the instantiated `except_f` computes to false (Section 3.2, pp. 7-9). (4) The symbolic prover follows the same rule. The paper states: “A procedure call f (σ (x1 ), . . . , σ (xn )) must not be executed symbolically if it stems from a  – replacement.” (Section 4, p. 16). It demands that σ(except_f) simplify to false before the call is opened. Footnote 9 (p. 16) says the exception guard is only conceptual: the implementation labels the recursive calls that stem from a ⋆ replacement and never executes labelled calls symbolically.
-
-Verus form. Inference: keep the Rust function's panic path explicit with `requires` and prove callers establish it. If a panic branch is modeled in a spec, use a ghost `Option` or result datatype and prove that the `None`/panic case is unreachable under the precondition. Verus does not use Walther's marker or exception guard syntax; the conceptual guard becomes the function precondition and branch proof.
-
-Evidence and limits. The paper's stuck-term examples are `−(0)` (predecessor of 0), `log(3,2)` and `if {1/0 = 0, 42, 42}`; calls are by value, so a stuck argument makes the call stuck (Section 3.2, p. 9); the introduction also discusses `1/0` and `last` of the empty list (p. 2). The exception guard being false does not mean the call is defined: `log(12,2)` is stuck although `except_log` computes to false, and subtraction `−` has `except_−` = false yet is incompletely defined (Section 3.2, p. 9). So `except_f` is not a domain test; the domain procedures of technique 2 serve that purpose. The technique assumes terminating procedures; the paper's setting is restricted to partial functions with decidable domain (Introduction, p. 1). Inference: this limits automation for recursive Rust code whose panic condition depends on an undecidable invariant.
-
-## technique 2: synthesize determination guards and domain procedures
-
-what it is and when to use it. A determination guard `dg[t]` computes whether a term `t` produces a value. A domain procedure `∇f` is synthesized for each procedure and selector and can be placed in theorem preconditions.
-
-steps from the definitions (Definition 9, p. 17). (1) For a marker ⋆, `dg[⋆] = false`; for a variable it is true. (2) For constructors (including constants), equality, negation and already-synthesized domain procedures, conjoin the guards of all arguments (a constant has no arguments, so its guard is true). (3) For `if {t1,t2,t3}`, the guard is `dg[t1]` and, depending on `t1`, the guard of the selected branch: `[dg[t1] ∧ if {t1, dg[t2], dg[t3]}]`. (4) For a call `f(t1,...,tn)` of a procedure or selector, require all argument guards and `∇f(t1,...,tn)`. The paper says: “Informally, dg[f (t1 , . . . , tn )] states that the result of a procedure (or selector) call f (t1 , . . . , tn ) is determined iff all arguments are determined (as dg[t1 ] ∧ . . . ∧ dg[tn ] must hold) and are in the domain of f (as ∇f (t1 , . . . , tn ) must hold).” (Section 5, p. 17). (5) Define `∇f` as the determination guard of `f`'s body after weak normalization (Definition 10, p. 17), later refined to weak simplification (formula (11), Section 5.2.1, p. 22). For a selector, the domain procedure tests that the argument equals `cons(sel_1(x),...,sel_n(x))`, i.e. that it has the selector's constructor. (6) A domain procedure is only synthesized after termination of `f` has been verified; the recursive calls in `f` and `∇f` coincide, so `∇f` terminates too (p. 18). Domain procedures are completely defined, so no domain procedure is generated for a domain procedure (p. 18).
-
-Verus form. Inference: define `spec fn domain_f(args) -> bool` and require `domain_f(args)` in the Rust function contract. Prove `domain_f` implies no panic and use it in caller preconditions and lemmas. Verus `spec fn` is pure and cannot call runtime code; recursive domain predicates need termination measures and proof lemmas. The paper's automatic symbolic evaluator has no direct Verus equivalent, so synthesis would be a separate source transformation.
-
-Evidence. For logarithm, the paper writes the guarded law (7), `∀b, x, y:N ∇log(x, b) ∧ ∇log(y, b) → log(x ∗ y, b) = log(x, b) + log(y, b)` (Section 5, pp. 16-17); it notes that `∇log(x ∗ y, b)` need not be demanded because it follows from the other two (footnote 10, p. 17, and (17) in Section 5.3). Soundness: Theorem 2 (p. 18) says that a domain procedure always computes true or false and, if it computes true, the call is not stuck. Exactness: Theorems 4 and 5 (Section 5.1, pp. 20-21) show the domain procedure decides the domain exactly when the program is safe. The paper's words: “Hence each domain procedure of a safe L-program is a decision procedure for the domain of its mother procedure” (p. 20). A term is unsafe when it contains a stuck subterm at an irrelevant position that the interpreter never evaluates strictly, e.g. `hd(0::tl(∅))`; the synthesized `∇fail` for `fail(i,k) = hd(i::tl(k))` is `k = hd(k)::tl(k)`, which is false on `∅` although `fail(0,∅)` computes to 0 (p. 20). Safeness is not semi-decidable (p. 21). The author calls unsafe code bad style and reports: “So far, we never encountered an unsafe procedure in our case studies”, a claim about his own case studies, not tested here. The abstract's “in almost all cases” is the qualification: completeness is not universal.
-
-## technique 3: optimize synthesized guards
-
-why. Initial guards contain redundant conditions, recursive calls, and calls to other domain procedures. Since guards occur in proof obligations, simplify them before use (Section 5.2, p. 21).
-
-steps. (1) Use weak simplification, which does not unfold recursive procedures but rewrites nonrecursive calls using context conditions and verified lemmas (Section 5.2.1, p. 22). Example: the call `∇−(x,y)` inside `∇/` is removed with the lemma `x ≥ y → ∇−(x,y)` (formula (12), proved automatically by induction), and after recursion elimination `∇/(x,y)` becomes `¬ y = 0`; in `∇log` the calls `∇mod(x,b)` and `∇/(x,b)` become `true` from the context `¬ 2 > b`. (2) Eliminate recursive calls in conditions. Theorem 6 (Section 5.2.2, pp. 24-25) gives: if the syntactic requirements on the body hold (base results are `true` or recursive calls, and recursive calls in conditions have the shapes listed in the theorem), the whole body `∇f` can be replaced with `true`. This is how `∇∈` (tree membership), `∇fib` and `∇ack` become `true` (Figs. 10-12, pp. 23-25). (3) Eliminate recursive result terms. Group recursive calls into a cluster; for base result `b` ∈ {true,false}, prove the recursion elimination formula `R_{e,b}` (Definition 13, p. 27); Theorem 7 then lets the cluster be replaced with `b`, followed by weak normalization. The paper states: “By Theorem 7, the body R∇f of domain procedure ∇f can be soundly replaced with the optimized procedure body R∇f ,b if the recursion elimination formula Re,b has been proved.” (Section 5.2.2, p. 28). For `∇last` the formula (13) is proved by weak normalization and the result is `¬ k = ∅`. For `∇min` neither recursive call can be removed alone (the Disprover refutes both single-call formulas, p. 27), but the cluster of both calls succeeds with `b = true`, giving `¬ k = ∅` (Fig. 15, p. 28). (4) The implementation (Section 5.4, pp. 31-32) tries clusters of decreasing size, calling the Disprover first.
-
-Verus form. Inference: simplify `spec fn` domain predicates with rewrite lemmas and explicit `assert` facts; prove recursive simplifications with induction on a `decreases` measure. Never erase a recursive condition merely because it appears unreachable without a proof. The resulting compact predicate improves solver performance but remains a logical definition, not executable panic handling.
-
-Evidence and limits. Recursion that cannot be removed: `∇−` (it computes `x ≥ y`, which cannot be defined non-recursively; both formulas (14) and (15) are refuted by the Disprover with `x := 1, y := 2` and `x := y := 1`) and `∇log` (refuted with `x := 6, b := 2` and `x := b := 2`) (p. 26). Cost: with `k` recursive result terms, `(2^k − 1)·2` formulas are needed in the worst case; the paper reports a case study with a domain procedure with 19 recursive result terms none of which can be eliminated, and restricts the search when `k > N1` (default 4) and disables it when `k > N2` (default 8) (pp. 32-33). Timing reported in footnote 18 (p. 32): VeriFun 3.5, Windows 7, Intel Core i5-2520M 2.50 GHz, Java 1.8.0_311. It needs 1 s for `>`, `−`, `/` and `log`, and 3 s with the proofs of lemma (7) and lemma guard (17) added; under 1 s for `∈`, `fib`, `ack`, `last` and `min`. The method also depends on user input where the system cannot proceed: unproved elimination formulas can be proved interactively or accepted with the Accept button (p. 33). An alternative the paper gives for `−`: define it completely (Fig. 9), so `∇−` is `true` and lemma (12) is not needed; it uses this in all its case studies (p. 23).
-
-## technique 4: refined theory and well-formed lemmas
-
-what it is. Even a true formula can evaluate to a runtime error on a ground instance (Example 1, p. 13). Define a lemma guard with the determination guard and admit a formula into the refined theory only when that guard is itself true.
-
-steps. (1) For a lemma body `b`, compute the lemma guard `∀x1..xn dg[b]` after weak simplification (Definition 14, pp. 28-29). (2) The lemma is well-formed iff the guard is true. (3) `Th*_Pr = {ϕ ∈ Th_Pr | ∇ϕ ∈ Th_Pr}`. (4) Call the Disprover on the guard before trying to prove it: the paper says this “avoids proof attempts for false formulas” (Section 5.3, p. 29; the guard is usually true or false after simplification, but induction is sometimes needed, e.g. for `∀n:N ∇−(n,n)` and for (17)). The paper states: “The refined theory Th∗Pr excludes each specification formula from ThPr which is not well-formed.” (Section 5.3, p. 29). Theorem 8 (p. 29): if the lemma guard holds (well-formed), every monomorphic constructor ground instance of the lemma body evaluates to `true` or `false`, never to a stuck term; if the formula is also in `Th*_Pr` (well-formed and true), every such instance evaluates to `true`. The paper states that all lemma guards for the statements of Fig. 1 are false, so none of them is well-formed or in `Th*_Pr` (p. 29).
-
-Verus form. Inference: require panic-freedom as an explicit precondition or prove a separate `no_panic` lemma before admitting a specification lemma. Use `requires` to express the guard and `ensures` for the property; a test harness can instantiate constructor-like values to search for guard counterexamples. Verus's solver does not automatically construct Walther's refined theory, so the discipline must be encoded in contracts and proof lemmas.
-
-limits and relation to `requires`. The paper admits that some formulas that never get stuck are still excluded: lemma (18) `hd(i::tl(k)) = i` is never stuck but not well-formed, and the author treats such lemmas as “examples of a bad specification style rather than a deficiency of our proposal” (p. 30). Safe lemmas can also be excluded: lemma (19) `x − y ≤ x` is safe but not well-formed (p. 30). The guard also depends on the order of connectives: lemma (20) is not well-formed while its contraposition (21) is, because `dg[a ∨ b]` differs from `dg[b ∨ a]`; the paper rejects the symmetric variant (22) because it would accept a lemma that has a stuck instance (`0/0 = 1` case, p. 31). Related work (Section 6, p. 37): the paper lists Verus [16], Dafny [17], F* [24] and Liquid Haskell [25] among systems with “refined type systems and/or requires-guards”, says their effect corresponds to the PVS approach, and names two disadvantages of requires-guards: “The disadvantages of this and the PVS approach are that (i) the user has to develop proof obligation reqf , and that (ii) certain procedure calls might be necessarily executed twice if they occur in the requires-guard as well as in the procedure body.” Footnote 23 (p. 37) says double execution does not happen when requires-guards are purely static, as in some systems. Footnote 24 (p. 38) says requires-guards add no expressiveness, since `requires req; R` can be written `if req then R else ⋆`. Inference: this supports treating a Verus `requires` as the manually written counterpart of `∇f`; what Walther adds is synthesis and optimization of the guard, and a refined theory in which lemmas must also pass the guard. Inference: the conservatism is useful for agent-written verified Rust, since it prevents proofs that rely on evaluation behavior outside the stated domain, but it may reject harmless lemmas and require manual guard proofs. Inference: a verification tool for Rust should not silently treat panics as arbitrary values without a guard.
-
-## proved, measured, and trusted
-
-Proved (Theorem 1 and 8 in the text; the rest in the appendix, pp. 38-46): termination preservation (Theorem 1), soundness of determination guards and domain procedures (Theorem 2, Corollary 3), exact domain decision for safe programs (Theorems 4 and 5, with the characterization of safe terms), soundness of recursion elimination (Theorems 6 and 7), and absence of stuck results for ground instances of well-formed lemmas (Theorem 8). Measured: only the VeriFun timings above (1 s, 3 s, under 1 s on small example files) and footnote 8's statement that the induction heuristic has a success rate above 95%, i.e. about 4 user-suggested induction axioms per 100 lemmas proved by induction (p. 15). The paper has no benchmark suite and no aggregate success rate for domain procedure synthesis or recursion elimination; it says its case studies contain no unsafe procedure. Trusted: the symbolic evaluator's soundness (formula (5), p. 15) on which proofs of recursion elimination formulas and lemma guards rest; the implementation of VeriFun and the Disprover; user-provided termination functions when automatic termination analysis fails (Section 4, p. 15); and the language L itself as a model of the programs. Inference: product risk is high if a verifier's panic model differs from executable Rust; domain predicates and well-formedness checks should be part of the contract boundary.
-
-## techniques for the catalog
-
-- exception guards for partial calls — block semantic calls introduced by undefined-result markers and represent them as stuck computations
-- determination/domain procedure synthesis — recursively compute guards for definedness and synthesize `∇f` predicates for partial procedures and selectors
-- guard optimization by recursion elimination — simplify guards and replace recursive calls only when Theorem 6/7-style formulas are proved
-- refined well-formed theory — admit specifications only when their determination guard is valid, guaranteeing ground evaluation without runtime errors
+Walther (J. Autom. Reason. 69:25, 2025): reason about terminating functional programs with undefined calls (1/0, hd(∅))
+- undefined result ⋆ means arbitrary but fixed value
+  - statement true in Th_Pr only if true for every completion of undefined calls
+  - stuck computation models a runtime error
+- refined theory Th*_Pr: interpreter never gets stuck on ground instances of proved statements
+- proofs for terminating programs only; results via VeriFun
+exception guards
+- replace ⋆ with self-call, disable those calls so they stay stuck
+- except_f: disjunction over ⋆ occurrences of path conditions (except_/ is y = 0)
+- guard false does not imply defined (log(12,2) stuck), so not a domain test
+determination guards and domain procedures ∇f
+- dg[⋆] = false, variable true, constructors/equality conjoin argument guards
+  - call f(t1..tn): all argument guards and ∇f(t1..tn)
+- ∇f = determination guard of body after weak normalization, synthesized after termination of f
+- soundness (Thm 2): ∇f true implies call not stuck
+- exact (Thms 4, 5) when program is safe
+  - unsafe: stuck subterm at a position never evaluated strictly, e.g. hd(0::tl(∅))
+  - safeness not semi-decidable, author found no unsafe procedure in own case studies
+  - hence abstract's "in almost all cases"
+guard optimization
+- weak simplification using context and verified lemmas (∇/ becomes ¬ y = 0)
+- recursion elimination (Thm 6): ∇∈, ∇fib, ∇ack become true
+- eliminate recursive result terms by clusters (Thm 7), proving formula R_{e,b}
+  - ∇last becomes ¬ k = ∅
+  - ∇min needs the cluster of both calls, single calls refuted
+- cannot be eliminated: ∇− (x ≥ y), ∇log
+- worst case (2^k − 1)·2 formulas for k recursive terms
+  - one case study had 19 and none eliminable
+  - limits N1 = 4 restrict, N2 = 8 disable search
+well-formed lemmas
+- true formula can still hit a runtime error on a ground instance
+- lemma admitted into Th*_Pr only if lemma guard (∀x dg[body]) is valid (Thm 8)
+  - lemma guard checked with Disprover before proof attempt
+- conservative: rejects safe lemmas like x − y ≤ x, never-stuck hd(i::tl(k)) = i
+- guard depends on connective order: dg[a ∨ b] ≠ dg[b ∨ a]
+relation to Verus requires (§6)
+- paper lists Verus, Dafny, F*, Liquid Haskell as requires-guard systems
+- disadvantages: user writes req_f by hand, calls may run twice
+- `requires req; R` equals `if req then R else ⋆`, no added expressiveness
+- Walther adds guard synthesis, optimization, refined theory
+evidence
+- timing: 1 s for >, −, /, log (3 s with lemmas), under 1 s for ∈, fib, ack, last, min
+- induction heuristic success above 95%
+- no benchmark suite, no aggregate success rate
+- trusted: symbolic evaluator soundness, VeriFun, Disprover, user termination functions, language L as model of programs
+for Verus (inference)
+- panic path explicit via `requires`, callers prove it
+- `spec fn domain_f(args) -> bool` required in contract, with `decreases` for recursion
+- prove a `no_panic` lemma before admitting spec lemmas
+- never treat panics as arbitrary values without a guard
+- synthesis would be a separate source transformation
+- risk high if verifier panic model differs from executable Rust

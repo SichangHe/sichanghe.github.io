@@ -1,35 +1,28 @@
 # Lean Workbook: A large-scale Lean problem set formalized from natural language math problems
 (authored by agents unless marked 🧑)
 Tag: `ying2024lean`, [paper](https://arxiv.org/abs/2406.03847v3)
-## pipeline purpose
-Lean Workbook addresses sparse formal-language data by iteratively translating contest problems into Lean 4 statements and filtering errors. The introduction states: “We open-source a dataset containing 57k formalized math problems (5k of them have formal solutions) which can be used for autoformalization and auto theorem proving.” It also states: “We formalize 21 new IMO questions that have not appeared in Compfiles.” (section 1, p. 2). The paper says: “We use Lean compiler and Natural Language Inference (NLI) to check if it is a valid formalization.” (introduction, p. 2). The paper reports that “Manual examination reports an accuracy of 93.5% of a random sample of the Lean Workbook.” (introduction, p. 2) Statement construction uses `by sorry` placeholders during data construction (section 2, p. 2).
 
-## technique: active-learning autoformalization
-Start with MiniF2F and ProofNet pairs, add bidirectional formal↔natural translation and multitask Lean data, and fine-tune InternLM-Math-Plus-20B for three epochs at learning rate 4e−5 on 32 A100 GPUs (section 4.1, pp. 3–4). Qwen-1.5-14B-Chat extracts forum problems with problem, answer, and tag fields; topic filtering and a second prompt remove unsuitable and ill-defined problems (section 4.1, pp. 4–5). Section 5.2 reports: “The original active learning dataset has 1088678 questions, among which 458692 questions are considered well-defined.” It then states: “After filtering the tags, 327870 questions are selected to be formalized in our experiments.” (p. 6).
-
-Each iteration: translate natural language to Lean; compile the statement with `by sorry`; back-translate Lean to natural language; ask NLI whether original and back-translation are the same; send compile failures or NLI disagreements to human experts; add corrected examples to the next training round. The paper states: “Each iteration will add an average of about 30 human-labeled samples into the training data, addressing the current model’s weakness.” (section 4.2, p. 5). After the first three rounds, diagnosis switches from recurring failure patterns to random sampling by tag; correct or modified samples enter training (section 4.2, pp. 5–6). The authors report: “We stop our iteration after six rounds when the correct rate in sampled data almost reaches 95%, and we add 341 problems into the training set during iterations.” (p. 6).
-
-Inference: for Verus, replace Lean statement compilation with parsing and specification checks, and replace NLI with a semantic comparison of Rust/Verus specs against source requirements. A placeholder proof may help data generation, but must be excluded from any verified artifact or training target intended to claim proof.
-
-## technique: fast compile checking with a REPL
-Lean Workbook builds a Lean 4 read-eval-print loop using runtime metaprogramming so statement checks run interpreted and in parallel. The authors report completion in one hour on 32 CPU cores under Lean v4.8.0-rc1 and matching Mathlib4 (section 4.2, p. 5). The authors explain: “To facilitate the process, we build up a Lean 4 read-eval-print loop (REPL), utilizing Lean 4’s runtime meta-programming facility, which allows for the verification of Lean 4 statements in an interpreted mode.” They report: “The correctness test program can be executed in a multi-process style and can be finished in one hour with a 32-core CPU.” (section 4.2, p. 5).
-
-Inference: a Verus pipeline could reuse verifier processes and check independent candidates in parallel. Whether Verus supports comparable process reuse requires a separate implementation check. Compilation acceptance proves syntactic/type validity, not that the formal statement matches the natural-language requirement.
-
-## technique: compilation, back-translation, and human diagnosis
-Compilation alone accepts statements that are well typed but mistranslated. Back-translation plus NLI checks semantic agreement; failures go to human diagnosis. The authors explain: “However, it is usually witnessed that a correctly compiled translation actually does not follow the original question.” (section 4.2, p. 5). They define compile pass number (CPN), NLI pass number (NPN), and sampled human correct-translation rate (section 5.1, pp. 5–6). NPN requires compilation and a positive NLI judgment; the manual rate estimates correctness among NLI-passing samples. Their diagnostic table gives reusable corrections: expand chained `a >= b >= c > 0` into conjunctions; add missing multiplication operators; encode triangle inequalities explicitly; represent all solutions as disjunctions; encode maxima with `IsGreatest`; and represent infinitely many numbers with `∀ N, ∃ n > N, ...` (table 2, p. 7).
-
-Inference: Verus specification generation should similarly separate parser/verifier acceptance from semantic equivalence. A reviewer must inspect quantifier scope, units/types, extrema, existence, and omitted assumptions; these errors are specification threats even when Rust compiles.
-
-## evidence and data limits
-After six rounds, 205,079 translations compile and 57,231 pass NLI. Sampling 5–10 items per common tag gives weighted accuracy 0.935; table 1 reports, for example, inequality 10/10, algebra 9/10, number theory 9/10, and trigonometry 4/5 (section 5.2, p. 6; table 1, p. 7). Sampling 1,024 proofs per problem solves 4,898 problems, reported as Pass@1024 8.6% (section 5.2, p. 6). Table 3 reports CPN/NPN of 136,670/37,122 for the first-round model, 205,079/57,231 after adding human-labeled data, and 228,928/82,893 after further fine-tuning on Lean Workbook (p. 8). Table 4 labels its training rows “Mathlib” and “+ Lean Workbook”; their MiniF2F validation/test accuracies are 44.3/37.3 and 50.4/46.7, respectively (p. 8). The first value is printed as `44,3`. The accompanying prose describes MiniF2F fine-tuning, so its description and the baseline row label differ.
-
-Table 1 cautions: “It is worth noting that some tags are incorrect due to the mistake of the tagging model, and we will choose another sample with this tag if we consider the current one unsuitable.” (p. 7). Table 2 rates integer division, min/max, and digits as “Half Correct” (p. 7). The limitations state: “We find our proposed dataset has some similar problems which is hard to apply deduplication.” They add: “Furthermore, our model is focused on contest-level problems during active learning which may not be appropriate to formalize other level math problems.” (p. 9). Inference: the sampled accuracy does not establish correctness of every released pair. Statement compilation with `sorry` does not establish a proof; separately searched proofs are checked by the authors’ correctness checker. Inference: the transferable risk for agent-written verified Rust is a specification that passes mechanical checks while expressing the wrong requirement. The paper does not evaluate Rust or Verus.
-
-## techniques for the catalog
-- active-learning autoformalization — add corrected translation examples to subsequent fine-tuning
-- parallel compile filtering — use a Lean REPL and multiple processes to check statements
-- back-translation NLI — compare original and reconstructed natural-language problems
-- error-pattern diagnosis — turn recurring compilation and semantic errors into training examples
-- sampled semantic audit — estimate correctness among NLI-passing samples by tag
-- proof/data separation — distinguish placeholder statements from separately searched and checked proofs
+active-learning autoformalization of contest problems into Lean 4 statements
+- result: 57k formalized problems, 5k with formal proofs, 21 new IMO formalizations
+- start: minif2f + proofnet pairs, InternLM-Math-Plus-20B, 3 epochs
+- source: 1.09M forum questions -> 459k well-defined -> 328k after tag filter
+- per round: translate, compile with `by sorry`, back-translate, nli compare, humans fix failures
+  - ~30 human-labeled samples added per round
+  - stop after 6 rounds at ~95% sampled correct rate
+compile pass is not semantic correctness
+- "correctly compiled translation actually does not follow the original question"
+- back-translation + nli catches mismatches, humans diagnose the rest
+- final: 205,079 compile, 57,231 pass nli
+- sampled manual accuracy 93.5%
+  - 5-10 items per tag, tags sometimes wrong
+- recurring errors: chained inequalities, missing operators, extrema, "all solutions", infinitely many
+fast checking: lean 4 repl via metaprogramming, interpreted and parallel
+- 1 hour on 32 cores
+proof search is separate from statements
+- 1,024 samples per problem solve 4,898 problems (pass@1024 8.6%)
+- minif2f val/test 44.3/37.3 -> 50.4/46.7 after training on workbook
+- limits: near-duplicates, contest-level focus
+verus transfer (inference, untested by paper)
+- spec generation needs semantic check beyond verus acceptance
+  - review quantifier scope, types, extrema, existence, dropped assumptions
+- keep placeholder proofs out of any verified artifact or training target
