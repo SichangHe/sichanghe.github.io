@@ -64,17 +64,14 @@ Use plain text w/o bullet for top level to reduce 1 level of indentation.
 
 DO NOT use Minimal Bullet Tree unless instructed to. Speak normally.
 
-🤖 Whenever a chart, diagram, image, table or rendered page would beat
-terminal text, show it to the human: save it as `.html`, `.svg`, `.png`,
-`.md` or `.mmd` (Mermaid) and run `viz FILE`; it opens in their browser at once.
-Files you only save are invisible to them.
-
 Follow each reference whose description matches the current task:
 
 - Agent planning, autonomy, persistent instructions, or review:
     `getagentsmd get agent_work`
     - Not needed for Q&A or discussions
 - Human-facing writing or source synthesis: `getagentsmd get communication`
+- 🤖 A chart, diagram, image or table would beat text for the human:
+    `getagentsmd get show_viz`
 - First-principles thinking for planning and when
     you are not making good progress: `getagentsmd get first_principles`
 - Programming or software development: `getagentsmd get development`
