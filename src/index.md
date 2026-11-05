@@ -7,6 +7,9 @@
 
 Hello there, Steven here:
 
+<!-- 🧑 -->
+I think critically about what technology actually does.
+
 - Systems programmer, Rustacean, Pythonista, Elixirist, Vimmer.
 - Analytical, skeptical, empirical, optimistic nihilist.
 - Computer Science Ph.D. student,

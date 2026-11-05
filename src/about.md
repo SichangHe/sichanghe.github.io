@@ -1,5 +1,8 @@
 # About
 
+<!-- 🧑 -->
+I think critically about what technology actually does.
+
 ## Research Interests
 
 Current:
