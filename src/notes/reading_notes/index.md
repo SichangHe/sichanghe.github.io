@@ -1,5 +1,17 @@
 # Unstructured Reading Notes
 
+- Readable games on the move, Chunyu Xia, NSL meeting
+    - text blur under low connectivity: unplayable
+    - on the road, latency&jitter high ⇒ mainly turn-based games
+    - region-of-interest (ROI) coding: video encoding spend more bytes on text
+    - Unity render: world layer + UI tree
+    - hard to extract UI code: entangled
+    - pixel consistency: sniffer&streamer to identify UI parts
+    - consistent timing: tag both data and frame and align them
+    - agent act as beta tester
+        - may get stuck in places
+    - OCR result difference: 97%\~100% vs 44-50% for pixel streaming
+    - subjective user study in car
 - Narratives as a Fundamental Unit for
     Modeling the Online Information Ecosystem, Patrick Gerard, thesis proposal
     - \~7 social platform/month on average

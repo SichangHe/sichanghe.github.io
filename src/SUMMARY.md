@@ -12,6 +12,7 @@
         - [ChatGPT](notes/automation_software/chatgpt.md)
         - [Command-Line Utilities](notes/automation_software/cli_util.md)
         - [Hammerspoon](notes/automation_software/hammerspoon.md)
+    - [Books](notes/books/index.md)
     - [Browsers](notes/browsers/index.md)
     - [Computer Science](notes/cs/index.md)
         - [Discrete Mathematics for
