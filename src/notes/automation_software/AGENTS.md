@@ -75,6 +75,7 @@ Follow each reference whose description matches the current task:
 - Human-facing writing or source synthesis: `getagentsmd get communication`
 - 🤖 A chart, diagram, image or table would beat text for the human:
     `getagentsmd get show_viz`
+- 🤖 The human asks to talk to another agent: `getagentsmd get switch_agent`
 - First-principles thinking for planning and when
     you are not making good progress: `getagentsmd get first_principles`
 - Programming or software development: `getagentsmd get development`
