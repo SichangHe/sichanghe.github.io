@@ -31,7 +31,7 @@ Three failures come from a bad prompt.
 The NL2Contract study reports the first one as the authors' observation.
 The study's words: "The authors found that omitting this context makes LLMs hallucinate names that do not exist."
 No count is given.
-[study](../vl_paper_walkthrough/beyond_postconditions_20261012.md)
+[study](../paper_takeaways/spec.md)
 
 So the question is what to show the model, and when.
 
@@ -55,7 +55,7 @@ Each step names where it comes from.
    - the LSP study does this for Eiffel and feeds the result into prompts
 4. fetch examples for the target
    - key on the code, not on the written spec (PropertyGPT)
-   - or key on proof shape: views, ownership, solver mode (a recommendation in the [Verus systems study](../vl_paper_walkthrough/verus_practical_20261012.md), untested)
+   - or key on proof shape: views, ownership, solver mode (a recommendation in the [Verus systems study](../paper_takeaways/rustv.md), untested)
    - match the Verus version, and keep the file path of every example
 5. write a short syntax guide into the prompt
    - `requires`/`ensures` placement, `invariant` after the loop header, `int` casts, `Seq` slicing
@@ -75,7 +75,7 @@ Each step names where it comes from.
     - otherwise you cannot tell which piece paid
 
 ### code-keyed retrieval: PropertyGPT (Solidity, Certora-style rules)
-[study](../vl_paper_walkthrough/propertygpt_20261012.md)
+[study](../paper_takeaways/spec.md)
 
 - embed human-written critical code, not the property text
   - the study quotes the paper: "the reference properties themselves will not be embedded because they cannot be queried against by the subject test code"
@@ -86,7 +86,7 @@ Each step names where it comes from.
 - the Verus form is the study's inference
 
 ### staged retrieval: VeriFast specifications (C)
-[study](../vl_paper_walkthrough/an_empirical_study_of_llm_generated_spec_20261012.md)
+[study](../paper_takeaways/spec.md)
 
 - corpus: verifier tutorials, library declarations, related programs
 - BM25 (sparse) or embeddings (dense)
@@ -95,7 +95,7 @@ Each step names where it comes from.
 - the strongest input also gives a correct formal contract (the study's "FB" and "FBP" forms)
 
 ### slice and decompose: AutoSpec (C, Frama-C)
-[study](../vl_paper_walkthrough/enchanting_program_specification_synthes_20261012.md)
+[study](../paper_takeaways/spec.md)
 
 - call graph whose nodes are functions and loops
 - specify leaves first
@@ -103,7 +103,7 @@ Each step names where it comes from.
 - few-shot examples in each prompt
 
 ### slice before analysis: LemmaNet (C, Rocq)
-[study](../vl_paper_walkthrough/automated_lemma_discovery_in_agentic_pro_20261012.md)
+[study](../paper_takeaways/proof.md)
 
 - slice the source to what the obligation needs
 - a model writes a source-level version of the goal
@@ -112,7 +112,7 @@ Each step names where it comes from.
 - the catalog line names "program slicing for semantic analysis", but in the study slicing is one clause of the method
 
 ### project index behind a language server: Eiffel-tools (Eiffel, AutoProof)
-[study](../vl_paper_walkthrough/large_language_models_and_language_serve_20261012.md)
+[study](../paper_takeaways/agent.md)
 
 - index features, contracts and inheritance from the project and its libraries
 - the study quotes the paper: "This information is also integrated into LLM prompts when relevant to give the relevant context to the model"
@@ -120,7 +120,7 @@ Each step names where it comes from.
 - output is parsed with Tree-sitter; invalid output is dropped
 
 ### library search as a tool: Lean agent with search (Lean)
-[study](../vl_paper_walkthrough/automating_formal_verification_with_agen_20261012.md)
+[study](../paper_takeaways/agent.md)
 
 - the study quotes the paper:
   - "The tool provides access to multiple Lean search providers which handle natural language and type-pattern queries, allowing the model to broadly access lemma names"
@@ -128,7 +128,7 @@ Each step names where it comes from.
 - the study's Verus form is a `search_verus` tool over project lemmas; that is inference
 
 ### standalone dependency extraction: VeruSAGE (Verus)
-[study](../vl_paper_walkthrough/verusage_20261012.md)
+[study](../paper_takeaways/agent.md)
 
 - the study quotes the paper:
   - "Each task corresponds to one proof function or executable Rust function in the original project, with all the dependencies extracted into a stand-alone Rust file"
@@ -136,14 +136,14 @@ Each step names where it comes from.
 - the file name says "verusage" but the study's title is VeruSAGE
 
 ### syntax guide plus evolving guide: ProofWright (CUDA, VerCors)
-[study](../vl_paper_walkthrough/proofwright_20261012.md)
+[study](../paper_takeaways/other.md)
 
 - knowledge base: stripped verifier docs, hand-annotated kernels, error and fix pairs
 - the guide is distilled from those and updated after each successful proof, with manual review
 - sizes: about 12K words for the knowledge base, about 9.5K tokens for the guide
 
 ### local file context: Baldur (Isabelle)
-[study](../vl_paper_walkthrough/baldur_20261012.md)
+[study](../paper_takeaways/proof.md)
 
 - prefix the theorem with up to 50 preceding statements from the same file
 - left-truncate to the token budget, keep the theorem statement
@@ -151,23 +151,23 @@ Each step names where it comes from.
 
 ### few-shot and reusable hints
 - KaPilot (Kani): similar verified function and spec pairs retrieved from a shared store.
-  - the study's pipeline step stores each candidate that eventually verifies. [study](../vl_paper_walkthrough/kapilot_20261012.md)
-- DafnyPro (Dafny): eight hand-written tactic patterns retrieved after failed attempts. [study](../vl_paper_walkthrough/dafnypro_20261012.md)
-- proof-helper catalogue (Dafny): sequence, recursion and quantifier templates in the repair prompt. [study](../vl_paper_walkthrough/automatic_generation_of_formal_specifica_20261012.md)
-- AlphaVerus (Verus): starts from Verus syntax and five examples, then adds verified translations and error-repair trajectories each round. [study](../vl_paper_walkthrough/alphaverus_20261012.md)
-- NL2Contract (Python): context built mechanically from signature, docs, imports, globals, callee signatures. [study](../vl_paper_walkthrough/beyond_postconditions_20261012.md)
-- neuro-symbolic invariants (C): four few-shot families (inductive, with and without explanation; Hoare; Horn). [study](../vl_paper_walkthrough/neuro_symbolic_software_verification_20261012.md)
+  - the study's pipeline step stores each candidate that eventually verifies. [study](../paper_takeaways/spec.md)
+- DafnyPro (Dafny): eight hand-written tactic patterns retrieved after failed attempts. [study](../paper_takeaways/proof.md)
+- proof-helper catalogue (Dafny): sequence, recursion and quantifier templates in the repair prompt. [study](../paper_takeaways/spec.md)
+- AlphaVerus (Verus): starts from Verus syntax and five examples, then adds verified translations and error-repair trajectories each round. [study](../paper_takeaways/spec.md)
+- NL2Contract (Python): context built mechanically from signature, docs, imports, globals, callee signatures. [study](../paper_takeaways/spec.md)
+- neuro-symbolic invariants (C): four few-shot families (inductive, with and without explanation; Hoare; Horn). [study](../paper_takeaways/proof.md)
 - refinement library (LLM4PR): persists successful refinement trees for tasks with the same pre/post pattern.
-  - the design is described, and I found no measurement of reuse. [study](../vl_paper_walkthrough/towards_large_language_model_aided_progr_20261012.md)
+  - the design is described, and I found no measurement of reuse. [study](../paper_takeaways/proof.md)
 - SpecAgent (ACSL): up to three examples chosen by Jaccard similarity of a 32-bit structural fingerprint,
-  after filtering out units with a different loop structure or return type. [study](../vl_paper_walkthrough/specagent_20261012.md)
+  after filtering out units with a different loop structure or return type. [study](../paper_takeaways/spec.md)
   - the paper reports no retrieval-only ablation
-- trace-linked retrieval (hardware assertions): graph of requirements, code, diagnostics; I found no numbers for it. [study](../vl_paper_walkthrough/knowledge_graphs_formal_verification_20261012.md)
-- KBSpec (JML, OpenJML): 83 seed items (11 examples, 31 tutorials, 26 exercises, 15 repair guidelines), then grown from verifier-accepted traces. [study](../vl_paper_walkthrough/kbspec_20261012.md)
+- trace-linked retrieval (hardware assertions): graph of requirements, code, diagnostics; I found no numbers for it. [study](../paper_takeaways/agent.md)
+- KBSpec (JML, OpenJML): 83 seed items (11 examples, 31 tutorials, 26 exercises, 15 repair guidelines), then grown from verifier-accepted traces. [study](../paper_takeaways/spec.md)
   - each item holds original content, an LLM summary and keywords; retrieval is by embedding the program, and on repair the current specification plus the error
   - items are scored against a knowledge-free baseline: helpful if only the item's run passes, harmful if only the baseline passes; near-duplicates (cosine over 0.95) are dropped
   - the memory is frozen for evaluation; the Verus form is the study's inference, as the paper has no Verus implementation
-- What's in a Proof? (F* and Verus, expert behaviour) [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md).
+- What's in a Proof? (F* and Verus, expert behaviour) [study](../paper_takeaways/other.md).
   - experts search documentation and adapt existing lemmas; a copilot would retrieve lemmas and examples for the current subgoal
   - P2's F* Intersection proof reused library lemmas and was three times shorter than P4's from-scratch proof
   - the F* agent demonstration used GraphRAG retrieval; no retrieval-only ablation is reported

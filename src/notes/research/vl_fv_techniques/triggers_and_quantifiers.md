@@ -9,10 +9,10 @@ So a proof fails in two opposite ways.
 The needed instance is never produced, so the proof is missing a fact.
 Or too many instances are produced, so the proof is slow or times out.
 
-[Tunable automation](../vl_paper_walkthrough/tunable_automation_in_automated_program__20261012.md)
+[Tunable automation](../paper_takeaways/rustv.md)
 states the tradeoff:
 more instantiation removes manual hints, but the search space and response time can explode.
-[ProofSaX](../vl_paper_walkthrough/synthesizing_proofs_using_proof_sharding_20261012.md)
+[ProofSaX](../paper_takeaways/proof.md)
 says the missing piece of a nearly finished proof is usually small:
 "triggers, helper-lemma calls, definition reveals, or case splits"
 (this is the study's wording of the paper's claim, not a quotation).
@@ -42,7 +42,7 @@ Ask which of the two failures it is.
 If a fact that should apply does not, you need an instance.
 If the proof is slow or flaky, you have too many.
 Do not raise the timeout before you know.
-[Verus in practice](../vl_paper_walkthrough/verus_practical_20261012.md)
+[Verus in practice](../paper_takeaways/rustv.md)
 advises: "Diagnose excessive instantiation before increasing timeouts."
 (that is the study's recommendation, not the paper's).
 
@@ -91,7 +91,7 @@ See "variants" for the instability paper.
 ## variants by paper
 
 Broadcast lemmas and groups:
-[tunable automation](../vl_paper_walkthrough/tunable_automation_in_automated_program__20261012.md)
+[tunable automation](../paper_takeaways/rustv.md)
 adds `broadcast proof fn`, `broadcast group` and `broadcast use` to Verus.
 The paper says broadcast proofs "must adhere to trigger rules as if they are universally quantified."
 Its IronKV example exports transitivity of a key order as `trans_lt_lt` with a group `group_key_cmp_properties`.
@@ -104,7 +104,7 @@ In IronKV the authors removed manual triggers where they could and added 206 ann
 It was a win there and did not carry to the other projects (see evidence).
 
 Trigger synthesis as search:
-[ProofSaX](../vl_paper_walkthrough/synthesizing_proofs_using_proof_sharding_20261012.md)
+[ProofSaX](../paper_takeaways/proof.md)
 runs on Dafny.
 It extracts trigger patterns, generates the smallest terms that match them, and sends candidates to the prover in batches.
 It tries all single triggers and all pairs, and builds a covering so every pair shares a batch.
@@ -114,25 +114,25 @@ The same tool has a reveal transformer and a quantifier-elimination transformer,
 The reveal transformer keeps a reveal only if it changes the prover outcome.
 
 Plan-then-act with quantifier actions:
-[VeruSAGE](../vl_paper_walkthrough/verusage_20261012.md)
+[VeruSAGE](../paper_takeaways/agent.md)
 gives its planning agent action families that include `reveal_opaque`, `use_lemma`, `instantiate_forall` and `instantiate_exists`.
 A static analysis finds lemmas, recursive functions and opaque functions first, and disables actions that cannot apply.
 Its study says the action library maps to `reveal`, `broadcast use`, `assert forall` and `choose`.
 That mapping is the study's inference.
 
 Sealing a recursive definition:
-[Corten](../vl_paper_walkthrough/corten_foundational_verification_of_rust_20261012.md)
+[Corten](../paper_takeaways/rustv.md)
 marks a recursive weakest-precondition function opaque.
 It exposes only one-step lemmas, so only the leading statement or the base case unfolds.
 The study's Verus translation ("opaque lemmas and controlled unfolding of recursive predicates") is an inference.
 
 Rewriting the quantifier itself:
-[Move specification inference](../vl_paper_walkthrough/combining_mechanical_and_agentic_specifi_20261012.md)
+[Move specification inference](../paper_takeaways/spec.md)
 has the agent replace unbounded quantifiers in weakest-precondition output by bounded forms and add triggers to the ones that remain.
 For overflow, the agent adds a monotonicity lemma and calls it with a trigger.
 
 Trigger anchors and recursive reachability:
-[Fewer Assumptions by Design](../vl_paper_walkthrough/fewer_assumptions_20261012.md)
+[Fewer Assumptions by Design](../paper_takeaways/rustv.md)
 (Verus, DLL invariants; the lessons are the study's reading of §3.4, pp.110-113).
 Quantified invariants need usable trigger anchors.
 A syntactically valid but overly specific trigger may never instantiate at the needed proof site.
@@ -141,7 +141,7 @@ For recursive reachability it keeps "both a fuel-bounded reachability predicate 
 It gives no counts for the trigger lessons alone.
 
 Choosing a backend:
-[Kani](../vl_paper_walkthrough/kani_20261012.md)
+[Kani](../paper_takeaways/rustv.md)
 offers `kani::forall!` and `kani::exists!` over bounded ranges.
 SAT backends expand the range, so the bounds must be compile-time and small.
 Z3 and cvc5 take the formula, but instantiation can fail.
@@ -149,16 +149,16 @@ The paper's example: "Z3 cannot automatically instantiate the quantifier at d = 
 The authors weakened the postcondition to avoid it.
 
 Measuring brittleness:
-[SMT instability](../vl_paper_walkthrough/smt_instability_20261012.md)
+[SMT instability](../paper_takeaways/solver.md)
 generates equivalent mutants of a query and measures runtime spread by coefficient of variation (CV).
 Its mutations only shuffle assertions, not declarations or triggers.
 It proposes, but does not implement, restructuring a query for lower runtime.
 Searching equivalent lemma and trigger layouts is the study's inference for Verus.
 
 Context pruning by default:
-[Verus in practice](../vl_paper_walkthrough/verus_practical_20261012.md)
+[Verus in practice](../paper_takeaways/rustv.md)
 says Verus prunes unreachable definitions and picks few triggers rather than broad ones.
-[Linear ghost types](../vl_paper_walkthrough/verus_linear_20261012.md)
+[Linear ghost types](../paper_takeaways/rustv.md)
 lists trigger selection, trigger profiling and hide/reveal as existing proof tools.
 Neither gives a procedure.
 
@@ -226,13 +226,13 @@ Hidden definitions confuse weaker agents.
 The VeruSAGE study says Sonnet often fails in NRKernel by demanding hidden bodies, rather than calling lemmas that expose the properties.
 
 A trigger that is valid but too specific may never fire at the proof site where it is needed
-([study](../vl_paper_walkthrough/fewer_assumptions_20261012.md)); the study treats this as a search failure, not a false property.
+([study](../paper_takeaways/rustv.md)); the study treats this as a search failure, not a false property.
 
 Solvers can still fail on arithmetic inside the quantifier.
 The Kani example above is the case.
 
 Missing triggers do not always give a counterexample.
-The [ExVerus](../vl_paper_walkthrough/exverus_20261012.md) study says assertion errors from a missing trigger can lack a well-defined counterexample, so
+The [ExVerus](../paper_takeaways/proof.md) study says assertion errors from a missing trigger can lack a well-defined counterexample, so
 [counterexample guided repair](counterexample_guided_repair.md)
 does not help here.
 

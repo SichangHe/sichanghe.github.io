@@ -19,7 +19,7 @@ the core of this technique.
 None of the studies runs this loop with Verus's own solver output, except ExVerus. The other steps are my inference from tools for C, Rust, Dafny and Solidity. I mark them.
 
 1. Get the failing obligation: the Verus error, the failing assertion or invariant, and the relevant `requires`, `invariant` and `ensures`.
-2. Get concrete violating states. [ExVerus](../vl_paper_walkthrough/exverus_20261012.md) has an LLM translate the obligation into a short Z3Py query over source variables, then solves
+2. Get concrete violating states. [ExVerus](../paper_takeaways/proof.md) has an LLM translate the obligation into a short Z3Py query over source variables, then solves
    for several assignments. The study says it does this to "bypass Verus’s lowered SMT model (SSA snapshots and quantifiers)". This is the study's wording, not the paper's.
 3. Check whether each state is real. For an invariant error, ExVerus is the one that does this in Verus. It pulls the loop into its own function, turns the invariants into assertions
    before and after one iteration, and injects each state at entry. A state counts as a start failure only if the start assertion fails. It counts as an end failure only if the start
@@ -37,13 +37,13 @@ Two extra uses of the same idea, both inference for Verus:
 
 ## variants by paper
 
-ExVerus, source-level counterexamples with triage. [study](../vl_paper_walkthrough/exverus_20261012.md)
+ExVerus, source-level counterexamples with triage. [study](../paper_takeaways/proof.md)
 - This is the only study that repairs Verus proofs this way.
 - It names the parts: source-level SMT counterexample synthesis, loop-based counterexample validation, triage-directed mutation, blocked-counterexample ranking.
 - The triage fork is the study's own: "choose strengthen-based mutator for correct-but-non-inductive invariants or missing assertions" and "choose replace-based mutator for factually
   wrong invariants".
 
-KaPilot, counterexample feedback plus a vacuity test, on Kani contracts. [study](../vl_paper_walkthrough/kapilot_20261012.md)
+KaPilot, counterexample feedback plus a vacuity test, on Kani contracts. [study](../paper_takeaways/spec.md)
 - It sorts Kani results into syntax errors, counterexample failures and vacuous successes. On a failure it sends the model the counterexample, the passing and failing harnesses, and a
   repair rule for that failure type.
 - Vacuity test, in the study's words: appends `#[kani::ensures(|_| false)]`. "If the original contract verifies but the appended false postcondition also verifies, the assumptions were
@@ -51,52 +51,52 @@ KaPilot, counterexample feedback plus a vacuity test, on Kani contracts. [study]
 - Verus form is inference, per the study: "Add a deliberately impossible postcondition or an equivalent reachability assertion in a temporary verification harness, run Verus, and
   require the temporary check to fail."
 
-VerIbmc, ESBMC as an oracle for invariants. [study](../vl_paper_walkthrough/neuro_symbolic_software_verification_20261012.md)
+VerIbmc, ESBMC as an oracle for invariants. [study](../paper_takeaways/proof.md)
 - ESBMC answers provable, disprovable or unknown for each candidate predicate. A timeout or parse error is unknown, never acceptance. The study's rule: "A timeout or parse error is
   unknown, never acceptance."
 - On a failed candidate it decomposes the formula into sub-formulas and tests each one (in the study's example the split is into two conjuncts). It keeps the provable atoms and records
   the disprovable ones. This is counterexample-guided in a coarse way: the checker's verdict per atom replaces the trace.
 - It tried raw traces and dropped them. The study says: "Counterexample traces were tried but generally harmed smaller models because they lengthened context."
 
-Crux, symbolic unit tests. [study](../vl_paper_walkthrough/crux_a_precise_verifier_for_rust_and_oth_20261012.md)
+Crux, symbolic unit tests. [study](../paper_takeaways/rustv.md)
 - Use a symbolic test as a cheap first check before a proof. Symbolic inputs, `crucible_assume!` for preconditions, `crucible_assert!` for the property. The solver either finds no
   assignment, which means the bounded property holds, or returns a concrete counterexample.
 - The study says Verus has no such command: "Verus does not provide Crux's `Symbolic` trait or `cargo crux-test` counterexample search."
 
-Kani, bounded proof harnesses. [study](../vl_paper_walkthrough/kani_20261012.md), also [Kani note](../topic_studies/formal_verification_rust/rust_verifiers/kani.md)
+Kani, bounded proof harnesses. [study](../paper_takeaways/rustv.md), also [Kani note](../topic_studies/formal_verification_rust/rust_verifiers/kani.md)
 - `kani::any` for inputs, `kani::assume` for preconditions, `assert!` for the property, `#[kani::unwind(k)]` on loops. A satisfiable formula is a concrete failing run. The study
   suggests replaying it "with Kani’s concrete playback support or as an ordinary Rust test".
 - Two honesty rules: a passing assertion with a failing unwinding assertion is "inconclusive, not a proof", and `assume(false)` makes a proof vacuously true.
 - For Verus this is a pre-filter. Finding a bug in seconds is cheaper than failing to prove a false claim. That use is my inference.
 
-PropertyGPT, BMC after a failed proof. [study](../vl_paper_walkthrough/propertygpt_20261012.md)
+PropertyGPT, BMC after a failed proof. [study](../paper_takeaways/spec.md)
 - If the strongest-postcondition check fails, it runs bounded model checking to find a concrete counterexample, then has a person investigate before calling it a vulnerability. Depth is
   capped at three, with up to five loop iterations.
 - The decision about reachability is left to a human here.
 
-WybeCoder, disproving an unsatisfiable spec. [study](../vl_paper_walkthrough/wybecoder_20261012.md)
+WybeCoder, disproving an unsatisfiable spec. [study](../paper_takeaways/agent.md)
 - When a contract may be contradictory, the agent may either implement it or prove "some input satisfies the precondition while no output satisfies the postcondition". The agent is not
   told which case applies.
 - The study says that in Verus this can be a separate `proof fn`. Report disproofs separately from implementations.
 - On Verina, per the study, GPT-5 was "notably successful on 347/384" of the cases in 32-turn evaluations. The paper does not define the 384.
 
-AxDafny, optional counterexamples in the feedback. [study](../vl_paper_walkthrough/axdafny_20261012.md)
+AxDafny, optional counterexamples in the feedback. [study](../paper_takeaways/agent.md)
 - Dafny's verifier feeds back unmet conditions, locations "and optional concrete counterexamples". The study's own audit note says the paper only says the flag can be enabled, with no
   ablation, so this is not evidence that counterexamples help.
 
 Knowledge graph and practitioner survey, supporting roles.
-- [Knowledge graphs](../vl_paper_walkthrough/knowledge_graphs_formal_verification_20261012.md) keeps counterexamples as nodes linked to the exact property and design location, and runs
+- [Knowledge graphs](../paper_takeaways/agent.md) keeps counterexamples as nodes linked to the exact property and design location, and runs
   counterexample repair as its own loop, separate from syntax repair and coverage. This is a hardware assertion setting, not Rust.
-- [Practitioner survey](../vl_paper_walkthrough/toward_practical_deductive_verification_20261012.md) reports that "ten valued counterexamples" and that fifteen found communication with
+- [Practitioner survey](../paper_takeaways/other.md) reports that "ten valued counterexamples" and that fifteen found communication with
   non-experts difficult, and the study says concrete counterexamples help. Interview counts, not an experiment.
 
-JS-SAM trace-window repair. [study](../vl_paper_walkthrough/executable_javascript_as_a_checkable_spe_20261012.md)
+JS-SAM trace-window repair. [study](../paper_takeaways/spec.md)
 - Failing replay windows (pre-state, action and data, expected post-state, model output) go into one repair prompt with the full module.
 - After the repair, hold out observable-domain combinations absent from the prompt and inspect the source for window tables or literal branches, to catch memorization.
 - Verus form is the study's inference: each window becomes a failing `assert` or test lemma.
 
 Local counterexamples in a proof graph (Scimitar)
-([study](../vl_paper_walkthrough/interactive_safety_verification_of_distr_20261012.md)):
+([study](../paper_takeaways/dist.md)):
 the counterexample is kept per action node, and the human adds a lemma that excludes it, rather than repairing a proof.
 It guides inventing a missing lemma, not fixing text.
 See [proof decomposition](proof_decomposition.md).
@@ -114,7 +114,7 @@ ExVerus (numbers are from the audited study; I did not check them against the pa
 - The paper's text says ExVerus is above 73% and AutoVerus below 40% on obfuscation strategies, but the study says the paper's Table 2 conflicts with that (65.2% for ExVerus, 77.3% for
   AutoVerus). I do not use the claim.
 
-JS-SAM spinlock repair, 28 windows ([study](../vl_paper_walkthrough/executable_javascript_as_a_checkable_spe_20261012.md)).
+JS-SAM spinlock repair, 28 windows ([study](../paper_takeaways/spec.md)).
 - One round took Opus and Fable from a partial score to 28/28. Haiku stayed at 6/28. A replication left Sonnet unstable at N=1.
 - All repaired specs passed the held-out combinations, but the study notes all held-out lock cases were observable no-ops.
 - At Raft scale, 0/20 one-shot specs passed every phase, and one repair round recovered 6/20.
@@ -140,7 +140,7 @@ KaPilot, Crux, PropertyGPT: the studies give no measured benefit for the counter
 - Trace text can hurt. VerIbmc found raw traces harmed smaller models.
 - No study measures whether the reachable-or-spurious fork beats giving the model the state without a verdict.
 
-- JS-SAM repair measures whether the model can use precise, correct feedback, not unaided generation. [study](../vl_paper_walkthrough/executable_javascript_as_a_checkable_spe_20261012.md)
+- JS-SAM repair measures whether the model can use precise, correct feedback, not unaided generation. [study](../paper_takeaways/spec.md)
 
 ## where studies disagree
 

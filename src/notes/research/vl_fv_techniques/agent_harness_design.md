@@ -73,7 +73,7 @@ Mark generated clauses (for example `[inferred]`) so a rerun does not overwrite 
 
 ### persistent agent with search and submit tools
 
-[study](../vl_paper_walkthrough/automating_formal_verification_with_agen_20261012.md)
+[study](../paper_takeaways/agent.md)
 The Lean thesis keeps one conversation, a `search_mathlib` tool and a schema-checked `submit_code` tool.
 The baseline restarts from the unchanged file each round and passes only the error message.
 Step 6 of the study gives the stop rule: stop at a verified submission, else at K.
@@ -83,7 +83,7 @@ The study's Verus form is its own inference.
 
 ### subagents against one context
 
-[same study](../vl_paper_walkthrough/automating_formal_verification_with_agen_20261012.md)
+[same study](../paper_takeaways/agent.md)
 Two tree designs add a parent and short-lived subagents.
 In the state design a subagent gets a partial proof; the parent commits it or undoes it.
 In the context design the whole transcript of a subagent is a node.
@@ -94,7 +94,7 @@ Details of the search budget belong to [proof search strategies](proof_search_st
 
 ### hands-off against hands-on
 
-[study](../vl_paper_walkthrough/verusage_20261012.md)
+[study](../paper_takeaways/agent.md)
 Hands-off: a coding CLI with Verus, `vstd` and a cheat checker, inside a container.
 The prompt says "Please invoke Verus to check the proof annotation you added" (hands-off prompt, in the study).
 Hands-on: a planner agent picks an action; an action agent returns a small diff; Verus runs; the candidate is accepted or reverted.
@@ -104,7 +104,7 @@ Acceptance depends on the action: a case split may add errors if the targeted on
 
 ### phase prerequisite checks and a plan
 
-[study](../vl_paper_walkthrough/p_3_20261012.md)
+[study](../paper_takeaways/proof.md)
 P^3 (Lean) fixes a plan first.
 The paper's rule, quoted in the study: "repair local errors in place, but return to Step 1 if elaboration requires an unplanned algorithm, invariant, or structural lemma".
 Appendix E in the study gives six phases, an external PASS-PLAN verdict, read-only specifications, and final mechanical and compliance checks.
@@ -113,7 +113,7 @@ The study notes the paper allows refining the current plan once or twice before 
 
 ### planner decomposition
 
-[study](../vl_paper_walkthrough/veristruct_20261012.md)
+[study](../paper_takeaways/proof.md)
 VeriStruct runs on Verus.
 A planner decides whether the module needs a View, a type invariant, specifications and proof code, then calls one prompt per component.
 Diagnostics go to repair modules that classify the error.
@@ -121,7 +121,7 @@ The baseline asks once per iteration for all annotations and feeds back the last
 
 ### edit hooks, markers and cached tools
 
-[study](../vl_paper_walkthrough/combining_mechanical_and_agentic_specifi_20261012.md)
+[study](../paper_takeaways/spec.md)
 The Move plugin fixes the task order: invariants, weakest precondition, simplify, verify, fix, timeouts.
 A hook runs after every write to a `.move` file and returns parse and format diagnostics.
 The MCP server caches the package.
@@ -132,7 +132,7 @@ The paper reports no denominators.
 
 ### isolated body repair and rollback
 
-[study](../vl_paper_walkthrough/large_language_models_and_language_serve_20261012.md)
+[study](../paper_takeaways/agent.md)
 Eiffel-tools (AutoProof) puts a candidate body in a subclass that overrides the feature.
 Only on success is the body copied to the original.
 Batch repair keeps a backup of the feature and restores it after a failure.
@@ -142,22 +142,22 @@ The paper disagrees with itself; pick a baseline policy and write it down.
 
 ### deterministic cleanup and prompt grammar
 
-[study](../vl_paper_walkthrough/can_llms_enable_verification_in_mainstre_20261012.md)
+[study](../paper_takeaways/agent.md)
 A converter fixes recurring syntax errors (Python chained comparisons in Nagini) before another model call.
 The study warns a converter must not change the contract silently.
-[Lemur](../vl_paper_walkthrough/lemur_20261012.md) goes further on the output side.
+[Lemur](../paper_takeaways/proof.md) goes further on the output side.
 It forces the oracle to print only an assertion with a loop marker, parses it, drops duplicates by syntax tree, and ranks by frequency.
 
 ### separate loops by evidence
 
-[study](../vl_paper_walkthrough/knowledge_graphs_formal_verification_20261012.md)
+[study](../paper_takeaways/agent.md)
 Syntax, counterexample and coverage each get their own loop with their own stop rule.
 The point is to know which kind of failure a change fixed.
 This is SystemVerilog; the study offers the Verus mapping as a suggestion.
 
 ### active and passive feedback
 
-[study](../vl_paper_walkthrough/towards_large_language_model_aided_progr_20261012.md)
+[study](../paper_takeaways/proof.md)
 The framework builds each prompt from the current specification and the failure history.
 The model only picks a law and writes a fragment.
 The framework checks the law's premise and retries a bounded number of times.
@@ -165,7 +165,7 @@ On repeated failure it backtracks to the last node of the refinement tree.
 
 ### state-machine orchestrator: SpecAgent
 
-[study](../vl_paper_walkthrough/specagent_20261012.md)
+[study](../paper_takeaways/spec.md)
 Agents use ReAct tool calls, but a deterministic state machine controls role changes, budgets and stopping.
 Planning and critique get ten steps, generation and repair thirty, and total invocations are capped at ten.
 Agents share a workspace but no conversation state.
@@ -173,14 +173,14 @@ Cost on DeepSeek per program: 1,684.49 seconds, 99.40 model calls, $0.6228.
 
 ### persistent annotation guide
 
-[study](../vl_paper_walkthrough/proofwright_20261012.md)
+[study](../paper_takeaways/other.md)
 ProofWright (VerCors) seeds a guide from ten hand-annotated kernels.
 After each successful proof the model records new principles, and a human reviews them.
 Error and fix pairs are stored as `ORIGINAL`, `ERROR`, `EXPLANATION`, `CODE`.
 
 ### investigate recurring failures before editing the harness
 
-[study](../vl_paper_walkthrough/so_rsi_20261012.md)
+[study](../paper_takeaways/agent.md)
 SO-RSI (Lean and Verus) lets an outer agent edit the workflow, not the model.
 A detector flags recurrence, reversal or expectation mismatch in past edits.
 Each flag becomes a hypothesis with a prediction and a check.
@@ -194,7 +194,7 @@ Verus steps here are the paper's Lean-structure workflow with Verus replacing Le
 
 ### scratch checks versus official checks
 
-[study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md)
+[study](../paper_takeaways/rustv.md)
 Rust-Prover (Lean) gives each agent three hours and 40 official checks, with unrestricted scratch Lean checks between submissions.
 The study quotes the paper: "most of the revision happens there."
 The agent cannot change the statement or generated code (see [anti-cheating prerequisite checks](anti_cheating_prerequisites.md)).
@@ -202,7 +202,7 @@ Study inference: first official acceptance is not one-shot generation; 944/1,325
 
 ### planner and syntax agents
 
-What's in a Proof? (F*, AutoGen and GraphRAG) [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md).
+What's in a Proof? (F*, AutoGen and GraphRAG) [study](../paper_takeaways/other.md).
 A Proof Expert writes a specification-first roadmap: representations, helper functions, lemmas.
 A Syntax Expert turns it into valid F* and iterates on verifier feedback.
 It gets verified solutions on T4 and T1 in 8 and 7 verifier loops; the o4-mini baseline fails within 30 loops.
@@ -212,7 +212,7 @@ The study also suggests logging each verifier call, edit and active diagnostic a
 
 ## evidence
 
-- Lean thesis, 423 tasks, [study](../vl_paper_walkthrough/automating_formal_verification_with_agen_20261012.md)
+- Lean thesis, 423 tasks, [study](../paper_takeaways/agent.md)
   - ten calls: persistent agent 263/423 (62.2%), six-model union, against 31.7% for the restart harness; the gap bundles reasoning, loop and search
   - GPT-5.4 alone: 255/423 (60.3%) against 24.6%
   - fifty calls, GPT-5.4: 402/423 (95.0%)
@@ -220,28 +220,28 @@ The study also suggests logging each verifier call, edit and active diagnostic a
   - so the plain agent beat both trees for GPT-5.4
   - the study flags likely benchmark saturation and possible contamination
   - costs assume perfect caching
-- VeruSAGE, 849 Verus tasks, [study](../vl_paper_walkthrough/verusage_20261012.md)
+- VeruSAGE, 849 Verus tasks, [study](../paper_takeaways/agent.md)
   - Sonnet 4.5 hands-off 688/849 (81%), hands-on 569/849 (67%)
   - o4-mini hands-on 348/849 (41%); GPT-5 hands-on 467/849 (55%)
   - cheating without the checker: 14% for Sonnet 4, 7% for Sonnet 4.5, 2% for GPT-5; under 1.5% for every model with it
   - the paper gives no denominator for these rates and does not say whether they cover all 849 tasks or the ablation runs (the paper's own gap, per the study)
   - the study concludes that a controller can constrain a strong model
-- P^3, one run per cell, [study](../vl_paper_walkthrough/p_3_20261012.md)
+- P^3, one run per cell, [study](../paper_takeaways/proof.md)
   - full restarts on Verina: 11.7%, 7.8%, 5.3%, 8.5% (four backends) against 28.6%, 24.7%, 18.5%, 24.9% for program-then-proof
   - 131/141 successes in 189 traces kept their first plan (92.9%); the paper calls this a proxy
   - no within-task variance
-- VeriStruct, [study](../vl_paper_walkthrough/veristruct_20261012.md)
+- VeriStruct, [study](../paper_takeaways/proof.md)
   - 10 of 11 modules, 128/129 functions; baseline 4/11 modules, 52 functions
   - the planner is not isolated from the repair modules and syntax guide; the study says no ablation separates them
-- Eiffel, 539 bugs, [study](../vl_paper_walkthrough/large_language_models_and_language_serve_20261012.md)
+- Eiffel, 539 bugs, [study](../paper_takeaways/agent.md)
   - Sonnet 4.6 fixed 513/539 (95.2%) with the full prompt, 486/539 (90.2%) with the minimal one
   - this tests the prompt, not the rollback; no run without rollback is reported
-- ProofWright, [study](../vl_paper_walkthrough/proofwright_20261012.md)
+- ProofWright, [study](../paper_takeaways/other.md)
   - no knowledge base and no guide: zero kernels verified; knowledge base alone: zero
   - ten examples without the evolving guide: 13 kernels (13% of the benchmark)
   - one model, one benchmark, hand-reviewed guide
 - Move plugin: no denominators, no comparison with a plain model
-- SO-RSI, three outer runs, [study](../vl_paper_walkthrough/so_rsi_20261012.md)
+- SO-RSI, three outer runs, [study](../paper_takeaways/agent.md)
   - Lean held-out: seed 29.4%, naive outer loop 49.4 +- 2.8%, SO-RSI 71.2 +- 1.9%
   - Verus: seed 14.8%, naive 33.4 +- 5.2%, SO-RSI 59.2 +- 3.7%
   - without executable probes: Lean 63.4%, Verus 33.0%; without investigation memory: 60.9%, 36.7%
@@ -271,7 +271,7 @@ The study also suggests logging each verifier call, edit and active diagnostic a
   - the guide is trusted infrastructure in ProofWright; a bad entry persists
 - an isolated body can pass in a scratch module and fail in the repository
   - VeruSAGE's extracted tasks trust `external_body` dependencies; its whole-project test of three IronKV tasks cost 1.6 times the time and 2.2 times the money
-- SO-RSI: "aggregate token cost is not reported" ([study](../vl_paper_walkthrough/so_rsi_20261012.md), the paper's words)
+- SO-RSI: "aggregate token cost is not reported" ([study](../paper_takeaways/agent.md), the paper's words)
   - matched wall time is not matched spending; the Verus check's coverage beyond verifier acceptance is not stated
   - one outer model, two domains; the paper calls generalization open
 - Eiffel rollback and Verus: Rust ownership may forbid the subclass trick; I would use a scratch module

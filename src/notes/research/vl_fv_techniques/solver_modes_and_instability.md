@@ -33,7 +33,7 @@ a fact about a concrete table, or ordinary linear arithmetic with quantifiers?
 Only the first four need a special mode.
 
 2. Pick the mode by that shape.
-[Verus practical](../vl_paper_walkthrough/verus_practical_20261012.md) lists four.
+[Verus practical](../paper_takeaways/rustv.md) lists four.
    - `integer_ring`: ring and congruence equalities, including modular ones
    - `nonlinear_arith`: nonlinear heuristics in an isolated query
    - `bit_vector`: machine-word identities, checked as bit-vectors
@@ -47,7 +47,7 @@ but you still prove the bounds and overflow facts yourself.
 The words about premises are the study's reading of the paper.
 
 4. Prefer a library lemma when one exists.
-[VeruSAGE](../vl_paper_walkthrough/verusage_20261012.md)
+[VeruSAGE](../paper_takeaways/agent.md)
 says to use `vstd::arithmetic` lemmas "when a library theorem is easier than a solver".
 Those are the study's words.
 
@@ -60,7 +60,7 @@ Then use the result in the integer proof through its stated range.
 6. If a mode does not close it, cut the obligation.
 Prove a smaller fact at the failing point, then use it.
 See [proof decomposition](proof_decomposition.md).
-[Schwarz](../vl_paper_walkthrough/schwarz_20261012.md)
+[Schwarz](../paper_takeaways/proof.md)
 does this with 10 to 20 second local timeouts.
 A quick timeout tells you the context, the theory, or a missing lemma is wrong.
 Extend a timeout only for an obligation that is hard in itself.
@@ -85,7 +85,7 @@ Treat step 9 as inference from WybeCoder.
 
 ### choosing a mode by the shape of the obligation
 
-[Verus practical](../vl_paper_walkthrough/verus_practical_20261012.md)
+[Verus practical](../paper_takeaways/rustv.md)
 is the only study from the Verus authors.
 It says the design is to "organize proof obligations so they play to different automation strategies".
 That phrase is the study's paraphrase of §1, not a quotation of the paper.
@@ -96,7 +96,7 @@ EPR (a decidable fragment) is used for IronKV's delegation map.
 Its cost can exceed its gain:
 about 25 default proof lines versus about 100 lines with the EPR abstraction, in a small lock example.
 
-[VeruSAGE](../vl_paper_walkthrough/verusage_20261012.md)
+[VeruSAGE](../paper_takeaways/agent.md)
 makes solver choice an action for an agent.
 Its planner picks among actions including nonlinear arithmetic, bit-vector and integer-ring.
 The accept rule depends on the action.
@@ -104,7 +104,7 @@ A nonlinear action is kept only if total errors strictly fall.
 A case split may raise total errors if the targeted error goes away.
 The study's example is `assert(...) by(bit_vector)` around `1u64 << max_width`.
 
-[Schwarz](../vl_paper_walkthrough/schwarz_20261012.md)
+[Schwarz](../paper_takeaways/proof.md)
 is for C, Rocq and Rust/Verus suites, not Verus alone.
 Its theory policies say to use ghost prefix summaries for array aggregates,
 mathematical integers for value-level induction,
@@ -120,7 +120,7 @@ In Schwarz a policy picks it from the dominant theory.
 
 ### a timeout is a proof-engineering problem
 
-[Combining mechanical and agentic specification inference for Move](../vl_paper_walkthrough/combining_mechanical_and_agentic_specifi_20261012.md)
+[Combining mechanical and agentic specification inference for Move](../paper_takeaways/spec.md)
 gives the escalation order in step 7.
 Its example: for `pow`, the agent adds a monotonicity lemma over unbounded numbers and calls it with a trigger.
 The paper says "The lemma is required for the aborts_if condition."
@@ -128,23 +128,23 @@ It also forbids weakening to get quiet.
 The authors call that trading "a real property for the appearance of progress."
 The prover is the Move Prover with Boogie, not Verus.
 
-[Verus practical](../vl_paper_walkthrough/verus_practical_20261012.md)
+[Verus practical](../paper_takeaways/rustv.md)
 adds an agent recommendation (the study's, not the paper's):
 "Diagnose excessive instantiation before increasing timeouts."
 
-[VerifyThisBench](../vl_paper_walkthrough/verifythisbench_20261012.md)
+[VerifyThisBench](../paper_takeaways/agent.md)
 says a timeout is a measurement outcome,
 not a verdict on correctness:
 "A one-minute timeout means the attempt exceeded the measurement budget; it is not evidence of incorrectness."
 These are the study's words.
 Several studies agree a timeout must map to "unknown", not to "false" or "accepted":
-[Lemur](../vl_paper_walkthrough/lemur_20261012.md),
-[neuro-symbolic invariant checking](../vl_paper_walkthrough/neuro_symbolic_software_verification_20261012.md),
-and [Schwarz](../vl_paper_walkthrough/schwarz_20261012.md).
+[Lemur](../paper_takeaways/proof.md),
+[neuro-symbolic invariant checking](../paper_takeaways/proof.md),
+and [Schwarz](../paper_takeaways/proof.md).
 
 ### proof by computation
 
-The only study with this is [Verus practical](../vl_paper_walkthrough/verus_practical_20261012.md).
+The only study with this is [Verus practical](../paper_takeaways/rustv.md).
 It says the mode was motivated by a hard-coded CRC lookup table
 whose derivation was hard to prove by directing SMT by hand.
 The page-table case study invokes bit-vector, nonlinear and computation modes
@@ -153,7 +153,7 @@ I found no agent paper that uses computation mode.
 
 ### combining an SMT solver with an interactive prover
 
-[WybeCoder](../vl_paper_walkthrough/wybecoder_20261012.md)
+[WybeCoder](../paper_takeaways/agent.md)
 lowers an imperative program to verification conditions.
 CVC5 discharges routine ones,
 and Lean agents repair the rest.
@@ -165,7 +165,7 @@ Its Heapsort run used CVC5 with `auto.smt.trust true`, which adds to what you mu
 
 ### cooperating backends
 
-[Lemur](../vl_paper_walkthrough/lemur_20261012.md)
+[Lemur](../paper_takeaways/proof.md)
 uses a language model for the high-level predicate and a sound backend for the check.
 Backends are ESBMC (k-induction) and UAutomizer (predicate abstraction), with a 30-second timeout per call.
 The study says the Verus form is an analogy:
@@ -174,7 +174,7 @@ The paper admits "k-induction is not complete; there are properties that are not
 
 ### measuring instability across equivalent queries
 
-[SMT instability](../vl_paper_walkthrough/smt_instability_20261012.md)
+[SMT instability](../paper_takeaways/solver.md)
 is the main source.
 It separates instability from difficulty:
 a query can be slow for every variant and still be stable.
@@ -196,7 +196,7 @@ It gives no search procedure.
 The Verus form (benchmark equivalent declaration, trigger and lemma forms, and store CV beside wall time) is the study's inference.
 The paper tests none of it.
 
-[ProofWright](../vl_paper_walkthrough/proofwright_20261012.md)
+[ProofWright](../paper_takeaways/other.md)
 also reports instability, from VerCors on CUDA kernels.
 The study's Figure 6 reading: verifier instability is 17% of the 100 level-1 problems, mostly (15%) from non-affine indexing.
 This is a different phenomenon: a verifier failing on hard index patterns,
@@ -205,13 +205,13 @@ I would not merge the two numbers.
 
 ### spending machines on it
 
-[Proof sharding (ProofSaX)](../vl_paper_walkthrough/synthesizing_proofs_using_proof_sharding_20261012.md)
+[Proof sharding (ProofSaX)](../paper_takeaways/proof.md)
 sends candidate checks to many prover instances with round-robin scheduling.
 One ring-election search took over six hours on one 20-core node and under 25 minutes on ten nodes.
 It targets Dafny and Z3.
 The study says the Verus adaptations are its inference.
 
-[Verifying the Rust standard library](../vl_paper_walkthrough/verifying_the_rust_standard_library_20261012.md)
+[Verifying the Rust standard library](../paper_takeaways/rustv.md)
 is about Kani, a model checker, not Verus.
 Compilation became the bottleneck at 16,748 harnesses.
 Parallelism, caching, ordering and stubbing gave a reported 3.97x speedup.
@@ -236,7 +236,7 @@ Instability:
   - in most categories the proportion of unstable queries is small; Table 1 ranges from 0.00 to 0.29, highest for Z3 on hard BMC queries (0.29, CV 0.61)
   - instability rises with average runtime (t = 10.5, df = 263, p < .001); whether difficulty causes it is not tested
   - no Verus workload and no end-to-end proof counts
-- slowness numbers from the [tunable automation study](../vl_paper_walkthrough/tunable_automation_in_automated_program__20261012.md)
+- slowness numbers from the [tunable automation study](../paper_takeaways/rustv.md)
   - with ambient collection facts, about 2% of functions took twice their original time
   - worst cases rose 19.1x (34 ms to 669 ms, Splinter) and 12.4x (3508 ms to 43563 ms, Anvil)
   - these come from quantifier context, so they belong to the triggers page too

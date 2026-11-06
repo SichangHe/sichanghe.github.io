@@ -25,14 +25,14 @@
 - Verus: Verifying Rust Programs using Linear Ghost Types (2023), score 95
   https://doi.org/10.1145/3586037
   Verus paper on linear ghost types, mode system, and a lambda-calculus soundness formalization with pointer and concurrency examples.
-  Study: [verus_linear](vl_paper_walkthrough/verus_linear_20261012.md)
+  Study: [verus_linear](paper_takeaways/rustv.md)
 - Verus: Verifying Rust Programs using Linear Ghost Types (extended version) (2023), score 95
   http://arxiv.org/abs/2303.05491v2
   Extended version of the Verus linear ghost types paper with the same design and formalization.
 - Verifying Probabilistic Programs in Rust (2026), score 80
   http://arxiv.org/abs/2607.12282v1
   Alerus: extends Verus with probabilistic error credits to verify randomized sampling algorithms in Rust, with soundness via VerusBelt.
-  Study: [probabilistic_rust](vl_paper_walkthrough/probabilistic_rust_20261012.md)
+  Study: [probabilistic_rust](paper_takeaways/rustv.md)
 
 ### SMT engineering and proof stability (1)
 
@@ -45,14 +45,14 @@
 - VerusBelt: A Semantic Foundation for Verus’s Proof-Oriented Extensions to the Rust Type System (2026), score 85
   https://www.semanticscholar.org/paper/9571023d66a9132f91c1385e0601a897a20accb5
   VerusBelt: semantic soundness proof of Verus's proof-oriented types, with lifetimes, concurrency and borrows, mechanized in Iris/Rocq.
-  Study: [verusbelt](vl_paper_walkthrough/verusbelt_20261012.md)
+  Study: [verusbelt](paper_takeaways/rustv.md)
 
 ### Other verification methods (2)
 
 - Verus: A Practical Foundation for Systems Verification (2024), score 90
   https://www.semanticscholar.org/paper/b7b3d2695da710cd8fa8bb490218c49516b03cc6
   Verus system paper: design for faster verification of distributed systems, page tables and allocators, 3-61x faster than prior tools.
-  Study: [verus_practical](vl_paper_walkthrough/verus_practical_20261012.md)
+  Study: [verus_practical](paper_takeaways/rustv.md)
 - Verifying Rust code with Verus (2026), score 85
   https://doi.org/10.34727/2026/isbn.978-3-85448-093-8_1
   Tutorial on Verus, its design rationale versus prior approaches, getting started, and examples, from a core developer.
@@ -388,7 +388,7 @@
 - Solving VeriContest with a Lean-Backed Rust Verifier (2026), score 95
   http://arxiv.org/abs/2610.03994v2
   Lean-backed verifier for Rust solving all 1325 theorems of the VeriContest benchmark, with cost and model comparisons and specs checked against tests.
-  Study: [lean_backed_rust_verifier](vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md)
+  Study: [lean_backed_rust_verifier](paper_takeaways/rustv.md)
 - Kani: A Model Checker for Rust (2026), score 92
   http://arxiv.org/abs/2607.01504v1
   Kani model checker for Rust with contracts, loop contracts and quantifiers; production CI with 16,000 harnesses, direct competitor to Verus
@@ -636,7 +636,7 @@
 - Fewer Assumptions by Design: A Reusable Skill for LLM-Assisted Verus Verification (2026), score 90
   http://arxiv.org/abs/2609.34886v1
   LLM skill encoding domain knowledge to write low-trust Verus specs for doubly linked lists while minimizing assume and axioms.
-  Study: [fewer_assumptions](vl_paper_walkthrough/fewer_assumptions_20261012.md)
+  Study: [fewer_assumptions](paper_takeaways/rustv.md)
 - Teaching Code LLMs to Reason with Intermediate Formal Specifications (2026), score 85
   https://doi.org/10.48550/arxiv.2607.04232
   trains code LLMs to emit intermediate checkable specifications validated by execution and mutants; directly relevant to LLM-written internal invariants for Verus
@@ -732,7 +732,7 @@
 - Inductive Deductive Synthesis: Enabling AI to Generate Formally Verified Systems (2026), score 87
   https://doi.org/10.48550/arxiv.2605.23109
   Agent jointly synthesizes implementation and proof for distributed key-value stores at 7/7 specs, a direct competitor to AI-built verified systems
-  Study: [inductive_deductive_synthesis](vl_paper_walkthrough/inductive_deductive_synthesis_20261012.md)
+  Study: [inductive_deductive_synthesis](paper_takeaways/proof.md)
 - Formal Disco: Scalable Open-Ended Generation of Formally Verified Programs (2026), score 85
   http://arxiv.org/abs/2607.04631v1
   Distributed LLM worker system generating verified Dafny, Verus and Frama-C programs with entropy-maximizing self-improvement, matching Claude Opus 4.5 on some tasks.
@@ -767,7 +767,7 @@
 - Second-Order Problem Solving for Recursive Self-Improvement in Formal Verification (2026), score 80
   https://doi.org/10.48550/arxiv.2610.05701
   Second-order recursive self-improvement of agent workflows, evaluated on Lean proof generation and Verus verifiable code generation.
-  Study: [so_rsi](vl_paper_walkthrough/so_rsi_20261012.md)
+  Study: [so_rsi](paper_takeaways/agent.md)
 - BRIDGE: Building Representations In Domain Guided Program Synthesis (2025), score 80
   https://doi.org/10.48550/arxiv.2511.21104
   code-first structured prompting coupling code, spec and proof in Lean; 1.5x executable correctness gain over direct prompting
@@ -822,7 +822,7 @@
 - Certified Program Synthesis with a Multi-modal Verifier (2026), score 70
   https://www.semanticscholar.org/paper/dbeace1b61a2f52ec0dfe5fa40cd3b1a36c04032
   LeetProof: staged agentic pipeline using a multi-modal Lean verifier, property testing of specs, and frontier provers for residual obligations.
-  Study: [leetproof](vl_paper_walkthrough/leetproof_20261012.md)
+  Study: [leetproof](paper_takeaways/spec.md)
 - Automated Conjecture Resolution with Formal Verification (2026), score 70
   https://doi.org/10.70777/si.v3i3.18746
   informal LLM reasoning plus Lean formalization agent solves an open algebra problem; shows end-to-end pipeline with search tools
@@ -1170,7 +1170,7 @@
 - SpecSyn: LLM-based Synthesis and Refinement of Formal Specifications for Real-world Program Verification (2026), score 78
   http://arxiv.org/abs/2604.21570v1
   Segments large programs and refines LLM specs via semantic mutation checks, reaching 1071 of 1365 properties; mutation-based spec strength check transfers to Verus spec quality
-  Study: [specsyn](vl_paper_walkthrough/specsyn_20261012.md)
+  Study: [specsyn](paper_takeaways/spec.md)
 - Specula: Scaling formal specifications for autonomous model checking of system code (2026), score 75
   https://doi.org/10.48550/arxiv.2607.25333
   LLM agents write TLA+ specs of real system code and model check them, finding 249 bugs; spec-generation at scale
@@ -1476,7 +1476,7 @@
 - Vosti: Specifying, Implementing, and Verifying Deterministic LLM Inference (2026), score 60
   http://arxiv.org/abs/2609.38981v1
   Specifies deterministic LLM inference and builds an engine with a Verus inductive proof of scheduling and KV-cache preservation.
-  Study: [vosti](vl_paper_walkthrough/vosti_20261012.md)
+  Study: [vosti](paper_takeaways/dist.md)
 - Cedar: An Expressive, Fast, Safe, and Analyzable Authorization Language for Modern Distributed Systems [Keynote Abstract] (2025), score 60
   https://www.semanticscholar.org/paper/2a1a01c64b57b0670620cef395f02ea3f8f39c45
   Cedar authorization language in Rust with Lean-verified core, built in verification-guided development at cloud scale

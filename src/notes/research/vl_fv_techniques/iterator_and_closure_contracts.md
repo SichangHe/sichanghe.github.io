@@ -23,7 +23,7 @@ The iterator hides its internals, so the client has no names for them.
 Closures make it worse.
 A closure in map can mutate captured variables.
 A proof that ignores those effects misses what the loop accumulated.
-The [Rust study](../vl_paper_walkthrough/compositional_reasoning_for_side_effectf_20261012.md) says:
+The [Rust study](../paper_takeaways/rustv.md) says:
 "without explicit history and closure contracts, local proofs can miss accumulated side effects" (study's words, not the paper's).
 Its claim of novelty is the paper's:
 "We present the first methodology for the modular specification and verification of advanced iteration idioms with side-effectful computations."
@@ -82,7 +82,7 @@ If the iterator can be changed by methods other than `next`, the Rust study says
 
 ## variants by paper
 
-Rust, Prusti: [study](../vl_paper_walkthrough/compositional_reasoning_for_side_effectf_20261012.md)
+Rust, Prusti: [study](../paper_takeaways/rustv.md)
 
 - four-component contract: `produced`, `completed`, `step`, `leadsto`, with Q1 to Q5 proved on each `next`
 - closure call descriptions for `FnMut`
@@ -96,7 +96,7 @@ Rust, Prusti: [study](../vl_paper_walkthrough/compositional_reasoning_for_side_e
   - contracts must refine the base contract: weaker preconditions, stronger postconditions
 - this paper verifies the implementation of `next` against the contract
 
-OCaml, Gospel and Cameleer: [study](../vl_paper_walkthrough/unfolding_iterators_20261012.md)
+OCaml, Gospel and Cameleer: [study](../paper_takeaways/spec.md)
 
 - two predicates: `permitted` for a valid visited prefix, `complete` for done
   - they handle finite or infinite, deterministic or nondeterministic iterators
@@ -119,7 +119,7 @@ OCaml, Gospel and Cameleer: [study](../vl_paper_walkthrough/unfolding_iterators_
 - this paper verifies clients only, not the iterator implementations
 
 A third study sidesteps iterators instead.
-[Graph algorithm study](../vl_paper_walkthrough/auto_active_verification_of_graph_algori_20261012.md)
+[Graph algorithm study](../paper_takeaways/proof.md)
 lists the step "Change higher-order iterators into list-returning operations when the verifier cannot reason about the original iterators."
 That is a workaround, not a contract.
 The OCaml study adds that the paper's related work says Creusot and Prusti already apply permitted/complete to Rust iterators.
@@ -160,7 +160,7 @@ Both are hand-written.
 - the Rust study suspects the slow outliers need work to control quantifier instantiation
 - among the OCaml graph operations, complement is slowest because it tracks unexplored vertices (study's reading)
 - Rust standard library iterators are not yet verified
-  - the [standard library study](../vl_paper_walkthrough/verifying_the_rust_standard_library_20261012.md) says iterators are among the APIs only partially covered or not yet addressed
+  - the [standard library study](../paper_takeaways/rustv.md) says iterators are among the APIs only partially covered or not yet addressed
 - times come from old hardware and small suites; they do not show scaling
 
 ## where the studies differ

@@ -32,9 +32,9 @@ Everything about Verus is my inference.
    The std paper:
    "A proof harness is analogous to a unit test, but instead of calling a function with concrete inputs, it calls the function with symbolic (non-deterministic) values"
    (the rest: "that represent all possible inputs simultaneously").
-   In Kani: `#[kani::proof]`, `kani::any()`, `kani::assume(...)`, `assert!(...)`, run `cargo kani` ([study](../vl_paper_walkthrough/kani_20261012.md)).
+   In Kani: `#[kani::proof]`, `kani::any()`, `kani::assume(...)`, `assert!(...)`, run `cargo kani` ([study](../paper_takeaways/rustv.md)).
    In Crux: `#[crux_test]`, `Symbolic::symbolic`, `crucible_assume!`, `crucible_assert!`,
-   run `cargo crux-test` ([study](../vl_paper_walkthrough/crux_a_precise_verifier_for_rust_and_oth_20261012.md)).
+   run `cargo crux-test` ([study](../paper_takeaways/rustv.md)).
 3. Make assumptions match the Verus `requires` of the function.
    An assumption that is too strong hides bugs.
    The Kani paper: "an incorrect assumption (e.g., assume(false)) makes the proof vacuously true, so assumptions must be reviewed as carefully as the code itself".
@@ -49,7 +49,7 @@ Everything about Verus is my inference.
 6. When the bound is too costly, use a contract and reuse it as a stub.
    Details are under variants.
 7. Record what the pass means: bound, unwind complete or not, assumptions, stubs, solver, timeouts.
-   The studies repeat this need ([Kani](../vl_paper_walkthrough/kani_20261012.md), [std](../vl_paper_walkthrough/verifying_the_rust_standard_library_20261012.md)).
+   The studies repeat this need ([Kani](../paper_takeaways/rustv.md), [std](../paper_takeaways/rustv.md)).
 8. Do not expect a shared source.
    I found no study on compiling Verus-annotated source with Kani.
    Expect to keep a plain Rust copy or a thin harness crate (inference, untested).
@@ -57,7 +57,7 @@ Everything about Verus is my inference.
 ## variants by paper
 
 Kani, bounded harness
-([study](../vl_paper_walkthrough/kani_20261012.md)):
+([study](../paper_takeaways/rustv.md)):
 steps 2 to 4 above.
 Kani inserts checks for invalid dereference, misaligned cast, overflow, division by zero, bad shifts, bounds, `unwrap` on `None`.
 The GCD harness needed `unwind(94)`, the exact worst case for 64-bit Euclid.
@@ -77,12 +77,12 @@ Kani, loop contracts (same study):
 `loop_invariant`, `loop_modifies`, `loop_decreases`.
 Kani checks base case and step, so time does not depend on iteration count.
 The std paper: "A successful verification with loop contracts therefore constitutes an inductive proof for the annotated loops"
-([study](../vl_paper_walkthrough/verifying_the_rust_standard_library_20261012.md))
+([study](../paper_takeaways/rustv.md))
 Verus users already write this as `invariant` and `decreases`.
 Invariant writing is covered on [loop invariant synthesis](loop_invariant_synthesis.md).
 
 Std library, generated harnesses
-([study](../vl_paper_walkthrough/verifying_the_rust_standard_library_20261012.md)):
+([study](../paper_takeaways/rustv.md)):
 a compiler pass lists monomorphic functions whose arguments implement `kani::Arbitrary`, and calls each with symbolic values.
 A function with a contract gets precondition assumed and postcondition checked.
 Others are checked for supported undefined behavior only.
@@ -94,13 +94,13 @@ The study's warning: "types whose safety invariants are not yet annotated with i
 In Verus this is a `spec fn` invariant in `requires` (inference).
 
 Lessons from the std effort
-([study](../vl_paper_walkthrough/lessons_rust_std_20261012.md)):
+([study](../paper_takeaways/rustv.md)):
 generic functions get one near-identical harness per type: "The result of this is a plethora of near-identical harnesses where only the types are different".
 Shadow memory (the paper's proposal, not an existing tool) would track history-dependent obligations such as whether a `MaybeUninit` is initialized.
 The paper also says there is "No one-size-fits-all approach", so tools are chosen per property.
 
 Crux, symbolic unit tests
-([study](../vl_paper_walkthrough/crux_a_precise_verifier_for_rust_and_oth_20261012.md)):
+([study](../paper_takeaways/rustv.md)):
 same shape as Kani, by symbolic execution to SMT.
 Its equality target: "By extensional equality, we mean (1) that code and specification cannot generate undefined behaviour / panic"
 and (2) equal output on equal inputs.
@@ -110,9 +110,9 @@ The paper: "Compositional reasoning is necessary to verify even mid-size pieces 
 For SHA2 the loops were factored into one-iteration helpers, each proved equal to the spec, so the loop comparison became trivial.
 
 Choosing a tool by property
-([std study](../vl_paper_walkthrough/verifying_the_rust_standard_library_20261012.md),
-[lessons](../vl_paper_walkthrough/lessons_rust_std_20261012.md),
-[survey](../vl_paper_walkthrough/surveying_rust_verification_landscape_20261012.md)):
+([std study](../paper_takeaways/rustv.md),
+[lessons](../paper_takeaways/rustv.md),
+[survey](../paper_takeaways/rustv.md)):
 Kani for finite safety checks.
 VeriFast (separation logic) for the linked list that model checking did not cover.
 Flux for refinement types.
@@ -120,13 +120,13 @@ Randomized testing for 565 SIMD intrinsics.
 The std study quotes the paper that "no single tool can discharge all verification conditions."
 
 Hybrid assurance in industry
-([study](../vl_paper_walkthrough/toward_practical_deductive_verification_20261012.md)):
+([study](../paper_takeaways/other.md)):
 interviewees combine deductive proofs with tests, static analysis, model checking and monitors.
 The study's steps are its own inference from counts, not the paper's procedure.
 Its Verus form is also inference: Verus proofs plus unit and property tests and runtime checks, with coverage stated.
 
 Comparative symbolic execution, C against Rust translation
-([study](../vl_paper_walkthrough/finding_a_crab_in_the_c_20261012.md)):
+([study](../paper_takeaways/rustv.md)):
 cozy runs both binaries on the same symbolic input in angr and pairs the feasible terminal paths.
 A pair is compatible when the joint path constraints are satisfiable.
 For compatible pairs it asks whether memory can differ, and returns concrete inputs that show a difference.
@@ -136,11 +136,11 @@ The study quotes the paper:
 and that it gives "a fairly coarse success/failure signal".
 Verus form: the study gives none; a Rust harness with two calls and equality assertions is its inference, and it loses the path-pair diagnostics.
 
-Not a variant: KaPilot ([study](../vl_paper_walkthrough/kapilot_20261012.md)) uses an LLM to write the Kani contracts around a harness.
+Not a variant: KaPilot ([study](../paper_takeaways/spec.md)) uses an LLM to write the Kani contracts around a harness.
 It is a spec-writing technique, so I only use its numbers below.
 
 TLC or Apalache for counterexamples, TLAPS for the final proof (Scimitar)
-([study](../vl_paper_walkthrough/interactive_safety_verification_of_distr_20261012.md)):
+([study](../paper_takeaways/dist.md)):
 the model checker finds counterexamples to induction on finite instances, then a proof checker validates the unbounded graph.
 The paper's words: TLC “cannot produce full proofs of inductive invariants for protocols of arbitrary size, but can generate CTIs for finite protocol instances”.
 The paper does not report false-negative rates of the bounded search.
@@ -152,7 +152,7 @@ The studies do not compare Kani or Crux with Verus on one codebase.
 Each point below is evidence from the Kani, Crux or std papers plus my inference for Verus.
 
 - Checks on code Verus does not handle.
-  The [hybrid Rust study](../vl_paper_walkthrough/hybrid_rust_verification_20261012.md) says, of the paper's related work: "Verus cannot verify traditional raw pointers".
+  The [hybrid Rust study](../paper_takeaways/rustv.md) says, of the paper's related work: "Verus cannot verify traditional raw pointers".
   Kani targets unsafe code and the std campaign checked 4,645 unsafe functions with harnesses.
   Those are Kani's checked classes only, not a proof of functional behavior.
 - Bugs without a spec.
@@ -184,7 +184,7 @@ Kani CI, self-selected projects:
 The paper: "the evaluated projects self-selected into Kani adoption, potentially over-representing favorable cases".
 
 cozy: three experiments, no counts of paths or queries
-([study](../vl_paper_walkthrough/finding_a_crab_in_the_c_20261012.md)).
+([study](../paper_takeaways/rustv.md)).
 Insertion sort in C, Rust and C2Rust was verified equivalent, and C insertion sort against Rust bubble sort for sorted outputs, with small bounded array lengths.
 Box blur was verified only for small images and kernel sizes.
 The watch example needed input assumptions to avoid overflow states.
@@ -223,7 +223,7 @@ Model checking beside a Verus proof (SoundGate)
   Loom checked bounded interleavings of the deployed Rust prerequisite check: three models, zero failures reported.
 - The finite TLC search is bounded. TLAPS proved the invariants for arbitrary run and key sets (68 obligations).
 - Study inference: a statistical bound under the harness distribution does not establish arbitrary deployment correctness.
-- [study](../vl_paper_walkthrough/stop_means_stop_20261011.md)
+- [study](../paper_takeaways/agent.md)
 
 ## where it fails
 
@@ -252,7 +252,7 @@ Model checking beside a Verus proof (SoundGate)
   The study's inference: it is not an all-input theorem for unbounded loops.
   Pairwise comparison can become quadratic in paths.
   The paper names binary interpretation in angr as the main cost, not the solver
-  ([study](../vl_paper_walkthrough/finding_a_crab_in_the_c_20261012.md)).
+  ([study](../paper_takeaways/rustv.md)).
 - Undefined behavior differs by language: the study says C overflow is undefined, Rust debug builds panic and release builds wrap.
   Input assumptions removed these states, so they narrow the claim.
 

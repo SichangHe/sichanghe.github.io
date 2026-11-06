@@ -42,19 +42,19 @@ No study gives a Verus pipeline. This order is my inference from the studies; ea
 1. pick the source of intent, and write down what the model may see
    - documents or docstrings only: implementation-blind, so a bug cannot leak into the contract
    - code allowed: the contract may describe the bug
-   - [KaPilot study](../vl_paper_walkthrough/kapilot_20261012.md), technique 3
+   - [KaPilot study](../paper_takeaways/spec.md), technique 3
 2. extract requirements as short atomic sentences, each with a source tag
    - one property per sentence, no duplicates, no contradictions, each variable mapped to a parameter or the return value
    - KaPilot checks six rules and loops up to three times on feedback
-   - [KaPilot study](../vl_paper_walkthrough/kapilot_20261012.md), technique 1
+   - [KaPilot study](../paper_takeaways/spec.md), technique 1
 3. after steps 5 to 7 have given the loop invariants, derive the routine part mechanically, if you have a tool for it
    - abort conditions, frames, and the postcondition that control flow already fixes
    - the Move study does this with weakest preconditions, and runs it after invariant synthesis
    - Verus has no such tool in the studies
-   - [Move study](../vl_paper_walkthrough/combining_mechanical_and_agentic_specifi_20261012.md), technique 1
+   - [Move study](../paper_takeaways/spec.md), technique 1
 4. build a graph of functions and loops, and order it callees first
    - a loop is a node with its own invariant
-   - [AutoSpec study](../vl_paper_walkthrough/enchanting_program_specification_synthes_20261012.md), technique 1
+   - [AutoSpec study](../paper_takeaways/spec.md), technique 1
 5. at each node, ask the model for a list of candidate clauses, not one answer
    - give it only that node's code and the already-kept contracts of its callees
 6. run Verus and keep a clause only if it compiles and is satisfiable
@@ -65,10 +65,10 @@ No study gives a Verus pipeline. This order is my inference from the studies; ea
    - if not, revisit the node, up to a fixed bound; AutoSpec's default is five rounds
 8. when a proof fails, ask which side is wrong, the contract or the proof
    - revise the contract, the lemma, or the code, and recheck the dependents
-   - [assurance cases study](../vl_paper_walkthrough/assurance_cases_20261012.md), technique 1
+   - [assurance cases study](../paper_takeaways/proof.md), technique 1
 9. combine across candidates
    - if you sampled several, take the weakest usable `requires` and the strongest usable `ensures`, then reverify
-   - [KaPilot study](../vl_paper_walkthrough/kapilot_20261012.md), technique 6
+   - [KaPilot study](../paper_takeaways/spec.md), technique 6
 10. delete clauses one at a time, replaying the proof, to keep the contract small
     - see [proof minimization](proof_minimization.md)
 
@@ -78,7 +78,7 @@ Step 6 is a filter, not a judgment: a clause that survives can still say the wro
 
 ### documentation-derived requirements, implementation-blind
 
-[KaPilot study](../vl_paper_walkthrough/kapilot_20261012.md), Kani, unsafe Rust.
+[KaPilot study](../paper_takeaways/spec.md), Kani, unsafe Rust.
 Five agents: harness, safety requirements, contract generation, precheck, verify.
 The contract writer never sees the target body.
 The paper's words: "We exclude the source code of the target function, because we believe that the actual implementation would interfere with LLMs’ understanding of safety properties."
@@ -91,7 +91,7 @@ The paper's words: "We exclude the source code of the target function, because w
 
 ### natural language in the docstring to pre and postconditions
 
-[Beyond Postconditions study](../vl_paper_walkthrough/beyond_postconditions_20261012.md), NL2Contract, Python.
+[Beyond Postconditions study](../paper_takeaways/spec.md), NL2Contract, Python.
 The model sees signature, docstring and context, not the reference body, and writes both a precondition and a postcondition.
 Postcondition-only inference gives false alarms on inputs the docstring excludes.
 
@@ -102,7 +102,7 @@ Postcondition-only inference gives false alarms on inputs the docstring excludes
 
 ### tests as the source of intent
 
-[Dafny test-oracle study](../vl_paper_walkthrough/automatic_generation_of_formal_specifica_20261012.md).
+[Dafny test-oracle study](../paper_takeaways/spec.md).
 Keep the test calls with their `assert`s, strip every annotation, and have the model write contracts.
 The contract is accepted only if all test assertions prove.
 The paper says static tests act by "validating specifications at compile time rather than implementations at run time" (quoted in the study).
@@ -111,11 +111,11 @@ The paper says static tests act by "validating specifications at compile time ra
   - a negative test that proves exposes a weak precondition or an overly strong postcondition
 - the generate, check, repair, minimize loop reaches 108 of 110 programs; see evidence
 
-[ProofRover study](../vl_paper_walkthrough/assured_automatic_programming_via_large__20261012.md) also treats a trusted test as a fact the repair must keep, to block `ensures true`.
+[ProofRover study](../paper_takeaways/spec.md) also treats a trusted test as a fact the repair must keep, to block `ensures true`.
 
 ### the model's loop invariants, then weakest preconditions
 
-[Move study](../vl_paper_walkthrough/combining_mechanical_and_agentic_specifi_20261012.md), Move Prover.
+[Move study](../paper_takeaways/spec.md), Move Prover.
 The model first supplies the loop invariants and high-level properties that weakest-precondition analysis cannot derive.
 Then the analysis runs on a reference-free, contract-instrumented form, cutting loops at their headers.
 The paper's words: "The WP analysis provides a sound, mechanical baseline for inference."
@@ -125,14 +125,14 @@ The paper's words: "The WP analysis provides a sound, mechanical baseline for in
 
 ### loop-aware call graph and hierarchical rounds
 
-[AutoSpec study](../vl_paper_walkthrough/enchanting_program_specification_synthes_20261012.md), C and Frama-C.
+[AutoSpec study](../paper_takeaways/spec.md), C and Frama-C.
 Nodes are functions and loops; generation runs from leaves up; each node is revisited until the target assertion proves or a bound is hit.
-[SpecSyn study](../vl_paper_walkthrough/specsyn_20261012.md) adds a dependency graph with strongly connected components kept together, one annotation site at a time, and a planning sketch.
+[SpecSyn study](../paper_takeaways/spec.md) adds a dependency graph with strongly connected components kept together, one annotation site at a time, and a planning sketch.
 SpecSyn also feeds surviving mutants back: a contract that still verifies on a mutant is missing something.
 
 ### typed state machine and a frozen invariant layer
 
-[OSVBench study](../vl_paper_walkthrough/osvbench_20261012.md), Hyperkernel.
+[OSVBench study](../paper_takeaways/spec.md), Hyperkernel.
 The model writes a state-machine transition inside a small typed syntax; the safety invariants are fixed and not the model's to change.
 Acceptance means the verifier gives the same results as an oracle specification across all kernel implementations in the task.
 The paper's words: "If both state-machine specifications produce the same verification results for all kernel implementations, the generated one is considered correct."
@@ -141,7 +141,7 @@ The paper's words: "If both state-machine specifications produce the same verifi
 
 ### intermediate property language
 
-[PropertyGPT study](../vl_paper_walkthrough/propertygpt_20261012.md), Solidity.
+[PropertyGPT study](../paper_takeaways/spec.md), Solidity.
 The model writes in a small grammar of invariants, pre/post triples and rules, which a compiler checks.
 Retrieval of similar audited code and its human-written property gives a one-shot example.
 Compile errors go back to the model.
@@ -150,25 +150,25 @@ A static check rejects a rule that never calls the target function.
 
 ### contract and proof co-evolution
 
-[Assurance cases study](../vl_paper_walkthrough/assurance_cases_20261012.md), VST in Rocq.
+[Assurance cases study](../paper_takeaways/proof.md), VST in Rocq.
 The paper's words: "A usable, provable pair is therefore the outcome of an iterative co-evolution, not of a single synthesis pass."
 Its example: weak `list_push` postconditions returned an arbitrary list, so `list_length`'s precondition could not be established.
 Stronger postconditions fixed the callee, not the caller.
 
-[ProofRover study](../vl_paper_walkthrough/assured_automatic_programming_via_large__20261012.md), Dafny.
+[ProofRover study](../paper_takeaways/spec.md), Dafny.
 The paper's words: "repair the code and its specification such that the verification of the repaired program against the repaired specification succeeds."
 It splits verification conditions into hard facts (passing parts and trusted annotations) and soft facts (failing parts), and asks the model for patches that keep the hard ones.
 
 ### evolving knowledge base for JML
 
-[KBSpec study](../vl_paper_walkthrough/kbspec_20261012.md), OpenJML, Java.
+[KBSpec study](../paper_takeaways/spec.md), OpenJML, Java.
 Retrieve documentation and past verified traces as advice while generating and repairing a specification.
 The verifier still decides; the study says "retrieved text is advice, not evidence."
 Details are on [context for the model](context_for_the_model.md).
 
 ### planned, retrieved, repaired and critiqued: SpecAgent (ACSL, Frama-C)
 
-[SpecAgent study](../vl_paper_walkthrough/specagent_20261012.md).
+[SpecAgent study](../paper_takeaways/spec.md).
 A Planning Agent lists targets, intended meaning, dependencies and order before any contract is written.
 Retrieval takes up to three structurally similar examples from 184 tutorial units, ranked by Jaccard similarity of a 32-bit fingerprint.
 Edits are limited to annotations, never code.
@@ -178,13 +178,13 @@ The Verus form is the study's inference, and the study says the C and Frama-C co
 
 ### other sources, briefly
 
-- [VeriFast study](../vl_paper_walkthrough/an_empirical_study_of_llm_generated_spec_20261012.md): how much formal input helps, natural language versus formal behavior; see evidence
-- [Teaching Code LLMs study](../vl_paper_walkthrough/teaching_code_llms_to_reason_with_interm_20261012.md):
+- [VeriFast study](../paper_takeaways/spec.md): how much formal input helps, natural language versus formal behavior; see evidence
+- [Teaching Code LLMs study](../paper_takeaways/spec.md):
   executable assertions at internal checkpoints, kept only if they hold on correct runs and reject mutants
-- [Knowledge graphs study](../vl_paper_walkthrough/knowledge_graphs_formal_verification_20261012.md): SystemVerilog assertions; adds properties for behavior that formal coverage shows is unexercised
-- [Eiffel and language server study](../vl_paper_walkthrough/large_language_models_and_language_serve_20261012.md):
+- [Knowledge graphs study](../paper_takeaways/agent.md): SystemVerilog assertions; adds properties for behavior that formal coverage shows is unexercised
+- [Eiffel and language server study](../paper_takeaways/agent.md):
   the model adds `require` and `ensure` clauses; names and call arities are checked before insertion
-- [Agentic proving study](../vl_paper_walkthrough/agentic_proving_for_program_verification_20261012.md): guided multi-interpretation synthesis (Lean 4, CLEVER)
+- [Agentic proving study](../paper_takeaways/agent.md): guided multi-interpretation synthesis (Lean 4, CLEVER)
   - prompts add examples, formal tests and a policy for behaviour outside the valid domain; the last asks for up to four defensible specifications
   - Verus use is the study's inference: ask for a few candidate contracts where prose is ambiguous, check each with Verus and tests, then have a person choose
 
@@ -234,7 +234,7 @@ None are Verus numbers, and the settings differ, so I do not compare across line
   - there is no run without the graph, so the table does not show the graph's effect
 - KBSpec, 699 FormalBench-Base Java programs, OpenJML: pass rate 73.96% (GPT-5.2), 47.35% (GPT-5-mini), 62.66% (Claude-Sonnet-5), against SpecGen's 41.63%, 28.18%, 47.93%
   - C@All (mutant completeness, zero if nothing passes) 38.51%, 30.92%, 39.46%; C@Pass is lower than SpecGen on all three backends
-  - on SpecGenBench (120 programs) KBSpec has higher pass rate and C@All on all three. [study](../vl_paper_walkthrough/kbspec_20261012.md)
+  - on SpecGenBench (120 programs) KBSpec has higher pass rate and C@All on all three. [study](../paper_takeaways/spec.md)
 
 ## where studies disagree
 
@@ -251,10 +251,10 @@ None are Verus numbers, and the settings differ, so I do not compare across line
 
 ## where it fails
 
-- CLEVER, 161 entries ([study](../vl_paper_walkthrough/agentic_proving_for_program_verification_20261012.md)): guidance cut generated-specification issues from 10 to 2 in one comparison
+- CLEVER, 161 entries ([study](../paper_takeaways/agent.md)): guidance cut generated-specification issues from 10 to 2 in one comparison
   - the multi-specification run made 290 candidates (2.76 per problem); only 15 proved isomorphic to references, across 11 entries; 66 entries got ISSUE in at least one attempt
   - the study's reading: prompting cannot repair ambiguous intent or a defective reference
-- SpecAgent, 811 targets, DeepSeek: 604 discharged (74.5%); Atomthreads only 109 of 239 ([study](../vl_paper_walkthrough/specagent_20261012.md))
+- SpecAgent, 811 targets, DeepSeek: 604 discharged (74.5%); Atomthreads only 109 of 239 ([study](../paper_takeaways/spec.md))
   - generation alone gave recall 80.93%; adding planning gave 83.99% for DeepSeek and lowered GPT-5 from 72.14% to 71.51%
   - the authors say the ablations are not independent causal effects
   - no retrieval-only ablation is reported
@@ -278,7 +278,7 @@ None are Verus numbers, and the settings differ, so I do not compare across line
   - the assurance-cases study: contracts, external specifications and human review linking to requirements stay trusted
 - a memory can teach weakening
   - KBSpec's Table 7 lists weakening postconditions as a repair strategy in 33.0-51.2% of learned repair items
-  - its pass rate rises while C@Pass falls below SpecGen's; the study's inference is that item credit counts verifier success, not strength. [study](../vl_paper_walkthrough/kbspec_20261012.md)
+  - its pass rate rises while C@Pass falls below SpecGen's; the study's inference is that item credit counts verifier success, not strength. [study](../paper_takeaways/spec.md)
 
 ## problems I saw in the studies
 

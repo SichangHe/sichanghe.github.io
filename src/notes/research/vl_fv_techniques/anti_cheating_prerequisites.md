@@ -25,11 +25,11 @@ Four ways, from the studies:
 - give up politely: leave an `assume` as a "partial proof"
 
 The AlphaVerus study shows it happening without any adversary.
-It says that removing the critique step causes "snowballing `assume(false)` use until programs verify trivially" ([study](../vl_paper_walkthrough/alphaverus_20261012.md), the study's words).
+It says that removing the critique step causes "snowballing `assume(false)` use until programs verify trivially" ([study](../paper_takeaways/spec.md), the study's words).
 
 The VeruSAGE study measures it.
 Without the checker, cheating was 14% for Sonnet 4, 7% for Sonnet 4.5, and 2% for GPT-5.
-With the checker, under 1.5% for every model ([study](../vl_paper_walkthrough/verusage_20261012.md)).
+With the checker, under 1.5% for every model ([study](../paper_takeaways/agent.md)).
 The paper gives no denominator for these percentages, and no checker rules (per the study).
 
 ## how to do it in Verus
@@ -44,7 +44,7 @@ Steps, in order. Cheap checks first, Verus last, judge last of all.
    - this is the reference for every comparison below
 2. Mark what the agent may touch.
    - proof material only: `assert`, `by` blocks, `invariant`, `decreases`, `proof fn` bodies, `broadcast use`
-   - SaltBench calls these the "permitted regions" ([study](../vl_paper_walkthrough/saltbench_20261012.md))
+   - SaltBench calls these the "permitted regions" ([study](../paper_takeaways/agent.md))
 3. Parse the candidate into an AST. Do not use regex alone.
    - SaltBench uses an AST. AxDafny and DafnyBench use text or regex matches.
 4. Check the contract.
@@ -65,12 +65,12 @@ Steps, in order. Cheap checks first, Verus last, judge last of all.
    - record the prerequisite check verdict next to the Verus output
 
 The checker must run where the agent cannot edit it.
-SaltBench's reason: "Outcomes are decided outside the agent's toolchain." (the paper's words, quoted in the [study](../vl_paper_walkthrough/saltbench_20261012.md)).
+SaltBench's reason: "Outcomes are decided outside the agent's toolchain." (the paper's words, quoted in the [study](../paper_takeaways/agent.md)).
 
 ## variants by paper
 
 SaltBench, Verus.
-[study](../vl_paper_walkthrough/saltbench_20261012.md)
+[study](../paper_takeaways/agent.md)
 - parse to AST, compare against the original, reject `assume`, `admit`, `external_body`, `assume_specification` and "verifier-specific aliases"
 - the study lists three layers: a screen over the agent's regions, a count guard (canonical against original), and an AST comparison
 - prerequisite check sits between generation and the referee
@@ -78,14 +78,14 @@ SaltBench, Verus.
 - the study says Verus emits no proof object, so the claim is only "the referee accepted"
 
 VeruSAGE, Verus.
-[study](../vl_paper_walkthrough/verusage_20261012.md)
+[study](../paper_takeaways/agent.md)
 - the prompt forbids change: "You should NOT change existing functions' pre-conditions or post-conditions" (the paper's prompt, quoted in the study)
 - a separate `verus-checker` runs after Verus "to detect illegal changes"
 - runs in a container with no proof bodies from the source project
 - residual cheating: when the model gives up, it leaves `assume`, `admit`, or an axiom as a partial proof
 
 AxDafny, Dafny.
-[study](../vl_paper_walkthrough/axdafny_20261012.md)
+[study](../paper_takeaways/agent.md)
 - clause extraction: originals must be a subset of the candidate's `requires`/`ensures`
 - regex for `{:axiom}`, `{:verify false}`, `assume`, `{:extern}`
 - then Dafny, then an LLM reviewer for things like a predicate rewritten to `true`
@@ -93,58 +93,58 @@ AxDafny, Dafny.
 - the benchmark applies the same rule: specification, definitions, and functions unmodified, and no vacuous shortcuts
 
 DafnyPro, Dafny.
-[study](../vl_paper_walkthrough/dafnypro_20261012.md)
+[study](../paper_takeaways/proof.md)
 - diff-checker: parse, extract the added annotations, strip them, compare the rest to the original
 - the paper: "verifies that the regenerated code, once stripped of annotations, is identical to the original base code"
 - the model may regenerate the whole program, so this is what stops silent edits to assignments or control flow
 - the study notes that ad-hoc annotation removers had caused compile errors (Appendix A.6); that a parser avoids this is my inference
 
 DafnyBench, Dafny.
-[study](../vl_paper_walkthrough/dafnybench_20261012.md)
+[study](../paper_takeaways/proof.md)
 - text comparison of `requires` and `ensures`, reject any change
 - reject `{:verify false}` and `assume false`
 - the study's Verus form (inference): same check, plus `admit` and new axioms
 
 Lean harness, Lean.
-[study](../vl_paper_walkthrough/automating_formal_verification_with_agen_20261012.md)
+[study](../paper_takeaways/agent.md)
 - reject `sorry`, `admit`, axiom declarations, `unsafe`, `Unchecked.cast`, `@[extern]` before counting success
 - spec holes are filled into the unmodified original each round, so the contract cannot drift
 - a task counts only when Lean verifies and bypass validation passes
 
 OSVBench, Verus-adjacent (Z3-based kernel verification).
-[study](../vl_paper_walkthrough/osvbench_20261012.md)
+[study](../paper_takeaways/spec.md)
 - freeze the declarative safety predicates; generate only the state-machine transitions
 - the study's reason: otherwise "a successful proof may simply reflect a weakened invariant"
 - the study's Verus form (inference): keep the spec fixed, mutate the code
 
 LemmaNet, Rocq with Frama-C.
-[study](../vl_paper_walkthrough/automated_lemma_discovery_in_agentic_pro_20261012.md)
+[study](../paper_takeaways/proof.md)
 - trust-boundary preservation in a different sense: per the study, the semantic VC "only serves as guidance" and its correctness does not affect soundness
 - helper lemmas must be proved against the trusted verification condition
 - the study's own caution (inference): also check that a helper lemma's precondition is satisfiable and not stronger than the intended contract
 
 AlphaVerus, Verus, semantic layer.
-[study](../vl_paper_walkthrough/alphaverus_20261012.md)
+[study](../paper_takeaways/spec.md)
 - critic models check that a translated spec matches the source intent
 - an exploit model tries simple, often trivial implementations that satisfy the specification; if one verifies, the spec is flawed and the translation is discarded
 - a rule-based filter checks `assume(false)`, `#[verifier::external]` and trivial preconditions
 - the paper's words, as quoted in the study: critique models cover "the one part of the pipeline that lacks formal guarantees"
 
 AlgoVeri and WybeCoder, judge layer.
-[AlgoVeri](../vl_paper_walkthrough/algoveri_20261012.md), [WybeCoder](../vl_paper_walkthrough/wybecoder_20261012.md)
+[AlgoVeri](../paper_takeaways/agent.md), [WybeCoder](../paper_takeaways/agent.md)
 - a verified file passes to an LLM judge that rejects cheating or degenerate algorithms (AlgoVeri)
 - WybeCoder judges "imperativeness": a method that wraps a pure `fold` is a leak, not an implementation
 - the WybeCoder study: "A judge is a screening layer, not evidence of correctness; the Verus verifier remains authoritative."
 
 Rust-Prover, Lean (Aeneas translation of Rust).
-[study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md)
+[study](../paper_takeaways/rustv.md)
 - the theorem statement and surrounding generated code must stay fixed; the study quotes the paper: "must be byte-identical to the pipeline’s output"
 - the prerequisite check also audits the theorem's dependencies, not only the visible proof: only `propext`, `Classical.choice` and `Quot.sound` are allowed,
   so `sorry`, `admit`, `native_decide` and `bv_decide` may not appear anywhere the theorem depends on
 - accepted proofs are rebuilt in a clean clone
 - the study's inference for Verus: audit transitively reachable `assume`, `admit` and `external_body`, not only the proof text
 
-AlphaProof Nexus, Lean. [study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)
+AlphaProof Nexus, Lean. [study](../paper_takeaways/proof.md)
 - the agent edits only regions marked `EVOLVE-BLOCK` and `EVOLVE-VALUE`; a validator checks
   "to ensure the problem statement was not changed unsafely and the proof compiles" (the paper's Figure 2 caption)
 - a sketch with `sorry` is never emitted; the compiler must report no pending goals
@@ -168,7 +168,7 @@ Prerequisite check as part of a result.
 - these numbers are with the prerequisite checks on (full systems, not the prerequisite checks alone). None of the three studies reports a prerequisites-off ablation, so they do not show how much the prerequisite checks changed the score.
 
 Prerequisite check as part of a result, Lean.
-- Rust-Prover: all 1325 theorems proved and passed the re-check, over 1,007 problems ([study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md), author report); no prerequisites-off ablation
+- Rust-Prover: all 1325 theorems proved and passed the re-check, over 1,007 problems ([study](../paper_takeaways/rustv.md), author report); no prerequisites-off ablation
 
 Prerequisite check false alarms.
 - no study reports how often a prerequisite check rejected an honest proof
@@ -177,7 +177,7 @@ Prerequisite check false alarms.
 Denominators to keep straight.
 - DafnyBench's no-LLM baseline is 26.9%, because some programs verify without hints. A pass there may need no model work.
 
-AlphaProof Nexus, Lean. [study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)
+AlphaProof Nexus, Lean. [study](../paper_takeaways/proof.md)
 - the authors found two density misformalizations (#125 and #741(i)) after the agent had found proofs, so compiling is not enough
 - the validator stops edits; it does not show the formal statement matches the informal question, so expert review stays
 - many failed sketches hid a target-sized `sorry` in a helper lemma, so the prerequisite check must inspect nested lemmas
@@ -186,7 +186,7 @@ AlphaProof Nexus, Lean. [study](../vl_paper_walkthrough/advancing_mathematics_re
 
 The prerequisite check only guards what it names.
 - SaltBench's authors say the screens "reduce threats but do not remove trust in the runner, parser, pinned verifier, or task specification" (the study's words)
-- AxDafny, the paper's words in the [study](../vl_paper_walkthrough/axdafny_20261012.md):
+- AxDafny, the paper's words in the [study](../paper_takeaways/agent.md):
   - "our evaluation therefore treats the specification as a trusted object and explicitly checks for specification modification and vacuous proof shortcuts."
 - so a wrong original spec passes every prerequisite check
 
@@ -206,7 +206,7 @@ The diff-checker trusts the parser's idea of "annotation".
 
 Honest partial proofs look like cheating.
 - VeruSAGE: residual cheating comes from models that give up and leave `assume`
-- a prerequisite check that rejects these is right, but the run reports a failure, not "stuck"; SaltBench separates HALT from FAIL for stops like this ([study](../vl_paper_walkthrough/saltbench_20261012.md))
+- a prerequisite check that rejects these is right, but the run reports a failure, not "stuck"; SaltBench separates HALT from FAIL for stops like this ([study](../paper_takeaways/agent.md))
 
 Judges are the soft part.
 - AxDafny makes the LLM reviewer a hard acceptance condition

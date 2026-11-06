@@ -7,7 +7,7 @@
   - a View maps the concrete fields to a logical Seq, Map or Set
   - a type invariant says which concrete states are legal
 - contracts then talk about `self@`, never about indices or pointers
-- one study targets Verus directly: [VeriStruct](../vl_paper_walkthrough/veristruct_20261012.md)
+- one study targets Verus directly: [VeriStruct](../paper_takeaways/proof.md)
 - the other studies do the same job with other tools
   - Creusot plus Gillian-Rust, Rocq with Iris, Prusti, Verus linear types
 - every Verus step below is my inference unless a study shows the code
@@ -24,7 +24,7 @@ Every proof then re-derives facts like "the index is in range".
 VeriStruct states the cost of skipping this.
 The study says single-function synthesis misses cross-method dependencies
 (the study's words, from its planner section).
-The paper's claim, quoted in the [VeriStruct study](../vl_paper_walkthrough/veristruct_20261012.md):
+The paper's claim, quoted in the [VeriStruct study](../paper_takeaways/proof.md):
 "defining a custom view offers better abstraction, clarity, and proof efficiency" (the paper's words).
 
 A second problem is that a contract can be sound and still too loose.
@@ -48,7 +48,7 @@ The other steps are my inference from the other studies.
    - mark it `#[verifier::type_invariant]` on a `closed spec fn inv(&self) -> bool`
    - state index bounds, non-empty storage, length agreement with the View
    - in a proof block call `use_type_invariant(&self)` to get the facts back
-   - the paper, quoted in the [VeriStruct study](../vl_paper_walkthrough/veristruct_20261012.md):
+   - the paper, quoted in the [VeriStruct study](../paper_takeaways/proof.md):
      "A type invariant is a logical formula that all instances of a data structure must satisfy."
 4. write each method as an abstract operation
    - `push` ensures `self@ == old(self)@.push(x)`, in my words
@@ -59,7 +59,7 @@ The other steps are my inference from the other studies.
    - the study says operations must preserve it, and bad or redundant invocations trigger repair
 6. add pointer-level ownership only when needed
    - for raw pointers use a `Tracked` permission with its own View
-   - the [Verus linear types study](../vl_paper_walkthrough/verus_linear_20261012.md): a permission token holds `Some(v)` or `None` for uninitialised memory
+   - the [Verus linear types study](../paper_takeaways/rustv.md): a permission token holds `Some(v)` or `None` for uninitialised memory
    - the XOR linked list there pairs the pointer structure, a sequence View and node permissions
 7. for two-state contracts, compare whole views
    - a snapshot is `old(self)@` or a ghost copy of the View
@@ -67,41 +67,41 @@ The other steps are my inference from the other studies.
 
 ## variants by paper
 
-- VeriStruct, the Verus case: [study](../vl_paper_walkthrough/veristruct_20261012.md)
+- VeriStruct, the Verus case: [study](../paper_takeaways/proof.md)
   - a planner decides whether the module needs a View, an invariant, specs and proofs, then calls one generator for each
   - Bitmap's generated View is a single sequence; the study says it verified
   - the study notes the LLM's simpler View may differ from the human ground truth
-- Hybrid Creusot and Gillian-Rust: [study](../vl_paper_walkthrough/hybrid_rust_verification_20261012.md)
+- Hybrid Creusot and Gillian-Rust: [study](../paper_takeaways/rustv.md)
   - an `Ownable` trait maps a concrete type to a pure representation `ReprTy`
   - for `LinkedList<T>`, `ReprTy = Seq<T::ReprTy>` and `own` ties it to a separation-logic segment predicate
   - safe code sees only the Seq through `ShallowModel`
   - `#[show_safety]` generates the ownership pre and postcondition
-- Corten, Rocq and Iris: [study](../vl_paper_walkthrough/corten_foundational_verification_of_rust_20261012.md)
+- Corten, Rocq and Iris: [study](../paper_takeaways/rustv.md)
   - a buddy allocator spec keeps an abstract `buddyRep` and hides the free lists existentially
   - `alloc` takes ownership of `self` and returns a new representation
   - the study: "allocator methods thread the single `self ↦ v` fact through every `&mut self` call"
   - the domain invariant lemmas were about 1,400 of about 2,800 Rocq lines
-- Resource specifications, Prusti: [study](../vl_paper_walkthrough/resource_specifications_20261012.md)
+- Resource specifications, Prusti: [study](../paper_takeaways/rustv.md)
   - the abstract state is a resource amount per owner, tied to program fields by a coupling invariant
   - the invariant is two-state and acts as an implicit postcondition on every function with a mutable reference
-- Compositional iterators, Prusti: [study](../vl_paper_walkthrough/compositional_reasoning_for_side_effectf_20261012.md)
+- Compositional iterators, Prusti: [study](../paper_takeaways/rustv.md)
   - a snapshot abstracts a whole tree-shaped value, ignoring addresses
   - two-state predicates become ordinary ghost functions over old and new snapshots
   - the study's Verus form uses `view` functions as snapshots; it calls this an inference
-- Gospel iterators: [study](../vl_paper_walkthrough/unfolding_iterators_20261012.md)
+- Gospel iterators: [study](../paper_takeaways/spec.md)
   - the abstract cursor has a ghost `visited` sequence and the invariant that it is permitted
   - a client loop invariant ties the concrete stack to that ghost prefix
-- Flux, indexed types: [study](../vl_paper_walkthrough/flux_20261012.md)
+- Flux, indexed types: [study](../paper_takeaways/rustv.md)
   - the abstraction lives in the type: `RVec<T>[n]` carries its length as an index
   - `push` goes from `RVec<T>[n]` to `RVec<T>[n+1]` through a strong reference
   - a bounds check becomes an ordinary typed call
-- Move spec inference: [study](../vl_paper_walkthrough/combining_mechanical_and_agentic_specifi_20261012.md)
+- Move spec inference: [study](../paper_takeaways/spec.md)
   - old-state values and intermediate snapshots specify multi-address updates
   - the Verus form is the study's inference
-- VeruSAGE, opacity: [study](../vl_paper_walkthrough/verusage_20261012.md)
+- VeruSAGE, opacity: [study](../paper_takeaways/agent.md)
   - NRKernel failures involve closed spec functions whose lemmas, not bodies, are the intended interface
   - the same idea applies to a closed `view`: prove lemmas about it, do not open it
-- Vosti, Verus inference engine: [study](../vl_paper_walkthrough/vosti_20261012.md)
+- Vosti, Verus inference engine: [study](../paper_takeaways/dist.md)
   - ghost histories and cache provenance tie physical KV-cache pages to the logical token prefix they must equal
   - the invariant: "every live or retained reusable KV entry equals the value obtained by recomputing its token prefix without cache" (paper, §4.2, as quoted in the study)
   - a second invariant, write isolation: new suffix writes cannot corrupt initialized or shared pages, so equal tokens alone do not give equal values
@@ -111,7 +111,7 @@ The other steps are my inference from the other studies.
   - exact ghost order sequences make append, insertion and removal postconditions precise; reachability or endpoint preservation alone does not fix order
   - the I3 run adds a ghost order witness; the authors warn "a ghost-heavy specification is less faithful to the concrete implementation"
   - live slots, free slots and reachable nodes are tracked as separate sets
-  - [study](../vl_paper_walkthrough/fewer_assumptions_20261012.md)
+  - [study](../paper_takeaways/rustv.md)
 
 ## evidence
 
@@ -148,7 +148,7 @@ They do not show it is what made the proofs succeed.
 - type invariants do not cover raw pointers
   - the hybrid paper's related work says Verus does not support traditional raw pointers
   - the Verus papers say Verus supports raw pointers through permissioned primitives
-  - the [hybrid study](../vl_paper_walkthrough/hybrid_rust_verification_20261012.md) says the papers do not reconcile the wordings
+  - the [hybrid study](../paper_takeaways/rustv.md) says the papers do not reconcile the wordings
   - so use permission tokens, or a separation-logic tool, for those parts
 - the hybrid tools leave gaps
   - shared references, more than one lifetime and closures are unsupported

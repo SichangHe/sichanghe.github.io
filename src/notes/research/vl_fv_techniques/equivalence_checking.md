@@ -17,7 +17,7 @@ Then the spec is "same as that program".
 
 Compiling is not enough.
 The REM study quotes the paper: "the mere fact that refactored code compiles does not guarantee equivalence."
-([study](../vl_paper_walkthrough/refactoring_and_equivalence_in_rust_20261012.md); the words are the paper's.)
+([study](../paper_takeaways/rustv.md); the words are the paper's.)
 
 Three ways to check, from strongest to weakest:
 - prove it, for all inputs
@@ -49,7 +49,7 @@ Every Verus step below is my inference.
 Translate both versions, then prove a generated equality lemma.
 CHARON turns Rust into LLBC, AENEAS turns that into pure Coq, and Coq checks `Orig.main = Refactored.main`.
 On failure the tool offers rollback.
-[study](../vl_paper_walkthrough/refactoring_and_equivalence_in_rust_20261012.md)
+[study](../paper_takeaways/rustv.md)
 
 Its Verus form, per the study (inference): a ghost model or relational lemma over pre-state, inputs, return value and mutated state.
 
@@ -59,7 +59,7 @@ Assert, on symbolic inputs, that implementation and reference agree.
 The paper defines it:
 "By extensional equality, we mean (1) that code and specification cannot generate undefined behaviour / panic, and (2) that they produce equivalent output when supplied with equivalent inputs."
 (Introduction, p. 2; the paper's words, quoted in the
-[study](../vl_paper_walkthrough/crux_a_precise_verifier_for_rust_and_oth_20261012.md).)
+[study](../paper_takeaways/rustv.md).)
 The reference can be Cryptol, hacspec or plain Rust.
 So definedness is part of the check, not only output.
 
@@ -77,7 +77,7 @@ Pair terminal states whose joint path constraints are satisfiable.
 For each pair, ask whether memory can differ: `is_sat(s.constraints ∧ s'.constraints ∧ v ≠ v')`.
 Event streams (instructions, register access, modeled IO) are compared with a line diff.
 A difference comes with a concrete input.
-([study](../vl_paper_walkthrough/finding_a_crab_in_the_c_20261012.md))
+([study](../paper_takeaways/rustv.md))
 
 Two features differ from a proof.
 The developer classifies each difference as intentional or erroneous.
@@ -103,17 +103,17 @@ It checks the concurrent model with TLC and TLAPS.
 It then compares the deployed Rust with an executable transcription of the model.
 The study reports 12 million operations across 200,000 randomized traces with zero divergences, plus an exhaustive comparison of 14,580 transitions.
 The author calls it "refinement evidence by differential testing" and "not a mechanized refinement proof."
-([study](../vl_paper_walkthrough/stop_means_stop_20261011.md); the author's words.)
+([study](../paper_takeaways/agent.md); the author's words.)
 
 ### equivalence as a trusted step in LLM pipelines
 
 Two studies rely on equivalence they do not prove.
 - Dissect and Restore extracts helper lemmas, then merges back.
   The study says it "does not prove equivalence independently; it asks the LLM to merge and then verifies the result."
-  ([study](../vl_paper_walkthrough/dissect_and_restore_20261012.md))
+  ([study](../paper_takeaways/proof.md))
 - The Lean-backed verifier benchmark checks translated specs by sampling.
   Of 114 problems with test suites, 105 ran to completion, giving 19,555 matching cases.
-  ([study](../vl_paper_walkthrough/lean_backed_rust_verifier_20261012.md))
+  ([study](../paper_takeaways/rustv.md))
 
 ## evidence, with denominators
 

@@ -16,7 +16,7 @@ Rejecting proofs that cheat is in [anti-cheating prerequisite checks](anti_cheat
 
 Off-the-shelf models write Verus proofs badly, and there is little Verus code to train on.
 SAFE's study puts raw GPT-4o at 11.51% Accuracy@1 on the 139 VerusBench tasks, against 43.17% for the trained SAFE model.
-See [SAFE study](../vl_paper_walkthrough/automated_proof_generation_for_rust_code_20261012.md).
+See [SAFE study](../paper_takeaways/agent.md).
 
 Human-written verified code does not scale.
 The unlimited source is the model itself, but its text cannot be trusted.
@@ -53,7 +53,7 @@ A proof verified by one Verus version may not verify on another.
 
 ### verifier-filtered self-evolution (SAFE)
 
-Study: [SAFE](../vl_paper_walkthrough/automated_proof_generation_for_rust_code_20261012.md).
+Study: [SAFE](../paper_takeaways/agent.md).
 
 SAFE has four pieces.
 Translate Rust to Verus-compatible Rust, filter specifications, fine-tune on verified proofs, and train a repair task.
@@ -78,7 +78,7 @@ The study reports 10,486 debugging pairs.
 
 ### checker-filtered self-synthesis, tutorial curriculum, trajectories (VeruSyn)
 
-Study: [VeruSyn](../vl_paper_walkthrough/verusyn_20261012.md).
+Study: [VeruSyn](../paper_takeaways/rustv.md).
 
 Self-synthesis: fine-tune on SAFE's seed proofs, prompt with only a prefix, generate Rust plus specification plus proof, deduplicate, verify, self-debug failures, fine-tune on everything so far.
 The study's count: 6.9M verified programs, 5.7M direct and 1.2M after debugging.
@@ -98,7 +98,7 @@ Those 289 tasks are excluded from evaluation to avoid leakage.
 
 ### cross-language bootstrapping and prompt-only improvement (AlphaVerus)
 
-Study: [AlphaVerus](../vl_paper_walkthrough/alphaverus_20261012.md).
+Study: [AlphaVerus](../paper_takeaways/spec.md).
 
 No weights change.
 Translate Dafny programs into Verus.
@@ -121,7 +121,7 @@ The collection also lifts few-shot results of other models (Table 3).
 
 ### reinforcement learning with the verifier as reward (ANCORA)
 
-Study: [ANCORA](../vl_paper_walkthrough/ancora_20261012.md).
+Study: [ANCORA](../paper_takeaways/spec.md).
 
 One model plays two roles.
 Proposer writes a Verus specification.
@@ -146,7 +146,7 @@ The paper's words on what enters the reward, quoted in the study:
 
 ### diversity-aware selection (Formal Disco)
 
-Study: [Formal Disco](../vl_paper_walkthrough/formal_disco_20260822.md).
+Study: [Formal Disco](../paper_takeaways/agent.md).
 The study is audited; its plan sections are the study's own recommendations, and I use only its paper statements.
 
 Three Claude-seeded workers (initiator, fixer, extender) grow verified programs.
@@ -157,7 +157,7 @@ At pass@32 it reports 59.1% against SAFE's 51%.
 
 ### proof-checked equivalence self-play (SEQ/SINQ)
 
-Study: [SEQ/SINQ study](../vl_paper_walkthrough/improving_llm_code_reasoning_via_semanti_20261012.md).
+Study: [SEQ/SINQ study](../paper_takeaways/proof.md).
 Haskell with Liquid Haskell, not Verus; the Verus forms are the study's inference.
 Alice writes a variant Q of a program P.
 Positive pairs (SEQ) keep Q only if Liquid Haskell accepts Alice's proof that P and Q agree on all inputs.
@@ -172,17 +172,17 @@ Difference from the other variants: the verifier also labels negatives, by execu
 
 ### other training uses
 
-[DafnyPro study](../vl_paper_walkthrough/dafnypro_20261012.md), Dafny not Verus: fine-tuning on 31k attempts, successful and failed, paired with verifier errors.
+[DafnyPro study](../paper_takeaways/proof.md), Dafny not Verus: fine-tuning on 31k attempts, successful and failed, paired with verifier errors.
 It reports first-attempt verification up 23% for Qwen2.5-7B and 13% for Qwen3-14B.
 
-[SPEC CODER study](../vl_paper_walkthrough/teaching_code_llms_to_reason_with_interm_20261012.md), Python checkpoint assertions, not proofs: the same filter idea with tests as judge.
+[SPEC CODER study](../paper_takeaways/spec.md), Python checkpoint assertions, not proofs: the same filter idea with tests as judge.
 Mutants that pass some tests and fail others are kept.
 An annotated program is kept only if every assertion is reached and the thresholds hold, with
 "at least one assertion has a non-empty eligible mutant set."
 The study splits train and test by problem before generating mutants, to prevent leakage.
 It trains two tasks: insert checkpoints into existing code, and write the whole program with checkpoints.
 
-[Baldur study](../vl_paper_walkthrough/baldur_20261012.md), Isabelle not Verus: whole-proof generation by fine-tuning, and a repair model with input
+[Baldur study](../paper_takeaways/proof.md), Isabelle not Verus: whole-proof generation by fine-tuning, and a repair model with input
 "theorem statement, incorrect proof, error message".
 This is the origin of error-conditioned training in this set.
 The study notes its repair data only has the first error, so the model learns only those kinds of errors.
@@ -217,7 +217,7 @@ ANCORA, pass@1, Qwen2.5-Coder-3B:
 - HumanEval-Verified (85): 19.15% against 19.07%.
 - Cost about 200 GPU-hours.
 
-SEQ/SINQ (Haskell), [study](../vl_paper_walkthrough/improving_llm_code_reasoning_via_semanti_20261012.md):
+SEQ/SINQ (Haskell), [study](../paper_takeaways/proof.md):
 - Validated training pairs: 937 for the 50/50 regime (E0), 1,839 for counterexamples only (E1), 140 for the 96% SEQ regime (E2).
 - These are retained-pair counts; the paper gives no denominator of all Alice attempts.
 - E0 has fewer pairs than E1 but better semantic reasoning, per the study.
@@ -245,7 +245,7 @@ I would not read this as settled.
 
 The verifier checks the proof against a specification, not against what you meant.
 SAFE's gcd example has `ensures result > 0`, which gives a trivial proof.
-[SAFE study](../vl_paper_walkthrough/automated_proof_generation_for_rust_code_20261012.md) cites it as appendix F.4.
+[SAFE study](../paper_takeaways/agent.md) cites it as appendix F.4.
 Low-quality specifications cut accuracy from 43.17% to 17.27%, so spec filtering is not optional.
 
 Reward hacking: `assume(false)` and trivial preconditions pass the verifier.

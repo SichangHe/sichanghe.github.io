@@ -60,21 +60,21 @@ Justified pruning.
 ## variants by paper
 
 AutoSpec, deletion simplification, Frama-C:
-[study](../vl_paper_walkthrough/enchanting_program_specification_synthes_20261012.md).
+[study](../paper_takeaways/spec.md).
 - Once the target assertion verifies, try deleting each clause one at a time.
 - The study says: "attempt deletion of each clause; keep a deletion only if the assertion remains provable". These are the study's words.
 - The study notes that satisfiable is not the same as adequate. A clause can be true and still too weak. Minimization only starts after adequacy.
 - Verus form: study says it is an inference. Delete one invariant or lemma and replay.
 
 Automatic annotation generation for Dafny, dependency-aware minimization:
-[study](../vl_paper_walkthrough/automatic_generation_of_formal_specifica_20261012.md).
+[study](../paper_takeaways/spec.md).
 - Repair output is bigger than hand-written proof. Appendix B has a deletion algorithm that preserves the original program.
 - Candidates come from an LCS diff: statements, blocks, groups, loop clauses, `requires`/`ensures`.
 - It builds declaration reference counts, deletes bottom up, caches, and repeats.
 - The study says the Verus version is an inference.
 
 Tunable Automation, assertion minimization, Verus:
-[study](../vl_paper_walkthrough/tunable_automation_in_automated_program__20261012.md).
+[study](../paper_takeaways/rustv.md).
 - It scans proof code linearly, removes each `assert` or `assert ... by`, reruns Verus, and keeps the assert only if removal causes failure.
 - The study says the paper reruns verification after each removal. Rerunning only the affected condition is complicated by cross-talk between conditions.
 - Purpose is to measure automation, not to ship the smaller proof.
@@ -84,49 +84,49 @@ Tunable Automation, assertion minimization, Verus:
 This is the paper's sentence as quoted in the study.
 
 VCoT-Bench, proof pruning:
-[study](../vl_paper_walkthrough/can_llms_reason_like_automated_theorem_p_20261012.md).
+[study](../paper_takeaways/rustv.md).
 - An LLM "Proof Pruner" removes trivial and redundant steps with a justification each. The study says Verus runs afterwards, in the repair stage, not inside the pruner.
 - The deletion is chosen by the model first and checked by the verifier second. That is the reverse of the two papers above.
 
 DafnyPro, greedy invariant pruning:
-[study](../vl_paper_walkthrough/dafnypro_20261012.md).
+[study](../paper_takeaways/proof.md).
 - It removes clauses the verifier reports as non-inductive, then reverifies.
 - It is repair, not shrinking. The input does not verify yet.
 - I list it because the catalog names it, but it solves a different problem.
 
 AutoVerus, Houdini:
-[study](../vl_paper_walkthrough/autoverus_20261012.md).
+[study](../paper_takeaways/proof.md).
 - The study says only "Houdini checks whether a subset of annotations suffices." (study's words).
 - It sits inside the step that merges ranked invariant candidates.
 - The study gives no procedure for how subsets are chosen. I cannot say more.
 
 VerifyThisBench, artifact deletion ablations:
-[study](../vl_paper_walkthrough/verifythisbench_20261012.md).
+[study](../paper_takeaways/agent.md).
 - This deletes code, specs or invariants from a human solution to test a model, not to shrink a proof. It is the same mechanical act with a different goal.
 
 ## evidence
 
-Dafny minimizer ([study](../vl_paper_walkthrough/automatic_generation_of_formal_specifica_20261012.md)).
+Dafny minimizer ([study](../paper_takeaways/spec.md)).
 - Repair-generated programs are 63.2% larger than manual solutions.
 - Minimization removes 58% of annotation lines and brings overhead down to 10.6%.
 - Cost is 1.4 seconds per removed line on average.
 - Direct prompting has only 7.9% extra lines.
 - The study does not give the number of programs here, so I do not know the denominator.
 
-Tunable Automation ([study](../vl_paper_walkthrough/tunable_automation_in_automated_program__20261012.md)).
+Tunable Automation ([study](../paper_takeaways/rustv.md)).
 - Four Verus projects. Minimized assert counts after importing 49 collection lemmas in four broadcast groups.
 - IronKV 268 to 245 (8.6%). Splinter 1158 to 1130 (2.4%). Anvil 343 to 336 (2.0%). CapybaraKV 449 to 415 (7.6%).
 - With `all_triggers` on 261 IronKV quantifiers, minimized asserts fell 268 to 235 (12.3%). One proof broke. It did not scale to the other projects.
 - These are not proof shrinking results. They compare two minimized baselines to measure the lemma library.
 
-AutoSpec ([study](../vl_paper_walkthrough/enchanting_program_specification_synthes_20261012.md)).
+AutoSpec ([study](../paper_takeaways/spec.md)).
 - Deletion appears as an optional last step. The study gives one example and no count of deletions.
 
-VCoT-Bench pruning ([study](../vl_paper_walkthrough/can_llms_reason_like_automated_theorem_p_20261012.md)).
+VCoT-Bench pruning ([study](../paper_takeaways/rustv.md)).
 - The study gives a running example, no pruning rate.
 - The study's audit note says the earlier claim that the pruner reruns Verus was wrong.
 
-DafnyPro pruning ([study](../vl_paper_walkthrough/dafnypro_20261012.md)).
+DafnyPro pruning ([study](../paper_takeaways/proof.md)).
 - Component gains (the study gives them as percentages, not points): +3.19% (Claude 3.5) and +3.06% (3.7) on DafnyBench. +12.26% and +5.66% on HumanEval.
 - Those measure repair success, not size reduction.
 

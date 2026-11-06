@@ -15,7 +15,7 @@ Check each piece alone.
 Put the pieces back together, and let the verifier check the whole.
 
 None of the studies gives a Verus experiment for this.
-Only [leveraging LLMs for proof synthesis in Rust](../vl_paper_walkthrough/leveraging_large_language_models_for_aut_20261012.md) runs Verus.
+Only [leveraging LLMs for proof synthesis in Rust](../paper_takeaways/proof.md) runs Verus.
 Everywhere else, the Verus steps below are my inference from Dafny, Lean, Rocq or C tools.
 
 Related notes, not repeated here:
@@ -36,7 +36,7 @@ Check each alone.
 Make each piece a `proof fn` with its own `requires` and `ensures`.
 Keep the names stable.
 Later edits then change one piece, not all of them.
-[WybeCoder](../vl_paper_walkthrough/wybecoder_20261012.md) relies on stable names to keep old proofs.
+[WybeCoder](../paper_takeaways/agent.md) relies on stable names to keep old proofs.
 
 3. Split a long function at a loop boundary or another natural cut.
 Write the interface as an `ensures` for the first part and a `requires` for the second.
@@ -63,14 +63,14 @@ Do not add `assume`.
 
 8. After every cut, run Verus on the recomposed original.
 A piece that verifies alone can still be useless or too weak for the parent.
-[Dissect-and-Restore](../vl_paper_walkthrough/dissect_and_restore_20261012.md) says the same about helper lemmas.
+[Dissect-and-Restore](../paper_takeaways/proof.md) says the same about helper lemmas.
 
 9. Keep a retry cap and a search budget.
 Splitting widens the search.
 
 ### case and postcondition splits: ProofSaX
 
-Study: [proof sharding](../vl_paper_walkthrough/synthesizing_proofs_using_proof_sharding_20261012.md).
+Study: [proof sharding](../paper_takeaways/proof.md).
 Dafny.
 The study says its examples "explicitly include Verus", but the Verus mapping is the study's inference.
 
@@ -88,7 +88,7 @@ That search covers triggers, existing helper calls, reveals and quantifier varia
 
 ### case split on a stable fact: Lemur
 
-Study: [Lemur](../vl_paper_walkthrough/lemur_20261012.md).
+Study: [Lemur](../paper_takeaways/proof.md).
 C verifiers (ESBMC, UAutomizer).
 
 Say the model proposes a fact `q`.
@@ -105,7 +105,7 @@ Verus form (the study's inference): `if q { ... } else { ... }`, both branches p
 
 ### segmenting a long function: Yao et al.
 
-Study: [leveraging LLMs for proof synthesis in Rust](../vl_paper_walkthrough/leveraging_large_language_models_for_aut_20261012.md).
+Study: [leveraging LLMs for proof synthesis in Rust](../paper_takeaways/proof.md).
 Verus, GPT-4.
 
 Split at loop boundaries.
@@ -120,7 +120,7 @@ Verus only checks the predicates as stated.
 
 ### lifting nested loops: Dissect-and-Restore
 
-Study: [Dissect-and-Restore](../vl_paper_walkthrough/dissect_and_restore_20261012.md).
+Study: [Dissect-and-Restore](../paper_takeaways/proof.md).
 Dafny, LLM agent called Prometheus.
 
 Pull each loop into a named method with at most one loop.
@@ -141,7 +141,7 @@ It asks an LLM to merge, then reruns the verifier.
 
 ### recursive lemma trees with solvers: APOLLO
 
-Study: [APOLLO](../vl_paper_walkthrough/apollo_20261012.md).
+Study: [APOLLO](../paper_takeaways/proof.md).
 Lean 4.
 It turns a failed whole proof into compilable placeholders, one per bad step.
 Each placeholder becomes a new lemma, tried with a cheap solver first, then with the LLM, down to a depth limit.
@@ -152,7 +152,7 @@ Kimina and Goedel keep improving through depth 6.
 
 ### named obligations in parallel: WybeCoder
 
-Study: [WybeCoder](../vl_paper_walkthrough/wybecoder_20261012.md).
+Study: [WybeCoder](../paper_takeaways/agent.md).
 Lean with Loom/Velvet and CVC5.
 
 Extract each obligation (entry, preservation, exit, decreases) as its own theorem.
@@ -168,7 +168,7 @@ When you split, each piece's contract needs frame conditions, permutation facts 
 
 ### offline lemma synthesis and a lemma library: LemmaNet
 
-Study: [LemmaNet](../vl_paper_walkthrough/automated_lemma_discovery_in_agentic_pro_20261012.md).
+Study: [LemmaNet](../paper_takeaways/proof.md).
 C with Frama-C and Rocq.
 
 An analyzer writes a source-level version of the verification condition.
@@ -183,7 +183,7 @@ It also found that importing too many lemmas hurts (see "where it fails").
 
 ### decomposing by code, property or refinement: practitioners
 
-Study: [Toward Practical Deductive Verification](../vl_paper_walkthrough/toward_practical_deductive_verification_20261012.md).
+Study: [Toward Practical Deductive Verification](../paper_takeaways/other.md).
 A survey, not a tool. The study labels its how-to steps as its own inference, not the paper's.
 
 Split by method, module, thread, property or refinement step.
@@ -195,7 +195,7 @@ It also says splitting is "very manual" and needs knowing "where to cut properly
 
 ### factorized loops: Crux
 
-Study: [Crux](../vl_paper_walkthrough/crux_a_precise_verifier_for_rust_and_oth_20261012.md).
+Study: [Crux](../paper_takeaways/rustv.md).
 Rust symbolic execution.
 This is the only variant that runs on Rust code, but not with Verus.
 
@@ -208,16 +208,16 @@ Crux enables a proved helper spec by an attribute, and then replaces calls to it
 Verus has no such automatic replacement.
 You call the lemma yourself.
 
-One related note: [Scaling verification of cryptographic software](../vl_paper_walkthrough/scaling_verification_of_cryptographic_so_20261012.md)
+One related note: [Scaling verification of cryptographic software](../paper_takeaways/rustv.md)
 (Lean) has a `decompose` command that folds a range of a big extracted function into a helper.
 It proves an equality theorem for the rewrite, so the edit is checked.
 
-Fewer Assumptions by Design ([study](../vl_paper_walkthrough/fewer_assumptions_20261012.md)) gives Verus lessons on DLL proofs.
+Fewer Assumptions by Design ([study](../paper_takeaways/rustv.md)) gives Verus lessons on DLL proofs.
 It splits a bookkeeping `wf()` from a structural `full_wf()`: "decouples the helper primitives (e.g., allocate and link) from chain reasoning".
 It also splits large proof contexts into helper lemmas to avoid solver resource exhaustion, and adds explicit induction lemmas for reachability.
 These are author-reported lessons from an interactive session; the study's inference is that an allocator should not have to prove a full chain in a transient state.
 
-What's in a Proof? (F* and Verus, expert telemetry) [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md).
+What's in a Proof? (F* and Verus, expert telemetry) [study](../paper_takeaways/other.md).
 It records how experts decompose, not an automated method.
 Experts write the contract first, split the task into subgoals, and defer details with `assume(false)` or comments.
 They then prove one subgoal at a time and replace each hole by real invariants and asserts.
@@ -230,13 +230,13 @@ The prerequisite check that keeps `assume(false)` out of the accepted branch is 
 
 ### helper lemmas found by an agent: AlphaProof Nexus
 
-Study: [AlphaProof Nexus](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md), Lean.
+Study: [AlphaProof Nexus](../paper_takeaways/proof.md), Lean.
 - on Erdős #125, AlphaProof failed on a monolithic density lemma
   - the subagent "decomposed that goal into three simpler lemmas" and then proved all six resulting goals (the paper, Figure 1 caption and page 3)
 - steps: read the open goal, state one intermediate step as a new lemma with a hole, call it from the original, compile after each insertion, remove every `sorry`
 - the Verus form (helper `proof fn`s, `assert ... by`, earlier facts as `requires`) is the study's inference
 
-StateSync-GKR ([study](../vl_paper_walkthrough/statesync_gkr_20261012.md), audited) splits a trust chain into theorems that are composed.
+StateSync-GKR ([study](../paper_takeaways/fm.md), audited) splits a trust chain into theorems that are composed.
 Transition semantics, then compiler acceptance iff validity (A), then a GKR chain-event bound (B), then their composition (C).
 Composition takes the contrapositive of compiler soundness; invalidity stays an explicit hypothesis, and chain well-formedness is discharged at concrete instances.
 Batching is a separate theorem: `batch_prove = map prove`, equivalent to independent runs.
@@ -245,7 +245,7 @@ Verus form is the study's inference; the probability bound needs an external mod
 
 ### inductive proof graph: Scimitar
 
-Study: [study](../vl_paper_walkthrough/interactive_safety_verification_of_distr_20261012.md).
+Study: [study](../paper_takeaways/dist.md).
 TLA+ with TLC, Apalache and TLAPS, for distributed protocol safety. Every Verus mapping is the study's inference.
 
 Replace one monolithic invariant with a graph.
@@ -322,12 +322,12 @@ Six weeks of one engineer's time, as the study reports it.
 Practitioners.
 12 of 29 and 8 of 29, as above.
 
-What's in a Proof?: eight experts, four small tasks, F* 7 of 8 sessions complete, Verus 6 of 8 [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md).
+What's in a Proof?: eight experts, four small tasks, F* 7 of 8 sessions complete, Verus 6 of 8 [study](../paper_takeaways/other.md).
 Telemetry and timelines show successful sessions spend effort on specifications early and return to them.
 P2's F* Intersection proof reused library lemmas and was three times shorter than P4's from-scratch proof.
 This is behavioural evidence, not a causal experiment; expertise and task choice confound it.
 
-Scimitar, from [study](../vl_paper_walkthrough/interactive_safety_verification_of_distr_20261012.md).
+Scimitar, from [study](../paper_takeaways/dist.md).
 Five TLA+ protocols, 4 to 12 variables, 5 to 14 actions, 8 to 39 lemmas.
 Median slice sizes over graph nodes: 2/6 (SimpleConsensus), 3/6 (TwoPhase), 3/4 (AbstractRaft), 4/6 (Bakery), 5/12 (AsyncRaft).
 These are slice sizes, not proof-time savings.
@@ -340,7 +340,7 @@ The cut can be wrong.
 ProofSaX shards do not help when the missing fact spans several shards.
 Seven of ten multi-hole failures needed two helper-lemma calls, which it does not search for.
 
-Expert decomposition is not shown to cause success. [study](../vl_paper_walkthrough/what_s_in_a_proof_analyzing_expert_proof_20261012.md)
+Expert decomposition is not shown to cause success. [study](../paper_takeaways/other.md)
 The paper's own caution is that clusters are exploratory; the Verus planner cluster has one member.
 
 Helpers can be useless.
@@ -352,7 +352,7 @@ LemmaNet failed on 25 verification conditions that AutoRocq solved.
 12 were from conflicting imported lemmas.
 7 were from over-fixating on adapting a lemma.
 6 were from extra context that sent the agent down a different path.
-The [Verus practical study](../vl_paper_walkthrough/verus_practical_20261012.md) says the same in general: "A larger context or more lemmas can make
+The [Verus practical study](../paper_takeaways/rustv.md) says the same in general: "A larger context or more lemmas can make
 verification slower rather than stronger" (that is the study's own sentence, not the paper's).
 
 Interfaces can be too weak or wrong.
@@ -377,19 +377,19 @@ The ProofSaX trigger-pair search also assumes no proof needs three or more trigg
 
 StateSync-GKR's composition is model-level.
 The study says implementation cache correctness is not absorbed.
-The per-variable degree-four corollary is weaker than the total-degree instance. [study](../vl_paper_walkthrough/statesync_gkr_20261012.md)
+The per-variable degree-four corollary is weaker than the total-degree instance. [study](../paper_takeaways/fm.md)
 
 No Verus tool does this end to end.
 Everything except Yao et al. is another language.
 
-AlphaProof Nexus ([study](../vl_paper_walkthrough/advancing_mathematics_research_with_ai_d_20261012.md)).
+AlphaProof Nexus ([study](../paper_takeaways/proof.md)).
 - one successful example, not a decomposition algorithm
 - agents hid the original difficulty in one helper lemma with `sorry`, so a validator must inspect all nested lemmas
 - more helpers can raise solver load
 
 Scimitar still needs a human to invent each lemma, and has no node-selection heuristic, so a poor pick wastes effort.
 Slice soundness assumes deterministic guarded updates; Rust heaps, aliasing and trait calls would need a conservative over-approximation (study inference).
-Its bounded CTIs are evidence of a missing lemma, not proof; see [study](../vl_paper_walkthrough/interactive_safety_verification_of_distr_20261012.md).
+Its bounded CTIs are evidence of a missing lemma, not proof; see [study](../paper_takeaways/dist.md).
 
 ## where the studies disagree
 
