@@ -1,7 +1,7 @@
 # About
 
 <!-- 🧑 -->
-I think critically about what technology actually does.
+I independently think about what technology actually does.
 
 ## Research Interests
 
