@@ -101,11 +101,11 @@ only reports failures
 If asked to git commit, use sane&minimal&atomic conventional message.
 ALWAYS commit ALL your changes and ONLY yours.
 Commit to the default branch by default.
-ALWAYS push new commits so they are backed up. Pull rebase if push fails.
+Get the human's approval before pushing commits. Pull rebase if an approved push fails.
 Try `--no-recurse-submodules` or rm submodule dir if rebase fail.
 To "merge" feature branch, make a new branch w/ appended number,
 rebase main onto new branch, rebase new branch onto main; keep and
-push all feature branch.
+push all feature branch only with the human's approval.
 NEVER EVER commit ANY absolute path or secret, use env file or
 ignored notes files as needed.
 NEVER EVER commit any artifacts, generated files, or large files;
