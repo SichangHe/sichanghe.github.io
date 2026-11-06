@@ -21,7 +21,7 @@ keep the whole outline as one big nested unordered list of short items and never
 ## Coder agent
 
 requirement for coding & behavior (need `.config` cloned;
-fetches [AGENTS.md](./AGENTS.md)):
+fetches [AGENTS.md](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/automation_software/AGENTS.md)):
 
 ```
 You MUST **IMMEDIATELY** run: ~/.config/getagentsmd

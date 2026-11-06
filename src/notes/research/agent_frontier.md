@@ -16,50 +16,50 @@ evidence labels
 
 - accepted evidence: 21 peer-reviewed papers in the fixed set
 - first-party preprint evidence: BrowseComp only
-- 🤖 separate post-cutoff companion note: [HANDBOOK.md](handbook.md)
+- 🤖 separate post-cutoff companion note: [HANDBOOK.md](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/handbook.md)
   - outside the fixed 22-paper packet because its arXiv v1 arrived after the cutoff
   - workshop-status preprint, not accepted main-track evidence
 - inference: conclusions drawn across non-comparable studies
 - recommendation: proposed research, not a demonstrated capability
 - source cards preserve method, result, limitation, uncertainty, short quotes, and local OCR paths
-  - [source cards](agent_frontier_papers/source_cards.md)
+  - [source cards](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md)
   - [selection ledger](agent_frontier_papers/selection_ledger.tsv)
-  - [search log](agent_frontier_papers/search_log.md)
+  - [search log](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/search_log.md)
 
 what works now
 
 - accepted evidence: frontier agents complete some well-specified software tasks that take skilled humans hours
   - the measured 50% completion horizon reached about 110 human-minutes for o3 on a 170-task software and research suite
   - its 80% horizon was four to six times shorter
-  - [time-horizon evidence](agent_frontier_papers/source_cards.md#time-horizons)
+  - [time-horizon evidence](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#time-horizons)
 - accepted evidence: agents can repair real repositories when the issue, environment, tests, and interface are prepared
   - interface design itself changes outcomes
   - harder professional and freelance sets sharply reduce the success and economic value recovered
-  - [SWE-agent](agent_frontier_papers/source_cards.md#swe-agent)
-  - [SWE-Bench Pro](agent_frontier_papers/source_cards.md#swe-bench-pro)
-  - [SWE-Lancer](agent_frontier_papers/source_cards.md#swe-lancer)
+  - [SWE-agent](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#swe-agent)
+  - [SWE-Bench Pro](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#swe-bench-pro)
+  - [SWE-Lancer](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#swe-lancer)
 - accepted evidence: agents can execute portions of web, desktop, customer-service, and workplace workflows
   - success depends on a controlled environment, available APIs or actions, explicit policy, and recoverable mistakes
-  - [tau-bench](agent_frontier_papers/source_cards.md#tau-bench)
-  - [OSWorld](agent_frontier_papers/source_cards.md#osworld)
-  - [WorkArena](agent_frontier_papers/source_cards.md#workarena)
-  - [TheAgentCompany](agent_frontier_papers/source_cards.md#theagentcompany)
+  - [tau-bench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#tau-bench)
+  - [OSWorld](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#osworld)
+  - [WorkArena](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#workarena)
+  - [TheAgentCompany](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#theagentcompany)
 - accepted evidence: agents can produce useful work on bounded ML and research tasks
   - they can win some Kaggle medals, outperform expert humans at short R&D budgets, and partially reproduce ML papers
   - humans retain an advantage as the horizon grows, and end-to-end paper replication remains weak
-  - [MLE-bench](agent_frontier_papers/source_cards.md#mle-bench)
-  - [RE-Bench](agent_frontier_papers/source_cards.md#re-bench)
-  - [PaperBench](agent_frontier_papers/source_cards.md#paperbench)
+  - [MLE-bench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#mle-bench)
+  - [RE-Bench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#re-bench)
+  - [PaperBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#paperbench)
 - accepted evidence: training and memory mechanisms can improve narrow agent behavior
   - WebRL improves one open-model web agent through online curriculum reinforcement learning
   - memory systems trade retrieval, updating, long-range understanding, and forgetting rather than solving all four
-  - [WebRL](agent_frontier_papers/source_cards.md#webrl)
-  - [MemoryAgentBench](agent_frontier_papers/source_cards.md#memoryagentbench)
+  - [WebRL](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#webrl)
+  - [MemoryAgentBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#memoryagentbench)
 - first-party preprint evidence: a specialized deep-research agent solved 51.5% of BrowseComp
   - the model was trained for BrowseComp-like tasks
   - more test-time compute and selection improved results
   - short-answer fact finding is not a normal web-query distribution
-  - [BrowseComp](agent_frontier_papers/source_cards.md#browsecomp)
+  - [BrowseComp](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#browsecomp)
 
 what remains brittle or weakly evidenced
 
@@ -74,22 +74,22 @@ what remains brittle or weakly evidenced
   - unit tests can accept invalid patches
   - rubric or model graders can miss scientific defects
   - public tasks can leak into training, tool traces, or scaffold tuning
-  - [UTBoost](agent_frontier_papers/source_cards.md#utboost)
-  - [ScienceAgentBench](agent_frontier_papers/source_cards.md#scienceagentbench)
+  - [UTBoost](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#utboost)
+  - [ScienceAgentBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#scienceagentbench)
 - human comparisons are narrow
   - human expertise, familiarization, time limits, tools, and incentives differ across studies
   - BrowseComp humans and the specialized model did not operate under equivalent conditions
   - PaperBench and RE-Bench are informative within their designs, not labor-market forecasts
 - multi-agent results do not establish a general team advantage
   - extra agents also add samples, tokens, coordination paths, and correlated errors
-  - [MultiAgentBench](agent_frontier_papers/source_cards.md#multiagentbench)
+  - [MultiAgentBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#multiagentbench)
 - safety is not a side constraint
   - prompt injection, harmful-task compliance, policy violations, and intentional subversion can directly defeat useful autonomy
   - existing defenses are benchmark-specific and often trade utility for safety
-  - [AgentDojo](agent_frontier_papers/source_cards.md#agentdojo)
-  - [AgentHarm](agent_frontier_papers/source_cards.md#agentharm)
-  - [ST-WebAgentBench](agent_frontier_papers/source_cards.md#st-webagentbench)
-  - [AI Control](agent_frontier_papers/source_cards.md#ai-control)
+  - [AgentDojo](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#agentdojo)
+  - [AgentHarm](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#agentharm)
+  - [ST-WebAgentBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#st-webagentbench)
+  - [AI Control](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#ai-control)
 
 important gaps
 
@@ -121,8 +121,8 @@ research missions
 - 1. measure dependable horizon
   - why now
     - accepted evidence links human task time to success and shows repeated-run collapse
-    - [time horizons](agent_frontier_papers/source_cards.md#time-horizons)
-    - [tau-bench](agent_frontier_papers/source_cards.md#tau-bench)
+    - [time horizons](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#time-horizons)
+    - [tau-bench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#tau-bench)
   - first experiment
     - run one frozen agent on fresh tasks binned by human completion time with 20 independent seeds
     - fit 50%, 80%, and 95% horizons under one fixed dollar budget
@@ -136,8 +136,8 @@ research missions
 - 2. make recovery a first-class capability
   - why now
     - long-horizon benchmarks expose compounding failures but usually score only final success
-    - [UltraHorizon](agent_frontier_papers/source_cards.md#ultrahorizon)
-    - [SWE-Bench Pro](agent_frontier_papers/source_cards.md#swe-bench-pro)
+    - [UltraHorizon](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#ultrahorizon)
+    - [SWE-Bench Pro](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#swe-bench-pro)
   - first experiment
     - inject matched tool failures, stale observations, and plausible wrong hypotheses
     - compare baseline, checkpoint, explicit replan, and rollback agents under equal budgets
@@ -151,9 +151,9 @@ research missions
 - 3. close the proxy-to-truth gap
   - why now
     - coding and science benchmarks show that tests and graders can accept defective artifacts
-    - [UTBoost](agent_frontier_papers/source_cards.md#utboost)
-    - [PaperBench](agent_frontier_papers/source_cards.md#paperbench)
-    - [ScienceAgentBench](agent_frontier_papers/source_cards.md#scienceagentbench)
+    - [UTBoost](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#utboost)
+    - [PaperBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#paperbench)
+    - [ScienceAgentBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#scienceagentbench)
   - first experiment
     - create fresh tasks with hidden semantic tests and an independent expert audit
     - forbid the producer agent from querying the final verifier
@@ -167,8 +167,8 @@ research missions
 - 4. test memory causally across sessions
   - why now
     - current systems differ sharply across retrieval, learning, long-range integration, and forgetting
-    - [MemoryAgentBench](agent_frontier_papers/source_cards.md#memoryagentbench)
-    - [WebRL](agent_frontier_papers/source_cards.md#webrl)
+    - [MemoryAgentBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#memoryagentbench)
+    - [WebRL](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#webrl)
   - first experiment
     - compare real memory with shuffled, stale, poisoned, no-memory, and equal-token full-context controls
   - success metric
@@ -181,9 +181,9 @@ research missions
 - 5. optimize task success and policy compliance together
   - why now
     - tool agents fail domain rules, and web agents remain vulnerable to malicious or conflicting instructions
-    - [tau-bench](agent_frontier_papers/source_cards.md#tau-bench)
-    - [AgentDojo](agent_frontier_papers/source_cards.md#agentdojo)
-    - [ST-WebAgentBench](agent_frontier_papers/source_cards.md#st-webagentbench)
+    - [tau-bench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#tau-bench)
+    - [AgentDojo](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#agentdojo)
+    - [ST-WebAgentBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#st-webagentbench)
   - first experiment
     - cross product fresh user tasks, unseen policy clauses, and adaptive prompt injections
     - use diverse simulators plus a blinded human audit subset
@@ -197,9 +197,9 @@ research missions
 - 6. find the human-agent R&D crossover
   - why now
     - agents can win short-budget R&D comparisons while humans overtake them at longer budgets
-    - [RE-Bench](agent_frontier_papers/source_cards.md#re-bench)
-    - [PaperBench](agent_frontier_papers/source_cards.md#paperbench)
-    - [MLE-bench](agent_frontier_papers/source_cards.md#mle-bench)
+    - [RE-Bench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#re-bench)
+    - [PaperBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#paperbench)
+    - [MLE-bench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#mle-bench)
   - first experiment
     - randomize experts to human-only, agent-only, and human-with-agent conditions at 1, 4, and 16 hours
   - success metric
@@ -212,8 +212,8 @@ research missions
 - 7. isolate real coordination gains
   - why now
     - multi-agent systems are measurable, but more agents also mean more compute and more failure channels
-    - [MultiAgentBench](agent_frontier_papers/source_cards.md#multiagentbench)
-    - [AI Control](agent_frontier_papers/source_cards.md#ai-control)
+    - [MultiAgentBench](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#multiagentbench)
+    - [AI Control](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/source_cards.md#ai-control)
   - first experiment
     - compare one agent, independent best-of-n, communicating peers, and a trusted-monitor team under equal token and tool budgets
     - randomize role assignment and communication topology
@@ -231,5 +231,5 @@ bottom line
 - inference: reliability, verification, recovery, and control are capability research
 - recommendation: pursue the seven missions above before scaling task horizon or permissions
 - residual uncertainty
-  - search and omission limits are explicit in the [search log](agent_frontier_papers/search_log.md)
+  - search and omission limits are explicit in the [search log](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_frontier_papers/search_log.md)
   - every absolute result may move with model, scaffold, budget, and benchmark version

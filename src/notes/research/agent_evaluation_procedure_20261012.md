@@ -7,7 +7,7 @@ A person says, in a few vague sentences, what they want guaranteed. An agent wor
 
 A proof checker only tells you the proof matches the statement it was given. It does not tell you the statement is what the person meant. Most checks below are about that gap, plus the ways an agent can fake a pass.
 
-The checks combine literature review with proposed evaluation methods. The sources are in [agent_evaluation_procedure_sources_20261012.md](agent_evaluation_procedure_sources_20261012.md), keyed by check id. You do not need that file to follow the procedure.
+The checks combine literature review with proposed evaluation methods. The sources are in [agent_evaluation_procedure_sources_20261012.md](https://github.com/SichangHe/sichanghe.github.io/blob/main/src/notes/research/agent_evaluation_procedure_sources_20261012.md), keyed by check id. You do not need that file to follow the procedure.
 
 What the five labels tell a reader who must decide whether to trust the result:
 - valid: every claim holds as the person's words say, with no limit to list. You can rely on it as stated.
