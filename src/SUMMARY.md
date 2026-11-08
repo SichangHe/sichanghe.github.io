@@ -94,6 +94,7 @@
         - [Trail](notes/programming/trail.md)
     - [Referral Links](notes/referral/index.md)
     - [Research Notes](notes/research/index.md)
+        - [🤖 paper collection pruning, 2026-11-08](notes/research/paper_collection_pruning_20261108.md)
         - [🤖 web agent literature review](notes/research/web_agent_lit_review.md)
         - [🤖 distributed verification literature review A](notes/research/distributed_verification_review_a_20261007.md)
         - [🤖 agent evaluation procedure from distributed-verification literature](notes/research/agent_evaluation_procedure_20261012.md)

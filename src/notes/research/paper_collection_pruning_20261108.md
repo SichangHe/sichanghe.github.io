@@ -1,0 +1,3845 @@
+# paper collection pruning, 2026-11-08
+(authored by agents unless marked 🧑)
+
+collection decision
+- papers listed below: not useful enough to retain a PDF in this collection
+  - this is a retention decision, not a claim that the papers have no value
+  - based on existing reading and collection records; papers were not reread for this decision
+- titles, years, and tags reuse existing records where available
+  - bibliographic details have not been independently verified
+  - entries without a known paper tag use the recorded title
+
+papers not retained
+- "But they have overlooked a few things in Afghanistan:" An Analysis of the Integration of Biometric Voter Verification in the 2019 Afghan Presidential Elections (2024)
+- "Threat modeling is very formal, it's very technical, and also very hard to do correctly": Investigating Threat Modeling Practices in Open-Source Software Projects (2025)
+- `chen2026inator`: &inator: Correct, Precise C-to-Rust Interface Translation
+- `pegden2026auto`: (Auto)formalization is supposed to be easy: Trellis process semantics for spelling out rigorous proofs
+- `hamid2024nearest`: (Nearest) Neighbors You Can Rely On: Formally Verified k-d Tree Construction and Search in Coq
+- `rybalchenko2014quantified`: (Quantified) Horn Constraint Solving for Program Verification and Synthesis
+- `urban2026130k`: 130k Lines of Formal Topology in Two Weeks: Simple and Cheap Autoformalization for Everyone?
+- 26f0c0c7d0d3c9b1e3a6e2f4c5b7a8d9e0f1c2b3a4d5e6f7a8b9c0d1e2f3a4b_mshbench
+- 2LS: Heap Analysis and Memory Safety (Competition Contribution) (2019)
+- 3D-Prover: Diversity Driven Theorem Proving With Determinantal Point Processes (2024)
+- 3DGen: AI-Assisted Generation of Provably Correct Binary Format Parsers (2024)
+- A Basis for Verifying Multi-threaded Programs (2009)
+- `eekelen2019benchmark`: A benchmark for C program verification
+- A Bi-Directional Extensible Interface Between Lean and Mathematica (2021)
+- A blueprint for the formalization of norm-variation of multiple ergodic averages for commuting transformations (2026)
+- `owre2008brief`: A brief overview of PVS
+- A Calculus for Units of Measure with Conversion (2026)
+- `back1988calculus`: A calculus of refinements for program derivations
+- `deng2023case`: A Case for Synthesis of Recursive Quantum Unitary Programs
+- A Case Study in Assuring AI-Written Software (2026)
+- `brizhinev2018case`: A case study in formal verification of a Java program
+- `russinoff2000case`: A Case Study in Formal Verification of Register-Transfer Logic with ACL2: The Floating Point Adder of the AMD Athlon TM Processor
+- A Case Study on Emergent Cheating and Whistleblowing in Autonomous Research Swarms (2026)
+- `hasegawa2025case`: A Case Study on Model Checking and Runtime Verification for Awkernel
+- `tran2021case`: A case study on parametric verification of failure detectors
+- `bayazt2025case`: A Case Study on the Effectiveness of LLMs in Verification with Proof Assistants
+- A Certificate-Producing Cascade for Equational Implication: The SAIR EQT2 Stage 2 Solver (2026)
+- A Certified Proof Checker for Deep Neural Network Verification in Imandra (2024)
+- `chlipala2007certified`: A certified type-preserving compiler from lambda calculus to assembly language
+- A Combinatorial Identities Benchmark for Theorem Proving via Automated Theorem Generation (2025)
+- `helmstetter2008comparison`: A Comparison of Two SystemC/TLM Semantics for Formal Verification
+- A Complete Approach to Loop Verification with Invariants and Summaries (2020)
+- `drodt2026complete`: A Complete, Formal Semantics for Rust Source Code
+- A complex-analytic proof of square-restricted stable phase retrieval in Fock space (2026)
+- A Compositional Approach to Verifying Modular Robotic Systems (2022)
+- `ramananandro2015compositional`: A Compositional Semantics for Verified Separate Compilation and Linking
+- A Comprehensive Formal Security Analysis of OPC UA (2025)
+- A comprehensive, formal and automated analysis of the EDHOC protocol (2023)
+- `blanchet2006computationally`: A computationally sound mechanized prover for security protocols
+- A Concurrent Constraint Programming Interpretation of Access Permissions (2018)
+- `kanav2014conference`: A Conference Management System with Verified Document Confidentiality
+- `herbelin2012constructive`: A Constructive Proof of Dependent Choice, Compatible with Classical Logic
+- A Constructor-Based Reachability Logic for Rewrite Theories (2017)
+- A Contemporary Survey of Large Language Model Assisted Program Analysis (2025)
+- A Contract-Grade Verifier for LLM-Generated GPU Kernels, and a Native Blackwell Backward for the Gated-Linear-Recurrence Family (2026)
+- `boldo2017coq`: A Coq formal proof of the Lax-Milgram theorem
+- `benzaken2019coq`: A Coq mechanised formal semantics for realistic SQL queries: formally reconciling SQL and bag relational algebra
+- A cyclic proof system for Guarded Kleene Algebra with Tests (full version) (2024)
+- A Cyclic Proof System for HFLN (2020)
+- `bromberger2021datalog`: A Datalog Hammer for Supervisor Verification Conditions Modulo Simple Linear Arithmetic
+- A DbC Inspired Neurosymbolic Layer for Trustworthy Agent Design (2025)
+- `delaune2004decision`: A decision procedure for the verification of security protocols with explicit destructors
+- `soares2020deductive`: A Deductive Verification Framework For Higher Order Programs
+- `schroer2023deductive`: A Deductive Verification Infrastructure for Probabilistic Programs (Extended Version)
+- A Deeper Look at Depth: Stable Generation Accounting for Quantifier Reasoning (2026)
+- A Dependently Typed Library for Static Information-Flow Control in Idris (2019)
+- A Design Theory for AI-Assisted Software Development Derived from Christopher Alexander's Theory of Form (2026)
+- A Deterministic Agentic Workflow for HS Tariff Classification: Multi-Dimensional Rule Reasoning with Interpretable Decisions (2026)
+- A Domain-Specific Harness for End-to-End Automation of Optimization Research (2026)
+- `almeida2017fast`: A Fast and Verified Software Stack for Secure Function Evaluation
+- A First Class Boolean Sort in First-Order Theorem Proving and TPTP (2015)
+- A Fixed-point Theorem for Horn Formula Equations (2021)
+- `slobodova2011flexible`: A flexible formal verification framework for industrial scale validation
+- `fasse2023flexible`: A flexible specification approach for verifying total correctness of fine-grained concurrent modules
+- A Formal Analysis of 5G Authentication (2018)
+- A Formal Analysis of Apple's iMessage PQ3 Protocol (2025)
+- A Formal Analysis of IEEE 802.11's WPA2: Countering the Kracks Caused by Cracking the Counters (2020)
+- A Formal Analysis of SCTP: Attack Synthesis and Patch Verification (2024)
+- `park2023formal`: A Formal CHERI-C Semantics for Verification
+- `freund1999formal`: A formal framework for the Java bytecode language and verifier
+- `bailey1995formal`: A formal model and specification language for procedure calling conventions
+- `carbone2003formal`: A formal model for trust in dynamic networks
+- `bartoletti2021formal`: A Formal Model of Algorand Smart Contracts
+- A formal proof of Hensel's lemma over the p-adic integers (2019)
+- A formal proof of PAC learnability for decision stumps (2021)
+- A formal proof of the independence of the continuum hypothesis (2020)
+- A Formal Security Analysis of CAN XL (2026)
+- `naus2023formal`: A Formal Semantics for P-Code
+- A formal specification of Java class loading (2000)
+- `park2018formal`: A formal verification tool for Ethereum VM bytecode
+- `cohen2024formalization`: A Formalization of Core Why3 in Coq
+- A Formalization of the Mean-Field Derivation of the Vlasov Equation (2026)
+- `rushby1994formally`: A formally verified algorithm for clock synchronization under a hybrid fault model
+- A Formally Verified Compiler Back-end (2009)
+- `bourke2017formally`: A formally verified compiler for Lustre
+- `jeannin2015formally`: A Formally Verified Hybrid System for the Next-Generation Airborne Collision Avoidance System
+- `kohlen2025formally`: A Formally Verified IEEE 754 Floating-Point Implementation of Interval Iteration for MDPs
+- A Formally Verified Library of Mathematical Finance in Lean 4 (2026)
+- `klein2010formally`: A formally verified OS kernel. Now what?
+- `tobler2025formally`: A Formally Verified Robustness Certifier for Neural Networks
+- `robert2012formally`: A Formally-Verified Alias Analysis
+- `boldo2013formally`: A formally-verified C compiler supporting floating-point arithmetic
+- `jourdan2015formally`: A Formally-Verified C Static Analyzer
+- `brunel2009foundation`: A foundation for flow-based program matching: using temporal logic and model checking
+- A framework for assessing the capabilities of code generation of constraint domain-specific languages with large language models (2026)
+- `cho2024framework`: A Framework for Debugging Automated Program Verification Proofs via Proof Actions
+- A Framework for Designing Provably Secure Steganography (2025)
+- `gomes2024framework`: A framework for embedded software portability and verification: from formal models to low-level code
+- `andreae2006framework`: A framework for implementing pluggable type systems
+- A Framework for Modelling, Verification and Transformation of Concurrent Imperative Programs (2020)
+- A Framework for Proof-carrying Logical Transformations (2021)
+- `soares2023framework`: A Framework for the Automated Verification of Algebraic Effects and Handlers (extended version)
+- `küsters2012framework`: A Framework for the Cryptographic Verification of Java-Like Programs
+- `alkassar2013framework`: A Framework for the Verification of Certifying Computations
+- A fully verified container library (2015)
+- `esparza2013fully`: A Fully Verified Executable LTL Model Checker
+- `arquint2022generic`: A Generic Methodology for the Modular Verification of Security Protocol Implementations (extended version)
+- `igarashi2001generic`: A generic type system for the Pi-calculus
+- A Governance Methodology Layer for AI-Assisted Software Development: Defect Taxonomy, Controlled Ablation, and a Test of Process-Over-Capability (2026)
+- `crichton2023grounded`: A Grounded Conceptual Model for Ownership Types in Rust
+- A HAT Trick: Automatically Verifying Representation Invariants using Symbolic Finite Automata (2024)
+- `akhtar2011high`: A high-level language for modeling algorithms and their properties
+- A Human Audit of OpenAIs AI-Generated Mathematical Proofs (2026)
+- A Human-AI Collaborative Workflow for Mathematical Discovery: A Case Study in Grover-Compatible Riemannian Optimization (2025)
+- `lynch1989hundred`: A hundred impossibility proofs for distributed computing
+- `kumar2012hybrid`: A hybrid approach to cyber-physical systems verification
+- `gao2021hybrid`: A Hybrid Approach to Formal Verification of Higher-Order Masked Arithmetic Programs
+- `ayoun2025hybrid`: A Hybrid Approach to Semi-automated Rust Verification
+- `yang2020hybrid`: A Hybrid Formal Verification System in Coq for Ensuring the Reliability and Security of Ethereum-Based Service Smart Contracts
+- A Kernel-Checked Exclusion Certificate for Erdős Problem 647 (2026)
+- `chen2019large`: A Large-Scale Empirical Study on Control Flow Identification of Smart Contracts
+- A Layered Formal Methods Approach to Answering Queue-related Queries (2025)
+- A Lean Dataset for International Math Olympiad: Small Steps towards Writing Math Proofs for Hard Problems (2024)
+- `fang2026learning`: A Learning Method for Symbolic Systems Using Large Language Models
+- A Light-Weight Approach for Verifying Multi-Threaded Programs with CPAchecker (2016)
+- `pearce2021lightweight`: A Lightweight Formalism for Reference Lifetimes and Borrowing in Rust
+- A Linear First-Order Functional Intermediate Language for Verified Compilers (2015)
+- `distefano2006local`: A Local Shape Analysis Based on Separation Logic
+- `vogels2008machine`: A machine checked soundness proof for an intermediate verification language: extended version
+- A machine-checked direct proof of the Steiner-lehmus theorem (2022)
+- `yang2026machine`: A machine-checked proof of the Dong-Yang classification of optimal (n,4) binary codes for BSCs
+- `gonthier2013machine`: A Machine-Checked Proof of the Odd Order Theorem
+- `kol2026machine`: A Machine-Verified Proof of a Quantum-Optimization Conjecture
+- `gleirscher2023manifesto`: A manifesto for applicable formal methods
+- `shamsu2025mechanically`: A Mechanically Verified Garbage Collector for OCaml
+- `hirschi2016method`: A Method for Verifying Privacy-Type Properties: The Unbounded Case
+- A Minimal Agent for Automated Theorem Proving (2026)
+- A Minimalist Proof Language for Neural Theorem Proving over Isabelle/HOL (2025)
+- `mccormack2024mixed`: A Mixed-Methods Study on the Implications of Unsafe Rust for Interoperation, Encapsulation, and Tooling
+- `he2005modular`: A modular correctness proof of IEEE 802.11i and TLS
+- `armand2011modular`: A Modular Integration of SAT/SMT Solvers to Coq through Proof Witnesses
+- A monadic framework for relational verification: applied to information security, program equivalence, and optimizations (2018)
+- `fleury2023pragmatic`: A More Pragmatic CDCL for IsaSAT and Targetting LLVM (Short Paper)
+- `liu2025multi`: A Multi-Agent Generative AI Framework for IC Module-Level Verification Automation
+- A Natural Formalized Proof Language (2024)
+- A Neuro-Symbolic Approach to Strategy Synthesis for Strategic Logics (2026)
+- A Neurosymbolic Approach to Loop Invariant Generation via Weakest Precondition Reasoning (2025)
+- A Neurosymbolic Approach to Natural Language Formalization and Verification
+- A New Approach Towards Autoformalization (2023)
+- `abdollahi2005new`: A new canonical form for fast boolean matching in logic synthesis and verification
+- `tihanyi2025new`: A New Era in Software Security: Towards Self-Healing Software via Large Language Models and Formal Verification
+- A New Interaction Concept for Interactive and Autoactive Program Verification (2026)
+- `tan2016new`: A new verified compiler backend for CakeML
+- A Note on an Inferentialist Approach to Resource Semantics (2024)
+- `kazakov2009note`: A Note on the Complexity of the Satisfiability Problem for Graded Modal Logics
+- `boyapati2001parameterized`: A parameterized type system for race-free Java programs
+- `reger2013pattern`: A pattern-based approach to parametric specification mining
+- `esparza2012perfect`: A Perfect Model for Bounded Verification
+- A Pilot Benchmark for NL-to-FOL Translation in Planetary Exploration (2026)
+- A Polymorphic Intermediate Verification Language: Design and Logical Encoding (2010)
+- `saligrama2019practical`: A Practical Analysis of Rust's Concurrency Story
+- `holzmann1999practical`: A practical method for verifying event-driven software
+- A Practical Quantum Hoare Logic with Classical Variables, I (2024)
+- `tsukada2025primal`: A Primal-Dual Perspective on Program Verification Algorithms (Extended Version)
+- A Probabilistic Separation Logic (2019)
+- `amilon2024program`: A Program Instrumentation Framework for Automatic Verification
+- `ren2012programmer`: A Programmer-Centric Approach to Program Verification in ATS
+- `apt1980proof`: A Proof System for Communicating Sequential Processes
+- A Proof-of-Concept for Explainable Disease Diagnosis Using Large Language Models and Answer Set Programming (2025)
+- A Proof-Producing Compiler for Blockchain Applications (2025)
+- `cimatti2012property`: A Property-Based Proof System for Contract-Based Design
+- A Reality Check of Language Models as Formalizers on Constraint Satisfaction Problems (2025)
+- `sharma2013refinement`: A refinement calculus for Promela
+- `bily2025refinement`: A Refinement Methodology for Distributed Programs in Rust
+- `denes2012refinement`: A Refinement-Based Approach to Computational Algebra in Coq
+- `atkey2014relationally`: A relationally parametric model of dependent type theory
+- `decky2010road`: A road to a formally verified general-purpose operating system
+- `klaus2026rust`: A Rust-to-Lean Verification Pipeline with AI Provers: An Experience Report
+- `li2021secure`: A Secure and Formally Verified Linux KVM Hypervisor
+- `delignat-lavaud2021security`: A Security Model and Fully Verified Implementation for the IETF QUIC Record Layer
+- `kapus2019segmented`: A segmented memory model for symbolic execution
+- `gao2025semantic`: A Semantic Search Engine for Mathlib4
+- `gauthier2024semantics`: A Semantics of Structures, Unions, and Underspecified Terms for Formal Specification
+- A Sequent Calculus For Trace Formula Implication (2025)
+- A Short Counterexample Property for Safety and Liveness Verification of Fault-tolerant Distributed Algorithms (2016)
+- `beg2025short`: A Short Survey on Formalising Software Requirements using Large Language Models
+- `tristan2010simple`: A simple, verified validator for software pipelining
+- A Solver-in-the-Loop Framework for Improving LLMs on Answer Set Programming for Logic Puzzle Solving (2025)
+- `weirich2017specification`: A specification for dependent types in Haskell
+- `pardo2022specification`: A Specification Logic for Programs in the Probabilistic Guarded Command Language (Extended Version)
+- `goldberg1998specification`: A specification of Java loading and bytecode verification
+- A Spectral Analysis of Noise: A Comprehensive, Automated, Formal Analysis of Diffie-Hellman Protocols (2020)
+- A Spectral Proof of Khachiyan's Ellipsoid Conjecture (2026)
+- `lange2018static`: A static verification framework for message passing in Go using behavioural types
+- A Storm is Coming: A Modern Probabilistic Model Checker (2017)
+- A Study of the Reliability of Agentic AI-Generated Programs (2026)
+- `mccormack2024study`: A Study of Undefined Behavior Across Foreign Function Boundaries in Rust Libraries
+- `luckcuck2019summary`: A Summary of Formal Specification and Verification of Autonomous Robotic Systems
+- `sanchez2019survey`: A survey of challenges for runtime verification from advanced application domains (beyond software)
+- `weyns2012survey`: A survey of formal methods in self-adaptive systems
+- A Survey of Learning-based Automated Program Repair (2023)
+- A Survey of Practical Formal Methods for Security (2021)
+- `huang2024survey`: A survey of safety and trustworthiness of large language models through the lens of verification and validation
+- `bradbury2004survey`: A survey of self-management in dynamic software architecture specifications
+- `tolmach2021survey`: A Survey of Smart Contract Formal Specification and Verification
+- `agha2018survey`: A survey of statistical model checking
+- `ge2025survey`: A Survey of Vibe Coding with Large Language Models
+- A Survey on Deep Learning for Theorem Proving (2024)
+- `zhao2015survey`: A survey on formal specification and verification of separation kernels
+- A Survey on Large Language Models for Mathematical Reasoning (2025)
+- `zheng2026survey`: A Survey on LLM-Integrated Hardware Design Verification
+- `bhargavan2022symbolic`: A Symbolic Analysis of Privacy for TLS 1.3 with Encrypted Client Hello
+- `kuvent2017symbolic`: A symbolic justice violations transition system for unrealizable GR(1) specifications
+- A System to Verify Network Behavior of Known Cryptographic Clients (2017)
+- A Tale of 1001 LoC: Potential Runtime Error-Guided Specification Synthesis for Verifying Large-Scale Programs (2025)
+- `tafese2025tale`: A Tale of Two Case Studies: A Unified Exploration of Rust Verification with SeaBMC
+- A Tale of Two Headers: A Formal Analysis of Inconsistent Click-Jacking Protection on the Web (2020)
+- `lafourcade2025tale`: A Tale of Two Worlds, a Formal Story of WireGuard Hybridization
+- A Task-Centric Ontology and Deterministic Domain Rules as a Verifiable Core for AI-Assisted Chemistry Problem Solving (2026)
+- `parnas1972technique`: A technique for software module specification with examples
+- `aguirre2002temporal`: A temporal logic approach to the specification of reconfigurable component-based systems
+- A Theory of Formal Synthesis via Inductive Learning (2015)
+- A Tool for Checking ANSI-C Programs (2004)
+- A Tool for the Certification of PLCs based on a Coq Semantics for Sequential Function Charts (2011)
+- `chen2026transfer`: A Transfer Tactic for Lean
+- `neatherway2012traversal`: A traversal-based algorithm for higher-order model checking
+- `singavarapu2026trust`: A Trust Ledger and an Execution Check for CPG-Based C-to-Lean 4 Autoformalization: Separating Declined from Silently Incorrect Translations
+- `bodin2014trusted`: A trusted mechanised JavaScript specification
+- `owre1994tutorial`: A tutorial on using PVS for hardware verification
+- A Two-Phase Infinite/Finite Low-Level Memory Model: Reconciling Integer–Pointer Casts, Finite Space, and undef at the LLVM IR Level of Abstraction (2024)
+- `kobayashi2009type`: A Type System Equivalent to the Modal Mu-Calculus Model Checking of Higher-Order Recursion Schemes
+- `he2021type`: A type system for extracting functional specifications from memory-safe imperative programs
+- `freund1998type`: A type system for object initialization in the Java bytecode language
+- `ramsay2014type`: A type-directed abstraction refinement approach to higher-order model checking
+- `krebbers2015typed`: A Typed C11 Semantics for Interactive Theorem Proving
+- A UML-based proposal for IoT system requirements specification (2018)
+- `ramananandro2016unified`: A unified Coq framework for verifying C programs with floating-point computations
+- `amusuo2025unit`: A Unit Proofing Framework for Code-level Verification: A Research Agenda
+- `kaleeswaran2023user`: A user study for evaluation of formal verification results and their explanation at Bosch
+- `avigad2022verified`: A verified algebraic representation of cairo program execution
+- A Verified Certificate Checker for Finite-Precision Error Bounds in Coq and HOL4 (2017)
+- `chlipala2010verified`: A verified compiler for an impure functional language
+- `eberl2015verified`: A verified compiler for probability density functions
+- A Verified Confidential Computing as a Service Framework for Privacy Preservation (2023)
+- A verified implementation of the Misra and Gries edge coloring algorithm (2025)
+- `amorim2014verified`: A verified information-flow architecture
+- `krings2024verified`: A verified low-level implementation and visualization of the adaptive exterior light and speed control system
+- `mansky2017verified`: A verified messaging system
+- `sprenger1998verified`: A verified model checker for the modal Μ-calculus in Coq
+- `hietala2021verified`: A verified optimizer for Quantum circuits
+- `blaudeau2020verified`: A verified packrat parser interpreter for parsing expression grammars
+- `tan2015verified`: A verified type system for CakeML
+- `fromherz2019verified`: A verified, efficient embedding of a verifiable assembly language
+- A Verifier-Guided Explainable Reasoning Framework with Gold-Anchored QLoRA, Task-Aware Mixture-of-Experts, and Group-Relative RLVR (2026)
+- A-ProS: Towards Reliable Autonomous Programming Through Multi-Model Feedback (2026)
+- `ma2026a2rbench`: A2RBench: An Automatic Paradigm for Formally Verifiable Abstract Reasoning Benchmark Generation
+- `li2014aalta`: Aalta: an LTL satisfiability checker over Infinite/Finite traces
+- ABC: An Academic Industrial-Strength Verification Tool (2010)
+- ABSENTIA: Detecting Broken Access Control Vulnerabilities in Web Applications (2026)
+- `jacquemin2019abstract`: Abstract Compilation for Verification of Numerical Accuracy Properties
+- `hofmann2014abstract`: Abstract interpretation from Büchi automata
+- `dams1997abstract`: Abstract interpretation of reactive systems
+- `cousot1977abstract`: Abstract interpretation: a unified lattice model for static analysis of programs by construction or approximation of fixpoints
+- `cousot2014abstract`: Abstract interpretation: past, present and future
+- `giacobazzi2004abstract`: Abstract non-interference: parameterizing non-interference by abstract interpretation
+- Abstract Refinement Types (2013)
+- `giannakopoulou2013abstraction`: Abstraction and Learning for Infinite-State Compositional Verification
+- `grigore2016abstraction`: Abstraction refinement guided by a learnt probabilistic model
+- `sethi2013abstractions`: Abstractions for model checking SDN controllers
+- Absynthe: Abstract Interpretation-Guided Synthesis (2023)
+- `gopinathan2025accelerating`: Accelerating Automated Program Verifiers by Automatic Proof Localization
+- Accelerating Scientific Research with Gemini: Case Studies and Common Techniques (2026)
+- `gross2022accelerating`: Accelerating verified-compiler development with a verified rewriting engine
+- AccelSync: Verifying Synchronization Coverage in Accelerator Pipeline Programs (2026)
+- `corazza2025accessible`: Accessible Smart Contracts Verification: Synthesizing Formal Models with Tamed LLMs
+- `xiao2023account`: Account Verification on Social Media: User Perceptions and Paid Enrollment
+- `ozga2025ace`: ACE: Towards A High-Assurance Isolated Virtualization Environment for RISC-V
+- Achilles: A Formal Framework of Leaking Secrets from Signature Schemes via Rowhammer (2025)
+- `brock1996acl2`: ACL2 theorems about commercial microprocessors
+- ACL2(ml): Machine-Learning for ACL2 (2014)
+- `kaufmann1996acl2`: ACL2: An industrial strength version of Nqthm
+- ACon^2: Adaptive Conformal Consensus for Provable Blockchain Oracles (2023)
+- `hu2026acslbench`: ACSLBench: A Verified C/ACSL Corpus and Benchmark with Compositional Call Chains for Formal Specification Synthesis
+- `bultan2001action`: Action Language Verifier
+- `iftikhar2014activforms`: ActivFORMS: active formal models for self-adaptation
+- Actris 2.0: Asynchronous Session-Type Based Reasoning in Separation Logic (2020)
+- Adaptable Logical Control for Large Language Models (2024)
+- Adaptive Proof Refinement with LLM-Guided Strategy Selection (2025)
+- AdapTrack: Constrained Decoding without Distorting LLM's Output Intent (2025)
+- `stefan2012addressing`: Addressing covert termination and timing channels in concurrent information flow systems
+- Adjoint Natural Deduction (Extended Version) (2024)
+- `chen2018advanced`: Advanced automata-based algorithms for program termination checking
+- `tsoukalas2026advancing`: Advancing mathematics research with AI-driven formal proof search
+- Advancing Natural Language Formalization to First Order Logic with Fine-tuned LLMs (2025)
+- AdverMCTS: Combating Pseudo-Correctness in Code Generation via Adversarial Monte Carlo Tree Search (2026)
+- `li2025adversarial`: Adversarial Agent Collaboration for Correctness Improvements of C to Safe Rust Translation
+- `guo2018adversarial`: Adversarial symbolic execution for detecting concurrency-related cache timing leaks
+- `yousefzadeh2025advocate`: Advocate for Complete Benchmarks for Formal Reasoning with Formal/Informal Statements and Formal/Informal Proofs
+- `limperg2023aesop`: Aesop: White-Box Best-First Proof Search for Lean
+- AfterVibe: What Remains When the Conversation Ends (2026)
+- AG-CoT: Verified Algorithmic Traces for LLM Program Synthesis on Clifford Circuits (2026)
+- `brown2026agent`: Agent Hunt: Bounty Based Collaborative Autoformalization With LLM Agents
+- Agent-Driven Verification of Memory Safety for liblzma Decoder Components with VST (2026)
+- `hu2025agent2world`: Agent2World: Learning to Generate Symbolic World Models via Adaptive Multi-Agent Feedback
+- AgentEval: DAG-Structured Step-Level Evaluation for Agentic Workflows with Error Propagation Tracking (2026)
+- Agentic Agile-V: From Vibe Coding to Verified Engineering in Software and Hardware Development (2026)
+- Agentic AI for Software: thoughts from Software Engineering community (2025)
+- Agentic AI in the Software Development Lifecycle: Architecture, Empirical Evidence, and the Reshaping of Software Engineering (2026)
+- `pothireddypalli2026agentic`: Agentic AI-based Coverage Closure for Formal Verification
+- Agentic AutoResearch forSpace Autonomy: An Auditable, LLM-Driven Research Agent for Aerospace Control Problems (2026)
+- Agentic Code Reasoning (2026)
+- `lin2026agentic`: Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses
+- `sun2026agentic`: Agentic Model Checking
+- Agentic Neuro-Symbolic Planning and Commissioning for Human-in-the-Loop Industrial Robotics with Digital Twins (2026)
+- `xia2026agentic`: Agentic Neurosymbolic Collaboration for Mathematical Discovery: A Case Study in Combinatorial Design
+- `ong2026agentic`: Agentic Porting, Construction and Initial Verification and Validation of Libraries within the Open Source Unified TRAnsient Multi-Phase Advanced Reactor simulation Kit (Outram Park) Part I: A Software Engineering Log for Thermal Hydraulics
+- `lee2026agentic`: Agentic Proof and Property-Based Testing via Property-Templates in Data-Intensive Computing
+- Agentic Proof Automation: A Case Study (2026)
+- `sosso2026agentic`: Agentic Proving for Program Verification
+- `suresh2026agentic`: Agentic Separation Logic Specification Synthesis
+- Agentic Specification Generator for Move Programs (2025)
+- Agentic Stage-One Stellarator Optimization: Autonomous Multi-Objective Search for Finite-Beta Equilibria (2026)
+- Agentic Verification of Software Systems (2025)
+- Agentic-IC3: Enabling Semantic Proof Search in IC3 Model Checking (2026)
+- `ni2026agentified`: Agentified Assessment of Logical Reasoning Agents
+- AgentLens: Revealing The Lucky Pass Problem in SWE-Agent Evaluation (2026)
+- AgentLTL: A Trace-Verification Framework for Measuring, Enforcing, and Training Procedural Compliance in Tool-Using LLM Agents (2026)
+- AgentModernize: Preserving Business Logic in Legacy Modernization with Multi-Agent LLMs and Behavioral Specification Graphs (2026)
+- `xavier2026agentproof`: Agentproof: Static Verification of Agent Workflow Graphs
+- Agents Are Systems, Not Models: Rethinking Agentic Evaluation (2026)
+- Agents4PLC: Automating Closed-Loop PLC Code Generation and Verification in Industrial Control Systems Using LLM-Based Agents (2024)
+- AgentSpec: Customizable Runtime Enforcement for Safe and Reliable LLM Agents (2025)
+- `li2024agon`: AGON: Automated Design Framework for Customizing Processors From ISA Documents
+- Agora: Toward Autonomous Bug Detection in Production-Level Consensus Protocols with LLM Agents (2026)
+- AGVTS: Automated Generation and Verification of Temporal Specifications for Aeronautics SCADE Models
+- AI Agent Swarms as Researchers: Progress, Challenges, and Open Questions (2026)
+- AI as a Compiler: Compiling Triton kernels without the Triton compiler (2026)
+- AI Chains: Transparent and Controllable Human-AI Interaction by Chaining Large Language Model Prompts (2021)
+- `crescitelli2026ai`: AI Evaluation Should Measure Verification Cost, Not Correctness Alone
+- AI for Mathematics: Progress, Challenges, and Prospects (2026)
+- AI IDEs or Autonomous Agents? Measuring the Impact of Coding Agents on Software Development (2026)
+- AI with Authority, from Application to Silicon (2026)
+- `doan2025ai`: AI-Assisted Autoformalization of Combinatorics Problems in Proof Assistants
+- AI-Assisted Engineering Should Track the Epistemic Status and Temporal Validity of Architectural Decisions (2026)
+- `hasan2026ai`: AI-Assisted Hardware Security Verification: A Survey and AI Accelerator Case Study
+- AI-for-Science Low-code Platform with Bayesian Adversarial Multi-Agent Framework (2026)
+- `zhang2026ai4slt`: AI4SLT: Empirical Processes in Lean 4 for Formal Statistical Learning Theory
+- AIProver: Agentic Auto-Formalization of Mathematical Research via Certificate-Driven Evolving Harness (2026)
+- `jiang2026akirarust`: AkiraRust: Re-thinking LLM-aided Rust Repair Using a Feedback-guided Thinking Switch
+- Alchemy: Amplifying Theorem-Proving Capability through Symbolic Mutation (2024)
+- Aletheia: What Makes RLVR For Code Verifiers Tick? (2026)
+- `armstrong2013algebraic`: Algebraic Principles for Rely-Guarantee Style Concurrency Verification Tools
+- `zhang2023algo`: ALGO: Synthesizing Algorithmic Programs with Generated Oracle Verifiers
+- `leeson2022algorithm`: Algorithm Selection for Software Verification using Graph Neural Networks
+- `dipto2026algorithm`: Algorithm-Based Pipeline for Reliable and Intent-Preserving Code Translation with LLMs
+- `nigam2009algorithmic`: Algorithmic specifications in linear logic with subexponentials
+- `gumbaumezquita2026algorithmic`: Algorithmic Unverifiability of Safety for Fixed and Recursively Self-Improving Systems
+- Algorithms and Complexity of Difference Logic (2024)
+- AlgoSkill: Learning to Design Algorithms by Scheduling Human-Like Skills (2026)
+- `zhao2026algoveri`: AlgoVeri: An Aligned Benchmark for Verified Code Generation on Classical Algorithms
+- Alias Equals Zone? Large-Scale and Stealthy Takeover of Domain Hosting Service via CNAME-Following Cross-Domain Verification (2026)
+- Alias Types (2000)
+- `krebbers2013aliasing`: Aliasing Restrictions of C11 Formalized in Coq
+- Aligning Requirement for Large Language Model's Code Generation (2025)
+- `lopes2021alive2`: Alive2: bounded translation validation for LLVM
+- All about Eve: Execute-Verify Replication for Multi-Core Servers (2012)
+- `gadde2024all`: All Artificial, Less Intelligence: GenAI through the Lens of Formal Verification
+- All for One and One for All: Program Logics for Exploiting Internal Determinism in Parallel Programs (2025)
+- All from one, one for all: on model checking using representatives (1993)
+- `schwartz2010all`: All You Ever Wanted to Know about Dynamic Taint Analysis and Forward Symbolic Execution (but Might Have Been Afraid to Ask)
+- All Your Tokens are Belong to Us: Demystifying Address Verification Vulnerabilities in Solidity Smart Contracts (2024)
+- All-Path Reachability Logic (2014)
+- `milicevic2015alloy`: Alloy*: A General-Purpose Higher-Order Relational Constraint Solver
+- `jackson2001alloy`: Alloy: a lightweight object modelling notation
+- `jackson2002alloy`: Alloy: A new technology for software modelling
+- `baier2008almost`: Almost-Sure Model Checking of Infinite Paths in One-Clock Timed Automata
+- `zhou2026alpha`: Alpha-RTL: Test-Time Training for RTL Hardware Optimization
+- ALPS: Measuring Valid Creativity in Large Language Models with Mathematical Construction (2026)
+- AMDKernelVault: Large-Scale Datasets and Agentic Training for AMD GPU Kernel Optimization (2026)
+- Amortised Resource Analysis with Separation Logic (2011)
+- `nipkow2015amortized`: Amortized Complexity Verified
+- An Abstract Contract Theory for Programs with Procedures (2021)
+- An abstract interpretation framework for termination (2012)
+- `wang2019abstract`: An abstract stack based approach to verified compositional compilation to machine code
+- An Agile Formal Specification Language Design Based on K Framework (2024)
+- `sun2026ai`: An AI Approach to Verified Production Cryptographic Libraries
+- `zhang2026ai`: An AI-Assisted Formalization of the Poincar\'e Conjecture
+- `antonopoulos2022algebra`: An algebra of alignment for relational verification
+- An approach for modularly verifying the core of Rust's atomic reference counting algorithm against the (Y)C20 memory consistency model (2025)
+- An Automata-Theoretic Approach for Model Checking Threads for LTL Propert (2006)
+- `cristia2022automatically`: An Automatically Verified Prototype of the Android Permissions System
+- `cristia2021automatically`: An Automatically Verified Prototype of the Tokeneer ID Station Specification
+- `braibant2010efficient`: An Efficient Coq Tactic for Deciding Kleene Algebras
+- An Efficient Cyclic Entailment Procedure in a Fragment of Separation Logic (2022)
+- `blatter2024efficient`: An Efficient VCGen-based Modular Verification of Relational Properties
+- An empirical evaluation of pre-trained large language models for repairing declarative formal specifications (2024)
+- `elsayed2026empirical`: An Empirical Security Evaluation of LLM-Generated Cryptographic Rust Code
+- `fan2026empirical`: An Empirical Study of LLM-Generated Specifications for VeriFast
+- `fonseca2017empirical`: An Empirical Study on the Correctness of Formally Verified Distributed Systems
+- An encoding of array verification problems into array-free Horn clauses (2015)
+- An Evaluation Benchmark for Autoformalization in Lean4 (2024)
+- `luckham1995event`: An event-based architecture definition language
+- `ellison2012executable`: An Executable Formal Semantics of C with Applications
+- `kan2018executable`: An Executable Operational Semantics for Rust with the Formalization of Ownership and Borrowing
+- An Exercise in Invariant-based Programming with Interactive and Automatic Theorem Prover Support (2012)
+- An experimental Study using ACSL and Frama-C to formulate and verify Low-Level Requirements from a DO-178C compliant Avionics Project (2015)
+- `crary2002expressive`: An expressive, scalable type theory for certified code
+- `banerjee2009immune`: An Immune System Inspired Approach to Automated Program Verification
+- `filippidis2014improvement`: An improvement of the piggyback algorithm for parallel model checking
+- An In-Context Learning Agent for Formal Theorem-Proving (2023)
+- `johnson2013incremental`: An incremental verification framework for component-based software systems
+- An Infinite Needle in a Finite Haystack: Finding Infinite Counter-Models in Deductive Verification (2023)
+- `masci2019integrated`: An Integrated Development Environment for the Prototype Verification System
+- `abdulla2013integrated`: An Integrated Specification and Verification Technique for Highly Concurrent Data Structures
+- `rajan1995integration`: An integration of model checking with automated proof checking
+- `willmor2006intensional`: An intensional approach to the specification of test cases for database applications
+- `gray2025interactive`: An Interactive Debugger for Rust Trait Errors
+- An Iris for Expected Cost Analysis (2024)
+- An iterative approach to precondition inference using constrained Horn clauses (2018)
+- An LLM Agentic Approach for Legal-Critical Software: A Case Study for Tax Prep Software (2025)
+- An LLM-Based Assistance System for Intuitive and Flexible Capability-Based Planning (2026)
+- `feng2007open`: An open framework for foundational proof-carrying code
+- `laleau2000overview`: An overview of a method and its support tool for generating B specifications from UML notations
+- An Overview of the HFL Model Checking Project (2021)
+- `havelund2004overview`: An Overview of the Runtime Verification Tool Java PathExplorer
+- An Update on Deductive Synthesis and Repair in the Leon Tool (2016)
+- Analysis and Transformation of Constrained Horn Clauses for Program Verification (2021)
+- `gallagher2014analysis`: Analysis and Transformation Tools for Constrained Horn Clause Verification
+- `huang2026analyzing`: Analyzing the Narration Gap in LLM-Solver Loops
+- `yang2026ancora`: ANCORA: Learning to Question via Manifold-Anchored Self-Play for Verifiable Reasoning
+- Andy: A Mathematical Agent for Rigorous Proof and Autonomous Research (2026)
+- Aneris: A Mechanised Logic for Modular Reasoning about Distributed Systems (2020)
+- `rao2025annotating`: Annotating and Auditing the Safety Properties of Unsafe Rust
+- `clarke1994another`: Another Look at LTL Model Checking
+- ANPL: Towards Natural Programming with Interactive Decomposition (2023)
+- `mottola2010anquiro`: Anquiro: enabling efficient static verification of sensor network software
+- `lee2026answer`: Answer-Conditioned Chains of Thought Degrade Verifiable-Reasoning Distillation in Large Language Models
+- `xu2026aoa`: AoA: Theorem Proving Agent over Abstract Syntax Tree of Redesigned Language
+- APE-Bench: Evaluating Automated Proof Engineering for Formal Math Libraries (2025)
+- APEX: A Verified Architecture for Proofs of Execution on Remote Devices under Full Software Compromise (2020)
+- `kang2016apex`: APEx: automated inference of error specifications for C APIs
+- APKeep: Realtime Verification for Real Networks (2020)
+- `ospanov2025apollo`: APOLLO: Automated LLM and Lean Collaboration for Advanced Formal Reasoning
+- `betin-can2005application`: Application of design for verification with concurrency controllers to air traffic control software
+- `torlak2013applications`: Applications and extensions of Alloy: past, present and future
+- `carbonneaux2022applying`: Applying formal verification to microkernel IPC at meta
+- `gordon2025applying`: Applying Modern Verification Techniques to a Root-of-Trust Bootloader
+- `odonnell2012approximability`: Approximability and proof complexity
+- `holland2019aquarium`: Aquarium: Cassiopea and Alewife Languages.
+- Aragog: Scalable Runtime Verification of Shardable Networked Systems (2020)
+- `ubayashi2010archface`: Archface: a contract place where architectural design and code meet together
+- `mohammed2025architect`: Architect in the Loop Agentic Hardware Design and Verification
+- Are Agents Probabilistic Automata? A Trace-Based, Memory-Constrained Theory of Agentic AI (2025)
+- Are Language Models Efficient Reasoners? A Perspective from Logic Programming (2025)
+- `jin2026llms`: Are LLMs reliable code reviewers? systematic overcorrection in requirement conformance judgement
+- `ying2023llms`: Are LLMs Rigorous Logical Reasoners? Empowering Natural Language Proof Generation by Stepwise Decoding with Contrastive Learning
+- `chapman2014there`: Are We There Yet? 20 Years of Industrial Theorem Proving with SPARK
+- `ozkaya2013there`: Are We There Yet? Analyzing Architecture Description Languages for Formal Analysis, Usability, and Realizability
+- `wang2019arepair`: ARepair: A Repair Framework for Alloy
+- Arguzz: Testing zkVMs for Soundness and Completeness Bugs (2026)
+- Aria: An Agent For Retrieval and Iterative Auto-Formalization via Dependency Graph (2025)
+- Aristotle: IMO-level Automated Theorem Proving (2025)
+- ARM-FM: Automated Reward Machines via Foundation Models for Compositional Reinforcement Learning (2025)
+- Array-Carrying Symbolic Execution for Function Contract Generation (2026)
+- `raiyan2026artificial`: Artificial Intelligence for Mathematical Reasoning: An Integrated Survey of Language Models, Neuro-symbolic Systems, and Verified Discovery
+- Artificial Intelligence in Software Engineering: Integration and Key Challenges (2025)
+- `aliabadi2017artinali`: ARTINALI: dynamic invariant detection for cyber-physical system security
+- `sowietzki2026ask`: Ask Your Advisor: Learning When to Consult Stronger Models in Agentic Systems
+- Assay: Claims That Decay With the Code. Content-Addressed Evidence Graphs for Accountable AI-Assisted Software Delivery (2026)
+- AssertCoder: LLM-Based Assertion Generation via Multimodal Specification Extraction (2025)
+- AssertGen: Enhancement of LLM-aided Assertion Generation through Cross-Layer Signal Bridging (2025)
+- `bai2025assertionforge`: AssertionForge: Enhancing Formal Verification Assertion Generation with Structured Representation of Specifications and RTL
+- `liu2025assess`: ASSESS: A Semantic and Structural Evaluation Framework for Statement Similarity
+- Assessing Large Language Models in Comprehending and Verifying Concurrent Programs across Memory Models (2025)
+- `reiss2022assisted`: Assisted Specification of Code Using Search
+- AssumptionMiner: Extracting, Tracing, and Revising Implicit Assumptions in LLM Code Generation (2026)
+- Assurance Envelopes for Autonomous Coding Agents: Minimum-Cost Evidence for Software Change (2026)
+- `2024assured`: Assured Automatic Programming via Large Language Models
+- Assuring Certified Database Utility in Privacy-Preserving Database Fingerprinting (2025)
+- `peng2025asterinas`: Asterinas: A Linux ABI-Compatible, Rust-Based Framekernel OS with a Small and Sound TCB
+- `kloos2015asynchronous`: Asynchronous Liquid Separation Types
+- `wenzel2014asynchronous`: Asynchronous User Interaction and Tool Integration in Isabelle/PIDE
+- ATA: A Neuro-Symbolic Approach to Implement Autonomous and Trustworthy Agents (2025)
+- ATLAS: A Sequence-based Learning Approach for Attack Investigation (2021)
+- `tashdid2026atlas`: ATLAS: AI-Assisted Threat-to-Assertion Learning for System-on-Chip Security Verification
+- `liu2025atlas`: ATLAS: Autoformalizing Theorems through Lifting, Augmentation, and Synthesis of Data
+- `baksys2025atlas`: ATLAS: Automated Toolkit for Large-Scale Verified Code Synthesis
+- `chen2023atmosphere`: Atmosphere: Towards Practical Verified Kernels in Rust
+- Attention is All you Need (2017)
+- `ambrona2017attribute`: Attribute-Based Encryption in the Generic Group Model: Automated Proofs and New Constructions
+- `hu2026audit`: Audit-First VAPO: Risk-Certified Selective Updates under Imperfect Verification
+- Auditing and Decomposing Feedback-Driven Evolution in LLM Test Generation under the Oracle Problem (2026)
+- Auditing Framework APIs via Inferred App-side Security Specifications (2023)
+- Auto formalisation of Chaitin and of the surprise incompleteness Theorem (2026)
+- `coquand2026auto`: Auto formalisation of Goedel's Second Incompleteness Theorem in Binary Recursive Arithmetic
+- Auto-active Verification of Floating-point Programs via Nonlinear Real Provers (2022)
+- `castanho2022auto`: Auto-active Verification of Graph Algorithms, Written in OCaml
+- `zhou2026autoacsl`: AutoACSL: Synthesizing ACSL Specifications by Integrating LLMs with CPG-Based Static Analysis
+- AutoBaxBuilder: Bootstrapping Code Security Benchmarking (2025)
+- AutoCedar: An Agentic Framework for Verifier-Guided Access Control Policy Synthesis (2026)
+- AutoCodeRover: Autonomous Program Improvement (2024)
+- AutoCodeSherpa: Symbolic Explanations in AI Coding Agents (2025)
+- `amilon2025autodeduct`: AutoDeduct: A Tool for Automated Deductive Verification of C Code
+- `mondl2026autoformalization`: Autoformalization of Agent Instructions into Policy-as-Code
+- `mensfelt2024autoformalization`: Autoformalization of Game Descriptions using Large Language Models
+- `wu2022autoformalization`: Autoformalization with Large Language Models
+- `li2024autoformalize`: Autoformalize Mathematical Statements by Symbolic Equivalence and Semantic Consistency
+- Autoformalizer with Tool Feedback (2025)
+- Autoformalizing Argumentative Material Inferences (2026)
+- `murphy2024autoformalizing`: Autoformalizing Euclidean Geometry
+- Autoformalizing Natural Language to First-Order Logic: A Case Study in Logical Fallacy Detection (2024)
+- AutoGraphForge: Towards Automated Graph Theory Discovery (2026)
+- AutoHarness: improving LLM agents by automatically synthesizing a code harness (2026)
+- `luo2025autoice`: AutoICE: Automatically Synthesizing Verifiable C Code via LLM-driven Evolution
+- `zhou2026autoinv`: AutoINV: Automated Invariant Generation Framework for Formal Verification on High-Level Synthesis Designs
+- AutoKernel: Autonomous GPU Kernel Optimization via Iterative Agent-Driven Search (2026)
+- `cremers2016automated`: Automated Analysis and Verification of TLS 1.3: 0-RTT, Resumption and Delayed Authentication
+- Automated analysis of requirement specifications (1997)
+- `peruffo2021automated`: Automated and Formal Synthesis of Neural Barrier Certificates for Dynamical Models
+- Automated and Modular Refinement Reasoning for Concurrent Programs (2015)
+- Automated Catamorphism Synthesis for Solving Constrained Horn Clauses over Algebraic Data Types (2025)
+- Automated Completion of Statements and Proofs in Synthetic Geometry: an Approach based on Constraint Solving (2024)
+- `heitmeyer1996automated`: Automated consistency checking of requirements specifications
+- Automated Discovery of Tactic Libraries for Interactive Theorem Proving (2025)
+- Automated Discovery of Test Oracles for Database Management Systems Using LLMs (2025)
+- Automated Extraction of Protocol State Machines from 3GPP Specifications with Domain-Informed Prompts and LLM Ensembles (2025)
+- Automated Formal Proofs of Combinatorial Identities via Wilf-Zeilberger Guidance and LLMs (2026)
+- Automated formalisation of informal specifications by combining LLMs and grammar-based language processing (2026)
+- `lu2025automated`: Automated Formalization via Conceptual Retrieval-Augmented LLMs
+- `degiovanni2014automated`: Automated goal operationalisation based on interpolation and SAT solving
+- Automated Invariant Generation for Solidity Smart Contracts (2024)
+- `zhao2026automated`: Automated Lemma Discovery in Agentic Program Verification
+- Automated LTL Specification Generation from Industrial Aerospace Requirements (2026)
+- `wang2018automated`: Automated model repair for Alloy
+- Automated Multi-Agent Workflows for RTL Design (2025)
+- `cai2025automated`: Automated Program Refinement: Guide and Verify Code Large Language Model with Refinement Calculus
+- `chen2024automated`: Automated Proof Generation for Rust Code via Self-Evolution
+- Automated Proving of Shannon-Type Entropy Inequalities via Fine-Tuned Language Models and Guided Tree Search (2026)
+- Automated Reasoning in Blockchain: Foundations, Applications, and Frontiers (2025)
+- `hasan2023automated`: Automated Repair of Declarative Software Specifications in the Era of Large Language Models
+- `brizzio2023automated`: Automated Repair of Unrealisable LTL Specifications Guided by Model Counting
+- Automated Side-Channel Analysis of Cryptographic Protocol Implementations (2025)
+- Automated Soundness and Completeness Vetting of Polygon zkEVM (2025)
+- Automated Strategy Invention for Confluence of Term Rewrite Systems (2024)
+- `yang2025automated`: Automated Synthesis of Formally Verified Multi-Abstraction Function Summaries
+- `shen2026automated`: Automated Tactics for Polynomial Reasoning in Lean 4
+- `rushby2008automated`: Automated Test Generation and Verified Software
+- Automated Testing and Repair for Verified Compilers Generated by a Coding Agent (2026)
+- `dreier2018automated`: Automated Unbounded Verification of Stateful Cryptographic Protocols with Exclusive OR
+- `kobeissi2017automated`: Automated Verification for Secure Messaging Protocols and Their Implementations: A Symbolic and Computational Approach
+- `stephens2025automated`: Automated Verification of Consistency in Zero-Knowledge Proof Circuits
+- `chin2019automated`: Automated Verification of CountDownLatch
+- Automated Verification of Customizable Middlebox Properties with Gravel (2020)
+- Automated Verification of Idempotence for Stateful Serverless Applications (2023)
+- `sharma2019automated`: Automated Verification of Integer Overflow
+- Automated Verification of Monotonic Data Structure Traversals in C (2025)
+- Automated Verification of Network Function Binaries (2022)
+- Automated verification of practical garbage collectors (2009)
+- `backes2008automated`: Automated Verification of Remote Electronic Voting Protocols in the Applied Pi-Calculus
+- `nguyen2007automated`: Automated verification of shape and size properties via separation logic
+- `faella2024automated`: Automated Verification of Tree-Manipulating Programs Using Constrained Horn Clauses
+- Automatic Abstraction in SMT-Based Unbounded Software Model Checking (2013)
+- `iman2026automatic`: Automatic Assertion Mining in Assertion-Based Verification: Techniques, Challenges, and Future Directions
+- `rowe2017automatic`: Automatic cyclic termination proofs for recursive procedures in separation logic
+- `pnueli2001automatic`: Automatic Deductive Verification with Invisible Invariants
+- `koenighofer2014automatic`: Automatic Error Localization for Software using Deductive Verification
+- `currie2000automatic`: Automatic formal verification of DSP software
+- Automatic Function Annotations for Hoare Logic (2012)
+- `faria2026automatic`: Automatic Generation of Formal Specification and Verification Annotations Using LLMs and Test Oracles
+- `pradel2009automatic`: Automatic Generation of Object Usage Specifications from Large Method Traces
+- `li2025automatic`: Automatic Generation of Safety-compliant Linear Temporal Logic via Large Language Model: A Self-supervised Framework
+- `wasser2017automatic`: Automatic generation of specifications using verification tools
+- Automatic Goal Clone Detection in Rocq (2025)
+- `liu2019automatic`: Automatic Grading of Programming Assignments: An Approach Based on Formal Semantics
+- `lian2025automatic`: Automatic Linear Resource Bound Analysis for Rust via Prophecy Potentials
+- `li2017automatic`: Automatic loop-invariant generation anc refinement through selective sampling
+- `ball2001automatic`: Automatic predicate abstraction of C programs
+- `amilon2023automatic`: Automatic Program Instrumentation for Automatic Verification (Extended Technical Report)
+- `recio2025automatic`: Automatic Proof Generation: Fine-tuning and RAG in Reasoner vs. Math LLMs
+- `alur1996automatic`: Automatic Symbolic Verification of Embedded Systems
+- `kapus2017automatic`: Automatic testing of symbolic execution engines via program generation and differential testing
+- Automatic Textbook Formalization (2026)
+- `asperti2017automatic`: Automatic verification and interactive theorem proving
+- `latella1999automatic`: Automatic verification of a behavioural subset of UML statechart diagrams using the SPIN model-checker
+- `blewitt2005automatic`: Automatic verification of design patterns in Java
+- `clarke1983automatic`: Automatic Verification Of Finite State Concurrent Systems Using Temporal Logic Specifications: A Practical Approach
+- Automatic Verification of Floating-Point Accumulation Networks (2025)
+- Automatic Verification of Iterated Separating Conjunctions using Symbolic Execution (2016)
+- `lesens1997automatic`: Automatic verification of parameterized linear networks of processes
+- `burch1994automatic`: Automatic verification of pipelined microprocessor control
+- `li2026automatically`: Automatically Building Machine-Checked Assurance Cases from C Codebases to Requirements
+- Automatically Detecting Error Handling Bugs Using Error Specifications (2016)
+- `yang2006automatically`: Automatically generating malicious disks using symbolic execution
+- Automating Bitvector and Finite Field Equivalence Proofs in Lean (2026)
+- `summers2017automating`: Automating Deductive Verification for Weak-Memory Programs
+- `yao2026automating`: Automating Formal Verification with Agent-Guided Tree Search
+- `tan2026automating`: Automating Formal Verification with Reinforcement Learning and Recursive Inference
+- `piskac2013automating`: Automating separation logic using SMT
+- `piskac2014automating`: Automating separation logic with trees and data
+- AutoMegaKernel: A Statically-Checked Agent Harness for Self-Retargeting Megakernel Synthesis (2026)
+- Autonomous Mathematical Discovery in an Open-World Multi-Agent Environment (2026)
+- AutoProof: Auto-active Functional Verification of Object-oriented Programs (2015)
+- `amusuo2026autosoup`: AutoSOUP: Safety-Oriented Unit Proof Generation for Component-level Memory-Safety Verification
+- AutoSpec: Safety Rule Evolution for LLM Agents via Inductive Logic Programming (2026)
+- `wilson2026autotam`: AutoTam: Specifying Secure Protocol Implementations with Tamarin Model Generation
+- `zhang2019autotap`: AutoTap: Synthesizing and Repairing Trigger-Action Programs Using LTL Properties
+- `voronkov2014avatar`: AVATAR: The Architecture for First-Order Theorem Provers
+- Ave: Guiding Agentic GPU Optimization Using Data-Flow Invariants (2026)
+- `lu2006avio`: AVIO: detecting atomicity violations via access interleaving invariants
+- `flanagan2001avoiding`: Avoiding exponential explosion: generating compact verification conditions
+- `clarke1987avoiding`: Avoiding The State Explosion Problem In Temporal Logic Model Checking Algorithms
+- Ax-Prover: A Deep Reasoning Agentic Framework for Theorem Proving in Mathematics and Quantum Physics (2025)
+- `breen2026axdafny`: AxDafny: Agentic Verified Code Generation in Dafny
+- AXLE: A Cloud Infrastructure for Lean 4 Theorem Proving Utilities (2026)
+- AxQM: A Textbook-Scale Benchmark for Formal Proof Synthesis in a Library of Finite-Dimensional Quantum Mechanics (2026)
+- `yu2023b`: B-Coder: Value-Based Deep Reinforcement Learning for Program Synthesis
+- `nezamabadi2025baking`: Baking for Dafny: A CakeML Backend for Dafny
+- BalanceProofs: Maintainable Vector Commitments with Fast Aggregation (2023)
+- `first2023baldur`: Baldur: Whole-Proof Generation and Repair with Large Language Models
+- `dediost2026banach`: Banach lattices and phase retrieval: A case study for the use of AI in mathematics
+- Barbarians at the Gate: How AI is Upending Systems Research (2025)
+- BARReL: a modern backend for Atelier B in Lean (2026)
+- `taheri2025barrierbench`: BarrierBench: Evaluating Large Language Models for Safety Verification in Dynamical Systems
+- Barriers in Concurrent Separation Logic: Now With Tool Support! (2012)
+- Basilisk: Using Provenance Invariants to Automate Proofs of Undecidable Protocols (2025)
+- `murali2017bayesian`: Bayesian specification learning for finding API usage errors
+- BeePL: Correct-by-compilation kernel extensions (2025)
+- `findler2001behavioral`: Behavioral contracts and behavioral subtyping
+- `fulton2017bellerophon`: Bellerophon: Tactical Theorem Proving for Hybrid Systems
+- Benchmarking Agents for Proving Theorems in Quantum Algorithms and Quantum Information (2026)
+- Benchmarking energy calculations using formal proofs (2025)
+- `cordeiro2018benchmarking`: Benchmarking of Java Verification Tools at the Software Verification Competition (SV-COMP)
+- Benchmarking Software Model Checkers on Automotive Code (2020)
+- Benchmarking Testing in Automated Theorem Proving (2026)
+- `heuer2026benefits`: Benefits of Applying Software Design Patterns to Backend Rust Applications
+- BesFS: A POSIX Filesystem for Enclaves with a Mechanized Safety Proof (2020)
+- `hassan2013better`: Better generalization in IC3
+- `ip1996better`: Better verification through symmetry
+- `medeiros2014beval`: BEval: A Plug-in to Extend Atelier B with Current Verification Technologies
+- `xiang2023beyond`: Beyond a Centralized Verifier: Scaling Data Plane Checking via Distributed, On-Device Verification
+- `mulder2023beyond`: Beyond Backtracking: Connections in Fine-Grained Concurrent Separation Logic
+- Beyond Basic Specifications? A Systematic Study of Logical Constructs in LLM-based Specification Generation (2026)
+- Beyond Benchmarks: MathArena as an Evaluation Platform for Mathematics with LLMs (2026)
+- Beyond Code Generation: Assessing Code LLM Maturity with Postconditions (2024)
+- Beyond Code Generation: Reliability, Verification, and Cost Economics in the Agentic Software Development Lifecycle (2026)
+- Beyond Compilation: Evaluating Faithful Natural-Language-to-Lean Statement Formalization (2026)
+- Beyond Correctness: Exposing LLM-generated Logical Flaws in Reasoning via Multi-step Automated Theorem Proving (2025)
+- Beyond Fail-to-Pass: Iterative Hardening of Co-Generated Bug Reproduction Tests and Fixes (2026)
+- Beyond Gold Standards: Epistemic Ensemble of LLM Judges for Formal Mathematical Reasoning (2025)
+- Beyond k-induction: Learning from Counterexamples to Bidirectionally Explore the State Space (2019)
+- Beyond Objective Equivalence: Constraint Injection for LLM-Based Optimization Modeling on Vehicle Routing Problems (2026)
+- `pronesti2026beyond`: Beyond Outcome Verification: Verifiable Process Reward Models for Structured Reasoning
+- Beyond Pass@k: Measuring Reliability and Security of Agentic Code Generation (2026)
+- `richter2025beyond`: Beyond Postconditions: Can Large Language Models infer Formal Contracts for Automatic Software Verification?
+- Beyond Resolution Rates: Behavioral Drivers of Coding Agent Success and Failure (2026)
+- Beyond Solver Verdicts: Generative Reward Models for Autoformalization (2026)
+- `moakhar2026beyond`: Beyond the Library: An Agentic Framework for Autoformalizing Research Mathematics
+- Beyond Theorem Proving: Formulation, Framework and Benchmark for Formal Problem-Solving (2025)
+- `nair2026beyond`: Beyond Type-checking: Towards Holistic Evaluation of Formal Specification Generation
+- BFS-Prover: Scalable Best-First Tree Search for LLM-based Automatic Theorem Proving (2025)
+- Bi-Abduction for Shapes with Ordered Data (2020)
+- Bilateral Proofs of Safety and Progress Properties of Concurrent Programs (2017)
+- Binsec/Rel: Efficient Relational Symbolic Execution for Constant-Time at Binary-Level (2019)
+- Bisimulation Learning (2024)
+- Bit-Precise CHC Satisfiability Using Theory-Modular Reasoning (2026)
+- BliStrTune: hierarchical invention of theorem proving strategies (2017)
+- BlueprintRepair: Typed Local Edits for Failed Lean Proof Blueprints (2026)
+- `chang2026bodhi`: BODHI: Precise OS Kernel Specification Inference
+- `deng2006bogor`: Bogor/Kiasan: A k-bounded Symbolic Execution for Checking Strong Heap Properties of Open Systems
+- Bolzano: From Expert-Guided Proof Search to Automated Open-Problem Solving (2026)
+- `monteiro2019boost`: Boost the Impact of Continuous Formal Verification in Industry
+- `jaffar2013boosting`: Boosting concolic testing via interpolation
+- Boosting k-Induction with Continuously-Refined Invariants (2015)
+- Bootstrapping LCF Declarative Proofs (2017)
+- `nakayama2023borrowable`: Borrowable Fractional Ownership Types for Verification
+- `milanesi2022borrowing`: Borrowing and Lifetimes
+- `jaloyan2018borrowing`: Borrowing Safe Pointers from Rust in SPARK
+- `miltner2022bottom`: Bottom-up synthesis of recursive functional programs using angelic execution
+- `somorjai2024bottoms`: Bottoms Up for CHCs: Novel Transformation of Linear Constrained Horn Clauses to Software Verification
+- Bounded Model Checking of Multi-threaded Software using SMT solvers (2010)
+- `clarke2001bounded`: Bounded Model Checking Using Satisfiability Solving
+- Bounded Quantifier Instantiation for Checking Inductive Invariants (2017)
+- Bounded refinement types (2015)
+- Bounded Rewriting Induction for LCSTRSs (2026)
+- `gerstacker2018bounded`: Bounded Synthesis of Reactive Programs
+- Bourbaki: Self-Generated and Goal-Conditioned MDPs for Theorem Proving (2025)
+- `corradini2017bprove`: BProVe: A formal verification framework for business process models
+- Brains vs. Bytes: Evaluating LLM Proficiency in Olympiad Mathematics (2025)
+- Breach, A Toolbox for Verification and Parameter Synthesis of Hybrid Systems (2010)
+- Break-It-Fix-It: Unsupervised Learning for Program Repair (2021)
+- `george2025bridge`: BRIDGE: Building Representations In Domain Guided Program Synthesis
+- `chaudhuri2014bridging`: Bridging boolean and quantitative synthesis using smoothed proof search
+- Bridging Natural Language and Formal Specification--Automated Translation of Software Requirements to LTL via Hierarchical Semantics Decomposition Using LLMs (2025)
+- `pasareanu2026bridging`: Bridging Requirements and Assurance: Neurosymbolic Autoformalization for C++ Verification and Requirements-Coverage Testing (Keynote)
+- Bridging Syntax and Semantics of Lean Expressions in E-Graphs (2024)
+- `greenaway2012bridging`: Bridging the Gap: Automatic Verified Abstraction of C
+- `bhat2021brief`: Brief Announcement: Automating and Mechanising Cutoff Proofs for Parameterized Verification of Distributed Protocols
+- `tatlock2010bringing`: Bringing extensibility to verified compilers
+- `gaher2026bringing`: Bringing Foundational Verification to Real-World Rust Code
+- `zhang2024broadly`: Broadly Enabling KLEE to Effortlessly Find Unrecoverable Errors in Rust
+- `blain2026broken`: Broken by Default: A Formal Verification Study of Security Vulnerabilities in AI-Generated Code
+- BrokenMath: A Benchmark for Sycophancy in Theorem Proving with LLMs (2025)
+- `zhang2026btor2`: BTOR2-Based C Program Verification via Hardware Model Checking
+- Building A Proof-Oriented Programmer That Is 64% Better Than GPT-4o Under Data Scarcity (2025)
+- Building A Proof-Oriented Programmer That Is 64% Better Than GPT-4o Under Data Scarsity (2025)
+- Building Shor's Algorithm in Lean: An Agentic Formalization of Quantum Attacks on RSA-2048 and P-256 (2026)
+- Bulkhead: Automated Semantic Detection and Remediation of Container Escape Vulnerabilities (2026)
+- `wang2023bwos`: BWoS: Formally Verified Block-based Work Stealing for Parallel Processing
+- `dahl2025bye`: Bye-bye, Bluebook? Automating Legal Drudgery With AI-Augmented Rule Following
+- `cao2025c`: C*: Unifying Programming and Verification in C
+- `bagnara2023c`: C-rusted: The Advantages of Rust, in C, without the Disadvantages
+- C-SHORe: a collapsible approach to higher-order verification (2013)
+- `nitin2025c2saferrust`: C2SaferRust: Transforming C Projects into Safer Rust with NeuroSymbolic Techniques
+- `hatcliff2003cadena`: Cadena: an integrated development, analysis, and verification environment for component-based systems
+- `schroer2026caesar`: Caesar: A Deductive Verifier for Probabilistic Programs
+- `kumar2014cakeml`: CakeML: a verified implementation of ML
+- CAM-Bench: A Benchmark for Computational and Applied Mathematics in Lean (2026)
+- `pereira2021cameleer`: Cameleer: a Deductive Verification Tool for OCaml (extended version)
+- `nikolaou2026camelot`: CaMeLoT: CaMeL orchestrated with Temporal logic for static verification and liveness
+- CAMP in the Odyssey: Provably Robust Reinforcement Learning with Certified Radius Maximization (2025)
+- Can ChatGPT Pass a Theory of Computing Course? (2024)
+- Can ChatGPT support software verification? (2023)
+- Can Formal Specifications Be Synthesized from Tests Alone? (2026)
+- Can Large Language Models Autoformalize Kinematics? (2025)
+- Can Large Language Models Help Students Prove Software Correctness? An Experimental Study with Dafny (2025)
+- Can Large Language Models Learn Formal Logic? A Data-Driven Training and Evaluation Framework (2025)
+- `chen2026large`: Can Large Language Models Model Programs Formally?
+- `endres2024large`: Can Large Language Models Transform Natural Language Intent into Formal Method Postconditions?
+- `qin2025large`: Can Large Language Models Verify System Software? A Case Study Using FSCQ as a Benchmark
+- Can Large Language Models Write Good Property-Based Tests? (2023)
+- Can LLM Aid in Solving Constraints with Inductive Definitions? (2026)
+- `chong2026llms`: Can LLMs be Effective Code Contributors? A Study on Open-source Projects
+- `shefer2025llms`: Can LLMs Enable Verification in Mainstream Programming?
+- Can LLMs help find Ambiguities in Protocol Specifications? (2026)
+- Can LLMs Perform Synthesis? (2026)
+- Can LLMs Prove Robotic Path Planning Optimality? A Benchmark for Research-Level Algorithm Verification (2026)
+- Can LLMs Reason About Program Semantics? A Comprehensive Evaluation of LLMs on Formal Specification Inference (2025)
+- `xie2026llms`: Can LLMs Reason Like Automated Theorem Provers for Rust Verification? VCoT-Bench: Evaluating via Verification Chain of Thought
+- Can LLMs Write Correct TLA+ Specifications? Evaluating Natural-Language-to-TLA+ Generation (2026)
+- `ryan2026open`: Can Open-Weight LLMs Produce Kernel-Verified Coq Proofs? A Pilot Study
+- Canonical Byte-String Encoding for Finite-Ring Cryptosystems (2026)
+- Canonical for Automated Theorem Proving in Lean (2025)
+- `mahboubi2013canonical`: Canonical Structures for the Working Coq User
+- CAPRI: Contract-Aware Proof Repair for Isabelle (2026)
+- `meseguer2025capturing`: Capturing System Designs with Formal Executable Specifications
+- `schiller2014case`: Case studies and tools for contract specifications
+- Case study: solving P-99 with LPTP and an LLM (2026)
+- `hertzberg2025casp`: CASP: An Evaluation Dataset for Formal Verification of C Code
+- CatCoder: Repository-Level Code Generation with Relevant Code and Type Context (2024)
+- `urabe2017categorical`: Categorical liveness checking by corecursive algebras
+- Causal Past Logic for Runtime Verification of Distributed LLM Agent Workflows (2026)
+- CausalSmith: A Formally Grounded, Self-Improving Agentic Framework for Automated Research in Causal Inference (2026)
+- Cayenne—a language with dependent types (1998)
+- Cazamariposas: Automated Instability Debugging in SMT-Based Program Verification (2025)
+- `zhang2026cb`: CB-VER: A Stable Foundation for Modular Control Plane Verification
+- `oconnor2026cbcl`: CBCL: Safe Self-Extending Agent Communication
+- CBMC: The C Bounded Model Checker (2023)
+- CDCL-inspired Word-level Learning for Bit-vector Constraint Solving (2017)
+- Cedar: A New Language for Expressive, Fast, Safe, and Analyzable Authorization (2024)
+- `kastner2025cedar`: Cedar: An Expressive, Fast, Safe, and Analyzable Authorization Language for Modern Distributed Systems [Keynote Abstract]
+- CellularLint: A Systematic Approach to Identify Inconsistent Behavior in Cellular Network Specifications (2024)
+- Certificate-Aware Property-Directed Reachability (2026)
+- Certificate-Carrying Transformation of Event-Driven Block Programs (2026)
+- `almeida2013certified`: Certified computer-aided cryptography: efficient provably secure machine code from high-level implementations
+- Certified in Theory, Broken in Practice: Assumption Gaps in Cryptographic Model Certification (2026)
+- Certified Side Channels (2020)
+- `tsai2017certified`: Certified Verification of Algebraic Properties on Low-Level Mathematical Constructs in Cryptographic Programs
+- `blatter2022certified`: Certified Verification of Relational Properties
+- Certifying optimal MEV strategies with Lean (2025)
+- `sindoni2025certifying`: Certifying rlive: A New Proof Strategy for Liveness Model Checking
+- `gu2016certikos`: CertiKOS: An extensible architecture for building certified concurrent OS kernels
+- `yang2025certphash`: CertPHash: Towards Certified Perceptual Hashing via Robust Training
+- CertRL: formalizing convergence proofs for value and policy iteration in Coq (2021)
+- CertTA: Certified Robustness Made Practical for Learning-Based Traffic Analysis (2025)
+- `moskewicz2001chaff`: Chaff: engineering an efficient SAT solver
+- CHAINIAC: Proactive Software-Update Transparency via Collectively Signed Skipchains and Verified Builds (2017)
+- Challenges in Decomposing Encodings of Verification Problems (2016)
+- Change2Task: From Repository Changes to Executable Coding Agent Tasks and Environments (2026)
+- `chargueraud2011characteristic`: Characteristic formulae for the verification of imperative programs
+- `zheng2026characterizing`: Characterizing and Bridging the Diagnostic Gap in eBPF Verifier Rejections
+- `feng2026characterizing`: Characterizing Paraphrase-Induced Failures in Lean 4 Autoformalization
+- `rao2024characterizing`: Characterizing Unsafe Code Encapsulation In Real-world Rust Systems
+- `ho2025charon`: Charon: An Analysis Framework for Rust
+- CHC-COMP 2022: Competition Report (2022)
+- CHCVerif: A Portfolio-Based Solver for Constrained Horn Clauses (2025)
+- CheckDP: An Automated and Integrated Approach for Proving Differential Privacy or Finding Precise Counterexamples (2020)
+- Checking Data-Race Freedom of GPU Kernels, Compositionally (2021)
+- Checking Robustness Against Snapshot Isolation (2019)
+- `lichtenstein1985checking`: Checking that finite state concurrent programs satisfy their linear specification
+- Checking Zenon Modulo Proofs in Dedukti (2015)
+- Checkmate: Zero Performance Overhead Model Checkpointing via Network Gradient Replication (2026)
+- Cheetah: Lean and Fast Secure Two-Party Deep Neural Network Inference (2022)
+- ChipMEM: Verification-Grounded Memory for EDA Agents (2026)
+- Choir: An Open Protocol for Distributed Multi-Agent Autoformalization (2026)
+- `trabish2018chopped`: Chopped symbolic execution
+- CIll: CTI-Guided Invariant Generation via LLMs for Model Checking (2026)
+- `chien2026circuit`: Circuit-Based Program Verification: Sequential Circuits as an Intermediate Representation for Verifying C Programs
+- `yang2026circuitprover`: CircuitProver: Agentic Lean 4 Theorem Proving with Reusable Circuit Proof Library for Hardware Verification
+- Circular Induction (2026)
+- CISE3: Verificação de aplicações com consistência fraca em Why3 (2019)
+- CktFormalizer: Autoformalization of Natural Language into Circuit Representations (2026)
+- Clarifying Before Reasoning: A Coq Prover with Structural Context (2025)
+- ClarifySTL: An Interactive LLM Agent Framework for STL Transformation through Requirements Clarification (2026)
+- CLARION: Sound and Clear Provenance Tracking for Microservice Deployments (2021)
+- CleanQ: a lightweight, uniform, formally specified interface for intra-machine data transfer (2019)
+- ClearStamp: A Human-Visible and Robust Model-Ownership Proof based on Transposed Model Training (2024)
+- `thakur2025clever`: CLEVER: A Curated Benchmark for Formally Verified Code Generation
+- CLN2INV: Learning Loop Invariants with Continuous Logic Networks (2019)
+- `krishnamurthy2026closing`: Closing the Loop on LLM-Generated RTL Assertions with Quality-Aware Formal Verification
+- `heydari2026closing`: Closing the Loop: Formally Verified Law as a Reward Signal for Self-Improving Legal AI
+- Clover: Closed-Loop Verifiable Code Generation (2023)
+- CM-DPO: Constraint-Margin Direct Preference Optimization for LLM Planning (2026)
+- `musuvathi2002cmc`: CMC: a pragmatic approach to model checking real code
+- `pulte2023cn`: CN: Verifying Systems C Code with Separation-Logic Refinement Types
+- `byrnes2026cnnotator`: CNnotator: LLM-Guided Memory Safety Annotation Synthesis
+- Co-evolution of Types and Dependencies: Towards Repository-Level Type Inference for Python Code (2025)
+- `lustig2016coatcheck`: COATCheck: Verifying Memory Ordering at the Hardware-OS Interface
+- COBALT-TLA: A Neuro-Symbolic Verification Loop for Cross-Chain Bridge Vulnerability Discovery (2026)
+- `kasibatla2026cobblestone`: Cobblestone: A Divide-and-Conquer Approach for Automating Formal Verification
+- Cobra: Making Transactional Key-Value Stores Verifiably Serializable (2020)
+- Coco: Co-Design and Co-Verification of Masked Software Implementations on CPUs (2021)
+- `popescu2020cocon`: CoCon: A Conference Management System with Formally Verified Document Confidentiality
+- `lamba2024cocoon`: Cocoon: Static Information Flow Control in Rust
+- `katz2010code`: Code Mutation in Verification and Automatic Code Correction
+- `tadesse2026code`: Code Quality Analysis of Translations from C to Rust
+- Code-Augur: Agentic Vulnerability Detection via Specification Inference (2026)
+- Code-Aware Prompting: A Study of Coverage-Guided Test Generation in Regression Setting using LLM (2024)
+- Code2Inv: A Deep Learning Framework for Program Verification (2020)
+- CodeCircuit: Toward Inferring LLM-Generated Code Correctness via Attribution Graphs (2026)
+- CodeGrad: Integrating Multi-Step Verification with Gradient-Based LLM Refinement (2025)
+- `gotmare2022coderl`: CodeRL: Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning
+- `wang2026codespec`: CodeSpec: Dual Executable Specifications for Agentic Long-Horizon Feature Development
+- CodeSpecBench: Benchmarking LLMs for Executable Behavioral Specification Generation (2026)
+- CodeTS: Verifiable Text-to-Time Series Generation via Executable Code (2026)
+- `cook2005cogent`: Cogent: Accurate Theorem Proving for Program Verification
+- Cogentic: Multi-Agent Orchestration for Automated Proof Discovery (2026)
+- Cognitive Admission Control: Risk-Conditioned Assurance for Consequential Actions in Agentic Distributed Systems (2026)
+- Coinductive Proofs for Temporal Hyperliveness (2025)
+- Collaboration Dynamics and Reliability Challenges of Multi-Agent LLM Systems in Finite Element Analysis (2024)
+- `ernst2014collaborative`: Collaborative Verification of Information Flow for a High-Assurance App Store
+- Collapsing Threads Safely with Soft Invariants (2015)
+- `ritirc2017column`: Column-wise verification of multipliers using computer algebra
+- `paskevich2025coma`: Coma , an Intermediate Verification Language with Explicit Abstraction Barriers
+- CombiBench: Benchmarking LLM Capability for Combinatorial Mathematics (2025)
+- `disch2007combinational`: Combinational Equivalence Checking Using Incremental SAT Solving, Output Ordering, and Resets
+- `reeber2006combining`: Combining ACL2 and an automated verification tool to verify a multiplier
+- `mutluergil2026combining`: Combining Axiomatic Models for Refinement Proofs
+- `murphy2024combining`: Combining LLM Code Generation with Formal Specifications and Reactive Program Synthesis
+- `grieskamp2026combining`: Combining Mechanical and Agentic Specification Inference for Move
+- `chen2005combining`: Combining programming with theorem proving
+- `casinghino2014combining`: Combining proofs and programs in a dependently typed language
+- `abbasi2023combining`: Combining rule- and SMT-based reasoning for verifying floating-point Java programs in KeY
+- `su2015combining`: Combining Symbolic Execution and Model Checking for Data Flow Testing
+- Combining Textual and Structural Information for Premise Selection in Lean (2025)
+- `ijaz2024combining`: Combining Type Checking and Formal Verification for Lightweight OS Correctness
+- Combining Type Checking and Set Constraint Solving to Improve Automated Software Verification (2022)
+- Coming to Terms with Quantified Reasoning (2016)
+- Communicating State Transition Systems for Fine-Grained Concurrent Resources (2014)
+- Compaction as Epistemic Failure: How Agentic LLM Tools Fabricate Confirmed Results from Killed Processes (2026)
+- `collavizza2008comparison`: Comparison between CPBPV, ESC/Java, CBMC, Blast, EUREKA and Why for Bounded Program Verification
+- `pu2026compassplay`: CompassPlay: Rewarding the Proposer for Where It Moves the Solver
+- Compilation as Multi-Language Semantics (2025)
+- `li2026compile`: Compile to Compress: Boosting Formal Theorem Provers by Compiler Outputs
+- Compiler-Guided Adaptive Proof Search with Cross-Model Synergy on Context-Dependent Theorem Proving (2026)
+- `zhao2026compiling`: Compiling by Proving in \({\mathbb{K}}\) : From All-Path Reachability Proofs to Single-Step Semantic Rules
+- Complete Local Reasoning About Parameterized Programs Over Topologies (Extended Version) (2026)
+- Completeness for a First-order Abstract Separation Logic (2016)
+- Completeness of Cyclic Proofs for Symbolic Heaps (2018)
+- Completeness of Synthesis under Realizability Assumptions using Superposition (2026)
+- Completeness Thresholds for Memory Safety of Array Traversing Programs: Early Technical Report (2022)
+- Complexity and information in invariant inference (2019)
+- Complexity and Scale in AI-Assisted Workflow Management: A Federated Learning Case Study (2026)
+- `tibermacine2011component`: Component-based specification of software architecture constraints
+- `zhou2023compositional`: Compositional Inductive Invariant Based Verification of Neural Network Controlled Systems
+- Compositional Invariant Generation via Linear Recurrence Analysis (2015)
+- `aberle2026compositional`: Compositional Program Verification with Polynomial Functors in Dependent Type Theory
+- `bily2022compositional`: Compositional Reasoning for Side-effectful Iterators and Iterator Adapters
+- `brockschmidt2015compositional`: Compositional Safety Verification with Max-SMT
+- `loow2025compositional`: Compositional Symbolic Execution for the Next 700 Memory Models
+- Compositional Test Generation of Industrial Synchronous Systems (2021)
+- Compositional Verification in Concurrent Separation Logic with Permissions Regions (2025)
+- `martin2023compositional`: Compositional Verification in Rewriting Logic
+- Compositional Verification of Concurrency Using Past-Time Temporal Epistemic Logic (2025)
+- Compositional Verification of Procedural Programs using Horn Clauses over Integers and Arrays (2015)
+- `borda2018compositional`: Compositional verification of self-adaptive cyber-physical systems
+- `liang2014compositional`: Compositional verification of termination-preserving refinement of concurrent programs
+- `aizatulin2012computational`: Computational verification of C protocol implementations by symbolic execution
+- Computer-Assisted Verification of Four Interval Arithmetic Operators (2020)
+- `fiore2001computing`: Computing symbolic models for verifying cryptographic protocols
+- ConCert: a smart contract certification framework in Coq (2020)
+- `costea2020concise`: Concise Read-Only Specifications for Better Synthesis of Programs with Pointers
+- Concretely Efficient Blind Signatures Based on VOLE-in-the-Head Proofs and the MAYO Trapdoor (2026)
+- `dipierro2000concurrent`: Concurrent constraint programming: towards probabilistic abstract interpretation
+- `beyer2012conditional`: Conditional model checking: a technique to pass information between verifiers
+- `li2026confidence`: Confidence-Guided Protocol IR for LLM-Aided Security Protocol Modeling
+- Confident and Wrong: Silent Semantic Failures in Coding Agents (2026)
+- Confidently Wrong: Exception Chain Collapse in Frontier LLM Rule Evaluation (2026)
+- Config2Spec: Mining Network Specifications from Network Configurations (2020)
+- `post2008configuration`: Configuration Lifting: Verification meets Software Configuration
+- Conflict-Aware Fusion: Mitigating Logic Inertia in Large Language Models via Structured Cognitive Priors (2025)
+- `cheung2026conformal`: Conformal Certification of Reasoning Trace Prefixes
+- Conformal Language Modeling via Posterior Sampling (2026)
+- ConformalNL2LTL: Translating Natural Language Instructions into Temporal Logic Formulas with Conformal Correctness Guarantees (2025)
+- Congruence Closure in Intensional Type Theory (2017)
+- Conjecturing: An Overlooked Step in Formal Mathematical Reasoning (2025)
+- Consistency Meets Verification: Enhancing Test Generation Quality in Large Language Models Without Ground-Truth Solutions (2026)
+- ConSORT: Context- and Flow-Sensitive Ownership Refinement Types for Imperative Programs (2020)
+- Constant-time foundations for the new spectre era (2019)
+- Constrained Path Reasoning: Measuring When Committed Stages Earn Their Cost (2026)
+- `kent1997constraint`: Constraint diagrams: visualizing invariants in object-oriented models
+- Constraint Solving for Finite Model Finding in SMT Solvers (2017)
+- `unno2021constraint`: Constraint-based Relational Verification
+- `cohen2012construction`: Construction of Real Algebraic Numbers in Coq
+- Construction-Verification: A Benchmark for Applied Mathematics in Lean 4 (2026)
+- `kozachok2026context`: Context-Aware Distillation and Ablation for Text2DSL
+- Contextual Drag: How Errors in the Context Affect LLM Reasoning (2026)
+- Contextual Linear Types for Differential Privacy (2023)
+- `zhang2026continual`: Continual Graph Memory for Mathematical Research Agents
+- `cordeiro2009continuous`: Continuous Verification of Large Embedded Software using SMT-Based Bounded Model Checking
+- Contract Based Verification of Non-functional Requirements for Embedded Automotive C Code (2026)
+- Contract Strengthening through Constrained Horn Clause Verification (2022)
+- Contract-Aware Rescue of a Drifted Isabelle Development: The Double-Tank Case Study (2026)
+- `quinton2008contract`: Contract-Based Verification of Hierarchical Systems of Components
+- `findler2002contracts`: Contracts for higher-order functions
+- `delaval2010contracts`: Contracts for modular discrete controller synthesis
+- `gulwani2009control`: Control-flow refinement and progress invariants for bound analysis
+- Controlled Owicki-Gries Concurrency: Reasoning about the Preemptible eChronos Embedded Operating System (2015)
+- `pirzada2026conver`: ConVer: Using Contracts and Loop Invariant Synthesis for Scalable Formal Software Verification
+- `tang2025converos`: Converos: Practical Model Checking for Verifying Rust OS Kernel Concurrency
+- `song2026converted`: Converted, Not Equivalent: Benchmarking Codebase Conversion via Observational Equivalence
+- `haltermann2020cooperative`: Cooperative Verification via Collective Invariant Generation
+- `lizardo2026copper`: Copper: Unifying Correctness and Performance Specification in Code Generation
+- CoProver: A Recommender System for Proof Construction (2023)
+- `tsai2023coqcryptoline`: CoqCryptoLine: A Verified Model Checker with Certified Results
+- `kozyrev2024coqpilot`: CoqPilot, a plugin for LLM-based generation of proofs
+- CoqPyt: Proof Navigation in Python in the Era of LLMs (2024)
+- Coquet: A Coq Library for Verifying Hardware (2011)
+- CORE: Conflict-Oriented Reasoning Elimination for Verifiable Language-Model Search (2026)
+- `moriconi1995correct`: Correct architecture refinement
+- Correct by Construction Networks Using Stepwise Refinement (2017)
+- Correct Tests Are Not Enough: Measuring and Training Oracle Conversion in Specification-Based Test Generation (2026)
+- `hu2026correct`: Correct Verdicts, Flawed Reasoning: Structured Auditing of LLM-based Vulnerability Reasoning
+- `beyer2016correctness`: Correctness witnesses: exchanging verification results between verifiers
+- `farka2026corten`: Corten - Foundational Verification of Rust Programs
+- Cost-Efficient Theorem Proving via Agent Orchestration in Program Verification (2026)
+- CoTu at EXACT 2026: Neuro-Symbolic Reasoning for Transparent Educational QA (2026)
+- Count-Based Abstractions for Performance Verification of Contention Points (2026)
+- Counterexample Generation via Per-Theorem Symbolic Verifiers: When Imitation Hurts and Reinforcement Repairs (2026)
+- `jha2023counterexample`: Counterexample Guided Inductive Synthesis Using Large Language Models and Satisfiability Solving
+- Counterexample Guided Learning in the Large using Reasoning Agents (2026)
+- CounterExample Guided Neural Synthesis (2020)
+- `clarke2003counterexample`: Counterexample-guided abstraction refinement for symbolic model checking
+- Counterexample-Guided Prophecy for Model Checking Modulo the Theory of Arrays (2021)
+- `hassnain2024counterexamples`: Counterexamples in Safe Rust
+- COUNTERFOIL: Verifying Provenance of Integrated Circuits using Intrinsic Package Fingerprints and Inexpensive Cameras (2020)
+- Counting immutable beans: reference counting optimized for purely functional programming (2019)
+- Counting polynomial roots in Isabelle/HOL: a formal proof of the Budan-Fourier theorem (2019)
+- `hoskote1999coverage`: Coverage estimation for symbolic model checking
+- `beyer2009cpachecker`: CPAchecker: A Tool for Configurable Software Verification
+- `rummer2026craig`: Craig Interpolation in Program Verification
+- `kang2018crellvm`: Crellvm: verified credible compilation for LLVM
+- CRITIC: Large Language Models Can Self-Correct with Tool-Interactive Critiquing (2023)
+- CriticLean: Critic-Guided Reinforcement Learning for Mathematical Formalization (2025)
+- Cross-Context Review: Improving LLM Output Quality by Separating Production and Review Sessions (2026)
+- `xu2026cross`: Cross-Provider Review as a Runtime Contract for Coding Agents: A Controlled Pilot and Fault-Injection Study
+- `kamburjan2021crowbar`: Crowbar: Behavioral Symbolic Execution for Deductive Verification of Active Objects
+- `toman2015crust`: Crust: A Bounded Verifier for Rust (N)
+- `pernsteiner2024crux`: Crux, a Precise Verifier for Rust and Other Languages
+- CRUXEval: A Benchmark for Code Reasoning, Understanding and Execution (2024)
+- `li2026crypformbench`: CrypFormBench: Benchmarking Formal Analysis Capability of Large Language Models for Cryptographic Schemes
+- `curaba2024cryptoformaleval`: CryptoFormalEval: Integrating LLMs and Formal Verification for Automated Cryptographic Protocol Vulnerability Detection
+- `bhargavan2008cryptographically`: Cryptographically verified implementations for TLS
+- CryptOpt: Verified Compilation with Randomized Program Search for Cryptographic Primitives (full version) (2022)
+- `fischer2013cseq`: CSeq: A concurrency pre-processor for sequential C verification tools
+- `barrett2026cslib`: CSLib: The Lean Computer Science Library
+- CSLibPremiseBench: Structure-Guided Premise Retrieval and Label Robustness for Lean 4 Computer-Science Theorems (2026)
+- `carelli2024ctl`: CTL* Verification and Synthesis using Existential Horn Clauses
+- CTL+FO Verification as Constraint Solving (2014)
+- CuBridge: An LLM-Based Framework for Understanding and Reconstructing High-Performance Attention Kernels (2026)
+- CUDA-Harness: Harnessing Agentic CUDA Kernel Generation and Optimization from Natural Language (2026)
+- CuDIP: Enhancing Theorem Proving in LLMs via Curriculum Learning-based Direct Preference Optimization (2025)
+- Cumulative Reasoning with Large Language Models (2023)
+- Cuvée: Blending SMT-LIB with Programs and Weakest Preconditions (2020)
+- CV-Rules: Serializability Verification of Concurrency Control Protocols via Explicit Transaction Ordering (2026)
+- cvc5: A Versatile and Industrial-Strength SMT Solver (2022)
+- Dafny as Verification-Aware Intermediate Language for Code Generation (2025)
+- dafny-annotator: AI-Assisted Verification of Dafny Programs (2024)
+- `loughridge2024dafnybench`: DafnyBench: A Benchmark for Formal Software Verification
+- `banerjee2026dafnypro`: DafnyPro: LLM-Assisted Automated Verification for Dafny Programs
+- `wong2015dase`: DASE: Document-Assisted Symbolic Execution for Improving Automated Software Testing
+- `schmidt1998data`: Data flow analysis is model checking of abstract interpretations
+- `hong2003data`: Data flow testing as model checking
+- Data for Mathematical Copilots: Better Ways of Presenting Proofs for Machine Learning (2024)
+- `haftmann2013data`: Data Refinement in Isabelle/HOL
+- `song2026data`: Data Verification is the Future of Quantum Computing Copilots
+- `miltner2020data`: Data-driven inference of representation invariants
+- Data-Efficient Learning of Natural Language to Linear Temporal Logic Translators for Robot Task Specification (2023)
+- daVinci-Env: Open SWE Environment Synthesis at Scale (2026)
+- `cutner2021deadlock`: Deadlock-free asynchronous message reordering in rust with multiparty session types
+- Dear CAV, We Need to Talk About Reproducibility (2015)
+- Debug like a Human: A Large Language Model Debugger via Verifying Runtime Execution Step by Step (2024)
+- `beckert2018debugging`: Debugging Program Verification Proof Scripts (Tool Paper)
+- Decidability and Synthesis of Abstract Inductive Invariants (2020)
+- `haynes2026decidable`: Decidable By Construction: Design-Time Verification for Truly Fearless Systems
+- `mathur2018decidable`: Decidable Verification of Uninterpreted Programs
+- Deciding and Interpolating Algebraic Data Types by Reduction (Technical Report) (2018)
+- Deciding Entailments in Inductive Separation Logic with Tree Automata (2014)
+- Deciding Separation Logic with Pointer Arithmetic and Inductive Definitions (2024)
+- Decision Tree Learning in CEGIS-Based Termination Analysis (2021)
+- Decode-Time Grammars: Constrained LLM Generation over a Refinement Order of Grammar Fragments (2026)
+- `liu2026decompose`: Decompose, Structure, and Repair: A Neuro-Symbolic Framework for Autoformalization via Operator Trees
+- Decompose-and-Formalise: Recursively Verifiable Natural Language Inference (2026)
+- Decomposing the Enigma: Subgoal-based Demonstration Learning for Formal Theorem Proving (2023)
+- `kafle2015decomposition`: Decomposition by tree dimension in Horn clause verification
+- `hahnle2019deductive`: Deductive Software Verification: From Pen-and-Paper Proofs to Industrial Tools
+- `boroujeni2021deductive`: Deductive Verification of Floating-Point Java Programs in KeY
+- Deductive Verification of Smart Contracts with Dafny (2022)
+- `efremov2018deductive`: Deductive Verification of Unmodified Linux Kernel Library Functions
+- Deductive Verification of Weak Memory Programs with View-based Protocols (extended version) (2026)
+- `dubois2025deductive`: Deductive Verification of Sparse Sets in Why3
+- `ernst2021deductive`: Deductive Verification via the Debug Adapter Protocol
+- `amilon2025deductively`: Deductively Verified Program Models for Software Model Checking
+- Deep Generation of Coq Lemma Names Using Elaborated Terms (2020)
+- `loos2017deep`: Deep Network Guided Proof Search
+- `gu2015deep`: Deep Specifications and Certified Abstraction Layers
+- DeepMath - Deep Sequence Models for Premise Selection (2016)
+- DeepSeek-Prover-V1.5: Harnessing Proof Assistant Feedback for Reinforcement Learning and Monte-Carlo Tree Search (2024)
+- DeepSeek-Prover-V2: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition (2025)
+- DeepSeek-Prover: Advancing Theorem Proving in LLMs through Large-Scale Synthetic Data (2024)
+- `deepseek2025deepseek`: DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning
+- DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning (2025)
+- DeepTheorem: Advancing LLM Reasoning for Theorem Proving Through Natural Language and Reinforcement Learning (2025)
+- `cooper2026defab`: DeFAb: A Verifiable Benchmark for Defeasible Abduction in Foundation Models
+- Defense-in-Depth Runtime Safety in Move (2026)
+- `hirai2017defining`: Defining the ethereum virtual machine for interactive theorem provers
+- `nuyts2018degrees`: Degrees of Relatedness: A Unified Framework for Parametricity, Irrelevance, Ad Hoc Polymorphism, Intersections, Unions and Algebra in Dependent Type Theory
+- Delay, Plateau, or Collapse: Evaluating the Impact of Systematic Verification Error on RLVR (2026)
+- Delta-net: Real-time Network Verification Using Atoms (2017)
+- `cheng2024denotation`: Denotation-based Compositional Compiler Verification
+- `unno2009dependent`: Dependent type inference with interpolants
+- `swamy2016dependent`: Dependent types and multi-monadic effects in F*
+- Derandomization with Pseudorandomness (2024)
+- `jackson1995deriving`: Deriving specifications from requirements: an example
+- Desfuncionalizar para Provar (2019)
+- `young1998design`: Design and specification of embedded systems in Java using successive, formal refinement
+- `rushby1981design`: Design and verification of secure systems
+- Design and Verification of the Arm Confidential Compute Architecture (2022)
+- Design of Access Control Mechanisms in Systems-on-Chip with Formal Integrity Guarantees (2023)
+- `padhy2022designing`: Designing and proving properties of the abaco autoscaler using TLA+
+- Detecting critical bugs in SMT solvers using blackbox mutational fuzzing (2020)
+- `choi2026detecting`: Detecting Inconsistencies in Arm CCA's Formally Verified Specification
+- Detecting Multi-Step IAM Attacks in AWS Environments via Model Checking (2023)
+- `misra1983detecting`: Detecting termination of distributed computations using markers
+- `apel2011detection`: Detection of feature interactions using feature-aware verification
+- Determinizing Crash Behavior with a Verified Snapshot-Consistent Flash Translation Layer (2020)
+- `liu2026deterv`: DeterV: Verifying Deterministic Parallel Execution
+- DeTor: Provably Avoiding Geographic Regions in Tor (2017)
+- `zhang2014detrust`: DeTrust: Defeating Hardware Trust Verification with Stealthy Implicitly-Triggered Hardware Trojans
+- Developing a Numerical Algorithm with CIVL Model Checking in the Loop (2026)
+- `ryzhyk2016developing`: Developing a Practical Reactive Synthesis Tool: Experience and Lessons Learned
+- `atzei2019developing`: Developing secure bitcoin contracts with BitML
+- `leino2013developing`: Developing verified programs with Dafny
+- `becker2017development`: Development and Verification of a Flight Stack for a High-Altitude Glider in Ada/SPARK 2014
+- `hales2014developments`: Developments in Formal Proofs
+- Diaframe: Automated Verification for Fine-Grained Concurrency in Iris
+- `mulder2022diaframe`: Diaframe: automated verification of fine-grained concurrent programs in Iris
+- Diagnosing with Insights: Structured Analysis of Agent Failures via Behavioral Abstractions (2026)
+- `thomas2014dialing`: Dialing Back Abuse on Phone Verified Accounts
+- DICE*: A Formally Verified Implementation of DICE Measured Boot (2021)
+- `dietsch2019different`: Different Maps for Different Uses. A Program Transformation for Intermediate Verification Languages
+- `loos2016differential`: Differential Refinement Logic
+- `person2008differential`: Differential symbolic execution
+- `wang2026diffusion`: Diffusion-Proof: Recipe for Formal Theorem Proving Beyond Auto-Regressive Generation
+- Diffy: Inductive Reasoning of Array Programs using Difference Invariants (2021)
+- `maillard2019dijkstra`: Dijkstra monads for all
+- Direct Optimization of Generators for Search in Automated Theorem Proving (2026)
+- `edelkamp2001directed`: Directed explicit model checking with HSF-SPIN
+- `edelkamp2004directed`: Directed explicit-state model checking in the validation of communication protocols
+- Directed Neuro-Symbolic Stochastic Execution for Verification of Distributed Parallel AI Programs (2026)
+- `fox2012directions`: Directions in ISA Specification
+- Discover and Prove: An Open-source Agentic Framework for Hard Mode Automated Theorem Proving in Lean 4 (2026)
+- Discovering Expert-Level Nash Equilibrium Algorithms with Large Language Models (2025)
+- `cook1998discovering`: Discovering models of software processes from event-based data
+- Discovering New Theorems via LLMs with In-Context Proof Learning in Lean (2025)
+- `rummer2013disjunctive`: Disjunctive Interpolants for Horn-Clause Verification (Extended Technical Report)
+- `wang2025dissect`: Dissect-and-Restore: AI-based Code Verification with Transient Refactoring
+- `fontenot2026dissprove`: DissProve: Automated Verification of Asynchronous Distributed Protocols with Affine Communication
+- DistAI: Data-Driven Automated Invariant Learning for Distributed Protocols (2021)
+- Distilling LLM Feedback for Lean Theorem Proving (2026)
+- `lerda1999distributed`: Distributed-memory model checking with SPIN
+- Distributional Energy-Based Models for Uncertainty-Aware Structured LLM Reasoning (2026)
+- `shankar2007ditto`: DITTO: automatic incrementalization of data structure invariant checks (in Java)
+- Diversifying to Verify: When Task-Equivalent Programs Differ in Verifiability (2026)
+- Djinnlang: Higher-Level Programming by Unambiguous Specification with an LLM in the Compiler (2026)
+- Do AI models help produce verified bug fixes? (2025)
+- Do Language Models Need Music Supervision? Verifiable Rewards for Multi-Constraint Symbolic Music Generation (2026)
+- Do LLMs Game Formalization? Evaluating Faithfulness in Logical Reasoning (2026)
+- `xia2026doc2spec`: Doc2Spec: Synthesizing Formal Programming Specifications from Natural Language via Grammar Induction
+- DocPrompting: Generating Code by Retrieving the Docs (2022)
+- DocVAL: Validated Chain-of-Thought Distillation for Grounded Document VQA (2025)
+- Does CoT-Pass@k Really Check the CoT? A Multilingual Mathematical Audit (2026)
+- Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? (2025)
+- `maiga2023rust`: Does Rust SPARK Joy? Safe Bindings from Rust to SPARK, Applied to the BBQueue Library
+- Does the Proof Prove It That Way? Faithful Formalization of Elements Proofs (2026)
+- `hong2026don`: Don't Make Models Guess Security and Safety: Symbolic Guardrails for Domain-Specific AI Agents
+- Don't Trust the Code, Check Its Effects: Runtime Refinement for Regenerated Systems Code Under an Adversarial Generator (2026)
+- `zhou2024don`: Don't Trust: Verify - Grounding LLM Quantitative Reasoning with Autoformalization
+- Doubly Saturated Ramsey Graphs: A Case Study in Computer-Assisted Mathematical Discovery (2026)
+- `wang2026dprivbench`: DPrivBench: Benchmarking LLMs' Reasoning for Differential Privacy
+- DR. CHECKER: A Soundy Analysis for Linux Kernel Drivers (2017)
+- `jiang2022draft`: Draft, Sketch, and Prove: Guiding Formal Theorem Provers with Informal Proofs
+- DreamProver: Evolving Transferable Lemma Libraries via a Wake-Sleep Theorem-Proving Agent (2026)
+- DRIFT: Decompose, Retrieve, Illustrate, then Formalize Theorems (2025)
+- `rowney2026dslean`: DSLean: A Framework for Type-Correct Interoperability Between Lean 4 and External DSLs
+- DSpec2Test: Specification-Driven Test Generation in Dafny (2026)
+- DSValidator: An Automated Counterexample Reproducibility Tool for Digital Systems (Tool Demonstration) (2016)
+- DualityCert: Verifier-Gated Language-Model Repair of Broken Duality Claims in Quantum Field Theory (2026)
+- DUET: Agentic Design Understanding via Experimentation and Testing (2025)
+- Duet: an expressive higher-order language and linear type system for statically enforcing differential privacy (2019)
+- DuoAI: Fast, Automated Inference of Inductive Invariants for Verifying Distributed Protocols (2022)
+- `bhargavan2021dy`: DY*: A Modular Symbolic Verification Framework for Executable Cryptographic Protocol Code
+- Dynamic Bidirectional Pattern Memory: A Production-Scale Empirical Characterisation of Inference-Time Gating in Clinical NLP (2026)
+- `cogumbreiro2015dynamic`: Dynamic deadlock verification for general barrier synchronisation
+- `flanagan2005dynamic`: Dynamic partial-order reduction for model checking software
+- Dynamic proofs of retrievability with low server storage (2021)
+- `csallner2006dynamically`: Dynamically discovering likely interface invariants
+- `csallner2008dysy`: DySy: dynamic symbolic execution for invariant inference
+- `ge2011dyta`: DyTa: dynamic symbolic execution guided with static verification results
+- Early Evidence of Vibe-Proving with Consumer LLMs: A Case Study on Spectral Region Characterization with ChatGPT-5.2 (Thinking) (2026)
+- EASEAndroid: Automatic Policy Analysis and Refinement for Security Enhanced Android via Large-Scale Semi-Supervised Learning (2015)
+- Easy As Child's Play: An Empirical Study on Age Verification of Adult-Oriented Android Apps (2025)
+- `fischer1985easy`: Easy impossibility proofs for distributed consensus problems
+- `pan2019easy`: Easy Modelling and Verification of Unpredictable and Preemptive Interrupt-Driven Systems
+- EconCSLib: AI-Assisted Lean Formalization for Economics & Computation research (2026)
+- EconProver: Towards More Economical Test-Time Scaling for Automated Theorem Proving (2025)
+- Effective Attacks and Provable Defenses for Website Fingerprinting (2014)
+- Effective SAT Solving
+- `velev2001effective`: Effective use of boolean satisfiability procedures in the formal verification of superscalar and VLIW
+- `esparza2000efficient`: Efficient Algorithms for Model Checking Pushdown Systems
+- `ganai2007efficient`: Efficient BMC for Multi-Clock Systems with Clocked Specifications
+- `takahashi2026efficient`: Efficient Branch-and-Bound Testing and Verification of zkVMs
+- `beer2001efficient`: Efficient Detection of Vacuity in Temporal Model Checking
+- `hartmanns2025efficient`: Efficient Formally Verified Maximal End Component Decomposition for MDPs
+- Efficient Implementation of an Abstract Domain of Quantified First-Order Formulas (2024)
+- Efficient Neural Theorem Proving via Fine-grained Proof Structure Analysis (2025)
+- `meredith2013efficient`: Efficient parametric runtime verification with deterministic string rewriting
+- `kamoi2026efficient`: Efficient PRM Training Data Synthesis via Formal Verification
+- `dutra2018efficient`: Efficient sampling of SAT solutions for testing
+- `darga2006efficient`: Efficient software model checking of data structure properties
+- `roberson2008efficient`: Efficient software model checking of soundness of type systems
+- Efficient Synthesis of Symbolic Distributed Protocols by Sketching (2024)
+- Efficient Test-Time Optimization for Multi-Agent Proof Autoformalization (2026)
+- `zhan2016efficient`: Efficient verification of imperative programs using auto2
+- `schoolderman2020efficient`: Efficient Verification of Optimized Code: Correct High-speed X25519
+- `heule2017efficient`: Efficient, Verified Checking of Propositional Proofs
+- Efficiently Provable Approximations for Non-Polynomial Functions (2026)
+- Elaboration in Dependent Type Theory (2015)
+- Election Eligibility with OpenID: Turning Authentication into Transferable Proof of Eligibility (2024)
+- ElectionGuard: a Cryptographic Toolkit to Enable Verifiable Elections (2024)
+- `xi1998eliminating`: Eliminating array bound checking through dependent types
+- `halle2010eliminating`: Eliminating navigation errors in web applications via model checking and runtime enforcement of navigation state machines
+- Email Spoofing with SMTP Smuggling: How the Shared Email Infrastructures Magnify this Vulnerability (2025)
+- Enabling Memory Safety of C Programs using LLMs (2024)
+- `wen2024enchanting`: Enchanting Program Specification Synthesis by Large Language Models Using Static Analysis and Program Verification
+- enclawed: A Configurable, Sector-Neutral Hardening Framework for Single-User AI Assistant Gateways (2026)
+- `wu2025encode`: Encode the $\forall\exists$ Relational Hoare Logic into Standard Hoare Logic
+- `wu2025encode`: Encode the ∀∃ Relational Hoare Logic into Standard Hoare Logic
+- `hekmatnejad2019encoding`: Encoding and monitoring responsibility sensitive safety rules for automated vehicles in signal temporal logic
+- `wu2025end`: End-to-end Compositional Verification of Program Safety through Verified and Verifying Compilation
+- `park2020end`: End-to-End Formal Verification of Ethereum 2.0 Deposit Smart Contract
+- End-to-End Formalization of Quantum Error Correction (2026)
+- `correnson2023engineering`: Engineering a Formally Verified Automated Bug Finder
+- Engineering as Code: Bringing Software Engineering Methodology to Engineering Design (2026)
+- `alrefai2026engineering`: Engineering Trustworthy Agentic AI for Critical Systems
+- Enhancing Automated Loop Invariant Generation for Complex Programs with Large Language Models (2024)
+- Enhancing Ethical Explanations of Large Language Models through Iterative Symbolic Refinement (2024)
+- `florath2024enhancing`: Enhancing Formal Theorem Proving: A Comprehensive Dataset for Training AI Models on Coq Code
+- Enhancing Inductive Entailment Proofs in Separation Logic with Lemma Synthesis (2017)
+- Enhancing Large Language Models in Coding Through Multi-Perspective Self-Consistency (2023)
+- Enhancing LLM-based Specification Generation via Program Slicing and Logical Deletion (2025)
+- Enhancing Neural Theorem Proving through Data Augmentation and Dynamic Sampling Method (2023)
+- `angelis2017enhancing`: Enhancing Predicate Pairing with Abstraction for Relational Verification
+- Enhancing Program Repair with Specification Guidance and Intermediate Behavioral Signals (2026)
+- Enhancing Reliability in LLM-Based Secure Code Generation (2026)
+- Enhancing Word-Level Property Directed Reachability with LLM-Driven Semantic Guidance (2026)
+- ENPIRE: Agentic Robot Policy Self-Improvement in the Real World (2026)
+- Entropy Regularization: A Free Correction to Cross-Entropy for Verified Demonstrations (2026)
+- Enumerating Choice Terms in Model-Based Quantifier Instantiation (2026)
+- `balliu2011epistemic`: Epistemic temporal logic for information flow security
+- EPVerifier: Accelerating Update Storms Verification with Edge-Predicate (2024)
+- `sanabria2026equational`: Equational and Inductive Reasoning for Maude in Athena
+- Equivalence Checking of ML GPU Kernels (2025)
+- `shekhar2006equivalence`: Equivalence verification of arithmetic datapaths with multiple word-length operands
+- `aditi2026equivsva`: EquivSVA: A Formally Verified Dataset of Behavioral Assertions Across Equivalent RTL Implementations
+- `schroer2025error`: Error Localization, Certificates, and Hints for Probabilistic Program Verification via Slicing (Extended Version)
+- Errors are Useful Prompts: Instruction Guided Task Programming with Verifier-Assisted Iterative Prompting (2023)
+- ESAA-Security: An Event-Sourced, Verifiable Architecture for Agent-Assisted Security Audits of AI-Generated Code (2026)
+- ESBMC v7.6: Enhanced Model Checking of C++ Programs with Clang AST (2024)
+- `dantas2026esbmc`: ESBMC-Arduino: Closing the Deployment Gap for Formal Verification of Open-Hardware PLCs
+- `dantas2026esbmc`: ESBMC-PLC: Formal Verification of IEC 61131-3 Ladder Diagram Programs Using SMT-Based Model Checking
+- ESBMC-Solidity: An SMT-Based Model Checker for Solidity Smart Contracts (2021)
+- `dantas2026esbmc`: ESBMC: A Survey of Its Evolution, Integration, and Future Directions in Formal Software Verification
+- `blanchet1998escape`: Escape analysis: correctness proof, implementation and experimental results
+- `dang2026escaping`: Escaping the Cognitive Well: Efficient Competition Math with Off-the-Shelf Models
+- `sewell2026escaping`: Escaping the Quicksand: A Call to Arms
+- `das2002esp`: ESP: path-sensitive program verification in polynomial time
+- Establishing Best Practices for Building Rigorous Agentic Benchmarks (2025)
+- Establishing Browser Security Guarantees through Formal Shim Verification (2012)
+- `aledo2014estimating`: Estimating verification time
+- ETHBMC: A Bounded Model Checker for Smart Contracts (2020)
+- `gaianu2026ethics`: Ethics by Design in Smart Environments: A Formally Verified Sidecar for Deterministic Legal Compliance in Public Transit
+- `tang2026euclean`: Euclean: Automated Geometry Problem Formalization with Unified Verification in Lean
+- Euclid-MCP: A Model Context Protocol Server for Deterministic Logical Reasoning via Prolog (2026)
+- `goo2026evaluating`: Evaluating and Guarding Citation Faithfulness in Agentic Scientific Synthesis
+- `xiang2026evaluating`: Evaluating and Improving Automated Repository-Level Rust Issue Resolution with LLM-based Agents
+- Evaluating Autoformalization Robustness via Semantically Similar Paraphrasing (2025)
+- `krautz2006evaluating`: Evaluating Coverage of Error Detection Logic for Soft Errors using Formal Methods
+- Evaluating Frontier LLMs on PhD-Level Mathematical Reasoning: A Benchmark on a Textbook in Theoretical Computer Science about Randomized Algorithms (2025)
+- Evaluating language models for mathematics through interactions (2023)
+- Evaluating Large Language Models for Symbolic Security Protocol Analysis (2026)
+- Evaluating LLM-driven User-Intent Formalization for Verification-Aware Languages (2024)
+- `beg2026evaluating`: Evaluating LLM-Generated ACSL Annotations for Formal Verification
+- Evaluating Research-Level Math Proofs via Strict Step-Level Verification (2026)
+- `fan2025evaluating`: Evaluating the Ability of Large Language Models to Generate Verifiable Specifications in VeriFast
+- Evaluating the Architectural Reasoning Capabilities of LLM Provers via the Obfuscated Natural Number Game (2026)
+- `gui2026evaluating`: Evaluating the Robustness of Proof Autoformalization in Lean 4
+- Evaluation of LLMs for Mathematical Formalization in Lean (2026)
+- `wang2026event`: Event-B Agent: Towards LLM Agent for Formal Model Synthesis and Repair
+- `cook1998event`: Event-based detection of concurrency
+- `protzenko2020evercrypt`: EverCrypt: A Fast, Verified, Cross-Platform Cryptographic Provider
+- `bhargavan2017everest`: Everest: Towards a verified, drop-in replacement of HTTPS
+- EverParse: Verified Secure Zero-Copy Parsers for Authenticated Message Formats (2019)
+- `chen2025evidence`: Evidence-Bound Autonomous Research (EviBound): A Governance Framework for Eliminating False Claims
+- Evidence-Driven LLM Agent for C-to-Synthesizable-C Conversion and Verification (2026)
+- `ren2026evidence`: Evidence-Grounded Verified Agentic Reasoning: A Path Toward Eliminating LLM Hallucination in Empirical Inference via Tool-Attested Kernel Proofs
+- EvilGenie: A Reward Hacking Benchmark (2025)
+- `wang2025evoc2rust`: EvoC2Rust: A Skeleton-guided Framework for Project-Level C-to-Rust Translation
+- EVOKE: Efficient Revocation of Verifiable Credentials in IoT Networks (2024)
+- EvolProver: Advancing Automated Theorem Proving by Evolving Formalized Problems via Symmetry and Difficulty (2025)
+- EvoSpex: An Evolutionary Algorithm for Learning Postconditions (2021)
+- `luckow2014exact`: Exact and approximate probabilistic symbolic execution for nondeterministic programs
+- `tao2026execcritic`: ExecCritic: Learn to Test, Test to Improve for Coding Agents
+- `dubray2026executable`: Executable JavaScript as a Checkable Specification Language: A JS-SAM Case Study on SysMoBench
+- `ko1997execution`: Execution monitoring of security-critical programs in distributed systems: a specification-based approach
+- Execution-State-Aware LLM Reasoning for Automated Proof-of-Vulnerability Generation (2026)
+- Execution-Verified Reinforcement Learning for Optimization Modeling (2026)
+- Exo-GPU: Safe, Imperative, User-schedulable Programming for Tensor Cores (2026)
+- `klein2009experience`: Experience report: seL4: formally verifying a high-performance microkernel
+- Experimental results from applying GPT-4 to an unpublished formal language (2023)
+- `davy2018experiments`: Experiments in Verification of Linear Model Predictive Control: Automatic Generation and Formal Verification of an Interior Point Method Algorithm
+- `nazari2023explainable`: Explainable Program Synthesis by Localizing Specifications
+- Explaining Counterexamples with Giant-Step Assertion Checking (2021)
+- Explaining Textual Entailment with Lexical Entailments: Using LLMs to Supply Lexical Relations for Formal Proofs (2026)
+- `czipo2017exploiting`: Exploiting Hierarchy in the Abstraction-Based Verification of Statecharts Using SMT Solvers
+- `quentin2018exploiting`: Exploiting Pointer Analysis in Memory Models for Deductive Verification
+- `velev1999exploiting`: Exploiting positive equality and partial non-consistency in the formal verification of pipelined microprocessors
+- `clarke1996exploiting`: Exploiting symmetry in temporal logic model checking
+- `barnett2009exploiting`: Exploiting the synergy between automated-test-generation and programming-by-contract
+- `kambhamettu2026explorable`: Explorable Theorems: Making Written Theorems Explorable by Grounding Them in Formal Representations
+- `horowitz2026exploring`: Exploring proof autoformalization with Mistral on Herald
+- Exploring Structures in Physics Problems: Can AI Agents Discover Statistical Mechanical Mappings? (2026)
+- Exponential Sample Complexity Separation between Flat and Hierarchical Agentic Theorem Provers (2026)
+- `loring2017expose`: ExpoSE: practical symbolic execution of standalone JavaScript
+- `hunter2013expressive`: Expressive Completeness for Metric Temporal Logic
+- `jacobs2011expressive`: Expressive modular fine-grained concurrency specification
+- `fontaine2006expressiveness`: Expressiveness + Automation + Soundness: Towards Combining SMT Solvers and Interactive Proof Assistants
+- Extending ACL2 with SMT Solvers (2015)
+- Extending concurrent separation logic to the hardware level to verify the xv6 OS kernel on RISC-V with AI agents (2026)
+- `armand2010extending`: Extending Coq with Imperative Features and Its Application to SAT Verification
+- `rodriguez2005extending`: Extending JML for Modular Specification and Verification of Multi-threaded Programs
+- Extract, model, refine: improved modelling of program verification tools through data enrichment (2025)
+- `aizatulin2011extracting`: Extracting and verifying cryptographic models from C protocol code by symbolic execution
+- `annenkov2021extracting`: Extracting smart contracts tested and verified in Coq
+- `sun2021f`: F-IDEs with Features and VCs Designed to Assist Human Reasoning When Verification Fails
+- Fact-Saboteurs: A Taxonomy of Evidence Manipulation Attacks against Fact-Verification Systems (2023)
+- Failure Modes of Large Language Models on Research-Level Mathematics: A Taxonomy and an Empirical Characterisation (2026)
+- `musuvathi2008fair`: Fair stateless model checking
+- `albarghouthi2017fairsquare`: FairSquare: probabilistic verification of program fairness
+- FaithformBench: Benchmarking Faithfulness of Mathematical Chain-of-Thought Autoformalisation (2026)
+- Faithful and Robust LLM-Driven Theorem Proving for NLI Explanations (2025)
+- `liu2026faithful`: Faithful Autoformalization of Natural Language Assertions
+- `wang2026faithsieve`: FaithSieve: Fine-Grained Evaluation of Math Proofs with Faithful Formal Evidence
+- `waksman2013fanci`: FANCI: identification of stealthy malicious logic using boolean functional analysis
+- `20252fans`: FANS: Formal Answer Selection for LLM Natural Language Math Reasoning Using Lean4
+- `dill2022fast`: Fast and Reliable Formal Verification of Smart Contracts with the Move Prover
+- `lammich2024fast`: Fast and Verified UNSAT Certificate Checking
+- Fast Collection Operations from Indexed Stream Fusion (2025)
+- Fast RS-IOP Multivariate Polynomial Commitments and Verifiable Secret Sharing (2024)
+- Fast, Lean, and Accurate: Modeling Password Guessability Using Neural Networks (2016)
+- FATE: A Formal Benchmark Series for Frontier Algebra of Multiple Difficulty Levels (2025)
+- Faults in Our Formal Benchmarking: Dataset Defects and Evaluation Failures in Lean Theorem Proving (2026)
+- `elibol2026fearless`: Fearless Concurrency on the GPU
+- `cui2024fearless`: Fearless Unsafe. A More User-friendly Document for Unsafe Rust Programming Base on Refined Safety Properties
+- Featherweight VeriFast (2015)
+- Federated Formal Verification: Cross-Backend Citation, Cross-Axis Convergence, and AI-Orchestrated Proof Dispatch for Production Systems (2026)
+- FGeo-TP: A Language Model-Enhanced Solver for Geometry Problems (2024)
+- `delaware2015fiat`: Fiat: Deductive Synthesis of Abstract Data Types in a Proof Assistant
+- Fictional Separation Logic (2012)
+- Fidelity Probes for Specification-Code Alignment (2026)
+- `eilers2025fifteen`: Fifteen Years of Viper
+- FIMO: A Challenge Formal Dataset for Automated Theorem Proving (2023)
+- `helbling2026finding`: Finding a Crab in the C: Assured Translation via Comparative Symbolic Execution
+- Finding and Analyzing Crash-Consistency Bugs in Persistent-Memory File Systems (2022)
+- `dolby2007finding`: Finding bugs efficiently with a SAT solver
+- `kamath2023finding`: Finding Inductive Loop Invariants using Large Language Models
+- `hance2021finding`: Finding Invariants of Distributed Systems: It's a Small (Enough) World After All
+- Finding Memory Leaks in C/C++ Programs via Neuro-Symbolic Augmented Static Analysis (2026)
+- Finding Model-Checkable Needles in Large Source Code Haystacks: Modular Bug-Finding via Static Analysis and Dynamic Invariant Discovery (2016)
+- Finding polynomial loop invariants for probabilistic programs (2017)
+- Finding Traceability Attacks in the Bluetooth Low Energy Specification and Its Implementations (2024)
+- `yang2023fine`: Fine-Tuning Language Models Using Formal Methods Feedback
+- `zhao2026fine`: Fine-Tuning Qwen3-27B for C-to-Rust Code Translation: A Three-Stage Curriculum of Pretraining, Debugging-Aware SFT, and Task-Specific SFT
+- FINER-SQL: Boosting Small Language Models for Text-to-SQL (2026)
+- `lisitsa2011finite`: Finite countermodels for safety verification of parameterized tree systems
+- `lisitsa2010finite`: Finite Model Finding for Parameterized Verification
+- First Experiments with Neural Translation of Informal to Formal Mathematics (2018)
+- First Neural Conjecturing Datasets and Experiments (2020)
+- `havelund2017first`: First order temporal logic monitoring with BDDs
+- `bovel2026first`: First-Class Refinement Types for Scala
+- `alur2008first`: First-Order and Temporal Logics for Nested Words
+- First-order Hybrid Separation Logic (2025)
+- First-Order Theorem Proving and Vampire (2013)
+- Fixed-Point Scaffolding in the Clef Programming Language (2026)
+- Fixing Large Language Models' Specification Misunderstanding for Better Code Generation (2025)
+- `deligiannis2023fixing`: Fixing Rust Compilation Errors using LLMs
+- `chajed2026fixing`: Fixing the Fixpoint: A Formal Theory of Convergence Detection for Incremental Recursive Computation
+- FLAMES: Fine-tuning LLMs to Synthesize Invariants for Smart Contract Security (2025)
+- FLARE: Verifying MILP Reformulations with LLM-Based Theorem Proving (2026)
+- Flexible Proof Production in an Industrial-Strength SMT Solver (2022)
+- `manino2025floating`: Floating-Point Neural Network Verification at the Software Level
+- `george2026floatlib`: FloatLib: Verified Floating-Point Arithmetic in Lean
+- `li2026flood`: Flood and Harvest: The Provable Necessity of Trivia for Generating Valuable Mathematics via the Lens of Language Generation in the Limit
+- `vir2026flowcheck`: FlowCheck: Helping End-Users Specify and Verify Intent in Vibe-Coded Web Apps
+- FlowDist: Multi-Staged Refinement-Based Dynamic Information Flow Analysis for Distributed Software Systems (2021)
+- `giannakopoulou2003fluent`: Fluent model checking for event-based systems
+- FM-Agent: Scaling Formal Methods to Large Systems via LLM-Based Hoare-Style Reasoning (2026)
+- FMC: Formalization of Natural Language Mathematical Competition Problems (2025)
+- `murali2026fo`: FO-Complete Program Verification for Heap Logics
+- `economou2023focusing`: Focusing on Refinement Typing
+- `haslbeck2021few`: For a Few Dollars More
+- `nagasamudram2025forall`: Forall-Exists Relational Verification by Filtering to Forall-Forall
+- FORALL-LEAN-AGENT for Auditable Reasoning in Formal Mathematics and Software Verification (2026)
+- Forbidden Sidon subsets of perfect difference sets, featuring a human-assisted proof (2025)
+- `dhara1996forcing`: Forcing behavioral subtyping through specification inheritance
+- `huang2026forex`: ForEx: A Formal Verification Framework for Explainable Reasoning in Logical Fallacy Detection and Annotation
+- `lafeychine2025formal`: Formal account of ghost snapshots in a verification tool for Rust
+- Formal Analysis and Patching of BLE-SC Pairing (2023)
+- `armando2008formal`: Formal analysis of SAML 2.0 web browser single sign-on: breaking the SAML-based single sign-on for google apps
+- Formal Analysis of Session-Handling in Secure Messaging: Lifting Security from Sessions to Conversations (2023)
+- Formal Analysis of SPDM: Security Protocol and Data Model version 1.2 (2023)
+- `patrignani2019formal`: Formal approaches to secure compilation: A survey of fully abstract compilation and related work
+- Formal Conjectures: An Open and Evolving Benchmark for Verified Discovery in Mathematics (2026)
+- `poesia2026formal`: Formal Disco: Scalable Open-Ended Generation of Formally Verified Programs
+- `dardinier2025formal`: Formal Foundations for Translational Separation Logic Verifiers
+- `gupta1992formal`: Formal hardware verification methods: A survey
+- `yang2024formal`: Formal Mathematical Reasoning: A New Frontier in AI
+- Formal Mathematics Statement Curriculum Learning (2022)
+- Formal Methods for Network Performance Analysis (2023)
+- `abrial2006formal`: Formal methods in industry: achievements, problems, future
+- `ferrari2022formal`: Formal methods in railways: a systematic mapping study
+- Formal Methods Meet LLMs: Auditing, Monitoring, and Intervention for Compliance of Advanced AI Systems (2026)
+- `woodcock2009formal`: Formal methods: Practice and experience
+- `wang2026formal`: Formal Model Construction Guided by Model-Based Proof Sketches
+- `allen1998formal`: Formal modeling and analysis of the HLA component integration standard
+- `darbari2016formal`: Formal Modelling, Testing and Verification of HSA Memory Models using Event-B
+- `tworkowski2022formal`: Formal Premise Selection With Language Models
+- Formal Proof of a Wave Equation Resolution Scheme: The Method Error (2010)
+- `butelle2010formal`: Formal Proof of SCHUR Conjugate Function
+- Formal Proofs of Tarjan’s Strongly Connected Components Algorithm in Why3, Coq and Isabelle
+- `abbas2014formal`: Formal property verification in a conformance testing framework
+- `yoon2022formal`: Formal reasoning about layered monadic interpreters
+- `darimont1996formal`: Formal refinement patterns for goal-driven requirements elaboration
+- Formal Security Analysis of Neural Networks using Symbolic Intervals (2018)
+- Formal Security Analysis of Widevine through the W3C EME Standard (2024)
+- `bhargavan2025formal`: Formal Security and Functional Verification of Cryptographic Protocol Implementations in Rust
+- `abdulaziz2022formal`: Formal Semantics and Formally Verified Validation for Temporal Planning
+- `seassau2025formal`: Formal Semantics and Program Logics for a Fragment of OCaml
+- Formal Semantics for Agentic Tool Protocols: A Process Calculus Approach (2026)
+- `luckcuck2019formal`: Formal specification and verification of autonomous robotic systems: A survey
+- `heitmeyer2006formal`: Formal specification and verification of data separation in a separation kernel for an embedded system
+- `boer2023formal`: Formal Specification and Verification of JDK’s Identity Hash Map Implementation
+- `wang2018formal`: Formal Specification and Verification of Smart Contracts for Azure Blockchain
+- `guttag1980formal`: Formal specification as a design tool
+- `niyogi2022formal`: Formal specification of a team formation protocol
+- `vanlamsweerde2000formal`: Formal specification: a roadmap
+- `hahn2022formal`: Formal Specifications from Natural Language
+- `lathouwers2022formal`: Formal specifications investigated
+- `dong2024formal`: Formal Theorem Proving by Rewarding LLMs to Decompose Proofs Hierarchically
+- `morris2022formal`: Formal verification and validation of run-to-completion style state charts using Event-B
+- `seger1995formal`: Formal Verification by Symbolic Evaluation of Partially-Ordered Trajectories
+- `owre1995formal`: Formal verification for fault-tolerant architectures: Prolegomena to the design of PVS
+- `kurshan1997formal`: Formal verification in a commercial setting
+- `mevel2021formal`: Formal verification of a concurrent bounded queue in a weak memory model
+- `barthe2020formal`: Formal verification of a constant-time preserving C compiler
+- formal verification of a distributed dynamic reconfiguration protocol
+- `leroy2009formal`: Formal verification of a realistic compiler
+- `ukhanov2025formal`: Formal Verification of a Token Sale Launchpad: A Compositional Approach in Dafny
+- `terbeek2008formal`: Formal verification of an automotive scenario in service-oriented computing
+- `goel2000formal`: Formal verification of an IBM CoreConnect processor local bus arbiter core
+- Formal Verification of an Out-of-Order Multiprocessor against an In-Order Weak-Memory ISA (2026)
+- `coglio2025formal`: Formal Verification of Blockchain Nonforking in DAG-Based BFT Consensus with Dynamic Stake
+- `reynaudmichez2026formal`: Formal Verification of Borrow-Checking by Local Commutation Diagrams
+- `choi2023formal`: Formal Verification of Chase-Lev Deque in Concurrent Separation Logic
+- `pandey1997formal`: Formal verification of content addressable memories using symbolic trajectory evaluation
+- `araizaillan2014formal`: Formal verification of control systems' properties with theorem proving
+- `russinoff2005formal`: Formal verification of floating-point RTL at AMD using the ACL2 theorem prover
+- `grieskamp2026formal`: Formal Verification of Imperative First-Class Functions in Move
+- `hahnle2025formal`: Formal Verification of Legal Contracts: A Translation-based Approach (Extended Version)
+- `wesselink2025formal`: Formal Verification of Minimax Algorithms
+- `keller1976formal`: Formal verification of parallel programs
+- `xiu2025formal`: Formal Verification of Parameterized Systems based on Induction
+- `lopezmiguel2025formal`: Formal Verification of PLCs as a Service: A CERN-GSI Safety-Critical Case Study (extended version)
+- `vo2009formal`: Formal verification of practical MPI programs
+- `bruso2010formal`: Formal Verification of Privacy for RFID Systems
+- `kura2026formal`: Formal Verification of Probing Security via Conditional Independence
+- `nini2025formal`: Formal Verification of Programs Equivalence
+- `shi2022formal`: Formal Verification of Resource Synchronization Protocol Implementations: A Case Study in RTEMS
+- `halder2017formal`: Formal Verification of ROS-Based Robotic Applications Using Timed-Automata
+- `son2024formal`: Formal Verification of Rust Programs by Functional Translation. (Vérification formelle de programmes Rust par traduction fonctionnelle)
+- `mokhov2018formal`: Formal Verification of Spacecraft Control Programs Using a Metalanguage for State Transformers
+- `zhao2013formal`: Formal verification of SSA-based optimizations for LLVM
+- `martin2017formal`: Formal Verification of Station Keeping Maneuvers for a Planar Autonomous Hybrid System
+- Formal verification of superscale microprocessors with multicycle functional units, exception, and branch prediction (2000)
+- `karlsson2006formal`: Formal Verification of SystemC Designs Using a Petri-Net Based Representation
+- Formal verification of the PQXDH Post-Quantum key agreement protocol for end-to-end secure messaging (2024)
+- `avigad2026formal`: Formal verification of the S-two AIR
+- `tristan2008formal`: Formal verification of translation validators
+- `kirsten2014formal`: Formal Verification of Voting Schemes
+- `aagaard1999formal`: Formal verification using parametric representations of Boolean constraints
+- `huuck2013formal`: Formal Verification, Engineering and Business Value
+- `wei2026formal`: Formal-Method-Guided Vibe Coding: Closing the Verification Loop on AI-Generated Safety-Critical Software Through Model-Driven Engineering
+- `lu2024formalalign`: FormalAlign: Automated Alignment Evaluation for Autoformalization
+- FormalEvolve: Neuro-Symbolic Evolutionary Search for Diverse Autoformalization (2026)
+- Formalising Decentralised Exchanges in Coq (2023)
+- Formalising Filesystems in the ACL2 Theorem Prover: an Application to FAT32 (2018)
+- Formalization of a Realistic Verification-Condition Generator for an Intermediate Verification Language
+- `buzhinsky2019formalization`: Formalization of natural language requirements into temporal logics: a survey
+- `douglas2026formalization`: Formalization of QFT
+- `feng2026formalize`: Formalize Once, Edit the Rest: Efficient Lean-Based Answer Selection for Math Reasoning
+- Formalize, Don't Optimize: The Heuristic Trap in LLM-Generated Combinatorial Solvers (2026)
+- Formalizing and Benchmarking Prompt Injection Attacks and Defenses (2024)
+- Formalizing and validating properties in Asmeta with Large Language Models (Extended Abstract) (2026)
+- `christakis2014formalizing`: Formalizing and verifying a modern build language
+- `thiemann2016formalizing`: Formalizing Jordan normal forms in Isabelle/HOL
+- `rammal2026formalizing`: Formalizing Mathematics at Scale
+- Formalizing Memory Accesses and Interrupts (2017)
+- `meek2026formalizing`: Formalizing Numerical Analysis: An Agent Pipeline and Quality Audit Beyond Kernel Acceptance
+- Formalizing Soundness Proofs of Linear PCP SNARKs (2024)
+- `zhao2012formalizing`: Formalizing the LLVM intermediate representation for verified program transformations
+- `blanchette2019formalizing`: Formalizing the metatheory of logical calculi and automatic provers in Isabelle/HOL (invited talk)
+- FormalJudge: A Neuro-Symbolic Paradigm for Agentic Oversight (2026)
+- Formally Solving Answer-Construction Problems in Lean (2025)
+- Formally Specifying the High-Level Behavior of LLM-Based Agents (2023)
+- `parthasarathy2021formally`: Formally Validating a Practical Verification Condition Generator
+- `dupont2020formally`: Formally verified architecture patterns of hybrid systems using proof and refinement with Event-B
+- `tekriwal2024formally`: Formally verified asymptotic consensus in robust networks
+- `verbeek2025formally`: Formally Verified Binary-Level Pointer Analysis
+- Formally Verified Code Synthesis for Structured Data Translation in a Medical Internet of Things (2026)
+- `protzenko2019formally`: Formally Verified Cryptographic Web Applications in WebAssembly
+- `bohrer2017formally`: Formally verified differential dynamic logic
+- `albert2023formally`: Formally Verified EVM Block-Optimizations
+- `chassot2026formally`: Formally Verified Linear-Time Invertible Lexing
+- Formally Verified Memory Protection for a Commodity Multiprocessor Hypervisor (2021)
+- `abdulaziz2023formally`: Formally Verified SAT-Based AI Planning
+- `barriere2021formally`: Formally verified speculation and deoptimization in a JIT compiler
+- `cheung2025formally`: Formally Verified Suffix Array Construction
+- Formally Verified Synthesizable Floating-Point Data Types in ARCH HDL (2026)
+- `boyton2013formally`: Formally verified system initialisation
+- `beckert2024formally`: Formally Verifying an Efficient Sorter
+- `antonino2026formally`: Formally Verifying Noir Zero Knowledge Programs with NAVe
+- `yu2025formalmath`: FormalMATH: Benchmarking Formal Mathematical Reasoning of Large Language Models
+- FormalML: A Benchmark for Evaluating Formal Subgoal Completion in Machine Learning Theory (2025)
+- `ravi2026formalproofbench`: FormalProofBench: Can Models Write Graduate Level Math Proofs That Are Formally Verified?
+- FormalRewardBench: A Benchmark for Formal Theorem Proving Reward Models (2026)
+- `li2026formalrtl`: FormalRTL: Verified RTL Synthesis at Scale
+- FormalRx: Rectify and eXamine Semantic Failures in Autoformalization (2026)
+- FormalScience: Scalable Human-in-the-Loop Autoformalisation of Science with Agentic Code Generation in Lean (2026)
+- FormalSpecCpp: A Dataset of C++ Formal Specifications created using LLMs (2025)
+- `wang2026formaltcs`: FormalTCS: Benchmarking End-to-End Frontier Formal Theoretical Computer Science Research of Large Language Models
+- FormaTheoria: Constructing Large-Scale Lean Theories from Mathematical Literature $-$ Toward the Formalization of the Classification of Finite Simple Groups (2026)
+- Formula Slicing: Inductive Invariants from Preconditions (2016)
+- `abuah2026forte`: Forte: A sensitivity type system for imperative Rust
+- Forward Invariant Cuts to Simplify Proofs of Safety (2015)
+- `lindner2023forward`: Forward Symbolic Execution for Trustworthy Automation of Binary Code Verification
+- `khan2026foundational`: Foundational Constraint Solving for Expressive Refinement Typing
+- `wu2003foundational`: Foundational proof checkers with small witnesses
+- Foundational Refinement Proofs for Deployed Bytecode, at the Price of Tokens (2026)
+- `jacobs2026foundational`: Foundational VeriFast: Pragmatic Certification of Verification Tool Results through Hinted Mirroring
+- `sjoberg2024foundational`: Foundational Verification of Smart Contracts through Verified Compilation
+- `traytel2012foundational`: Foundational, Compositional (Co)datatypes for Higher-Order Logic: Category Theory Applied to Theorem Proving
+- Foundations for Entailment Checking in Quantitative Separation Logic (extended version) (2022)
+- FRCC: Towards Provably Fair and Robust Congestion Control (2026)
+- FregeLogic at SemEval 2026 Task 11: A Hybrid Neuro-Symbolic Architecture for Content-Robust Syllogistic Validity Prediction (2026)
+- Fresh Masking Makes NTT Pipelines Composable: Machine-Checked Proofs for Arithmetic Masking in PQC Hardware (2026)
+- `klein2010verified`: From a verified kernel towards verified systems
+- From Agent Traces to Trust: A Survey of Evidence Tracing and Execution Provenance in LLM Agents (2026)
+- From Alarms to Real Bugs: Multi-target Multi-step Directed Greybox Fuzzing for Static Analysis Result Verification (2025)
+- `lopezcorona2026authorial`: From Authorial Mathematics to Studio Mathematics:Ecobiontic Forms of Proof after Large Language Models
+- `ma2026business`: From Business Requirements to Test Assertions: Evaluating LLM-Generated Oracles on Real Bugs
+- `sartakov2026c`: From C to Idiomatic Rust: A Ship-of-Theseus Agentic Translation
+- `koh2019c`: From C to interaction trees: specifying, verifying, and testing a networked server
+- From Capability to Assurance in Autonomous Penetration-Testing Harnesses: A Framework and Reference Implementation (2026)
+- `liu2026dead`: From Dead Code and Static Requirements to Working Engines: Software Revival with Coding Agents
+- From Dependency to Compositionality: A Neurosymbolic Lifting of LLM Outputs via Combinatory Categorial Grammar (2026)
+- `joblin2015developer`: From Developer Networks to Verified Communities: A Fine-Grained Approach
+- From Errors to Proofs: Minimal-Core-Guided Repair for Neuro-Symbolic Constraint Solving (2026)
+- From Evaluation to Enhancement: Large Language Models for Zero-Knowledge Proof Code Generation (2025)
+- `iskander2026finite`: From Finite Enumeration to Universal Proof: Ring-Theoretic Foundations for PQC Hardware Masking Verification
+- `ciapessoni1999formal`: From formal models to formally based methods: An industrial experience
+- From Helpful to Trustworthy: LLM Agents for Pair Programming (2026)
+- `dong2026i`: From I/O to Code with Discovery Agent
+- `cao2025informal`: From Informal to Formal -- Incorporating and Evaluating LLMs on Natural Language Requirements to Verifiable Formal Proofs
+- From Intents to Algorithms: Verified Algorithm Discovery for Transport Networks (2026)
+- `bedarkar2022intuition`: From Intuition to Coq: A Case Study in Verified Response-Time Analysis of FIFO Scheduling
+- `sharma2016invariant`: From invariant checking to invariant inference using randomized search
+- `mashnoor2026language`: From Language to Logic: Bridging LLMs & Formal Representations for RTL Assertion Generation
+- From Lecture Notes to Lean: Formalizing a Textbook on Probability Theory (2026)
+- From LLM-Generated Conjectures to Lean Formalizations: Automated Polynomial Inequality Proving via Sum-of-Squares Certificates (2026)
+- `wang2021matching`: From Matching Logic To Parallel Imperative Language Verification
+- `kejstova2018model`: From Model Checking to Runtime Verification and Back
+- `li2025natural`: From Natural Language to Certified H-infinity Controllers: Integrating LLM Agents with LMI-Based Synthesis
+- `erfan2026natural`: From Natural Language to Verified Code: Toward AI Assisted Problem-to-Code Generation with Dafny-Based Formal Verification
+- `chlipala2015network`: From Network Interface to Multithreaded Web Applications: A Case Study in Modular Program Verification
+- From Noisy Traces to Root Causes: Structural Trajectory Analysis and Causal Extraction for Agent Optimization (2026)
+- From One Thousand Pages of Specification to Unveiling Hidden Bugs: Large Language Model Assisted Fuzzing of Matter IoT Devices (2024)
+- `srivastava2010program`: From program verification to program synthesis
+- From Prompt Injections to Protocol Exploits: Threats in LLM-Powered AI Agents Workflows (2025)
+- `kobaladze2025provable`: From Provable Correctness to Probabilistic Generation: A Comparative Review of Program Synthesis Paradigms
+- `xie2026reasoning`: From Reasoning Strings to Partial Orders: Verifier-Certified Rule Transport through Quotient Policy Optimization
+- `zhang2026resource`: From Resource Flow to Executable Tests: Petri-Net-Guided LLM Test Generation for Concurrent Stateful Rust APIs
+- `bergeron2026rocq`: From Rocq to Metal: A Pipeline for Formally Verified Microcontroller Firmware
+- From Scientific Texts to Verifiable Code: Automating the Process with Transformers (2025)
+- `groce2010scripts`: From scripts to specifications: the evolution of a flight software testing effort
+- From Solver Feedback to Faithful Plans: Multi-Role Reinforcement Learning for Symbolic Planning (2026)
+- `jiang2026solvers`: From Solvers to Research: Large Language Model-Driven Formal Mathematics at the Research Frontier
+- `fauri2017system`: From System Specification to Anomaly Detection (and back)
+- From Verification Failures to Reusable Guidance for Coding Agents (2026)
+- `zee2008full`: Full functional verification of linked data structures
+- `banerjee2025fulminate`: Fulminate: Testing CN Separation-Logic Specifications in C
+- `ugare2026fun2spec`: Fun2spec: Code Contract Synthesis At Scale
+- Functional Reasoning for Distributed Systems with Failures (2025)
+- Functionally Equivalent or Not? Graph-Grounded Differential Surrogate Execution for Code Equivalence (2026)
+- `mellies2015functors`: Functors are Type Refinement Systems
+- Future-based Static Analysis of Message Passing Programs (2016)
+- `zhang2023fuzz`: Fuzz Driver Synthesis for Rust Generic APIs
+- `xia2024fuzz4all`: Fuzz4All: Universal Fuzzing with Large Language Models
+- Fuzzing Class Specifications (2022)
+- `bai2025fvdebug`: FVDebug: An LLM-Driven Debugging Assistant for Automated Root Cause Analysis of Formal Verification Failures
+- `lin2024fvel`: FVEL: Interactive Formal Verification Environment with Large Language Models via Theorem Proving
+- `kang2025fveval`: FVEval: Understanding Language Model Capabilities in Formal Verification of Digital Hardware
+- `wan2026fvrulelearner`: FVRuleLearner: Operator-Level Reasoning Tree (Op-Tree)-Based Rules Learning for Formal Verification
+- FVSpec: Real-World Property-Based Tests as Lean Challenges (2026)
+- Fyan: A Human--AI Harness with Semantic Auditing for Document-Level Formalization (2026)
+- Gale-Shapley Verified
+- GamePad: A Learning Environment for Theorem Proving (2018)
+- Gaming the Judge: Unfaithful Chain-of-Thought Can Undermine Agent Evaluation (2026)
+- GAR: Generative Adversarial Reinforcement Learning for Formal Theorem Proving (2025)
+- `coblenz2021garbage`: Garbage Collection Makes Rust Easier to Use: A Randomized Controlled Trial of the Bronze Garbage Collector
+- GDEPO: Group Dual-dynamic and Equal-right Advantage Policy Optimization with Enhanced Training Data Utilization for Sample-Constrained Reinforcement Learning (2026)
+- `nguyen2026gdpr`: GDPR Auto-Formalization with AI Agents and Human Verification
+- GDPR-Bench-Android: A Benchmark for Evaluating Automated GDPR Compliance Detection in Android (2025)
+- General Interpolation and Strong Amalgamation for Contiguous Arrays (2022)
+- `lemieux2015general`: General LTL Specification Mining (T)
+- Generalization or Memorization? Brittleness Testing for Chess-Trained Language Models (2026)
+- `khurshid2005generalizing`: Generalizing symbolic execution to library classes
+- Generating correctness proofs with neural networks (2019)
+- `klimek2014generating`: Generating Logical Specifications from Requirements Models for Deduction-based Formal Verification
+- `hamilton2017generating`: Generating Loop Invariants for Program Verification by Transformation
+- Generating Millions Of Lean Theorems With Proofs By Exploring State Transition Graphs (2025)
+- `chen2016generating`: Generating performance distributions via probabilistic symbolic execution
+- Generating Precise Format Specification for Network Protocols Through Adversarial LLM Interactions (2026)
+- Generating Proof-of-Vulnerability Tests to Help Enhance the Security of Complex Software (2026)
+- Generating Symbolic World Models via Test-time Scaling of Large Language Models (2025)
+- `kumar2024generative`: Generative AI Augmented Induction-based Formal Verification
+- `mundler2026generative`: Generative Compilation: On-the-Fly Compiler Feedback as AI Generates Code
+- `nazari2024generative`: Generative Explanations for Program Synthesizers
+- `liu2026generative`: Generative File Systems: Specification-Driven Synthesis and Evolution via LLMs
+- `polu2020generative`: Generative Language Modeling for Automated Theorem Proving
+- Generative transformations and patterns in LLM-native approaches for software verification and falsification (2024)
+- `lehmann2025generic`: Generic Refinement Types
+- `xu2025generically`: Generically Automating Separation Logic by Functors, Homomorphisms, and Modules
+- GenesisGeo: Technical Report (2025)
+- Genetic Algorithm for Program Synthesis (2022)
+- GenOS: Compositional Certificates for Semantic Robustness in AI Code Generation (2026)
+- Geometric Measurements of the Axiom of Choice in Neural Proof Embeddings (2026)
+- Geometry of Reason: Spectral Signatures of Valid Mathematical Reasoning (2026)
+- `recoules2019get`: Get Rid of Inline Assembly through Verification-Oriented Lifting
+- `zhang2023getting`: Getting More out of Large Language Models for Proofs
+- GFLean: An Autoformalisation Framework for Lean via GF (2024)
+- `yanovski2021ghostcell`: GhostCell: separating permissions from data in Rust
+- GIF: Locally Sound Geometric Information Flow Control for LLMs (2026)
+- `grech2019gigahorse`: Gigahorse: Thorough, Declarative Decompilation of Smart Contracts
+- `maksimovic2021gillian`: Gillian, Part II: Real-World Verification for JavaScript and C
+- Gillian: Compositional Symbolic Execution for All (2020)
+- Goal-Autopilot: A Verifiable Anti-Fabrication Firewall for Unattended Long-Horizon Agents (2026)
+- `degiovanni2016goal`: Goal-conflict detection based on temporal satisfiability checking
+- `wolf2021gobra`: Gobra: Modular Specification and Verification of Go Programs (extended version)
+- Goedel-Architect: Streamlining Formal Theorem Proving with Blueprint Generation and Refinement (2026)
+- `li2026goedel`: Goedel-Code-Prover: Hierarchical Proof Search for Open State-of-the-Art Code Verification
+- Goedel-Prover-V2: Scaling Formal Theorem Proving with Scaffolded Data Synthesis and Self-Correction (2025)
+- Goedel-Prover: A Frontier Model for Open-Source Automated Theorem Proving (2025)
+- `talupur2008going`: Going with the Flow: Parameterized Verification Using Message Flows
+- GoJournal: a verified, concurrent, crash-safe journaling system (2021)
+- Gold-medalist Performance in Solving Olympiad Geometry with AlphaGeometry2 (2025)
+- Governance Records as Supervision: Verifier-Selected Self-Training for Structured Workflow Repair (2026)
+- GPT-4 Doesn't Know It's Wrong: An Analysis of Iterative Prompting for Reasoning Problems (2023)
+- `maoz2015gr`: GR(1) synthesis for LTL specification patterns
+- Graded Hoare Logic and its Categorical Semantics (2020)
+- GradeSQL: Outcome reward models for intelligent Text-to-SQL generation from LLMs (2026)
+- `divincenzo2022gradual`: Gradual C0: Symbolic Execution for Gradual Verification
+- `zimmerman2024gradual`: Gradual Exact Logic: Unifying Hoare Logic and Incorrectness Logic via Gradual Verification
+- `lehmann2017gradual`: Gradual refinement types
+- `sun2023gradual`: Gradual Verification for Smart Contracts
+- `torek2026gradually`: Gradually Verifying Unfolding Expressions & Pure Functions
+- Grammars of Formal Uncertainty: When to Trust LLMs in Automated Reasoning Tasks (2025)
+- `couchot2009graph`: Graph Based Reduction of Program Verification Conditions
+- Graph Representations for Higher-Order Logic and Theorem Proving (2019)
+- Graph Sequence Learning for Premise Selection (2023)
+- `inaba2011graph`: Graph-transformation verification using monadic second-order logic
+- Graph2Tac: Online Representation Learning of Formal Math Concepts (2024)
+- `zhang2026graphaligncoder`: GraphAlignCoder: Aligning Program and Proof Graphs for Code Generation
+- GRID: Grammar-Railed Decoding for Enterprise SQL Generation (2026)
+- `morrison2026grind`: grind: An SMT-Inspired Tactic for Lean 4 (Short Paper – System Description)
+- Grounded AI for Code Review: Resource-Efficient Large-Model Serving in Enterprise Pipelines (2025)
+- Grounded Continuation: A Linear-Time Runtime Verifier for LLM Conversations (2026)
+- Grounding AI Agents in Contracts: An Empirical Evaluation of Spec-Driven Test Generation (2026)
+- `chockler2001group`: Group communication specifications: a comprehensive study
+- Grove: a Separation-Logic Library for Verifying Distributed Systems (2023)
+- Growing an Agent/Prover Interface: Evolutionary Tool Design for Cost-Efficient Theorem Proving in Rocq and Lean (2026)
+- Growing Mathlib: maintenance of a large scale mathematical library (2025)
+- `prasad2025guided`: Guided Proof Search Using Large Language Models and Lemma Extraction in Coq
+- `li2024guiding`: Guiding Enumerative Program Synthesis with Large Language Models
+- Guiding LLM Temporal Logic Generation with Explicit Separation of Data and Control (2024)
+- Guiding LLM-Based Loop Invariant Synthesis via Feedback on Local Reasoning Errors (2026)
+- `shafiuzzaman2026guiding`: Guiding Symbolic Execution with Static Analysis and LLMs for Vulnerability Discovery
+- Gödel Test: Can Large Language Models Solve Easy Conjectures? (2025)
+- Gödel's Poetry (2025)
+- `zinzindohoue2017hacl`: HACL*: A Verified Modern Cryptographic Library
+- `polubelova2020haclxn`: HACLxN: Verified Generic SIMD Crypto (for all your favourite platforms)
+- HaliVer: Deductive Verification and Scheduling Languages Join Forces (2024)
+- Hammer for Coq: Automation for Dependent Type Theory (2018)
+- `dupont2019handling`: Handling refinement of continuous behaviors: a proof based approach with Event-B
+- Hard2Verify: A Step-Level Verification Benchmark for Open-Ended Frontier Math (2025)
+- `biere2017hardware`: Hardware model checking competition 2017
+- `clarke2003hardware`: Hardware verification using ANSI-C programs as a reference
+- `hardin2022hardware`: Hardware/Software Co-Assurance using the Rust Programming Language and ACL2
+- `zhang2026harness`: Harness as an Asset: Enforcing Determinism via the Convergent AI Agent Framework (CAAF)
+- `kan2026harnessing`: Harnessing Code Agents for Automatic Software Verification
+- `wang2026harnessllm`: HarnessLLM: Rust Verification Harness Generation with Large Language Models
+- Have a thing? Reasoning around recursion with dynamic typing in grounded arithmetic (2025)
+- HeapHopper: Bringing Bounded Model Checking to Heap Implementation Security (2018)
+- `dasu2026heimdall`: Heimdall: Formally Verified Automated Migration of Legacy eBPF Programs to Rust
+- `choi2022hemiola`: Hemiola: A DSL and Verification Tools to Guide Design and Proof of Hierarchical Cache-Coherence Protocols
+- Herald: A Natural Language Annotated Lean 4 Dataset (2024)
+- Herding Cats - Modelling, simulation, testing, and data-mining for weak memory (2013)
+- HERMES: Towards Efficient and Verifiable Mathematical Reasoning in LLMs (2025)
+- Hermes: Unlocking Security Analysis of Cellular Network Protocols by Synthesizing Finite State Machines from Natural Language Specifications (2024)
+- Heterogeneous Dynamic Logic: Provability Modulo Program Theories (2025)
+- `cardoso2020heterogeneous`: Heterogeneous Verification of an Autonomous Curiosity Rover
+- `sheng2022hhlpy`: HHLPy: Practical Verification of Hybrid Systems using Hoare Logic
+- Hierarchical Attention Generates Better Proofs (2025)
+- `lynch1987hierarchical`: Hierarchical correctness proofs for distributed algorithms
+- `nie2026hiersva`: HierSVA: A Data Synthesis Pipeline, Dataset, and Benchmark for LLM-Driven Hierarchical Hardware Formal Verification
+- `garcia2019high`: High-level mission specification for multiple robots
+- Higher-Order Approximate Relational Refinement Types for Mechanism Design and Differential Privacy (2015)
+- Higher-Order Constrained Horn Clauses and Refinement Types (2017)
+- `kobayashi2010higher`: Higher-order multi-parameter tree transducers and recursion schemes for program verification
+- Higher-order Program Verification as Satisfiability Modulo Theories with Algebraic Data-types (2013)
+- `young2024higher`: Higher-Order Specifications for Deductive Synthesis of Programs with Pointers (Extended Version)
+- `varambally2025hilbert`: Hilbert: Recursively Building Formal Proofs with Informal Reasoning
+- HITrees: Higher-Order Interaction Trees (2025)
+- HoarePrompt: Structural Reasoning About Program Correctness in Natural Language (2025)
+- `dekhil2025hol4psg`: HOL4PSG: AI-Driven Proof Sequence Generation for the HOL4 Theorem Prover
+- HolStep: A Machine Learning Dataset for Higher-order Logic Theorem Proving (2017)
+- Horn-ICE Learning for Synthesizing Invariants and Contracts (2017)
+- `newcombe2015amazon`: How Amazon web services uses formal methods
+- `astrauskas2020programmers`: How do programmers use unsafe rust?
+- `legunsen2016good`: How good are the specs? a study of the bug-finding effectiveness of existing Java API specifications
+- `yang2026powerful`: How Powerful are LLMs in Generating Formal Program Specifications?
+- How Strongly Should Task State Influence an LLM Agent? (2026)
+- How the Analyzer can Help the User Help the Analyzer (2021)
+- How to Simulate It in Isabelle: Towards Formal Proof for Secure Multi-Party Computation (2017)
+- `collins2026human`: Human agency in initial human-AI proof formalization workflows
+- Human-LLM Deliberation as Interactive Proof: Conditions for Verifiability Without Transparency (2026)
+- Humanize Olympiad Agents: A Multi-Session Workflow for Olympiad Problem Solving with Solve, Review, Wiki, Verify (2026)
+- Humanize: Judgement Engineering for Agentic Coding (2026)
+- HunyuanProver: A Scalable Data Synthesis Framework and Guided Tree Search for Automated Theorem Proving (2024)
+- `foster2021hybrid`: Hybrid Systems Verification with Isabelle/HOL: Simpler Syntax, Better Models, Faster Proofs
+- `hu2025hybridprover`: HybridProver: Augmenting Theorem Proving with LLM-Driven Proof Synthesis and Refinement
+- HydroAgent: Closing the Gap Between Frontier LLMs and Human Experts in Hydrologic Model Calibration via Simulator-Grounded RL (2026)
+- Hydrozoan: Latency-Adaptive DAG Consensus under Mixed Byzantine and Crash Faults (2026)
+- HyperLogic: A Hard, Forward-Authored Chinese Logical Reasoning Benchmark with Execution-Derived Answers (2026)
+- Hyperproofs: Aggregating and Maintaining Proofs in Vector Commitments (2022)
+- HyperTree Proof Search for Neural Theorem Proving (2022)
+- HyPFuzz: Formal-Assisted Processor Fuzzing (2023)
+- `batzoglou2026hypothesis`: Hypothesis Frontier: Verifier Guided LLM and Symbolic Search for First-Order Induction
+- Hypothesis-Disciplined Multi-Agent Automated Formalization of Asymptotic Statistical Theory (2026)
+- `franzle2006hysat`: HySAT: An efficient proof engine for bounded model checking of hybrid systems
+- `henzinger1997hytech`: HyTech: A model checker for hybrid systems
+- `chauhan2026iac`: IaC-Guard-V: A Verification Framework for LLM-Generated Infrastructure-as-Code Repairs
+- `lange2015ic3`: IC3 software model checking on control flow automata
+- IC3-Evolve: Proof-/Witness-Gated Offline LLM-Driven Heuristic Evolution for IC3 Hardware Model Checking (2026)
+- `champion2018ice`: ICE-Based Refinement Type Discovery for Higher-Order Functional Programs
+- Iceberg: Automated Verification of DNS Authoritative Engines via Just-in-Time Summarization (2026)
+- Icefish: Practical zk-SNARKs for Verifiable Genomics (2026)
+- `jones2010ideas`: Ideas for a high-level proof strategy language
+- `battista2016identification`: Identification of Android Malware Families with Model Checking:
+- `moura2026identifying`: Identifying Challenges and Practitioner Techniques in the Use of Verification-Aware Programming Languages
+- `brady2011idris`: IDRIS ---: systems programming meets full dependent types
+- Igloo: soundly linking compositional refinement and separation logic for distributed system verification (2020)
+- `brat2014ikos`: IKOS: A framework for static analysis based on abstract interpretation
+- Ilinva: Using Abduction to Generate Loop Invariants (2019)
+- Imandra CodeLogician: Neuro-Symbolic Reasoning for Precise Analysis of Software Logic (2026)
+- Imbuing Large Language Models with Bidirectional Logic for Robust Chain Repair (2026)
+- Impact of Code Language Models on Automated Program Repair (2023)
+- `koch2025imperative`: Imperative Quantum Programming with Ownership and Borrowing in Guppy
+- Imperfect Visual Verification for Code Edition : A Case Study on TikZ (2026)
+- Implementing Dependent Type Theory Inhabitation and Unification (2026)
+- `bhargavan2013implementing`: Implementing TLS with Verified Cryptographic Security
+- `keller2010importing`: Importing HOL Light into Coq
+- ImpossibleBench: Measuring LLMs' Propensity of Exploiting Test Cases (2025)
+- Impredicative Concurrent Abstract Predicates (2014)
+- `rampone2026improved`: Improved bounds for the smallest 4-chromatic graph of girth six
+- Improvements in Software Verification and Witness Validation: SV-COMP 2025 (2025)
+- ImProver 2: Iteratively Self-Improving LMs for Neurosymbolic Proof Optimization (2026)
+- ImProver: Agent-Based Automated Proof Optimization (2024)
+- Improving Debugging in Verification-Aware Languages Through Automated Fault Localization: A Case Study in Dafny (2026)
+- Improving Dynamic Specification Inference with LLM-Generated Counterexamples (2026)
+- `chan1998improving`: Improving efficiency of symbolic model checking for state-based system requirements
+- Improving Lean4 Autoformalization via Cycle Consistency Fine-tuning (2026)
+- `nok2026improving`: Improving LLM Code Reasoning via Semantic Equivalence Self-Play with Formal Verification
+- Improving NLSAT for Nonlinear Real Arithmetic (2024)
+- Improving Small Language Models for Code Generation with Reinforcement Learning from Verification Feedback (2026)
+- `kannwischer2022improving`: Improving software quality in cryptography standardization projects
+- `inkumsah2008improving`: Improving Structural Testing of Object-Oriented Programs via Integrating Evolutionary Testing and Symbolic Execution
+- `thatikonda2026improving`: Improving Symbolic Translation of Language Models for Logical Reasoning
+- Incomplete SMT Techniques for Solving Non-Linear Formulas over the Integers (2020)
+- `hasan2026incompleteness`: Incompleteness of AI Safety Verification via Kolmogorov Complexity
+- `jakobs2023incorporating`: Incorporating Data Dependencies and Properties in Difference Verification with Conditions (Technical Report)
+- Incorrectness Separation Logic with Arrays and Pointer Arithmetic (2025)
+- `pardo1998incremental`: Incremental CTL model checking using BDD subsetting
+- `genereux2026incremental`: Incremental Forward Reasoning for White-Box Proof Search
+- `bensalem2012incremental`: Incremental Generation of Linear Invariants for Component-Based Systems
+- Incremental Symbolic Bounded Model Checking of Software Using Interval Methods via Contractors (2020)
+- `danish2024incremental`: Incremental units-of-measure verification
+- Inducing Emergent Misalignment from Reward Hacks with Iterative DPO (2026)
+- `batzoglou2026induction`: INDUCTION: Finite-Structure Concept Synthesis in First-Order Logic
+- `agarwal2026inductive`: Inductive Deductive Synthesis: Enabling AI to Generate Formally Verified Systems
+- `cousot1992inductive`: Inductive Definitions, Semantics and Abstract Interpretation
+- `dillig2013inductive`: Inductive invariant generation via abductive inference
+- Inductive Invariants That Spark Joy: Using Invariant Taxonomies to Streamline Distributed Protocol Proofs (2024)
+- Inductive Synthesis of Inductive Heap Predicates (2025)
+- `hunt2017industrial`: Industrial hardware and software verification with ACL2
+- `iliasov2021industrial`: Industrial-Strength Verification of Solid State Interlocking Programs
+- Ineq-Comp: Benchmarking Human-Intuitive Compositional Reasoning in Automated Theorem Proving on Inequalities (2025)
+- `cho2010inference`: Inference and analysis of formal models of botnet command and control protocols
+- Inference of Error Specifications and Bug Detection Using Structural Similarities (2024)
+- `reich2019inference`: Inference of Properties from Requirements and Automation of Their Formal Verification
+- Inference-Time Amplification of Weak Reasoning Models (2026)
+- Inference-Time Code Selection via Symbolic Equivalence Partitioning (2026)
+- Inference-Time Diversity in RL-Trained Lean Theorem Provers: A Diagnostic Study (2026)
+- Inferentialist Resource Semantics (2024)
+- Inferring Invariants with Quantifier Alternations: Taming the Search Space Explosion (2021)
+- Inferring multiple helper Dafny assertions with LLMs (2025)
+- `leavens2007information`: Information Hiding and Visibility in Interface Specifications
+- InfoSynth: Information-Guided Benchmark Synthesis for LLMs (2026)
+- INPROVF: Leveraging Large Language Models to Repair High-level Robot Controllers from Assumption Violations (2025)
+- `kammueller2017insider`: Insider threats and auctions: formalization, mechanized proof, and code generation
+- InSPECtor: Improving SLEIGH Specification Veracity via Proxy (2026)
+- Instantiation-based Formalization of Logical Reasoning Tasks using Language Models and Logical Solvers (2025)
+- Instruct, Not Answer: Using Instruction Privileges in On-Policy Context Distillation (2026)
+- Instructions Unclear: Undefined Behaviour in Cellular Network Specifications (2023)
+- INT: An Inequality Benchmark for Evaluating Generalization in Theorem Proving (2020)
+- `pereira2020integrated`: Integrated Verification of Cryptographic Security Proofs and Implementations
+- Integrating Owicki-Gries for C11-Style Memory Models into Isabelle/HOL (2020)
+- `luo2025integrating`: Integrating Rules and Semantics for LLM-Based C-to-Rust Translation
+- `sun2009integrating`: Integrating Specification and Programs for System Modeling and Verification
+- Integrating Symbolic Execution with LLMs for Automated Generation of Program Specifications (2025)
+- Intent Formalization: A Grand Challenge for Reliable Coding in the Age of AI Agents (2026)
+- `ye2026intent`: Intent-aligned Formal Specification Synthesis via Traceable Refinement
+- `xia2020interaction`: Interaction trees: representing recursive and impure programs in Coq
+- `boving2025interactive`: Interactive Bitvector Reasoning using Verified Bit-Blasting
+- Interactive Code Generation via Test-Driven User-Intent Formalization (2022)
+- `krebbers2017interactive`: Interactive proofs in higher-order concurrent separation logic
+- `schultz2024interactive`: Interactive Safety Verification of Distributed Protocols by Inductive Proof Decomposition
+- `giannakopoulou2009interface`: Interface Generation and Compositional Verification in JavaPathfinder
+- InternLM-Math: Open Math Large Language Models Toward Verifiable Reasoning (2024)
+- InternLM2.5-StepProver: Advancing Automated Theorem Proving via Critic-Guided Search (2024)
+- `ho2022internship`: Internship proposal: Formal verification of Rust programs
+- `kafle2016interpolant`: Interpolant Tree Automata and their Application in Horn Clause Verification
+- Interpolation and SAT-Based Model Checking (2003)
+- `beyer2022interpolation`: Interpolation and SAT-Based Model Checking Revisited: Adoption to Software Verification
+- `kapur2006interpolation`: Interpolation for data structures
+- Interpolation in local theory extensions (2008)
+- Interpolation synthesis for quadratic polynomial inequalities and combination with EUF (2016)
+- `vizel2009interpolation`: Interpolation-sequence based model checking
+- interwhen: A Generalizable Framework for Steering Reasoning Models with Test-time Verification (2026)
+- `lindgren2019introducing`: Introducing Certified Compilation in Education by a Functional Language Approach
+- `baresi1997introducing`: Introducing formal specification methods in industrial practice
+- `diaconescu2020introducing`: Introducing H, an Institution-Based Formal Specification and Verification Language
+- `he2019invariant`: Invariant Detection with Program Verification Tools
+- Invariant Discovery for Networked Systems (2026)
+- `nimmer2002invariant`: Invariant inference for static checking:
+- `neider2017invariant`: Invariant Synthesis for Incomplete Verification Engines
+- `mesbah2009invariant`: Invariant-based automatic testing of AJAX user interfaces
+- Invariant-Guided Logical Testing of Open RAN Controllers (2026)
+- `conchon2013invariants`: Invariants for finite instances and beyond
+- Investigating Verification Behavior and Perceptions of Visual Digital Certificates (2023)
+- InvGen: An Efficient Invariant Generator (2009)
+- InvWeaver: Deductive Feedback for Invariant Synthesis in Interacting-Loop Programs (2026)
+- IODINE: Verifying Constant-Time Execution of Hardware (2019)
+- Ironclad Apps: End-to-End Security via Automated Full-System Verification (2014)
+- IronSpec: Increasing the Reliability of Formal Specifications (2024)
+- `delap2004runtime`: Is runtime verification applicable to cheat detection?
+- `evans2020rust`: Is Rust Used Safely by Software Developers?
+- Is Self-Repair a Silver Bullet for Code Generation? (2023)
+- `cui2023unsafe`: Is unsafe an Achilles' Heel? A Comprehensive Study of Safety Requirements in Unsafe Rust Programming
+- Is Your Code Generated by ChatGPT Really Correct? Rigorous Evaluation of Large Language Models for Code Generation (2023)
+- Is “Knowing It’s Malicious” Enough? Evaluating LLMs for Fine-Grained Malware Behavior Auditing (2025)
+- `armstrong2019isa`: ISA semantics for ARMv8-a, RISC-v, and CHERI-MIPS
+- `jones2026isabellm`: IsabeLLM: Automated Theorem Proving Applied to Formally Verifying Consensus
+- `griffin2025isabil`: IsaBIL: A Framework for Verifying (In)correctness of Binaries in Isabelle/HOL (Extended Version)
+- IsarStep: a Benchmark for High-level Mathematical Reasoning (2021)
+- Isomorphic Data Type Transformations (2020)
+- `kiczales1992issues`: Issues in the design and specification of class libraries
+- Iterative Circuit Repair Against Formal Specifications (2023)
+- `borges2015iterative`: Iterative distribution-aware sampling for probabilistic symbolic execution
+- ITPEval: Benchmarking Formal Translation Across Interactive Theorem Provers (2026)
+- `mcmillan2020ivy`: Ivy: A Multi-modal Verification Tool for Distributed Algorithms
+- `padon2016ivy`: Ivy: Safety Verification by Interactive Generalization
+- `amin2016java`: Java and scala's type systems are unsound: the existential crisis of null pointers
+- Joint Verification and Refinement of Language Models for Safety-Constrained Planning (2024)
+- Judging Is Not Enumerating: Silent Omissions in LLM-Authored Acceptable Sets (2026)
+- JURY-RL: Votes Propose, Proofs Dispose for Label-Free RLVR (2026)
+- Just Type It in Isabelle! AI Agents Drafting, Mechanizing, and Generalizing from Human Hints (2026)
+- jwmalloc: A Verified Memory Allocator for Mobile Devices (2026)
+- `choi2017kami`: Kami: a platform for high-level parametric hardware specification and its modular verification
+- `delmas2026kani`: Kani: A Model Checker for Rust
+- `wang2026kapilot`: KaPilot: LLM-Assisted Generation of Kani Specifications for Unsafe Rust Verification
+- `laddad2022katara`: Katara: synthesizing CRDTs with verified lifting
+- Katra: Realtime Verification for Multilayer Networks (2022)
+- `wang2026kbspec`: KBSpec: LLM-driven Formal Specification Generation with Evolving Domain Knowledge Base
+- Keep the Proof State Live: Snapshotting for Efficient Tactic Search in Lean 4 (2026)
+- `zhang2025kelps`: KELPS: A Framework for Verified Multi-Language Autoformalization via Semantic-Syntactic Alignment
+- Kernel Contracts: A Specification Language for ML Kernel Correctness Across Heterogeneous Silicon (2026)
+- KernelOPT: Dispatch-Aware Agentic Search for GPU Kernel Optimization (2026)
+- `wang2025kerspecgen`: KerSpecGen: Co-piloting formal Kernel specification synthesis with refined knowledge graphs and large language models
+- `dickerson2024kestrel`: KestRel: Relational Verification Using E-Graphs for Program Alignment
+- Kevin: Multi-Turn RL for Generating CUDA Kernels (2025)
+- KForge: Program Synthesis for Diverse AI Hardware Accelerators (2025)
+- Kimina Lean Server: A High-Performance Lean Server for Large-Scale Verification (2025)
+- `wang2025kimina`: Kimina-Prover Preview: Towards Large Formal Reasoning Models with Reinforcement Learning
+- Kinetic: Verifiable Dynamic Network Control (2015)
+- `bevier1989kit`: Kit: A study in operating system verification
+- `park2015kjs`: KJS: a complete formal semantics of JavaScript
+- Kleene Algebra with Tests and Coq Tools for While Programs (2013)
+- `zakharov2023klever`: Klever: Verification Framework for Critical Industrial C Programs
+- `wang2026know`: Know Your Limits : On the Faithfulness of LLMs as Solvers and Autoformalizers in Legal Reasoning
+- `viswambharan2026knowledge`: Knowledge Graphs, the Missing Link in Agentic AI-based Formal Verification
+- `ferraiuolo2017komodo`: Komodo: Using verification to disentangle secure-enclave hardware from software
+- `yovine1997kronos`: KRONOS: a verification tool for real-time systems
+- `wang2018krust`: KRust: A Formal Executable Semantics of Rust
+- `majumdar2014kuai`: Kuai: A model checker for software-defined networks
+- L-Mosaics and Bounded Join-Semilattices in Isabelle/HOL (2025)
+- LACUNA: Safe Agents as Recursive Program Holes (2026)
+- LADDER: Self-Improving LLMs Through Recursive Problem Decomposition (2025)
+- `din2022lagc`: LAGC Semantics of Concurrent Programming Languages
+- Lagrangian-Based Duality for Quantified SMT Algorithms (2026)
+- LAMP: Lean-based Agentic framework with MCP and Proof Repair (2026)
+- Lamphone: Passive Sound Recovery from a Desk Lamp's Light Bulb Vibrations (2022)
+- Lancet: A Formalization Framework for Crash and Exploit Pathology (2025)
+- LangProp: A code optimization framework using Large Language Models applied to driving (2024)
+- Language Agent Tree Search Unifies Reasoning Acting and Planning in Language Models (2023)
+- Language Models as Higher-Order Planning Formalizers (2026)
+- Language Models Can Teach Themselves to Program Better (2022)
+- Language Models For Generalised PDDL Planning: Synthesising Sound and Programmatic Policies (2025)
+- Language-Based Security for Low-Level MPC (2024)
+- Large Language Model for OWL Proofs (2026)
+- Large Language Model Guided Tree-of-Thought (2023)
+- `schena2026large`: Large Language Models and Language Server Protocol: a match made in context
+- Large Language Models Cannot Self-Correct Reasoning Yet (2023)
+- `yoshikawa2023large`: Large language models for chemistry robotics
+- Large Language Models for Validating Network Protocol Parsers (2025)
+- Large Language Models in the Loop: A Stability- and Network-Aware Survey in Networked Control, Cyber-Physical, and Multi-Agent Systems (2026)
+- Large Language Models' Understanding of Math: Source Criticism and Extrapolation (2023)
+- Large Language Monkeys: Scaling Inference Compute with Repeated Sampling (2024)
+- Large Lemma Miners: Can LLMs do Induction Proofs for Hardware? (2025)
+- Large-Scale Formal Proof for the Working Mathematician - Lessons Learnt from the ALEXANDRIA Project (2023)
+- `andronick2012large`: Large-scale formal verification in practice: A process perspective
+- `ankireddy2025lasa`: LASA: Enhancing SoC Security Verification with LLM-Aided Property Generation
+- `spies2022later`: Later credits: resourceful reasoning for the later modality
+- Later Credits: Supplementary Material
+- `zimmerman2023latte`: Latte: Lightweight Aliasing Tracking for Java
+- `hasuo2016lattice`: Lattice-theoretic progress measures and coalgebraic model checking
+- `mugnier2025laurel`: Laurel: Unblocking Automated Verification with Large Language Models
+- Law And Order: Tax Law Autoformalization (2026)
+- Layered and Staged Monte Carlo Tree Search for SMT Strategy Synthesis (2024)
+- Lazy Annotation for Program Testing and Verification (2010)
+- `katz2016lazy`: Lazy proofs for DPLL(T)-based SMT solvers
+- `evans1994lclint`: LCLint: a tool for using specifications to check code
+- `gros2024le`: Le chameau et le serpent rentrent dans un bar : vérification quasi-automatique de code OCaml en logique de séparation
+- `hance2023leaf`: Leaf: Modularity for Temporary Sharing in Separation Logic (Extended Version)
+- `yanahama2026lean`: Lean Atlas: An Integrated Proof Environment for Scalable Human-AI Collaborative Formalization
+- `song2024lean`: Lean Copilot: Large Language Models as Copilots for Theorem Proving in Lean
+- Lean Finder: Semantic Search for Mathlib That Understands User Intents (2025)
+- Lean Meets Theoretical Computer Science: Scalable Synthesis of Theorem Proving Challenges in Formal-Informal Pairs (2025)
+- Lean on Vampire Proofs (Short Paper) (2026)
+- Lean Refactor: Multi-Objective Controllable Proof Optimization via Agentic Strategy Search (2026)
+- Lean Workbook: A large-scale Lean problem set formalized from natural language math problems (2024)
+- Lean-auto: An Interface between Lean 4 and Automated Theorem Provers (2025)
+- Lean-GAP: A Dataset of Formalized Graduate Algebra Problems (2026)
+- LEAN-GitHub: Compiling GitHub LEAN repositories for a versatile LEAN prover (2024)
+- Lean-ing on Quality: How High-Quality Data Beats Diverse Multilingual Data in AutoFormalization (2025)
+- Lean-SMT: An SMT tactic for discharging proof goals in Lean (2025)
+- Lean-STaR: Learning to Interleave Thinking and Proving (2024)
+- `wang2026lean4agent`: Lean4Agent: Formal Modeling and Verification for Agent Workflow and Trajectory
+- Lean4Physics: Comprehensive Reasoning Framework for College-level Physics in Lean4 (2025)
+- Leanabell-Prover-V2: Verifier-integrated Reasoning for Formal Theorem Proving via Reinforcement Learning (2025)
+- Leanabell-Prover: Posttraining Scaling in Formal Reasoning (2025)
+- LeanAgent: Lifelong Learning for Formal Theorem Proving (2024)
+- LeanArchitect: Automating Blueprint Generation for Humans and AI (2026)
+- LeanBET: Formally-verified surface area calculations in Lean (2026)
+- LeanCat: A Benchmark Suite for Formal Category Theory in Lean (Part I: 1-Categories) (2025)
+- LeanCSP: A Framework for Certifying Constraint Reformulation and Solving in Lean (2026)
+- `yang2023leandojo`: LeanDojo: Theorem Proving with Retrieval-Augmented Language Models
+- LeanExplore: A search engine for Lean 4 declarations (2025)
+- LeanFlow: A Case Study in Workflow-Driven Lean Autoformalization (2026)
+- LeanGeo: Formalizing Competitional Geometry problems in Lean (2025)
+- `zhang2026leanmarathon`: LeanMarathon: Toward Reliable AI Co-Mathematicians through Long-Horizon Lean Autoformalization
+- LeanPlan: Optimal Planning with LLM-Generated Heuristics and Admissibility Proofs (2026)
+- `bourigault2026leanpolish`: LeanPolish: Verified Supervision for Lean Proof Compression
+- LeanProgress: Guiding Search for Neural Theorem Proving via Proof Progress Prediction (2025)
+- LeanReasoner: Boosting Complex Logical Reasoning with Lean (2024)
+- LeanSearch v2: Global Premise Retrieval for Lean 4 Theorem Proving (2026)
+- LeanSide: A Formally Verified Co-Reasoning System for Natural-language Proofs (2026)
+- LeanTree: Accelerating White-Box Proof Search with Factorized States in Lean 4 (2025)
+- LEAP: Supercharging LLMs for Formal Mathematics with Agentic Frameworks (2026)
+- Learn from Failure: Fine-Tuning LLMs with Trial-and-Error Data for Intuitionistic Propositional Logic Proving (2024)
+- `wang2026learned`: Learned Interventions in Lean 4 grind
+- Learning an Effective Premise Retrieval Model for Efficient Mathematical Formalization (2025)
+- Learning Assumptions for Compositional Verification
+- Learning Formal Mathematics From Intrinsic Motivation (2024)
+- `ren2026learning`: Learning from Failures: Correction-Oriented Policy Optimization with Verifiable Rewards
+- `liu2026learning`: Learning from the Gap Between Pass@K and Pass@1
+- Learning Guided Automated Reasoning: A Brief Survey (2024)
+- Learning Invariants using Decision Trees (2015)
+- `neider2018learning`: Learning linear temporal properties
+- Learning nonlinear loop invariants with gated continuous logic networks (2020)
+- Learning Provably Correct Distributed Protocols Without Human Knowledge (2026)
+- `zhu2015learning`: Learning refinement types
+- Learning Structure-Aware Representations of Dependent Types (2024)
+- `kim2026learning`: Learning the Error Patterns of Language Models
+- Learning to Coordinate Symbolic Tools: LLM Agents for Verified Sum-of-Squares Certificates (2026)
+- `ildiz2026learning`: Learning to Correct: Calibrated Reinforcement Learning for Multi-Attempt Chain-of-Thought
+- Learning to Discover Interesting Mathematics (2026)
+- `li2026learning`: Learning to Disprove: Formal Counterexample Generation with Large Language Models
+- Learning to Evaluate Before Improving: Automatic Rubric Induction for Automatic Research Agents (2026)
+- Learning to Generate Formally Verifiable Step-by-Step Logic Reasoning via Structured Formal Intermediaries (2026)
+- Learning to Plan by Looking Back: Hindsight Hierarchies for Training Reasoning Models (2026)
+- Learning to Prove Theorems by Learning to Generate Theorems (2020)
+- Learning to Prove Theorems via Interacting with Proof Assistants (2019)
+- `zhang2026learning`: Learning to Prove, Not Just to Answer: Reinforcement Learning from Formal Verification for Natural-Language Logical Reasoning
+- Learning to Reason in Large Theories without Imitation (2019)
+- Learning to Refine: An Agentic RL Approach for Iterative SPARQL Query Construction (2025)
+- Learning to Repair Lean Proofs from Compiler Feedback (2026)
+- Learning to Solve and Optimize by Evolving Code (2026)
+- `beg2026learning`: Learning-Infused Formal Reasoning: From Contract Synthesis to Artifact Reuse and Formal Semantics
+- LEGO-Compiler: Enhancing Neural Compilation Through Translation Composability (2025)
+- LEGO-Prover: Neural Theorem Proving with Growing Libraries (2023)
+- Lemma Functions for Frama-C: C Programs as Proofs (2018)
+- Lemma Generation for Horn Clause Satisfiability: A Preliminary Study (2019)
+- `yang2025lemmahead`: LemmaHead: RAG Assisted Proof Generation Using Large Language Models
+- Lemmanaid: Neuro-Symbolic Lemma Conjecturing (2025)
+- `wu2023lemur`: Lemur: Integrating Large Language Models in Automated Program Verification
+- `barroso2023leroy`: Leroy and Blazy Were Right: Their Memory Model Soundness Proof is Automatable
+- Less Effort, Shorter Proofs: Reinforcement Learning for Security Protocol Analysis in Tamarin (2026)
+- `baumann2012lessons`: Lessons Learned From Microkernel Verification -- Specification is the New Bottleneck
+- `blanc2025lessons`: Lessons Learned So Far From a Community Effort to Verify the Rust Standard Library (work-in-progress)
+- Let the Library Speak: Self-Advertised Method Selection for Formal Proving (2026)
+- Let's Reason Formally: Natural-Formal Hybrid Reasoning Enhances LLM's Math Capability (2025)
+- Let's Verify Step by Step (2023)
+- LEVER: Adaptive Cost-Aware Proof Search Over AND/OR Graphs (2026)
+- LEVER: Learning to Verify Language-to-Code Generation with Execution (2023)
+- Leveraging Automated Unit Tests for Unsupervised Code Translation (2021)
+- `pinto2023leveraging`: Leveraging Compositional Methods for Modeling and Verification of an Autonomous Taxi System
+- Leveraging Cryptographic Simulator Synthesis for Formally Verifying the FOO E-Voting Protocol (2026)
+- `yao2023leveraging`: Leveraging Large Language Models for Automated Proof Synthesis in Rust
+- Leveraging Large Language Models to Boost Dafny's Developers Productivity (2024)
+- Leveraging LLMs for Formal Software Requirements - Challenges and Prospects (2025)
+- `ijaz2023leveraging`: Leveraging Rust for Lightweight OS Correctness
+- `astrauskas2019leveraging`: Leveraging rust types for modular specification and verification
+- `fiala2023leveraging`: Leveraging Rust Types for Program Synthesis
+- `cassou2011leveraging`: Leveraging software architectures to guide and verify the development of sense/compute/control applications
+- Leveraging Test Driven Development with Large Language Models for Reliable and Verifiable Spreadsheet Code Generation: A Research Framework (2025)
+- `pradel2012leveraging`: Leveraging test generation and specification mining for automated bug detection without false positives
+- Libra: Divide and Conquer to Verify Forwarding Tables in Huge Networks (2014)
+- `huffman2013lifting`: Lifting and Transfer: A Modular Design for Quotients in Isabelle/HOL
+- `bargmann2023lifting`: Lifting the Reasoning Level in Generic Weak Memory Verification (Extended Version)
+- `zhang2016lightdp`: LightDP: towards automating differential privacy proofs
+- `castes2025lightweight`: Lightweight Hypervisor Verification: Putting the Hardware Burger on a Diet
+- `macedo2016lightweight`: Lightweight specification and analysis of dynamic systems with rich configurations
+- `tang2022lightyear`: LIGHTYEAR: Using Modularity to Scale BGP Control Plane Verification
+- `jilk2016limits`: Limits to Verification and Validation of Agentic Behavior
+- `burckhardt2010line`: Line-up: a complete and automatic linearizability checker
+- `dallago2011linear`: Linear Dependent Types and Relative Completeness
+- `congard2026linear`: Linear Effects, Exceptions, and Resource Safety
+- Linear effects, exceptions, and resource safety: a Curry-Howard correspondence for destructors (2025)
+- Linear Haskell: practical linearity in a higher-order polymorphic language (2017)
+- Linear Integer Arithmetic Revisited (2015)
+- Linear Invariant Generation Using Non-linear Constraint Solving (2003)
+- `ji2026linear`: Linear Reasoning vs. Proof by Cases: Obstacles for Large Language Models in FOL Problem Solving
+- `li2022linear`: Linear types for large-scale systems verification
+- Liquid information flow control (2016)
+- `csiky2022liquidrust`: LiquidRust: Refinement Types for Imperative Languages with Ownership
+- LiveFMBench: Unveiling the Power and Limits of Agentic Workflows in Specification Generation (2026)
+- Liveness Verification of Stateful Network Functions (2020)
+- `azerbayev2023llemma`: Llemma: An Open Language Model For Mathematics
+- LLM Assisted Coding with Metamorphic Specification Mutation Agent (2025)
+- LLM Library Learning Fails: A LEGO-Prover Case Study (2025)
+- `wu2024llm`: LLM Meets Bounded Model Checking: Neuro-symbolic Loop Invariant Inference
+- LLM Priors for ERM over Programs (2025)
+- `kwok2026llm`: LLM-as-a-Verifier: A General-Purpose Verification Framework
+- `tomihari2026llm`: LLM-as-an-Improver: Turning Verification into Better Candidates
+- LLM-Assisted Automatic Security Proofs for Cryptographic Protocols: How Far Are We? (2026)
+- LLM-Assisted Formalization Enables Deterministic Detection of Statutory Inconsistency in the Internal Revenue Code (2025)
+- `takhar2026llm`: LLM-Assisted Unsatisfiability Proofs for Satisfiability Modulo Theories, Oracles, and Natural Language
+- LLM-based Automated Theorem Proving Hinges on Scalable Synthetic Data Generation (2025)
+- LLM-Based FORM Code Generation with Verification-Driven Fine-Tuning (2026)
+- LLM-based Framework for Generating and Verifying Parallel DEVS Statecharts (2026)
+- LLM-Based Invariant Testing for Software Functional Bugs (2026)
+- LLM-Based Repair of Static Nullability Errors (2025)
+- LLM-based Satisfiability Checking of String Requirements by Consistent Data and Checker Generation (2025)
+- LLM-Based Test Oracles: Source-of-Authority Taxonomy—A Systematic Literature Review (2026)
+- LLM-Driven Heuristic Synthesis for Industrial Process Control: Lessons from Hot Steel Rolling (2026)
+- `muller2026llm`: LLM-enabled Behavior Driven Development Workflow for Formally Verified Hardware Designs
+- LLM-Guided Program Evolution for Circle Packing: Breaking 10 Packomania Records for $28 (2026)
+- LLM2SMT: Building an SMT Solver with Zero Human-Written Code (2026)
+- `bedell2026llm4c2rust`: LLM4C2Rust: Large Language Models for Automated Memory-Safe Code Transpilation
+- LLMs and Fuzzing in Tandem: A New Approach to Automatically Generating Weakest Preconditions (2025)
+- `bartoletti2025llms`: LLMs as verification oracles for Solidity
+- LLMs Can't Plan, But Can Help Planning in LLM-Modulo Frameworks (2024)
+- `kesavan2026llms`: LLMS FOR FORMAL THEOREM PROVING – HUMAN–MACHINE COLLABORATION ON PROOFS
+- LLMs Get Lost In Multi-Turn Conversation (2025)
+- LLMs Know When They Know, but Do Not Act on It: A Metacognitive Harness for Test-time Scaling (2026)
+- LLMs Lean on Priors, Not Programming Language Semantics (2025)
+- LLMSTEP: LLM proofstep suggestions in Lean (2023)
+- `liao2026llvm`: LLVM Translation Validation Automated with Large Language Models and Lean
+- Local Coherence or Global Validity? Investigating RLVR Traces in Math Domains (2025)
+- Local Look-Ahead Guidance via Verifier-in-the-Loop for Automated Theorem Proving (2025)
+- Local refinement typing (2017)
+- Local Success Does Not Compose: Benchmarking Large Language Models for Compositional Formal Verification (2025)
+- `holzmann2000logic`: Logic verification of ANSI-C code with SPIN
+- Logic-LM: Empowering Large Language Models with Symbolic Solvers for Faithful Logical Reasoning (2023)
+- `xu2025logicreward`: LogicReward: Incentivizing LLM Reasoning via Step-Wise Logical Supervision
+- `hu2026logictrack`: LogicTrack: Auditing Reasoning Trajectories of Large Language Models with Formal Logic Solvers
+- Logos: Certified Order-Sensitive SQL Rewrites with Mechanized Semantics and LLM Guidance (2026)
+- `lu2026long`: Long-horizon autoformalization of a core theorem underlying MIP* = RE
+- LongCat-Flash-Prover: Advancing Native Formal Reasoning via Agentic Tool-Integrated Reinforcement Learning (2026)
+- Looping Is Not Reliability: State-Bound Evidence and Typed Revision Contracts for Agentic Code Repair (2026)
+- LoRA: Low-Rank Adaptation of Large Language Models (2021)
+- Lost at C: A User Study on the Security Implications of Large Language Model Code Assistants (2022)
+- `beyersdorff2016lower`: Lower Bounds: From Circuits to QBF Proof Systems
+- LSPRAG: LSP-Guided RAG for Language-Agnostic Real-Time Unit Test Generation (2025)
+- `jeffrey2012ltl`: LTL types FRP: linear-time temporal logic propositions as types, proofs as functional reactive programs
+- LTLDiff: Finite Linear Temporal Logic-Guided Data Generation and Diffusion Policies for Multi-agent Robotic Manipulation (2026)
+- `foster2006ltsa`: LTSA-WS: a tool for model-based verification of web service compositions and choreography
+- Lyra: Orchestrating Dual Correction in Automated Theorem Proving (2023)
+- `wang2026m2f`: M2F: Automated Formalization of Mathematical Literature at Scale
+- `he2026m2k`: M2K: Making the Model-Kernel Interface Explicit for Reliable CUDA Kernel Verification
+- `wang2025ma`: MA-LoT: Model-Collaboration Lean-based Long Chain-of-Thought Reasoning enhances Formal Theorem Proving
+- MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem Proving in Mathematical Analysis (2026)
+- Macaw: A Machine Code Toolbox for the Busy Binary Analyst (2024)
+- Machine-Checked Certificates for the Geometric Half of the Minimum Kochen-Specker Bound (2026)
+- Machine-Checked Dual-Write Recovery from a Commit Log (2026)
+- `chargueraud2015machine`: Machine-Checked Verification of the Correctness and Amortized Complexity of an Efficient Union-Find Implementation
+- Machine-checking Multi-Round Proofs of Shuffle: Terelius-Wikstrom and Bayer-Groth (2023)
+- Machine-Generated, Machine-Checked Proofs for a Verified Compiler (Experience Report) (2026)
+- Machine-Learned Premise Selection for Lean (2023)
+- `guha2013machine`: Machine-verified network controllers
+- Maestro Order: A Model-Agnostic Orchestration Harness (2026)
+- Mage: Multi-Axis Evaluation of LLM-Generated Executable Game Scenes Beyond Compile-Pass Rate (2026)
+- Magenta: Closing the Loop Between Mathematical Reasoning and Lean Verification (2026)
+- Magnushammer: A Transformer-Based Approach to Premise Selection (2023)
+- MAGS: Multi-agent Auto-formalization Guarantees Safety for Agentic Outputs (2026)
+- Maintaining a Library of Formal Mathematics (2020)
+- `yu2012maintaining`: Maintaining invariant traceability through bidirectional transformations
+- `marinescu2012make`: make test-zesti: A symbolic execution solution for improving regression testing
+- `schneider2014managing`: Managing LTL properties in Event-B refinement
+- Manthan: A Data Driven Approach for Boolean Function Synthesis (2020)
+- `mossberg2019manticore`: Manticore: A User-Friendly Symbolic Execution Framework for Binaries and Smart Contracts
+- `adjedj2024martin`: Martin-Löf à la Coq
+- `nejati2007matching`: Matching and Merging of Statecharts Specifications
+- Matching Multiplications in Bit-Vector Formulas (2016)
+- math-PVS: A Large Language Model Framework to Map Scientific Publications to PVS Theories (2023)
+- Math-Shepherd: Verify and Reinforce LLMs Step-by-step without Human Annotations (2023)
+- MathAdv: What Theorem Provers Know, Reason, Formalize, and Generalize (2026)
+- MathAtlas: A Benchmark for Autoformalization in the Wild (2026)
+- MathConstraint: Automated Generation of Verified Combinatorial Reasoning Instances for LLMs (2026)
+- MathCoPilot: An Interactive System for Human-AI Symbiotic Paradigm of Mathematical Research (2026)
+- Mathematical Discovery in the Wild: AI-Guided Proofs in Banach Space Theory (2026)
+- Mathematical exploration and discovery at scale (2025)
+- Mathematical Formalized Problem Solving and Theorem Proving in Different Fields in Lean 4 (2024)
+- `duc2025mathematics`: Mathematics with large language models as provers and verifiers
+- Mathesis: Towards Formal Theorem Proving from Natural Languages (2025)
+- MathForm: Scaling Mathematical Autoformalization with Knowledge Retrieval and Verification-Guided Refinement (2026)
+- `liu2026mathliblemma`: MathlibLemma: Folklore Lemma Generation and Benchmark for Formal Mathematics
+- MathlibPR: Pull Request Merge-Readiness Benchmark for Formal Mathematical Libraries (2026)
+- MATP-BENCH: Can MLLM Be a Good Automated Theorem Prover for Multimodal Problems? (2025)
+- `albarghouthi2016maximal`: Maximal specification synthesis
+- MBA-Blast: Unveiling and Simplifying Mixed Boolean-Arithmetic Obfuscation (2021)
+- `fredlund2007mcerlang`: McErlang: a model checker for a distributed functional programming language
+- `lomuscio2015mcmas`: MCMAS: an open-source model checker for the verification of multi-agent systems
+- `watt2018mechanising`: Mechanising and verifying the WebAssembly specification
+- Mechanism-level routing failure in LLMs over Lean-verified algebraic structures (2026)
+- Mechanized Semantics for the Clight Subset of the C Language (2009)
+- `borkowski2024mechanizing`: Mechanizing Refinement Types
+- MechMath Agent Team: LLM Driven Agents for Mathematical Research (2026)
+- MechMath: Sorrifier-Driven Formal Decomposition Workflow for Automated Theorem Proving (2026)
+- `monniaux2024memory`: Memory Simulations, Security and Optimization in a Verified Compiler
+- `courcoubetis1992memory`: Memory-efficient algorithms for the verification of temporal properties
+- `xu2021memory`: Memory-Safety Challenge Considered Solved? An In-Depth Study with All Rust CVEs
+- `torlak2010memsat`: MemSAT: checking axiomatic specifications of memory models
+- MerLean-Prover: A Recursive Looping Harness for Lean 4 Theorem Proving (2026)
+- `livshits2009merlin`: Merlin: specification inference for explicit information flow problems
+- Meta-Ctrl: Guaranteed Plan Generation by Decoupling Syntactic and Semantic Constraints (2026)
+- `martinez2019meta`: Meta-F*: Proof Automation with SMT, Tactics, and Metaprograms
+- Meta-Harness: End-to-End Optimization of Model Harnesses (2026)
+- Meta-Sift: How to Sift Out a Clean Subset in the Presence of Data Poisoning? (2023)
+- Metamodel-Guided Model Generation with Layered Constraints (2025)
+- Metha: Network Verifiers Need To Be Correct Too! (2021)
+- `metere2026methods`: Methods for Formal Verification of Agent Skills: Three Layers Toward a Mechanically Checkable Capability-Containment Proof
+- Metrics That Write Themselves: Evolving an Evaluator from Its Own Blind Spots (2026)
+- `azevedodeamorim2015micro`: Micro-Policies: Formally Verified, Tag-Based Security Monitors
+- `chen2026milestones`: Milestones over Outcome: Unlocking Geometric Reasoning with Sub-Goal Verifiable Reward
+- miniCodeProps: a Minimal Benchmark for Proving Code Properties (2024)
+- `hu2025minictx`: miniCTX: Neural Theorem Proving with (Long-)Contexts
+- MiniF2F in Rocq: Automatic Translation Between Proof Assistants - A Case Study (2025)
+- MiniF2F-Dafny: LLM-Guided Mathematical Theorem Proving via Auto-Active Verification (2025)
+- miniF2F-Lean Revisited: Reviewing Limitations and Charting a Path Forward (2025)
+- MiniF2F: a cross-system benchmark for formal Olympiad-level mathematics (2021)
+- `geilen2005minimising`: Minimising buffer requirements of synchronous dataflow graphs with model checking
+- `acharya2007mining`: Mining API patterns as partial orders from source code: from usage scenarios to specifications
+- `lee2011mining`: Mining parametric specifications
+- `christodorescu2007mining`: Mining specifications of malicious behavior
+- `blanchette2015mining`: Mining the Archive of Formal Proofs
+- Minotaur: A SIMD-Oriented Synthesizing Superoptimizer (2023)
+- `kaleeswaran2013minthint`: MintHint: automated synthesis of repair hints
+- MIRB: Mathematical Information Retrieval Benchmark (2025)
+- `li2021mirchecker`: MirChecker: Detecting Bugs in Rust Programs via Static Analysis
+- Mirror: Enabling Proofs of Data Replication and Retrievability in the Cloud (2016)
+- MirrorShard: Proof by Computational Reflection with Verified Hints (2013)
+- `kekatos2026mission`: Mission-Level Runtime Assurance for LLM-Assisted ISR Swarms over a Verification-Aware Fabric
+- MIST: Defending Against Membership Inference Attacks Through Membership-Invariant Subspace Training (2024)
+- `akilesh2026mitigating`: Mitigating False Positives in Static Memory Safety Analysis of Rust Programs via Reinforcement Learning
+- Mitigating hallucinations and omissions in LLMs for invertible problems: An application to hardware logic design automation (2025)
+- `moine2026mizzle`: Mizzle: A Complete Concurrent Incorrectness Logic for Preventing False Alarms in Agentic Bug Finding
+- `amrani2018ml`: ML + FV = $\heartsuit$? A Survey on the Application of Machine Learning to Formal Verification
+- ML4PG in Computer Algebra verification (2013)
+- MobileAtlas: Geographically Decoupled Measurements in Cellular Networks for Security and Privacy Research (2023)
+- `alur1998mocha`: MOCHA: Modularity in model checking
+- `kuru2025modal`: Modal Verification Patterns for Systems Software
+- `emerson1985modalities`: Modalities for model checking (extended abstract)
+- `benetti2010model`: Model Checking Ad Hoc Network Routing Protocols: ARAN vs. endairA
+- `hartong2002model`: Model checking algorithms for analog verification
+- `clarke1992model`: Model checking and abstraction
+- `grumberg1994model`: Model checking and modular verification
+- Model Checking C Programs with Loops via k-Induction and Invariants (2015)
+- `bochot2009model`: Model checking flight control systems: The Airbus experience
+- `godefroid1997model`: Model checking for programming languages using VeriSoft
+- `kokologiannakis2019model`: Model checking for weakly consistent libraries
+- Model Checking in Bits and Pieces (2013)
+- `havelund1999model`: Model checking JAVA programs using JAVA PathFinder
+- `anderson1996model`: Model checking large software specifications
+- `classen2010model`: Model checking lots of systems
+- `ballarini2006model`: Model Checking Medium Access Control for Sensor Networks
+- `lauenroth2009model`: Model Checking of Domain Artifacts in Product Line Engineering
+- `kupferman2001model`: Model Checking of Safety Properties
+- `esparza2004model`: Model checking probabilistic pushdown automata
+- `visser2003model`: Model Checking Programs
+- `guerraoui2008model`: Model checking transactional memories
+- `godefroid1998model`: Model checking without a model: an analysis of the heart-beat monitor of a telephone switch using VeriSoft
+- `fu2004model`: Model checking XML manipulating software
+- Model Generation for Quantified Formulas: A Taint-Based Approach (2018)
+- `fiterau-brostean2017model`: Model learning and model checking of SSH implementations
+- Model-based verification of Web service compositions
+- `baier2003model`: Model-checking algorithms for continuous-time markov chains
+- `kobayashi2009model`: Model-checking higher-order functions
+- `alur1993model`: Model-Checking in Dense Real-Time
+- `wei2026model`: Model-Driven Discipline for Multi-Agent LLMs: Requirement-to-Verification Generation of Traceable System Models
+- Model-Guided Synthesis of Inductive Lemmas for FOL with Least Fixpoints (2020)
+- ModelForge: Using GenAI to Improve the Development of Security Protocols (2025)
+- `bryant2002modeling`: Modeling and Verifying Systems Using a Logic of Counter Arithmetic with Lambda Expressions and Uninterpreted Functions
+- Modeling Reachability Types with Logical Relations: Semantic Type Soundness, Termination, Effect Safety, and Equational Theory (2023)
+- `siegel2005modeling`: Modeling wildcard-free MPI programs for verification
+- `freitas2016modelling`: Modelling and verifying a priority scheduler for an SCJ runtime environment
+- `mitsch2016modelplex`: ModelPlex: verified runtime validation of verified cyber-physical system models
+- Models That Prove Their Own Correctness (2024)
+- `logozzo2012modular`: Modular and verified automatic program repair
+- `fournet2011modular`: Modular code-based cryptographic verification
+- `thijm2022modular`: Modular Control Plane Verification via Temporal Invariants
+- `foroushaani2022modular`: Modular Formal Verification of Rust Programs with Unsafe Blocks
+- Modular information flow through ownership (2021)
+- `pereira2025modular`: Modular Reasoning about Global Variables and Their Initialization
+- `li2026modular`: Modular Responsiveness Verification of Rust Async Runtimes
+- `wolff2021modular`: Modular specification and verification of closures in Rust
+- Modular termination verification with a higher-order concurrent separation logic (Intermediate report) (2022)
+- `parkinson2007modular`: Modular verification of a non-blocking stack
+- `farrell2019modular`: Modular Verification of Autonomous Space Robotics
+- `feng2005modular`: Modular verification of concurrent assembly code with dynamic thread creation and termination
+- `rasin2021modular`: Modular Verification of Concurrent Programs via Sequential Model Checking
+- Modular Verification of Differential Privacy in Probabilistic Higher-Order Separation Logic (2026)
+- `tergabrielyan2019modular`: Modular Verification of Heap Reachability Properties in Separation Logic
+- `sung2017modular`: Modular Verification of Interrupt-Driven Software
+- `apt2009modular`: Modular Verification of Recursive Programs
+- `bhargavan2010modular`: Modular verification of security protocol code by typing
+- `leino2018modular`: Modular verification scopes via export sets and translucent exports
+- Modularity, Code Specialization, and Zero-Cost Abstractions for Program Verification (2021)
+- `radicek2018monadic`: Monadic refinements for relational cost analysis
+- `emmi2015monitoring`: Monitoring refinement via symbolic reasoning
+- `baumeister2023monitoring`: Monitoring with verified guarantees
+- Monotonic Reference-Free Refinement for Autoformalization (2026)
+- `banka2026claims`: More Claims, Less Evidence: Bounded Verification of AI-Generated Digital Knowledge Artifacts
+- `gopinathan2023mostly`: Mostly Automated Proof Repair for Verified Libraries
+- `wang2026mostly`: Mostly Automatic Translation of Language Interpreters from C to Safe Rust
+- `chlipala2011mostly`: Mostly-automated verification of low-level programs in computational separation logic
+- `ma2025mover`: MoVer: Motion Verification for Motion Graphics Animations
+- `onofilho2026moving`: Moving the Mean Toward the Known Good, Not Beyond It: What Inference-Time Interventions and Weight Consolidation Buy in Open-Ended Generation
+- MPS-Prover: Advancing Stepwise Theorem Proving by Multi-Perspective Search and Data Curation (2025)
+- MSC-180: A Benchmark for Automated Formal Theorem Proving from Mathematical Subject Classification (2025)
+- MSWasm: Soundly Enforcing Memory-Safe Execution of Unsafe Code (2022)
+- `ziliani2013mtac`: Mtac: a monad for typed tactic programming in Coq
+- `wang2018mualloy`: MuAlloy: a mutation testing framework for alloy
+- Multi-agent Autoformalization of Tensor Network Theory (2026)
+- `kekatos2026multi`: Multi-Aspect Runtime Verification for Simulation-Based V&V of LLM-Enabled Autonomous Agents
+- Multi-Grained Specifications for Distributed System Model Checking and Verification (2024)
+- Multi-Threaded Software Model Checking via Parallel Trace Abstraction Refinement (2025)
+- `lungu2009multicore`: Multicore power management: Ensuring robustness via early-stage formal verification
+- Multilingual Mathematical Autoformalization (2023)
+- MultiPL-E: A Scalable and Extensible Approach to Benchmarking Neural Code Generation (2022)
+- `berger2019multiple`: Multiple Analyses, Requirements Once: simplifying testing & verification in automotive model-based development
+- Multiple Query Satisfiability of Constrained Horn Clauses (2022)
+- `sen2015multise`: MultiSE: multi-path symbolic execution using value summaries
+- `bryant2026munkres`: Munkres' General Topology Autoformalized in Isabelle/HOL
+- MUSTARD: Mastering Uniform Synthesis of Theorem and Proof Data (2024)
+- `black2000mutation`: Mutation operators for specifications
+- MutDafny: A Mutation-Based Approach to Assess Dafny Specifications (2025)
+- mypyvy: A Research Platform for Verification of Transition Systems in First-Order Logic (2024)
+- `blain2026mythos`: Mythos and the Unverified Cage: Z3-Based Pre-Deployment Verification for Frontier-Model Sandbox Infrastructure
+- NanoProof: Open and Efficient Automated Theorem Proving in Lean 4 (2026)
+- Natural Emergent Misalignment from Reward Hacking in Production RL (2025)
+- `poroor2021natural`: Natural Hoare Logic: Towards formal verification of programs from logical forms of natural language specifications
+- `li2026natural`: Natural Language based Specification and Verification
+- Natural Language Specifications in Proof Assistants (2022)
+- Natural Language to First-Order Logic LLM-based Autoformalization (2026)
+- Natural Language Translation of Formal Proofs through Informalization of Proof Steps and Recursive Summarization along Proof Structure (2025)
+- Natural Synthesis: Outperforming Reactive Synthesis Tools with Large Reasoning Models (2026)
+- Nazrin: An Atomic Neural Proof Automation Tactic in Lean 4 (2026)
+- `zheng2026ncclbpf`: NCCLbpf: Verified, Composable Policy Execution for GPU Collective Communication
+- NDD: A Decision Diagram for Network Verification (2025)
+- `teodori2026nebula`: NEBULA: A Language - Independent Specification for Opaque Rotating Refresh Tokens
+- `chugh2012nested`: Nested refinements: a logic for duck typing
+- NetSMC: A Custom Symbolic Model Checker for Stateful Network Verification (2020)
+- Neural Interactive Proofs (2024)
+- `isac2022neural`: Neural Network Verification with Proof Production
+- `xu2026neural`: Neural Theorem Proving for Verification Conditions: A Real-World Benchmark
+- Neural Theorem Proving: Generating and Structuring Proofs for Formal Verification (2025)
+- `jha2023neuro`: Neuro Symbolic Reasoning for Planning: Counterexample Guided Inductive Synthesis using Large Language Models and Satisfiability Solving
+- `lahiri2026neuro`: Neuro-Formal Verification: Agentic Language-Agnostic Formal Program Reasoning
+- `zhang2026neuro`: Neuro-Symbolic Generation and Validation of Memory-Aware Formal Function Specifications
+- Neuro-Symbolic Integration Brings Causal and Reliable Reasoning Proofs (2025)
+- `zi2026neuro`: Neuro-symbolic PRM: Enhancing Scientific Reasoning via Structured Traces and Symbolic Verification
+- `he2026neuro`: Neuro-Symbolic Proof Generation for Scaling Systems Software Verification
+- `nong2026neuro`: Neuro-Symbolic Proof-of-Vulnerability Generation with Open-Weight Models
+- Neuro-Symbolic Reasoning for Vulnerability Detection (2026)
+- `pirzada2026neuro`: Neuro-Symbolic Software Verification: Hyper-charging Local Language Models with Symbolic Reasoning at Scale
+- Neuro-Symbolic Verification on Instruction Following of LLMs (2026)
+- `manino2023neurocodebench`: NeuroCodeBench: a plain C neural network benchmark for software verification
+- NeuroNL2LTL: A Neurosymbolic Framework for Natural Language Translation of Linear Temporal Logic (2026)
+- NeuroProlog: Multi-Task Fine-Tuning for Neurosymbolic Mathematical Reasoning via the Cocktail Effect (2026)
+- Neurosymbolic Auditing of Natural-Language Software Requirements (2026)
+- Neurosymbolic Language Reasoning as Satisfiability Modulo Theory (2026)
+- NeuroSynt: A Neuro-symbolic Portfolio Solver for Reactive Synthesis (2024)
+- `li2026never`: Never Stop Thinking: Continuous-Time Language Agents
+- Never the Number: Structural Abstention for AI Systems Whose Answers Are Consumed as Fact (2026)
+- `ganzinger2003new`: New directions in instantiation-based theorem proving
+- `arapinis2012new`: New privacy issues in mobile telephony: fix and verification
+- Next Steps in LLM-Supported Java Verification (2025)
+- Next-Token Prediction Task Assumes Optimal Data Ordering for LLM Training in Proof Generation (2024)
+- Nickel: A Framework for Design and Verification of Information Flow Control Systems (2018)
+- Nidus: Externalized Reasoning for AI-Assisted Engineering (2026)
+- NIL: Learning Nonlinear Interpolants (2019)
+- NKI-Agent: Domain-Specific Fine-Tuning and Agentic Tool Use for Neuron Kernel Generation (2026)
+- NL2AGBench: Benchmarking LLM Auto-Formalization for AlphaGeometry (2026)
+- NL2LOGIC: AST-Guided Translation of Natural Language into First-Order Logic with Large Language Models (2026)
+- NL2SpaTiaL: Generating Geometric Spatio-Temporal Logic Specifications from Natural Language for Manipulation Tasks (2025)
+- `cosler2023nl2spec`: nl2spec: Interactively Translating Unstructured Natural Language to Temporal Logics with Large Language Models
+- NL2TL: Transforming Natural Languages to Temporal Logics using Large Language Models (2023)
+- `hu2026nl2vbench`: NL2VBench: A Benchmark for End-to-End Natural-Language to Verifiable Rust Generation
+- No Accidental Software Agent First Canonical Code for Human Code Entropy Reduction and 30 to 500 times Lower Frontier Model Requirements (2026)
+- No Certificate, No Execution: Certified Traces as a Foundation for Trustworthy AI Agents (2026)
+- `liu2026no`: No More Translation at Runtime: LLM-Empowered Static Binary Translation
+- `lindner2018no`: No Panic! Verification of Rust Programs by Symbolic Execution
+- `matsushita2025nola`: Nola: Later-Free Ghost State for Verifying Termination in Iris
+- `sankaranarayanan2004non`: Non-linear loop invariant generation using Gröbner bases
+- Nonlinear Craig Interpolant Generation (2020)
+- NormWorlds-CF: Solver-Verified Counterfactual Normative Reasoning with Metamorphic-Relation GRPO (2026)
+- Not All Invariants Are Equal: Curating Training Data to Accelerate Program Verification with SLMs (2026)
+- Not Self-Decidable: LLMs Cannot Draw the Boundary of What an Agent Verifier Can Check (2026)
+- Not-Quite-So-Broken TLS: Lessons in Re-Engineering a Security Protocol Specification and Implementation (2015)
+- Novel tree-search method for synthesizing SMT strategies (2025)
+- `immler2012numerical`: Numerical Analysis of Ordinary Differential Equations in Isabelle/HOL
+- Numina-Lean-Agent: An Open and General Agentic Reasoning System for Formal Mathematics (2026)
+- NuRV: A nuXmv Extension for Runtime Verification (2019)
+- `cimatti2002nusmv`: NuSMV 2: An OpenSource Tool for Symbolic Model Checking
+- `cimatti2000nusmv`: NUSMV: a new symbolic model checker
+- NuSMV: A New Symbolic Model Verifier (1999)
+- O-Forge: An LLM + Computer Algebra Framework for Asymptotic Analysis (2025)
+- ObliCheck: Efficient Verification of Oblivious Algorithms with Unobservable State (2021)
+- `gu2022obsynth`: ObSynth: An Interactive Synthesis System for Generating Object Models from Natural Language Specifications
+- `cimatti2013ocra`: OCRA: A tool for checking the refinement of temporal contracts
+- `zhang2014abstraction`: On abstraction refinement for program analyses in Datalog
+- `baresi2007accurate`: On Accurate Automatic Verification of Publish-Subscribe Architectures
+- On Automated Lemma Generation for Separation Logic with Inductive Definitions (2015)
+- `denamgana2026compositional`: On Compositional Learning Behaviours in Formal Mathematics
+- On Counterexample Guided Quantifier Instantiation for Synthesis in CVC4 (2015)
+- On Deciding Local Theory Extensions via E-matching (2015)
+- On Demystifying the Android Application Framework: Re-Visiting Android Permission Specification Analysis (2016)
+- `kneuss2013integrating`: On Integrating Deductive Synthesis and Verification Systems
+- `field1990laziness`: On laziness and optimality in lambda interpreters: tools for specification and analysis
+- `wasserrab2009pdg`: On PDG-based noninterference and its modular proof
+- On Reasoning-Centric LLM-based Automated Theorem Proving (2026)
+- On Reducing Linearizability to State Reachability (2015)
+- `koukoutos2017repair`: On Repair with Probabilistic Attribute Grammars
+- On Some Problems from the Kourovka Notebook (2026)
+- On Temporal Verification of Stateful P4 Programs (2025)
+- On the Almost-Sure Termination of Probabilistic Counter Programs (2025)
+- `losa2020formal`: On the formal verification of the stellar consensus protocol
+- On the Reliability and Explainability of Language Models for Program Generation (2023)
+- On the Self-Verification Limitations of Large Language Models on Reasoning and Planning Tasks (2024)
+- `atig2010verification`: On the verification problem for weak memory models
+- On Verifiable Legal Reasoning: A Multi-Agent Framework with Formalized Knowledge Representations (2025)
+- `maoz2016well`: On well-separation of GR(1) specifications
+- `sui2016demand`: On-demand strong update analysis via value-flow refinement
+- `krohn2004fly`: On-the-fly verification of rateless erasure codes for efficient content distribution
+- Once is Never Enough: Foundations for Sound Statistical Inference in Tor Network Experimentation (2021)
+- `esparza2018one`: One Theorem to Rule Them All: A Unified Translation of LTL into ω-Automata
+- `hajihashemi2026online`: Online Verification of Language Model Responses Under Cost Constraints
+- Ontology-to-tools compilation for executable semantic constraint enforcement in LLM agents (2026)
+- `tran2026open`: Open-Source LLM-Driven Formal Verification: A Multi-Agent Pipeline for RTL Repair
+- `nicolae2023openbsd`: OpenBSD formal driver verification with SeL4
+- `cok2014openjml`: OpenJML: Software verification for Java 7 using JML, OpenJDK, and Eclipse
+- OpenProver: Agentic and Interactive Theorem Proving with Lean 4 (2026)
+- Operator Packages, Proposer Strength, and Construction-Family Plateaus in Office-Scale Verified Search (2026)
+- OProver: A Unified Framework for Agentic Formal Theorem Proving (2026)
+- `liu2026opt`: Opt-Verifier: Unleashing the Power of LLMs for Optimization Modeling via Dual-Side Verification
+- `xu2026optiloop`: OptiLoop: Coordination-in-the-Loop Verification and Repair for LLM-Generated Optimization Agents
+- `roozbehani2011optimization`: Optimization of Lyapunov Invariants in Verification of Software Systems
+- Optimized Invariant Representation of Network Traffic for Detecting Unseen Malware Variants (2016)
+- `tan2016optimizing`: Optimizing selection of competing services with probabilistic hierarchical refinement
+- Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean (2026)
+- OptiRepair: Closed-Loop Diagnosis and Repair of Supply Chain Optimization Models with LLM Agents (2026)
+- `zhao2026optiskill`: OptiSkill: A Hierarchical and Evolving SkillBank for LLM-Based Optimization Modeling
+- OptProver: Bridging Olympiad and Optimization through Continual Training in Formal Theorem Proving (2026)
+- `farrukh2026orbit`: ORBIT: Guided Agentic Orchestration for Autonomous C-to-Rust Transpilation
+- Orchestrating LLM Agents for Scientific Research: A Pilot Study of Multiple Choice Question (MCQ) Generation and Evaluation (2026)
+- OSFoundry: Building and Evolving Operating Systems with Specification-Guided Agents (2026)
+- `jiang2006osprey`: Osprey: a practical type system for validating dimensional unit correctness of C programs
+- OSVAuto: automatic proofs about functional specifications in OS verification (2024)
+- `li2025osvbench`: OSVBench: Benchmarking LLMs on Specification Generation Tasks for Operating System Verification
+- `hozzova2024overapproximation`: Overapproximation of Non-Linear Integer Arithmetic for Smart Contract Verification
+- `cheung2021overcoming`: Overcoming Restraint: Composing Verification of Foreign Functions with Cogent
+- `andres2024owi`: Owi: Performant Parallel Symbolic Execution Made Easy, an Application to WebAssembly
+- Owicki-Gries Reasoning for C11 Programs with Relaxed Dependencies (Extended Version) (2021)
+- OwlC: Compiling Security Protocols to Verified, Secure, High-Performance Libraries (2025)
+- `zhang2023ownership`: Ownership Guided C to Rust Translation
+- `priya2024ownership`: Ownership in low-level intermediate representation
+- `fujiwara2026ownership`: Ownership Refinement Types for Pointer Arithmetic and Nested Arrays
+- `tanaka2023ownership`: Ownership Types for Verification of Programs with Pointer Arithmetic
+- `weiss2019oxide`: Oxide: The Essence of Rust
+- `li2026p`: P$^{3}$: Joint Program-and-Proof Planning for Verified Code Generation
+- `zhang2022pa`: PA-Boot: A Formally Verified Authentication Protocol for Multiprocessor Secure Boot
+- `chen2015pac`: PAC Learning-Based Verification and Model Synthesis
+- PairCoder++: Pair Programming as a Universal Paradigm for Verified Code-Driven Multimodal and Structured-Artifact Generation (2026)
+- PAL*M: Property Attestation for Large Generative Models (2026)
+- `chu2025palm`: PALM: Synergizing Program Analysis and LLMs to Enhance Rust Unit Test Coverage
+- PaMpeR: Proof Method Recommendation System for Isabelle/HOL (2018)
+- `ni2026panicfi`: PanicFI: An Infrastructure for Fixing Panic Bugs in Real-World Rust Programs
+- Pantograph: A Machine-to-Machine Interaction Interface for Advanced Theorem Proving, High Level Reasoning, and Data Extraction in Lean 4 (2024)
+- `john2013parameterized`: Parameterized model checking of fault-tolerant distributed algorithms by abstraction
+- Parametrized Invariance for Infinite State Processes (2013)
+- Pareto Optimal Code Generation (2025)
+- Parsel🦆: Algorithmic Reasoning with Language Models by Composing Decompositions (2022)
+- `ishchenko2026partial`: Partial Automation of Verification Condition Proving for Reflex Programs (Draft)
+- Partial Contracts Suffice: Sound, LLM-Inferred Regression Verification (2026)
+- `clouthier2026passing`: Passing Proofs That Prove Nothing: Deciding Postcondition Vacuity, Precondition Satisfiability, and Contract Completeness for Rust and Kani
+- `sanchez-stern2023passport`: Passport: Improving Automated Formal Verification Using Identifiers
+- `zuo2025pat`: PAT-Agent: Autoformalization for Model Checking
+- PAT: Towards Flexible Verification under Fairness
+- `le2014patch`: Patch verification via multiversion interprocedural control flow graphs
+- PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking (2021)
+- PatchOptic for Shared-State LLM Workflows with Projected Views and Verified Structured Updates (2026)
+- `li2025patchpilot`: PatchPilot: A Cost-Efficient Software Engineering Agent with Early Attempts on Formal Verification
+- PatchVerif: Discovering Faulty Patches in Robotic Vehicles (2023)
+- `defreez2018path`: Path-based function embedding and its application to error-handling specification mining
+- `huang2026path2spec`: Path2Spec: Path-Aware Specification Generation via Large Language Models
+- PATROL: Provable Defense against Adversarial Policy in Two-player Games (2023)
+- `dwyer1999patterns`: Patterns in property specifications for finite-state verification
+- Paxos Made EPR: Decidable Reasoning about Distributed Protocols (2017)
+- PaxosLease Revisited: A Checked Model of Diskless Distributed Leases (2026)
+- PBLean: Pseudo-Boolean Proof Certificates for Lean 4 (2026)
+- `li2025pcrllm`: PCRLLM: Proof-Carrying Reasoning with Large Language Models under Stepwise Logical Constraints
+- `laule2026pddlcoder`: PDDLCoder: Agentic PDDL Generation for LLM-Assisted Symbolic Planning
+- `soroco2025pde`: PDE-Controller: LLMs for Autoformalization and Reasoning of PDEs
+- Pegasus: sound continuous invariant generation (2021)
+- Pencil Puzzle Bench: A Benchmark for Multi-Step Verifiable Reasoning (2026)
+- `bornat2005permission`: Permission accounting in separation logic
+- Permission-Based Separation Logic for Multithreaded Java Programs (2014)
+- `gehring2025permrust`: PermRust: A Token-based Permission System for Rust
+- `huang2025pessimistic`: Pessimistic Verification for Open Ended Math Questions
+- `zhang2026petri`: Petri Nets-based Methods on Automatically Detecting for Concurrency Bugs in Rust Programs
+- Physics as the label for measuring and correcting materials reasoning in multimodal models (2026)
+- Physics-Audited Agentic Discovery in Scientific Machine Learning (2026)
+- PhysProver: Advancing Automatic Theorem Proving for Physics (2026)
+- PICACHV: Formally Verified Data Use Policy Enforcement for Secure Data Analytics (2025)
+- `neis2015pilsner`: Pilsner: a compositionally verified compiler for a higher-order imperative language
+- `dai2025pinchecker`: PinChecker: Identifying Unsound Safe Abstractions of Rust Pinning APIs
+- PINE: Efficient Verification of a Euclidean Norm Bound of a Secret-Shared Vector (2024)
+- `dejon2023pip`: Pip-MPU: Formal Verification of an MPU-Based Separationkernel for Constrained Devices
+- Pipeline Denotational Design: Correct-by-Construction Data Pipelines at Zero Cost (2026)
+- Pipeline for Verifying LLM-Generated Mathematical Solutions (2026)
+- PKind: A parallel k-induction based model checker (2011)
+- `grannan2025place`: Place Capability Graphs: A General-Purpose Model of Rust's Ownership and Borrowing Guarantees
+- `prabhu2020plankton`: Plankton: Scalable network configuration verification through model checking
+- `woos2016planning`: Planning for change in a formal verification of the raft consensus protocol
+- `katz2026planning`: Planning in the LLM Era: Building for Reliability and Efficiency
+- `zhang2026planning`: Planning to Hammer: Difficulty-Aware Decomposition for Automating Rocq Proofs
+- Plans You Can Check: Verifier-Grounded Learning of an Open-Weight Planner for Executable Video-Editing (2026)
+- Platforms in Everything: Analyzing Ground-Truth Data on the Anatomy and Economics of Bullet-Proof Hosting (2019)
+- Playing Without Paying: Detecting Vulnerable Payment Verification in Native Binaries of Unity Mobile Games (2022)
+- PML 2 : Integrated Program Verification in ML (2019)
+- PoC-Gym: Towards More Reliable LLM-Assisted Proof-of-Concept Exploit Generation (2026)
+- PolicyKG: An Agentic LLM Pipeline for Translating Institutional Policies into SHACL Knowledge Graphs (2026)
+- Politeness and Stable Infiniteness: Stronger Together (2021)
+- Polynomial invariant generation for non-deterministic recursive programs (2020)
+- Polynomial invariants by linear algebra (2016)
+- `hrushovski2018polynomial`: Polynomial Invariants for Affine Programs
+- PolyQEnt: A Polynomial Quantified Entailment Solver (2024)
+- `chen2025polyver`: PolyVer: A Compositional Approach for Polyglot System Modeling and Verification
+- `song2013pommade`: PoMMaDe: pushdown model-checking for malware detection
+- PORE: Provably Robust Recommender Systems against Data Poisoning Attacks (2023)
+- `kong2026position`: Position: Certified Correctness in Neural Constraint Reasoning Requires Symbolic Integration
+- `wagner2026position`: Position: Natural Language Should Not Fully Replace Formal Languages
+- `mitchell2025position`: Position: Vibe Coding Needs Vibe Reasoning: Improving Vibe Coding with Formal Verification
+- `zhang2026postcondbench`: POSTCONDBENCH: Benchmarking Correctness and Completeness in Formal Postcondition Inference
+- `leblanc2025power`: PoWER Never Corrupts: Tool-Agnostic Verification of Crash Consistency and Corruption Detection
+- `mandel2026ppdl`: PPDL: LLM-Based Flows as Probabilistic Programs
+- `pereira2024practical`: Practical Deductive Verification of OCaml Programs (Extended Version)
+- `tucker2026practical`: Practical Formal Verification for MLIR Programs
+- `gu2019practical`: Practical GUI Testing of Android Applications Via Model Abstraction and Refinement
+- `aebi2026practical`: Practical Range Refinement Types with Inference
+- Practical Rely/Guarantee Verification of an Efficient Lock for seL4 on Multicore Architectures (2024)
+- `mccreight2009practical`: Practical tactics for separation logic
+- `cohen2013pragmatic`: Pragmatic Quotient Types in Coq
+- `lecomte2026pragmatic`: Pragmatic Uses of AI in Formal Methods–Based Railway Projects: Early Lessons and Perspectives (Extended Abstract)
+- PRDTs: Composable Design and Verification of Consensus Protocols using Replicated Data Types (2025)
+- `guo2015pre`: Pre-silicon security verification and validation: a formal perspective
+- `yang2026precise`: Precise but Uncoupled: Reviewer Precision Does Not Guarantee Critique Uptake in Multi-Agent Math Reasoning
+- `chandrasekharan2016precise`: Precise error determination of approximated components in sequential circuits with model checking
+- Precise Reasoning about Container-Internal Pointers with Logical Pinning (2025)
+- `li2016precise`: Precise semantic history slicing through dynamic delta refinement
+- `lauder1998precise`: Precise visual specification of design patterns
+- Precondition Inference via Partitioning of Initial States (2018)
+- `gupta2011predicate`: Predicate abstraction and refinement for verifying multi-threaded programs
+- Predicate Abstraction for Linked Data Structures (2015)
+- `flanagan2002predicate`: Predicate abstraction for software verification
+- `angelis2017predicate`: Predicate Pairing for Program Verification
+- `dubbeling2026predicate`: Predicate Subtypes in VerCors
+- `murali2024predictable`: Predictable Verification using Intrinsic Definitions
+- `czech2017predicting`: Predicting Rankings of Software Verification Competitions
+- `czech2017predicting`: Predicting rankings of software verification tools
+- Predicting SMT Solver Performance for Software Verification (2017)
+- PrefixGuard: Online Failure Warning and Trace-Grounded Diagnosis for LLM Agents (2026)
+- Preguss: It Analyzes, It Specifies, It Verifies (2025)
+- Premise Order Matters in Reasoning with Large Language Models (2024)
+- Premise Selection for a Lean Hammer (2025)
+- Premise Selection for Mathematics by Corpus Analysis and Kernel Methods (2011)
+- Premise-Augmented Reasoning Chains Improve Error Identification in Math reasoning with LLMs (2025)
+- `wei2026prezta`: Prezta: Provable Remote Execution of Zero-Trust Authorization using SNARKs
+- `qin2022primrose`: Primrose: Selecting Container Data Types by their Properties
+- `dongol2014principles`: Principles for Verification Tools: Separation Logic
+- PRISM 4.0: Verification of Probabilistic Real-Time Systems (2011)
+- PRISM: A Tool for Automatic Verification of Probabilistic Systems (2006)
+- Privacy-Preserving Data Aggregation with Public Verifiability Against Internal Adversaries (2024)
+- `zhao2025pro`: PRO-V-R1: Reasoning Enhanced Programming Agent for RTL Verification
+- `chen2007probabilistic`: Probabilistic Alternating-time Temporal Logic and Model Checking Algorithm
+- `rautenberg2026probabilistic`: Probabilistic Guarantees for Reducing Contextual Hallucinations in LLMs
+- `fruth2006probabilistic`: Probabilistic Model Checking of Contention Resolution in the IEEE 802.15.4 Low-Rate Wireless Personal Area Network Protocol
+- `barthe2014probabilistic`: Probabilistic relational verification for cryptographic implementations
+- Probabilistic Rely-guarantee Calculus (2014)
+- `younes2002probabilistic`: Probabilistic Verification of Discrete Event Systems Using Acceptance Sampling
+- `pan2026problem`: Problem Reductions at Scale: Agentic Integration of Computationally Hard Problems
+- Procedural Refinement by LLM-driven Algorithmic Debugging for ARC-AGI-2 (2026)
+- Proceedings of the 17th Conference on Formal Methods in Computer-Aided Design (FMCAD 2017)
+- `lu2024process`: Process-Driven Autoformalization in Lean 4
+- Process-Verified Reinforcement Learning for Theorem Proving via Lean (2026)
+- `eilers2021product`: Product Programs in the Wild: Retrofitting Program Verifiers to Check Information Flow Security
+- `cheng2025products`: Products of Recursive Programs for Hypersafety Verification (Extended Version)
+- ProFactory: Improving IoT Security via Formalized Protocol Customization (2022)
+- Program Analysis with Local Policy Iteration (2015)
+- `sannella1985program`: Program specification and development in standard ML
+- Program Synthesis from Polymorphic Refinement Types (2015)
+- Program Synthesis in Saturation (2024)
+- `gulwani2007program`: Program verification as probabilistic inference
+- `chargueraud2010program`: Program Verification Through Characteristic Formulae
+- `unno2020program`: Program Verification via Predicate Constraint Satisfiability Modulo Theories
+- Programmers Are Poor and Overconfident Judges of LLM-Generated Assertions (2026)
+- `brady2013programming`: Programming and reasoning with algebraic effects and dependent types
+- Programming with permissions in Mezzo (2013)
+- Progress in Formalizing Sphere Packing in Dimension 8 (2026)
+- Progress on Software Verification: SV-COMP 2022 (2022)
+- Project Prometheus: Bridging the Intent Gap in Agentic Program Repair via Reverse-Engineered Executable Specifications (2026)
+- `acharya2010projection`: Projection and Division: Linear-Space Verification of Firewalls
+- Projectional Decoding: Towards Semantic-Aware LLM Generation (2026)
+- PrologMCP: A Standardized Prolog Tool Interface for LLM Agents (2026)
+- `ahn2026promise`: PROMISE: Proof Automation as Structural Imitation of Human Reasoning
+- `han2021proof`: Proof Artifact Co-training for Theorem Proving with Language Models
+- `geuvers2009proof`: Proof assistants: History, ideas and future
+- `lu2024proof`: Proof Automation with Large Language Models
+- `ho2024proof`: Proof Flow: Preliminary Study on Generative Flow Network Language Model Tuning for Formal Reasoning
+- `isac2025proof`: Proof Minimization in Neural Network Verification
+- `hoare1972proof`: Proof of correctness of data representations
+- Proof of Thought : Neurosymbolic Program Synthesis allows Robust and Interpretable Reasoning (2024)
+- `petrov2025proof`: Proof or Bluff? Evaluating LLMs on 2025 USA Math Olympiad
+- Proof search for propositional abstract separation logics via labelled sequents (2014)
+- `farzan2015proof`: Proof Spaces for Unbounded Parallelism
+- Proof Strategy Extraction from LLMs for Enhancing Symbolic Provers (2025)
+- Proof-Based Synthesis of Sorting Algorithms Using Multisets in Theorema (2019)
+- `appel1999proof`: Proof-carrying authentication
+- Proof-Carrying Certificates for LLM Pipelines: A Trust-Boundary Architecture (2026)
+- Proof-Carrying Cognition: Closing the Verification Gap with Reality-Settled Reward (2026)
+- `chatterjee2022proof`: Proof-Guided Underapproximation Widening for Bounded Model Checking
+- Proof-Pattern Recognition and Lemma Discovery in ACL2 (2013)
+- `fu2026proof`: Proof-Refactor: Refactoring Generated Formal Proofs into Modular Artifacts
+- Proof2Silicon: Prompt Repair for Verified Code and Hardware Generation via Reinforcement Learning (2025)
+- `jana2025proofbridge`: ProofBridge: Auto-Formalization of Natural Language Proofs in Lean via Joint Embeddings
+- ProofCompass: Enhancing Specialized Provers with LLM Guidance (2025)
+- ProofCouncil: An LLM Agent for Solving Open Mathematical Problems (2026)
+- ProofEvolve: Neuro-Symbolic Evolution for Formal Automated Theorem Proving (2026)
+- `cabral2025proofflow`: ProofFlow: A Dependency Graph Approach to Faithful Proof Autoformalization
+- ProofGap: Benchmarking Step-Level Formal Reasoning with Local Obligations Derived from Natural-Language Solutions (2026)
+- `wang2026proofloom`: ProofLoom: Proof-Obligation-Driven Theory Construction for Autoformalizing Research-Level Stochastic Optimization
+- ProofNet++: A Neuro-Symbolic System for Formal Proof Verification with Self-Correction (2025)
+- ProofNet: Autoformalizing and Formally Proving Undergraduate-Level Mathematics (2023)
+- ProofOptimizer: Training Language Models to Simplify Proofs without Human Demonstrations (2025)
+- ProofSketcher: Hybrid LLM + Lightweight Proof Checker for Reliable Math/Logic Reasoning (2026)
+- `yang2026proofverifier`: ProofVerifier: A Scalable, Diversity-Driven Framework for Natural-Language Proof Verification
+- ProofWala: A Framework for Multilingual Proof Data Synthesis and Theorem-Proving (2025)
+- `chatterjee2025proofwright`: ProofWright: Towards Agentic Formal Verification of CUDA
+- `tafjord2021proofwriter`: ProofWriter: Generating Implications, Proofs, and Abductive Statements over Natural Language
+- Property preserving abstractions for the verification of concurrent systems
+- `dwyer1998property`: Property specification patterns for finite-state verification
+- `menghi2018property`: Property specification patterns for robotic missions
+- Property-based Polynomial Invariant Generation using Sums-of-Squares Optimization (2015)
+- Property-Guided LLM Program Synthesis for Planning (2026)
+- `liu2025propertygpt`: PropertyGPT: LLM-driven Formal Verification of Smart Contracts through Retrieval-Augmented Property Generation
+- `nagatomi2026prophecy`: Prophecy-Based Automated Verification of Message-Passing Programs
+- `wilf2025propose`: Propose, Solve, Verify: Self-Play Through Formal Verification
+- Propositional Reasoning about Safety and Termination of Heap-Manipulating Programs (2014)
+- `takashima2023propproof`: PropProof: Free Model-Checking Harnesses from PBT
+- ProsaBuddy: Assisting Mechanized Real-Time Schedulability Analysis with LLM-based Agents (2026)
+- ProSpeCT: Provably Secure Speculation for the Constant-Time Policy (2023)
+- `milanicomparetti2009prospex`: Prospex: Protocol Specification Extraction
+- `aichernig2007protocol`: Protocol Conformance Testing a SIP Registrar: an Industrial Application of Formal Methods
+- `yellin1997protocol`: Protocol specifications and component adaptors
+- `oleary2009protocol`: Protocol verification using flows: An industrial experience
+- `lin1987protocol`: Protocol verification using reachability analysis: the state space explosion problem and relief strategies
+- `pereira2024protocols`: Protocols to Code: Formal Verification of a Next-Generation Internet Router
+- `pereira2025protocols`: Protocols to Code: Formal Verification of a Secure Next-Generation Internet Router
+- `bucur2014prototyping`: Prototyping symbolic execution engines for interpreted languages
+- Provable Secure Steganography Based on Adaptive Dynamic Sampling (2026)
+- Provably Complete Generalized Planning with LLMs (2026)
+- Provably Robust Multi-bit Watermarking for AI-generated Text (2025)
+- `wu2026provably`: Provably Secure Agent Guardrail
+- Provably-Safe Multilingual Software Sandboxing using WebAssembly (2022)
+- `ferreol2025prove`: Prove your Colorings: Formal Verification of Cache Coloring of Bao Hypervisor
+- PROVE-RT: Generating Mechanized Theorem Prover Scripts for Real-Time Systems using LLMs (2026)
+- Prove2Me: An Open Collaborative Platform for Scaling Math Formalization (2026)
+- Prover Agent: An Agent-Based Framework for Formal Mathematical Proofs (2025)
+- `saha2020prover`: PRover: Proof Generation for Interpretable Reasoning over Rules
+- Proving and Disproving Programs with Shared Mutable Data (2021)
+- Proving at Scale for Universal Algebra (2026)
+- `lacey2002proving`: Proving correctness of compiler optimizations by temporal logic
+- Proving Correctness of Imperative Programs by Linearizing Constrained Horn Clauses (2015)
+- Proving Cutoff Bounds for Safety Properties in First-Order Logic (2024)
+- Proving differential privacy in Hoare logic (2014)
+- Proving differential privacy with shadow execution (2019)
+- Proving Equivalence Between Complex Expressions Using Graph-to-Sequence Neural Models (2021)
+- Proving Equivalence Between Imperative and MapReduce Implementations Using Program Transformations (2018)
+- `owicki1982proving`: Proving Liveness Properties of Concurrent Programs
+- Proving Olympiad Inequalities by Synergizing LLMs and Symbolic Reasoning (2025)
+- Proving Properties of Sorting Programs: A Case Study in Horn Clause Verification (2019)
+- `dougherty2025proving`: Proving the Coding Interview: A Benchmark for Formally Verified Code Generation
+- `pusch1999proving`: Proving the Soundness of a Java Bytecode Verifier Specification in Isabelle/HOL
+- Proving Theorems Recursively (2024)
+- Proving Theorems using Incremental Learning and Hindsight Experience Replay (2021)
+- `summers2020prusti`: Prusti: deductive verification for Rust (keynote)
+- `menghi2019psalm`: PsALM: Specification of Dependable Robotic Missions
+- `boros2001pseudo`: Pseudo-Boolean optimization
+- `barkallah2026pseudo`: Pseudo-Formalization for Automatic Proof Verification
+- Psychometric-Based Evaluation for Theorem Proving with Large Language Models (2025)
+- `matsushita2026pure`: Pure Borrow: Linear Haskell Meets Rust-Style Borrowing
+- Push-Button Verification of File Systems via Crash Refinement (2016)
+- `cao2026pushing`: Pushing the Boundaries of Natural Reasoning: Interleaved Bonus from Formal-Logic Verification
+- Pushing the envelope of Optimization Modulo Theories with Linear-Arithmetic Cost Functions (2014)
+- `ghasemirad2025pushing`: Pushing the Limit: Verified Performance-Optimal Causally-Consistent Database Transactions
+- Putnam 2025 Problems in Rocq using Opus 4.6 and Rocq-MCP (2026)
+- PutnamBench: Evaluating Neural Theorem-Provers on the Putnam Mathematical Competition (2024)
+- `levami2000putting`: Putting static analysis to work for verification: A case study
+- PVMark: Enabling Public Verifiability for LLM Watermarking Schemes (2026)
+- `owre1992pvs`: PVS: A prototype verification system
+- `shankar1996pvs`: PVS: Combining specification, proof checking, and model checking
+- Pythagoras-Prover: Advancing Efficient Formal Proving via Augmented Lean Formalisation (2026)
+- Python Symbolic Execution with LLM-powered Code Generation (2024)
+- QbC: Quantum Correctness by Construction (2023)
+- `wu2025qcp`: QCP: A Practical Separation Logic-based C Program Verification Tool
+- `ringer2019qed`: QED at Large: A Survey of Engineering of Formally Verified Software
+- QED: An Open-Source Multi-Agent System for Generating Mathematical Proofs on Open Problems (2026)
+- `zhu2025qimeng`: QiMeng-CodeV-R1: Reasoning-Enhanced Verilog Generation
+- QiMeng-MuPa: Mutual-Supervised Learning for Sequential-to-Parallel Code Translation (2025)
+- `mcmillan2008quantified`: Quantified Invariant Generation Using an Interpolating Saturation Prover
+- `calvanese2018quantifier`: Quantifier Elimination for Database Driven Verification
+- Quantifier-Free Interpolation of a Theory of Arrays (2012)
+- Quantifiers on Demand (2021)
+- Quantifying Cross-Query Contradictions in Multi-Query LLM Reasoning (2026)
+- Quantifying Empirical Compute-Supervision Tradeoffs in RLVR (2026)
+- `evans2026quantifying`: Quantifying SMT Solver Instability for Formal Verification
+- `chawla2025quantifying`: Quantifying the Importance of Data Alignment in Downstream Model Performance
+- `rinard2026quantitative`: Quantitative Comparison of Credible Compilation and Verification In Coding Agent Compiler Development
+- `yasuoka2010quantitative`: Quantitative Information Flow - Verification Hardness and Possibilities
+- `chen2009quantitative`: Quantitative Model Checking of Continuous-Time Markov Chains Against Timed Automata Specifications
+- `aslanyan2016quantitative`: Quantitative Verification and Synthesis of Attack-Defence Scenarios
+- `abate2023quantitative`: Quantitative Verification with Neural Networks
+- `kwiatkowska2007quantitative`: Quantitative verification: models techniques and tools
+- QUASAR: Quantum Assembly Code Generation Using Tool-Augmented LLMs via Agentic RL (2025)
+- `ernst2000quickly`: Quickly detecting relevant program invariants
+- r2py: AI-Assisted Conversion of R Statistical Packages to Python (2026)
+- `blackshear2018racerd`: RacerD: compositional static race detection
+- `zhong2025rag`: RAG-Verus: Repository-Level Program Verification with LLMs using Retrieval Augmented Generation
+- Rango: Adaptive Retrieval-Augmented Proving for Automated Software Verification (2024)
+- Ranking LLM-Generated Loop Invariants for Program Verification (2023)
+- Rarus: A Succinct and Efficient Range Proof for Polynomial-based Vector Commitment (2026)
+- Raven: An SMT-Based Concurrency Verifier
+- `kim2026ravencheck`: Ravencheck: Effectively-Propositional Reasoning for Rust
+- `gao2025raw`: Raw Pointer Rewriting with LLMs for Translating C to Safer Rust
+- `cui2023rcanary`: rCanary: Detecting Memory Leaks Across Semi-Automated Memory Management Boundary in Rust
+- Re$^2$Math: Benchmarking Theorem Retrieval in Research-Level Mathematics (2026)
+- Re:Form -- Reducing Human Annotations in Scalable Formal Software Verification with RL in LLMs: A Preliminary Study on Dafny (2025)
+- REAL-Prover: Retrieval Augmented Lean Prover for Mathematical Reasoning (2025)
+- `konrad2005real`: Real-time specification patterns
+- Reality Is the Final Verifier: On Two Key Gaps in Agentic Software Engineering (2026)
+- Realizability in Semantics-Guided Synthesis Done Eagerly (2024)
+- `chen2026reason`: Reason Popper-ly: Patching In-Context Reasoning with Inductive Logic Programming
+- Reasoning about Block-based Cloud Storage Systems (2019)
+- Reasoning about External Calls (2025)
+- Reasoning About Incompletely Defined Programs (2005)
+- `poli2024reasoning`: Reasoning about Interior Mutability in Rust using Library-Defined Capabilities
+- Reasoning About Vectors using an SMT Theory of Sequences (2022)
+- Reasoning about Weak Isolation Levels in Separation Logic (2025)
+- `reynolds2016reasoning`: Reasoning in the Bernays-Schoenfinkel-Ramsey Fragment of Separation Logic
+- Reasoning in Transformers -- Mitigating Spurious Correlations and Reasoning Shortcuts (2024)
+- Reasoning without Gold Standards: A Proxy-Judge Theory of Autoformalization (2026)
+- `alpern1987recognizing`: Recognizing safety and liveness
+- `dardik2024recomposition`: Recomposition: A New Technique for Efficient Compositional Verification
+- `bohme2011reconstruction`: Reconstruction of Z3’s Bit-Vector Proofs in HOL4 and Isabelle/HOL
+- Recontextualization Mitigates Specification Gaming without Modifying the Specification (2025)
+- `dross2020recursive`: Recursive Data Structures in SPARK
+- Recursive Self-Improvement in AI: From Bounded Self-Refinement to Autonomous Research Loops (2026)
+- `post2008reducing`: Reducing False Positives by Combining Abstract Interpretation and Bounded Model Checking
+- Reducing False Positives in Static Bug Detection with LLMs: An Empirical Study in Industry (2026)
+- Reducing Hallucinations in LLM-Generated Code via Semantic Triangulation (2025)
+- `di2026reducing`: Reducing the Costs of Proof Synthesis on Rust Systems by Scaling Up a Seed Training Set
+- `caso2010reducing`: Reducing the Number of Annotations in a Verification-oriented Imperative Language
+- REFACTOR: Learning to Extract Theorems from Proofs (2024)
+- `britton2026refactoring`: Refactoring and Equivalence in Rust: Expanding the REM Toolchain with a Novel Approach to Automated Equivalence Proofs
+- `sammler2021refinedc`: RefinedC: automating the foundational verification of C code with refined ownership types
+- `lammich2016refinement`: Refinement based verification of imperative data structures
+- Refinement Reflection (or, how to turn your favorite language into a proof assistant using SMT) (2016)
+- Refinement Reflection: Complete Verification with SMT (2017)
+- `oconnor2016refinement`: Refinement through restraint: bringing down the cost of verification
+- `shinn2020refinement`: Refinement Type Contracts for Verification of Scientific Investigative Software
+- `vazou2014refinement`: Refinement types for Haskell
+- `freeman1991refinement`: Refinement Types for ML
+- Refinement types for TypeScript (2016)
+- `li2024refinement`: Refinement Verification of OS Services based on a Verified Preemptive Microkernel
+- `sridharan2006refinement`: Refinement-based context-sensitive points-to analysis for Java
+- Refining Existential Properties in Separation Logic Analyses (2015)
+- `roesner2026reflections`: Reflections on Trusting Trust, Revisited: Contaminating Self-Modifying AI Coding Agents with Poisoned Benchmarks
+- Reflexion: language agents with verbal reinforcement learning (2023)
+- Reflexive tactics for algebra, revisited (2022)
+- ReForm: Reflective Autoformalization with Prospective Bounded Sequence Optimization (2025)
+- Reformalization of the Jordan Curve Theorem (2026)
+- `agarwal2026refute`: Refute-or-Promote: An Adversarial Stage-Gated Multi-Agent Review Methodology for High-Precision LLM-Assisted Defect Discovery
+- Regression Accumulation in Multi-turn LLM Programming Conversations (2026)
+- Regression Verification - A Practical Way to Verify Programs (2005)
+- `sayedoff2022regression`: Regression verification of unbalanced recursive functions with multiple calls (long version)
+- `liu2018reguard`: ReGuard: finding reentrancy bugs in smart contracts
+- Regular Abstractions for Array Systems (2024)
+- `benedikt2011regular`: Regular Repair of Specifications
+- `carneiro2023reimplementing`: Reimplementing Mizar in Rust
+- Reinforced Large Language Model is a formal theorem prover (2025)
+- Reinforcement Learning from Compiler and Language Server Feedback (2025)
+- Reinforcement Learning of Theorem Proving (2018)
+- Reinforcement Learning via Self-Distillation (2026)
+- Reinforcement Learning with Verifiable Physics: Post-training LLMs with Continuous Rewards (2026)
+- `kovacs2013relational`: Relational abstract interpretation for the verification of 2-hypersafety properties
+- Relational Logic with Framing and Hypotheses: Technical Report (2016)
+- `xu2024relational`: Relational Network Verification
+- Relational Program Synthesis (2018)
+- `zhou2019relational`: Relational Verification via Invariant-Guided Synchronization
+- `ball2002relative`: Relative Completeness of Abstraction Refinement for Software Model Checking
+- Relative formalization in Isabelle/HOL of a result in inverse problems (2026)
+- `batz2020relatively`: Relatively Complete Verification of Probabilistic Programs
+- `sevcik2011relaxed`: Relaxed-memory concurrency and verified compilation
+- `gammie2015relaxing`: Relaxing safely: verified on-the-fly garbage collection for x86-TSO
+- Reliable Fine-Grained Evaluation of Natural Language Math Proofs (2025)
+- Reliable Natural Language Understanding with Large Language Models and Answer Set Programming (2023)
+- `sultan2025reliable`: Reliable Proof Generation with LLMs via Analogical Retrieval and Symbolic Verification: A Case Study in Euclidean Geometry
+- Reliable Reasoning with Large Language Models via Preference-Based Maximum Satisfiability (2026)
+- Reliable Self-Improvement Training by Verifying Reasoning, Not Just Answers (2026)
+- Reliable Use of Lemmas via Eligibility Reasoning and Section$-$Aware Reinforcement Learning (2026)
+- ReLoop: Structured Modeling and Behavioral Verification for Reliable LLM-Based Optimization (2026)
+- `patault2025remonter`: Remonter les barrières pour ouvrir une clôture: Inférence de spécification des clôtures pour la preuve de programmes Rust avec COMA
+- Remote Attacks on Speech Recognition Systems Using Sound from Power Supply (2023)
+- `wickerson2015remote`: Remote-scope promotion: clarified, rectified, and verified
+- `burckhardt2014replicated`: Replicated data types: specification, verification, optimality
+- RepoAudit: An Autonomous LLM-Agent for Repository-Level Code Auditing (2025)
+- `mazaheri2026repot`: REPOT: Recoverable Program-of-Thought via Checkpoint Repair
+- `burch1991representing`: Representing circuits more efficiently in symbolic model checking
+- RePro: Proof-Verified Benchmark Rewriting for Reliable Evaluation of LLM Mathematical Problem Solving (2026)
+- `feather1997requirements`: Requirements and Specification Exemplars
+- `tun2018requirements`: Requirements and specifications for adaptive security: concepts and analysis
+- Requirements Development and Formalization for Reliable Code Generation: A Multi-Agent Vision (2025)
+- `vanlamsweerde2000requirements`: Requirements engineering in the year 00: A research perspective
+- `hinchey2012requirements`: Requirements of an integrated formal method for intelligent swarms
+- `gargary2026resolve`: RESOLVE: Language-Agnostic Validation of GPU Kernels Through Testing, Reduction, and Proof
+- `yang2027resolving`: Resolving Natural Language Ambiguity for Verified Code Generation: A Two-Stage LLM Framework
+- `setty2013resolving`: Resolving the conflict between generality and plausibility in verified computation
+- `grannan2023resource`: Resource Specifications for Resource-Manipulating Programs
+- Resource-Guided Program Synthesis (2019)
+- Resources: A Safe Language Abstraction for Money (2020)
+- `khan2026resume`: Resume Means Resume: A Machine-Checked Conformance Contract for Checkpoint, Interrupt, and Resume Semantics in Workflow Persistence Layers
+- Rethinking Fine-Tuning when Scaling Test-Time Compute: Limiting Confidence Improves Mathematical Reasoning (2025)
+- `coppa2017rethinking`: Rethinking pointer reasoning in symbolic execution
+- Rethinking Supervision Granularity: Segment-Level Learning for LLM-Based Theorem Proving (2026)
+- `yang2025retrieval`: Retrieval-Augmented Language Models are Mimetic Theorem Provers
+- `zhou2025retrieval`: Retrieval-Augmented TLAPS Proof Generation with Large Language Models
+- `beyer2013reusing`: Reusing Precisions for Efficient Regression Verification
+- `hou2026revelio`: Revelio: Cost-Efficient Agentic Memory Safety Vulnerability Detection For Repository-Scale Codebases
+- Reversa: A Reverse Documentation Engineering Framework for Converting Legacy Software into Operational Specifications for AI Agents (2026)
+- `wang2018revery`: Revery: From Proof-of-Concept to Exploitable
+- `miller2026review`: Review Beats Planning: Dual-Model Interaction Patterns for Code Synthesis
+- `haberland2019review`: Review of Recent Heap Specification and Verification Techniques
+- `coet2026revisiting`: Revisiting Borrow Checking with Abstract Interpretation.
+- Reviving DSP for Advanced Theorem Proving in the Era of Reasoning Models (2025)
+- `cagatan2026reward`: Reward Hacking in Language Model Agents: Revisiting AI Safety Gridworlds
+- `vamshi2026reward`: Reward-Oracle MCTS for Formal Theorem Proving: Sample-Efficient Search and the Need for Kernel-Level Proof Auditing
+- Rewarding Novel Deductions: Solver-guided Process Supervision for Logical Reasoning (2026)
+- Rewarding the Unlikely: Lifting GRPO Beyond Distribution Sharpening (2025)
+- `rosu2005rewriting`: Rewriting-Based Techniques for Runtime Verification
+- RFCAudit: AI Agent for Auditing Protocol Implementations Against RFC Specifications (2025)
+- `dickerson2022rhle`: RHLE: Modular Deductive Verification of Relational $\forall\exists$ Properties
+- `bishop2005rigorous`: Rigorous specification and conformance testing techniques for network protocols, as applied to TCP, UDP, and sockets
+- Risk-Controlled Lean-as-Judge for Natural-Language Mathematical Reasoning (2026)
+- `navabpour2013rithm`: RiTHM: a tool for enabling time-triggered runtime verification for C programs
+- RLMEval: Evaluating Research-Level Neural Theorem Proving (2025)
+- RLSF: Fine-tuning LLMs via Symbolic Feedback (2024)
+- RLTL;DR: Self-improvement by Internalizing Self-generated Feedback (2026)
+- RMA: Context-Orchestrated Research Math Agents (2026)
+- `fainekos2009robustness`: Robustness of temporal logic specifications for continuous-time signals
+- Rocking Drones with Intentional Sound Noise on Gyroscopic Sensors (2015)
+- RocqSmith: Can Automatic Optimization Forge Better Proof Agents? (2026)
+- RocqStar: Leveraging Similarity-driven Retrieval and Agentic Systems for Rocq generation (2025)
+- Roosterize: Suggesting Lemma Names for Coq Verification Projects Using Deep Learning (2021)
+- `anand2015roscoq`: ROSCoq: Robots Powered by Constructive Reals
+- Rosetta: Automating First-Principles Performance Modeling Using Multi-Agent LLMs (2026)
+- RPG: A Repository Planning Graph for Unified and Scalable Codebase Generation (2025)
+- Rtl2lean: Automated RTL-to-Lean Translation with Hierarchical Theorem Generation and Lemma Reuse (2026)
+- `near2012rubicon`: Rubicon: bounded verification of web applications
+- `beer1996rulebase`: RuleBase: an industry-oriented formal verification tool
+- `filieri2011run`: Run-time efficient probabilistic model checking
+- Runtime Protocol Refinement Checking for Distributed Protocol Implementations (2025)
+- `weiss2018rust`: Rust Distilled: An Expressive Tower of Languages
+- `sim2026rust`: Rust's Type Checker Implementation Is Unsound: An Empirical Study on Soundness Bugs in rustc
+- `hahn2016rust2viper`: Rust2Viper: Building a Static Verifier for Rust
+- `bai2025rustassure`: RustAssure: Differential Symbolic Testing for LLM-Transpiled C-to-Rust Code
+- `wu2026rustcompcert`: RustCompCert: A Verified and Verifying Compiler for a Sequential Subset of Rust
+- `srinivasan2026rustguard`: RustGuard: A Compile-Time Verification Framework for Memory Safety in Distributed Rust Applications
+- `matsushita2022rusthornbelt`: RustHornBelt: a semantic foundation for functional verification of Rust programs with unsafe code
+- `cai2025rustmap`: RustMap: Towards Project-Scale C-to-Rust Migration via Program Analysis and LLM
+- `pearce2026rustmc`: RustMC : Automated Verification of Real-World Concurrent Rust
+- `pearce2025rustmc`: RustMC: Extending the GenMC stateless model checker to Rust
+- `hu2024rustpruner`: RustPruner: A Program Slicing Tool for Rust Programs
+- `oishi2025rustsfq`: RustSFQ: A Domain-Specific Language for SFQ Circuit Design
+- `panter2024rusty`: Rusty Linux: Advances in Rust for Linux Kernel Development
+- `kokke2019rusty`: Rusty Variation: Deadlock-free Sessions with Failure in Rust
+- `drodt2026rustydl`: RustyDL: A Program Logic for Rust
+- `liu2018s`: S-gram: towards semantic-aware security auditing for Ethereum smart contracts
+- `rao2026s2n`: s2n-bignum-bench: A practical benchmark for evaluating low-level code reasoning of LLMs
+- `kumar2026saarthi`: Saarthi for AGI: Towards Domain-Specific General Intelligence for Formal Verification
+- `kumar2025saarthi`: Saarthi: The First AI Formal Verification Engineer
+- `mclaughlin2012sabot`: SABOT: specification-based payload generation for programmable logic controllers
+- `zhou2025sactor`: SACTOR: LLM-Driven Correct and Idiomatic C to Rust Translation with Static Analysis and FFI-Based Verification
+- `jia2025safe`: Safe and usable kernel extensions with Rex
+- `jacobs2005safe`: Safe concurrency for aggregate objects with invariants
+- `jaloyan2017safe`: Safe Pointers in SPARK 2014
+- `li2025safe4u`: Safe4U: Identifying Unsound Safe Encapsulations of Unsafe Calls in Rust using LLMs
+- SAFE: An LLM-as-Verifier Framework for Evidence-Grounded Multi-Hop Reasoning (2026)
+- `liu2025safe`: Safe: Enhancing Mathematical Reasoning in Large Language Models via Retrospective Step-aware Formal Verification
+- `cui2021safedrop`: SafeDrop: Detecting Memory Deallocation Bugs of Rust Programs via Static Data-Flow Analysis
+- `braunsdorf2025safeffi`: SafeFFI: Efficient Sanitization at the Boundary Between Safe and Unsafe Code in Rust and Mixed-Language Applications
+- SafeLink-Agent: Agentic Maintenance for Adaptive Bitrate Controllers over Dynamic Starlink Networks (2026)
+- `farrukh2025safetrans`: SafeTrans: LLM-assisted Transpilation from C to Rust
+- `munch2026safety`: Safety and Security Critical Systems with Rust
+- `lindsay2010safety`: Safety Assessment Using Behavior Trees and Model Checking
+- `brain2015safety`: Safety Verification and Refutation by k-invariants and k-induction (extended version)
+- `chen2022safety`: Safety Verification of Declarative Smart Contracts
+- `wang2018safl`: SAFL: increasing and accelerating testing coverage with symbolic execution and guided fuzzing
+- Sage: Formalization with Semantic Correction (2026)
+- SAGE: Symbolic Action-Gating and Editing for LLM Task Planners (2026)
+- SAIL: Sound Abstract Interpreters with LLMs (2025)
+- SAIN: Improving ICS Attack Detection Sensitivity via State-Aware Invariants (2024)
+- Sal: Multi-modal Verification of Replicated Data Types (2026)
+- `hickey2026saltbench`: SaltBench: A Referee-Gated Protocol for Measuring Method Effects in Machine-Checked Software Work
+- SAMC: Semantic-Aware Model Checking for Fast Discovery of Deep Bugs in Cloud Systems (2014)
+- Sample More, Reflect Less: Self-Refine and Reflexion Lose to Repeated Sampling at Equal Token Cost, from 1.5B to 7B (2026)
+- `zhao2025sample`: Sample, Scrutinize and Scale: Effective Inference-Time Search by Scaling Verification
+- SanDRA: Safe Large-Language-Model-Based Decision Making for Automated Vehicles Using Reachability Analysis (2025)
+- SAPIC+: protocol verifiers of the world, unite! (2022)
+- `demsky2015satcheck`: SATCheck: SAT-directed stateless model checking for SC and TSO
+- `fredrikson2014satisfiability`: Satisfiability modulo counting: a new approach for analyzing privacy properties
+- Satisfiability Modulo Exponential Integer Arithmetic (2024)
+- `preiner2026satisfiability`: Satisfiability Modulo Extensional Constant Arrays (Extended Version)
+- Satisfiability Modulo Transcendental Functions via Incremental Linearization (2018)
+- `ye2023satlm`: SatLM: Satisfiability-Aided Language Models Using Declarative Prompting
+- Saturation-Driven Dataset Generation for LLM Mathematical Reasoning in the TPTP Ecosystem (2025)
+- SAVIOR: Securing Autonomous Vehicles with Robust Physical Invariants (2020)
+- SCAFFOLD-CEGIS: Preventing Latent Security Degradation in LLM-Driven Iterative Code Refinement (2026)
+- Scalable Collaborative zk-SNARK and Its Application to Fully Distributed Proof Delegation (2025)
+- `haak2026scalable`: Scalable Deductive Verification of Data-Level Parallel Programs
+- `xie2005scalable`: Scalable error detection using boolean satisfiability
+- Scalable Shape Analysis for Systems Code (2008)
+- `li2010scalable`: Scalable specification mining for verification and diagnosis
+- `sasnauskas2011scalable`: Scalable Symbolic Execution of Distributed Systems
+- `yang2025scalable`: Scalable Synthesis of Formally Verified Neural Value Function for Hamilton-Jacobi Reachability Analysis
+- `chibotaru2019scalable`: Scalable Taint Specification Inference with Big Code
+- Scalable Verification of GNN-based Job Schedulers (2022)
+- `smolka2019scalable`: Scalable verification of probabilistic networks
+- `henzinger2020scalable`: Scalable Verification of Quantized Neural Networks (Technical Report)
+- Scalable, Symbiotic, AI and Non-AI Agent Based Parallel Discrete Event Simulations (2025)
+- `liang2011scaling`: Scaling abstraction refinement via pruning
+- `mahdavi2025scaling`: Scaling Generative Verifiers For Natural Language Mathematical Proof Verification And Selection
+- Scaling Natural-Language Graph-Based Test Time Compute for Automated Theorem Proving (2025)
+- `plotkin2016scaling`: Scaling network verification using symmetry and surgery
+- Scaling Self-Play with Self-Guidance (2026)
+- `batory2004scaling`: Scaling step-wise refinement
+- Scaling Test-time Compute for LLM Agents (2025)
+- Scaling up Multi-Turn Off-Policy RL and Multi-Agent Tree Search for LLM Step-Provers (2025)
+- Scaling Verifiable Computation Using Efficient Set Accumulators (2020)
+- `ho2026scaling`: Scaling Verification of Cryptographic Software with Aeneas, Rust, and Lean
+- `lo2010scenario`: Scenario-based and value-based specification mining
+- `foster2026scenes`: Scenes: A Meta-Logical Algebra for Mutable State
+- Scenic: a language for scenario specification and scene generation (2019)
+- ScenicProver: A Framework for Compositional Probabilistic Verification of Learning-Enabled Systems (2025)
+- `guan2008schedulability`: Schedulability Analysis of Global Fixed-Priority or EDF Multiprocessor Scheduling with Symbolic Model-Checking
+- School of Reward Hacks: Hacking harmless tasks generalizes to misaligned behavior in LLMs (2025)
+- `ke2026schwarz`: Schwarz: Solver-Aware Agentic Program Verification
+- SciCoQA: Quality Assurance for Scientific Paper-Code Alignment (2026)
+- Sciduction: Combining Induction, Deduction, and Structure for Verification and Synthesis (2012)
+- Scope Logic with Local Reasoning and Pre/Post-State Properties (2010)
+- Scope Logic: Extending Hoare Logic for Pointer Program Verification (2009)
+- SCOPE: Certified Theorem Proving with a Language Model as the Policy Planner (2026)
+- SCOPE: Leveraging Subgoal Critiques for Code Generation (2026)
+- SCRAPS: Scalable Collective Remote Attestation for Pub-Sub IoT Networks with Untrusted Proxy Verifier (2022)
+- `ren2026scratchy`: Scratchy: Visual-Scratchpad Multimodal Reasoning for Cryptographic Proof Generation in EasyCrypt
+- `fromherz2024scylla`: Scylla: Translating an Applicative Subset of C to Safe Rust
+- `guan2024search`: Search, Verify and Feedback: Towards Next Generation Post-training Paradigm of Foundation Models via Verifier Engineering
+- `sim2025search`: Search-Based Multi-Trajectory Refinement for Safe C-to-Rust Translation with Large Language Models
+- `anonymous2026seccodebench`: SecCodeBench-V2 Technical Report
+- SecGoal: A Benchmark for Extracting Formalizable Security Goals from Protocol Documents (2026)
+- `jiang2026second`: Second-Order Problem Solving for Recursive Self-Improvement in Formal Verification
+- `andrici2025secref`: SecRef*: Securely Sharing Mutable References between Verified and Unverified Code in F*
+- SecSMT: Securing SMT Processors against Contention-Based Covert Channels (2022)
+- Secure Code Generation via Online Reinforcement Learning with Vulnerability Reward Model (2026)
+- `swamy2011secure`: Secure distributed programming with value-dependent types
+- `ramananandro2025secure`: Secure Parsing and Serializing with Separation Logic Applied to CBOR, CDDL, and COSE
+- `andrici2024securing`: Securing Verified IO Programs Against Unverified Code in F*
+- `mundhenk2015security`: Security analysis of automotive architectures using probabilistic model checking
+- `jurjens2006security`: Security Analysis of Crypto-based Java Programs using Automated Theorem Provers
+- `ferrara2012security`: Security Analysis of Role-Based Access Control through Program Verification
+- `wang2026security`: Security Is Relative: Training-Free Vulnerability Detection via Multi-Agent Behavioral Contract Synthesis
+- Security Tests as Executable Specifications for LLM Code Generation: Benefits, Trade-offs, and Coverage Limits (2026)
+- Security Vulnerabilities in AI-Generated Code: A Large-Scale Analysis of Public GitHub Repositories (2025)
+- Seed-Prover 1.5: Mastering Undergraduate-Level Theorem Proving via Learning from Experience (2025)
+- Seed-Prover: Deep and Broad Reasoning for Automated Theorem Proving (2025)
+- Seeing is Living? Rethinking the Security of Facial Liveness Verification in the Deepfake Era (2022)
+- Seeking Specifications: The Case for Neuro-Symbolic Specification Synthesis (2025)
+- `murray2013sel4`: seL4: from general purpose to a proof of information flow enforcement
+- Selection Without Signal, Recovery Through Expression: A Measurement Study of Post-Hoc Falsification Operators for Frozen Small Code Models (2026)
+- `zhang2024selene`: Selene: Pioneering Automated Proof in Software Verification
+- `guo2026self`: Self-Authored Verification Is Unreliable in Heuristic Self-Improving Agents
+- Self-Edit: Fault-Aware Code Editor for Code Generation (2023)
+- Self-Modifying Lean Proof Agents with Verifier-Grounded Benchmark Coevolution (2026)
+- Self-Reports Are Not Verification (2026)
+- `qian2026self`: Self-Spec Verifiable Code Generation
+- `ota2026self`: Self-Supervised Theorem Discovery in a Formal Axiomatic System
+- `wu2026self`: Self-Trained Verification for Training- and Test-Time Self-Improvement
+- Semantic cut elimination for the logic of bunched implications, formalized in Coq (2022)
+- Semantic Intent Fragmentation: A Single-Shot Compositional Attack on Multi-Agent AI Pipelines (2026)
+- Semantic Prefix Oracles for LLM Decoding: Contracts and Differential Validation (2026)
+- Semantic Search over 9 Million Mathematical Theorems (2026)
+- SemanticForge: Repository-Level Code Generation through Semantic Knowledge Graphs and Constraint Satisfaction (2025)
+- Semantics for 2D Rasterization (2026)
+- `stefanescu2016semantics`: Semantics-based program verifiers for all languages
+- SemaPLC: A Project-Grounded, Verification-Gated Agent Harness for PLC Code Generation (2026)
+- SemFuzz: Semantics-based Automatic Generation of Proof-of-Concept Exploits (2017)
+- `reinhard2024semi`: Semi-Automated Modular Formal Verification of Critical Software: Liveness and Completeness Thresholds
+- Semi-Autonomous Formalization of the Vlasov-Maxwell-Landau Equilibrium (2026)
+- Semi-supervised verified feedback generation (2016)
+- `navarro2011separation`: Separation logic + superposition calculus = heap theorem prover
+- `parkinson2005separation`: Separation logic and abstraction
+- `parkinson2008separation`: Separation logic, abstraction and inheritance
+- `burch1990sequential`: Sequential circuit verification using symbolic model checking
+- `cavoj2024session`: Session Types for the Transport Layer: Towards an Implementation of TCP
+- `banerjee2026severa`: SEVerA: Verified Synthesis of Self-Evolving Agents
+- `su2026sft`: SFT-GRPO Data Overlap as a Post-Training Hyperparameter for Autoformalization
+- `cadar2014shadow`: Shadow symbolic execution for better testing of evolving software
+- `han2026shadowbench`: SHADOWBENCH: Toward Reliable Automatic Evaluation of Semantic Alignment in Autoformalization
+- `ma2026shannonprover`: ShannonProver: Towards Automating Formal Cryptographic Proofs
+- Shape Analysis via Second-Order Bi-Abduction (2014)
+- `zhao2025shard`: Shard: Securing GPU Kernels with Lightweight Formal Methods
+- Shared Contract-Obedient Endpoints (2012)
+- Sharpen the Spec, Cut the Code: A Case for Generative File System with SYSSPEC (2025)
+- `okudono2017sharper`: Sharper and Simpler Nonlinear Interpolants for Program Verification
+- Shimmer: a Provably Secure Steganography Based on Entropy Collecting Mechanism (2025)
+- Show Me The Money: An Exercise in Proof-Driven Software Understanding (2026)
+- `peng2020sif`: SIF: A Framework for Solidity Contract Instrumentation and Analysis
+- `orru2026sigma`: sigma-rs: A Modular Approach for Keyed-Verification Anonymous Credentials
+- `fu2019signed`: Signed Cryptographic Program Verification with Typed CryptoLine
+- `erbsen2020simple`: Simple high-level code for cryptographic arithmetic: With proofs, without compromises
+- `monniaux2021simple`: Simple, light, yet formally verified, global common subexpression elimination and loop-invariant code motion
+- `chand2018simpler`: Simpler specifications and easier proofs of distributed algorithms using history variables
+- `stevens2025simplified`: Simplified and Verified: A Second Look at a Proof-Producing Union-Find Algorithm
+- `han2025simplifying`: Simplifying Formal Proof-Generating Models with ChatGPT and Basic Searching Techniques
+- Simplifying proofs of linearisability using layers of abstraction (2013)
+- Simplifying Safety Proofs with Forward-Backward Reasoning and Prophecy (2026)
+- Simulating reachability using first-order logic with applications to verification of linked data structures (2009)
+- Size Relationships in Abstract Cyclic Entailment Systems (2017)
+- `jiang2026sketch`: Sketch-and-Verify: Structured Inference-Time Scaling via Program Sketching
+- SkillEvoLean: Mutation-enhanced skill evolution for Lean provers (2026)
+- `liu2026skillforge`: SkillForge: Compositional Skill Synthesis with Verification-in-the-Loop for Generating Formally Verified Dafny Programs
+- SkillSpec: Intent-Masked Specification Reasoning for Agent Skill Correctness (2026)
+- SkipAnalyzer: A Tool for Static Code Analysis with Large Language Models (2023)
+- Skipping Refinement (2015)
+- SLAyer: Memory Safety for Systems-Level Code (2011)
+- SLEAN: Simple Lightweight Ensemble Analysis Network for Multi-Provider LLM Coordination: Design, Implementation, and Vibe Coding Bug Investigation Case Study (2025)
+- Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training (2024)
+- `lim2026slice`: SLICE: Specification-Level Isolation of Contract Enforcement
+- SLING: using dynamic analysis to infer program invariants in separation logic (2019)
+- `feist2019slither`: Slither: A Static Analysis Framework for Smart Contracts
+- `howard2024smart`: Smart Casual Verification of the Confidential Consortium Framework
+- Smart Contract Synthesis Modulo Hyperproperties (2022)
+- `chen2026smart`: Smart Contract Synthesis via Multi-modal Specifications
+- `shiraishi2024smartc2rust`: SmartC2Rust: Iterative, Feedback-Driven C-to-Rust Translation via Large Language Models for Safety and Equivalence
+- `tikhomirov2018smartcheck`: SmartCheck: static analysis of ethereum smart contracts
+- `coblenz2019smarter`: Smarter Smart Contract Development Tools
+- `goel2026smarteval`: SmartEval: A Benchmark for Evaluating LLM-Generated Smart Contracts from Natural Language Specifications
+- `lo2006smartic`: SMArTIC: towards building an accurate, robust and scalable specification miner
+- SmartPoC: Generating Executable and Validated PoCs for Smart Contract Bug Reports (2025)
+- SmartVerif: Push the Limit of Automation Capability of Verifying Security Protocols by Dynamic Strategies (2020)
+- `stump2012smt`: SMT proof checking using a logical framework
+- SMT-based Model Checking for Recursive Programs (2014)
+- SMT-Based Translation Validation for Machine Learning Compiler (2022)
+- Soft contract verification (2014)
+- `schellhorn2022software`: Software & system verification with KIV
+- Software Dataplane Verification (2014)
+- `artho2013software`: Software model checking for distributed systems with selector-based, non-blocking communication
+- `beyer2009software`: Software model checking via large-block encoding
+- `holzmann1999software`: Software model checking: Extracting verification models from source code
+- `godefroid2005software`: Software Model Checking: The VeriSoft Approach
+- `tsukada2022software`: Software model-checking as cyclic-proof search
+- `alglave2012software`: Software Verification for Weak Memory via Program Transformation
+- `baier2024software`: Software Verification with CPAchecker 3.0: Tutorial and User Guide (Extended Version)
+- Software Verification: 10th Comparative Evaluation (SV-COMP 2021) (2021)
+- `barbosa2021sok`: SoK: Computer-aided cryptography
+- `buhan2022sok`: SoK: Design tools for side-channel-aware implementations
+- `akca2020solanalyser`: SolAnalyser: A Framework for Analysing and Testing Smart Contracts
+- SolType: refinement types for arithmetic overflow in solidity (2022)
+- `dimitrov2026solutionsx`: SolutionsX: supergravity theories/solutions as code, with an agentic workflow for machine-verifiable physics
+- `kobayashi2025solvable`: Solvable Tuple Patterns and Their Applications to Program Verification
+- `bartoletti2024solvent`: Solvent: liquidity verification of smart contracts
+- `kici2021solver`: Solver-Aided Constant-Time Circuit Verification
+- Solver-Informed RL: Grounding Large Language Models for Authentic Optimization Modeling (2025)
+- Solving Formal Math Problems by Decomposition and Iterative Reflection (2025)
+- Solving Horn Clauses on Inductive Data Types Without Induction (2018)
+- Solving non-linear Horn clauses using a linear Horn clause solver (2016)
+- Solving non-linear Horn clauses using a linear solver (2015)
+- `nieuwenhuis2006solving`: Solving SAT and SAT Modulo Theories: From an abstract Davis--Putnam--Logemann--Loveland procedure to DPLL(T)
+- Sorries Are Not the Hard Part: An Expert-Review Case Study of a Semi-Autonomous Formalization (2026)
+- SorryDB: Can AI Provers Complete Real-World Lean Theorems? (2026)
+- `ayoun2026soteria`: Soteria: Efficient Symbolic Execution as a Functional Library: Perhaps You Should Write Your Own Symbolic Execution Engine!
+- Sound and Efficient Generation of Data-Oriented Exploits via Programming Language Synthesis (2025)
+- `dardinier2022sound`: Sound Automation of Magic Wands
+- `ho2024sound`: Sound Borrow-Checking for Rust via Symbolic Semantics
+- `ho2024sound`: Sound Borrow-Checking for Rust via Symbolic Semantics (Long Version)
+- Sound compilation of reals (2013)
+- Sound Enforcement of Dynamic Release Information Flow Policy (2026)
+- `zimmerman2023sound`: Sound Gradual Verification with Symbolic Execution
+- Sound of Interference: Electromagnetic Eavesdropping Attack on Digital Microphones Using Pulse Density Modulation (2025)
+- Sound Probabilistic Safety Bounds for Large Language Models (2026)
+- `ling2026sound`: Sound State Encodings in Translational Separation Logic Verifiers (Extended Version)
+- Sound-Proof: Usable Two-Factor Authentication Based on Ambient Sound (2015)
+- `felli2019soundness`: Soundness Verification of Decision-Aware Process Models with Variable-to-Variable Conditions
+- `binkley2007source`: Source code analysis: A road map
+- `liu2021source`: Source-Level Bitwise Branching for Temporal Verification
+- Source-to-Source Transformations for GPU Code Generation (2026)
+- SOVER: Formal Certification of Optimization Reformulations via LLM-Assisted SMT Verification (2026)
+- Sovereign Agentic Loops: Decoupling AI Reasoning from Execution in Real-World Systems (2026)
+- SpaceEx: Scalable Verification of Hybrid Systems (2011)
+- Spain: Succinct Proofs for Numerical Computations (2026)
+- Spark-Prover-X1: Formal Theorem Proving Through Diverse Data Training (2025)
+- SparSamp: Efficient Provably Secure Steganography Based on Sparse Sampling (2025)
+- Spec-Harness: Measuring and Improving Behavioral Adequacy of LLM-Synthesized Formal Specifications (2026)
+- Spec2Vision: Contract-Guided Delivery of AI-Generated Computer Vision Pipelines (2026)
+- `ma2026specagent`: SpecAgent: Empowering Program Verification with Agentic Synthesis of Formal Program Specifications
+- `zhao2026specbench`: SpecBench: Measuring Reward Hacking in Long-Horizon Coding Agents
+- `li2026speccoder`: SpecCoder: Specification-Aware Code Generation with Curriculum Dual-Task Reinforcement Learning
+- `ma2024speceval`: SpecEval: Evaluating Code Comprehension in Large Language Models via Program Specifications
+- `chen2026specfirst`: SpecFirst: Behavioral Specification Elicitation as a First-Class Step in Agent-Based Program Synthesis from Scratch
+- SpecGen: Automated Generation of Formal Program Specifications via Large Language Models (2024)
+- `biyani2026specguard`: SpecGuard: Proving a Task Is Broken Before the Agent Cheats
+- `luckham1995specification`: Specification and analysis of system architecture using Rapide
+- `olveczky2006specification`: Specification and analysis of the AER/NCA active network protocol suite in Real-Time Maude
+- `wolper1982specification`: Specification and synthesis of communicating processes using an extended temporal logic
+- Specification and verification in the field: Applying formal methods to BPF just-in-time compilers in the Linux kernel (2020)
+- `manna1987specification`: Specification and verification of concurrent programs by A ∀ automata
+- Specification Decomposition for Reactive Synthesis (2021)
+- Specification Grounding Drives Test Effectiveness for LLM Code (2026)
+- `bastani2015specification`: Specification Inference Using Context-Free Language Reachability
+- `zaremski1997specification`: Specification matching of software components
+- Specification Mining for Intrusion Detection in Networked Control Systems (2016)
+- `legoues2009specification`: Specification Mining with Few False Positives
+- `grunske2008specification`: Specification patterns for probabilistic quality properties
+- `liskov1975specification`: Specification techniques for data abstractions
+- `smith2001specification`: Specification, Refinement and Verification of Concurrent Systems—An Integration of Object-Z and CSP
+- Specification-based anomaly detection
+- `gopinath2011specification`: Specification-Based Program Repair Using SAT
+- `richardson1992specification`: Specification-based test oracles for reactive systems
+- Specification-first convergence with an AI coding agent: a case study of dismantling a core architectural invariant across 189 files in a 717k-line codebase with no test oracle and no human code review (2026)
+- Specification-Guided Repair of Arithmetic Errors in Dafny Programs using LLMs (2025)
+- `li2026specification`: Specification-Guided Synthesis of Deadlock-Free Communication Protocol Refinements with Large Language Models
+- Specify What? Enhancing Neural Specification Synthesis by Symbolic Methods (2024)
+- Specifying a Realistic File System (2015)
+- Specifying AI-SDLC Processes: A Protocol Language for Human-Agent Boundaries (2026)
+- `romanescu2010specifying`: Specifying and dynamically verifying address translation-aware memory consistency
+- `denis2023specifying`: Specifying and Verifying Higher-order Rust Iterators
+- `dong2022specifying`: Specifying and verifying SDP protocol based zero trust architecture using TLA+
+- Specifying concurrent programs in separation logic: morphisms and simulations (2019)
+- `roychoudhury2002specifying`: Specifying multithreaded Java semantics for program verification
+- Specifying verified x86 software from scratch (2019)
+- `chang2026specloop`: SpecLoop: An Agentic RTL-to-Specification Framework with Formal Verification Feedback Loop
+- SpecMind: Cognitively Inspired, Interactive Multi-Turn Framework for Postcondition Inference (2026)
+- SpecPylot: Python Specification Generation using Large Language Models (2026)
+- `ayon2026specpylot`: SpecPylot: Python Specification Generation with Large Language Models
+- SpecRL: Reinforcement Learning with Test-Based Completeness Rewards for Formal Specification Synthesis (2026)
+- `ma2026specsyn`: SpecSyn: LLM-based Synthesis and Refinement of Formal Specifications for Real-world Program Verification
+- `maoz2021spectra`: Spectra: a specification language for reactive systems
+- `cheng2026specula`: Specula: Scaling formal specifications for autonomous model checking of system code
+- Spoq: Scaling Machine-Checkable Systems Verification in Coq (2023)
+- SqueezeBench: Saturation-Resilient Evaluation of Mathematical Capability (2026)
+- `leblanc2025squirrelfs`: SquirrelFS: Using the Rust Compiler to Check File-System Crash Consistency
+- `sevenhuijsen2026staff`: STAFF: Towards Translating Formal Verification Benchmarks between Formal Specification Languages
+- `foo2024staged`: Staged Specification Logic for Verifying Higher-Order Imperative Programs
+- `foo2023staged`: Staged Specification Logic for Verifying Higher-Order Imperative Programs (Technical Report)
+- `reitz2024starmalloc`: StarMalloc: A Formally Verified, Concurrent, Performant, and Security-Oriented Memory Allocator
+- `reitz2024starmalloc`: StarMalloc: Verifying a Modern, Hardened Memory Allocator
+- `le2009statechart`: Statechart Verification with iState
+- `jensen2015stateless`: Stateless model checking of event-driven applications
+- `kokologiannakis2016stateless`: Stateless model checking of the Linux kernel's hierarchical read-copy-update (tree RCU)
+- `kim2026statesync`: StateSync-GKR: Machine-Checking the Trust Chain from Sparse-Merkle State Transitions to GKR Verification
+- `bertrane2015static`: Static analysis and verification of aerospace software by abstract interpretation
+- `bertrane2010static`: Static analysis by abstract interpretation of embedded critical software
+- `goubault2013static`: Static analysis by abstract interpretation of numerical programs and systems, and FLUCTUAT
+- Static and Dynamic Verification of OCaml Programs: The Gospel Ecosystem (Extended Version) (2024)
+- `blatter2018static`: Static and Dynamic Verification of Relational Properties on Self-Composed C Code
+- `xu2009static`: Static contract checking for Haskell
+- `ramanathan2007static`: Static specification inference using predicate mining
+- `pradel2012statically`: Statically checking API protocol conformance with mined multi-object specifications
+- `zhou2020statically`: Statically verified refinements for multiparty protocols
+- Statistical Independence Aware Caching for LLM Workflows (2025)
+- `sen2004statistical`: Statistical Model Checking of Black-Box Probabilistic Systems
+- Statistical Proof as a Window into Human-AI Collaboration: Practical Insights and a Community Agenda (2026)
+- `filieri2014statistical`: Statistical symbolic execution with informed sampling
+- `arapinis2011statverif`: StatVerif: Verification of Stateful Processes
+- `lagaillardie2022stay`: Stay Safe under Panic: Affine Rust Programming with Multiparty Session Types
+- `fromherz2021steel`: Steel: proof-oriented programming in a dependently typed concurrent separation logic
+- SteelCore: an extensible concurrent separation logic for effectful dependently typed programs (2020)
+- `kirtania2025steering`: Steering LLMs for Formal Theorem Proving
+- `li2013steering`: Steering symbolic execution to less traveled paths
+- Stellar Colosseum: A Many-Agent Harness for Long-Horizon Research in Mathematics and Theoretical Computer Science (2026)
+- `zhou2025step`: Step-Wise Formal Verification for LLM-Based Mathematical Problem Solving
+- `wu2026stepfun`: StepFun-Formalizer: Unlocking the Autoformalization Potential of LLMs Through Knowledge-Reasoning Fusion
+- StepFun-Prover Preview: Let's Think and Verify Step by Step (2025)
+- `zamponi2026stlsat`: STLSat - An Improved Tableau for Satisfiability Checking of Signal Temporal Logic Formulas
+- Stochastic superoptimization (2012)
+- `davidovich2026stochbench`: StochBench: A Domain-Specific Benchmark for Stochastic Processes in Lean
+- `khan2026stop`: Stop Means Stop: Measuring and Repairing the Enforcement Gap in Agent-Framework Control Primitives
+- `hance2020storage`: Storage Systems are Distributed Systems (So Verify Them That Way!)
+- STORM: Refinement Types for Secure Web Applications (2021)
+- STP: Self-play LLM Theorem Provers with Iterative Conjecturing and Proving (2025)
+- `apel2013strategies`: Strategies for product-line verification: Case studies and experiments
+- Stratified Consistency Distillation for Natural Language Formalization (2026)
+- `alur2011streaming`: Streaming transducers for algorithmic verification of single-pass list-processing programs
+- `mamouras2017streamqre`: StreamQRE: modular specification and efficient evaluation of quantitative queries over streaming data
+- `bravenboer2009strictly`: Strictly declarative specification of sophisticated points-to analyses
+- Strong-Separation Logic (2020)
+- Structural Certification for Reliable Physical Design with Language Models (2026)
+- Structural Invariants for the Verification of Systems with Parameterized Architectures (2020)
+- `ioannidis2024structural`: Structural Temporal Logic for Mechanized Program Verification
+- Structural Verification for Reliable EDA Code Generation without Tool-in-the-Loop Debugging (2026)
+- Structured Decomposition for LLM Reasoning: Cross-Domain Validation and Semantic Web Integration (2026)
+- Structuring the synthesis of heap-manipulating programs (2018)
+- `nanevski2010structuring`: Structuring the verification of heap-manipulating programs
+- `garlan1996style`: Style-based refinement for software architecture
+- SubgoalXL: Subgoal-based Expert Learning for Theorem Proving (2024)
+- Substructural Parametricity (2025)
+- Summing Up Smart Transitions (2021)
+- `wang2025supporting`: Supporting Software Formal Verification with Large Language Models: An Experimental Study
+- `escribanobarreno2015supporting`: Supporting the monitoring of the verification process of critical systems'software
+- `akesson2006supremica`: Supremica - An integrated environment for verification, synthesis and simulation of discrete event systems
+- `lathouwers2024survey`: Survey of annotation generators for deductive verifiers
+- `blanc2024surveying`: Surveying the Rust Verification Landscape
+- `bobba2018survivability`: Survivability: design, formal modeling, and validation of cloud storage systems using Maude
+- `beyer2025sv`: SV-LIB 1.0: A Standard Exchange Format for Software-Verification Tasks
+- `holzmann2008swarm`: Swarm Verification
+- SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering (2024)
+- SWE-Bench+: Enhanced Coding Benchmark for LLMs (2024)
+- `ma2026swe`: SWE-Proof: Can Language Models Resolve Real-World Issues with Machine-Checked Proofs?
+- `blanchet2017symbolic`: Symbolic and Computational Mechanized Verification of the ARINC823 Avionic Protocols
+- Symbolic Automatic Relations and Their Applications to SMT and CHC Solving (2021)
+- `bryant1992symbolic`: Symbolic Boolean manipulation with ordered binary-decision diagrams
+- `abdelrazek2026symbolic`: Symbolic Execution Meets Multi-LLM Orchestration: Detecting Memory Vulnerabilities in Incomplete Rust CVE Snippets
+- `guo2017symbolic`: Symbolic execution of programmable logic controller code
+- `becker2006symbolic`: Symbolic invariant verification for systems with dynamic structural adaptation
+- `dubrovin2007symbolic`: Symbolic model checking of hierarchical UML state machines
+- `classen2011symbolic`: Symbolic model checking of software product lines
+- `biere1999symbolic`: Symbolic model checking using SAT procedures instead of BDDs
+- Symbolic Model Checking without BDDs (1999)
+- `burch1992symbolic`: Symbolic model checking: 1020 States and beyond
+- `pasareanu2010symbolic`: Symbolic PathFinder: symbolic execution of Java bytecode
+- `maoz2019symbolic`: Symbolic Repairs for GR(1) Specifications
+- Symbolic Search Is Not Exhausted: Persistent Proof-Space Exploration in Lean4 (2026)
+- Symbolic Temporal Supervision of LLM Agents Using Contracts (2026)
+- `rival2004symbolic`: Symbolic transfer function-based approaches to certified compilation
+- `zhu2026symbolon`: Symbolon: Symbolic Execution by Learning Code Transformation
+- SYMDIFF: A Language-Agnostic Semantic Diff Tool for Imperative Programs (2012)
+- SymGPT: Auditing Smart Contracts via Combining Symbolic Execution with Large Language Models (2025)
+- Symmetry and model checking
+- `usmanova2026symstep`: SymStep: Symbolic Step Verification for Logical Reasoning
+- `birrell1987synchronization`: Synchronization primitives for a multiprocessor: a formal specification
+- `kragl2018synchronizing`: Synchronizing the asynchronous
+- SynCode: LLM Generation with Grammar Augmentation (2024)
+- `le2015synergizing`: Synergizing Specification Miners through Model Fissions and Fusions (T)
+- `bianculli2026syntax`: Syntax-driven Incremental Program Verification of Matching Logic Properties
+- Synthesis Benchmarks for Automated Reasoning (2025)
+- `bagheri2014synthesis`: Synthesis from Formal Partial Abstractions
+- `katz2014synthesis`: Synthesis of Parametric Programs using Genetic Programming and Model Checking
+- `zhang2004synthesising`: Synthesising verified access control systems in XACML
+- Synthesiz3 This: an SMT-Based Approach for Synthesis with Uncomputable Symbols (2025)
+- `ghezzi2012synthesizing`: Synthesizing dynamically updating controllers from changes in scenario-based specifications
+- Synthesizing Feature Extractors: An Agentic Approach for Algorithm Selection (2026)
+- `jeon2016synthesizing`: Synthesizing framework models for symbolic execution
+- Synthesizing Inductive Invariants for Distributed Protocols via IC3 and Large Language Models (2026)
+- `ghahani2026synthesizing`: Synthesizing Proofs Using Proof Sharding and Exploration
+- `grebenshchikov2012synthesizing`: Synthesizing software verifiers from proof rules
+- `wang2026synthesizing`: Synthesizing Voltage Ride-Through Controllers for Data Centers
+- Synthetic Programming Elicitation for Text-to-Code in Very Low-Resource Programming and Formal Languages (2024)
+- SysMoBench: Evaluating AI on Formally Modeling Complex Real-World Systems (2025)
+- `cousot2002systematic`: Systematic design of program transformation frameworks by abstract interpretation
+- Systematic Design of Separation Logics (2026)
+- `ferrari2021systematic`: Systematic evaluation and usability analysis of formal methods tools for railway signaling system design
+- `bondarev2026systematization`: Systematization of Knowledge: Formal Verification of Consensus Protocols
+- `brooker2025systems`: Systems Correctness Practices at Amazon Web Services
+- T2: Temporal Property Verification (2015)
+- Tactics for Reasoning Modulo AC in Coq (2011)
+- TacticToe: Learning to Prove with Tactics (2018)
+- TacticToe: Learning to Reason with HOL4 Tactics (2017)
+- TacticZero: Learning to Prove Theorems from Scratch with Deep Reinforcement Learning (2021)
+- `first2020tactok`: TacTok: semantics-aware proof synthesis
+- `freitas2006taking`: Taking our own medicine: Applying the refinement calculus to state-rich refinement model checking
+- Taking Proof-Based Verified Computation a Few Steps Closer to Practicality (2012)
+- Talk is Cheap, Logic is Hard: Benchmarking LLMs on Post-Condition Formalization (2026)
+- `elboher2026talking`: Talking with Verifiers: Automatic Specification Generation for Neural Network Verification
+- `yang2026taming`: Taming Bitwise Behavior in GPU Kernels with Tensor Core: Black-Box Reconstruction, Compiler Enforcement, and Static Verification
+- `duarte2022taming`: Taming stateful computations in Rust with typestates
+- `kondylidou2026tao`: Tao's Equational Proof Challenge Accepted (Technical Report)
+- TaoBench: Do Automated Theorem Prover LLMs Generalize Beyond MathLib? (2026)
+- `kim2019target`: Target-driven compositional concolic testing with function summary refinement for effective bug detection
+- `cadar2015targeted`: Targeted program transformations for symbolic execution
+- `chen2026task`: Task-Specified Active Metrological Inspection with Measurement-Steered VLA Manipulation and Deterministic Evidence Gating
+- `mohsin2026teaching`: Teaching Agents to Code Reliably
+- `leanh2026teaching`: Teaching Code LLMs to Reason with Intermediate Formal Specifications
+- `bayer2026teaching`: Teaching LLMs Program Semantics via Symbolic Execution Traces
+- Teaching LLMs to Plan: Logical Chain-of-Thought Instruction Tuning for Symbolic Planning (2025)
+- `fang2018techniques`: Techniques for formal modelling and verification on dynamic memory allocators
+- Technologies for "Complete, Transparent & Interactive Models of Math" in Education (2019)
+- `abernethy2000technology`: Technology transfer issues for formal methods of software specification
+- Template-based Program Synthesis using Stellensätze (2022)
+- `cousot2000temporal`: Temporal abstract interpretation
+- `een2003temporal`: Temporal Induction by Incremental SAT Solving
+- `jeltsch2013temporal`: Temporal logic with "Until", functional reactive programming with processes, and concrete process categories
+- Temporal Prophecy for Proving Temporal Properties of Infinite-State Systems (2021)
+- `boker2011temporal`: Temporal Specifications with Accumulative Values
+- `chargueraud2017temporary`: Temporary Read-Only Permissions for Separation Logic
+- `bowen2005ten`: Ten commandments revisited: a ten-year perspective on the industrial application of formal methods
+- Ten Digits on a Train: AI-Assisted Verification of Two Eigenvalue Problems (2026)
+- `apt1981ten`: Ten Years of Hoare's Logic: A Survey—Part I
+- `arora2025tensorright`: TensorRight: Automated Verification of Tensor Graph Rewrites
+- Tenspiler: A Verified Lifting-Based Compiler for Tensor Operations (2024)
+- `britikov2026termination`: Termination analysis with interpolation-based transition invariant generation
+- `le2015termination`: Termination and non-termination specification inference
+- TerraFormer: Automated Infrastructure-as-Code with LLMs Fine-Tuned via Policy-Guided Verifier Feedback (2026)
+- Test-Driven Approaches to Software Engineering with Large Language Models: A Survey of Phases, Tasks, and Agent Skills (2026)
+- Test-Oriented Programming: rethinking coding for the GenAI era (2026)
+- `khurshid2004testera`: TestEra: Specification-Based Testing of Java Programs Using SAT
+- `gabel2012testing`: Testing mined specifications
+- Testing, Credible Compilation, and Verification in the Axon Verified Compiler in Lean and Claude Code (2026)
+- TestSuiteBench: Coding Agents Struggle to Generate Strong Test Suites from Specifications (2026)
+- `kadioglu2026text2model`: Text2Model: Modeling Copilots for Text-to-Model Translation
+- TextGrad: Automatic "Differentiation" via Text (2024)
+- `garavel20202020`: The 2020 expert survey on formal methods
+- The 4/δ Bound: Designing Predictable LLM-Verifier Systems for Formal Method Guarantee (2025)
+- `munozlahoz2026banach`: The Banach lattice Lean library
+- The Best Programming Language for Tokenmaxxing: An Investigation of Coding Agent Behavior Across Programming Languages (2026)
+- `zhang2026blind`: The Blind Curator: How a Biased Judge Silently Disables Skill Retirement in Self-Evolving Agents
+- `camargo2026cafe`: The Café in Amsterdam: When the Incumbent Becomes the Oracle
+- `alberti2025caisar`: The CAISAR Platform: Extending the Reach of Machine Learning Specification and Verification
+- `green2026case`: The Case for Automated Hyperspecialization: Evidence from SAT
+- `kressgazit2019challenges`: The Challenges in Specifying and Explaining Synthesized Implementations of Reactive Systems
+- The Choice of Divergence: A Neglected Key to Mitigating Diversity Collapse in Reinforcement Learning with Verifiable Reward (2025)
+- `vontessin2012clustered`: The clustered multikernel: An approach to formal verification of multiprocessor OS kernels
+- `sistla1987complementation`: The complementation problem for Büchi automata with applications to temporal logic
+- The Complexity of Interference: When Rely/Guarantee Does Not Work (2026)
+- `sistla1985complexity`: The complexity of propositional linear temporal logics
+- `reynolds2026cooperating`: The Cooperating Proof Calculus: Comprehensive Proofs for an SMT Solver
+- `grigore2012design`: The Design and Algorithms of a Verification Condition Generator
+- `jovanovic2013design`: The design and implementation of the model constructing satisfiability calculus
+- `brock1997dual`: The DUAL-EVAL Hardware Description Language and Its Use in the Formal Specification and Verification of the FM9001 Microprocessor
+- `thompson2026dual`: The Dual-State Architecture for Reliable LLM Agents
+- The Effects of Adding Reachability Predicates in Quantifier-Free Separation Logic (2018)
+- The End of Code Review: Coding Agents Supersede Human Inspection (2026)
+- The Essence of Higher-Order Concurrent Separation Logic (2017)
+- `dams2004existence`: The existence of finite abstractions for branching time model checking
+- The Faithfulness Gap: Certifying Semantic Equivalence Between Natural-Language and Formal Mathematical Statements (2026)
+- The FIL Hypothesis: Inductive Biases Help with Kernel Engineering (2026)
+- `armoni2002forspec`: The ForSpec Temporal Logic: A New Temporal Property-Specification Language
+- `paulson1989foundation`: The foundation of a generic theorem prover
+- `zhang2024fusion`: The Fusion of Large Language Models and Formal Methods for Trustworthy AI Agents: A Roadmap
+- `molnar2018gamma`: The Gamma statechart composition framework: Design, verification and code generation for component-based reactive systems
+- The Gold Rush in AI4Math: Where Are We Now? (2026)
+- `singh2026hallucination`: The Hallucination Snowball: Modeling Error Propagation as State Transitions in Multi-Agent LLM Pipelines
+- The Hitchhiker's Guide to Program Analysis: A Journey with Large Language Models (2023)
+- The HoTT library: a formalization of homotopy type theory in Coq (2017)
+- The Illusion of Safety: Multi-Tier Verification of AI vs. Human C++ Code (2026)
+- The Imandra Automated Reasoning System (system description) (2020)
+- The impact of GenAI on the future of requirements engineering (2026)
+- `ann2026interaction`: The Interaction Tax: When Communication Erases Diversity in Multi-Agent Teams
+- `lammich2010isabelle`: The Isabelle Collections Framework
+- The KeYmaera X Proof IDE - Concepts on Usability in Hybrid Systems Theorem Proving (2017)
+- The Lean 4 Theorem Prover and Programming Language (2021)
+- The lean mathematical library (2020)
+- The Limits of Inference Scaling Through Resampling (2024)
+- The LLMbda Calculus: AI Agents, Conversations, and Information Flow (2026)
+- `hartmanns2014modest`: The Modest Toolset: An Integrated Environment for Quantitative Modelling and Verification
+- `zhong2020move`: The Move Prover
+- `bulwahn2012new`: The New Quickcheck for Isabelle
+- The nuXmv Symbolic Model Checker (2014)
+- The Output-Space Hypothesis: Enumerative Equivalence Checking for Tensor Programs (2026)
+- `bagnara2006parma`: The Parma Polyhedra Library: Toward a complete set of numerical abstractions for the analysis and verification of hardware and software systems
+- `mothukuri2026patchwork`: The Patchwork Problem in LLM-Generated Code
+- `makarov2013picard`: The Picard Algorithm for Ordinary Differential Equations in Coq
+- `hur2013power`: The power of parameterization in coinductive proof
+- The Promise and Limits of LLMs in Constructing Proofs and Hints for Logic Problems in Intelligent Tutoring Systems (2025)
+- The Prover Is the Judge: Verified Security Software from AI Coding Agents in Ada/SPARK (2026)
+- `mehta2026reach`: The reach of a verification tool decides its value: A controlled study of verification surface, artifact quality, and cost in AI coding agents
+- The Reasoning Boundary Paradox: How Reinforcement Learning Constrains Language Models (2025)
+- `pandey2026refutation`: The Refutation Gap: Certifying Both Halves of an Optimality Claim
+- The Relationship between Craig Interpolation and Recursion-Free Horn Clauses (2013)
+- The Relationship Between Separation Logic and Implicit Dynamic Frames (2012)
+- `alenezi2026rise`: The Rise of AI-Native Software Engineering: Implications for Practice, Education, and the Future Workforce
+- `brazdil2008satisfiability`: The Satisfiability Problem for Probabilistic CTL
+- The Scyther Tool: Verification, Falsification, and Analysis of Security Protocols (2008)
+- The SeaHorn Verification Framework
+- The Search for Constrained Random Generators (2025)
+- `arquint2026secrets`: The Secrets Must Not Flow: Scaling Security Verification to Large Codebases
+- `dai2026signal`: The Signal-Coverage Matrix: Stratifying Type and Semantic Errors in Statement Autoformalization
+- `sartori2026specification`: The Specification Gap: Coordination Failure Under Partial Knowledge in Code Agents
+- The Stretch Factor of Planar Delaunay Triangulations Is Less Than 1.65 (2026)
+- `blaauwbroek2020tactician`: The Tactician - A Seamless, Interactive Tactic Learner and Prover for Coq
+- The Tactician's Web of Large-Scale Formal Knowledge (2024)
+- The temporal logic of branching time (1981)
+- `stade2024top`: The Top-Down Solver Verified: Building Confidence in Static Analyzers
+- `monniaux2022trusted`: The Trusted Computing Base of the CompCert Verified Compiler
+- `larchey-wendling2010undecidability`: The Undecidability of Boolean BI through Phase Semantics
+- The Unfireable Safety Kernel: Execution-Time AI Alignment for AI Agents and Other Escapable AI Systems (2026)
+- `ferdowsi2023usability`: The Usability of Advanced Type Systems: Rust as a Case Study
+- The Use of Likely Invariants as Feedback for Fuzzers (2021)
+- The Vampire Diary (2025)
+- `armborst2024vercors`: The VerCors Verifier: A Progress Report
+- `wang2026verification`: The Verification Horizon: No Silver Bullet for Coding Agent Rewards
+- `tan2019verified`: The verified CakeML compiler backend
+- The Verifier is the Curriculum: Precision Sets the Return on Search in Code Self-Distillation (2026)
+- The Verifier Tax: Horizon Dependent Safety--Success Tradeoffs in Tool Using LLM Agents (2026)
+- The VMT-LIB Language and Tools (2021)
+- `filliatre2007krakatoa`: The Why/Krakatoa/Caduceus Platform for Deductive Program Verification
+- `nagasamudram2023whyrel`: The WhyRel Prototype for Relational Verification
+- Theorem Prover as a Judge for Synthetic Data Generation (2025)
+- `flanagan2003theorem`: Theorem Proving Using Lazy Proof Explication
+- TheoremBench: Evaluating LLMs on Theorem Proving in Formal Mathematics (2026)
+- TheoremForge: Scaling up Formal Data Synthesis with Low-Budget Agentic Workflow (2026)
+- `kurgan2026theoremgraph`: TheoremGraph: Bridging Formal and Informal Mathematics
+- TheoremLlama: Transforming General-Purpose LLMs into Lean4 Experts (2024)
+- Theoria: Rewrite-Acceptability Verification over Informal Reasoning States (2026)
+- Theorist Toolbox: Tools for Agent Based LLM-assisted economic theory Research (2026)
+- `min2026theory`: Theory-Level Autoformalization: From Isolated Statements to Unified Formal Knowledge Bases
+- Theory-Scale Auto-Formalization of Logics for Computer Science (2026)
+- `jiang2023thetis`: Thetis: A Booster for Building Safer Systems Using the Rust Programming Language
+- Think Fast, Talk Smart: Partitioning Deterministic and Neural Computation for Structured Health Text Generation (2026)
+- Think with Self-Decoupling and Self-Verification: Automated RTL Design with Backtrack-ToT (2025)
+- Thinking Machines: Mathematical Reasoning in the Age of LLMs (2025)
+- Thirty-seven years of relational Hoare logic: remarks on its principles and history (2020)
+- `jiang2022thor`: Thor: Wielding Hammers to Integrate Language Models and Automated Theorem Provers
+- `holzl2011three`: Three Chapters of Measure Theory in Isabelle/HOL
+- `ogawa2025thrust`: Thrust: A Prophecy-Based Refinement Type System for Rust
+- `marcozzi2018time`: Time to clean your test objectives
+- `cerans1993timed`: Timed modal specification — Theory and tools
+- `blackham2011timing`: Timing analysis of a protected operating system kernel
+- Tiramisu: Fast Multilayer Network Verification (2020)
+- `bagheri2016titanium`: Titanium: efficient analysis of evolving alloy specifications
+- TLA+-Bench: An Execution-Grounded Benchmark and Dataset for Natural-Language to TLA+ Specification Generation (2026)
+- TLA-Prover: Verifiable TLA+ Specification Synthesis via Preference-Optimized Low-Rank Adaptation (2026)
+- To Pin or Not to Pin—Helping App Developers Bullet Proof Their TLS Connections (2015)
+- `khan2026token`: Token Budgets: An Empirical Catalog of 63 LLM-Agent Budget-Overrun Incidents, with an Affine-Typed Rust Mitigation as a Case Study
+- `liao2026tool`: Tool Verification for Test-Time Reinforcement Learning
+- `dwyer2001tool`: Tool-supported program abstraction for finite-state verification
+- TopoAlign: A Framework for Aligning Code to Math via Topological Decomposition (2025)
+- TorchLean: Formalizing Neural Networks in Lean (2026)
+- Total Haskell is reasonable Coq (2018)
+- Touring the MetaCoq Project (Invited Paper) (2021)
+- `malecha2010verified`: Toward a verified relational database management system
+- `ma2026engineering`: Toward an Engineering of Science: Rebalancing Generation and Verification in the Age of AI
+- `ying2018automatic`: Toward Automatic Verification of Quantum Programs
+- `brugger2025practical`: Toward Practical Deductive Verification: Insights from a Qualitative Survey in Industry and Academia
+- `dahlin2011verification`: Toward the Verification of a Simple Hypervisor
+- `mensfelt2026common`: Towards a Common Framework for Autoformalization
+- `ahrens2026deductive`: Towards a Deductive Verification Infrastructure for Weighted Programming
+- Towards a Deterministic Math Solver for Clinical Language Models (2026)
+- `ozga2023formally`: Towards a Formally Verified Security Monitor for VM-based Confidential Computing
+- `bartocci2014gpgpu`: Towards a GPGPU-parallel SPIN model checker
+- Towards a Mathematics Formalisation Assistant using Large Language Models (2022)
+- `lee2007mechanized`: Towards a mechanized metatheory of standard ML
+- `elphinstone2007practical`: Towards a Practical, Verified Kernel.
+- Towards a Probabilistic Framework for Analyzing and Improving LLM-Enabled Software (2025)
+- `gardner2012program`: Towards a program logic for JavaScript
+- Towards a Proof System for Probabilistic Dynamic Logic (2024)
+- `cao2025advanced`: Towards Advanced Mathematical Reasoning for LLMs via First-Order Logic Theorem Proving
+- `misu2024ai`: Towards AI-Assisted Synthesis of Verified Dafny Methods
+- Towards an Agentic LLM-based Approach to Requirement Formalization from Unstructured Specifications (2026)
+- `cunningham2023autoformalization`: Towards Autoformalization of Mathematics and Code Correctness: Experiments with Elementary Proofs
+- Towards Automated Formal Verification of Backend Systems with LLMs (2025)
+- `huang2026automated`: Towards Automated Formal Verification of zkEVMs Using LLM-Guided Constraint Synthesis
+- Towards Automated Functional Equation Proving: A Benchmark Dataset and A Domain-Specific In-Context Agent (2024)
+- `courant2008automated`: Towards automated proofs for asymmetric encryption schemes in the random oracle model
+- Towards Automatic Linearization via SMT Solving (2024)
+- `jones2026automating`: Towards Automating Blockchain Consensus Verification with IsabeLLM
+- `bartoletti2024benchmarking`: Towards benchmarking of Solidity verification tools
+- Towards Bit-Width-Independent Proofs in SMT Solvers (2019)
+- Towards Certificate-Driven Software Porting: A Self-Improving Agentic Harness for Scientific Program Optimization (2026)
+- `anand2018certified`: Towards Certified Meta-Programming with Typed Template-Coq
+- Towards Concurrent Quantitative Separation Logic (2022)
+- `winikoff2019deriving`: Towards Deriving Verification Properties
+- `cai2024efficient`: Towards Efficient Verification of Constant-Time Cryptographic Implementations
+- Towards Faster Reasoners By Using Transparent Huge Pages (2020)
+- `ziani2023formal`: Towards Formal Verification of a TPM Software Stack
+- `ziani2025formal`: Towards Formal Verification of a TPM Software Stack: Achievements and Opportunities
+- `dane2026formal`: Towards Formal Verification of Hybrid Synchronous Programs with Refinement Types
+- `councilman2025formal`: Towards Formal Verification of LLM-Generated Code from Natural Language Prompts
+- Towards Formal Verification of State Continuity for Enclave Programs (2021)
+- `chhak2021formally`: Towards formally verified compilation of tag-based policy enforcement
+- `albert2026formally`: Towards Formally Verified Smart Contracts Compilation
+- Towards Fully Automated Medical Imaging Code Generation via Validation-Based Context Engineering (2026)
+- Towards General Loop Invariant Generation: A Benchmark of Programs with Memory Manipulation (2023)
+- Towards Generality: Task-Adaptive Binary Analysis via Semantic Retrieval and Verifiable Reasoning (2026)
+- Towards Guaranteed Safe AI: A Framework for Ensuring Robust and Reliable AI Systems (2024)
+- `zhou2026language`: Towards Language Model Guided $$\text {TLA}^{+}$$ Proof Automation
+- `zhou2026language`: Towards Language Model Guided TLA+ Proof Automation
+- `cai2024large`: Towards Large Language Model Aided Program Refinement
+- `drechsler2025llm`: Towards LLM-based Generation of Human-Readable Proofs in Polynomial Formal Verification
+- Towards Logically Sound Natural Language Reasoning with Logic-Enhanced Language Model Agents (2024)
+- Towards Machine Learning Induction (2018)
+- Towards Mitigating API Hallucination in Code Generated by LLMs with Hierarchical Dependency Aware (2025)
+- Towards Neural Synthesis for SMT-Assisted Proof-Oriented Programming (2024)
+- Towards Neural-Guided Program Synthesis for Linear Temporal Logic Specifications (2019)
+- Towards Neuro-symbolic Causal Rule Synthesis, Verification, and Evaluation Grounded in Legal and Safety Principles (2026)
+- `shilov2019platform`: Towards platform-independent specification and verification of the standard trigonometry functions
+- `shilov2018platform`: Towards platform-independent verification of the standard mathematical functions: the square root function
+- `hu2022porting`: Towards Porting Operating Systems with Program Synthesis
+- Towards Practical Requirement Analysis and Verification: A Case Study on Software IP Components in Aerospace Embedded Systems (2024)
+- Towards Practical, End-to-End Formally Verified X.509 Certificate Validators with Verdict (2025)
+- Towards provably performant congestion control (2024)
+- `bellanger2023proved`: Towards Proved Formal Specification and Verification of STL Operators as Synchronous Observers
+- Towards Real-World Industrial-Scale Verification: LLM-Driven Theorem Proving on seL4 (2026)
+- Towards Reliable AI-Assisted Analog Design: Template-Constrained LLM Agents for SAR ADC Generation (2026)
+- `luo2026reliable`: Towards Reliable C-to-Rust Translation with Rule-Guided Reasoning and Reinforcement Learning
+- Towards Reliable Generation of Executable Workflows by Foundation Models (2025)
+- `zhong2025repository`: Towards Repository-Level Program Verification with Large Language Models
+- Towards Richer Challenge Problems for Scientific Computing Correctness (2025)
+- Towards Scalable and Cost-Efficient Vulnerability Detection: A Study on Automatic Query Generation (2026)
+- Towards SMT Solver Stability via Input Normalization (2024)
+- Towards Solving More Challenging IMO Problems via Decoupled Reasoning and Proving (2025)
+- Towards Solving the Gilbert-Pollak Conjecture via Large Language Models (2026)
+- `jacob2026system`: Towards System-Oriented Formal Verification of Local-First Access Control
+- Towards Tackling Application Logic Flaws through Autonomous Formal-Logic Modeling and Automated Reasoning (2026)
+- Towards the verification of a generic interlocking logic: Dafny meets parameterized model checking (2024)
+- `bubel2022trace`: Towards Trace-based Deductive Verification (Tech Report)
+- `eniser2024translating`: Towards Translating Real-World Code with LLMs: A Study of Translating to Rust
+- `parthasarathy2024trustworthy`: Towards Trustworthy Automated Program Verifiers: Formally Validating Translations into an Intermediate Verification Language (extended version)
+- Towards Trustworthy Legal AI through LLM Agents and Formal Reasoning (2025)
+- `chang2025understanding`: Towards Understanding and Enhancing Security of Proof-of-Training for DNN Model Ownership Verification
+- Towards Verifiable Transformers: Solver-Checkable Circuit Explanations (2026)
+- `couto2014verification`: Towards Verification of Constituent Systems through Automated Proof
+- Towards Verified Code Reasoning by LLMs (2025)
+- Towards verified stochastic variational inference for probabilistic programs (2019)
+- `andrysco2018verified`: Towards Verified, Constant-time Floating Point Operations
+- `amani2018verifying`: Towards verifying ethereum smart contract bytecode in Isabelle/HOL
+- `tas2026verifying`: Towards verifying unsafe Rust programs against Rust's pointer-aliasing restrictions
+- Trace-Tree Magmas: Proof-Producing Infinite Countermodels and 28 New Order-Five Austin Classifications (2026)
+- TraceFix: Repairing Agent Coordination Protocols with TLA+ Counterexamples (2026)
+- `nowacki2026tracking`: Tracking Borrows with Regular Expressions
+- `bouajjani2015tractable`: Tractable Refinement Checking for Concurrent Objects
+- `lucio2026tractable`: Tractable Verification of Model Transformations: A Cutoff-Theorem Approach for DSLTrans
+- `okhravi2026tractor`: TRACTOR Benchmark for Evaluating C to Rust Translators
+- `molina2019training`: Training Binary Classifiers as Data Structure Invariants
+- Training Language Models to Use Prolog as a Tool (2025)
+- `mangannavar2026training`: Training the Orchestrator: A Supervised Approach to End-to-End PDDL Planning with LLM Agents
+- Training Verifiers to Solve Math Word Problems (2021)
+- `strauch2025transaction`: Transaction Level Hierarchy Guided and Functional Coverage Driven Deductive Formal Verification
+- `angelis2020transformational`: Transformational Verification of Quicksort
+- `podelski2004transition`: Transition invariants
+- Transition-Oriented Programming: Developing Provably Correct Systems (2020)
+- `li2024translating`: Translating C To Rust: Lessons from a User Study
+- `wang2026translating`: Translating Informal Proofs into Formal Proofs Using a Chain of States
+- `dehghan2025translating`: Translating Large-Scale C Repositories to Idiomatic Rust
+- Translating Scala Programs to Isabelle/HOL (2016)
+- Translation Tag Team: Formal Rules and LLMs Translate More Macros Together Than Apart (2026)
+- Translation Validation (1998)
+- `sewell2013translation`: Translation validation for a verified OS kernel
+- `wang2026translator`: Translator vs. Challenger: Adversarial Agentic Learning for C-to-Rust Translation
+- Transport via Partial Galois Connections and Equivalences (2023)
+- TREBL -- A Relative Complete Temporal Event-B Logic. Part I: Theory (2025)
+- TreeThink: A Modular Tree Search Library for Mathematical Reasoning with LLMs (2026)
+- `foster2015trends`: Trends in functional verification: a 2014 industry study
+- Tridirectional Discriminating-Power Formal Verification of Smart Contract Reentrancy Defense Against Production-Deployed Solidity Source (2026)
+- `leino2016trigger`: Trigger Selection Strategies to Stabilize Program Verifiers
+- `heule2013trimming`: Trimming while checking clausal proofs
+- `blanchette2014truly`: Truly Modular (Co)datatypes for Isabelle/HOL
+- Trust but Verify: An Assessment of Vulnerability Tagging Services (2025)
+- Trust the Spec, Not the Code - A Specification-First, AI-Assisted Case Study in Online Banking (2026)
+- `chen2023trusta`: Trusta: Reasoning about Assurance Cases with Formal Methods and Large Language Models
+- Trustworthy AI Software Engineers (2026)
+- `gordon2023trustworthy`: Trustworthy Formal Natural Language Specifications
+- Trustworthy Software Project Generation : a Case Study with an Interactive Theorem Prover (2026)
+- `palmskog2025trustworthy`: Trustworthy Verification of RISC-V Binaries Using Symbolic Execution in HolBA
+- `koprowski2011trx`: TRX: A Formally Verified Parser Interpreter
+- `mine2017tutorial`: Tutorial on static inference of numeric invariants by abstract interpretation
+- `zhang2024two`: Two Birds One Stone: Effective Static Detection of Resource and Communication Deadlocks in Rust Programs
+- `bojanczyk2009two`: Two-way unary temporal logic over trees
+- Type Casting Verification: Stopping an Emerging Attack Vector (2015)
+- `holzl2013type`: Type Classes and Filters for Mathematical Analysis in Isabelle/HOL
+- `li2026type`: Type Safety via Hoare Logic with Separation and Pure Types
+- `chang2017type`: Type systems as macros
+- `liblit2000type`: Type systems for distributed data structures
+- Type-Checked Compliance: Deterministic Guardrails for Agentic Financial Systems Using Lean 4 Theorem Proving (2026)
+- `mundler2025type`: Type-Constrained Code Generation with Language Models
+- `hong2024type`: Type-migrating C-to-Rust translation using a large language model
+- `sternfeld2025typepilot`: TypePilot: Leveraging the Scala Type System for Secure LLM-generated Code
+- `chen2025typepulse`: TYPEPULSE: Detecting Type Confusion Bugs in Rust Programs
+- `kobayashi2009types`: Types and higher-order recursion schemes for verification of higher-order programs
+- `chaki2002types`: Types as models: model checking message-passing programs
+- `tuch2007types`: Types, bytes, and separation logic
+- TäKōFormal: Enabling Robust Software for Programmable Memory Hierarchies (2026)
+- `polgreen2022uclid5`: UCLID5: Multi-modal Formal Modeling, Verification, and Synthesis
+- `snook2006uml`: UML-B: Formal modeling and design aided by UML
+- `cabot2007umltocsp`: UMLtoCSP: a tool for the formal verification of UML/OCL models using constraint programming
+- `cremers2008unbounded`: Unbounded verification, falsification, and characterization of security protocols by pattern refinement
+- Uncovering Hidden Correctness in LLM Causal Reasoning via Symbolic Verification (2026)
+- Under the Hood of DANE Mismanagement in SMTP (2022)
+- Understanding and Improving Automated Proof Synthesis for Interactive Theorem Provers (2026)
+- `laneve2026understanding`: Understanding code semantics: a benchmark study of LLMs
+- Understanding JavaScript event-based interactions (2014)
+- `islam2026understanding`: Understanding the Usability of Cryptographic Verification Tools
+- Understanding Tool-Augmented Agents for Lean Formalization: A Factorial Analysis (2026)
+- `chirica2025unfolding`: Unfolding Iterators: Specification and Verification of Higher-Order Iterators, in OCaml
+- Unifying Inference-Time Planning Language Generation (2025)
+- `foster2024unifying`: Unifying Model Execution and Deductive Verification with Interaction Trees in Isabelle/HOL
+- `zhi2024unifying`: Unifying Qualitative and Quantitative Safety Verification of DNN-Controlled Systems
+- `turon2013unifying`: Unifying Refinement and Hoare-Style Reasoning in a Logic for Higher-Order Concurrency
+- Unifying Theories of Reactive Design Contracts (2017)
+- `sozeau2014universe`: Universe Polymorphism in Coq
+- `jiang2025unlocking`: Unlocking a New Rust Programming Experience: Fast and Slow Thinking with LLMs to Conquer Undefined Behaviors
+- `yin2026unsafechecker`: UnsafeChecker: Finding Soundness Bugs in Rust Safe Abstractions
+- `wang2024unsafecop`: UnsafeCop: Towards Memory Safety for Real-World Unsafe Rust Code with Practical Bounded Model Checking
+- Untrusted Authors, Trusted Answers: A Calculus of Fidelity-Graded Translations (2026)
+- `gamboa2025usability`: Usability Barriers for Liquid Types
+- `khazeev2016usability`: Usability of AutoProof: a case study of software verification
+- Usable declarative configuration specification and validation for applications, systems, and cloud (2017)
+- Using a Prophecy-Based Encoding of Rust Borrows in a Realistic Verification Tool (2025)
+- `lau2026aristotle`: Using Aristotle API for AI-Assisted Theorem Proving in Lean 4: A Formalisation Case Study of the Grasshopper Problem
+- `emerson1982branching`: Using branching time temporal logic to synthesize synchronization skeletons
+- `chen2015crash`: Using Crash Hoare Logic for Certifying the FSCQ File System
+- `krka2010dynamic`: Using dynamic execution traces and program invariants to enhance behavioral model inference
+- Using Dynamically Layered Definite Releases for Verifying the RefFS File System (2024)
+- `bornholt2021lightweight`: Using Lightweight Formal Methods to Validate a Key-Value Storage Node in Amazon S3
+- `zave2012lightweight`: Using lightweight modeling to understand Chord
+- `sahoo2013likely`: Using likely invariants for automated software fault localization
+- `orenesvera2023llms`: Using LLMs to Facilitate Formal Verification of RTL
+- Using Reasoning Models to Generate Search Heuristics that Solve Open Instances of Combinatorial Design Problems (2025)
+- UTBoost: Rigorous Evaluation of Coding Agents on SWE-Bench (2025)
+- `borges2024utc`: UTC Time, Formally Verified
+- VACS: Value-Aligned Compositional Shielding for Multi-Agent Reasoning (2026)
+- Vale: Verifying High-Performance Cryptographic Assembly Code (2017)
+- VALG: An Agentic System for ML Theory Research (2026)
+- Valid Stopping in Adaptive Generator-Verifier Loops (2026)
+- Validating Solidity Code Defects using Symbolic and Concrete Execution powered by Large Language Models (2025)
+- Validating the eBPF Verifier via State Embedding (2024)
+- `li2026varies`: VARIES: Verification Harness Synthesis and Efficient Scheduling for Unsoundness Detection in Rust Libraries
+- VASO: Formally Verifiable Self-Evolving Skills for Physical AI Agents (2026)
+- vCause: Efficient and Verifiable Causality Analysis for Cloud-based Endpoint Auditing (2026)
+- `zhao2026vclare`: VClare: Resolving Imperfect Specifications in LLM-Based Verilog Generation
+- `sevenhuijsen2025vecogen`: VeCoGen: Automating Generation of Formally Verified C Code With Large Language Models
+- `massoudi2026vego`: VeGo: Direct Deductive Formal Verification of Go Programs for Computer Science Education
+- `pirlea2025veil`: Veil: A Framework for Automated and Interactive Verification of Transition Systems
+- `ileri2024vel`: VEL: A Formally Verified Reasoner for OWL2 EL Profile
+- `chen2024veld`: Veld: Verified Linux Drivers
+- `achermann2025velosiraptor`: Velosiraptor: Code Synthesis for Memory Translation
+- Velvet: A Foundational Multi-modal Verifier for Imperative Programs in Lean (2026)
+- VEP: A Two-stage Verification Toolchain for Full eBPF Programmability (2025)
+- VEPA: Verified Evolving Formal Policy for Lifelong LLM Agent Guardrails (2026)
+- `chen2022veracity`: Veracity: declarative multicore programming with commutativity
+- Verbalized Algorithms: Classical Algorithms are All You Need (Mostly) (2025)
+- `wilcox2015verdi`: Verdi: A Framework for Implementing and Formally Verifying Distributed Systems
+- `singh2026verge`: VERGE: Formal Refinement and Guidance Engine for Verifiable LLM Reasoning
+- `liu2026veri`: Veri-Sure: A Contract-Aware Multi-Agent Framework with Temporal Tracing and Formal Verification for Correct RTL Code Generation
+- `luo2026verication`: Verication-driven closed-loop multi-agent large language modelframework for code-compliant structural design
+- `saha2026verichat`: VeriChat: An Agentic Conversational AI Assistant for Hardware Security Verification
+- `anton2024vericheri`: VeriCHERI: Exhaustive Formal Security Verification of CHERI at the RTL
+- VeriCoder: Enhancing LLM-Based RTL Code Generation through Functional Correctness Validation (2025)
+- VeriCoT: Neuro-symbolic Chain-of-Thought Validation via Logical Consistency Checks (2025)
+- VeriEquivBench: An Equivalence Score for Ground-Truth-Free Evaluation of Formally Verifiable Code (2025)
+- `peng2025verif`: VerIF: Verification Engineering for Reinforcement Learning in Instruction Following
+- `dreossi2019verifai`: VerifAI: A Toolkit for the Formal Design and Analysis of Artificial Intelligence-Based Systems
+- `jacobs2026verifast`: VeriFast's separation logic: a logic without laters for modular verification of fine-grained concurrent programs.
+- Verifiable abstention makes AI leak diagnosis accountable in urban water distribution networks (2026)
+- Verifiable Auto-Formalization of Mathematics Using a Relaxed Natural Formal Language (2026)
+- Verifiable Checks for Business Rule Consistency (2026)
+- Verifiable Process Rewards for Agentic Reasoning (2026)
+- Verifiable side-channel security of cryptographic implementations: constant-time MEE-CBC (2016)
+- `han2025verifiagent`: VerifiAgent: a Unified Verification Agent in Language Model Reasoning
+- `eilers2024verification`: Verification Algorithms for Automated Separation Logic Verifiers
+- `fisler2005verification`: Verification and change-impact analysis of access-control policies
+- Verification and Redesign of OFDM Backscatter (2021)
+- Verification and Refinement of Natural Language Explanations through LLM-Symbolic Theorem Proving (2024)
+- `lu2026verification`: Verification and Self-Improvement in Agentic AI: Foundations and Limits
+- `cohen2020verification`: Verification and Validation of Convex Optimization Algorithms for Model Predictive Control
+- `beyer2019verification`: Verification Artifacts in Cooperative Verification: Survey and Unifying Component Framework
+- `afoud2026verification`: Verification as an Architectural Layer for LLM Agents: A V-Model Design, and a Pilot Study of Its Deterministic Core
+- Verification Challenge: Fractional Cascading for Multi-Nuclide Grid Lookup (2025)
+- `berdine2012verification`: Verification Condition Generation and Variable Conditions in Smallfoot
+- `gureja2025verification`: Verification Limits Code LLM Training
+- `uppar2026verification`: Verification Modulo Tested Library Contracts
+- `wang2026verification`: Verification of a Generational Garbage Collector
+- `haque2020verification`: Verification of a Generative Separation Kernel
+- `hardin2023verification`: Verification of a Rust Implementation of Knuth's Dancing Links using ACL2
+- `utting2021verification`: Verification of a Smart Contract for a Simple Casino
+- `garavel2009verification`: Verification of an industrial SystemC/TLM model using LOTOS and CADP
+- `bryant1995verification`: Verification of arithmetic circuits with binary moment diagrams
+- Verification of C++ Programs with VeriFast (2022)
+- `wolff2020verification`: Verification of Closures in Rust Programs
+- Verification of Compiler-to-Accelerator Mappings for Machine Learning Accelerators (2026)
+- `bozga2021verification`: Verification of Component-based Systems with Recursive Architectures
+- `cimatti2026verification`: Verification of Configurable SRA Systems
+- `feng2021verification`: Verification of Distributed Quantum Programs
+- `clarke2003verification`: Verification of Hybrid Systems Based on Counterexample-Guided Abstraction Refinement
+- `mironov2021verification`: Verification of MPI programs
+- `farzan2012verification`: Verification of parameterized concurrent programs by modular reasoning about data and control
+- Verification of PCP-Related Computational Reductions in Coq (2018)
+- `suh2026verification`: Verification of PETSc with CIVL using LLM-generated ACSL contracts and deterministic driver generation
+- `angelis2014verification`: Verification of Programs by Combining Iterated Specialization with Interpolation
+- `abdulla2019verification`: Verification of programs under the release-acquire semantics
+- `lisitsa2017verification`: Verification of Programs via Intermediate Interpretation
+- `thiemann2026verification`: Verification of Provers and Solvers
+- `sahai2020verification`: Verification of Quantitative Hyperproperties Using Trace Enumeration Relations
+- `halbwachs1997verification`: Verification of Real-Time Systems using Linear Relation Analysis
+- `lindner2019verification`: Verification of Safety Functions Implemented in Rust - a Symbolic Execution based approach
+- Verification of the Incremental Merkle Tree Algorithm with Dafny (2021)
+- `liang2016verification`: Verification of the Tree-Based Hierarchical Read-Copy Update in the Linux Kernel
+- `berkovits2019verification`: Verification of Threshold-Based Distributed Algorithms by Decomposition to Decidable Logics
+- `penix2000verification`: Verification of time partitioning in the DEOS scheduler kernel
+- `chaurasia2026verification`: Verification Reward Model for Reinforcement Learning in Chip Design Verification
+- `shaikh2010verification`: Verification-driven slicing of UML/OCL models
+- Verification-Guided Specification Synthesis with Large Language Models for Intrusion Detection Rules (2026)
+- `dardinier2023verification`: Verification-Preserving Inlining in Automatic Separation Logic Verifiers
+- `guilloud2025verified`: Verified and Optimized Implementation of Orthologic Proof Search
+- `emann2022verified`: Verified Approximation Algorithms
+- `bhatia2024verified`: Verified Code Transpilation with LLMs
+- `li2022verified`: Verified compilation of Quantum oracles
+- Verified Compilation of Space-Efficient Reversible Circuits (2017)
+- `loow2019verified`: Verified compilation on a verified processor
+- Verified Correctness and Security of mbedTLS HMAC-DRBG (2017)
+- Verified Correctness and Security of OpenSSL HMAC (2015)
+- `boston2021verified`: Verified Cryptographic Code for Everybody
+- `khan2026verified`: Verified Detection and Prevention of Concurrency Anomalies in Multi-Agent Large Language Model Systems
+- `lammich2014verified`: Verified Efficient Implementation of Gabow’s Strongly Connected Component Algorithm
+- `cohen2022verified`: Verified Erasure Correction in Coq with MathComp and VST
+- `medeiros2025verified`: Verified Foundations for Differential Privacy
+- `bhargavan2008verified`: Verified implementations of the information card federated identity-management protocol
+- `diekmann2018verified`: Verified iptables Firewall Analysis and Verification
+- `myreen2010verified`: Verified just-in-time compiler on x86
+- `singh2026verified`: Verified Learning for Compiler Optimization: An LLM-Guided Architecture with Formal Control
+- `kamil2016verified`: Verified lifting of stencil computations
+- `somers2024verified`: Verified Lock-Free Session Channels with Linking
+- `protzenko2017verified`: Verified Low-Level Programming Embedded in F*
+- `wimmer2018verified`: Verified Model Checking of Timed Automata
+- `bhargavan2017verified`: Verified Models and Reference Implementations for the TLS 1.3 Standard Candidate
+- `chaabani2025verified`: Verified Path Indexing
+- `mullen2016verified`: Verified peephole optimizations for CompCert
+- `tan2023verified`: Verified Propagation Redundancy and Compositional UNSAT Checking in CakeML
+- `immler2015verified`: Verified Reachability Analysis of Continuous Systems
+- `finkbeiner2020verified`: Verified Rust Monitors for Lola Specifications
+- `sison2021verified`: Verified secure compilation for mixed-sensitivity concurrent programs
+- `fournet2016verified`: Verified Secure Implementations for the HTTPS Ecosystem: Invited Talk
+- `guha2011verified`: Verified Security for Browser Extensions
+- `bauereiss2022verified`: Verified Security for the Morello Capability-enhanced Prototype Arm Architecture
+- Verified Security of Merkle-Damgård (2012)
+- Verified Software Toolchain - (Invited Talk) (2011)
+- `beringer2021verified`: Verified Software Units
+- `xie2003verified`: Verified systems by composition from verified components
+- `liu2022verified`: Verified tensor-program optimization via high-level scheduling rewrites
+- `sousa2018verified`: Verified three-way program merge
+- `tristan2009verified`: Verified validation of lazy code motion
+- Verified VCG and Verified Compiler for Dafny (2025)
+- `zhou2026verifier`: Verifier-Guided Code Translation via Meta-Step Decoding
+- Verifier-guided discovery of exact high-order mimetic operators with large language models (2026)
+- `ahmed2022verifix`: Verifix: Verified Repair of Programming Assignments
+- VeriFlow: Verifying Network-Wide Invariants in Real Time (2013)
+- Verify Implementation Equivalence of Large Models (2026)
+- Verify your Labels! Trustworthy Predictions and Datasets via Confidence Scores (2024)
+- Verify, Repair, Repeat, or Stop? Robust Stopping for Noisy Verify-Repair Loops in LLM Agents (2026)
+- `clouthier2026verify`: Verify-in-the-Loop: Proof-Carrying AI Mathematics — a case study certifying, expanding, and stress-testing the Jacobian counterexample with Claude Code (Opus 4.8) and a signing verifier
+- `pottier2017verifying`: Verifying a hash table and its iterators in higher-order separation logic
+- `chen2017verifying`: Verifying a high-performance crash-safe file system using a tree specification
+- `frehse2006verifying`: Verifying analog oscillator circuits using forward/backward abstraction refinement
+- `ngo2017verifying`: Verifying and Synthesizing Constant-Resource Implementations with Types
+- `mommen2023verifying`: Verifying C++ Dynamic Binding
+- Verifying C11-Style Weak Memory Libraries (2020)
+- Verifying C11-Style Weak Memory Libraries via Refinement (2021)
+- Verifying Catamorphism-Based Contracts using Constrained Horn Clauses (2022)
+- `rayan2021verifying`: Verifying Competitive-Programming Programs in a Rust Verifier
+- Verifying Concurrent Multicopy Search Structures (2021)
+- Verifying concurrent software using movers in CSPEC (2018)
+- `liu1999verifying`: Verifying Consistency and Validity of Formal Specifications by Testing
+- Verifying Constant-Time Implementations (2016)
+- `aziz1996verifying`: Verifying continuous time Markov chains
+- `zhao2025verifying`: Verifying Device Drivers with Pancake
+- `vanhattum2022verifying`: Verifying dynamic trait objects in rust
+- `bouajjani2014verifying`: Verifying eventual consistency of optimistic replication systems
+- `britton2025verifying`: Verifying Extract Method Refactoring in Rust
+- Verifying First-Order Temporal Properties of Infinite-State Systems via Timers and Rankings (2026)
+- `gilot2026verifying`: Verifying Floating-Point Programs in Stainless
+- Verifying Functional Correctness Properties At the Level of Java Bytecode (2024)
+- Verifying Graph Algorithms in Separation Logic: A Case for an Algebraic Approach (Extended Version) (2025)
+- Verifying Hardware Security Modules with Information-Preserving Refinement (2022)
+- `abel2005verifying`: Verifying haskell programs using constructive type theory
+- `swamy2013verifying`: Verifying higher-order programs with the Dijkstra monad
+- Verifying Isolation Levels of Database Implementations for Free Using Separation Logic (2026)
+- `cramer2025verifying`: Verifying LLM-Generated Code in the Context of Software Verification with Ada/SPARK
+- Verifying Lock-free Search Structure Templates (2024)
+- Verifying maximum link loads in a changing world (2025)
+- Verifying Numerical Methods with Isabelle/HOL (2025)
+- Verifying Peephole Rewriting In SSA Compiler IRs (2024)
+- `bai2026verifying`: Verifying Probabilistic Programs in Rust
+- Verifying Procedural Programs via Constrained Rewriting Induction (2014)
+- Verifying Reachability in Networks with Mutable Datapaths (2017)
+- Verifying Relational Properties using Trace Logic (2019)
+- `dai2024verifying`: Verifying Rust Implementation of Page Tables in a Software Enclave Hypervisor
+- `baranowski2018verifying`: Verifying Rust Programs with SMACK
+- `beckmann2020verifying`: Verifying Safe Clients of Unsafe Code and Trait Implementations in Rust
+- `yahav2001verifying`: Verifying safety properties of concurrent Java programs using 3-valued logic
+- `yahav2004verifying`: Verifying safety properties using separation and heterogeneous abstractions
+- Verifying Safety Properties With the TLA+ Proof System (2010)
+- `le2013verifying`: Verifying SystemC using an intermediate verification language and symbolic simulation
+- `cui2013verifying`: Verifying systems rules using rule-directed symbolic execution
+- Verifying that a compiler preserves concurrent value-dependent information-flow security (2019)
+- Verifying the DaisyNFS concurrent and crash-safe file system with sequential reasoning (2022)
+- `cook2026verifying`: Verifying the Rust Standard Library
+- Verifying Tree-Manipulating Programs via CHCs (2025)
+- Verifying vMVCC, a high-performance transaction library using multi-version concurrency control (2023)
+- Verifying Whiley Programs with Boogie
+- Verifying x86 instruction implementations (2020)
+- `dross2020verifythis`: VerifyThis 2019: A Program Verification Competition (Extended Report)
+- `deng2025verifythisbench`: VerifyThisBench: Generating Code, Specifications, and Proofs All at Once
+- VeriGuard: Enhancing LLM Agent Safety via Verified Code Generation (2025)
+- `zhang2026veriharness`: VeriHarness: Scaling Agentic Verification for Long-Horizon Tasks
+- VeriLocc: End-to-End Cross-Architecture Register Allocation via LLM (2025)
+- VeriMoA: A Mixture-of-Agents Framework for Spec-to-HDL Generation (2025)
+- `ye2025verina`: VERINA: Benchmarking Verifiable Code Generation
+- VeriPhy: Agentic Physical Reasoning for World Model Evaluation and Refinement (2026)
+- `bohrer2018veriphy`: VeriPhy: verified controller executables from verified cyber-physical system models
+- `lwin2026veripy`: VeriPy Source-Preserving Verification and Compatibility Checking for Python Components
+- `lee2025verisafe`: VeriSafe Agent: Safeguarding Mobile GUI Agent via Logic-based Action Verification
+- VeriScale: Adversarial Test-Suite Scaling for Verifiable Code Generation (2026)
+- VeriSimplePIR: Verifiability in SimplePIR at No Online Cost for Honest Servers (2024)
+- `jia2026veriskill`: VeriSkill: A Self-Evolution Framework for Program Verification Skills
+- `zhou2024verismo`: VeriSMo: A Verified Security Module for Confidential VMs
+- `xin2026verisoftbench`: VeriSoftBench: Repository-Scale Formal Verification Benchmarks for Lean
+- `sun2025veristruct`: VeriStruct: AI-assisted Automated Verification of Data-Structure Modules in Verus
+- `acharya2026veritas`: VERITAS: Verifier-Guided Proof Search for Zero-Shot Formal Theorem Proving
+- `liu2026veritrans`: VeriTrans: Fine-Tuned LLM-Assisted NL→PL Translation via a Deterministic Neuro-symbolic Pipeline
+- `zhang2013veritrust`: VeriTrust: verification for hardware trust
+- VerLoc: Verifiable Localization in Decentralized Systems (2022)
+- VerMCTS: Synthesizing Multi-Step Programs using a Verifier, a Large Language Model, and Tree Search (2024)
+- `ye2026vero`: Vero: Can AI Agents Build Formally Verified Software Repositories?
+- `yang2024vert`: VERT: Verified Equivalent Rust Transpilation with Large Language Models as Few-Shot Learners
+- `yang2025verusage`: VeruSAGE: A Study of Agent-Based Verification for Rust Systems
+- `zhang2026verusseek`: VerusSeek: Retrieval-Augmented LLM-Based Proof Synthesis for Rust Programs
+- `permenev2020verx`: VerX: Safety Verification of Smart Contracts
+- `zhong2026verytrace`: VeryTrace: Verifying Reasoning Traces through Compilable Formalism and Structured Verification
+- VETR: Execution-Grounded Self-Improving Agent for Symbolic Graphics Reasoning (2026)
+- `csertan2002viatra`: VIATRA - visual automated transformations for formal verification and validation of UML models
+- Vibe Building (2026)
+- `hou2026vibe`: Vibe Coding an LLM-powered Theorem Prover
+- Vibe Coding in Practice: Motivations, Challenges, and a Future Outlook – a Grey Literature Review (2025)
+- `siddeeq2026vibe`: Vibe Coding in Software Development: A Multivocal Literature Review
+- `lepigre2022vip`: VIP: verifying real-world C idioms with integer-pointer casts
+- `brayton1996vis`: VIS: A system for verification and synthesis
+- Vision: An Extensible Methodology for Formal Software Verification in Microservice Systems (2025)
+- Visored: A Controlled-Natural-Language Prover for LLM-Generated Mathematics (2026)
+- Visual Program Distillation: Distilling Tools and Programmatic Reasoning into Vision-Language Models (2023)
+- Viva La Vida: Verification and Accumulation Failures in Multi-Agent Proof Search (2026)
+- Viverra: Text-to-Code with Guarantees (2026)
+- VMDV: A 3D Visualization Tool for Modeling, Demonstration, and Verification (2017)
+- `qin2026vosti`: Vosti: Specifying, Implementing, and Verifying Deterministic LLM Inference
+- Voting Method Synthesis on an Infinite Domain: A Possibility Theorem for Positive Involvement (2026)
+- Voyager: An Open-Ended Embodied Agent with Large Language Models (2023)
+- VRASED: A Verified Hardware/Software Co-Design for Remote Attestation (2019)
+- VSS Challenge Problem: Verifying the Correctness of AllReduce Algorithms in the MPICH Implementation of MPI (2025)
+- VSync: Push-Button Verification and Optimization for Synchronization Primitives on Weak Memory Models (Technical Report) (2021)
+- Vul4Py: Benchmarking Automated Vulnerability Repair in Python with Paired Exploit and Functional Oracles (2026)
+- Vulcan: Instance-specialized, Verifiable Systems Heuristics Through LLM-driven Search (2025)
+- `wang2019vultron`: VULTRON: Catching Vulnerable Smart Contracts Once and for All
+- VUPER: Verified ASN.1 UPER Parser (2026)
+- Vérification déductive de programmes Rust (2023)
+- Vεrity: Verifiable Local Differential Privacy (2026)
+- Waltzz: WebAssembly Runtime Fuzzing with Stack-Invariant Transformation (2025)
+- `ferrando2025watchdogs`: Watchdogs and Oracles: Runtime Verification Meets Large Language Models for Autonomous Systems
+- WaveCert: Translation Validation for Asynchronous Dataflow Programs via Dynamic Fractional Permissions (2023)
+- WAVED: Principled Identification of Off-Path Exploitable Weak Verifications within the TCP/IP Protocol Suite (2026)
+- Weak Order on the MacNeille Completion of Bruhat Order (2026)
+- Weakening Goals in Logical Specifications (2025)
+- `bouayad2026weave`: Weave of Formal Thought
+- `baier2014weight`: Weight monitoring with linear temporal logic: complexity and decidability
+- What are the Right Symmetries for Formal Theorem Proving? (2026)
+- What Challenges Do Developers Face When Using Verification-Aware Programming Languages? (2025)
+- `mondal2023llms`: What do LLMs need to Synthesize Correct Router Configurations?
+- What good are strong specifications? (2012)
+- `neider2025formal`: What is Formal Verification without Specifications? A Survey on mining LTL Specifications
+- What is the Difference Between Me and You? Benchmarking the Quality Gap Between Human-Written and AI-Generated Code (2026)
+- `lamport1985means`: What it means for a concurrent program to satisfy a specification
+- What Predicts Correctness in Text-to-SQL? A Selective-Prediction Study (2026)
+- What Was Said, Not What Was'Thought': Type-6 Logic for CoT Verification (2026)
+- What's Decidable About Sequences? (2010)
+- `jain2025s`: What's in a Proof? Analyzing Expert Proof-Writing Processes in F* and Verus
+- Whatever Remains Must Be True: Filtering Drives Reasoning in LLMs, Shaping Diversity (2025)
+- `kotte2026conformal`: When Can Conformal Risk Control Certify LLM Outputs? Bounds, Impossibility, and Adaptation for Structured Generation
+- `park2026agent`: When Do Agent Loops Mistake Stagnation for Progress? Self-Evaluation Bias and Externally Grounded Verification in Long-Running Autonomous LLM Agent Loops
+- When Does a Second Model Help? Cross-Model Review in LLM Verification (2026)
+- When Does Structured Knowledge Help Neural Theorem Proving? (2026)
+- `lu2025verification`: When Does Verification Pay Off? A Closer Look at LLMs as Solution Verifiers
+- When Helping Hurts and How to Fix It: Multi-Agent Debate for Data Cleaning (2026)
+- `liu2026llm`: When is LLM-Based Program Reasoning Correct? A Completion Semantics for LLM-Based Code Inference
+- When Lifetimes Liberate: A Type System for Arenas with Higher-Order Reachability Tracking (2025)
+- `zheng2026llms`: When LLMs Invent Rust Crates: An Empirical Study of Hallucination Patterns and Mitigation
+- When Passing Tests Hides Vulnerabilities: An Empirical Study of Silent Failures in Agentic Systems (2026)
+- `he2018regression`: When Regression Verification Meets CEGAR
+- When Specifications Conflict: A Symmetry-Based Framework for Measuring LLM Preferences (2026)
+- `yasir2026verification`: When Verification Hurts: Asymmetric Effects of Multi-Agent Feedback in Logic Proof Tutoring
+- Who Verifies the Verifier? Co-Evolving Inspectable Graders with Self-Improving Agents (2026)
+- Who Verifies the Verifiers? A Computer-Checked Implementation of the DPLL Algorithm in Dafny (2020)
+- Why Agentic Theorem Prover Works: A Statistical Provability Theory of Mathematical Reasoning Models (2026)
+- `zhao2026code`: Why Code, Why Now: An Information-Theoretic Perspective on the Limits of Machine Learning
+- Why Do Multi-Agent LLM Systems Fail? (2025)
+- `eriksson2026fail`: Why does it fail? Explanation of verification failures
+- Why Formal Monitors Fail: Attack Distribution Entropy as a Coverage Bound for LTL-Based LLM Agent Safety (2026)
+- Why3 - Where Programs Meet Provers (2013)
+- `tanaka2026why3`: Why3-py: A Tool for Formal Verification of Hypothesis Testing and Meta-Analysis in Python
+- Willful Disobedience: Automatically Detecting Failures in Agentic Traces (2026)
+- `beyer2015witness`: Witness validation and stepwise testification across software verifiers
+- Working Document - Formalising Software Requirements with Large Language Models (2025)
+- Worst-Case Symbolic Constraints Analysis and Generalisation with Large Language Models (2025)
+- `gloeckle2026wybecoder`: WybeCoder: Verified Imperative Code Generation
+- `lavermicocca2026x`: X-rated Compliance Theater: An Empirical Evaluation of European Age Verification Systems in Adult Websites
+- XCheck: Verifying Integrity of 3D Printed Patient-Specific Devices via Computing Tomography (2023)
+- `nanevski2008ynot`: Ynot: dependent types for imperative programs
+- Your Simulation Runs but Solves the Wrong Physics: PDE-Grounded Intent Verification for LLM-Generated Multiphysics Simulation Code (2026)
+- `nitin2023yuga`: Yuga: Automatically Detecting Lifetime Annotation Bugs in the Rust Language
+- `zheng2013z3`: Z3-str: a z3-based string solver for web application analysis
+- Z3: An Efficient SMT Solver (2008)
+- `ball2004zapato`: Zapato: Automatic Theorem Proving for Predicate Abstraction Refinement
+- Zero-Knowledge Model Checking (2026)
+- `kolozyan2026zkp`: ZKP Security Tools and Verification: Coverage, Effectiveness, Adoption, and Challenges
+- Zombie Agents: Persistent Control of Self-Evolving LLM Agents via Self-Reinforcing Injections (2026)
+- `allain2026zoo`: Zoo: A Framework for the Verification of Concurrent OCaml 5 Programs using Separation Logic
+- Zooid: a DSL for Certified Multiparty Computation
+- `castroperez2021zooid`: Zooid: a DSL for certified multiparty computation: from mechanised metatheory to certified multiparty processes
