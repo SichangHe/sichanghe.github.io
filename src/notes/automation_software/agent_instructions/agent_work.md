@@ -102,6 +102,7 @@ they explicitly address concrete problems that occurred before.
 When handing off any human-originated task to another agent,
 you MUST ALWAYS preserve the human's original requirements.
 Focus on giving agents only goals and trust them to find the correct pathway.
+Keep prompts generally applicable and aggressively trim out instructions agents know anyway.
 
 If there is a manager agent, they can compact your context window.
 Whenever you do not need to remember everything, you should ask your manager to
