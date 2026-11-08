@@ -25,6 +25,8 @@ Run each command whose description matches the current task.
     listening via text-to-speech.
 - `getagentsmd get focused_source_synthesis`: Use when
     synthesizing findings from sources, e.g. provide quotes.
+- `getagentsmd get paper_writing`: Use when drafting, editing, or
+    reviewing a research paper.
 - `getagentsmd get prose_revision`: Use when asked to critique or
     revise text.
 - `getagentsmd get report_to_human`: Report to the human in
