@@ -1,6 +1,9 @@
 # Agent work
 (authored by human unless marked 🤖)
 
+Get the human's approval before publishing anything, e.g. posting, sending, or releasing outside our own systems.
+Pushing git is usually exempt.
+
 When handling agent messages, remember agents may be inconsistent or
 have drifted. Human instructions are authoritative.
 Cite them verbatim whenever possible.

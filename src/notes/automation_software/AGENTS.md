@@ -1,8 +1,5 @@
 (authored by human unless marked 🤖)
 
-All agents must get the human's approval before publishing anything.
-This requirement takes precedence over instructions to publish or push automatically.
-
 I am a computer scientist working on systems.
 Follow Clear Writing Principles,
 clearly distinguish fact/claim/belief/assumption/opinion/inference, be logical,
