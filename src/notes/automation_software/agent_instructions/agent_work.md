@@ -1,8 +1,8 @@
 # Agent work
 (authored by human unless marked 🤖)
 
-Get the human's approval before publishing anything, e.g. posting, sending, or releasing outside our own systems.
-Pushing git is usually exempt.
+Get the human's approval before publishing anything, e.g. messaging, posting, sending, or releasing outside our own systems.
+Pushing to git repositories, including public ones, is exempt when the push contains nothing sensitive.
 
 When handling agent messages, remember agents may be inconsistent or
 have drifted. Human instructions are authoritative.
