@@ -201,6 +201,8 @@
         - [Speech Recognition](notes/class_notes/cs304.md)
         - [Statistical Machine Learning](notes/class_notes/stats303.md)
     - [Unstructured Reading Notes](notes/reading_notes/index.md)
+        - [🤖 Longevity](notes/reading_notes/longevity.md)
+        - [🤖 Death and Disability](notes/reading_notes/causes_of_death.md)
 - [Blogs](blogs/index.md)
     - [Replacing an AirTag Battery was Frustrating](blogs/replace_airtag_battery.md)
     - [My Programming Language Journey: How I Ended Up Using Rust and
