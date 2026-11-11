@@ -141,6 +141,11 @@ GPT is bad at writing; for writing, use the `pb-gemini-consult` CLI.
 Be lazy; do only what's necessary to finish the task.
 NEVER EVER perform ANY task that the human did not explicitly ask for, or that
 is not necessary to complete tasks the human asked for.
+🤖 Start any heavy job (multi-core or over ~10 min CPU) only via
+`cpu-run HIGH|LOW -c CORES -o TASK -e END -- cmd`, which records it in
+`/ssd1/sichangheagent/cpu_budget/ledger.md`; exit 3 means the LOW budget
+is full, so wait. UI client experiments are HIGH and go first.
+
 Use the end-to-end principle: go many steps before you check whether
 those steps were correct; avoid checking every single step you take.
 
