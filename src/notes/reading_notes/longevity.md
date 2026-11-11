@@ -31,7 +31,7 @@ Population/biology evidence synthesis, top-tier venues only. Not personal medica
     - human: NMN raised muscle insulin sensitivity in prediabetic women, a modest single-endpoint effect (Yoshino 2021, Science)
     - against: NR did not extend lifespan in the ITP (Harrison 2021, Aging Cell)
     - read: raises NAD+ reliably; healthspan/lifespan benefit in humans unshown
-    - regulatory side-story: FDA in 2022 ruled NMN excluded from supplements because it was under drug investigation, then reversed in 2025 (agent recollection; not re-verified)
+    - regulatory side-story: FDA in 2022 ruled NMN excluded from supplements because it was under drug investigation, then on 2025-09-29 said NMN is lawful in supplements because it was sold as one before the drug investigation (FDA response to Natural Products Association, reported by [NutraIngredients](https://www.nutraingredients.com/Article/2025/12/09/fda-reinstates-ndi-status-of-nmn-with-new-letters-to-ingredient-players/)); legal status says nothing about efficacy
 - Information theory of aging (Sinclair)
     - claim: loss of epigenetic information causes aging; inducing DNA breaks (ICE mice) accelerates aging, and OSK reprogramming reverses it (Yang 2023, Cell)
     - critique (inference/opinion from field): ICE damage may mimic damage rather than normal aging; the "cause" claim outruns the evidence
