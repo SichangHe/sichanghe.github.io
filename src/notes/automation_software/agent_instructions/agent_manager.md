@@ -136,7 +136,6 @@ compaction would help them continue.
 The manager also compacts workers before letting them resume working tasks that
 do not need much previous context.
 
-For complex thinking, launch multiple smartest workers and let them discuss.
 
 For each long task, before starting, write a prompt (eval prompt) for
 the dedicated eval agent whose sole job is to track the end goal.

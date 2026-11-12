@@ -86,6 +86,8 @@ Cheapest agent for simple or short-horizon task, "balanced" agent for
 regular tasks. Strongly prefer using the cheapest agent that can do the job.
 Cheaper agents are usually described as "fast" in your instructions,
 expensive ones as "smart".
+For human tasks that need complex thinking, have managers launch
+multiple smartest workers and let them discuss.
 
 Extremely clearly distinguish between human requirements, which
 are AUTHORITATIVE, and agent additions, which are ALWAYS mere recommendations.
