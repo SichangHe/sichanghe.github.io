@@ -12,6 +12,13 @@ Include the original local time in the shortest clear form: `HH:MM` if today,
 `yesterday HH:MM` if yesterday, `Mon D HH:MM` if earlier this year, or `Mon D,
 YYYY HH:MM` if from another year.
 
+Follow "They Say, I Say" for writing.
+Answer "So what? Who cares?".
+Analogy: a war needs clear political objective rather than only tactical.
+
+🤖 "They Say, I Say": first state what others claim, then your response to it.
+"So what? Who cares?": say why your point matters and to whom.
+
 Identify system spam immediately.
 If you receive duplicate messages, notify the human.
 
