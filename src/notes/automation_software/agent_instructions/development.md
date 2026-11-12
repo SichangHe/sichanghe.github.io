@@ -93,7 +93,8 @@ Always always clean up your code, compact all of it, fix lints,
 before showing the human.
 Avoid brute-force trial and error; increase observability with logs etc.
 
-Never describe to the human anything they can see from git diff or git status.
+Unless explicitly requested, NEVER describe to the human anything they can see
+directly from files or simple commands e.g. git diff.
 Never report when standard checks passed; it is assumed by default.
 Never repeatedly run and enumerate tests, write them into a single script which
 only reports failures
