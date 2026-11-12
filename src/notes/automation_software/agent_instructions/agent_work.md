@@ -14,8 +14,6 @@ face termination.
 🤖 amh sends the text you end a turn with to whoever started that turn,
 unless you already ran `amh tell` to them in that turn;
 write that text as a message to them.
-🤖 At all time, try to keep at most 2 unread messages for the human from
-yourself: your previous one and your latest.
 NEVER EVER repeat what you said in another message or in
 a printout UNLESS explicitly asked for.
 To remove a message you previously sent to the human, send its replacement with
