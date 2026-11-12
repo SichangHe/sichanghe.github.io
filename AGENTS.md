@@ -13,3 +13,6 @@ Put the opposite emoji on the heading or paragraph containing each exception;
 it applies only to that adjacent content. `AGENTS.md` files are human-authored
 unless the human explicitly says otherwise. If the authorship of an existing
 file is unknown, ask the human; never guess.
+
+🤖 Exception: agent instruction files under `src/notes/automation_software/`
+need no authorship line; they are human-authored by default.
