@@ -10,34 +10,14 @@ refresh memory of the guidelines.
 Manager policy is in `getagentsmd get agent_manager` and
 `getagentsmd get agent_manager_core`, and exactly one role command:
 `main_manager` or `submanager`.
-`amh task start --as-manager` selects submanager instructions;
-main-manager rotation selects main-manager instructions.
-Launches fail before mutation when any required command fails or
-returns no text.
 
 Load machine-local values from `data/local.env` if present.
 Then run `amh manager watchers` before handling pending work.
 Rerun it after helper-code changes.
 
-Transient state and inbound mail locations are configured locally;
-do not hardcode them here.
-
 ## Task files
 
-Prompts are plain markdown blocks separated by blank lines or `---`.
-Notes are parenthesized lines.
-
-Every active task file except
-main manager task files MUST track ALL still-open goals in
-frontmatter `pending_task_items`.
-Quote human prompt verbatim as much as possible for goals.
-Workers can manage their own pending-item lists with `amh todo`.
-Managers may also update pending-item lists through manager helpers.
-Managers read task files directly only for overview or troubleshooting;
-routine task-file mutations MUST go through `amh task`.
-Every agent explicitly assigned to inspect or
-directly edit task files MUST first run `getagentsmd get agent_manager` and
-follow its task-record and lifecycle rules for that work.
+Quote the human's words verbatim as much as possible for open items.
 
 To create/link a task and spawn a worker, use `amh task start`.
 When a human email causes a launch, pass `--email` and
@@ -55,8 +35,7 @@ If a worker reports a manager-process problem, consume it through that
 worker's task file and update manager policy yourself; do not ask the worker to
 inspect manager state.
 
-When a worker task is complete, close it with `amh task close x.md` so the task reference moves from `TODO.md` `current`
-to the top of `previous`.
+When a worker task is complete, close it with `amh task close`.
 
 🧑 At times, agents may become stupid and produce a mess.
 To fix this, terminate them, then launch an agent to
@@ -72,35 +51,15 @@ resume them for follow-up as needed.
 For persistent role pools,
 the manager MUST preserve an explicit dependency graph whenever roles are
 `blocked`.
-Each active persistent role task must have `status: running`, `status:
-long_running` with or without `blocked_on: <persistent role reason>`, or
-`status: blocked` with `blocked_on: <specific task file or human review>`.
-🤖 For `long_running` roles, request dependencies suppress reminders only for
-those request items; `blocked_on` does not suppress reminders for ready items.
-`status: blocked` still pauses the whole task.
 an exited persistent role without a concrete blocker is a manager bug:
 first mark the exact blocker, then resume it only after that
-blocker is resolved, and keep the task linked under `current:` or
-`human pending:` as appropriate.
+blocker is resolved.
 
 🧑 The human's instructions MUST remain the absolute source of truth;
 the manager MUST keep it and restate them verbatim or refer to them in
 prompts when routing or resuming tasks.
 Agents' prompts have much lower precedence than the human's instructions, and
 MUST NEVER displace human instructions as task goals.
-
-When work is waiting on the human, move the task file path under `TODO.md`
-`human pending:` and keep it there.
-- The `TODO.md` entry must be the task md path only, not vague prose.
-- The task file body must include:
-    - exact files/docs to review
-    - one concrete review question or next action
-
-For pending blocks:
-
-- If the target session is unclear, ask the human.
-- Keep directory-specific instructions in the target directory or task file.
-- Store prompts directly in task files.
 
 ## Dispatch and status
 
@@ -188,15 +147,6 @@ If eval passes, the task is done; otherwise, the manager spawns a new worker to
 actually achieve the goal.
 Either way, each eval agent only evaluates once, and
 the manager uses the eval prompt to launch a new eval agent every time.
-
-The email watcher accepts only self-sent manager subjects and
-records accepted UIDs to prevent duplicate pending blocks.
-
-Ordinary addressed mail goes only to the addressed task's `runat`.
-`for manager` at an active unquoted content edge,
-including directly linked readable content, routes it to `managerat`;
-matching ignores case, surrounding punctuation, and edge whitespace while
-preserving the phrase's internal spacing.
 
 Human messages must describe the actual request, decision, or task in
 plain words; file paths, mail UIDs, and line numbers are source refs,

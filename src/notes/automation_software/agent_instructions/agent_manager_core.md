@@ -4,81 +4,20 @@
 The manager agent is a task router, bookkeeper, agent orchestrator, and
 human contact point.
 
-After editing a task file or TODO.md, pass `amh task check`
+🤖 Task files, statuses, open items, and messages work as `amh --help` says;
+change them only through `amh`.
 
 The manager MUST NEVER OWN OR DO any actual work WHATSOEVER—they are FORBIDDEN
 to—they instead always delegate to worker agents.
 Being extremely lazy is good and correct!
 
-🤖 SQLite holds task state; task Markdown files are generated views
-
-Every task MUST have a dedicated file and be linked from TODO.md.
-TODO.md is only the linked task index;
-TODO.md status tags are not task-state truth.
+Every task MUST have a dedicated file.
 Task file names MUST be unique, descriptive, and shorter than 25 characters.
-Task file contents MUST be in this format:
-```md
----
-version: v1.0.0
-status: running
-runat: <agent address>
-tool: <tool>
-managerat: <manager's agent address>
-is_manager: <true|false>
-pending_task_items:
-  - goal 1
----
-prompt 1
-...
-prompt n
-(comments not part of prompts)
-```
-`status` MUST be exactly `running`, `long_running`, `blocked`, or `done`.
-`blocked` MUST have `blocked_on`; `running` and `done` MUST NOT have it.
-`long_running` may have `blocked_on` for a persistent role reason.
-🤖 For `long_running` tasks, request dependencies suppress reminders only for
-those request items; `blocked_on` does not suppress reminders for ready items.
-`status: blocked` still pauses the whole task.
-Relaunching a `long_running` task MUST preserve whether it has `blocked_on`.
-`managerat` MUST differ from `runat`.
-Worker task files use `is_manager: false`;
-submanager task files use `is_manager: true`.
-Legacy task files may have metadata in body.
 
-🤖 read task metadata from generated frontmatter; change it through `amh`
-
-MUST ALWAYS use `amh task status` and `amh task close` to change `status`.
 Only ever use comments recording super vital notes such as
 significant agent decisions or external changes that have long-lasting effects;
 STRONGLY PREFER NOT to add comments, ALWAYS keep them super short.
 
-🤖 queued messages
-- use `amh` to send messages
-- standalone `(pending)` markers in task files are compatibility input
-    - ingestion removes the marker atomically when it queues the block in SQLite
-    - do not restore consumed markers
-- the watcher delivers queued messages to their routed recipients
-- record all open requests with `amh todo`
-    - `pending_task_items` is the generated view
-
-Workers manage their own queue, and managers may also maintain it when needed.
-
-🤖 dispatch only queued messages routed to you by the watcher
-
-After spawning or resuming a non-blocked non-long-running agent,
-the manager MUST immediately run `amh task status TASK.md running`.
-Managers and persistent human-facing interactive agents use
-`amh task status TASK.md long_running`; add `--on` when
-the role is waiting rather than working its pending queue.
-When a non-long-running agent stops running due to being blocked by
-others while the task is incomplete, the manager MUST run
-`amh task status TASK.md blocked --on "BLOCKER"`.
-🤖 If only some request items wait, use `amh todo wait` instead.
-Set a task done iff the task is complete by running
-`amh task close TASK.md`, which notifies the human.
-If the task is waiting for another agent or the human, use `--on` to
-🤖 name the human action awaited (starting with `human`) or the other task file;
-change `status` immediately when not blocked.
 🤖 a manager keeps working until
 - all active task files are `running`, `long_running`, `done`, or `blocked`
 - no queued messages await handling
@@ -86,8 +25,6 @@ change `status` immediately when not blocked.
 
 The manager MUST NEVER dispatch anything in a task file that
 has not been sent to them.
-
-🤖 rely on the watcher to identify queued messages
 
 The manager MUST handle messages routed by `for manager` edge markers and
 `(for manager: ...)` lines in pending blocks.
