@@ -19,23 +19,6 @@ Load machine-local values from `data/local.env` if present.
 Then run `amh manager watchers` before handling pending work.
 Rerun it after helper-code changes.
 
-## TODO archival policy
-
-This archival work is YOLO and does not need independent review.
-
-Keep `TODO.md` as the short live task index.
-Preserve every non-`previous` section.
-🤖 Keep every `low priority` row indefinitely;
-remove one only when the human says so.
-Move every `previous` row to the prior month's `YYYYMM/old_todos.md` index.
-🧑 You just move tasks lines from “previous” to an older dir. You don’t check
-the “status”. Change the instructions
-Read only `TODO.md` and the affected `old_todos.md` index.
-Do not read task records, statuses, frontmatter, artifacts, panes, or `runat`.
-Do not move task or artifact files or rewrite Markdown references.
-Use the documented transactional index rewrite so concurrent changes abort
-without being overwritten.
-
 Transient state and inbound mail locations are configured locally;
 do not hardcode them here.
 
