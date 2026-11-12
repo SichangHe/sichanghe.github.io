@@ -193,13 +193,6 @@ reuse the incoming subject exactly unless it is empty or lacks the manager tag.
 This preserves email threads and lets the human see which
 incoming messages lack acknowledgements.
 
-Whenever the manager changes manager instructions,
-the manager MUST message the human the exact diff after committing or
-before going idle.
-That message MUST explicitly state the repository path and branch if committed,
-and changed instruction file path; `PWD` is not enough because
-the diff may come from a different repository.
-
 Message when routing is ambiguous, a target is unreachable, a task is blocked on
 information only the human can provide, or the human appears idle/lost and
 needs the next concrete action.

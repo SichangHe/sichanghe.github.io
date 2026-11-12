@@ -6,3 +6,4 @@
 4. 🤖 State each approved requirement as a precise action. Prefer positive instructions. Use prohibitions or absolute language only when the same requirement is not clear from the positive instruction.
 5. 🤖 Show the complete draft to the human. Explain what behavior it changes and wait for the human to review and approve the exact text before using it as instruction.
 6. 🤖 Apply the approved text. If the text changes after approval, show the changed text to the human again before using it.
+7. 🤖 After committing changes to persistent instructions, or before going idle, message the human the exact diff, with the repository path, the branch, and each changed file path; the current directory is not enough because the diff may come from a different repository.
