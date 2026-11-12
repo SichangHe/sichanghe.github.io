@@ -14,8 +14,8 @@ Population/biology evidence synthesis, top-tier venues only. Not personal medica
 
 - Aging has a set of interacting mechanisms ("hallmarks"): genomic instability, telomere loss, epigenetic change, proteostasis loss, nutrient-sensing dysregulation, mitochondrial dysfunction, senescence, stem-cell exhaustion, altered communication, plus inflammation, dysbiosis, impaired autophagy (López-Otín 2013 and 2023, Cell).
 - Rapamycin (mTOR inhibitor) extends mouse lifespan even when started late; replicated across sites by the NIA Interventions Testing Program (ITP) (Harrison 2009, Nature).
-- Clearing p16Ink4a-positive senescent cells extends healthy lifespan in mice (Baker 2016, Nature).
-- CR extends healthspan/survival in rhesus monkeys once the two conflicting NIA/Wisconsin studies are reconciled by diet and start age (Mattison 2017, Nat Commun). In humans, 2-year moderate CR improves cardiometabolic risk factors, not proven outcomes (CALERIE 2, Kraus 2019, Lancet Diabetes Endocrinol).
+- Clearing p16Ink4a-positive senescent cells extends median lifespan and delays age-related organ deterioration in mice (Baker 2016, Nature).
+- CR improves health in rhesus monkeys; survival improved in the Wisconsin study but not significantly in the NIA study, a gap Mattison 2017 (Nat Commun) attributes partly to diet and start age without fully resolving it. In humans, 2-year moderate CR improves cardiometabolic risk factors, not proven outcomes (CALERIE 2, Kraus 2019, Lancet Diabetes Endocrinol).
 - DNA-methylation "clocks" predict age and mortality risk; DunedinPACE measures rate of aging (Belsky 2022, eLife). Inference: clocks are biomarkers, not proof that changing a clock changes lifespan.
 
 ## Contested
@@ -27,7 +27,7 @@ Population/biology evidence synthesis, top-tier venues only. Not personal medica
     - decisive: resveratrol did not extend lifespan of normal-diet mice in the ITP (Strong 2013, J Gerontol A)
     - read: no reliable lifespan benefit in healthy mammals
 - NAD+ precursors (NMN, NR)
-    - claim: NAD+ falls with age; restoring it reverses mitochondrial/muscle/vascular decline in mice (Gomes 2013, Cell; Mills 2016, Cell Metab)
+    - claim: NAD+ falls with age; restoring it reverses mitochondrial decline in mouse muscle (Gomes 2013, Cell) and mitigates age-related metabolic, activity, and eye-function decline (Mills 2016, Cell Metab)
     - human: NMN raised muscle insulin sensitivity in prediabetic women, a modest single-endpoint effect (Yoshino 2021, Science)
     - against: NR did not extend lifespan in the ITP (Harrison 2021, Aging Cell)
     - read: raises NAD+ reliably; healthspan/lifespan benefit in humans unshown
