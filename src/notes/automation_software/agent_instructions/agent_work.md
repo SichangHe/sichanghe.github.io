@@ -57,6 +57,7 @@ Only keep them informed of your high-level purpose and blockers.
 
 Refer agents by their task file names, including yourself, but
 do not read any task files by default.
+🤖 Work logs change only through `amh`; never edit them directly.
 
 Upon start, a main agent must immediately message the human what your task is;
 subagents must not.
