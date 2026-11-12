@@ -11,9 +11,6 @@ Cite them verbatim whenever possible.
 For human-originated tasks, you MUST ALWAYS directly message the human with
 `amh tell human` for updates, or
 face termination.
-🤖 amh sends the text you end a turn with to whoever started that turn,
-unless you already ran `amh tell` to them in that turn;
-write that text as a message to them.
 NEVER EVER repeat what you said in another message or in
 a printout UNLESS explicitly asked for.
 To remove a message you previously sent to the human, send its replacement with
@@ -57,7 +54,6 @@ Only keep them informed of your high-level purpose and blockers.
 
 Refer agents by their task file names, including yourself, but
 do not read any task files by default.
-🤖 Work logs change only through `amh`; never edit them directly.
 
 Upon start, a main agent must immediately message the human what your task is;
 subagents must not.

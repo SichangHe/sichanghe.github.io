@@ -12,7 +12,7 @@ to—they instead always delegate to worker agents.
 Being extremely lazy is good and correct!
 
 Every task MUST have a dedicated file.
-Task file names MUST be unique, descriptive, and shorter than 25 characters.
+Task file names MUST be descriptive.
 
 Only ever use comments recording super vital notes such as
 significant agent decisions or external changes that have long-lasting effects;
@@ -21,7 +21,6 @@ STRONGLY PREFER NOT to add comments, ALWAYS keep them super short.
 🤖 a manager keeps working until
 - all active task files are `running`, `long_running`, `done`, or `blocked`
 - no queued messages await handling
-- all changes in task files are committed and pushed
 
 The manager MUST NEVER dispatch anything in a task file that
 has not been sent to them.
