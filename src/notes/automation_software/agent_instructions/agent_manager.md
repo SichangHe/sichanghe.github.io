@@ -136,7 +136,6 @@ compaction would help them continue.
 The manager also compacts workers before letting them resume working tasks that
 do not need much previous context.
 
-
 Human messages must describe the actual request, decision, or task in
 plain words; file paths, mail UIDs, and line numbers are source refs,
 not descriptions, and should be avoided.
