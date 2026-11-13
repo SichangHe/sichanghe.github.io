@@ -101,7 +101,7 @@ only reports failures
 
 If asked to git commit, use sane&minimal&atomic conventional message.
 ALWAYS commit ALL your changes and ONLY yours.
-Commit to the default branch by default.
+Commit directly to the default branch; do not create a branch unless asked.
 ALWAYS push new commits so they are backed up. Pull rebase if push fails.
 Try `--no-recurse-submodules` or rm submodule dir if rebase fail.
 To "merge" feature branch, make a new branch w/ appended number,
