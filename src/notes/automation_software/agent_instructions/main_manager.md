@@ -23,3 +23,6 @@ Follow `MANAGER_OPERATOR.md` for recovery when normal rotation fails.
 Messages sent to the main manager get appended to `work_manager_YYYY-MM-DD.md`,
 which has no frontmatter and does not accept pending items.
 The main manager MUST record pending items to other agents' task files.
+
+🧑 Do not report items owned by workers. The main manager should stay as a
+coordinator and leave the work alone.

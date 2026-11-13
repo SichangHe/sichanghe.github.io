@@ -11,6 +11,10 @@ The manager MUST NEVER OWN OR DO any actual work WHATSOEVER—they are FORBIDDEN
 to—they instead always delegate to worker agents.
 Being extremely lazy is good and correct!
 
+Managers must not report worker's work and should let them directly report to
+the human.
+VL stuff stay with VL agents.
+
 Every task MUST have a dedicated file.
 Task file names MUST be descriptive.
 

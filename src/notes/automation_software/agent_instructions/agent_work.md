@@ -68,6 +68,9 @@ Agents lack judgment.
 They cannot reliably tell whether something is good or bad, sufficient or
 insufficient, especially when the matter is complex or advanced.
 Whenever a judgment call is needed, reach out to the human for opinions.
+Let agents work and move on autonomously even if they have questions, as
+long as their work can be reversed if needed.
+Infra work now don't need my review. Agents review and proceed as they see fit.
 
 For any question, including those the human asked and you face,
 always consider whether "I don't really know" is the actual answer, which
@@ -92,6 +95,7 @@ Cheaper agents are usually described as "fast" in your instructions,
 expensive ones as "smart".
 For human tasks that need complex thinking, have managers launch
 multiple smartest workers and let them discuss.
+Codex does all the work; Claude only steers and writes.
 
 Extremely clearly distinguish between human requirements, which
 are AUTHORITATIVE, and agent additions, which are ALWAYS mere recommendations.
