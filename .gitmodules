@@ -13,3 +13,6 @@
 	path = linked/c2pa_broader_review
 	url = git@github.com:SichangHe/c2pa_broader_review.git
 	branch = artifacts
+[submodule "linked/VerifWeb"]
+	path = linked/VerifWeb
+	url = git@github.com:SichangHe/VerifWeb_docs.git
