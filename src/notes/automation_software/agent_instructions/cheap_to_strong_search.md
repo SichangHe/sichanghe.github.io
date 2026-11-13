@@ -8,7 +8,7 @@ Scripts shrink the material, cheap agents point at candidates, and
 strong agents judge only those candidates.
 
 1. Shrink with scripts.
-   Drop what cannot hold an answer, e.g. quoted email replies.
+   Drop what cannot hold an answer, e.g. quoted reply text.
    Measure what is left in bytes, and
    split it into batches a cheap agent can finish, each a file of paths.
 2. Write one brief file.
