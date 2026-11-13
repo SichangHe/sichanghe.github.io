@@ -4,7 +4,6 @@ optimize for them.
 Robustness and correctness are the most important.
 
 Approachability and Simplicity need a high lower bound so it can be understood.
-CLIs should be natural, self-explanatory to use by having logical help page trees.
 
 Maintainability is necessary if we want long-term development.
 Composability helps here, e.g. separation of concerns among modules.

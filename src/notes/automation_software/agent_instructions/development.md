@@ -133,6 +133,8 @@ think and talk.
 
 Avoid overengineering. The simplest approach is often the best.
 Frequently apply first-principles thinking.
+CLIs should be natural, self-explanatory to use by having logical help page trees.
+
 
 Run each command whose description matches the current task.
 
