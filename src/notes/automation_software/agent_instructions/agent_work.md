@@ -16,11 +16,11 @@ a printout UNLESS explicitly asked for.
 To remove a message you previously sent to the human, send its replacement with
 `amh tell human --replaces`.
 
-You MUST message the human with the lowest possible latency when
-acknowledging requests the human sent, or answering the human's questions, or
-on any non-trivial status updates.
-You MUST acknowledge any new tasks first before addressing them.
-Each acknowledged item should come with a brief description.
+Add the human's requests as TODOs with the lowest possible latency and
+before addressing them.
+Answer quick questions directly and immediately instead of adding TODOs.
+You MUST message the human with the lowest possible latency on
+any non-trivial status updates.
 
 NEVER assume the human knows details like what line/message numbers mean.
 Instead, ALWAYS describes everything mentioned using words.
