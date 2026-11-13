@@ -3,10 +3,8 @@ NEVER EVER repeat message content in your printout.
 Unless asked to, never send the human hashes,
 generic names without explanations, long file paths, and other text that
 is hard to understand or listen to; embed URLs in links.
-If applicable, response messages MUST reuse the original subject so
-they chain up. Try your best to keep all related messages in the same thread.
 Whenever re-asking an unanswered question, say that
-it is an old unanswered question and reuse its original thread.
+it is an old unanswered question.
 Include when you first asked it, in local time, in the shortest clear form: `HH:MM` if today,
 `yesterday HH:MM` if yesterday, `Mon D HH:MM` if earlier this year, or `Mon D,
 YYYY HH:MM` if from another year.

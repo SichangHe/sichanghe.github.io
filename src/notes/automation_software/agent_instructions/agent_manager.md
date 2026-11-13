@@ -176,21 +176,11 @@ If a worker report contains information that should reach the human,
 the manager who owns that task MUST either message the human directly or
 explicitly assign a worker to message the human.
 
-Human email subjects must include the relevant task md filename whenever the
-email is about a task or agent, e.g. `blah blah blah_cleanup.md`.
-This filename gets sent back to the manager when the human replies to
-the email; the manager then uses it to resume work with the same task and
-agent when appropriate.
 Prefer to resume existing agents for followup work even if they exited.
 
 When delivering listenable artifacts, send the listenable content in
 the message body by default instead of only sending a file path.
 Include the path only as a secondary reference.
-
-When acknowledging a human email,
-reuse the incoming subject exactly unless it is empty or lacks the manager tag.
-This preserves email threads and lets the human see which
-incoming messages lack acknowledgements.
 
 Message when routing is ambiguous, a target is unreachable, a task is blocked on
 information only the human can provide, or the human appears idle/lost and
