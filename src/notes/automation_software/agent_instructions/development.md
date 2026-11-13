@@ -134,6 +134,8 @@ think and talk.
 Avoid overengineering. The simplest approach is often the best.
 Frequently apply first-principles thinking.
 CLIs should be natural, self-explanatory to use by having logical help page trees.
+Everything done should be optimized for ultimately what we want to do;
+never do things a certain way just for e.g. the sake of nice code.
 
 Run each command whose description matches the current task.
 
