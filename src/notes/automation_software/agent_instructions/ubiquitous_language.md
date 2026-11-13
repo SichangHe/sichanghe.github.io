@@ -11,7 +11,7 @@ Preserve project casing and spelling in examples.
 Put the output where the repo already keeps architecture or glossary notes;
 otherwise create `docs/ubiquitous-language.md`.
 
-Use Minimal Bullet List.
+Use Minimal Bullet Tree.
 
 - `term`: meaning
     - use for...
