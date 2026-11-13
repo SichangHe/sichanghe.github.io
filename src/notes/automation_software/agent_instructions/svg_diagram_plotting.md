@@ -9,6 +9,7 @@ Tell ChatGPT the full diagram brief, and tell them:
 ```
 DO NOT use image generation. Code the diagram in SVG by writing self-contained SVG code in plain text. Render your SVG into PNG and look at it to check if it looks pretty and the layout is good, and do so iteratively until it is good. Make sure the fonts are as big as they possibly can without looking bad.
 ```
+Show the result as `getagentsmd get show_viz` says.
 
 (Below are written by agents, for reference only)
 
@@ -25,5 +26,3 @@ Render the SVG locally and inspect the PNG visually:
 ```sh
 convert -background white -density 192 "$work_dir/diagram.svg" "$work_dir/diagram.png"
 ```
-
-Show the result as `getagentsmd get show_viz` says.
