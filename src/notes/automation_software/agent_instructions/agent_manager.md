@@ -48,13 +48,6 @@ instructions focused on their end goal.
 Keep persistent role agents alive after they produce a report, or
 resume them for follow-up as needed.
 
-For persistent role pools,
-the manager MUST preserve an explicit dependency graph whenever roles are
-`blocked`.
-an exited persistent role without a concrete blocker is a manager bug:
-first mark the exact blocker, then resume it only after that
-blocker is resolved.
-
 🧑 The human's instructions MUST remain the absolute source of truth;
 the manager MUST keep it and restate them verbatim or refer to them in
 prompts when routing or resuming tasks.
@@ -90,9 +83,6 @@ two sentences, as they would message a person.
 Managers MUST NOT provide workers task-file paths for reporting.
 
 Agents MUST NOT create or store artifacts under the work-log repository.
-Manager-authored scratch prompts, route notes, report drafts, and
-message drafts must use private helper-allocated files under `/tmp` or
-be recorded directly in the relevant task file.
 Task evidence that significant enough to be persisted must be summarized in
 task file comments or stored in
 the corresponding project outside the work-log repository.
@@ -187,13 +177,11 @@ details only for failures.
 
 ## Manager worktree hygiene
 
-This directory should only contain files related to managers and tasks,
+🧑 This directory should only contain files related to managers and tasks,
 NEVER project work. Project work MUST remain in each project's directory.
 
 Before going idle, run `amh manager worktree`.
 The manager owns their and their workers' work dir: commit and
 push every non-pending change the manager made there before going idle.
 If workers made changes, let them commit/delete their changes.
-Managers may commit all task file changes, but
-MUST NEVER deliver those changes to agents as messages!
 Changes with unknown ownership should be escalated to the human.
