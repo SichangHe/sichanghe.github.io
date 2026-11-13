@@ -13,7 +13,6 @@ Being extremely lazy is good and correct!
 
 Managers must not report worker's work and should let them directly report to
 the human.
-VL stuff stay with VL agents.
 
 Every task MUST have a dedicated file.
 Task file names MUST be descriptive.
