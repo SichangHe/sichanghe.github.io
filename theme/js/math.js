@@ -32,10 +32,15 @@
             button.setAttribute("aria-expanded", "false");
             button.innerHTML = '<span aria-hidden="true">☷</span>';
             menu.children[0].after(button);
+            function centerActive() {
+                const offset = active.link.getBoundingClientRect().top - toc.getBoundingClientRect().top;
+                toc.scrollTop += offset - toc.clientHeight / 2;
+            }
             button.addEventListener("click", () => {
                 toc.hidden = !toc.hidden;
                 sidebar.hidden = !toc.hidden;
                 button.setAttribute("aria-expanded", String(!toc.hidden));
+                if (!toc.hidden && active) centerActive();
             });
             let active;
             function update() {
@@ -50,10 +55,7 @@
                 active = current;
                 active.link.classList.add("active");
                 active.link.setAttribute("aria-current", "location");
-                if (!toc.hidden) {
-                    const offset = active.link.getBoundingClientRect().top - toc.getBoundingClientRect().top;
-                    toc.scrollTop += offset - toc.clientHeight / 2;
-                }
+                if (!toc.hidden) centerActive();
             }
             document.addEventListener("scroll", update, {passive: true});
             update();

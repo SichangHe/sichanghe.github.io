@@ -18,6 +18,7 @@
   - no Markdown ToC generation, list relocation, or copied mdBook template
   - Ctrl/Command+B toggles the book sidebar
   - Ctrl/Command+Shift+B selects the page contents
+  - opening page contents centers the current heading, including after scrolling with contents hidden
 - scroll position is per page and session
   - explicit URL fragments take precedence
 - run `node scripts/check.mjs` to check Lua metadata against a temporary Git repository
