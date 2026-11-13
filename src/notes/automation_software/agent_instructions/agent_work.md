@@ -35,6 +35,10 @@ a file and point to it.
 ALWAYS avoid communication among agents unless absolutely necessary.
 
 Manage your pending task queue with `amh todo`.
+
+Put scratch files (draft prompts, messages, notes) in your own `mktemp -d`
+directory under `/tmp`.
+
 🤖 Batch what goes to the human: add or finish several items in one call, and
 put item changes and your message in one message with
 `amh tell human --add ITEM --done ITEM`. Every call messages at once.

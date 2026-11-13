@@ -80,12 +80,6 @@ For a reporting-tree inventory, follow `getagentsmd get manager_reporting`.
 
 Workers message their manager with `amh tell manager`, in one or
 two sentences, as they would message a person.
-Managers MUST NOT provide workers task-file paths for reporting.
-
-Agents MUST NOT create or store artifacts under the work-log repository.
-Task evidence that significant enough to be persisted must be summarized in
-task file comments or stored in
-the corresponding project outside the work-log repository.
 
 When a reported problem needs a different specialist or external capability,
 delegate via a new/reused task rather than doing the work locally.
@@ -149,12 +143,6 @@ the human text.
 contact the human through `amh tell human`
 - uses the configured transport
 
-Managers MUST NOT treat `amh tell manager`, task-file notes, TODO notes, or
-TUI text as human contact.
-If a worker report contains information that should reach the human,
-the manager who owns that task MUST either message the human directly or
-explicitly assign a worker to message the human.
-
 Prefer to resume existing agents for followup work even if they exited.
 
 When delivering listenable artifacts, send the listenable content in
@@ -176,9 +164,6 @@ Routine verification tests stay quiet: pass/fail aggregate only,
 details only for failures.
 
 ## Manager worktree hygiene
-
-🧑 This directory should only contain files related to managers and tasks,
-NEVER project work. Project work MUST remain in each project's directory.
 
 Before going idle, run `amh manager worktree`.
 The manager owns their and their workers' work dir: commit and
