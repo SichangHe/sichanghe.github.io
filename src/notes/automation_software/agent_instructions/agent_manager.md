@@ -137,16 +137,6 @@ The manager also compacts workers before letting them resume working tasks that
 do not need much previous context.
 
 
-For each long task, before starting, write a prompt (eval prompt) for
-the dedicated eval agent whose sole job is to track the end goal.
-After the worker for that task considers themselves fully done,
-they report the high-level takeaways to the eval agent, who then
-decides whether we actually met the goal.
-If eval passes, the task is done; otherwise, the manager spawns a new worker to
-actually achieve the goal.
-Either way, each eval agent only evaluates once, and
-the manager uses the eval prompt to launch a new eval agent every time.
-
 Human messages must describe the actual request, decision, or task in
 plain words; file paths, mail UIDs, and line numbers are source refs,
 not descriptions, and should be avoided.
