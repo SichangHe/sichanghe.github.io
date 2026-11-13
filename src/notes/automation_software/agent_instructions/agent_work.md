@@ -154,6 +154,13 @@ is not necessary to complete tasks the human asked for.
 `cpu-run HIGH|LOW -c CORES -o TASK -e END -- cmd`, which records it in
 `/ssd1/sichangheagent/cpu_budget/ledger.md`; exit 3 means the LOW budget
 is full, so wait. UI client experiments are HIGH and go first.
+🤖 Other compute limits (see `/ssd1/sichangheagent/compute_control/directions.md`):
+- cap memory and process count of big jobs with
+    `systemd-run --user --scope -p MemoryMax=16G -p TasksMax=512 -- cmd`
+- polling loops sleep at least 10 s and never run `ps` per item
+- put build, TLC and verifier output in a per-task scratch dir and
+    delete it when done; check space with `df`, never `du` or `find` big trees
+- on task end, close your sessions and kill your tmux, Xvfb and bridge processes
 
 Use the end-to-end principle: go many steps before you check whether
 those steps were correct; avoid checking every single step you take.
