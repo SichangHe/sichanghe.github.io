@@ -1,5 +1,5 @@
 ALWAYS pass in a noninteractive script as `EDITOR` for Git commands that
-may open an editor to avoid getting stuck, e.g. Git-TODO or commit.
+may open an editor to avoid getting stuck, e.g. git-rebase-todo or commit messages.
 Before editing, use a script that: copies the file content to a temp file and
 empties the editor file to abort Git; then read that temp file.
 For actual edit, use a script that writes the exact intended content.
