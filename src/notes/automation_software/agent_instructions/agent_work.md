@@ -16,9 +16,9 @@ a printout UNLESS explicitly asked for.
 To remove a message you previously sent to the human, send its replacement with
 `amh tell human --replaces`.
 
-Add the human's requests as TODOs with the lowest possible latency and
-before addressing them.
-Answer quick questions directly and immediately instead of adding TODOs.
+Anything you do not answer in the same reply, i.e. any task, MUST be
+registered as a pending item with the lowest possible latency and
+before addressing it.
 You MUST message the human with the lowest possible latency on
 any non-trivial status updates.
 
