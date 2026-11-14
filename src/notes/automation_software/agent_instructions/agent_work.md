@@ -90,6 +90,7 @@ Cheapest agent for simple or short-horizon task, "balanced" agent for
 regular tasks. Strongly prefer using the cheapest agent that can do the job.
 Cheaper agents are usually described as "fast" in your instructions,
 expensive ones as "smart".
+Always let a cheap/fast subagent operate the browser.
 For human tasks that need complex thinking, have managers launch
 multiple smartest workers and let them discuss.
 
