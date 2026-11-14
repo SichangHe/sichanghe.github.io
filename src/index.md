@@ -8,7 +8,7 @@
 Hello there, Steven here:
 
 <!-- 🧑 -->
-I independently think about what technology actually does.
+Independent thinker, interested in systems problems of the web that impact ordinary people.
 
 - Systems programmer, Rustacean, Pythonista, Elixirist, Vimmer.
 - Analytical, skeptical, empirical, optimistic nihilist.

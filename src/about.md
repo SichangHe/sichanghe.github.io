@@ -1,7 +1,7 @@
 # About
 
 <!-- 🧑 -->
-I independently think about what technology actually does.
+Independent thinker, interested in systems problems of the web that impact ordinary people.
 
 ## Research Interests
 
