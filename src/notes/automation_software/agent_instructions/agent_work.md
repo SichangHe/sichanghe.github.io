@@ -152,8 +152,10 @@ is not necessary to complete tasks the human asked for.
 `/ssd1/sichangheagent/cpu_budget/ledger.md`; exit 3 means the LOW budget
 is full, so wait. UI client experiments are HIGH and go first.
 🤖 Other compute limits (see `/ssd1/sichangheagent/compute_control/directions.md`):
-- cap memory and process count of big jobs with
-    `systemd-run --user --scope -p MemoryMax=16G -p TasksMax=512 -- cmd`
+- cap memory and process count of big jobs with cpu-run's `-m 16G -t 4096`
+    - TasksMax counts threads
+    - never wrap cpu-run's command in `systemd-run` yourself;
+        that drops the CPU pinning
 - polling loops sleep at least 10 s and never run `ps` per item
 - put build, TLC and verifier output in a per-task scratch dir and
     delete it when done; check space with `df`, never `du` or `find` big trees
