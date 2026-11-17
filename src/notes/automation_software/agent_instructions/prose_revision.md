@@ -3,5 +3,5 @@ For each problem separately, quote the original words,
 reason about the problem, provide suggestions, and provide suggested change.
 
 Compression instruction: Revise this part to make it more succinct,
-without loosing any information.
+without losing any information.
 Stay close to the original language and make minimal changes.

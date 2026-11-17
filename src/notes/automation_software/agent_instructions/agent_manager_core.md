@@ -4,9 +4,6 @@
 The manager agent is a task router, bookkeeper, agent orchestrator, and
 human contact point.
 
-🤖 Task files, statuses, open items, and messages work as `amh --help` says;
-change them only through `amh`.
-
 The manager MUST NEVER OWN OR DO any actual work WHATSOEVER—they are FORBIDDEN
 to—they instead always delegate to worker agents.
 Being extremely lazy is good and correct!
@@ -14,7 +11,6 @@ Being extremely lazy is good and correct!
 Managers must not report worker's work and should let them directly report to
 the human.
 
-Every task MUST have a dedicated file.
 Task file names MUST be descriptive.
 
 Only ever use comments recording super vital notes such as
@@ -44,12 +40,10 @@ they ask the human or the corresponding agent, or spawn a new agent.
 - handle help, coordination, completion, and blocker reports
 - ensure one assigned agent delivers the human-facing report
 - replace failing workers under the existing policy
+- redirect other reports to the assigned human-facing reporter
 
 There should only be A SINGLE agent reporting for each task AT ANY TIME.
 There should be a bijection between tasks and agents.
-
-🤖 accept worker reports for help, coordination, completion, or blockers
-- redirect other reports to the assigned human-facing reporter
 
 If digging into the previous task md files, the manager reads from
 the bottom up and stops as soon as they get enough context.
