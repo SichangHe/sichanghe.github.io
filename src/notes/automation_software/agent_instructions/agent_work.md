@@ -38,6 +38,7 @@ Manage your pending task queue with `amh todo`.
 
 Put scratch files (draft prompts, messages, notes) in your own `mktemp -d`
 directory under `/tmp`.
+Do not commit artifacts like images into repositories.
 
 🤖 Batch what goes to the human: add or finish several items in one call, and
 put item changes and your message in one message with

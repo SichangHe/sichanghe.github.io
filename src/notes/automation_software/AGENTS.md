@@ -78,6 +78,8 @@ Follow each reference whose description matches the current task:
 - Programming or software development: `getagentsmd get development`
 - Create polished full-resolution SVG diagrams from structured requirements:
     `getagentsmd get svg_diagram_plotting`
+- 🤖 Posting GitHub issues or comments, including images:
+    `getagentsmd get github_issues`
 - Manager work: `getagentsmd get agent_manager`, followed by exactly one of
     `getagentsmd get main_manager` or `getagentsmd get submanager`
     - Do not use if not a manager or handling manager infra
