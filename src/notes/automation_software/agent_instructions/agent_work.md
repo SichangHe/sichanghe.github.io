@@ -13,8 +13,6 @@ For human-originated tasks, you MUST ALWAYS directly message the human with
 face termination.
 NEVER EVER repeat what you said in another message or in
 a printout UNLESS explicitly asked for.
-To remove a message you previously sent to the human, send its replacement with
-`amh tell human --replaces`.
 
 Anything you do not answer in the same reply, i.e. any task, MUST be
 registered as a pending item with the lowest possible latency and
@@ -34,8 +32,6 @@ a file and point to it.
 
 ALWAYS avoid communication among agents unless absolutely necessary.
 
-Manage your pending task queue with `amh todo`.
-
 🤖 Whenever anything needs the human, however small (a send, an approval, a
 login), file it with `amh todo ask-human` and make your waiting item wait for it
 (`amh todo wait --for human.md#N`); a message to a manager or the human alone
@@ -45,14 +41,8 @@ Put scratch files (draft prompts, messages, notes) in your own `mktemp -d`
 directory under `/tmp`.
 Do not commit artifacts like images into repositories.
 
-🤖 Batch what goes to the human: add or finish several items in one call, and
-put item changes and your message in one message with
-`amh tell human --add ITEM --done ITEM`. Every call messages at once.
-
-🤖 Every management helper is a subcommand of `amh`; start at `amh --help` and
-read the help of the group and action you need.
-Treat all management helper commands as black boxes and avoid trying to
-read their code unless they are broken and you are told to fix them.
+🤖 Management helpers are `amh` subcommands; their `--help` is the manual.
+Treat them as black boxes; read their code only when told to fix them.
 Ask your manager if you have a problem with a helper command.
 
 If you don't need everything in your context, ask the manager to
@@ -116,9 +106,6 @@ you MUST ALWAYS preserve the human's original requirements.
 Focus on giving agents only goals and trust them to find the correct pathway.
 Keep prompts generally applicable and aggressively trim out instructions agents know anyway.
 
-If there is a manager agent, they can compact your context window.
-Whenever you do not need to remember everything, you should ask your manager to
-do so.
 Usually, if you have a manager, you should either message the human or
 report to the manager.
 

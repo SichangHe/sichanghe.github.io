@@ -7,22 +7,12 @@ refresh memory of the guidelines.
 
 ## Startup
 
-Manager policy is in `getagentsmd get agent_manager` and
-`getagentsmd get agent_manager_core`, and exactly one role command:
-`main_manager` or `submanager`.
-
 Load machine-local values from `data/local.env` if present.
-Then run `amh manager watchers` before handling pending work.
-Rerun it after helper-code changes.
 
 ## Task files
 
 Quote the human's words verbatim as much as possible for open items.
-
-To create/link a task and spawn a worker, use `amh task start`.
-When a human email causes a launch, pass `--email` and
-`--lines` selecting the exact relevant lines.
-Use the custom prompt only for narrow task context;
+Use the custom prompt of `amh task start` only for narrow task context;
 do not paraphrase the human's email.
 
 🧑 Status notes should be plain descriptions using words that
@@ -34,8 +24,6 @@ explicit reporting instructions.
 If a worker reports a manager-process problem, consume it through that
 worker's task file and update manager policy yourself; do not ask the worker to
 inspect manager state.
-
-When a worker task is complete, close it with `amh task close`.
 
 🧑 At times, agents may become stupid and produce a mess.
 To fix this, terminate them, then launch an agent to
@@ -56,30 +44,16 @@ MUST NEVER displace human instructions as task goals.
 
 ## Dispatch and status
 
-Message an agent you manage with `amh tell agent`.
 If an agent is unclear or unresponsive, ask for a concise report.
-
-Use `amh agent status` for one agent and `amh agent problems` for
-a read-only one-shot problem check.
-The watcher periodically runs the problem check for
-automatic manager-facing notices.
 
 ## Helper commands
 
 🧑 "what managers and workers should use, i.e. just amh, and let them rely on
 `--help` instead of dumping info via file in my notes"
 
-Every helper is a subcommand of `amh`, which is on `PATH`.
-Start at `amh --help`, then read the help of the group and action you need;
-command help is authoritative.
-Managers do not give workers task-file paths unless the task file is
-explicitly assigned as an artifact to inspect, review, or change.
 For a reporting-tree inventory, follow `getagentsmd get manager_reporting`.
 
 ## Reports, relays, messages, and feedback
-
-Workers message their manager with `amh tell manager`, in one or
-two sentences, as they would message a person.
 
 When a reported problem needs a different specialist or external capability,
 delegate via a new/reused task rather than doing the work locally.
@@ -91,20 +65,9 @@ current worker status, answer the agent directly.
 The human may record direct conversation with an agent in an md file.
 The manager does nothing about it.
 
-SQLite stores durable queued messages; task Markdown files are generated views
-- use `amh` for messages and task-record changes
-- keep explicit source references with messages
-- prefer manager-mediated relay over direct agent-to-agent channels
-
-For larger work, spawn agents in fresh windows, record dependencies.
-
-Before stopping a non-trivial agent, ask for concise feedback on
+Before closing a non-trivial task, ask its agent for concise feedback on
 unclear instructions, routing/communication gaps, missing tooling/docs,
 check friction, or whether manager-triggered compaction would have helped.
-Use `amh task close x.md` for normal task closure, TODO movement, and
-worker shutdown.
-If feedback is needed, ask before marking the task done;
-the current helper close path does not collect feedback automatically.
 Preserve task-specific feedback in the task file;
 preserve manager-process feedback in manager docs;
 tell the human about useful feedback.
@@ -125,10 +88,6 @@ agent thread (task file name, e.g. `paper_writeup`) that owns or asked it, so
 the human can reply in that thread; the human asked for this after a list
 omitted them.
 
-Human messages must describe the actual request, decision, or task in
-plain words; file paths, mail UIDs, and line numbers are source refs,
-not descriptions, and should be avoided.
-
 If the request refers to things the manager does not have context for,
 they consult `~/.config/amh/README.md` first.
 
@@ -138,15 +97,13 @@ infer if the manager should handle the reply instead, in whole or in part.
 Avoid paraphrasing the human's text unless it is really poorly written, because
 paraphrasing usually lose information.
 Prefer to copy the exact human text or
-narrow source excerpts into the worker prompt.
+narrow source excerpts into the worker prompt;
+never paste entire raw email bodies or threads.
 Do not give workers manager mail paths, task-file paths, or
 line ranges unless that file is explicitly assigned as an artifact to inspect,
 review, or change.
 Append additional context to the message as needed, clearly separated from
 the human text.
-
-contact the human through `amh tell human`
-- uses the configured transport
 
 Prefer to resume existing agents for followup work even if they exited.
 
@@ -154,16 +111,12 @@ When delivering listenable artifacts, send the listenable content in
 the message body by default instead of only sending a file path.
 Include the path only as a secondary reference.
 
-Message when routing is ambiguous, a target is unreachable, a task is blocked on
-information only the human can provide, or the human appears idle/lost and
-needs the next concrete action.
+Message the human when routing is ambiguous, a target is unreachable, a task is
+blocked on information only the human can provide, or the human appears
+idle/lost and needs the next concrete action.
+Ask one question or give one next action.
 
 Humans may use text to speech for messages and have typos.
-
-Include file and tmux/session references.
-Ask one question or give one next action.
-Do not paste entire raw email bodies or threads into agent prompts;
-paste only task-relevant human text or excerpts.
 
 Routine verification tests stay quiet: pass/fail aggregate only,
 details only for failures.

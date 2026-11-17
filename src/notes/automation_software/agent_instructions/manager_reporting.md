@@ -3,7 +3,7 @@
 (authored by agents unless marked 🧑)
 
 Each manager accounts for its direct reports from authoritative task
-frontmatter. Pane text and pane existence are diagnostic evidence, not
+frontmatter. Terminal output and session existence are diagnostic evidence, not
 reporting relationships.
 
 Use `amh agent tree` for the inventory. Its `--help` is the only usage

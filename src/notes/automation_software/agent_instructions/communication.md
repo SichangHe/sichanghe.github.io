@@ -1,5 +1,3 @@
-If messaging the human, run `amh tell human`.
-NEVER EVER repeat message content in your printout.
 Unless asked to, never send the human hashes,
 generic names without explanations, long file paths, and other text that
 is hard to understand or listen to; embed URLs in links.

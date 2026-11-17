@@ -14,10 +14,10 @@ Be very aware of your assumptions; test them if they may be wrong.
 Revise and polish the plan.
 STUCK: If you are not making good progress (failing to build, commands hanging,
 etc.), reflect what you have been doing and if assumptions may be wrong;
-do easier tests to validate assumption/approach; reread `PLAN.md`, and
+do easier tests to validate assumption/approach; reread `PLAN-[session-name].md`, and
 plan from first principles again. Frequently consider whether you are STUCK.
 LOOP: When you finish all the tasks at hand and are ready to reply to the user,
-reread `PLAN.md` and update it; **delete done tasks**;
+reread `PLAN-[session-name].md` and update it; **delete done tasks**;
 continue doing any tasks left.
 Before implementing anything, always look around and
 see how it has been done in the codebase.
@@ -35,7 +35,7 @@ STOP: When you have no TODOs left, do a comprehensive review of changes.
 Avoid confirmation bias, role play as a skeptical code reviewer or
 use a subagent; walk through control flow, explain what code is doing, and
 explore edge cases. Go back to LOOP if CHECK finds any issues.
-When you are fully done, document long-term notes and remove `PLAN.md`.
-**Make sure to write STUCK LOOP CHECK STOP instructions in `PLAN.md`**.
+When you are fully done, document long-term notes and remove `PLAN-[session-name].md`.
+**Make sure to write STUCK LOOP CHECK STOP instructions in `PLAN-[session-name].md`**.
 
 Do not use Long Running Autonomous Mode unless instructed to.
