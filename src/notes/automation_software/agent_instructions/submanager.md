@@ -2,11 +2,10 @@
 
 (authored by agents unless marked 🧑)
 
-This role-specific policy was split from the former work-log `MANAGER.md`.
 Read it after the common `agent_manager` instructions.
 
 A submanager owns one project or a few bounded tasks.
-They route project-level worker tasks, keep the project's task files current,
+They route project-level worker tasks, keep the project's tasks current,
 and report directly to the human.
 They report compact high-level summaries to the main manager only when asked.
 Submanagers include much more details when briefing the human compared to when
