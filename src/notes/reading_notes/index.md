@@ -1,9 +1,32 @@
 # Unstructured Reading Notes
 
+- StreamBE: running best-effort work in the GPU's leftover resources,
+    Huanchen Sun, NSL meeting
+    - load from HBM to SM grouped inside GPC to compute
+    - fully idle, e.g. waiting for other GPUs; vs some SM idle
+        - but Nsight shows busy
+    - temporal sharing: preempt?
+        - some do small time chunks & no preemption
+    - spacial sharing: some SM doing other stuff
+    - want: high priority job feels nothing
+    - shared work by column
+    - keep table of done kernels in GPU RAM
+    - work stealing across GPU
+    - making model/ KV cache stealable requires RAM dup ⇒ bad
+- Stragglers in distributed LLM training, Mahdi Alizadeh, NSL meeting
+    - Simurg: distributed detection
+    - lots of delay from software etc.
+    - if cloud, harder to find tenant's straggler
+        - prior work very slow and need lots of info
+    - goal: use only NCCL timing, general, detect mild fault, low FPR
+    - learn normal communication pattern
+    - pass anomaly to localizer: propagated delay or local?
+    - Hudhud: migrate whole host for efficiency
 - Readable games on the move, Chunyu Xia, NSL meeting
     - text blur under low connectivity: unplayable
     - on the road, latency&jitter high ⇒ mainly turn-based games
-    - region-of-interest (ROI) coding: video encoding spend more bytes on text
+    - region-of-interest (ROI) coding: video encoding spend more bytes on
+        text
     - Unity render: world layer + UI tree
     - hard to extract UI code: entangled
     - pixel consistency: sniffer&streamer to identify UI parts

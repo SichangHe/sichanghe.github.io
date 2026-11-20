@@ -216,6 +216,7 @@
         Colormaps](blogs/perfect_grayscale.md)
     - [What an mdBook Preprocessor Does](blogs/what_does_mdbook.md)
     - [Drafts]()
+        - [Moving from Arc to Zen: the Tricky Bits](blogs/arc_to_zen.md)
         - [Learn Like Machine Learning Models](blogs/learn_like_models.md)
         - [We are Learning Async Rust
             Wrong](blogs/learning_async_rust_wrong.md)
