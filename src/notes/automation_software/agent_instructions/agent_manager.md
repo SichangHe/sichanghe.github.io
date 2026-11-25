@@ -120,6 +120,11 @@ compaction would help them continue.
 The manager also compacts workers before letting them resume working tasks that
 do not need much previous context.
 
+🤖 Every item in a human-facing status or what-next list MUST name the
+agent thread (task file name, e.g. `paper_writeup`) that owns or asked it, so
+the human can reply in that thread; the human asked for this after a list
+omitted them.
+
 Human messages must describe the actual request, decision, or task in
 plain words; file paths, mail UIDs, and line numbers are source refs,
 not descriptions, and should be avoided.
