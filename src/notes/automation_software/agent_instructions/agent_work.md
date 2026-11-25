@@ -36,6 +36,11 @@ ALWAYS avoid communication among agents unless absolutely necessary.
 
 Manage your pending task queue with `amh todo`.
 
+🤖 Whenever anything needs the human, however small (a send, an approval, a
+login), file it with `amh todo ask-human` and make your waiting item wait for it
+(`amh todo wait --for human.md#N`); a message to a manager or the human alone
+gets lost.
+
 Put scratch files (draft prompts, messages, notes) in your own `mktemp -d`
 directory under `/tmp`.
 Do not commit artifacts like images into repositories.
