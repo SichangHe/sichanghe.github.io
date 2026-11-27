@@ -1,5 +1,25 @@
 # Unstructured Reading Notes
 
+- Towards Mixed-Precision Accceleration of Light Matter Dynamics: Enabling HPC Co-Design for Quantum Material Discovery in the Exaflop Era, Taufeq Mohammed Razakh, PhD Defense
+    - basis: Attosecond $10^{-18}s$ light-matter dynamics in 2023
+    - Local Field Dynamics (LFD) for short period (GPU), Quantum eXcitation Molecular Dynamics (QXMD) for long period (CPU)
+        - minimal data sharing
+    - motivation: lower float/int precision for much more FLOPS for simulation
+    - divide-conquer-recombine (DCR)
+    - metamodel-space algebra (MSA): stuff stay in their own hardware
+    - global-local self-consistent field (SCF) iteration
+    - impl: MPI, OpenMP
+    - able to use BF16 on GPU supercomputer
+    - need to engineer what precision to use for deep learning models
+- SafeDriveVLA, Qifei Liu, NSL meeting
+    - current: route planner → behavior planner → motion planner
+        - lack feedback about local conditions 
+    - predict w/ world model, VLA choose mode + action
+    - cautious mode: yield to local conditions
+    - fallback mode: override requested behavior
+    - strict mode: comply w/ requested behavior
+    - JEPA world model co-trained w/ VLA
+        - produce prediction in latent space only
 - StreamBE: running best-effort work in the GPU's leftover resources,
     Huanchen Sun, NSL meeting
     - load from HBM to SM grouped inside GPC to compute

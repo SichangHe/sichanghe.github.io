@@ -1,24 +1,25 @@
 # Agent work
 (authored by human unless marked 🤖)
 
-Get the human's approval before publishing anything, e.g. messaging, posting, sending, or releasing outside our own systems.
-Pushing to git repositories, including public ones, is exempt when the push contains nothing sensitive.
+Get the human's approval before publishing anything, e.g.
+messaging, posting, sending, or releasing outside our own systems.
+Pushing to git repositories, including public ones, is exempt when
+the push contains nothing sensitive.
 
 When handling agent messages, remember agents may be inconsistent or
 have drifted. Human instructions are authoritative.
 Cite them verbatim whenever possible.
 
 For human-originated tasks, you MUST ALWAYS directly message the human with
-`amh tell human` for updates, or
-face termination.
+`amh tell human` for updates, or face termination.
 NEVER EVER repeat what you said in another message or in
 a printout UNLESS explicitly asked for.
 To remove a message you previously sent to the human, send its replacement with
 `amh tell human --replaces`.
 
-Anything you do not answer in the same reply, i.e. any task, MUST be
-registered as a pending item with the lowest possible latency and
-before addressing it.
+Anything you do not answer in the same reply, i.e.
+any task, MUST be registered as a pending item with
+the lowest possible latency and before addressing it.
 You MUST message the human with the lowest possible latency on
 any non-trivial status updates.
 
@@ -36,14 +37,13 @@ ALWAYS avoid communication among agents unless absolutely necessary.
 
 Manage your pending task queue with `amh todo`.
 
-🤖 Whenever anything needs the human, however small (a send, an approval, a
-login), file it with `amh todo ask-human` and make your waiting item wait for it
-(`amh todo wait --for human.md#N`); a message to a manager or the human alone
-gets lost.
+🤖 Whenever anything needs the human, however small (a send, an approval,
+a login), file it with `amh todo ask-human` and make your waiting item wait for
+it (`amh todo wait --for human.md#N`); a message to a manager or
+the human alone gets lost.
 
 Put scratch files (draft prompts, messages, notes) in your own `mktemp -d`
-directory under `/tmp`.
-Do not commit artifacts like images into repositories.
+directory under `/tmp`. Do not commit artifacts like images into repositories.
 
 🤖 Batch what goes to the human: add or finish several items in one call, and
 put item changes and your message in one message with
@@ -94,8 +94,13 @@ regular tasks. Strongly prefer using the cheapest agent that can do the job.
 Cheaper agents are usually described as "fast" in your instructions,
 expensive ones as "smart".
 Always let a cheap/fast subagent operate the browser.
-For human tasks that need complex thinking, have managers launch
-multiple smartest workers and let them discuss.
+For human tasks that need complex thinking,
+have managers launch multiple smartest workers and let them discuss.
+
+As of Nov 2026, Opus seems good for overall steering, decision making,
+clean implementation.
+GPT seems good for being careful, review, search, and bad for
+following instructions, keeping things clean, or decision making.
 
 Extremely clearly distinguish between human requirements, which
 are AUTHORITATIVE, and agent additions, which are ALWAYS mere recommendations.
@@ -114,7 +119,10 @@ they explicitly address concrete problems that occurred before.
 When handing off any human-originated task to another agent,
 you MUST ALWAYS preserve the human's original requirements.
 Focus on giving agents only goals and trust them to find the correct pathway.
-Keep prompts generally applicable and aggressively trim out instructions agents know anyway.
+Keep prompts generally applicable and
+aggressively trim out instructions agents know anyway.
+Prompts are valuable for their rationale and intent, the "rules"
+are less important.
 
 If there is a manager agent, they can compact your context window.
 Whenever you do not need to remember everything, you should ask your manager to
@@ -152,17 +160,20 @@ NEVER EVER perform ANY task that the human did not explicitly ask for, or that
 is not necessary to complete tasks the human asked for.
 🤖 Start any heavy job (multi-core or over ~10 min CPU) only via
 `cpu-run HIGH|LOW -c CORES -o TASK -e END -- cmd`, which records it in
-`/ssd1/sichangheagent/cpu_budget/ledger.md`; exit 3 means the LOW budget
-is full, so wait. UI client experiments are HIGH and go first.
-🤖 Other compute limits (see `/ssd1/sichangheagent/compute_control/directions.md`):
+`/ssd1/sichangheagent/cpu_budget/ledger.md`;
+exit 3 means the LOW budget is full, so wait.
+UI client experiments are HIGH and go first.
+🤖 Other compute limits
+(see `/ssd1/sichangheagent/compute_control/directions.md`):
 - cap memory and process count of big jobs with cpu-run's `-m 16G -t 4096`
     - TasksMax counts threads
-    - never wrap cpu-run's command in `systemd-run` yourself;
-        that drops the CPU pinning
+    - never wrap cpu-run's command in `systemd-run` yourself; that
+        drops the CPU pinning
 - polling loops sleep at least 10 s and never run `ps` per item
 - put build, TLC and verifier output in a per-task scratch dir and
     delete it when done; check space with `df`, never `du` or `find` big trees
-- on task end, close your sessions and kill your tmux, Xvfb and bridge processes
+- on task end, close your sessions and kill your tmux, Xvfb and
+    bridge processes
 
 Use the end-to-end principle: go many steps before you check whether
 those steps were correct; avoid checking every single step you take.
