@@ -41,6 +41,9 @@ Manage your pending task queue with `amh todo`.
 a login), file it with `amh todo ask-human` and make your waiting item wait for
 it (`amh todo wait --for human.md#N`); a message to a manager or
 the human alone gets lost.
+🤖 Each such human item states exactly what to do, step by step, or names
+the thread where the asking agent has posted those steps; the human asked for
+this after items said only what, not how.
 
 Put scratch files (draft prompts, messages, notes) in your own `mktemp -d`
 directory under `/tmp`. Do not commit artifacts like images into repositories.
