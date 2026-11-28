@@ -29,3 +29,12 @@ defaults write APP_NAME ApplePressAndHoldEnabled -bool false
 cd /System/Library/LaunchDaemons
 sudo launchctl unload com.apple.mobile.softwareupdated.plist
 ```
+
+## WindowServer & yabai bug list
+
+fork & fix one day
+
+- don't focus on Zoom window decoration
+- don't focus on another window right after switching space
+- some windows get stuck on top in stack mode
+- switching to an app does not focus on any window of it (e.g. sioyek)

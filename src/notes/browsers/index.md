@@ -17,3 +17,9 @@ Firefox:
 ```url
 about:networking#dns
 ```
+
+## history page
+
+```url
+chrome://browser/content/places/places.xhtml
+```
